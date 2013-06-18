@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter.impl.saml;
 
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.impl.filtercontext.NavigationHelper;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
@@ -25,12 +27,14 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
 /**
  * Matcher functor that checks, via matching against a regular expression, if the attribute requester contains an entity
- * attribute with a given value.
+ * attribute with a given value.<br/>
+ * 
+ * Most of the work is done in parent classes.
  */
 public class AttributeIssuerEntityAttributeRegexMatcher extends AbstractEntityAttributeRegexMatcher {
 
     /** {@inheritDoc} */
-    protected EntityDescriptor getEntityMetadata(AttributeFilterContext filterContext) {
+    @Nullable protected EntityDescriptor getEntityMetadata(final AttributeFilterContext filterContext) {
         final AttributeRecipientContext recipient =
                 NavigationHelper.locateRecipientContext(NavigationHelper.locateResolverContext(filterContext));
         return recipient.getAttributeIssuerMetadata();

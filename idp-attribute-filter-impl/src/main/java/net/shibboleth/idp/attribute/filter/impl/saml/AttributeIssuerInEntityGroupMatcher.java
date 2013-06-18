@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter.impl.saml;
 
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.impl.filtercontext.NavigationHelper;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
@@ -24,12 +26,14 @@ import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
 /**
- * A matcher that evaluates to true if attribute issuer matches the provided entity group name.
+ * A matcher that evaluates to true if attribute issuer matches the provided entity group name.<br/>
+ * 
+ * Most of the work is done in parent classes.
  */
 public class AttributeIssuerInEntityGroupMatcher extends AbstractEntityGroupMatcher {
 
     /** {@inheritDoc} */
-    protected EntityDescriptor getEntityMetadata(AttributeFilterContext filterContext) {
+    @Nullable  protected EntityDescriptor getEntityMetadata(final AttributeFilterContext filterContext) {
         final AttributeRecipientContext recipient =
                 NavigationHelper.locateRecipientContext(NavigationHelper.locateResolverContext(filterContext));
         return recipient.getAttributeIssuerMetadata();

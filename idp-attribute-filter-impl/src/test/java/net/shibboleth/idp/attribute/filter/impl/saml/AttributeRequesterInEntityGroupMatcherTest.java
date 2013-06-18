@@ -54,6 +54,7 @@ public class AttributeRequesterInEntityGroupMatcherTest extends BaseMetadataTest
     @Test public void noGroup() throws ComponentInitializationException, AttributeFilterException {
         AttributeRequesterInEntityGroupMatcher matcher = new AttributeRequesterInEntityGroupMatcher();
         matcher.setId("matcher");
+        matcher.initialize();
         Assert.assertFalse(matcher.isEntityInGroup(metadataContext(null, null, null)));
     }
 }

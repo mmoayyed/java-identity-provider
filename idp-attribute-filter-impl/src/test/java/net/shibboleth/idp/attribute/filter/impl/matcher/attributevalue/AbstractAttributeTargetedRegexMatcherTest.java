@@ -54,7 +54,12 @@ public class AbstractAttributeTargetedRegexMatcherTest {
         Assert.assertNotEquals(functor.getAttributeId(), NAME.toUpperCase());
 
         functor.setId("Test");
-
+        try {
+            functor.initialize();
+            Assert.fail();
+        } catch (ComponentInitializationException e) {
+        }
+        functor.setRegularExpression("^.p*");
         functor.initialize();
         try {
             functor.setAttributeId(NAME);
@@ -63,6 +68,7 @@ public class AbstractAttributeTargetedRegexMatcherTest {
             // OK
         }
     }
+
     @Test public void testTargetedPolicy() throws ComponentInitializationException, AttributeFilterException {
         final String NAME = "foo";
         AbstractAttributeTargetedRegexMatcher functor = new AbstractAttributeTargetedRegexMatcher() {
@@ -74,24 +80,27 @@ public class AbstractAttributeTargetedRegexMatcherTest {
 
         functor.setAttributeId(NAME);
         functor.setId("Test");
+        functor.setRegularExpression("^.p*");
         functor.initialize();
-        
+
         Assert.assertFalse(functor.matches(DataSources.unPopulatedFilterContext()));
         final AttributeFilterContext context = DataSources.unPopulatedFilterContext();
         final Attribute attribute = new Attribute(NAME);
-        attribute.setValues(Collections.singleton((AttributeValue)new StringAttributeValue("value")));
+        attribute.setValues(Collections.singleton((AttributeValue) new StringAttributeValue("value")));
         context.setPrefilteredAttributes(Collections.singleton(attribute));
         Assert.assertFalse(functor.matches(context));
-        functor =  new AbstractAttributeTargetedRegexMatcher() {
+        functor = new AbstractAttributeTargetedRegexMatcher() {
             public boolean compareAttributeValue(@Nullable AttributeValue value) {
                 return true;
             }
         };
         functor.setAttributeId(NAME);
         functor.setId("Test");
+        functor.setRegularExpression("^.p*");
         functor.initialize();
         Assert.assertTrue(functor.matches(context));
     }
+
     @Test public void testUnargetedValue() throws ComponentInitializationException, AttributeFilterException {
         final String NAME = "foo";
         final AbstractAttributeTargetedRegexMatcher functor = new AbstractAttributeTargetedRegexMatcher() {
@@ -102,8 +111,10 @@ public class AbstractAttributeTargetedRegexMatcherTest {
         Assert.assertNull(functor.getAttributeId());
 
         functor.setId("Test");
+        functor.setRegularExpression("^.p*");
         functor.initialize();
         final Attribute attribute = new Attribute(NAME);
-        attribute.setValues(Collections.singleton((AttributeValue)new StringAttributeValue("value")));
+        attribute.setValues(Collections.singleton((AttributeValue) new StringAttributeValue("value")));
         Assert.assertEquals(functor.getMatchingValues(attribute, DataSources.unPopulatedFilterContext()).size(), 1);
-    }}
+    }
+}

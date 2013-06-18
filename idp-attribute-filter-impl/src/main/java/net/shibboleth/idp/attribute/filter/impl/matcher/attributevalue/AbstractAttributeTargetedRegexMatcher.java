@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.impl.matcher.attributevalue;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
@@ -33,24 +34,29 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import com.google.common.base.Predicate;
 
 /**
- * Basic Implementation of a {@link net.shibboleth.idp.attribute.Matcher.impl.matcher.MatchFunctor} based on regexp
- * comparison. The missing parts
+ * Basic implementation of a {@link net.shibboleth.idp.attribute.Matcher.impl.matcher.MatchFunctor} based on regexp
+ * comparison.<br/>
+ * A concrete class extending this class implements {@link #compareAttributeValue(AttributeValue)} which will extract
+ * information from the value and call {@link #regexpCompare(String)} on it. <br/>
+ * This class deals with the complexities of setting the correct predicate (Policy or Value). The issues is that an
+ * Attribute Value comparing matcher may be either a policy predicate (if an Attribute Id is specified) this is also
+ * referred to as a TAREGTTED matcher or a value predicate if there is no Attribute Id (UNTARGETTED).
  */
 public abstract class AbstractAttributeTargetedRegexMatcher extends AbstractRegexpStringMatcher {
 
     /** log. */
-    private static Logger log = LoggerFactory.getLogger(AbstractAttributeTargetedRegexMatcher.class);
+    private final Logger log = LoggerFactory.getLogger(AbstractAttributeTargetedRegexMatcher.class);
 
     /** ID of the attribute whose values will be evaluated. */
     private String attributeId;
 
     /** {@inheritDoc} */
-    public String getAttributeId() {
+    @Nullable public String getAttributeId() {
         return attributeId;
     }
 
     /** {@inheritDoc} */
-    public void setAttributeId(String id) {
+    public void setAttributeId(@Nullable final String id) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         attributeId = StringSupport.trimOrNull(id);
     }
@@ -59,7 +65,7 @@ public abstract class AbstractAttributeTargetedRegexMatcher extends AbstractRege
     protected void doInitialize() throws ComponentInitializationException {
 
         if (null == attributeId) {
-            // This is a UNTARGETTED filter, so we expect to be called to compare
+            // This is a attribute value (UNTARGETTED) filter, so we expect to be called to compare
             // attribute values
             setValuePredicate(targettedValuePredicate());
         } else {
@@ -73,10 +79,10 @@ public abstract class AbstractAttributeTargetedRegexMatcher extends AbstractRege
      * 
      * @return if the attribute exists and has the value specified
      */
-    private Predicate<AttributeFilterContext> untargettedContextPredicate() {
+    @Nonnull private Predicate<AttributeFilterContext> untargettedContextPredicate() {
         return new Predicate<AttributeFilterContext>() {
 
-            public boolean apply(@Nullable AttributeFilterContext context) {
+            public boolean apply(@Nullable final AttributeFilterContext context) {
                 final Attribute attribute = context.getPrefilteredAttributes().get(attributeId);
 
                 if (null == attribute) {
@@ -100,17 +106,18 @@ public abstract class AbstractAttributeTargetedRegexMatcher extends AbstractRege
      * 
      * @return whether the value matches.
      */
-    private Predicate<AttributeValue> targettedValuePredicate() {
+    @Nonnull private Predicate<AttributeValue> targettedValuePredicate() {
         return new Predicate<AttributeValue>() {
 
-            public boolean apply(@Nullable AttributeValue input) {
+            public boolean apply(@Nullable final AttributeValue input) {
                 return compareAttributeValue(input);
             }
         };
     }
-    
+
     /**
      * Perform comparison.
+     * 
      * @param value the attribute value to inspect
      * @return whether it matches the configuration of this match function.
      */

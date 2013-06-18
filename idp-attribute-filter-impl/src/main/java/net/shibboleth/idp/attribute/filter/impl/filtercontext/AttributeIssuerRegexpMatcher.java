@@ -31,27 +31,27 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Predicate;
 
 /**
- * Compare the attribute issuer's entity ID for this resolution with the provided name.
+ * Compare the attribute issuer's entity ID for this resolution with the provided regexp.
  */
 public class AttributeIssuerRegexpMatcher extends AbstractRegexpStringMatcher {
 
     /** The logger. */
-    private Logger log = LoggerFactory.getLogger(AttributeIssuerRegexpMatcher.class);
+    private final Logger log = LoggerFactory.getLogger(AttributeIssuerRegexpMatcher.class);
 
     /** Constructor. */
     public AttributeIssuerRegexpMatcher() {
         setPolicyPredicate(new Predicate<AttributeFilterContext>() {
 
-            public boolean apply(@Nullable AttributeFilterContext input) {
+            public boolean apply(@Nullable final AttributeFilterContext input) {
                 return doCompare(input);
             }});        
     }
 
-    /** Compare the issuer from the provided context with the string.
+    /** Compare the issuer from the context with the provided regexp.
      * @param filterContext the context
      * @return whether it matches
      */
-    protected boolean doCompare(@Nullable AttributeFilterContext filterContext) {
+    protected boolean doCompare(@Nullable final AttributeFilterContext filterContext) {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 

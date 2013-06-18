@@ -23,6 +23,10 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractComparisonMatcher;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.saml.saml2.metadata.NameIDFormat;
 import org.opensaml.saml.saml2.metadata.SSODescriptor;
@@ -31,9 +35,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
 
-/**
- * Base class for matchers that check whether a particular entity attribute is present and contains a given
- * value.
+/** Base class for matching functions that check if an SAML entity supports a particular NameID format type.<br/>
+ * 
+ *  Classes wishing to implement NameId matchers implement {@link #getEntitySSODescriptor(AttributeFilterContext)}
+ * to navigate to the SSO endpoint, this class does the rest (including plumbing the right sort of predicate into
+ * {@link AbstractComparisonMatcher}.
  */
 public abstract class AbstractNameIDFormatSupportedMatcher extends AbstractComparisonMatcher {
 
@@ -58,7 +64,7 @@ public abstract class AbstractNameIDFormatSupportedMatcher extends AbstractCompa
      * 
      * @return NameID format that needs to be supported by the entity
      */
-    public String getNameIdFormat() {
+    @NonnullAfterInit public String getNameIdFormat() {
         return nameIdFormat;
     }
 
@@ -67,8 +73,8 @@ public abstract class AbstractNameIDFormatSupportedMatcher extends AbstractCompa
      * 
      * @param format NameID format that needs to be supported by the entity
      */
-    public void setNameIdFormat(String format) {
-        nameIdFormat = format;
+    public void setNameIdFormat(final String format) {
+        nameIdFormat = StringSupport.trimOrNull(format);
     }
 
     /**
@@ -79,13 +85,14 @@ public abstract class AbstractNameIDFormatSupportedMatcher extends AbstractCompa
      * @return true if the entity supports the required NameID format, false otherwise
      */
     protected boolean isNameIDFormatSupported(AttributeFilterContext filterContext) {
-        SSODescriptor role = getEntitySSODescriptor(filterContext);
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        final SSODescriptor role = getEntitySSODescriptor(filterContext);
         if (role == null) {
             log.debug("entity does contain an appropriate SSO role descriptor");
             return false;
         }
 
-        List<NameIDFormat> supportedFormats = role.getNameIDFormats();
+        final List<NameIDFormat> supportedFormats = role.getNameIDFormats();
         if (supportedFormats == null || supportedFormats.isEmpty()) {
             log.debug("entity SSO role descriptor does not list any supported NameID formats");
             return false;
@@ -101,6 +108,14 @@ public abstract class AbstractNameIDFormatSupportedMatcher extends AbstractCompa
         log.debug("entity does not support the NameID format '{}'", nameIdFormat);
         return false;
     }
+    
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        if (null == nameIdFormat) {
+            throw new ComponentInitializationException(getLogPrefix() + " No NameId format specified");
+        }
+    }
 
     /**
      * Gets the SSO role descriptor for the entity to be checked.
@@ -109,6 +124,6 @@ public abstract class AbstractNameIDFormatSupportedMatcher extends AbstractCompa
      * 
      * @return the SSO role descriptor of the entity or null if the entity does not have such a descriptor
      */
-    protected abstract SSODescriptor getEntitySSODescriptor(AttributeFilterContext filterContext);
+    @Nullable protected abstract SSODescriptor getEntitySSODescriptor(AttributeFilterContext filterContext);
 
 }

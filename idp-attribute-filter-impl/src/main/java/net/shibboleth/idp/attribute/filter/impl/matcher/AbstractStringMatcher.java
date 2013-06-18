@@ -35,7 +35,7 @@ public abstract class AbstractStringMatcher extends AbstractComparisonMatcher {
      * 
      * @return string to match for a positive evaluation
      */
-    public String getMatchString() {
+    @Nullable public String getMatchString() {
         return matchString;
     }
 
@@ -44,7 +44,7 @@ public abstract class AbstractStringMatcher extends AbstractComparisonMatcher {
      * 
      * @param match string to match for a positive evaluation
      */
-    public void setMatchString(String match) {
+    public void setMatchString(@Nullable final String match) {
         matchString = match;
     }
 
@@ -73,7 +73,7 @@ public abstract class AbstractStringMatcher extends AbstractComparisonMatcher {
      * 
      * @return true if the value matches the given match string, false if not
      */
-    protected boolean stringCompare(@Nullable String value) {
+    protected boolean stringCompare(@Nullable final String value) {
         if (value == null) {
             return matchString == null;
         }

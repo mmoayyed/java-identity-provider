@@ -26,15 +26,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Test that an {@link StringAttributeValue} is a string match to the supplied parameter.
+ * Test that an {@link AttributeValue} is a string match to the configured string.<br/>
+ * If the value is not a {@link StringAttributeValue} string it is coerced into a string.
  */
 public class AttributeValueStringMatcher extends AbstractAttributeTargetedStringMatcher {
 
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger(AttributeValueStringMatcher.class);
+    private final Logger log = LoggerFactory.getLogger(AttributeValueStringMatcher.class);
 
     /** {@inheritDoc} */
-    public boolean compareAttributeValue(@Nullable AttributeValue value) {
+    public boolean compareAttributeValue(@Nullable final AttributeValue value) {
         
         if (null == value) {
             return false;

@@ -42,7 +42,7 @@ import com.google.common.collect.Iterables;
 
 /**
  * Base class for {@link Matcher} implementations that are compositions of other
- * {@link Matcher}.
+ * {@link Matcher}s.
  */
 public abstract class AbstractComposedMatcher extends AbstractDestructableIdentifiableInitializableComponent implements
         Matcher, UnmodifiableComponent, ValidatableComponent {

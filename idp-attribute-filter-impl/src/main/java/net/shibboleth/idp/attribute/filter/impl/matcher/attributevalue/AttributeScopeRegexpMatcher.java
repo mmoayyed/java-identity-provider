@@ -26,15 +26,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Test that an {@link ScopedStringAttributeValue} is a regexp match to the supplied parameter.
+ * Test that the scope in a {@link ScopedStringAttributeValue} is a regexp match to configured value.
+ * <br/>If the value is not scoped return false.
  */
 public class AttributeScopeRegexpMatcher extends AbstractAttributeTargetedRegexMatcher {
 
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger(AttributeScopeRegexpMatcher.class);
+    private final Logger log = LoggerFactory.getLogger(AttributeScopeRegexpMatcher.class);
 
     /** {@inheritDoc} */
-    public boolean compareAttributeValue(@Nullable AttributeValue value) {
+    public boolean compareAttributeValue(@Nullable final AttributeValue value) {
 
         if (null == value) {
             return false;

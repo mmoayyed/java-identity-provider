@@ -33,6 +33,7 @@ import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.collection.LazySet;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -57,11 +58,9 @@ public class OrMatcher extends AbstractComposedMatcher {
         final List<Matcher> currentMatchers = getComposedMatchers();
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        if (currentMatchers != null) {
-            for (Matcher child : currentMatchers) {
-                if (child.matches(filterContext)) {
-                    return true;
-                }
+        for (Matcher child : currentMatchers) {
+            if (child.matches(filterContext)) {
+                return true;
             }
         }
         return false;
@@ -79,15 +78,20 @@ public class OrMatcher extends AbstractComposedMatcher {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        if (currentMatchers.isEmpty()) {
-            return Collections.emptySet();
-        }
-
         Set<AttributeValue> matchingValues = new LazySet<AttributeValue>();
-        for (Matcher matchFunctor : getComposedMatchers()) {
+        for (Matcher matchFunctor : currentMatchers) {
             matchingValues.addAll(matchFunctor.getMatchingValues(attribute, filterContext));
         }
 
         return Collections.unmodifiableSet(matchingValues);
     }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        if (getComposedMatchers().isEmpty()) {
+            throw new ComponentInitializationException("No matchers supplied to OR");
+        }
+    }
+
 }

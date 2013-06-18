@@ -25,6 +25,9 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.MatcherException;
 import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractComparisonMatcher;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -41,8 +44,14 @@ import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 
 /**
- * Base class for matchers that check whether a particular entity attribute is present and contains a given
- * value.
+ * Base class for matchers that check whether a particular entity attribute is present and contains a given value.<br/>
+ * 
+ * Given the metadata for an entity, this class takes care of navigation to the attribute and extracting the values, it
+ * also handles registering the correct (policy) predicate with its parent {@link AbstractComparisonMatcher}. <br/>
+ * 
+ * Classes wishing to implement Entity Attribute matchers implement {@link #getEntityMetadata(AttributeFilterContext)}
+ * to navigate to the entity (probably recipient or issuer) and {@link #entityAttributeValueMatches(String)} to
+ * implement the comparison (probably string or regexp).
  */
 public abstract class AbstractEntityAttributeMatcher extends AbstractComparisonMatcher {
 
@@ -59,7 +68,7 @@ public abstract class AbstractEntityAttributeMatcher extends AbstractComparisonM
     public AbstractEntityAttributeMatcher() {
         setPolicyPredicate(new Predicate<AttributeFilterContext>() {
 
-            public boolean apply(@Nullable AttributeFilterContext input) {
+            public boolean apply(@Nullable final AttributeFilterContext input) {
                 return hasEntityAttribute(input);
             }
         });
@@ -70,7 +79,7 @@ public abstract class AbstractEntityAttributeMatcher extends AbstractComparisonM
      * 
      * @return name of the entity attribute the entity must have
      */
-    public String getName() {
+    @NonnullAfterInit public String getName() {
         return name;
     }
 
@@ -79,8 +88,8 @@ public abstract class AbstractEntityAttributeMatcher extends AbstractComparisonM
      * 
      * @param attributeName name of the entity attribute the entity must have
      */
-    public void setAttributeName(String attributeName) {
-        name = attributeName;
+    public void setAttributeName(@Nullable final String attributeName) {
+        name = StringSupport.trimOrNull(attributeName);
     }
 
     /**
@@ -88,7 +97,7 @@ public abstract class AbstractEntityAttributeMatcher extends AbstractComparisonM
      * 
      * @return name format of the entity attribute the entity must have
      */
-    public String getNameFormat() {
+    @Nullable public String getNameFormat() {
         return nameFormat;
     }
 
@@ -97,13 +106,13 @@ public abstract class AbstractEntityAttributeMatcher extends AbstractComparisonM
      * 
      * @param attributeNameFormat name format of the entity attribute the entity must have
      */
-    public void setNameFormat(String attributeNameFormat) {
+    public void setNameFormat(@Nullable final String attributeNameFormat) {
         nameFormat = StringSupport.trimOrNull(attributeNameFormat);
     }
 
     /**
      * Checks to see if the entity returned by {@link #getEntityMetadata(ShibbolethFilteringContext)} contains the
-     * entity attribute specified by this functor's configuration.
+     * entity attribute specified by this matcher's configuration.
      * 
      * @param filterContext current request context
      * 
@@ -111,6 +120,8 @@ public abstract class AbstractEntityAttributeMatcher extends AbstractComparisonM
      */
     protected boolean hasEntityAttribute(@Nonnull AttributeFilterContext filterContext) {
         Constraint.isNotNull(filterContext, "Context must be supplied");
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+
         EntityDescriptor entityDescriptor = getEntityMetadata(filterContext);
         if (entityDescriptor == null) {
             throw new MatcherException(getLogPrefix() + " No metadata available for the entity");
@@ -191,7 +202,10 @@ public abstract class AbstractEntityAttributeMatcher extends AbstractComparisonM
     }
 
     /**
-     * Helper function for {@link #getEntityAttribute(EntityDescriptor)}. return an attribute that matches.
+     * Helper function for {@link #getEntityAttribute(EntityDescriptor)}. Having done all the null checking in
+     * {@link #getEntityAttribute(EntityDescriptor)}, this function actually does the match as per the rules:<br/>
+     * If both the attribute name and name format for this match functor is configured then both must match, otherwise
+     * only the attribute name must match.
      * 
      * @param entityAttributes the list of attributes
      * @param entityDescriptor the entity in question
@@ -216,14 +230,22 @@ public abstract class AbstractEntityAttributeMatcher extends AbstractComparisonM
         return null;
     }
 
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        if (name == null) {
+            throw new ComponentInitializationException(getLogPrefix() + " Attribute name is null");
+        }
+    }
+
     /**
      * Gets the entity descriptor for the entity to check.
      * 
      * @param filterContext current filter request context
      * 
-     * @return entity descriptor for the entity to check
+     * @return entity descriptor for the entity to check or null if not found
      */
-    protected abstract EntityDescriptor getEntityMetadata(AttributeFilterContext filterContext);
+    @Nullable protected abstract EntityDescriptor getEntityMetadata(AttributeFilterContext filterContext);
 
     /**
      * Checks whether the given entity attribute value matches the rules for particular implementation of this functor.

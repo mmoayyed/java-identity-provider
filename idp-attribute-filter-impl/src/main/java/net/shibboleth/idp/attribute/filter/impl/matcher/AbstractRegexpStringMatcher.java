@@ -19,6 +19,12 @@ package net.shibboleth.idp.attribute.filter.impl.matcher;
 
 import java.util.regex.Pattern;
 
+import javax.annotation.Nullable;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+
 /**
  * General {@link net.shibboleth.idp.attribute.filter.Matcher} for regexp comparison of strings in Attribute
  * Filters.
@@ -33,7 +39,7 @@ public abstract class AbstractRegexpStringMatcher extends AbstractComparisonMatc
      * 
      * @return rsegular expression to match
      */
-    public String getRegularExpression() {
+    @NonnullAfterInit public String getRegularExpression() {
         return regex.pattern();
     }
 
@@ -42,7 +48,8 @@ public abstract class AbstractRegexpStringMatcher extends AbstractComparisonMatc
      * 
      * @param expression regular expression to match
      */
-    public void setRegularExpression(String expression) {
+    public void setRegularExpression(final String expression) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         regex = Pattern.compile(expression);
     }
 
@@ -53,7 +60,8 @@ public abstract class AbstractRegexpStringMatcher extends AbstractComparisonMatc
      * 
      * @return true if the value matches the given match string, false if not
      */
-    public boolean regexpCompare(String value) {
+    public boolean regexpCompare(@Nullable final String value) {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         if (regex == null || value == null) {
             return false;
         }
@@ -65,4 +73,11 @@ public abstract class AbstractRegexpStringMatcher extends AbstractComparisonMatc
         return false;
     }
 
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        if (null == regex){
+            throw new ComponentInitializationException(getLogPrefix() + " No regular expression provided"); 
+        }
+    }
 }

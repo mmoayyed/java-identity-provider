@@ -33,7 +33,6 @@ import net.shibboleth.utilities.java.support.component.AbstractDestructableIdent
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
-import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import com.google.common.base.Objects;
@@ -48,7 +47,7 @@ import com.google.common.base.Objects;
 public final class NotMatcher extends AbstractDestructableIdentifiableInitializableComponent implements Matcher {
 
     /** The matcher we are negating. */
-    private Matcher negatedMatcher;
+    private final Matcher negatedMatcher;
 
     /**
      * Constructor.
@@ -64,7 +63,7 @@ public final class NotMatcher extends AbstractDestructableIdentifiableInitializa
      * 
      * @return matcher that is being negated
      */
-    public Matcher getNegtedMatcher() {
+    @Nonnull public Matcher getNegtedMatcher() {
         return negatedMatcher;
     }
 
@@ -108,9 +107,8 @@ public final class NotMatcher extends AbstractDestructableIdentifiableInitializa
      * @throws ComponentValidationException if any of the child validates failed.
      */
     public void validate() throws ComponentValidationException {
-        if (!isInitialized()) {
-            throw new UninitializedComponentException("Not Matcher not initialized");
-        }
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         ComponentSupport.validate(negatedMatcher);
     }
 
@@ -144,14 +142,12 @@ public final class NotMatcher extends AbstractDestructableIdentifiableInitializa
     /** {@inheritDoc} */
     protected void doDestroy() {
         ComponentSupport.destroy(negatedMatcher);
-        negatedMatcher = null;
         super.doDestroy();
     }
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-
         ComponentSupport.initialize(negatedMatcher);
     }
     /** {@inheritDoc} */

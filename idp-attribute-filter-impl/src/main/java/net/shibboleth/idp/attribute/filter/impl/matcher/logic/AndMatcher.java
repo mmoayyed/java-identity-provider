@@ -34,6 +34,7 @@ import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -66,15 +67,6 @@ public class AndMatcher extends AbstractComposedMatcher {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        if (currentMatchers.isEmpty()) {
-            //
-            // we should treat the null case the same as the empty list.
-            // Based on a "default deny" we make AND(null) false, (just like
-            // if (null))
-            //
-            return false;
-        }
-
         for (Matcher child : currentMatchers) {
             if (!child.matches(filterContext)) {
                 return false;
@@ -99,9 +91,6 @@ public class AndMatcher extends AbstractComposedMatcher {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        if (currentMatchers.isEmpty()) {
-            return Collections.emptySet();
-        }
         Iterator<Matcher> matcherItr = currentMatchers.iterator();
 
         Set<AttributeValue> matchingValues = matcherItr.next().getMatchingValues(attribute, filterContext);
@@ -113,6 +102,14 @@ public class AndMatcher extends AbstractComposedMatcher {
         }
 
         return Collections.unmodifiableSet(matchingValues);
+    }
+    
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        if (getComposedMatchers().isEmpty()) {
+            throw new ComponentInitializationException("No matchers supplied to AND");
+        }
     }
 
     /** {@inheritDoc} */

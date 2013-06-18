@@ -25,12 +25,14 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
 /**
  * Matcher that checks, via an exact match, if the attribute issuer contains an entity attribute with a given
- * value.
+ * value.<br/>
+ * 
+ * Most of the work is done in parent classes.
  */
 public class AttributeIssuerEntityAttributeExactMatcher extends AbstractEntityAttributeExactMatcher {
 
     /** {@inheritDoc} */
-    protected EntityDescriptor getEntityMetadata(AttributeFilterContext filterContext) {
+    protected EntityDescriptor getEntityMetadata(final AttributeFilterContext filterContext) {
         final AttributeRecipientContext recipient =
                 NavigationHelper.locateRecipientContext(NavigationHelper.locateResolverContext(filterContext));
         return recipient.getAttributeIssuerMetadata();

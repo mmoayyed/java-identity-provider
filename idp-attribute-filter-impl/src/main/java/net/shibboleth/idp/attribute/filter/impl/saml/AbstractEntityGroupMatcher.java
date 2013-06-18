@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractComparisonMatcher;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -33,7 +34,13 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Predicate;
 
 /**
- * Base class for matchers that check if a given entity is in an entity group.
+ * Base class for matchers that check if a given entity is in an entity group.<br/>
+ * 
+ * This class deals with the mechanics of working out whether a provided entity is a member, and with the plumbing in to
+ * the {@link AbstractComparisonMatcher}.<br/>
+ * 
+ * Classes wishing to implement Entity Group matchers implement {@link #getEntityMetadata(AttributeFilterContext)} to
+ * navigate to the entity (probably recipient or issuer), this class does the rest.
  */
 public abstract class AbstractEntityGroupMatcher extends AbstractComparisonMatcher {
 
@@ -47,7 +54,7 @@ public abstract class AbstractEntityGroupMatcher extends AbstractComparisonMatch
     public AbstractEntityGroupMatcher() {
         setPolicyPredicate(new Predicate<AttributeFilterContext>() {
 
-            public boolean apply(@Nullable AttributeFilterContext input) {
+            public boolean apply(@Nullable final AttributeFilterContext input) {
                 return isEntityInGroup(input);
             }
         });
@@ -58,7 +65,7 @@ public abstract class AbstractEntityGroupMatcher extends AbstractComparisonMatch
      * 
      * @return entity group to match against
      */
-    public String getEntityGroup() {
+    @Nullable public String getEntityGroup() {
         return entityGroup;
     }
 
@@ -80,15 +87,19 @@ public abstract class AbstractEntityGroupMatcher extends AbstractComparisonMatch
      */
     protected boolean isEntityInGroup(@Nonnull AttributeFilterContext input) {
         Constraint.isNotNull(input, "Context must be supplied");
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+
         final EntityDescriptor entity = getEntityMetadata(input);
         if (entityGroup == null) {
-            log.debug("{} No entity group specified, unable to check if entity is in group", getLogPrefix());
+            log.warn("{} No entity group specified, unable to check if entity is in group", getLogPrefix());
+            // TODO throw MatcherException?
             return false;
         }
 
         if (entity == null) {
             log.debug("{} No entity metadata available, unable to check if entity is in group {}", getLogPrefix(),
                     entityGroup);
+            // TODO throw MatcherException?
             return false;
         }
 
@@ -96,6 +107,7 @@ public abstract class AbstractEntityGroupMatcher extends AbstractComparisonMatch
         if (currentGroup == null) {
             log.debug("{} Entity descriptor does not have a parent object, unable to check if entity is in group {}",
                     getLogPrefix(), entityGroup);
+            // TODO throw MatcherException?
             return false;
         }
 

@@ -39,15 +39,13 @@ import net.shibboleth.utilities.java.support.component.AbstractDestructableIdent
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 import com.google.common.base.Objects;
 
 /**
- * A {@link net.shibboleth.idp.attribute.filter.Matcher} that delegates to a JSR-223 script for its actual
- * processing.
+ * A {@link net.shibboleth.idp.attribute.filter.Matcher} that delegates to a JSR-223 script for its actual processing.
  * 
  */
 @ThreadSafe
@@ -63,14 +61,14 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
     /**
      * Constructor.
      * 
-     * @param matchingScript script used to determine matching attibute values
+     * @param matchingScript script used to determine matching attribute values
      */
-    public ScriptedMatcher(@Nonnull EvaluableScript matchingScript) {
+    public ScriptedMatcher(@Nonnull final EvaluableScript matchingScript) {
         setScript(matchingScript);
     }
 
     /** {@inheritDoc} */
-    public void setId(String id) {
+    public void setId(@Nullable final String id) {
         super.setId(id);
         // clear cache
         logPrefix = null;
@@ -81,7 +79,7 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
      * 
      * @return the script to be evaluated
      */
-    public EvaluableScript getScript() {
+    @Nonnull public EvaluableScript getScript() {
         return script;
     }
 
@@ -90,10 +88,8 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
      * 
      * @param matcherScript the script to be evaluated
      */
-    protected void setScript(@Nonnull EvaluableScript matcherScript) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException();
-        }
+    protected void setScript(@Nonnull final EvaluableScript matcherScript) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         script = Constraint.isNotNull(matcherScript, "Attribute value matching script can not be null");
     }
@@ -109,8 +105,7 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
      * </p>
      * {@inheritDoc}
      */
-    public boolean matches(@Nullable AttributeFilterContext filterContext)
-            throws AttributeFilterException {
+    public boolean matches(@Nonnull final AttributeFilterContext filterContext) throws AttributeFilterException {
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 
         final EvaluableScript currentScript = script;
@@ -123,13 +118,13 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
         try {
             final Object result = currentScript.eval(scriptContext);
             if (null == result) {
-                throw new IllegalArgumentException(getLogPrefix() + "Matcher script did not return a result");
+                throw new IllegalArgumentException(getLogPrefix() + " Matcher script did not return a result");
             }
 
             if (result instanceof Boolean) {
                 return ((Boolean) result).booleanValue();
             } else {
-                throw new AttributeFilterException(getLogPrefix() + "Matcher script did not return a Boolean");
+                throw new AttributeFilterException(getLogPrefix() + " Matcher script did not return a Boolean");
             }
         } catch (ScriptException e) {
             throw new AttributeFilterException(getLogPrefix() + "Error while executing value matching script", e);
@@ -149,8 +144,9 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
      * </p>
      * {@inheritDoc}
      */
-    @Nonnull @NonnullElements @Unmodifiable public Set<AttributeValue> getMatchingValues(@Nonnull Attribute attribute,
-            @Nonnull AttributeFilterContext filterContext) throws AttributeFilterException {
+    @Nonnull @NonnullElements @Unmodifiable public Set<AttributeValue> getMatchingValues(
+            @Nonnull final Attribute attribute, @Nonnull final AttributeFilterContext filterContext)
+            throws AttributeFilterException {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 

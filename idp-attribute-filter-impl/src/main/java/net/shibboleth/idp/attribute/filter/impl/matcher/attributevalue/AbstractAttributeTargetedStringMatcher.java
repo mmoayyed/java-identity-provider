@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.impl.matcher.attributevalue;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
@@ -34,23 +35,29 @@ import com.google.common.base.Predicate;
 
 /**
  * Basic Implementation of a {@link net.shibboleth.idp.attribute.Matcher.impl.matcher.MatchFunctor} based on string
- * comparison. The missing parts
+ * comparison.<br>
+ * 
+ * A concrete class extending this class implements {@link #compareAttributeValue(AttributeValue) which will extract
+ * information from the value and call {@link #stringCompare(String)} on it. <br/>
+ * This class deals with the complexities of setting the correct predicate (Policy or Value). The issues is that an
+ * Attribute Value comparing matcher may be either a policy predicate (if an Attribute Id is specified) this is also
+ * referred to as a TAREGTTED matcher or a value predicate if there is no Attribute Id (UNTARGETTED).
  */
 public abstract class AbstractAttributeTargetedStringMatcher extends AbstractStringMatcher {
 
     /** log. */
-    private static Logger log = LoggerFactory.getLogger(AbstractAttributeTargetedStringMatcher.class);
+    private final Logger log = LoggerFactory.getLogger(AbstractAttributeTargetedStringMatcher.class);
 
     /** ID of the attribute whose values will be evaluated. */
     private String attributeId;
 
     /** {@inheritDoc} */
-    public String getAttributeId() {
+    @Nullable public String getAttributeId() {
         return attributeId;
     }
 
     /** {@inheritDoc} */
-    public void setAttributeId(String id) {
+    public void setAttributeId(@Nullable final String id) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         attributeId = StringSupport.trimOrNull(id);
     }
@@ -73,7 +80,7 @@ public abstract class AbstractAttributeTargetedStringMatcher extends AbstractStr
      * 
      * @return if the attribute exists and has the value specified
      */
-    private Predicate<AttributeFilterContext> untargettedContextPredicate() {
+    @Nonnull private Predicate<AttributeFilterContext> untargettedContextPredicate() {
         return new Predicate<AttributeFilterContext>() {
 
             public boolean apply(@Nullable AttributeFilterContext context) {
@@ -100,7 +107,7 @@ public abstract class AbstractAttributeTargetedStringMatcher extends AbstractStr
      * 
      * @return whether the value matches.
      */
-    private Predicate<AttributeValue> targettedValuePredicate() {
+    @Nonnull private Predicate<AttributeValue> targettedValuePredicate() {
         return new Predicate<AttributeValue>() {
 
             public boolean apply(@Nullable AttributeValue input) {

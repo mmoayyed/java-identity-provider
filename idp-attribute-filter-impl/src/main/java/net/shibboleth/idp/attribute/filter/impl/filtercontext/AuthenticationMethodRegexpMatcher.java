@@ -31,27 +31,27 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Predicate;
 
 /**
- * Compare the authentication method for this resolution with the provided name.
+ * Compare the authentication method for this resolution with the provided regexp.
  */
 public class AuthenticationMethodRegexpMatcher extends AbstractRegexpStringMatcher {
 
     /** The logger. */
-    private Logger log = LoggerFactory.getLogger(AuthenticationMethodRegexpMatcher.class);
+    private final Logger log = LoggerFactory.getLogger(AuthenticationMethodRegexpMatcher.class);
 
     /** Constructor. */
     public AuthenticationMethodRegexpMatcher() {
         setPolicyPredicate(new Predicate<AttributeFilterContext>() {
 
-            public boolean apply(@Nullable AttributeFilterContext input) {
+            public boolean apply(@Nullable final AttributeFilterContext input) {
                 return doCompare(input);
             }});        
     }
     
-    /** Compare the issuer from the provided context with the string.
+    /** Compare the authentication method for this resolution with the provided regexp.
      * @param filterContext the context
      * @return whether it matches
      */
-    protected boolean doCompare(@Nullable AttributeFilterContext filterContext) {
+    protected boolean doCompare(@Nullable final AttributeFilterContext filterContext) {
         
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         final AttributeRecipientContext recipient =

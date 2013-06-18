@@ -27,7 +27,9 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import org.opensaml.messaging.context.BaseContext;
 
 /**
- * Helper class for context Navigation.
+ * Helper class for context Navigation.<br/>
+ * The "filterContext" filters require access to the {@link AttributeRecipientContext} and this class provides the
+ * methods to do it.
  */
 public final class NavigationHelper {
 
@@ -43,7 +45,7 @@ public final class NavigationHelper {
      * @return the associated resolution context
      */
     @Nonnull public static AttributeResolutionContext locateResolverContext(
-            @Nonnull AttributeFilterContext filterContext) {
+            @Nonnull final AttributeFilterContext filterContext) {
         final BaseContext parent = filterContext.getParent();
 
         if (null == parent) {
@@ -64,17 +66,16 @@ public final class NavigationHelper {
      * @param filterContext the filterContext
      * @return the associated recipient context
      */
-    @Nonnull
-    public static AttributeRecipientContext locateRecipientContext(
-            @Nonnull AttributeResolutionContext filterContext) {
-        
+    @Nonnull public static AttributeRecipientContext locateRecipientContext(
+            @Nonnull final AttributeResolutionContext filterContext) {
+
         final AttributeRecipientContext recipientContext =
                 filterContext.getSubcontext(AttributeRecipientContext.class, false);
-        
+
         if (null == recipientContext) {
             throw new MatcherException("Attribute Filter:  Count not locate the recipient context");
         }
-        
+
         return recipientContext;
-    } 
+    }
 }

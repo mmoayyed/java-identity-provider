@@ -17,25 +17,32 @@
 
 package net.shibboleth.idp.attribute.filter.impl.saml;
 
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.impl.filtercontext.NavigationHelper;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.saml2.metadata.SSODescriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Checks if the attribute issuer supports the required NameID format. */
 public class AttributeRequesterNameIDFormatExactMatcher extends AbstractNameIDFormatSupportedMatcher {
 
+    /** Logger. */
+    private final Logger log = LoggerFactory.getLogger(AttributeRequesterNameIDFormatExactMatcher.class);
+    
     /** {@inheritDoc} */
-    protected SSODescriptor getEntitySSODescriptor(AttributeFilterContext filterContext) {
+    @Nullable protected SSODescriptor getEntitySSODescriptor(final AttributeFilterContext filterContext) {
         final AttributeRecipientContext recipient =
                 NavigationHelper.locateRecipientContext(NavigationHelper.locateResolverContext(filterContext));
-        RoleDescriptor role = recipient.getAttributeRequesterRoleDescriptor();
+        final RoleDescriptor role = recipient.getAttributeRequesterRoleDescriptor();
         if (role instanceof SSODescriptor) {
             return (SSODescriptor) role;
         }
-
+        log.debug("{} provided Role was null or not an SSODescriptor", getLogPrefix());
         return null;
     }
 

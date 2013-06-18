@@ -108,14 +108,16 @@ public class AndMatcherTest extends AbstractMatcherTest {
         }
 
     }
-
-    @Test public void emptyResults() throws ComponentInitializationException, AttributeFilterException {
+    
+    @Test(expectedExceptions={ComponentInitializationException.class})  public void emptyInput() throws ComponentInitializationException
+    {
         AndMatcher matcher = new AndMatcher(Collections.EMPTY_LIST);
         matcher.setId("test");
         matcher.initialize();
-        Assert.assertTrue(matcher.getMatchingValues(attribute, filterContext).isEmpty());
-
-        matcher =
+    }
+    
+    @Test public void emptyResults() throws ComponentInitializationException, AttributeFilterException {
+        AndMatcher matcher =
                 new AndMatcher(Lists.<Matcher> newArrayList(
                         new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2))),
                         new MockValuePredicateMatcher(equalTo(value3))));
@@ -155,17 +157,7 @@ public class AndMatcherTest extends AbstractMatcherTest {
     }
 
     @Test public void testPredicate() throws ComponentInitializationException, AttributeFilterException {
-        AndMatcher matcher = new AndMatcher(null);
-        matcher.setId("Test");
-        matcher.initialize();
-        Assert.assertFalse(matcher.matches(null));
-
-        matcher = new AndMatcher(Collections.EMPTY_SET);
-        matcher.setId("Test");
-        matcher.initialize();
-        Assert.assertFalse(matcher.matches(null));
-
-        matcher =
+        AndMatcher matcher =
                 new AndMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(false),
                         new MockValuePredicateMatcher(false)));
         matcher.setId("Test");

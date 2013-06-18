@@ -19,12 +19,16 @@ package net.shibboleth.idp.attribute.filter.impl.saml;
 
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+
 import com.google.common.base.Objects;
 
 
 /**
  * Base class for matchers that perform an exact match of a given attribute string value against entity attribute
- * value.
+ * value.  Most of the work is done by {@link AbstractEntityAttributeMatcher}, this class purely handle the
+ * comparison.
  */
 public abstract class AbstractEntityAttributeExactMatcher extends AbstractEntityAttributeMatcher {
 
@@ -36,7 +40,7 @@ public abstract class AbstractEntityAttributeExactMatcher extends AbstractEntity
      * 
      * @return value of the entity attribute the entity must have
      */
-    public String getValue() {
+    @NonnullAfterInit public String getValue() {
         return value;
     }
 
@@ -45,12 +49,20 @@ public abstract class AbstractEntityAttributeExactMatcher extends AbstractEntity
      * 
      * @param attributeValue value of the entity attribute the entity must have
      */
-    public void setValue(String attributeValue) {
+    public void setValue(@Nullable final String attributeValue) {
         value = attributeValue;
     }
 
     /** {@inheritDoc} */
-    protected boolean entityAttributeValueMatches(@Nullable String stringValue) {
+    protected boolean entityAttributeValueMatches(@Nullable final String stringValue) {
         return Objects.equal(value, stringValue);
+    }
+    
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        if (null == value) {
+            throw new ComponentInitializationException(getLogPrefix() + " No value supplied to compare against");
+        }
     }
 }

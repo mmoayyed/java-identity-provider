@@ -36,22 +36,22 @@ import com.google.common.base.Predicate;
 public class AttributeRequesterMatcher extends AbstractStringMatcher {
 
     /** The logger. */
-    private Logger log = LoggerFactory.getLogger(AttributeRequesterMatcher.class);
+    private final Logger log = LoggerFactory.getLogger(AttributeRequesterMatcher.class);
 
     /** Constructor. */
     public AttributeRequesterMatcher() {
         setPolicyPredicate(new Predicate<AttributeFilterContext>() {
 
-            public boolean apply(@Nullable AttributeFilterContext input) {
+            public boolean apply(@Nullable final AttributeFilterContext input) {
                 return doCompare(input);
             }});        
     }
     
-    /** Compare the issuer from the provided context with the string.
+    /** Compare the requester from the context with the provided string.
      * @param filterContext the context
      * @return whether it matches
      */
-    protected boolean doCompare(@Nullable AttributeFilterContext filterContext) {
+    protected boolean doCompare(@Nullable final AttributeFilterContext filterContext) {
         
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         

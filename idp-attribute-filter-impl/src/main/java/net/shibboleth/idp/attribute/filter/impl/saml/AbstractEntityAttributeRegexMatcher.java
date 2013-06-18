@@ -20,15 +20,17 @@ package net.shibboleth.idp.attribute.filter.impl.saml;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-
 /**
- * Base class for matchers that perform an regular expression match of a given attribute string value against
- * entity attribute value.
+ * Base class for matchers that perform an regular expression match of a given attribute string value against entity
+ * attribute value. Most of the work is done by {@link AbstractEntityAttributeMatcher}, this class purely handle the
+ * comparison.
  */
 public abstract class AbstractEntityAttributeRegexMatcher extends AbstractEntityAttributeMatcher {
-    
+
     /** The value of the entity attribute the entity must have. */
     private Pattern valueRegex;
 
@@ -37,7 +39,7 @@ public abstract class AbstractEntityAttributeRegexMatcher extends AbstractEntity
      * 
      * @return value of the entity attribute the entity must have
      */
-    public Pattern getValueRegex() {
+    @NonnullAfterInit public Pattern getValueRegex() {
         return valueRegex;
     }
 
@@ -46,14 +48,22 @@ public abstract class AbstractEntityAttributeRegexMatcher extends AbstractEntity
      * 
      * @param attributeValueRegex value of the entity attribute the entity must have
      */
-    public void setValueRegex(Pattern attributeValueRegex) {
+    public void setValueRegex(final Pattern attributeValueRegex) {
         valueRegex = attributeValueRegex;
     }
 
     /** {@inheritDoc} */
-    protected boolean entityAttributeValueMatches(String entityAttributeValue) {
+    protected boolean entityAttributeValueMatches(final String entityAttributeValue) {
         Matcher valueMatcher = valueRegex.matcher(StringSupport.trim(entityAttributeValue));
         return valueMatcher.matches();
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        if (valueRegex == null) {
+            throw new ComponentInitializationException(getLogPrefix() + " No regexp supplied to compare with");
+        }
     }
 
 }

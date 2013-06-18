@@ -58,7 +58,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
     private String logPrefix;
 
     /** {@inheritDoc} */
-    public boolean matches(@Nonnull AttributeFilterContext filterContext) throws AttributeFilterException {
+    public boolean matches(@Nonnull final AttributeFilterContext filterContext) throws AttributeFilterException {
         throw new AttributeFilterException(getLogPrefix() + " is not supported in policy requirements");
     }
 
@@ -70,7 +70,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
         final Multimap<String, RequestedAttribute> requestedAttributes = filterContext.getRequestedAttributes();
 
         if (null == requestedAttributes || requestedAttributes.isEmpty()) {
-            log.debug("{}:  The peer's metadata did not have appropriate requested attributes available",
+            log.debug("{} The peer's metadata did not have appropriate requested attributes available",
                     getLogPrefix());
             if (matchIfMetadataSilent) {
                 return attribute.getValues();
@@ -87,7 +87,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
             return Collections.EMPTY_SET;
         }
         
-        Set<AttributeValue> values = new HashSet<AttributeValue>();
+        final Set<AttributeValue> values = new HashSet<AttributeValue>();
         
         for (RequestedAttribute requestedAttribute: requestedAttributeList) {
             
@@ -169,7 +169,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
     }
 
     /** {@inheritDoc} */
-    public void setId(String id) {
+    public void setId(@Nullable String id) {
         super.setId(id);
     }
 
@@ -178,7 +178,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
      * 
      * @return "Attribute Filter '<filterID>' :"
      */
-    protected String getLogPrefix() {
+    @Nonnull protected String getLogPrefix() {
         // local cache of cached entry to allow unsynchronised clearing.
         String prefix = logPrefix;
         if (null == prefix) {

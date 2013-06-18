@@ -17,30 +17,51 @@
 
 package net.shibboleth.idp.attribute.filter.impl.matcher;
 
+import javax.annotation.Nullable;
+
+import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractRegexpStringMatcher;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Predicate;
 
 /**
  * Tests for {@link AbstractRegexpStringMatcher}
  */
 public class AbstractRegexpStringMatcherTest {
 
-
-    @Test public void testApply() {
-        AbstractRegexpStringMatcher predicate = new AbstractRegexpStringMatcher(){};
+    @Test public void testApply() throws ComponentInitializationException {
+        AbstractRegexpStringMatcher predicate = new AbstractRegexpStringMatcher() {};
         predicate.setRegularExpression(DataSources.TEST_REGEX);
+        predicate.setId("od");
+        predicate.setPolicyPredicate(new Predicate<AttributeFilterContext>() {
+            
+            public boolean apply(@Nullable AttributeFilterContext input) {
+                return false;
+            }
+        });
+        predicate.initialize();
 
         Assert.assertTrue(predicate.regexpCompare(DataSources.TEST_STRING));
         Assert.assertFalse(predicate.regexpCompare("o" + DataSources.TEST_STRING));
         Assert.assertFalse(predicate.regexpCompare(null));
         Assert.assertEquals(predicate.getRegularExpression(), DataSources.TEST_REGEX);
 
-        predicate = new AbstractRegexpStringMatcher(){};
+        predicate = new AbstractRegexpStringMatcher() {};
+        predicate.setRegularExpression("^p.*");
+        predicate.setId("od");
+        predicate.setPolicyPredicate(new Predicate<AttributeFilterContext>() {
+            
+            public boolean apply(@Nullable AttributeFilterContext input) {
+                return false;
+            }
+        });
+        predicate.initialize();
         Assert.assertFalse(predicate.regexpCompare(DataSources.TEST_STRING));
-        
-        
+
     }
 
 }

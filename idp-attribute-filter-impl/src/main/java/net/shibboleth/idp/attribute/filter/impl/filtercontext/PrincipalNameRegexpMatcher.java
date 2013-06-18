@@ -31,27 +31,27 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Predicate;
 
 /**
- * Compare the principal name for this resolution with the provided name.
+ * Compare the principal name for this resolution with the provided regexp.
  */
 public class PrincipalNameRegexpMatcher extends AbstractRegexpStringMatcher {
 
     /** The logger. */
-    private Logger log = LoggerFactory.getLogger(PrincipalNameRegexpMatcher.class);
+    private final Logger log = LoggerFactory.getLogger(PrincipalNameRegexpMatcher.class);
 
     /** Constructor. */
     public PrincipalNameRegexpMatcher() {
         setPolicyPredicate(new Predicate<AttributeFilterContext>() {
 
-            public boolean apply(@Nullable AttributeFilterContext input) {
+            public boolean apply(@Nullable final AttributeFilterContext input) {
                 return doCompare(input);
             }});        
     }
 
-    /** Compare the principal from the provided context with the string.
+    /** Compare the principal name for this resolution with the provided regexp.
      * @param filterContext the context
      * @return whether it matches
      */
-    protected boolean doCompare(@Nullable AttributeFilterContext filterContext) {
+    protected boolean doCompare(@Nullable final AttributeFilterContext filterContext) {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 

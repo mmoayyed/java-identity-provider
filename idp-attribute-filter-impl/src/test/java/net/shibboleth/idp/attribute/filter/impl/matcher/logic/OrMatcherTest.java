@@ -110,17 +110,19 @@ public class OrMatcherTest extends AbstractMatcherTest {
 
         matcher = new OrMatcher(Collections.EMPTY_LIST);
         matcher.setId("test");
-        matcher.initialize();
-        Assert.assertTrue(matcher.getMatchingValues(attribute, filterContext).isEmpty());
+        try {
+            matcher.initialize();
+            Assert.fail();
+        } catch (ComponentInitializationException ex) {
+            // OK
+        }
     }
-    
+
     @Test public void testRegressionGetValues() throws ComponentInitializationException, AttributeFilterException {
         OrMatcher matcher =
-                new OrMatcher(Lists.<Matcher> newArrayList(
-                        new MockValuePredicateMatcher(Predicates.alwaysFalse()),
-                        new MockValuePredicateMatcher(Predicates.alwaysFalse()),
-                        new MockValuePredicateMatcher(equalTo(value1)),
-                        new MockValuePredicateMatcher(equalTo(value2))));
+                new OrMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(Predicates.alwaysFalse()),
+                        new MockValuePredicateMatcher(Predicates.alwaysFalse()), new MockValuePredicateMatcher(
+                                equalTo(value1)), new MockValuePredicateMatcher(equalTo(value2))));
         matcher.setId("Test");
         matcher.initialize();
 
@@ -135,8 +137,8 @@ public class OrMatcherTest extends AbstractMatcherTest {
 
     @Test public void testNoMatchingValues() throws Exception {
         OrMatcher matcher =
-                new OrMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(
-                        equalTo("Nothing")), new MockValuePredicateMatcher(equalTo("Zippo"))));
+                new OrMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(equalTo("Nothing")),
+                        new MockValuePredicateMatcher(equalTo("Zippo"))));
 
         matcher.setId("Test");
         matcher.initialize();
@@ -148,11 +150,11 @@ public class OrMatcherTest extends AbstractMatcherTest {
     }
 
     // TODO
-    // @Test 
+    // @Test
     public void testEqualsHashToString() throws ComponentInitializationException {
         OrMatcher matcher =
-                new OrMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(
-                        equalTo(value2)), new MockValuePredicateMatcher(equalTo(value3))));
+                new OrMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(equalTo(value2)),
+                        new MockValuePredicateMatcher(equalTo(value3))));
 
         matcher.toString();
 
@@ -161,32 +163,29 @@ public class OrMatcherTest extends AbstractMatcherTest {
         Assert.assertFalse(matcher.equals(this));
 
         OrMatcher other =
-                new OrMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(
-                        equalTo(value2)), new MockValuePredicateMatcher(equalTo(value3))));
+                new OrMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(equalTo(value2)),
+                        new MockValuePredicateMatcher(equalTo(value3))));
 
         Assert.assertTrue(matcher.equals(other));
         Assert.assertEquals(matcher.hashCode(), other.hashCode());
 
         other =
-                new OrMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(
-                        equalTo(value3)), new MockValuePredicateMatcher(equalTo(value2))));
+                new OrMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(equalTo(value3)),
+                        new MockValuePredicateMatcher(equalTo(value2))));
 
         Assert.assertFalse(matcher.equals(other));
         Assert.assertNotSame(matcher.hashCode(), other.hashCode());
     }
 
-    @Test public void testPredicate() throws ComponentInitializationException, AttributeFilterException {
+    @Test(expectedExceptions = {ComponentInitializationException.class}) public void emptyInput()
+            throws ComponentInitializationException {
         OrMatcher matcher = new OrMatcher(null);
         matcher.setId("test");
         matcher.initialize();
-        Assert.assertFalse(matcher.matches(null));
+    }
 
-        matcher = new OrMatcher(Collections.EMPTY_SET);
-        matcher.setId("Test");
-        matcher.initialize();
-        Assert.assertFalse(matcher.matches(null));
-
-        matcher =
+    @Test public void testPredicate() throws ComponentInitializationException, AttributeFilterException {
+        OrMatcher matcher =
                 new OrMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(false),
                         new MockValuePredicateMatcher(false)));
         matcher.setId("Test");

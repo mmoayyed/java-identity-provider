@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter.impl.saml;
 
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.impl.filtercontext.NavigationHelper;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
@@ -30,7 +32,7 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 public class AttributeRequesterEntityAttributeRegexMatcher extends AbstractEntityAttributeRegexMatcher {
 
     /** {@inheritDoc} */
-    protected EntityDescriptor getEntityMetadata(AttributeFilterContext filterContext) {
+    @Nullable protected EntityDescriptor getEntityMetadata(final AttributeFilterContext filterContext) {
         final AttributeRecipientContext recipient =
                 NavigationHelper.locateRecipientContext(NavigationHelper.locateResolverContext(filterContext));
         return recipient.getAttributeRecipientMetadata();
