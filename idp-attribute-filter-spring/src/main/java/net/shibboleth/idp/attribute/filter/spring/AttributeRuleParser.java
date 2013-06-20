@@ -41,14 +41,14 @@ import org.w3c.dom.Element;
  */
 public class AttributeRuleParser extends MatcherParser {
 
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AttributeRuleParser.class);
-
     /** Element name. */
     public static final QName ELEMENT_NAME = new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeRule");
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeRuleType");
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(AttributeRuleParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
@@ -77,9 +77,10 @@ public class AttributeRuleParser extends MatcherParser {
             log.debug("permitValueRules {}", permitValueRules);
             builder.addPropertyValue("permitRule", permitValueRules.get(0));
         }
-
+        /*
         List<Element> permitValueRuleRef =
                 children.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "PermitValueRuleReference"));
+        
         if (permitValueRuleRef != null && !permitValueRuleRef.isEmpty()) {
             String reference =
                     getAbsoluteReference(configElement, "PermitValueRule", permitValueRuleRef.get(0).getTextContent());
@@ -96,7 +97,6 @@ public class AttributeRuleParser extends MatcherParser {
             // parserContext));
             // TODO figure this out
         }
-
         List<Element> denyValueRuleRef =
                 children.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "DenyValueRuleReference"));
         if (denyValueRuleRef != null && !denyValueRuleRef.isEmpty()) {
@@ -105,5 +105,6 @@ public class AttributeRuleParser extends MatcherParser {
             // builder.addPropertyReference("denyValueRule", reference);
             // TODO figure this out
         }
+        */
     }
 }

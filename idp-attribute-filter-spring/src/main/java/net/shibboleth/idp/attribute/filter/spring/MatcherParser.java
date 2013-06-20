@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.attribute.filter.spring;
 
-import net.shibboleth.idp.attribute.filter.Matcher;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -28,9 +26,9 @@ import org.w3c.dom.Element;
 
 // TODO incomplete v2 port
 /**
- * Spring bean definition parser to configure an {@link Matcher}.
+ * Spring bean definition parser to configure an {@link  net.shibboleth.idp.attribute.filter.Matcher.Matcher}.
  */
-public abstract class MatcherParser extends BaseFilterParser {
+public class MatcherParser extends BaseFilterParser {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(MatcherParser.class);
@@ -51,7 +49,8 @@ public abstract class MatcherParser extends BaseFilterParser {
             id = element.getAttributeNS(null, "id");
         } else {
             // TODO logging
-            log.warn("Attribute filter elements should contain an 'id' attribute. This is not currently required but will be in future versions.");
+            log.warn("Attribute filter elements should contain an 'id' attribute."
+                    + " This is not currently required but will be in future versions.");
             id = getQualifiedId(element, element.getLocalName(), element.getAttributeNS(null, "id"));
         }
 

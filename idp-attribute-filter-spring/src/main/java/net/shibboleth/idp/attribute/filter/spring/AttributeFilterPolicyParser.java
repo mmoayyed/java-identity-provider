@@ -61,7 +61,8 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
     protected String
             resolveId(Element configElement, AbstractBeanDefinition beanDefinition, ParserContext parserContext) {
         if (!configElement.hasAttributeNS(null, "id")) {
-            log.warn("AttributeFilterPolicy elements should include an 'id' attribute.  This is not currently required but will be in future versions.");
+            log.warn("AttributeFilterPolicy elements should include an 'id' attribute."
+                    + "  This is not currently required but will be in future versions.");
         }
         return getQualifiedId(configElement, configElement.getLocalName(), configElement.getAttributeNS(null, "id"));
     }
@@ -76,27 +77,27 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
         // TODO remove debug logging
         log.debug("add constructor arg-value 0 '{}'", policyId);
         builder.addConstructorArgValue(policyId);
-        
+
         List<Element> children;
         Map<QName, List<Element>> childrenMap = ElementSupport.getIndexedChildElements(config);
 
         children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "PolicyRequirementRule"));
         if (children != null && children.size() > 0) {
-            // TODO Lists.newArrayList ?
-            // builder.addPropertyValue("policyRequirement",
-            //        SpringSupport.parseCustomElements(Lists.newArrayList(children.get(0)), parserContext));
-            // builder.addConstructorArgValue(SpringSupport.parseCustomElements(Lists.newArrayList(children.get(0)), parserContext));
+            /*
+             * TODO Lists.newArrayList ? builder.addPropertyValue("policyRequirement",
+             * SpringSupport.parseCustomElements(Lists.newArrayList(children.get(0)), parserContext));
+             * builder.addConstructorArgValue( SpringSupport.parseCustomElements(Lists.newArrayList(children.get(0)),
+             * parserContext));
+             */
             ManagedList<BeanDefinition> foo = SpringSupport.parseCustomElements(children, parserContext);
             log.debug("add constructor arg-value 1 '{}'", foo.get(0));
             builder.addConstructorArgValue(foo.get(0));
-        } else {
-            children =
-                    childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE,
-                            "PolicyRequirementRuleReference"));
-            String reference = getAbsoluteReference(config, "PolicyRequirementRule", children.get(0).getTextContent());
-            // builder.addPropertyReference("policyRequirement", reference);
-            // TODO incomplete
-        }
+        } /*
+           * else { children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE,
+           * "PolicyRequirementRuleReference")); String reference = getAbsoluteReference(config,
+           * "PolicyRequirementRule", children.get(0).getTextContent()); //
+           * builder.addPropertyReference("policyRequirement", reference); // TODO incomplete }
+           */
 
         ManagedList attributeRules = new ManagedList();
         children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeRule"));

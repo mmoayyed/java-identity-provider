@@ -35,12 +35,13 @@ import com.google.common.base.Strings;
  */
 public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParser {
 
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(BaseFilterParser.class);
 
     /** Generator of unique IDs. */
     // TODO correct random identifier ?
     private static IdentifierGenerationStrategy idGen = new RandomIdentifierGenerationStrategy();
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(BaseFilterParser.class);
 
     /**
      * Generates an ID for a filter engine component. If the given localId is null a random one will be generated.
