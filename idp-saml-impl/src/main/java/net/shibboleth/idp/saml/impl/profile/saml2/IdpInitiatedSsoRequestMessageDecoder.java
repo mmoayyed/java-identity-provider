@@ -113,7 +113,11 @@ public class IdpInitiatedSsoRequestMessageDecoder extends BaseIdpInitiatedSsoReq
         // and dynamically resolved ACS URL if not in the request? The latter we might not do in the decoder.
         
         authnRequest.setAssertionConsumerServiceURL(ssoRequest.getAcsUrl());
-        authnRequest.setIssueInstant(new DateTime(ssoRequest.getTime(), ISOChronology.getInstanceUTC()));
+        if (ssoRequest.getTime() > 0) {
+            authnRequest.setIssueInstant(new DateTime(ssoRequest.getTime(), ISOChronology.getInstanceUTC()));
+        } else {
+            authnRequest.setIssueInstant(new DateTime(ISOChronology.getInstanceUTC()));
+        }
         authnRequest.setVersion(SAMLVersion.VERSION_20);
         authnRequest.setID(getMessageID());
         

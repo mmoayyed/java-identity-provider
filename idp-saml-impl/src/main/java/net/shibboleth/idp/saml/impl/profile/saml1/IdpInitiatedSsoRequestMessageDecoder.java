@@ -56,7 +56,11 @@ public class IdpInitiatedSsoRequestMessageDecoder extends
         messageContext.getSubcontext(SamlPeerEntityContext.class, true).setEntityId(ssoRequest.getEntityId());
         
         SamlMessageInfoContext msgInfoContext = messageContext.getSubcontext(SamlMessageInfoContext.class, true);
-        msgInfoContext.setMessageIssueInstant(new DateTime(ssoRequest.getTime(), ISOChronology.getInstanceUTC()));
+        if (ssoRequest.getTime() > 0) {
+            msgInfoContext.setMessageIssueInstant(new DateTime(ssoRequest.getTime(), ISOChronology.getInstanceUTC()));
+        } else {
+            msgInfoContext.setMessageIssueInstant(new DateTime(ISOChronology.getInstanceUTC()));
+        }
         msgInfoContext.setMessageId(getMessageID());
         
         populateBindingContext(messageContext);
