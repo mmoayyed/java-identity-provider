@@ -25,6 +25,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -63,10 +64,7 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
         &lt;/attribute>
       </code>
      */
-    private String attributeId = "<UnassignedAttributeId>";
-
-    /** Whether the attributeId has been set. */
-    private boolean attributeIdSet;
+    private String attributeId;
 
     /**
      * Filter that permits the release of attribute values.
@@ -88,7 +86,7 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
      * 
      * @return ID of the attribute to which this rule applies
      */
-    @Nonnull public String getAttributeId() {
+    @NonnullAfterInit public String getAttributeId() {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         return attributeId;
     }
@@ -104,8 +102,7 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        attributeId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Attribute ID can not be null or empty");
-        attributeIdSet = true;
+        attributeId = StringSupport.trimOrNull(id);
     }
 
     /**
@@ -204,16 +201,18 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (!attributeIdSet) {
-            throw new ComponentInitializationException("No attribute specified for this attribute value filter policy");
+        if (null == getAttributeId()) {
+            throw new ComponentInitializationException("Attribute Rule '" + getId()
+                    + "': No attribute specified for this attribute value filter policy");
         }
 
         if (permitValueRule == null && denyValueRule == null) {
-            throw new ComponentInitializationException("Attribute Rule must have a permit rule or a deny rule");
+            throw new ComponentInitializationException("Attribute Rule '" + getId()
+                    + "': must have a permit rule or a deny rule");
         }
         if (permitValueRule != null && denyValueRule != null) {
-            throw new ComponentInitializationException("Attribute Rule must have a permit rule or"
-                    + " a deny rule, but not both");
+            throw new ComponentInitializationException("Attribute Rule '" + getId()
+                    + "': must have a permit rule or a deny rule, but not both");
         }
 
         ComponentSupport.initialize(permitValueRule);

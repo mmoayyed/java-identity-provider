@@ -78,32 +78,31 @@ public class AttributeValueFilterPolicyTest {
     @Test public void testAttributeId() throws ComponentInitializationException {
         AttributeRule policy = new AttributeRule();
         policy.setId("id");
-        Assert.assertNotNull(policy.getAttributeId(), "AttributeId can never be null");
-
         boolean thrown = false;
-        try {
-            policy.setAttributeId(null);
-        } catch (ConstraintViolationException e) {
-            thrown = true;
-        }
-        Assert.assertTrue(thrown, "null Attribute Id");
-        Assert.assertNotNull(policy.getAttributeId(), "AttributeId can never be null");
-
-        thrown = false;
-        try {
-            policy.setAttributeId("");
-        } catch (ConstraintViolationException e) {
-            thrown = true;
-        }
-        Assert.assertTrue(thrown, "empty Attribute Id");
-        Assert.assertNotNull(policy.getAttributeId(), "AttributeId can never be null");
-
         try {
             policy.initialize();
         } catch (ComponentInitializationException e) {
             thrown = true;
         }
-        Assert.assertTrue(thrown, "init with no Id");
+        Assert.assertTrue(thrown, "AttributeId can never initialized be null");
+
+        thrown = false;
+        try {
+            policy.setAttributeId(null);
+            policy.initialize();
+        } catch (ComponentInitializationException e) {
+            thrown = true;
+        }
+        Assert.assertTrue(thrown, "null Attribute Id");
+
+        thrown = false;
+        try {
+            policy.setAttributeId("");
+            policy.initialize();
+        } catch (ComponentInitializationException e) {
+            thrown = true;
+        }
+        Assert.assertTrue(thrown, "empty Attribute Id");
 
         policy = new AttributeRule();
         policy.setId("id");                
