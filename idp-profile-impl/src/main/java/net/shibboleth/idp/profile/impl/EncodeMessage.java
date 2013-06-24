@@ -43,10 +43,10 @@ import org.springframework.webflow.execution.RequestContext;
 /** A profile stage that encodes an outbound response from the outbound {@link MessageContext}. 
  * 
  * <p>
- * Note that the supplied instance of {@link MessageEncoder} should not be initialized outside of the 
- * action. This action handles supplying the message context to encode via 
- * {@link MessageEncoder#setMessageContext(MessageContext)}, followed by invoking 
- * {@link MessageEncoder#initialize()}.
+ * If the supplied instance of {@link MessageEncoder} is not already initialized, this action will
+ * handle supplying the message context to encode via {@link MessageEncoder#setMessageContext(MessageContext)}, 
+ * followed by invoking {@link MessageEncoder#initialize()}. If the encoder is already initialized,
+ * these operations will be skipped.
  * </p>
  * 
  * */
@@ -108,8 +108,15 @@ public class EncodeMessage extends AbstractProfileAction {
 
             log.debug("Action {}: Encoding outbound response", getId());         
             final MessageContext msgContext = profileRequestContext.getOutboundMessageContext();
-            encoder.setMessageContext(msgContext);
-            encoder.initialize();
+            
+            if (!encoder.isInitialized()) {
+                log.debug("Encoder was not initialized, injecting MessageContext and initializing");
+                encoder.setMessageContext(msgContext);
+                encoder.initialize();
+            } else {
+                log.debug("Encoder was already initialized, skipping MessageContext injection and init");
+            }
+            
             
             encoder.prepareContext();
             
@@ -120,18 +127,20 @@ public class EncodeMessage extends AbstractProfileAction {
             }
             
             encoder.encode();
-            encoder.destroy();
+            
             log.debug("Action {}: Outbound response encoded from a message of type {}", getId(),
                     msgContext.getMessage().getClass().getName());
             
-            // TODO Could do this here, since we know the response has been handled.
-            // Also can do as an 'end' state expression.
-            //springRequestContext.getExternalContext().recordResponseComplete();
+            // Could also do this as an 'end' state expression in WebFlow.
+            springRequestContext.getExternalContext().recordResponseComplete();
 
             return ActionSupport.buildProceedEvent(this);
         } catch (MessageEncodingException | ComponentInitializationException | MessageHandlerException e) {
             log.debug("Action {}: Unable to encode outbound response", getId(), e);
             return ActionSupport.buildEvent(this, UNABLE_TO_ENCODE);
+        } finally {
+            encoder.destroy();
         }
+        
     }
 }

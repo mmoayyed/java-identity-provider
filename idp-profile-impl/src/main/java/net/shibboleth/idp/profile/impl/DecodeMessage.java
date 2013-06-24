@@ -69,7 +69,6 @@ public class DecodeMessage extends AbstractProfileAction {
             log.debug("Action {}: Decoding incoming request", getId());         
             decoder.decode();
             final MessageContext msgContext = decoder.getMessageContext();
-            decoder.destroy();
             log.debug("Action {}: Incoming request decoded into a message of type {}", getId(), 
                     msgContext.getMessage().getClass().getName());
 
@@ -78,6 +77,8 @@ public class DecodeMessage extends AbstractProfileAction {
         } catch (MessageDecodingException e) {
             log.debug("Action {}: Unable to decode incoming request", getId(), e);
             return ActionSupport.buildEvent(this, UNABLE_TO_DECODE);
+        } finally {
+            decoder.destroy();
         }
     }
 }

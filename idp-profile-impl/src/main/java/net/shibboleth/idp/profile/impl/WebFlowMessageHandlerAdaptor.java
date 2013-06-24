@@ -46,8 +46,10 @@ import com.google.common.base.Function;
  * The {@link Direction} enum is used to indicate the target message context for the invocation
  * of the handler:
  * <ul>
- * <li>{@link Direction#INBOUND} indicates to execute the handler on the {@link ProfileRequestContext#getInboundMessageContext()}</li>
- * <li>{@link Direction#OUBTOUND} indicates to execute the handler on the {@link ProfileRequestContext#getOutboundMessageContext()}</li>
+ * <li>{@link Direction#INBOUND} indicates to execute the handler on the 
+ * {@link ProfileRequestContext#getInboundMessageContext()}</li>
+ * <li>{@link Direction#OUBTOUND} indicates to execute the handler on the 
+ * {@link ProfileRequestContext#getOutboundMessageContext()}</li>
  * </ul>
  * </p>
  * 
@@ -147,11 +149,12 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
      * <p>The EventContext must contain a Spring Web Flow {@link Event} or a {@link String}.
      * Any other type of context data will be ignored.</p>
      * 
-     * @param action    the action signaling the event
+     * @param messageHandler the action signaling the event
      * @param messageContext the message context to examine
      * @return  an event based on the message context, or "proceed"
      */
-    @Nonnull protected Event getResult(@Nonnull final MessageHandler handler, @Nonnull final MessageContext messageContext) {
+    @Nonnull protected Event getResult(@Nonnull final MessageHandler messageHandler, 
+            @Nonnull final MessageContext messageContext) {
         
         // Check for an EventContext on output. Do not autocreate it.
         EventContext eventCtx = messageContext.getSubcontext(EventContext.class, false);
@@ -160,13 +163,13 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
             if (eventCtx.getEvent() instanceof Event) {
                 return (Event) eventCtx.getEvent();
             } else if (eventCtx.getEvent() instanceof String) {
-                return ActionSupport.buildEvent(handler, (String) eventCtx.getEvent());
+                return ActionSupport.buildEvent(messageHandler, (String) eventCtx.getEvent());
             } else {
                 return null;
             }
         } else {
             // Assume the result is to proceed.
-            return ActionSupport.buildProceedEvent(handler);
+            return ActionSupport.buildProceedEvent(messageHandler);
         }
     }
 
