@@ -17,13 +17,18 @@
 
 package net.shibboleth.idp.attribute.filter.spring;
 
+import javax.annotation.Nullable;
+
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.RandomIdentifierGenerationStrategy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 import com.google.common.base.Strings;
@@ -34,7 +39,6 @@ import com.google.common.base.Strings;
  * for generating an ID for the Spring bean that is unique within all the policy components loaded.
  */
 public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParser {
-
 
     /** Generator of unique IDs. */
     // TODO correct random identifier ?
@@ -73,10 +77,29 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
             }
         }
 
-        // TODO remove debug logging
-        log.debug("getQualifiedId element {} qualified id '{}'", configElement, qualifiedId.toString());
-
         return qualifiedId.toString();
+    }
+
+    /**
+     * Gets the reference text from an element.
+     * 
+     * @param element the element to look at.
+     * @return the text.
+     * 
+     * <br/>
+     *         TODO The V2 implementation used the text context but the schema suggest using the attribute "ref". This
+     *         does both (for now)
+     * 
+     * 
+     */
+    @Nullable protected String getReferenceText(Element element) {
+        String reference = StringSupport.trimOrNull(element.getAttributeNS(null, "ref"));
+
+        if (null == reference) {
+            reference = StringSupport.trimOrNull(element.getTextContent());
+        }
+
+        return reference;
     }
 
     /**
@@ -84,7 +107,7 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
      * 
      * @param configElement component configuration element
      * @param componentNamespace namespace for the component
-     * @param reference reference to convert into absolute form
+     * @param reference Reference to convert into an absolute
      * 
      * @return absolute form of the reference
      */
@@ -95,4 +118,35 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
             return getQualifiedId(configElement, componentNamespace, reference);
         }
     }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * Calculate the qualified id once, and set both the id property as well as a qualified id metadata attribute used
+     * by the resolveId() method.
+     */
+    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(element, parserContext, builder);
+
+        final String suppliedId = StringSupport.trimOrNull(element.getAttributeNS(null, "id"));
+        final String generatedId = getQualifiedId(element, element.getLocalName(), suppliedId);
+
+        if (suppliedId == null) {
+            log.warn("Element '{}' did not contain an 'id' attribute.  Generated id '{}' will be used",
+                    element.getLocalName(), generatedId);
+
+        } else {
+            log.debug("Element '{}' id attribute {} is mapped to '{}'", element.getLocalName(), suppliedId, 
+                    generatedId);
+        }
+
+        builder.getBeanDefinition().setAttribute("qualifiedId", generatedId);
+    }
+
+    /** {@inheritDoc} */
+    protected String
+            resolveId(Element configElement, AbstractBeanDefinition beanDefinition, ParserContext parserContext) {
+        return beanDefinition.getAttribute("qualifiedId").toString();
+    }
+
 }

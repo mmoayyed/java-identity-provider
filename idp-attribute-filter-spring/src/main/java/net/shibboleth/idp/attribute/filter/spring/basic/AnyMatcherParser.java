@@ -19,21 +19,21 @@ package net.shibboleth.idp.attribute.filter.spring.basic;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.filter.impl.matcher.logic.AnyMatcher;
-import net.shibboleth.idp.attribute.filter.spring.MatcherParser;
+import net.shibboleth.idp.attribute.filter.Matcher;
+import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 
 import org.w3c.dom.Element;
 
 /**
  * Bean definition parser for {@link AnyMatchFunctor} objects.
  */
-public class AnyMatcherParser extends MatcherParser {
+public class AnyMatcherParser extends BaseFilterParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "ANY");
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
-        return AnyMatcher.class;
+        return Matcher.MATCHES_ALL.getClass();
     }
 }

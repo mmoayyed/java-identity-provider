@@ -79,6 +79,6 @@ public class AttributeFilterService extends AbstractSpringService {
             throw new ServiceException("Unable to initialize the attribute filtering engine", e);
         }
 
-        log.debug("Attribute Filter Service '{}' : Initialized new attribute filtering engine.");
+        log.debug("Attribute Filter Service '{}' : Initialized new attribute filtering engine.", getId());
     }
 }

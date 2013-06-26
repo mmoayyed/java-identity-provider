@@ -18,7 +18,6 @@
 package net.shibboleth.idp.attribute.filter.spring;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -29,23 +28,39 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-// TODO incomplete port from v2
 /**
  * Spring bean definition parser to configure an {@link AttributeRule}.
  */
-public class AttributeRuleParser extends MatcherParser {
+public class AttributeRuleParser extends BaseFilterParser {
 
     /** Element name. */
     public static final QName ELEMENT_NAME = new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeRule");
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeRuleType");
+
+    /** PermitValueRule. */
+    private static final QName PERMIT_VALUE_RULE = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
+            "PermitValueRule");
+
+    /** PermitValueRuleReference. */
+    private static final QName PERMIT_VALUE_REF = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
+            "PermitValueRuleReference");
+
+    /** DenyValueRule. */
+    private static final QName DENY_VALUE_RULE = new QName(AttributeFilterNamespaceHandler.NAMESPACE, "DenyValueRule");
+
+    /** DenyValueRuleReference. */
+    private static final QName DENY_VALUE_REF = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
+            "DenyValueRuleReference");
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeRuleParser.class);
@@ -56,55 +71,59 @@ public class AttributeRuleParser extends MatcherParser {
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element configElement, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(configElement, parserContext, builder);
+    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(config, parserContext, builder);
 
-        String attributeId = StringSupport.trimOrNull(configElement.getAttributeNS(null, "attributeID"));
+        final String id = builder.getBeanDefinition().getAttribute("qualifiedId").toString();
+
+        builder.addPropertyValue("id", id);
+
+        final String attributeId = StringSupport.trimOrNull(config.getAttributeNS(null, "attributeID"));
         builder.addPropertyValue("attributeId", attributeId);
-        log.info("attributeID '{}' for '{}'", attributeId, configElement);
+        log.info("attributeID '{}' for '{}'", attributeId, config);
 
-        Map<QName, List<Element>> children = ElementSupport.getIndexedChildElements(configElement);
+        final List<Element> permitValueRule = ElementSupport.getChildElements(config, PERMIT_VALUE_RULE);
+        final List<Element> permitValueReference = ElementSupport.getChildElements(config, PERMIT_VALUE_REF);
+        final List<Element> denyValueRule = ElementSupport.getChildElements(config, DENY_VALUE_RULE);
+        final List<Element> denyValueReference = ElementSupport.getChildElements(config, DENY_VALUE_REF);
 
-        List<Element> permitValueRule =
-                children.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "PermitValueRule"));
         if (permitValueRule != null && !permitValueRule.isEmpty()) {
-            // TODO correct parse list instead of get(0)
-            // builder.addPropertyValue("permitValueRule", SpringConfigurationUtils.parseInnerCustomElement(
-            // permitValueRule.get(0), parserContext));
-            // builder.addPropertyValue("permitValueRule",
-            ManagedList<BeanDefinition> permitValueRules =
+
+            final ManagedList<BeanDefinition> permitValueRules =
                     SpringSupport.parseCustomElements(permitValueRule, parserContext);
             log.debug("permitValueRules {}", permitValueRules);
             builder.addPropertyValue("permitRule", permitValueRules.get(0));
-        }
-        /*
-        List<Element> permitValueRuleRef =
-                children.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "PermitValueRuleReference"));
-        
-        if (permitValueRuleRef != null && !permitValueRuleRef.isEmpty()) {
-            String reference =
-                    getAbsoluteReference(configElement, "PermitValueRule", permitValueRuleRef.get(0).getTextContent());
-            // builder.addPropertyReference("permitValueRule", reference);
-            // TODO figure this out
-        }
 
-        List<Element> denyValueRule =
-                children.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "DenyValueRule"));
-        if (denyValueRule != null && !denyValueRule.isEmpty()) {
-            // builder.addPropertyValue("denyValueRule", SpringConfigurationUtils.parseInnerCustomElement(denyValueRule
-            // .get(0), parserContext));
-            // builder.addPropertyValue("denyValueRule", SpringSupport.parseCustomElements(denyValueRule,
-            // parserContext));
-            // TODO figure this out
+        } else if (permitValueReference != null && !permitValueReference.isEmpty()) {
+
+            final String referenceText = getReferenceText(permitValueReference.get(0));
+            if (null == referenceText) {
+                throw new BeanCreationException("Attribute Rule '" + id + "' no text or reference for "
+                        + PERMIT_VALUE_REF);
+            }
+
+            final String reference = getAbsoluteReference(config, "PermitValueRule", referenceText);
+            log.debug("Adding PermitValueRule reference to {}", reference);
+            builder.addPropertyValue("permitRule", new RuntimeBeanReference(reference));
+
+        } else if (denyValueRule != null && !denyValueRule.isEmpty()) {
+
+            final ManagedList<BeanDefinition> denyValueRules =
+                    SpringSupport.parseCustomElements(denyValueRule, parserContext);
+            log.debug("denyValueRules {}", denyValueRules);
+            builder.addPropertyValue("denyRule", denyValueRules.get(0));
+
+        } else if (denyValueReference != null && !denyValueReference.isEmpty()) {
+
+            final String referenceText = getReferenceText(permitValueReference.get(0));
+            if (null == referenceText) {
+                throw new BeanCreationException("Attribute Rule '" + id + "' no text or reference for "
+                        + DENY_VALUE_REF);
+            }
+            final String reference = getAbsoluteReference(config, "DenyValueRule", referenceText);
+            log.debug("Adding DenyValueRule reference to {}", reference);
+            builder.addPropertyValue("denyRule", new RuntimeBeanReference(reference));
+
         }
-        List<Element> denyValueRuleRef =
-                children.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "DenyValueRuleReference"));
-        if (denyValueRuleRef != null && !denyValueRuleRef.isEmpty()) {
-            String reference =
-                    getAbsoluteReference(configElement, "DenyValueRule", denyValueRuleRef.get(0).getTextContent());
-            // builder.addPropertyReference("denyValueRule", reference);
-            // TODO figure this out
-        }
-        */
     }
 }

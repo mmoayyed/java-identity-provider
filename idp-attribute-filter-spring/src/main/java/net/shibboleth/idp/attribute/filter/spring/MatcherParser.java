@@ -17,53 +17,19 @@
 
 package net.shibboleth.idp.attribute.filter.spring;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-// TODO incomplete v2 port
 /**
  * Spring bean definition parser to configure an {@link  net.shibboleth.idp.attribute.filter.Matcher.Matcher}.
  */
 public class MatcherParser extends BaseFilterParser {
 
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(MatcherParser.class);
-
-    /**
-     * {@inheritDoc}
-     * 
-     * Calculate the qualified id once, and set both the id property as well as a qualified id metadata attribute used
-     * by the resolveId() method.
-     */
-    // TODO verify qualified id creation and storage
-    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(element, parserContext, builder);
-
-        String id = null;
-
-        if (element.hasAttributeNS(null, "id")) {
-            id = element.getAttributeNS(null, "id");
-        } else {
-            // TODO logging
-            log.warn("Attribute filter elements should contain an 'id' attribute."
-                    + " This is not currently required but will be in future versions.");
-            id = getQualifiedId(element, element.getLocalName(), element.getAttributeNS(null, "id"));
-        }
-
-        // Set id property.
-        builder.addPropertyValue("id", id);
-
-        // Set qualifiedId metadata used later by resolveId().
-        builder.getBeanDefinition().setAttribute("qualifiedId", id);
-    }
-
     /** {@inheritDoc} */
-    protected String
-            resolveId(Element configElement, AbstractBeanDefinition beanDefinition, ParserContext parserContext) {
-        return beanDefinition.getAttribute("qualifiedId").toString();
+    protected void doParse(Element configElement, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(configElement, parserContext, builder);
+
+        builder.addPropertyValue("id", builder.getBeanDefinition().getAttribute("qualifiedId").toString());
     }
 }

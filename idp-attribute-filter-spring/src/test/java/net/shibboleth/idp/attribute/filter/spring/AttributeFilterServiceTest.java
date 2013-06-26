@@ -145,4 +145,35 @@ public class AttributeFilterServiceTest {
 
         Assert.assertNull(filteredAttributes.get("affiliation"));
     }
+    
+    @Test public void testPolicy4() throws ServiceException, AttributeFilterException {
+
+
+        AttributeFilterService service =
+                AttributeFilterServiceTest.newService("policy4", new ClasspathResource(SERVICE_CONFIG_FILE));
+
+        AttributeFilterContext filterContext = new AttributeFilterContext();
+        filterContext.setPrefilteredAttributes(attributesToBeFiltered.values());
+
+        service.filterAttributes(filterContext);
+
+        Map<String, Attribute> filteredAttributes = filterContext.getFilteredAttributes();
+
+        Assert.assertEquals(1, filteredAttributes.size());
+
+        Assert.assertNull(filteredAttributes.get("firstName"));
+
+        Assert.assertNull(filteredAttributes.get("lastName"));
+
+        Assert.assertNull(filteredAttributes.get("email"));
+
+        Assert.assertEquals(2, filteredAttributes.get("affiliation").getValues().size(), 2);
+
+        Assert.assertTrue(filteredAttributes.get("affiliation").getValues()
+                .contains(new StringAttributeValue("employee")));
+
+        Assert.assertTrue(filteredAttributes.get("affiliation").getValues().contains(new StringAttributeValue("staff")));
+
+    }
+
 }

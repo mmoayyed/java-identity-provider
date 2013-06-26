@@ -18,7 +18,6 @@
 package net.shibboleth.idp.attribute.filter.spring;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -29,15 +28,14 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-// TODO incomplete v2 port
 /** Bean definition parser for an {@link AttributeFilterPolicy}. */
 public class AttributeFilterPolicyParser extends BaseFilterParser {
 
@@ -49,8 +47,23 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
     public static final QName TYPE_NAME = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
             "AttributeFilterPolicyType");
 
+    /** The PolicyRequirementRule QName. */
+    private static final QName POLICY_REQUIREMENT_RULE = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
+            "PolicyRequirementRule");
+
+    /** The PolicyRequirementRuleReference QName. */
+    private static final QName POLICY_REQUIREMENT_RULE_REF = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
+            "PolicyRequirementRuleReference");
+
+    /** The AttributeRule QName. */
+    private static final QName ATTRIBUTE_RULE = new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeRule");
+
+    /** The AttributeRuleReference QName. */
+    private static final QName ATTRIBUTE_RULE_REF = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
+            "AttributeRuleReference");
+
     /** Class logger. */
-    private static Logger log = LoggerFactory.getLogger(AttributeFilterPolicyParser.class);
+    private Logger log = LoggerFactory.getLogger(AttributeFilterPolicyParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
@@ -58,65 +71,52 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
     }
 
     /** {@inheritDoc} */
-    protected String
-            resolveId(Element configElement, AbstractBeanDefinition beanDefinition, ParserContext parserContext) {
-        if (!configElement.hasAttributeNS(null, "id")) {
-            log.warn("AttributeFilterPolicy elements should include an 'id' attribute."
-                    + "  This is not currently required but will be in future versions.");
-        }
-        return getQualifiedId(configElement, configElement.getLocalName(), configElement.getAttributeNS(null, "id"));
-    }
-
-    /** {@inheritDoc} */
     protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        String policyId = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
+        final String policyId = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
         log.info("Parsing configuration for attribute filter policy {}", policyId);
-        // builder.addPropertyValue("policyId", policyId);
-        // TODO remove debug logging
-        log.debug("add constructor arg-value 0 '{}'", policyId);
         builder.addConstructorArgValue(policyId);
 
-        List<Element> children;
-        Map<QName, List<Element>> childrenMap = ElementSupport.getIndexedChildElements(config);
+        final List<Element> policyRequirements = ElementSupport.getChildElements(config, POLICY_REQUIREMENT_RULE);
+        if (policyRequirements != null && policyRequirements.size() > 0) {
+            final ManagedList<BeanDefinition> requirements =
+                    SpringSupport.parseCustomElements(policyRequirements, parserContext);
+            builder.addConstructorArgValue(requirements.get(0));
+        } else {
+            final List<Element> policyRequirementsRef =
+                    ElementSupport.getChildElements(config, POLICY_REQUIREMENT_RULE_REF);
+            if (policyRequirementsRef != null && policyRequirementsRef.size() > 0) {
 
-        children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "PolicyRequirementRule"));
-        if (children != null && children.size() > 0) {
-            /*
-             * TODO Lists.newArrayList ? builder.addPropertyValue("policyRequirement",
-             * SpringSupport.parseCustomElements(Lists.newArrayList(children.get(0)), parserContext));
-             * builder.addConstructorArgValue( SpringSupport.parseCustomElements(Lists.newArrayList(children.get(0)),
-             * parserContext));
-             */
-            ManagedList<BeanDefinition> foo = SpringSupport.parseCustomElements(children, parserContext);
-            log.debug("add constructor arg-value 1 '{}'", foo.get(0));
-            builder.addConstructorArgValue(foo.get(0));
-        } /*
-           * else { children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE,
-           * "PolicyRequirementRuleReference")); String reference = getAbsoluteReference(config,
-           * "PolicyRequirementRule", children.get(0).getTextContent()); //
-           * builder.addPropertyReference("policyRequirement", reference); // TODO incomplete }
-           */
+                final String referenceText = getReferenceText(policyRequirementsRef.get(0));
+                if (null == referenceText) {
+                    throw new BeanCreationException("Attribute Filter '" + policyId + "' no text or reference for "
+                            + POLICY_REQUIREMENT_RULE_REF);
+                }
 
-        ManagedList attributeRules = new ManagedList();
-        children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeRule"));
-        if (children != null && children.size() > 0) {
-            attributeRules.addAll(SpringSupport.parseCustomElements(children, parserContext));
+                final String reference = getAbsoluteReference(config, "PolicyRequirementRule", referenceText);
+                log.debug("Adding PolicyRequirementRule reference to {}", reference);
+                builder.addConstructorArgValue(new RuntimeBeanReference(reference));
+            } else {
+                throw new BeanCreationException("Attribute Filter '" + policyId
+                        + "' A PolicyRequirementRule or a PolicyRequirementRuleReference should be present");
+            }
         }
 
-        children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeRuleReference"));
-        if (children != null && children.size() > 0) {
-            String reference;
-            for (Element child : children) {
-                reference = getAbsoluteReference(config, "AttributeRule", child.getTextContent());
+        final ManagedList attributeRules = new ManagedList();
+        final List<Element> rules = ElementSupport.getChildElements(config, ATTRIBUTE_RULE);
+        if (rules != null && rules.size() > 0) {
+            attributeRules.addAll(SpringSupport.parseCustomElements(rules, parserContext));
+        }
+
+        final List<Element> rulesRef = ElementSupport.getChildElements(config, ATTRIBUTE_RULE_REF);
+        if (rulesRef != null && rulesRef.size() > 0) {
+            for (Element ruleRef : rulesRef) {
+                final String reference = getAbsoluteReference(config, "AttributeRule", ruleRef.getTextContent());
                 attributeRules.add(new RuntimeBeanReference(reference));
             }
         }
 
-        // TODO remove debug logging
-        log.debug("add constructor arg-value 2 '{}'", attributeRules);
-        // builder.addPropertyValue("attributeRules", attributeRules);
         builder.addConstructorArgValue(attributeRules);
     }
 }

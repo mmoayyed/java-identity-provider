@@ -15,4 +15,8 @@
         <srv:ConfigurationResource file="net/shibboleth/idp/attribute/filter/spring/policy3.xml" xsi:type="resource:ClasspathResource" />
     </srv:Service>
 
+    <srv:Service id="policy4" xsi:type="attribute-afp:ShibbolethAttributeFilteringEngine">
+        <srv:ConfigurationResource file="net/shibboleth/idp/attribute/filter/spring/policy4.xml" xsi:type="resource:ClasspathResource" />
+    </srv:Service>
+
 </srv:Services>
