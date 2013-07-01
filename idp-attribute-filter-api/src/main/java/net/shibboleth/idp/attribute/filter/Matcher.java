@@ -49,7 +49,7 @@ public interface Matcher extends IdentifiableComponent {
         /** {@inheritDoc} */
         public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
                 throws AttributeFilterException {
-            return attribute.getValues();
+            return Collections.unmodifiableSet(attribute.getValues());
         }
 
         public boolean matches(@Nonnull AttributeFilterContext filterContext)

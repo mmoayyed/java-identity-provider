@@ -73,7 +73,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
             log.debug("{} The peer's metadata did not have appropriate requested attributes available",
                     getLogPrefix());
             if (matchIfMetadataSilent) {
-                return attribute.getValues();
+                return Collections.unmodifiableSet(attribute.getValues());
             } else {
                 return Collections.EMPTY_SET;
             }

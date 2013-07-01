@@ -152,7 +152,7 @@ public abstract class AbstractComparisonMatcher extends AbstractIdentifiableInit
             }
         }
 
-        return matchedValues;
+        return Collections.unmodifiableSet(matchedValues);
     }
 
     /**
