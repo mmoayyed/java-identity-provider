@@ -184,41 +184,6 @@ public class AttributeFilterPolicyTest {
 
     }
 
-    @Test public void testApplicable() throws ComponentInitializationException, AttributeFilterException {
-        AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, policyMatcher, Arrays.asList(valuePolicy));
-
-        boolean thrown = false;
-        try {
-            policy.isApplicable(new AttributeFilterContext());
-        } catch (UninitializedComponentException e) {
-            thrown = true;
-        }
-        Assert.assertTrue(thrown);
-
-        policy.initialize();
-
-        thrown = false;
-        try {
-            policy.isApplicable(null);
-        } catch (ConstraintViolationException e) {
-            thrown = true;
-        }
-        Assert.assertTrue(thrown);
-
-        policyMatcher.setRetVal(true);
-        AttributeFilterContext context = new AttributeFilterContext();
-        Assert.assertNull(policyMatcher.getContextUsedAndReset());
-        Assert.assertTrue(policy.isApplicable(context));
-        Assert.assertEquals(policyMatcher.getContextUsedAndReset(), context);
-        //
-        // Test that the reset worked
-        //
-        Assert.assertNull(policyMatcher.getContextUsedAndReset());
-        policyMatcher.setRetVal(false);
-        Assert.assertFalse(policy.isApplicable(context));
-        Assert.assertEquals(policyMatcher.getContextUsedAndReset(), context);
-    }
-
     @Test public void testApply() throws ComponentInitializationException, AttributeFilterException {
         AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, policyMatcher, Arrays.asList(valuePolicy));
 
