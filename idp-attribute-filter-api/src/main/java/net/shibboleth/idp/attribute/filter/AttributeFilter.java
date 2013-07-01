@@ -137,11 +137,6 @@ public class AttributeFilter extends AbstractDestructableIdentifiableInitializab
         try {
             final List<AttributeFilterPolicy> policies = getFilterPolicies();
             for (AttributeFilterPolicy policy : policies) {
-                if (!policy.isApplicable(filterContext)) {
-                    log.debug("{} filter policy '{}' is not applicable", getLogPrefix(), policy.getId());
-                    continue;
-                }
-
                 policy.apply(filterContext);
             }
 
@@ -236,7 +231,7 @@ public class AttributeFilter extends AbstractDestructableIdentifiableInitializab
             result = new StringBuffer("Attribute filtering engine '").append(getId()).append("' ").toString();
             logPrefix = result;
         }
-        return logPrefix;
+        return result;
     }
 
 }

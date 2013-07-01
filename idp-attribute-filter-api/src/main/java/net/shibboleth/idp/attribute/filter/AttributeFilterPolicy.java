@@ -69,6 +69,9 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
     /** Filters to be used on attribute values. */
     private final List<AttributeRule> valuePolicies;
 
+    /** Log prefix. */
+    private String logPrefix;
+
     /**
      * Constructor.
      * 
@@ -129,20 +132,16 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
      * 
      * @throws AttributeFilterException thrown if there is a problem evaluating this filter's requirement rule
      */
-    public boolean isApplicable(@Nonnull final AttributeFilterContext filterContext)
+    private boolean isApplicable(@Nonnull final AttributeFilterContext filterContext)
             throws AttributeFilterException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
-
-        log.debug("Checking if attribute filter policy '{}' is active", getId());
+        log.debug("{} Checking if attribute filter policy is active", getLogPrefix());
 
         final boolean isActive = policyRequirementRule.matches(filterContext);
         if (isActive) {
-            log.debug("Attribute filter policy '{}' is active for this request", getId());
+            log.debug("{} policy is active for this request", getLogPrefix());
         } else {
-            log.debug("Attribute filter policy '{}' is not active for this request", getId());
+            log.debug("{} policy is not active for this request", getLogPrefix());
         }
 
         return isActive;
@@ -163,9 +162,13 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
+        
+        if (!isApplicable(filterContext)) {
+            return;
+        }
 
         final Map<String, Attribute> attributes = filterContext.getPrefilteredAttributes();
-        log.debug("Applying attribute filter policy '{}' to current set of attributes: {}", getId(),
+        log.debug("{} Applying attribute filter policy to current set of attributes: {}", getLogPrefix(),
                 attributes.keySet());
 
         Attribute attribute;
@@ -174,12 +177,6 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
             if (attribute != null) {
                 if (!attribute.getValues().isEmpty()) {
                     valuePolicy.apply(attribute, filterContext);
-                }
-
-                if (attribute.getValues().isEmpty()) {
-                    log.debug("Removing attribute '{}' from attribute collection, it no longer contains any values",
-                            attribute.getId());
-                    filterContext.getFilteredAttributes().remove(attribute.getId());
                 }
             }
         }
@@ -194,6 +191,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
         for (AttributeRule valuePolicy : valuePolicies) {
             valuePolicy.initialize();
         }
+        logPrefix = null;
     }
 
     /** {@inheritDoc} */
@@ -206,4 +204,21 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
 
         super.doDestroy();
     }
+    
+    /**
+     * Get the prefix for logging.
+     * 
+     * @return Returns the logPrefix.
+     */
+    public String getLogPrefix() {
+        String result;
+
+        result = logPrefix;
+        if (null == result) {
+            result = new StringBuffer("Attribute Filter Policy '").append(getId()).append("' ").toString();
+            logPrefix = result;
+        }
+        return result;
+    }
+
 }
