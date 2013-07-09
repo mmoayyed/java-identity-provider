@@ -164,6 +164,7 @@ public class MockMatcher extends AbstractIdentifiableInitializableComponent impl
     }
 
     /** {@inheritDoc} */
+    //TODO remove
     public boolean matches(@Nonnull AttributeFilterContext filterContext) throws AttributeFilterException {
         if (fails) {
             throw new MatcherException("oops");

@@ -67,14 +67,6 @@ public final class NotMatcher extends AbstractDestructableIdentifiableInitializa
         return negatedMatcher;
     }
 
-    /**
-     * {@inheritDoc} The result is the logical NOT of the composed {@link Matcher}.
-     */
-
-    public boolean matches(@Nonnull AttributeFilterContext filterContext) 
-            throws AttributeFilterException {
-        return !negatedMatcher.matches(filterContext);
-    }
 
     /**
      * A given attribute value is considered to have matched if it is not returned by the composed {@link Matcher}.

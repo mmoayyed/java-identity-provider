@@ -28,6 +28,7 @@ import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.AttributeRule;
+import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
@@ -43,7 +44,7 @@ import com.google.common.collect.Lists;
 /** {@link AttributeFilterPolicy} unit test. */
 public class AttributeFilterPolicyTest {
 
-    private MockMatcher policyMatcher;
+    private MockPolicyRequirementRule policyMatcher;
 
     private AttributeRule valuePolicy;
 
@@ -56,7 +57,7 @@ public class AttributeFilterPolicyTest {
     private final String ID = "foo";
 
     @BeforeMethod public void setUp() {
-        policyMatcher = new MockMatcher();
+        policyMatcher = new MockPolicyRequirementRule();
         valueMatcher = new MockMatcher();
         valuePolicy = new AttributeRule();
         valuePolicy.setId("valuePolicy");
@@ -215,7 +216,7 @@ public class AttributeFilterPolicyTest {
         attribute2.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("45")));
         context.setPrefilteredAttributes(Arrays.asList(attribute, attribute2));
 
-        policyMatcher.setRetVal(true);
+        policyMatcher.setRetVal(Tristate.TRUE);
         valueMatcher.setMatchingAttribute(ATTR_NAME);
         valueMatcher.setMatchingValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("three")));
 

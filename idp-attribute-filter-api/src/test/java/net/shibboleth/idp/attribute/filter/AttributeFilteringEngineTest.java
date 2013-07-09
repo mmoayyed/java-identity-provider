@@ -75,9 +75,9 @@ public class AttributeFilteringEngineTest {
 
     /** Test setting and retrieving filter policies. */
     @Test public void testFilterPolicies() throws Exception {
-        AttributeFilterPolicy policy1 = new AttributeFilterPolicy("policy1", Matcher.MATCHES_NONE, null);
-        AttributeFilterPolicy policy2 = new AttributeFilterPolicy("policy2", Matcher.MATCHES_NONE, null);
-        AttributeFilterPolicy policy3 = new AttributeFilterPolicy("policy3", Matcher.MATCHES_NONE, null);
+        AttributeFilterPolicy policy1 = new AttributeFilterPolicy("policy1", PolicyRequirementRule.MATCHES_NONE, null);
+        AttributeFilterPolicy policy2 = new AttributeFilterPolicy("policy2", PolicyRequirementRule.MATCHES_NONE, null);
+        AttributeFilterPolicy policy3 = new AttributeFilterPolicy("policy3", PolicyRequirementRule.MATCHES_NONE, null);
 
         AttributeFilter engine =
                 new AttributeFilter("engine", Lists.<AttributeFilterPolicy> newArrayList(policy1, policy1,
@@ -121,7 +121,7 @@ public class AttributeFilteringEngineTest {
         attribute1Policy.setPermitRule(attribute1Matcher);
 
         AttributeFilterPolicy policy =
-                new AttributeFilterPolicy("attribute1Policy", Matcher.MATCHES_ALL,
+                new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
                         Lists.newArrayList(attribute1Policy));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
@@ -156,7 +156,7 @@ public class AttributeFilteringEngineTest {
         attribute1Policy.setPermitRule(Matcher.MATCHES_ALL);
 
         AttributeFilterPolicy policy =
-                new AttributeFilterPolicy("attribute1Policy", Matcher.MATCHES_ALL,
+                new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
                         Lists.newArrayList(attribute1Policy));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
@@ -191,7 +191,7 @@ public class AttributeFilteringEngineTest {
         attribute2Policy.setPermitRule(matcher);
 
         AttributeFilterPolicy policy =
-                new AttributeFilterPolicy("attribute1Policy", Matcher.MATCHES_ALL,
+                new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
                         Lists.newArrayList(attribute1Policy, attribute2Policy));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
@@ -217,7 +217,7 @@ public class AttributeFilteringEngineTest {
         attribute1Policy.setPermitRule(Matcher.MATCHES_NONE);
 
         AttributeFilterPolicy policy =
-                new AttributeFilterPolicy("attribute1Policy", Matcher.MATCHES_ALL,
+                new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
                         Lists.newArrayList(attribute1Policy));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
@@ -250,7 +250,7 @@ public class AttributeFilteringEngineTest {
         allowPolicy.setPermitRule(Matcher.MATCHES_ALL);
 
         AttributeFilterPolicy policy =
-                new AttributeFilterPolicy("attribute1Policy", Matcher.MATCHES_ALL, Lists.newArrayList(denyPolicy,
+                new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL, Lists.newArrayList(denyPolicy,
                         allowPolicy));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
@@ -278,7 +278,7 @@ public class AttributeFilteringEngineTest {
         allowPolicy.setPermitRule(Matcher.MATCHES_ALL);
 
         AttributeFilterPolicy policy =
-                new AttributeFilterPolicy("attribute1Policy", Matcher.MATCHES_NONE, Lists.newArrayList(allowPolicy));
+                new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_NONE, Lists.newArrayList(allowPolicy));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
 
@@ -306,7 +306,7 @@ public class AttributeFilteringEngineTest {
         allowPolicy.setPermitRule(Matcher.MATCHES_ALL);
 
         AttributeFilterPolicy policy =
-                new AttributeFilterPolicy("attribute1Policy", Matcher.MATCHES_ALL, Lists.newArrayList(denyPolicy,
+                new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL, Lists.newArrayList(denyPolicy,
                         allowPolicy));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
@@ -331,25 +331,25 @@ public class AttributeFilteringEngineTest {
         filterPolicy.setAttributeId("attribute1");
         filterPolicy.setPermitRule(matcher);
 
-        MockMatcher otherMatcher = new MockMatcher();
-        AttributeFilterPolicy policy = new AttributeFilterPolicy("policy", otherMatcher, Arrays.asList(filterPolicy));
+        MockPolicyRequirementRule policyRule = new MockPolicyRequirementRule();
+        AttributeFilterPolicy policy = new AttributeFilterPolicy("policy", policyRule, Arrays.asList(filterPolicy));
 
-        Assert.assertFalse(otherMatcher.isInitialized());
-        Assert.assertFalse(otherMatcher.isDestroyed());
+        Assert.assertFalse(policyRule.isInitialized());
+        Assert.assertFalse(policyRule.isDestroyed());
         Assert.assertFalse(matcher.isInitialized());
         Assert.assertFalse(matcher.isDestroyed());
 
         AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
         engine.initialize();
 
-        Assert.assertTrue(otherMatcher.isInitialized());
-        Assert.assertFalse(otherMatcher.isDestroyed());
+        Assert.assertTrue(policyRule.isInitialized());
+        Assert.assertFalse(policyRule.isDestroyed());
         Assert.assertTrue(matcher.isInitialized());
         Assert.assertFalse(matcher.isDestroyed());
 
         engine.destroy();
-        Assert.assertTrue(otherMatcher.isInitialized());
-        Assert.assertTrue(otherMatcher.isDestroyed());
+        Assert.assertTrue(policyRule.isInitialized());
+        Assert.assertTrue(policyRule.isDestroyed());
         Assert.assertTrue(matcher.isInitialized());
         Assert.assertTrue(matcher.isDestroyed());
 
@@ -368,11 +368,11 @@ public class AttributeFilteringEngineTest {
         filterPolicy.setAttributeId("attribute1");
         filterPolicy.setPermitRule(matcher);
 
-        MockMatcher otherMatcher = new MockMatcher();
-        AttributeFilterPolicy policy = new AttributeFilterPolicy("Id", otherMatcher, Arrays.asList(filterPolicy));
+        MockPolicyRequirementRule policyRule = new MockPolicyRequirementRule();
+        AttributeFilterPolicy policy = new AttributeFilterPolicy("Id", policyRule, Arrays.asList(filterPolicy));
 
         AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
-        Assert.assertFalse(otherMatcher.getValidated());
+        Assert.assertFalse(policyRule.getValidated());
         Assert.assertFalse(matcher.getValidated());
 
         try {
@@ -381,15 +381,15 @@ public class AttributeFilteringEngineTest {
         } catch (UninitializedComponentException e) {
             // OK
         }
-        Assert.assertFalse(otherMatcher.getValidated());
+        Assert.assertFalse(policyRule.getValidated());
         Assert.assertFalse(matcher.getValidated());
 
         engine.initialize();
         engine.validate();
-        Assert.assertTrue(otherMatcher.getValidated());
+        Assert.assertTrue(policyRule.getValidated());
         Assert.assertTrue(matcher.getValidated());
 
-        otherMatcher.setFailValidate(true);
+        policyRule.setFailValidate(true);
         try {
             engine.validate();
             Assert.fail();

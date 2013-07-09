@@ -53,18 +53,6 @@ public class OrMatcher extends AbstractComposedMatcher {
         super(composedMatchers);
     }
 
-    /** {@inheritDoc} */
-    public boolean matches(@Nonnull AttributeFilterContext filterContext) throws AttributeFilterException {
-        final List<Matcher> currentMatchers = getComposedMatchers();
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        for (Matcher child : currentMatchers) {
-            if (child.matches(filterContext)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     /** {@inheritDoc} */
     public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)

@@ -58,24 +58,6 @@ public class AndMatcher extends AbstractComposedMatcher {
         super(composedMatchers);
     }
 
-    /**
-     * Return true iff all composed matchers return true. {@inheritDoc}
-     * 
-     * @throws AttributeFilterException
-     */
-    public boolean matches(@Nullable final AttributeFilterContext filterContext) throws AttributeFilterException {
-        final List<Matcher> currentMatchers = getComposedMatchers();
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-
-        for (Matcher child : currentMatchers) {
-            if (!child.matches(filterContext)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
 
     /**
      * A given attribute value is considered to have matched if, and only if, it is returned by every composed

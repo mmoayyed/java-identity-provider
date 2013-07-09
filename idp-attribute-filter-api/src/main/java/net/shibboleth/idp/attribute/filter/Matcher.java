@@ -39,7 +39,7 @@ import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
  * {@link Object#hashCode()} methods.
  * </p>
  */
-//TODO - why? 
+// TODO - why?
 @ThreadSafe
 public interface Matcher extends IdentifiableComponent {
 
@@ -52,12 +52,8 @@ public interface Matcher extends IdentifiableComponent {
             return Collections.unmodifiableSet(attribute.getValues());
         }
 
-        public boolean matches(@Nonnull AttributeFilterContext filterContext)
-                throws AttributeFilterException {
-            return true;
-        }
-
         @Nullable public String getId() {
+            // TODO Auto-generated method stub
             return "MATCHES_ALL";
         }
     };
@@ -71,11 +67,6 @@ public interface Matcher extends IdentifiableComponent {
             return Collections.emptySet();
         }
 
-        public boolean matches(@Nonnull AttributeFilterContext filterContext)
-                throws AttributeFilterException {
-            return false;
-        }
-
         @Nullable public String getId() {
             // TODO Auto-generated method stub
             return "MATCHES_NONE";
@@ -83,39 +74,14 @@ public interface Matcher extends IdentifiableComponent {
     };
 
     /**
-     * Evaluate what this rule means if it is inside a <PolicyRequirementRule/>. <br/>
-     * 
-     * In this role the rule is taken as "Does this rule hold". Because of where
-     * we are called there is only one parameter - the filterContext. Criterion
-     * type rules naturally lend themselves to this interface. Matcher type
-     * rules have the definition "If the value matches for one attribute value
-     * in any attribute, true, else false.
-     * 
-     * @param filterContext
-     *            the context.
-     * @return whether the rule holds
-     * @throws AttributeFilterException
-     *             when badness occurrs.
-     */
-    boolean matches(@Nonnull final AttributeFilterContext filterContext)
-            throws AttributeFilterException;
-
-    /**
-     * Evaluate what this rule means if it is inside a <PermitValueRule/>. or a
-     * <DenyValueRule/><br/>
-     * 
-     * In this role the rule is taken as "return the values that this rule matches"
-     * 
-     * Matcher type rules naturally lend themselves to this interface. Criterion
-     * type rules have the definition "If the this is true for the environment
-     * then all values, else, no values.
+     * Return those {@link AttributeValues} which match this rule, or null if the matcher failed.
      * 
      * @param attribute the attribute under question.
      * @param filterContext the filter context
-     * @return The result of this rule if applied 
-     * @throws AttributeFilterException in error.  Usually just from scripting errors.
+     * @return The result of this rule. Null if we failed.
+     * @throws AttributeFilterException never. TODO remove this
      */
-    @Nonnull @NonnullElements @Unmodifiable public Set<AttributeValue> getMatchingValues(
+    @Nullable @NonnullElements @Unmodifiable public Set<AttributeValue> getMatchingValues(
             @Nonnull final Attribute attribute, @Nonnull final AttributeFilterContext filterContext)
             throws AttributeFilterException;
 

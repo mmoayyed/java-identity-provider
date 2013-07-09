@@ -183,7 +183,7 @@ public class OrMatcherTest extends AbstractMatcherTest {
         matcher.setId("test");
         matcher.initialize();
     }
-
+/*
     @Test public void testPredicate() throws ComponentInitializationException, AttributeFilterException {
         OrMatcher matcher =
                 new OrMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(false),
@@ -207,5 +207,5 @@ public class OrMatcherTest extends AbstractMatcherTest {
         Assert.assertTrue(matcher.matches(DataSources.unPopulatedFilterContext()));
 
     }
-
+*/
 }

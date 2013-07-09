@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
@@ -64,7 +65,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
     private final Logger log = LoggerFactory.getLogger(AttributeFilterPolicy.class);
 
     /** Criterion that must be met for this policy to be active for a given request. */
-    private final Matcher policyRequirementRule;
+    private final PolicyRequirementRule rule;
 
     /** Filters to be used on attribute values. */
     private final List<AttributeRule> valuePolicies;
@@ -79,11 +80,11 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
      * @param requirementRule criterion used to determine if this policy is active for a given request
      * @param attributeRules value filtering policies employed if this policy is active
      */
-    public AttributeFilterPolicy(@Nonnull @NotEmpty String policyId, @Nonnull Matcher requirementRule,
+    public AttributeFilterPolicy(@Nonnull @NotEmpty String policyId, @Nonnull PolicyRequirementRule requirementRule,
             @Nullable Collection<AttributeRule> attributeRules) {
         setId(policyId);
 
-        policyRequirementRule =
+        rule =
                 Constraint.isNotNull(requirementRule, "Attribute filter policy activiation criterion can not be null");
 
         ArrayList<AttributeRule> checkedPolicies = new ArrayList<AttributeRule>();
@@ -100,8 +101,8 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
      * 
      * @return MatchFunctor that must be met for this policy to be active for a given request
      */
-    @Nonnull public Matcher getPolicyRequirementRule() {
-        return policyRequirementRule;
+    @Nonnull public PolicyRequirementRule getPolicyRequirementRule() {
+        return rule;
     }
 
     /**
@@ -115,7 +116,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
 
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
-        ComponentSupport.validate(policyRequirementRule);
+        ComponentSupport.validate(rule);
 
         for (AttributeRule valuePolicy : valuePolicies) {
             valuePolicy.validate();
@@ -137,14 +138,17 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
 
         log.debug("{} Checking if attribute filter policy is active", getLogPrefix());
 
-        final boolean isActive = policyRequirementRule.matches(filterContext);
-        if (isActive) {
+        Tristate isActive = rule.matches(filterContext);
+
+        if (isActive == Tristate.FAIL) {
+            log.warn("{} Policy requirement rule failed for this request", getLogPrefix());
+        } else if (isActive == Tristate.FALSE) { 
             log.debug("{} policy is active for this request", getLogPrefix());
         } else {
             log.debug("{} policy is not active for this request", getLogPrefix());
         }
 
-        return isActive;
+        return isActive == Tristate.TRUE;
     }
 
     /**
@@ -186,7 +190,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        ComponentSupport.initialize(policyRequirementRule);
+        ComponentSupport.initialize(rule);
 
         for (AttributeRule valuePolicy : valuePolicies) {
             valuePolicy.initialize();
@@ -196,7 +200,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
 
     /** {@inheritDoc} */
     protected void doDestroy() {
-        ComponentSupport.destroy(policyRequirementRule);
+        ComponentSupport.destroy(rule);
 
         for (AttributeRule valuePolicy : valuePolicies) {
             valuePolicy.destroy();
