@@ -32,6 +32,7 @@ import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeRule;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.MockMatcher;
+import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
@@ -118,7 +119,7 @@ public class FilterAttributesTest {
         attribute1Policy.setPermitRule(attribute1Matcher);
 
         AttributeFilterPolicy policy =
-                new AttributeFilterPolicy("attribute1Policy", Matcher.MATCHES_ALL,
+                new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
                         Lists.newArrayList(attribute1Policy));
 
         AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
@@ -177,7 +178,7 @@ public class FilterAttributesTest {
         attribute1Policy.setPermitRule(attribute1Matcher);
 
         AttributeFilterPolicy policy =
-                new AttributeFilterPolicy("attribute1Policy", Matcher.MATCHES_ALL,
+                new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
                         Lists.newArrayList(attribute1Policy));
 
         AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
@@ -235,7 +236,7 @@ public class FilterAttributesTest {
         attribute1Policy.setPermitRule(attribute1Matcher);
 
         AttributeFilterPolicy policy =
-                new AttributeFilterPolicy("attribute1Policy", Matcher.MATCHES_ALL,
+                new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
                         Lists.newArrayList(attribute1Policy));
 
         AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
