@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -31,6 +30,7 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.Matcher;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -39,7 +39,8 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * {@link Matcher} that implements the disjunction of matchers. That is, a given attribute value is considered to have
- * matched if it is returned by any of the composed {@link Matcher}.
+ * matched if it is returned by any of the composed {@link Matcher}. If any of the matchers fail then failure is
+ * returned.
  */
 @ThreadSafe
 public class OrMatcher extends AbstractComposedMatcher {
@@ -53,10 +54,9 @@ public class OrMatcher extends AbstractComposedMatcher {
         super(composedMatchers);
     }
 
-
     /** {@inheritDoc} */
-    public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
-            throws AttributeFilterException {
+    @Nullable @NonnullElements public Set<AttributeValue> getMatchingValues(Attribute attribute,
+            AttributeFilterContext filterContext) throws AttributeFilterException {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 
@@ -66,9 +66,13 @@ public class OrMatcher extends AbstractComposedMatcher {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        Set<AttributeValue> matchingValues = new LazySet<AttributeValue>();
+        final Set<AttributeValue> matchingValues = new LazySet<AttributeValue>();
         for (Matcher matchFunctor : currentMatchers) {
-            matchingValues.addAll(matchFunctor.getMatchingValues(attribute, filterContext));
+            Set<AttributeValue> matches = matchFunctor.getMatchingValues(attribute, filterContext);
+            if (null == matches) {
+                return null;
+            }
+            matchingValues.addAll(matches);
         }
 
         return Collections.unmodifiableSet(matchingValues);

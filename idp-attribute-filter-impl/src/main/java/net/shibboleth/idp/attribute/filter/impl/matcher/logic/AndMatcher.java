@@ -43,8 +43,8 @@ import com.google.common.base.Objects;
 
 /**
  * {@link Matcher} that implements the conjunction of matchers. That is, a given attribute value is considered to have
- * matched if, and only if, it is returned by every composed {@link Matcher}. The predicate is true if and only if all
- * composed {@link Matcher} returns true.
+ * matched if, and only if, it is returned by every composed {@link Matcher}. If any of the matchers fail then 
+ * failure is returned.
  */
 @ThreadSafe
 public class AndMatcher extends AbstractComposedMatcher {
@@ -60,10 +60,11 @@ public class AndMatcher extends AbstractComposedMatcher {
 
 
     /**
-     * A given attribute value is considered to have matched if, and only if, it is returned by every composed
+     * A given attribute value is considered to have matched if, and only if, it is returned by every composed.
+     * If any of the matchers fail then failure is returned
      * {@link Matcher}. {@inheritDoc}
      */
-    @Nonnull @NonnullElements public Set<AttributeValue> getMatchingValues(@Nonnull final Attribute attribute,
+    @Nullable @NonnullElements public Set<AttributeValue> getMatchingValues(@Nonnull final Attribute attribute,
             @Nonnull final AttributeFilterContext filterContext) throws AttributeFilterException {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
@@ -76,9 +77,17 @@ public class AndMatcher extends AbstractComposedMatcher {
 
         Iterator<Matcher> matcherItr = currentMatchers.iterator();
 
-        Set<AttributeValue> matchingValues = new HashSet(matcherItr.next().getMatchingValues(attribute, filterContext));
+        Set<AttributeValue> match = matcherItr.next().getMatchingValues(attribute, filterContext);
+        if (null == match) {
+            return null;
+        }
+        Set<AttributeValue> matchingValues = new HashSet(match);
         while (matcherItr.hasNext()) {
-            matchingValues.retainAll(matcherItr.next().getMatchingValues(attribute, filterContext));
+            match = matcherItr.next().getMatchingValues(attribute, filterContext);
+            if (null == match) {
+                return null;
+            }
+            matchingValues.retainAll(match);
             if (matchingValues.isEmpty()) {
                 return Collections.emptySet();
             }
@@ -119,7 +128,7 @@ public class AndMatcher extends AbstractComposedMatcher {
 
     /** {@inheritDoc} */
     public String toString() {
-        return Objects.toStringHelper(this).add("composedMatchers", getComposedMatchers()).toString();
+        return Objects.toStringHelper(this).add("Composed Matchers : ", getComposedMatchers()).toString();
     }
 
 }

@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.Attribute;
@@ -29,6 +30,7 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.Matcher;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -41,7 +43,7 @@ import com.google.common.base.Objects;
  * {@link Matcher} that implements the negation of a matcher. <br/>
  * <br/>
  * A given attribute value is considered to have matched if it is not returned by the composed {@link Matcher}. The
- * predicate is the logical NOT of the composed {@link Matcher}.
+ * predicate is the logical NOT of the composed {@link Matcher}. If the matcher fails then failure is returned.
  */
 @ThreadSafe
 public final class NotMatcher extends AbstractDestructableIdentifiableInitializableComponent implements Matcher {
@@ -63,7 +65,7 @@ public final class NotMatcher extends AbstractDestructableIdentifiableInitializa
      * 
      * @return matcher that is being negated
      */
-    @Nonnull public Matcher getNegtedMatcher() {
+    @Nonnull public Matcher getNegatedMatcher() {
         return negatedMatcher;
     }
 
@@ -72,20 +74,25 @@ public final class NotMatcher extends AbstractDestructableIdentifiableInitializa
      * A given attribute value is considered to have matched if it is not returned by the composed {@link Matcher}.
      * {@inheritDoc}
      */
-    public Set<AttributeValue> getMatchingValues(@Nonnull final Attribute attribute,
+    @Nullable @NonnullElements public Set<AttributeValue> getMatchingValues(@Nonnull final Attribute attribute,
             @Nonnull final AttributeFilterContext filterContext) throws AttributeFilterException {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 
         // Capture the matchers to avoid race with setComposedMatchers
         // Do this before the test on destruction to avoid race with destroy code
-        final Matcher currentMatcher = getNegtedMatcher();
+        final Matcher currentMatcher = getNegatedMatcher();
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         Set<AttributeValue> attributeValues = new HashSet<AttributeValue>(attribute.getValues());
+        
+        Set<AttributeValue> matches = currentMatcher.getMatchingValues(attribute, filterContext);
+        if (null == matches) {
+            return matches;
+        }
 
-        attributeValues.removeAll(currentMatcher.getMatchingValues(attribute, filterContext));
+        attributeValues.removeAll(matches);
 
         if (attributeValues.isEmpty()) {
             return Collections.emptySet();

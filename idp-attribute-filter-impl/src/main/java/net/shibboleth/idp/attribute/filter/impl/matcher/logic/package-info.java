@@ -16,7 +16,7 @@
  */
 
 /**
- * Implementation of the logical policy matchers.  
+ * Implementation of the logical attribute matchers.  
  * 
  * The classes in this package all implement {@link net.shibboleth.idp.attribute.filter.Matcher} 
  */
