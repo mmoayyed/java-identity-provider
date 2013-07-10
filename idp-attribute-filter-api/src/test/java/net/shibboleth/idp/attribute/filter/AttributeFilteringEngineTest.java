@@ -176,12 +176,7 @@ public class AttributeFilteringEngineTest {
         Assert.assertTrue(result.contains(new StringAttributeValue("two")));
     }
     
-    @Test public void testAllMatcherThrows() throws Exception {
-
-        AttributeRule attribute1Policy = new AttributeRule();
-        attribute1Policy.setId("attribute1Policy");
-        attribute1Policy.setAttributeId("attribute1");
-        attribute1Policy.setPermitRule(Matcher.MATCHES_ALL);
+    @Test public void testAllMatcherFails() throws Exception {
 
         AttributeRule attribute2Policy = new AttributeRule();
         attribute2Policy.setId("attribute2Policy");
@@ -192,7 +187,7 @@ public class AttributeFilteringEngineTest {
 
         AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
-                        Lists.newArrayList(attribute1Policy, attribute2Policy));
+                        Lists.newArrayList(attribute2Policy));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
 

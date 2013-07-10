@@ -1,0 +1,76 @@
+/*
+ * Licensed to the University Corporation for Advanced Internet Development, 
+ * Inc. (UCAID) under one or more contributor license agreements.  See the 
+ * NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The UCAID licenses this file to You under the Apache 
+ * License, Version 2.0 (the "License"); you may not use this file except in 
+ * compliance with the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package net.shibboleth.idp.attribute.filter;
+
+import java.util.HashSet;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
+
+/**
+ * Base for the various XXX from YYY test clases
+ */
+public class BaseBridgingClassTester {
+    
+    protected final AttributeValue VALUE1 = new StringAttributeValue("value1");
+    protected final AttributeValue VALUE2 = new StringAttributeValue("value2");
+    protected final AttributeValue VALUE3 = new StringAttributeValue("value3");
+    
+    protected final String NAME1 = "foo";
+    protected final String NAME2 = "bar";
+    
+    protected AttributeFilterContext setUpCtx() {
+        HashSet<Attribute> attributes = new HashSet<Attribute>(2);
+
+        Attribute attribute = new Attribute(NAME1);
+        attribute.getValues().add(VALUE1);
+        attribute.getValues().add(VALUE2);
+        attributes.add(attribute);
+
+        attribute = new Attribute(NAME2);
+        attribute.getValues().add(VALUE1);
+        attribute.getValues().add(VALUE3);
+        attributes.add(attribute);
+        AttributeFilterContext filterContext = new AttributeFilterContext();
+
+        filterContext.setPrefilteredAttributes(attributes);
+        
+        return filterContext;
+    }
+
+    @Test public void baseClass() throws ComponentInitializationException, ComponentValidationException {
+        
+        BaseBridgingClass base = new BaseBridgingClass(new Object()) {};
+        
+        String s = base.getLogPrefix();
+        base.setId(NAME2);
+        Assert.assertEquals(base.getLogPrefix(), s);
+        base.initialize();
+        Assert.assertNotEquals(base.getLogPrefix(), s);
+        base.validate();
+        base.destroy();
+        
+    }
+
+}

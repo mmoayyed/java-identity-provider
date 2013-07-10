@@ -177,16 +177,27 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
                 .getValues().size());
 
         if (permitValueRule != null) {
-            Set<AttributeValue> matchingValues = permitValueRule.getMatchingValues(attribute, filterContext);
-            log.debug("Filter has permitted the release of {} values for attribute '{}'", matchingValues.size(),
-                    attribute.getId());
-            filterContext.addPermittedAttributeValues(attribute.getId(), matchingValues);
+            final Set<AttributeValue> matchingValues = permitValueRule.getMatchingValues(attribute, filterContext);
+            
+            if (null == matchingValues) {
+                log.warn("Filter failed.  Not attributes released for attribute '{}'", getAttributeId());
+            } else {
+                log.debug("Filter has permitted the release of {} values for attribute '{}'", matchingValues.size(),
+                        attribute.getId());
+                filterContext.addPermittedAttributeValues(attribute.getId(), matchingValues);
+            }
         }
         if (denyValueRule != null) {
-            Set<AttributeValue> matchingValues = denyValueRule.getMatchingValues(attribute, filterContext);
-            log.debug("Filter has denied the release of {} values for attribute '{}'", matchingValues.size(),
+            final Set<AttributeValue> matchingValues = denyValueRule.getMatchingValues(attribute, filterContext);
+            
+            if (null == matchingValues) {
+                log.warn("Filter failed.  all attributed denied for attribute '{}'", getAttributeId());
+                filterContext.addDeniedAttributeValues(attribute.getId(), attribute.getValues());
+            } else {
+                log.debug("Filter has denied the release of {} values for attribute '{}'", matchingValues.size(),
                     attribute.getId());
-            filterContext.addDeniedAttributeValues(attribute.getId(), matchingValues);
+                filterContext.addDeniedAttributeValues(attribute.getId(), matchingValues);
+            }
         }
     }
 

@@ -73,6 +73,20 @@ public interface Matcher extends IdentifiableComponent {
         }
     };
 
+    /** A {@link Matcher} that fails. targetted primarily at testing, but also at odd corners of parsing. */
+    public static final Matcher MATCHER_FAILS = new Matcher() {
+
+        /** {@inheritDoc} */
+        public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
+                throws AttributeFilterException {
+            return null;
+        }
+
+        @Nullable public String getId() {
+            // TODO Auto-generated method stub
+            return "MATCHER_FAILS";
+        }
+    };
     /**
      * Return those {@link AttributeValues} which match this rule, or null if the matcher failed.
      * 

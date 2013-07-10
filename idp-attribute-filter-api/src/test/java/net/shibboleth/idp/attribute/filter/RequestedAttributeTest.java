@@ -17,29 +17,22 @@
 
 package net.shibboleth.idp.attribute.filter;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+
 /**
- * Specific exception to handle tristated results from filtering. <br />
- * When a filter fails due to bad input then is no safe value to return. Instead we have to signal the failure to the
- * upper layers. We do this via tristating. But to keep the code easy we use an exception. So as to not get in the way
- * of other structures we make it run time.<br/>
- * 
- * TODO - this Will be removed longterm
+ * test for {@link RequestedAttribute}
  */
-public class MatcherException extends RuntimeException {
+public class RequestedAttributeTest {
 
-    
-    /**
-     * version UID.
-     */
-    private static final long serialVersionUID = 599342584063832167L;
-
-    /**
-     * Constructor.
-     *
-     * @param string what to say
-     */
-    public MatcherException(String string) {
-        super(string);
+    @Test public void requestedAttribute(){
+        RequestedAttribute attr = new RequestedAttribute("id");
+        
+        Assert.assertEquals(attr.getId(), "id");
+        Assert.assertFalse(attr.getIsRequired());
+        attr.setRequired(true);
+        Assert.assertTrue(attr.getIsRequired());
+        
     }
-
 }

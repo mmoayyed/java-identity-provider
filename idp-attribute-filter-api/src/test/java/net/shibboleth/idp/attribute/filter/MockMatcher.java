@@ -22,13 +22,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
-import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
-import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
@@ -57,9 +52,6 @@ public class MockMatcher extends AbstractIdentifiableInitializableComponent impl
     /** state variable */
     private boolean validated;
     
-    /** to return from getMatchingValues(). */
-    private boolean retVal;
-
     /** do we fail when validate is called? do we fail when we are called?*/
     private boolean fails;
 
@@ -96,7 +88,7 @@ public class MockMatcher extends AbstractIdentifiableInitializableComponent impl
     public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
             throws AttributeFilterException {
         if (fails) {
-            throw new MatcherException("throws");
+            return null;
         }
         if (!Objects.equal(attribute.getId(), matchingAttribute)) {
             return Collections.EMPTY_SET;
@@ -148,10 +140,6 @@ public class MockMatcher extends AbstractIdentifiableInitializableComponent impl
         initialized = true;
     }
 
-    public void setRetVal(boolean what) {
-        retVal = what;
-    }
-
 
     public AttributeFilterContext getContextUsedAndReset() {
         AttributeFilterContext value = contextUsed;
@@ -163,7 +151,7 @@ public class MockMatcher extends AbstractIdentifiableInitializableComponent impl
         fails = doFail;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
     //TODO remove
     public boolean matches(@Nonnull AttributeFilterContext filterContext) throws AttributeFilterException {
         if (fails) {
@@ -171,5 +159,5 @@ public class MockMatcher extends AbstractIdentifiableInitializableComponent impl
         }
         contextUsed = filterContext;
         return retVal;
-    }
+    }*/
 }

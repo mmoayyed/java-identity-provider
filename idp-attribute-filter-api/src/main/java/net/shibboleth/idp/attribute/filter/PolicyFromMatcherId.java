@@ -78,7 +78,7 @@ public class PolicyFromMatcherId extends BaseBridgingClass implements PolicyRequ
         
         if (null == attribute) {
             log.debug("{} No attribute found with Id of {}", getLogPrefix(), attributeId);
-            return Tristate.FAIL;
+            return Tristate.FALSE;
         }
         final Set<AttributeValue> result = theMatcher.getMatchingValues(attribute, context);
 

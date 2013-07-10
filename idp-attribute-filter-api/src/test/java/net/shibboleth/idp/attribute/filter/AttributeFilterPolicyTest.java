@@ -24,10 +24,6 @@ import java.util.Collections;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
-import net.shibboleth.idp.attribute.filter.AttributeRule;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
@@ -185,7 +181,8 @@ public class AttributeFilterPolicyTest {
 
     }
 
-    @Test public void testApply() throws ComponentInitializationException, AttributeFilterException {
+    private AttributeFilterContext apply(Tristate state) throws AttributeFilterException, ComponentInitializationException {
+
         AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, policyMatcher, Arrays.asList(valuePolicy));
 
         boolean thrown = false;
@@ -216,20 +213,33 @@ public class AttributeFilterPolicyTest {
         attribute2.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("45")));
         context.setPrefilteredAttributes(Arrays.asList(attribute, attribute2));
 
-        policyMatcher.setRetVal(Tristate.TRUE);
+        policyMatcher.setRetVal(state);
         valueMatcher.setMatchingAttribute(ATTR_NAME);
-        valueMatcher.setMatchingValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("three")));
+        valueMatcher.setMatchingValues(Arrays
+                .asList(new StringAttributeValue("one"), new StringAttributeValue("three")));
 
         policy.apply(context);
+        return context;
+    }
 
-        Collection values = context.getPermittedAttributeValues().get(ATTR_NAME);
+    @Test public void testApply() throws ComponentInitializationException, AttributeFilterException {
+        
+        AttributeFilterContext ctx = apply(Tristate.TRUE);
+        
+        Collection values = ctx.getPermittedAttributeValues().get(ATTR_NAME);
 
         Assert.assertEquals(values.size(), 2);
         Assert.assertTrue(values.containsAll(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue(
                 "three"))));
 
-        Assert.assertNull(context.getPermittedAttributeValues().get(ATTR_NAME_2));
-    }
+        Assert.assertNull(ctx.getPermittedAttributeValues().get(ATTR_NAME_2));
+
+        ctx = apply(Tristate.FALSE);
+        Assert.assertNull(ctx.getPermittedAttributeValues().get(ATTR_NAME));
+
+        ctx = apply(Tristate.FAIL);
+        Assert.assertNull(ctx.getPermittedAttributeValues().get(ATTR_NAME));
+}
 
     @Test public void testApplyToEmpty() throws ComponentInitializationException, AttributeFilterException {
         AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, policyMatcher, Arrays.asList(valuePolicy));

@@ -71,6 +71,18 @@ public interface PolicyRequirementRule extends IdentifiableComponent {
         }
     };
 
+    /** A {@link PolicyRequirementRule} that returns failed. */
+    public static final PolicyRequirementRule REQUIREMENT_RULE_FAILS = new PolicyRequirementRule() {
+
+        public Tristate matches(@Nonnull AttributeFilterContext filterContext) throws AttributeFilterException {
+            return Tristate.FAIL;
+        }
+
+        @Nullable public String getId() {
+            return "REQUIREMENT_RULE_FAILS";
+        }
+    };
+
     /**
      * Evaluate what this rule means. <br/>
      * 

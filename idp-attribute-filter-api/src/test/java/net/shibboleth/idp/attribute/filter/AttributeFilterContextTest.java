@@ -23,13 +23,14 @@ import java.util.List;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 
 /** Unit test for {@link AttributeFilterContext}. */
 public class AttributeFilterContextTest {
@@ -276,5 +277,12 @@ public class AttributeFilterContextTest {
         } catch (IllegalArgumentException e) {
             // expected this
         }
+    }
+    
+    @Test public void testRequestedAttributes() {
+        AttributeFilterContext context = new AttributeFilterContext();
+        Multimap map = ArrayListMultimap.create(); 
+        context.setRequestedAttributes(map);
+        Assert.assertEquals(context.getRequestedAttributes(), map);
     }
 }
