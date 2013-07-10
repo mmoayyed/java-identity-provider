@@ -48,18 +48,18 @@ public class AttributeRuleParser extends BaseFilterParser {
     public static final QName TYPE_NAME = new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeRuleType");
 
     /** PermitValueRule. */
-    private static final QName PERMIT_VALUE_RULE = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
+    public static final QName PERMIT_VALUE_RULE = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
             "PermitValueRule");
 
     /** PermitValueRuleReference. */
-    private static final QName PERMIT_VALUE_REF = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
+    public static final QName PERMIT_VALUE_REF = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
             "PermitValueRuleReference");
 
     /** DenyValueRule. */
-    private static final QName DENY_VALUE_RULE = new QName(AttributeFilterNamespaceHandler.NAMESPACE, "DenyValueRule");
+    public static final QName DENY_VALUE_RULE = new QName(AttributeFilterNamespaceHandler.NAMESPACE, "DenyValueRule");
 
     /** DenyValueRuleReference. */
-    private static final QName DENY_VALUE_REF = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
+    public static final QName DENY_VALUE_REF = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
             "DenyValueRuleReference");
 
     /** Class logger. */

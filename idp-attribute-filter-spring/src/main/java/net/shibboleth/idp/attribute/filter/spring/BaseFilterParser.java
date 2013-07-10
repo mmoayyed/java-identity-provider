@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.RandomIdentifierGenerationStrategy;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -149,4 +150,24 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
         return beanDefinition.getAttribute("qualifiedId").toString();
     }
 
+    /**
+     * Is this inside a &lt;PolicyRequirementRule&gt; or an permit or deny rule?.
+     * @param element the element under question
+     * @return true if it is inside a policy requirement rule, false otherwise.
+     */
+    protected boolean isPolicyRule(final Element element) {
+
+        Element elem = element;
+        do {
+            if (ElementSupport.isElementNamed(element, AttributeFilterPolicyParser.POLICY_REQUIREMENT_RULE)) {
+                return true;
+            } else if (ElementSupport.isElementNamed(element, AttributeRuleParser.DENY_VALUE_RULE) ||
+                       ElementSupport.isElementNamed(element, AttributeRuleParser.PERMIT_VALUE_RULE)) {
+                return false;
+            }
+            elem = ElementSupport.getElementAncestor(elem);
+        } while (elem != null);
+        log.warn("Element '{}' : could not find schema defined parent");
+        return false;
+    }
 }

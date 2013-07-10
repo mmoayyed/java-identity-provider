@@ -88,7 +88,7 @@ public class AttributeFilterServiceTest {
     @Test public void testPolicy1() {
         // TODO
     }
-/* TODO
+// TODO
     @Test public void testPolicy2() throws ServiceException, AttributeFilterException {
 
         AttributeFilterService service =
@@ -175,5 +175,5 @@ public class AttributeFilterServiceTest {
         Assert.assertTrue(filteredAttributes.get("affiliation").getValues().contains(new StringAttributeValue("staff")));
 
     }
-*/
+
 }

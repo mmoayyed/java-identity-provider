@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.filter.spring.basic;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.Matcher;
+import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 
 import org.w3c.dom.Element;
@@ -33,7 +34,10 @@ public class AnyMatcherParser extends BaseFilterParser {
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "ANY");
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element arg0) {
+    protected Class getBeanClass(Element element) {
+        if (isPolicyRule(element)) {
+            return PolicyRequirementRule.MATCHES_ALL.getClass();
+        }
         return Matcher.MATCHES_ALL.getClass();
     }
 }

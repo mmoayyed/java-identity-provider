@@ -48,11 +48,11 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
             "AttributeFilterPolicyType");
 
     /** The PolicyRequirementRule QName. */
-    private static final QName POLICY_REQUIREMENT_RULE = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
+    public static final QName POLICY_REQUIREMENT_RULE = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
             "PolicyRequirementRule");
 
     /** The PolicyRequirementRuleReference QName. */
-    private static final QName POLICY_REQUIREMENT_RULE_REF = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
+    public static final QName POLICY_REQUIREMENT_RULE_REF = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
             "PolicyRequirementRuleReference");
 
     /** The AttributeRule QName. */

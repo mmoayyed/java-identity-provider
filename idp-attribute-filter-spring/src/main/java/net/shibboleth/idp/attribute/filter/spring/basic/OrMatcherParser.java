@@ -22,6 +22,7 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.impl.matcher.logic.OrMatcher;
+import net.shibboleth.idp.attribute.filter.impl.policyrule.logic.OrPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.MatcherParser;
 import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -40,8 +41,11 @@ public class OrMatcherParser extends MatcherParser {
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "OR");
 
     /** {@inheritDoc} */
-    protected String getBeanClassName(Element element) {
-        return OrMatcher.class.getName();
+    protected Class getBeanClass(Element element) {
+        if (isPolicyRule(element)) {
+            return OrPolicyRule.class;
+        }
+        return OrMatcher.class;
     }
 
     /** {@inheritDoc} */
