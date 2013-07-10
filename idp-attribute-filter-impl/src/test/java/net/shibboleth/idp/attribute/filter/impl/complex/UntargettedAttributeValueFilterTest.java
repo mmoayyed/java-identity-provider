@@ -79,7 +79,8 @@ public class UntargettedAttributeValueFilterTest extends BaseComplexAttributeFil
         final AttributeRule attributeValueFilterPolicy = new AttributeRule();
         attributeValueFilterPolicy.setId("test");
         attributeValueFilterPolicy.setAttributeId("eduPersonAffiliation");
-        attributeValueFilterPolicy.setPermitRule(valueMatcher());
+        attributeValueFilterPolicy.setMatcher(valueMatcher());
+        attributeValueFilterPolicy.setIsDenyRule(false);
 
         final AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("targettedAtPermit", PolicyRequirementRule.MATCHES_ALL,
@@ -130,7 +131,8 @@ public class UntargettedAttributeValueFilterTest extends BaseComplexAttributeFil
         final AttributeRule attributeValueFilterPolicy = new AttributeRule();
         attributeValueFilterPolicy.setId("test");
         attributeValueFilterPolicy.setAttributeId("eduPersonAffiliation");
-        attributeValueFilterPolicy.setPermitRule(Matcher.MATCHES_ALL);
+        attributeValueFilterPolicy.setMatcher(Matcher.MATCHES_ALL);
+        attributeValueFilterPolicy.setIsDenyRule(false);
         PolicyFromMatcher rule = new PolicyFromMatcher(valueMatcher());
         rule.setId("rule");
         final AttributeFilterPolicy policy =

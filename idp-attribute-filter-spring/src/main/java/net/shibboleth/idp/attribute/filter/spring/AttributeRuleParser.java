@@ -92,7 +92,8 @@ public class AttributeRuleParser extends BaseFilterParser {
             final ManagedList<BeanDefinition> permitValueRules =
                     SpringSupport.parseCustomElements(permitValueRule, parserContext);
             log.debug("permitValueRules {}", permitValueRules);
-            builder.addPropertyValue("permitRule", permitValueRules.get(0));
+            builder.addPropertyValue("matcher", permitValueRules.get(0));
+            builder.addPropertyValue("isDenyRule", false);
 
         } else if (permitValueReference != null && !permitValueReference.isEmpty()) {
 
@@ -104,14 +105,16 @@ public class AttributeRuleParser extends BaseFilterParser {
 
             final String reference = getAbsoluteReference(config, "PermitValueRule", referenceText);
             log.debug("Adding PermitValueRule reference to {}", reference);
-            builder.addPropertyValue("permitRule", new RuntimeBeanReference(reference));
+            builder.addPropertyValue("matcher", new RuntimeBeanReference(reference));
+            builder.addPropertyValue("isDenyRule", false);
 
         } else if (denyValueRule != null && !denyValueRule.isEmpty()) {
 
             final ManagedList<BeanDefinition> denyValueRules =
                     SpringSupport.parseCustomElements(denyValueRule, parserContext);
             log.debug("denyValueRules {}", denyValueRules);
-            builder.addPropertyValue("denyRule", denyValueRules.get(0));
+            builder.addPropertyValue("matcher", denyValueRules.get(0));
+            builder.addPropertyValue("isDenyRule", true);
 
         } else if (denyValueReference != null && !denyValueReference.isEmpty()) {
 
@@ -122,7 +125,8 @@ public class AttributeRuleParser extends BaseFilterParser {
             }
             final String reference = getAbsoluteReference(config, "DenyValueRule", referenceText);
             log.debug("Adding DenyValueRule reference to {}", reference);
-            builder.addPropertyValue("denyRule", new RuntimeBeanReference(reference));
+            builder.addPropertyValue("matcher", new RuntimeBeanReference(reference));
+            builder.addPropertyValue("isDenyRule", true);
 
         }
     }

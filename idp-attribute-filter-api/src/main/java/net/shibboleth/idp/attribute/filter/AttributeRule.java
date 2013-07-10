@@ -69,12 +69,12 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
     /**
      * Filter that permits the release of attribute values.
      */
-    private Matcher permitValueRule;
+    private Matcher matcher;
 
     /**
      * Filter that denies the release of attribute values.
      */
-    private Matcher denyValueRule;
+    private boolean isDenyRule = true;
 
     /** {@inheritDoc} */
     public synchronized void setId(@Nonnull @NotEmpty final String componentId) {
@@ -106,55 +106,54 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
     }
 
     /**
-     * Gets the matcher used to determine permitted attribute values filtered by this rule.
+     * Gets the matcher used to determine the attribute values filtered by this rule.
      * 
-     * @return matcher used to determine permitted attribute values filtered by this rule
+     * @return matcher used to determine the attribute values filtered by this rule
      */
-    @Nullable public Matcher getPermitRule() {
+    @Nullable public Matcher getMatcher() {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        return permitValueRule;
+        return matcher;
     }
 
     /**
      * Sets the rule used to determine permitted attribute values filtered by this rule.
      * 
-     * @param matcher matcher used to determine permitted attribute values filtered by this rule
+     * @param theMatcher matcher used to determine permitted attribute values filtered by this rule
      */
-    public synchronized void setPermitRule(@Nonnull Matcher matcher) {
+    public synchronized void setMatcher(@Nonnull Matcher theMatcher) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        permitValueRule = Constraint.isNotNull(matcher, "Permit Rule can not be null");
+        matcher = Constraint.isNotNull(theMatcher, "Rule can not be null");
     }
 
     /**
-     * Gets the matcher used to determine denied attribute values filtered by this rule.
+     * Gets whether the rule is a deny rule or not.
      * 
-     * @return matcher used to determine denied attribute values filtered by this rule
+     * @return whether the rule is a deny rule or not.
      */
-    @Nullable public Matcher getDenyRule() {
+    public boolean getIsDenyRule() {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        return denyValueRule;
+        return isDenyRule;
     }
 
     /**
      * Sets the rule used to determine denied attribute values filtered by this rule.
      * 
-     * @param matcher matcher used to determine denied attribute values filtered by this rule
+     * @param isDeny - whether the rule is deny or not.
      */
-    public synchronized void setDenyRule(@Nonnull Matcher matcher) {
+    public synchronized void setIsDenyRule(boolean isDeny) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        denyValueRule = Constraint.isNotNull(matcher, "Deny Rule can not be null");
+        isDenyRule = isDeny;
     }
 
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        ComponentSupport.validate(denyValueRule);
-        ComponentSupport.validate(permitValueRule);
+        ComponentSupport.validate(matcher);
     }
 
     /**
@@ -176,26 +175,23 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
         log.debug("Filtering values for attribute '{}' which currently contains {} values", getAttributeId(), attribute
                 .getValues().size());
 
-        if (permitValueRule != null) {
-            final Set<AttributeValue> matchingValues = permitValueRule.getMatchingValues(attribute, filterContext);
-            
+        final Set<AttributeValue> matchingValues = matcher.getMatchingValues(attribute, filterContext);
+
+        if (!isDenyRule) {
             if (null == matchingValues) {
                 log.warn("Filter failed.  Not attributes released for attribute '{}'", getAttributeId());
             } else {
                 log.debug("Filter has permitted the release of {} values for attribute '{}'", matchingValues.size(),
-                        attribute.getId());
+                          attribute.getId());
                 filterContext.addPermittedAttributeValues(attribute.getId(), matchingValues);
             }
-        }
-        if (denyValueRule != null) {
-            final Set<AttributeValue> matchingValues = denyValueRule.getMatchingValues(attribute, filterContext);
-            
+        } else {
             if (null == matchingValues) {
                 log.warn("Filter failed.  all attributed denied for attribute '{}'", getAttributeId());
                 filterContext.addDeniedAttributeValues(attribute.getId(), attribute.getValues());
             } else {
                 log.debug("Filter has denied the release of {} values for attribute '{}'", matchingValues.size(),
-                    attribute.getId());
+                          attribute.getId());
                 filterContext.addDeniedAttributeValues(attribute.getId(), matchingValues);
             }
         }
@@ -203,8 +199,7 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
 
     /** {@inheritDoc} */
     protected void doDestroy() {
-        ComponentSupport.destroy(permitValueRule);
-        ComponentSupport.destroy(denyValueRule);
+        ComponentSupport.destroy(matcher);
         super.doDestroy();
     }
 
@@ -217,16 +212,11 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
                     + "': No attribute specified for this attribute value filter policy");
         }
 
-        if (permitValueRule == null && denyValueRule == null) {
+        if (matcher == null) {
             throw new ComponentInitializationException("Attribute Rule '" + getId()
                     + "': must have a permit rule or a deny rule");
         }
-        if (permitValueRule != null && denyValueRule != null) {
-            throw new ComponentInitializationException("Attribute Rule '" + getId()
-                    + "': must have a permit rule or a deny rule, but not both");
-        }
 
-        ComponentSupport.initialize(permitValueRule);
-        ComponentSupport.initialize(denyValueRule);
+        ComponentSupport.initialize(matcher);
     }
 }

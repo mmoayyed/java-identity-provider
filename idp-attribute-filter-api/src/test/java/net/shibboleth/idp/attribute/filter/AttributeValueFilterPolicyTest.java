@@ -45,7 +45,9 @@ public class AttributeValueFilterPolicyTest {
     @Test public void testInitDestroy() throws ComponentInitializationException {
         AttributeRule policy = new AttributeRule();
         MockMatcher matcher = new MockMatcher();        
-        policy.setPermitRule(matcher);
+        policy.setMatcher(matcher);
+        policy.setIsDenyRule(false);
+
 
         Assert.assertFalse(policy.isInitialized(), "Created - not initialized");
         Assert.assertFalse(matcher.isInitialized(), "Create - not initialized");
@@ -108,7 +110,8 @@ public class AttributeValueFilterPolicyTest {
         policy.setId("id");                
         policy.setAttributeId(" ID ");
         Assert.assertEquals(policy.getAttributeId(), "ID", "Get Attribute ID");
-        policy.setPermitRule(Matcher.MATCHES_ALL);
+        policy.setMatcher(Matcher.MATCHES_ALL);
+        policy.setIsDenyRule(false);
         policy.initialize();
         Assert.assertEquals(policy.getAttributeId(), "ID", "Get Attribute ID");
 
@@ -147,32 +150,35 @@ public class AttributeValueFilterPolicyTest {
         policy.setId("id");
         policy.setAttributeId("foo");
 
-        policy.setPermitRule(Matcher.MATCHES_ALL);
-        Assert.assertEquals(policy.getPermitRule(), Matcher.MATCHES_ALL,
+        policy.setMatcher(Matcher.MATCHES_ALL);
+        policy.setIsDenyRule(false);
+        Assert.assertEquals(policy.getMatcher(), Matcher.MATCHES_ALL,
                 "AttributeValueMatcher - changed");
+        Assert.assertFalse(policy.getIsDenyRule());
         policy.initialize();
-        Assert.assertEquals(policy.getPermitRule(), Matcher.MATCHES_ALL,
+        Assert.assertEquals(policy.getMatcher(), Matcher.MATCHES_ALL,
                 "AttributeValueMatcher - initialized");
 
         boolean thrown = false;
         try {
-            policy.setPermitRule(Matcher.MATCHES_NONE);
+            policy.setMatcher(Matcher.MATCHES_NONE);
         } catch (UnmodifiableComponentException e) {
             thrown = true;
         }
         Assert.assertTrue(thrown, "AttributeValueMatcher - set after initialized");
-        Assert.assertEquals(policy.getPermitRule(), Matcher.MATCHES_ALL,
+        Assert.assertEquals(policy.getMatcher(), Matcher.MATCHES_ALL,
                 "AttributeValueMatcher - set after initialized");
 
         policy = new AttributeRule();
         policy.setId("id");
         policy.setAttributeId(" foo");
-        policy.setPermitRule(Matcher.MATCHES_ALL);
+        policy.setMatcher(Matcher.MATCHES_ALL);
+        policy.setIsDenyRule(false);
         policy.initialize();
         policy.destroy();
         thrown = false;
         try {
-            policy.setPermitRule(Matcher.MATCHES_NONE);
+            policy.setMatcher(Matcher.MATCHES_NONE);
         } catch (UnmodifiableComponentException e) {
             thrown = true;
         }
@@ -180,7 +186,7 @@ public class AttributeValueFilterPolicyTest {
 
         thrown = false;
         try {
-            policy.getPermitRule();
+            policy.getMatcher();
         } catch (DestroyedComponentException e) {
             thrown = true;
         }
@@ -208,7 +214,8 @@ public class AttributeValueFilterPolicyTest {
 
         AttributeRule policy = new AttributeRule();
         policy.setId("id");        
-        policy.setPermitRule(matcher);
+        policy.setMatcher(matcher);
+        policy.setIsDenyRule(false);
         policy.setAttributeId(ATTR_NAME);
 
         boolean thrown = false;
@@ -261,7 +268,8 @@ public class AttributeValueFilterPolicyTest {
 
         policy = new AttributeRule();
         policy.setId("id");
-        policy.setDenyRule(matcher);
+        policy.setMatcher(matcher);
+        policy.setIsDenyRule(true);
         policy.setAttributeId(ATTR_NAME);
         policy.initialize();
 

@@ -29,12 +29,12 @@ public class PolicyFromMatcherIdTest extends BaseBridgingClassTester {
     
 
     @Test public void all() throws AttributeFilterException {
-        PolicyRequirementRule rule = new PolicyFromMatcherId(Matcher.MATCHES_ALL, NAME1);
+        PolicyFromMatcherId rule = new PolicyFromMatcherId(Matcher.MATCHES_ALL, NAME1);
         
         AttributeFilterContext context = setUpCtx();
         
         Assert.assertTrue(rule.matches(context)==Tristate.TRUE);
-        Assert.assertEquals(rule.getId(), NAME1);
+        Assert.assertEquals(rule.getAttributeId(), NAME1);
     
         rule = new PolicyFromMatcherId(Matcher.MATCHES_ALL, "fred");
         

@@ -29,39 +29,26 @@ public class AttributeRuleTest {
 
     @Test public void testGetRules() {
         final AttributeRule rule = new AttributeRule();
-        Assert.assertNull(rule.getDenyRule());
-        Assert.assertNull(rule.getPermitRule());
+        Assert.assertNull(rule.getMatcher());
         final MockMatcher p = new MockMatcher();
-        final MockMatcher d = new MockMatcher();
-        rule.setPermitRule(p);
-        rule.setDenyRule(d);
+        rule.setMatcher(p);
+        rule.setIsDenyRule(false);
+        Assert.assertFalse(rule.getIsDenyRule());
         
-        Assert.assertNotEquals(p,d);
-        Assert.assertEquals(p,rule.getPermitRule());
-        Assert.assertEquals(d,rule.getDenyRule());
+        Assert.assertEquals(p,rule.getMatcher());
         
     }
     
     @Test(expectedExceptions={ComponentInitializationException.class}) public void testInit1() throws ComponentInitializationException {
         final AttributeRule rule = new AttributeRule();
-        Assert.assertNull(rule.getDenyRule());
-        Assert.assertNull(rule.getPermitRule());
+        Assert.assertNull(rule.getMatcher());
 
+        rule.setIsDenyRule(true);
+        Assert.assertTrue(rule.getIsDenyRule());
         rule.setId("id1");
         rule.setAttributeId("aid1");
         rule.initialize();
     }
     
-    @Test(expectedExceptions={ComponentInitializationException.class}) public void testInit2() throws ComponentInitializationException {
-        final AttributeRule rule = new AttributeRule();
-        Assert.assertNull(rule.getDenyRule());
-        Assert.assertNull(rule.getPermitRule());
-        rule.setPermitRule(new MockMatcher());
-        rule.setDenyRule(new MockMatcher());
-        rule.setId("id2");
-        rule.setAttributeId("aid2");
-
-        rule.initialize();
-    }
 
 }

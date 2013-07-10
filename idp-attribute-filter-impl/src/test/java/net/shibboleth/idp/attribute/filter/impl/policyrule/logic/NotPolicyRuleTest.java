@@ -126,9 +126,7 @@ public class NotPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         } catch (DestroyedComponentException e) {
             // OK
         }
-
     }
-
 
     @Test public void testPredicate() throws ComponentInitializationException, AttributeFilterException {
         NotPolicyRule rule = new NotPolicyRule(PolicyRequirementRule.MATCHES_ALL);

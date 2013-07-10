@@ -58,7 +58,8 @@ public class AttributeFilterPolicyTest {
         valuePolicy = new AttributeRule();
         valuePolicy.setId("valuePolicy");
         valuePolicy.setAttributeId(ATTR_NAME);
-        valuePolicy.setPermitRule(valueMatcher);
+        valuePolicy.setMatcher(valueMatcher);
+        valuePolicy.setIsDenyRule(false);
     }
 
     @Test public void testPostConstructionState() {
