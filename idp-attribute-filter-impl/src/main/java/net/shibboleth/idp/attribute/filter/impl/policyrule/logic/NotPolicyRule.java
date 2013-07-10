@@ -57,12 +57,15 @@ public final class NotPolicyRule extends AbstractDestructableIdentifiableInitial
      * 
      * @return matcher that is being negated
      */
-    @Nonnull public PolicyRequirementRule getNegtedMatcher() {
+    @Nonnull public PolicyRequirementRule getNegatedMatcher() {
         return negatedRule;
     }
 
     /** {@inheritDoc} */
     public Tristate matches(@Nonnull AttributeFilterContext filterContext) throws AttributeFilterException {
+        Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+
         Tristate match = negatedRule.matches(filterContext);
         if (Tristate.FAIL == match) {
             return Tristate.FAIL;

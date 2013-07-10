@@ -112,28 +112,6 @@ public final class NotMatcher extends AbstractDestructableIdentifiableInitializa
     }
 
     /** {@inheritDoc} */
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-
-        if (obj == this) {
-            return true;
-        }
-
-        if (!(obj instanceof NotMatcher)) {
-            return false;
-        }
-
-        return Objects.equal(negatedMatcher, ((NotMatcher) obj).negatedMatcher);
-    }
-
-    /** {@inheritDoc} */
-    public int hashCode() {
-        return negatedMatcher.hashCode();
-    }
-
-    /** {@inheritDoc} */
     public String toString() {
         return Objects.toStringHelper(this).add("negatedMatcher", negatedMatcher).toString();
     }

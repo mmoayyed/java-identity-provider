@@ -27,11 +27,8 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractComparisonMatcher;
-import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractMatcherTest;
-import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
+import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractMatcherPolicyRuleTest;
 import net.shibboleth.idp.attribute.filter.impl.matcher.MockValuePredicateMatcher;
-import net.shibboleth.idp.attribute.filter.impl.matcher.logic.NotMatcher;
-import net.shibboleth.idp.attribute.filter.impl.matcher.logic.OrMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
@@ -45,7 +42,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Lists;
 
 /** Test the {@link NotMatcher} matcher. */
-public class NotMatcherTest extends AbstractMatcherTest {
+public class NotMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @BeforeTest public void setup() throws Exception {
         super.setUp();
@@ -183,40 +180,12 @@ public class NotMatcherTest extends AbstractMatcherTest {
         Assert.assertEquals(result.size(), 0);
     }
 
-    // TODO
-    // @Test
-    public void testEqualsHashToString() throws ComponentInitializationException {
-        NotMatcher matcher = new NotMatcher(new MockValuePredicateMatcher(equalTo(value2)));
-
-        matcher.toString();
-
-        Assert.assertFalse(matcher.equals(null));
-        Assert.assertTrue(matcher.equals(matcher));
-        Assert.assertFalse(matcher.equals(this));
-
-        NotMatcher other = new NotMatcher(new MockValuePredicateMatcher(equalTo(value2)));
-
-        Assert.assertTrue(matcher.equals(other));
-        Assert.assertEquals(matcher.hashCode(), other.hashCode());
-
-        other = new NotMatcher(new MockValuePredicateMatcher(equalTo(value3)));
-
-        Assert.assertFalse(matcher.equals(other));
-        Assert.assertNotSame(matcher.hashCode(), other.hashCode());
-
-    }
-/* TODO
-    @Test public void testPredicate() throws ComponentInitializationException, AttributeFilterException {
-        NotMatcher matcher = new NotMatcher(new MockValuePredicateMatcher(true));
-        matcher.setId("Test");
-        matcher.initialize();
-        Assert.assertFalse(matcher.matches(DataSources.unPopulatedFilterContext()));
-
-        matcher = new NotMatcher(new MockValuePredicateMatcher(false));
+    @Test public void testFails() throws Exception {
+        NotMatcher matcher = new NotMatcher( Matcher.MATCHER_FAILS);
         matcher.setId("test");
         matcher.initialize();
-        Assert.assertTrue(matcher.matches(DataSources.unPopulatedFilterContext()));
 
-    } */
-
+        Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
+        Assert.assertNull(result);
+    }
 }

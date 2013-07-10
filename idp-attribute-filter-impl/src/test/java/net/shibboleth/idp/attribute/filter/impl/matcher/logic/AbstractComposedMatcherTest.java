@@ -30,7 +30,6 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.Matcher;
-import net.shibboleth.idp.attribute.filter.impl.matcher.logic.AbstractComposedMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.CountingDestructableInitializableValidatableComponent;
@@ -201,9 +200,6 @@ public class AbstractComposedMatcherTest {
             return null;
         }
 
-        public boolean matches(@Nullable AttributeFilterContext arg0) {
-            return false;
-        }
     }
     
     public static class TestMatcher extends CountingDestructableInitializableValidatableComponent implements  Matcher, DestructableComponent, InitializableComponent, ValidatableComponent {

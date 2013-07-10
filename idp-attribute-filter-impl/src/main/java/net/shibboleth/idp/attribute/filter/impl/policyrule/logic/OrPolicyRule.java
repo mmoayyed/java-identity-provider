@@ -29,6 +29,8 @@ import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * {@link PolicyRequirementRule} that implements the disjunction of Policy Rules.  That
@@ -56,6 +58,9 @@ public class OrPolicyRule extends AbstractComposedPolicyRule {
     * rule 
     * {@inheritDoc} */
     public Tristate matches(@Nonnull AttributeFilterContext filterContext) throws AttributeFilterException {
+        Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+
         final List<PolicyRequirementRule> rules = getComposedRules();
         
         for (PolicyRequirementRule rule:rules) {

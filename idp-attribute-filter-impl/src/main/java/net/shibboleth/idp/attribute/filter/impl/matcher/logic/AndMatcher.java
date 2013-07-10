@@ -105,28 +105,6 @@ public class AndMatcher extends AbstractComposedMatcher {
     }
 
     /** {@inheritDoc} */
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-
-        if (obj == this) {
-            return true;
-        }
-
-        if (!(obj instanceof AndMatcher)) {
-            return false;
-        }
-
-        return Objects.equal(getComposedMatchers(), ((AndMatcher) obj).getComposedMatchers());
-    }
-
-    /** {@inheritDoc} */
-    public int hashCode() {
-        return getComposedMatchers().hashCode();
-    }
-
-    /** {@inheritDoc} */
     public String toString() {
         return Objects.toStringHelper(this).add("Composed Matchers : ", getComposedMatchers()).toString();
     }

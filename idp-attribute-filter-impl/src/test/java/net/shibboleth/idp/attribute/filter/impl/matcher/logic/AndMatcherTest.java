@@ -28,10 +28,8 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractComparisonMatcher;
-import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractMatcherTest;
-import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
+import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractMatcherPolicyRuleTest;
 import net.shibboleth.idp.attribute.filter.impl.matcher.MockValuePredicateMatcher;
-import net.shibboleth.idp.attribute.filter.impl.matcher.logic.AndMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -44,7 +42,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Lists;
 
 /** {@link AndMatcher} unit test. */
-public class AndMatcherTest extends AbstractMatcherTest {
+public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @BeforeTest public void setup() throws Exception {
         super.setUp();
@@ -106,16 +104,31 @@ public class AndMatcherTest extends AbstractMatcherTest {
         } catch (DestroyedComponentException e) {
             // expect this
         }
-
     }
-    
-    @Test(expectedExceptions={ComponentInitializationException.class})  public void emptyInput() throws ComponentInitializationException
-    {
+
+    @Test public void testFails() throws Exception {
+        AndMatcher matcher = new AndMatcher(Lists.<Matcher> newArrayList(Matcher.MATCHES_ALL, Matcher.MATCHER_FAILS));
+        matcher.setId("test");
+        matcher.initialize();
+
+        Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
+        Assert.assertNull(result);
+
+        matcher = new AndMatcher(Lists.<Matcher> newArrayList(Matcher.MATCHER_FAILS, Matcher.MATCHES_ALL));
+        matcher.setId("test");
+        matcher.initialize();
+
+        result = matcher.getMatchingValues(attribute, filterContext);
+        Assert.assertNull(result);
+    }
+
+    @Test(expectedExceptions = {ComponentInitializationException.class}) public void emptyInput()
+            throws ComponentInitializationException {
         AndMatcher matcher = new AndMatcher(Collections.EMPTY_LIST);
         matcher.setId("test");
         matcher.initialize();
     }
-    
+
     @Test public void emptyResults() throws ComponentInitializationException, AttributeFilterException {
         AndMatcher matcher =
                 new AndMatcher(Lists.<Matcher> newArrayList(
@@ -126,57 +139,4 @@ public class AndMatcherTest extends AbstractMatcherTest {
         matcher.initialize();
         Assert.assertTrue(matcher.getMatchingValues(attribute, filterContext).isEmpty());
     }
-
-    // TODO
-    // @Test 
-    public void testEqualsHashToString() throws ComponentInitializationException {
-        AndMatcher matcher =
-                new AndMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(equalTo(value2)),
-                        new MockValuePredicateMatcher(equalTo(value3))));
-
-        matcher.toString();
-
-        Assert.assertFalse(matcher.equals(null));
-        Assert.assertTrue(matcher.equals(matcher));
-        Assert.assertFalse(matcher.equals(this));
-
-        AndMatcher other =
-                new AndMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(equalTo(value2)),
-                        new MockValuePredicateMatcher(equalTo(value3))));
-
-        Assert.assertTrue(matcher.equals(other));
-        Assert.assertEquals(matcher.hashCode(), other.hashCode());
-
-        other =
-                new AndMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(equalTo(value3)),
-                        new MockValuePredicateMatcher(equalTo(value2))));
-
-        Assert.assertFalse(matcher.equals(other));
-        Assert.assertNotSame(matcher.hashCode(), other.hashCode());
-
-    }
-/* TODO
-    @Test public void testPredicate() throws ComponentInitializationException, AttributeFilterException {
-        AndMatcher matcher =
-                new AndMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(false),
-                        new MockValuePredicateMatcher(false)));
-        matcher.setId("Test");
-        matcher.initialize();
-        Assert.assertFalse(matcher.matches(DataSources.unPopulatedFilterContext()));
-
-        matcher =
-                new AndMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(true), null,
-                        new MockValuePredicateMatcher(false)));
-        matcher.setId("Test");
-        matcher.initialize();
-        Assert.assertFalse(matcher.matches(DataSources.unPopulatedFilterContext()));
-
-        matcher =
-                new AndMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(true), null,
-                        new MockValuePredicateMatcher(true)));
-        matcher.setId("Test");
-        matcher.initialize();
-        Assert.assertTrue(matcher.matches(DataSources.unPopulatedFilterContext()));
-
-    } */
 }

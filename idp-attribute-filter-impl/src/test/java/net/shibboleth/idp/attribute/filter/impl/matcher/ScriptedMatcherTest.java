@@ -38,7 +38,7 @@ import org.testng.annotations.Test;
 
 /** {@link ScriptedMatcher} unit test. */
 @ThreadSafe
-public class ScriptedMatcherTest extends AbstractMatcherTest {
+public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     /** A script that returns a set that contains the one of values the attribute. */
     private EvaluableScript returnOneValueScript;

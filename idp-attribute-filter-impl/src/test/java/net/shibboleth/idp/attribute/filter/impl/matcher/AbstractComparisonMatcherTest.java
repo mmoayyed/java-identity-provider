@@ -39,7 +39,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicate;
 
 /** Unit test for {@link AbstractComparisonMatcher}. */
-public class AbstractComparisonMatcherTest extends AbstractMatcherTest {
+public class AbstractComparisonMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @BeforeTest public void setup() throws Exception {
         super.setUp();

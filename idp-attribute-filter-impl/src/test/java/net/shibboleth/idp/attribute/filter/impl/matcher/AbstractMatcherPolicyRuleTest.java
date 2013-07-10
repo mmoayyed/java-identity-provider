@@ -21,9 +21,10 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.Matcher;
+import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 
-/** Base class for {@link Matcher} unit tests. */
-public abstract class AbstractMatcherTest {
+/** Base class for {@link Matcher} and {@link PolicyRequirementRule} unit tests. */
+public abstract class AbstractMatcherPolicyRuleTest {
 
     /** An attribute value. */
     protected StringAttributeValue value1;
