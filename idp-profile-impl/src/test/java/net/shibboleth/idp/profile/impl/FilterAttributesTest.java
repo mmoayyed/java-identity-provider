@@ -26,11 +26,10 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
-import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeRule;
-import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.MockMatcher;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.profile.ActionTestingSupport;
@@ -116,7 +115,8 @@ public class FilterAttributesTest {
         AttributeRule attribute1Policy = new AttributeRule();
         attribute1Policy.setId("attribute1Policy");
         attribute1Policy.setAttributeId("attribute1");
-        attribute1Policy.setPermitRule(attribute1Matcher);
+        attribute1Policy.setMatcher(attribute1Matcher);
+        attribute1Policy.setIsDenyRule(false);
 
         AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
@@ -175,7 +175,8 @@ public class FilterAttributesTest {
         AttributeRule attribute1Policy = new AttributeRule();
         attribute1Policy.setId("attribute1Policy");
         attribute1Policy.setAttributeId("attribute1");
-        attribute1Policy.setPermitRule(attribute1Matcher);
+        attribute1Policy.setMatcher(attribute1Matcher);
+        attribute1Policy.setIsDenyRule(false);
 
         AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
@@ -233,7 +234,8 @@ public class FilterAttributesTest {
         AttributeRule attribute1Policy = new AttributeRule();
         attribute1Policy.setId("attribute1Policy");
         attribute1Policy.setAttributeId("attribute1");
-        attribute1Policy.setPermitRule(attribute1Matcher);
+        attribute1Policy.setMatcher(attribute1Matcher);
+        attribute1Policy.setIsDenyRule(false);
 
         AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
