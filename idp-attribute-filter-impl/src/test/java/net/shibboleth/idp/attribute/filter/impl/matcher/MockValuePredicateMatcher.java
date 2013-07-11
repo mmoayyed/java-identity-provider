@@ -20,7 +20,6 @@ package net.shibboleth.idp.attribute.filter.impl.matcher;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractComparisonMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import com.google.common.base.Predicate;

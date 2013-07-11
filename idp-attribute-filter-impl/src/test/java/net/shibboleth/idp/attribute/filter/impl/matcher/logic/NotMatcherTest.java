@@ -26,7 +26,6 @@ import java.util.Set;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.Matcher;
-import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractComparisonMatcher;
 import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractMatcherPolicyRuleTest;
 import net.shibboleth.idp.attribute.filter.impl.matcher.MockValuePredicateMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -56,7 +55,7 @@ public class NotMatcherTest extends AbstractMatcherPolicyRuleTest {
             // expected this
         }
 
-        AbstractComparisonMatcher valuePredicate = new MockValuePredicateMatcher(alwaysTrue());
+        Matcher valuePredicate = new MockValuePredicateMatcher(alwaysTrue());
         NotMatcher matcher = new NotMatcher(valuePredicate);
         matcher.setId("NullArgs");
         matcher.initialize();

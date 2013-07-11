@@ -1,5 +1,4 @@
 /*
- * Licensed to the University Corporation for Advanced Internet Development, 
  * Inc. (UCAID) under one or more contributor license agreements.  See the 
  * NOTICE file distributed with this work for additional information regarding
  * copyright ownership. The UCAID licenses this file to You under the Apache 
@@ -35,7 +34,6 @@ import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
-import org.apache.commons.logging.LogFactory;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
