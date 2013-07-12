@@ -15,29 +15,24 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter.spring.basic;
+package net.shibboleth.idp.attribute.filter.spring.matcher;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.filter.Matcher;
-import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
-import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
-
-import org.w3c.dom.Element;
+import net.shibboleth.idp.attribute.filter.impl.matcher.attributevalue.AttributeValueStringMatcher;
+import net.shibboleth.idp.attribute.filter.spring.basic.AttributeFilterBasicNamespaceHandler;
 
 /**
- * Bean definition parser for {@link AnyMatchFunctor} objects.
+ * Bean definition parser for {@link AttributeValueStringMatchFunctor}s.
  */
-public class AnyMatcherParser extends BaseFilterParser {
+public class AttributeValueStringMatcherParser extends AbstractStringMatcherParser {
 
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "ANY");
+    public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
+            "AttributeValueString");
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
-        if (isPolicyRule(element)) {
-            return PolicyRequirementRule.MATCHES_ALL.getClass();
-        }
-        return Matcher.MATCHES_ALL.getClass();
+    protected Class getNativeBeanClass() {
+        return AttributeValueStringMatcher.class;
     }
 }

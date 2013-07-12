@@ -17,29 +17,28 @@
 
 package net.shibboleth.idp.attribute.filter.spring.matcher;
 
-import net.shibboleth.idp.attribute.filter.spring.MatcherParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-// TODO first port from v2
+// TODO TESTING
 /**
  * Base class for string matching functors.
  */
-public abstract class AbstractStringMatcherParser extends MatcherParser {
+public abstract class AbstractStringMatcherParser extends BaseAttributeValueMatcherParser {
 
     /** {@inheritDoc} */
-    protected void doParse(Element configElement, BeanDefinitionBuilder builder) {
-        super.doParse(configElement, builder);
+    protected void doNativeParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(element, builder);
 
-        builder.addPropertyValue("matchString", StringSupport.trimOrNull(configElement.getAttributeNS(null, "value")));
+        builder.addPropertyValue("matchString", StringSupport.trimOrNull(element.getAttributeNS(null, "value")));
 
         boolean ignoreCase = false;
-        if (configElement.hasAttributeNS(null, "ignoreCase")) {
-            ignoreCase =
-                    AttributeSupport.getAttributeValueAsBoolean(configElement.getAttributeNodeNS(null, "ignoreCase"));
+        if (element.hasAttributeNS(null, "ignoreCase")) {
+            ignoreCase = AttributeSupport.getAttributeValueAsBoolean(element.getAttributeNodeNS(null, "ignoreCase"));
         }
         builder.addPropertyValue("caseSensitive", !ignoreCase);
     }
