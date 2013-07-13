@@ -91,10 +91,6 @@ public class AttributeInMetadataPolicyRuleTest {
         Assert.assertFalse(matcher.getOnlyIfRequired());
     }
     
-    @Test(expectedExceptions = {AttributeFilterException.class}) public void matcher() throws AttributeFilterException {
-        new AttributeInMetadataPolicyRule().matches(null);
-    }
-
     @Test public void noRequested() throws AttributeFilterException, ComponentInitializationException {
 
         final Attribute attr =

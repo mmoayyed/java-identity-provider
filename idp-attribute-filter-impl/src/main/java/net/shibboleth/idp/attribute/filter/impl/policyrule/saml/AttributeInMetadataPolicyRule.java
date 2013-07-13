@@ -28,7 +28,6 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.RequestedAttribute;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
@@ -58,13 +57,8 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
     private String logPrefix;
 
     /** {@inheritDoc} */
-    public boolean matches(@Nonnull final AttributeFilterContext filterContext) throws AttributeFilterException {
-        throw new AttributeFilterException(getLogPrefix() + " is not supported in policy requirements");
-    }
-
-    /** {@inheritDoc} */
     @Nonnull public Set<AttributeValue> getMatchingValues(@Nonnull final Attribute attribute,
-            @Nonnull final AttributeFilterContext filterContext) throws AttributeFilterException {
+            @Nonnull final AttributeFilterContext filterContext) {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         final Multimap<String, RequestedAttribute> requestedAttributes = filterContext.getRequestedAttributes();

@@ -195,8 +195,7 @@ public class AbstractComposedMatcherTest {
             super(composedMatchers);
         }
 
-        public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
-                throws AttributeFilterException {
+        public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext) {
             return null;
         }
 
@@ -204,8 +203,7 @@ public class AbstractComposedMatcherTest {
     
     public static class TestMatcher extends CountingDestructableInitializableValidatableComponent implements  Matcher, DestructableComponent, InitializableComponent, ValidatableComponent {
 
-        public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
-                throws AttributeFilterException {
+        public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext) {
             return null;
         }
 
