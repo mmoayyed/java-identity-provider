@@ -27,9 +27,10 @@ import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filter.AttributeRule;
 import net.shibboleth.idp.attribute.filter.Matcher;
-import net.shibboleth.idp.attribute.filter.PolicyFromMatcher;
+import net.shibboleth.idp.attribute.filter.MatcherFromPolicy;
+import net.shibboleth.idp.attribute.filter.PolicyFromMatcherId;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
-import net.shibboleth.idp.attribute.filter.impl.matcher.attributevalue.AttributeValueStringMatcher;
+import net.shibboleth.idp.attribute.filter.impl.matcher.AttributeValueStringMatcher;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -47,7 +48,6 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
     private Matcher valueMatcher() {
         AttributeValueStringMatcher retVal = new AttributeValueStringMatcher();
 
-        retVal.setAttributeId("uid");
         retVal.setCaseSensitive(true);
         retVal.setMatchString("jsmith");
         retVal.setId("Test");
@@ -79,7 +79,12 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
         final AttributeRule attributeValueFilterPolicy = new AttributeRule();
         attributeValueFilterPolicy.setId("test");
         attributeValueFilterPolicy.setAttributeId("eduPersonAffiliation");
-        attributeValueFilterPolicy.setMatcher(valueMatcher());
+        final PolicyFromMatcherId pfm = new PolicyFromMatcherId(valueMatcher(), "uid");
+        pfm.setId("pfm");
+        final MatcherFromPolicy mfp = new MatcherFromPolicy(pfm);
+        mfp.setId("mfp");
+        
+        attributeValueFilterPolicy.setMatcher(mfp);
         attributeValueFilterPolicy.setIsDenyRule(false);
 
         final AttributeFilterPolicy policy =
@@ -133,7 +138,7 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
         attributeValueFilterPolicy.setMatcher(Matcher.MATCHES_ALL);
         attributeValueFilterPolicy.setIsDenyRule(false);
 
-        PolicyFromMatcher rule = new PolicyFromMatcher(valueMatcher());
+        PolicyFromMatcherId rule = new PolicyFromMatcherId(valueMatcher(), "uid");
         rule.setId("rule");
         final AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("targettedAtPermit", rule,  Collections.singleton(attributeValueFilterPolicy));

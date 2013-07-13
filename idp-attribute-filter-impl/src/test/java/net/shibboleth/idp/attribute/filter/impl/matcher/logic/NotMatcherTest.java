@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.filter.impl.matcher.logic;
 
-import static com.google.common.base.Predicates.alwaysTrue;
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Predicates.or;
 
@@ -48,14 +47,8 @@ public class NotMatcherTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testNullArguments() throws Exception {
-        try {
-            new MockValuePredicateMatcher(null);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-            // expected this
-        }
 
-        Matcher valuePredicate = new MockValuePredicateMatcher(alwaysTrue());
+        Matcher valuePredicate = Matcher.MATCHES_ALL;
         NotMatcher matcher = new NotMatcher(valuePredicate);
         matcher.setId("NullArgs");
         matcher.initialize();

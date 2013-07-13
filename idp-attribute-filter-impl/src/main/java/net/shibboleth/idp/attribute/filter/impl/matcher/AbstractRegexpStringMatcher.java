@@ -29,7 +29,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
  * General {@link net.shibboleth.idp.attribute.filter.Matcher} for regexp comparison of strings in Attribute
  * Filters.
  */
-public abstract class AbstractRegexpStringMatcher extends AbstractComparisonMatcher {
+public abstract class AbstractRegexpStringMatcher extends AbstractMatcher {
 
     /** Regular expression to match. */
     private Pattern regex;

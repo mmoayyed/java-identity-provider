@@ -22,7 +22,6 @@ import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractMatcherPolicyRuleTest;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
-import net.shibboleth.idp.attribute.filter.impl.matcher.MockValuePredicateMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
@@ -42,13 +41,6 @@ public class NotPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testNullArguments() throws Exception {
-        try {
-            new MockValuePredicateMatcher(null);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-            // expected this
-        }
-
         NotPolicyRule rule = new NotPolicyRule(PolicyRequirementRule.MATCHES_ALL);
         rule.setId("NullArgs");
         rule.initialize();

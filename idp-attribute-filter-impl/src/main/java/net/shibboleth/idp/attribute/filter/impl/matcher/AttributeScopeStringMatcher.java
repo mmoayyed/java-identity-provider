@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter.impl.matcher.attributevalue;
+package net.shibboleth.idp.attribute.filter.impl.matcher;
 
 import javax.annotation.Nullable;
 
@@ -26,13 +26,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Test that the scope in a {@link ScopedStringAttributeValue} is a regexp match to configured value.
- * <br/>If the value is not scoped return false.
+ * Test that the scope of a {@link ScopedStringAttributeValue} is a string match to the value configured. <br/>
+ * If the value is not scoped return false.
  */
-public class AttributeScopeRegexpMatcher extends AbstractAttributeTargetedRegexMatcher {
+public class AttributeScopeStringMatcher extends AbstractStringMatcher {
 
     /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(AttributeScopeRegexpMatcher.class);
+    private final Logger log = LoggerFactory.getLogger(AttributeScopeStringMatcher.class);
 
     /** {@inheritDoc} */
     public boolean compareAttributeValue(@Nullable final AttributeValue value) {
@@ -43,11 +43,11 @@ public class AttributeScopeRegexpMatcher extends AbstractAttributeTargetedRegexM
 
         if (value instanceof ScopedStringAttributeValue) {
             final ScopedStringAttributeValue scopedValue = (ScopedStringAttributeValue) value;
-            return super.regexpCompare(scopedValue.getScope());
+            return super.stringCompare(scopedValue.getScope());
 
         } else {
-            log.warn("{} Object supplied to ScopedRegexpAttributeValue comparison was of class "
-                    + "'{}', not ScopedAttributeValue, not matched", getLogPrefix(), value.getClass().getName());
+            log.warn("{} Object supplied to ScopedAttributeValue comparison"
+                    + " was of class '{}', not ScopedAttributeValue", getLogPrefix(), value.getClass().getName());
             return false;
         }
     }

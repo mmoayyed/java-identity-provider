@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter.impl.matcher.attributevalue;
+package net.shibboleth.idp.attribute.filter.impl.matcher;
 
 import javax.annotation.Nullable;
 
@@ -26,13 +26,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Test that an {@link AttributeValue} is a regexp match to the configured string. <br/>
+ * Test that an {@link AttributeValue} is a string match to the configured string.<br/>
  * If the value is not a {@link StringAttributeValue} string it is coerced into a string.
  */
-public class AttributeValueRegexpMatcher extends AbstractAttributeTargetedRegexMatcher {
+public class AttributeValueStringMatcher extends AbstractStringMatcher {
 
     /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(AttributeValueRegexpMatcher.class);
+    private final Logger log = LoggerFactory.getLogger(AttributeValueStringMatcher.class);
 
     /** {@inheritDoc} */
     public boolean compareAttributeValue(@Nullable final AttributeValue value) {
@@ -43,14 +43,14 @@ public class AttributeValueRegexpMatcher extends AbstractAttributeTargetedRegexM
 
         if (value instanceof StringAttributeValue) {
             final StringAttributeValue stringValue = (StringAttributeValue) value;
-            return super.regexpCompare(stringValue.getValue());
+            return super.stringCompare(stringValue.getValue());
 
         } else {
             final String valueAsString = ((AttributeValue) value).getValue().toString();
             log.warn("{} Object supplied to StringAttributeValue comparison"
                     + " was of class {}, not StringAttributeValue, comparing with {}", new Object[] {
                     getLogPrefix(), value.getClass().getName(), valueAsString,});
-            return super.regexpCompare(valueAsString);
+            return super.stringCompare(valueAsString);
         } 
     }
 

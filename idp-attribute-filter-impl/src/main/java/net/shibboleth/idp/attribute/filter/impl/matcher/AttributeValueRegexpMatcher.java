@@ -15,41 +15,43 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter.impl.matcher.attributevalue;
+package net.shibboleth.idp.attribute.filter.impl.matcher;
 
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.AttributeValue;
-import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Test that the scope of a {@link ScopedStringAttributeValue} is a string match to the value configured. <br/>
- * If the value is not scoped return false.
+ * Test that an {@link AttributeValue} is a regexp match to the configured string. <br/>
+ * If the value is not a {@link StringAttributeValue} string it is coerced into a string.
  */
-public class AttributeScopeStringMatcher extends AbstractAttributeTargetedStringMatcher {
+public class AttributeValueRegexpMatcher extends AbstractRegexpStringMatcher {
 
     /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(AttributeScopeStringMatcher.class);
+    private final Logger log = LoggerFactory.getLogger(AttributeValueRegexpMatcher.class);
 
     /** {@inheritDoc} */
     public boolean compareAttributeValue(@Nullable final AttributeValue value) {
-
+        
         if (null == value) {
             return false;
         }
 
-        if (value instanceof ScopedStringAttributeValue) {
-            final ScopedStringAttributeValue scopedValue = (ScopedStringAttributeValue) value;
-            return super.stringCompare(scopedValue.getScope());
+        if (value instanceof StringAttributeValue) {
+            final StringAttributeValue stringValue = (StringAttributeValue) value;
+            return super.regexpCompare(stringValue.getValue());
 
         } else {
-            log.warn("{} Object supplied to ScopedAttributeValue comparison"
-                    + " was of class '{}', not ScopedAttributeValue", getLogPrefix(), value.getClass().getName());
-            return false;
-        }
+            final String valueAsString = ((AttributeValue) value).getValue().toString();
+            log.warn("{} Object supplied to StringAttributeValue comparison"
+                    + " was of class {}, not StringAttributeValue, comparing with {}", new Object[] {
+                    getLogPrefix(), value.getClass().getName(), valueAsString,});
+            return super.regexpCompare(valueAsString);
+        } 
     }
 
 }

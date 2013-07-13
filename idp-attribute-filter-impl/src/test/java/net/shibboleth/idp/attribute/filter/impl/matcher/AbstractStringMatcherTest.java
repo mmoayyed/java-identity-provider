@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.impl.matcher;
 
+import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractStringMatcher;
 
 import org.testng.Assert;
@@ -28,7 +29,11 @@ import org.testng.annotations.Test;
 public class AbstractStringMatcherTest {
 
     @Test public void testSettersGetters() {
-        AbstractStringMatcher matcher = new AbstractStringMatcher(){};
+        AbstractStringMatcher matcher = new AbstractStringMatcher(){
+
+            protected boolean compareAttributeValue(AttributeValue value) {
+                return false;
+            }};
 
         Assert.assertNull(matcher.getMatchString());
         Assert.assertFalse(matcher.getCaseSensitive());
@@ -43,7 +48,11 @@ public class AbstractStringMatcherTest {
     }
 
     @Test public void testApply() {
-        AbstractStringMatcher matcher = new AbstractStringMatcher() {};
+        AbstractStringMatcher matcher = new AbstractStringMatcher() {
+
+            protected boolean compareAttributeValue(AttributeValue value) {
+                return false;
+            }};
         matcher.setCaseSensitive(true);
         matcher.setMatchString(DataSources.TEST_STRING);
 

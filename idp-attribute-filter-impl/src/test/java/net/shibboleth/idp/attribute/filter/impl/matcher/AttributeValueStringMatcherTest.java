@@ -15,10 +15,9 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter.impl.matcher.attributevalue;
+package net.shibboleth.idp.attribute.filter.impl.matcher;
 
-import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
-import net.shibboleth.idp.attribute.filter.impl.matcher.attributevalue.AttributeValueStringMatcher;
+import net.shibboleth.idp.attribute.filter.impl.matcher.AttributeValueStringMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
