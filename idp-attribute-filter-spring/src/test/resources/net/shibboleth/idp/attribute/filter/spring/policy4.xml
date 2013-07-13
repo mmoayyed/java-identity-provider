@@ -19,7 +19,7 @@
 	<afp:AttributeFilterPolicy id="InCommonRelease">
 		<afp:PolicyRequirementRule xsi:type="basic:ANY" id="pq"/>
 
-		<afp:AttributeRuleReference ref="wobble">wobble</afp:AttributeRuleReference>
+		<afp:AttributeRuleReference ref="wobble"/>
 
 	</afp:AttributeFilterPolicy>
 

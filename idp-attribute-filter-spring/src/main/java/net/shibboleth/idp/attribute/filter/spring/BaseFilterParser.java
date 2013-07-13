@@ -87,18 +87,9 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
      * @param element the element to look at.
      * @return the text.
      * 
-     * <br/>
-     *         TODO The V2 implementation used the text context but the schema suggest using the attribute "ref". This
-     *         does both (for now)
-     * 
-     * 
      */
     @Nullable protected String getReferenceText(Element element) {
         String reference = StringSupport.trimOrNull(element.getAttributeNS(null, "ref"));
-
-        if (null == reference) {
-            reference = StringSupport.trimOrNull(element.getTextContent());
-        }
 
         return reference;
     }
