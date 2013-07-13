@@ -18,9 +18,7 @@
 package net.shibboleth.idp.attribute.filter.impl.policyrule.saml;
 
 import junit.framework.Assert;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeRequesterNameIDFormatExactPolicyRule;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.annotations.Test;
@@ -39,7 +37,7 @@ public class AttributeRequesterNameIDFormatExactPolicyRuleTest extends BaseMetad
     }
 
     
-    @Test public void simple() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void simple() throws ComponentInitializationException {
         AttributeRequesterNameIDFormatExactPolicyRule matcher = getMatcher("https://example.org/foo");
         
         Assert.assertEquals(matcher.getNameIdFormat(), "https://example.org/foo");

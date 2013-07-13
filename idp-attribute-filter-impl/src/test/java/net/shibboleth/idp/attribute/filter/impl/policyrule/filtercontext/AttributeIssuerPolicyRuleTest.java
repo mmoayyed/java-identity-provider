@@ -17,10 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext;
 
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.AttributeIssuerPolicyRule;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 
@@ -45,7 +43,7 @@ public class AttributeIssuerPolicyRuleTest {
         return matcher;
     }
 
-    @Test public void testNull() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void testNull() throws ComponentInitializationException {
 
         try {
             new AttributeIssuerPolicyRule().matches(null);
@@ -56,16 +54,16 @@ public class AttributeIssuerPolicyRuleTest {
     }
 
     @Test public void testUnpopulated()
-            throws ComponentInitializationException, AttributeFilterException {
+            throws ComponentInitializationException {
         Assert.assertEquals(getMatcher().matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
     }
 
     @Test public void testNoIssuer()
-            throws ComponentInitializationException, AttributeFilterException {
+            throws ComponentInitializationException {
         Assert.assertEquals(getMatcher().matches(DataSources.populatedFilterContext(null, null, null)), Tristate.FAIL);
     }
 
-    @Test public void testCaseSensitive() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void testCaseSensitive() throws ComponentInitializationException {
 
         final AttributeIssuerPolicyRule matcher = getMatcher();
 
@@ -74,7 +72,7 @@ public class AttributeIssuerPolicyRuleTest {
         Assert.assertEquals(matcher.matches(DataSources.populatedFilterContext(null, "issuer", null)), Tristate.TRUE);
     }
 
-    @Test public void testCaseInsensitive() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void testCaseInsensitive() throws ComponentInitializationException {
 
         final AttributeIssuerPolicyRule matcher = getMatcher(false);
 

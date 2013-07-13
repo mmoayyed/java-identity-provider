@@ -162,10 +162,8 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
      * @param attribute attribute whose values will be filtered by this policy
      * @param filterContext current filter context
      * 
-     * @throws AttributeFilterException thrown if there is a problem applying this rule to the current filter context
      */
-    public void apply(@Nonnull final Attribute attribute, @Nonnull final AttributeFilterContext filterContext)
-            throws AttributeFilterException {
+    public void apply(@Nonnull final Attribute attribute, @Nonnull final AttributeFilterContext filterContext) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -182,7 +180,7 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
                 log.warn("Filter failed.  Not attributes released for attribute '{}'", getAttributeId());
             } else {
                 log.debug("Filter has permitted the release of {} values for attribute '{}'", matchingValues.size(),
-                          attribute.getId());
+                        attribute.getId());
                 filterContext.addPermittedAttributeValues(attribute.getId(), matchingValues);
             }
         } else {
@@ -191,7 +189,7 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
                 filterContext.addDeniedAttributeValues(attribute.getId(), attribute.getValues());
             } else {
                 log.debug("Filter has denied the release of {} values for attribute '{}'", matchingValues.size(),
-                          attribute.getId());
+                        attribute.getId());
                 filterContext.addDeniedAttributeValues(attribute.getId(), matchingValues);
             }
         }

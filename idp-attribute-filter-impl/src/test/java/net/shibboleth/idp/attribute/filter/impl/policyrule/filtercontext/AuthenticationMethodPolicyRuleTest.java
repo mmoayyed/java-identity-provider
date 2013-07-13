@@ -18,10 +18,8 @@
 package net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.AuthenticationMethodPolicyRule;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -65,7 +63,7 @@ public class AuthenticationMethodPolicyRuleTest {
         return matcher;
     }
 
-    @Test public void testNull() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void testNull() throws ComponentInitializationException {
 
         try {
             new AuthenticationMethodPolicyRule().matches(null);
@@ -76,16 +74,16 @@ public class AuthenticationMethodPolicyRuleTest {
     }
 
     @Test public void testUnpopulated()
-            throws ComponentInitializationException, AttributeFilterException {
+            throws ComponentInitializationException {
         Assert.assertEquals(getMatcher().matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
     }
 
     @Test public void testNoIssuer()
-            throws ComponentInitializationException, AttributeFilterException {
+            throws ComponentInitializationException {
         Assert.assertEquals(getMatcher().matches(filterContextWithAuthn(null)), Tristate.FAIL);
     }
 
-    @Test public void testCaseSensitive() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void testCaseSensitive() throws ComponentInitializationException {
 
         final AuthenticationMethodPolicyRule matcher = getMatcher();
 
@@ -94,7 +92,7 @@ public class AuthenticationMethodPolicyRuleTest {
         Assert.assertEquals(matcher.matches(filterContextWithAuthn(METHOD)), Tristate.TRUE);
     }
 
-    @Test public void testCaseInsensitive() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void testCaseInsensitive() throws ComponentInitializationException {
 
         final AuthenticationMethodPolicyRule matcher = getMatcher(false);
 

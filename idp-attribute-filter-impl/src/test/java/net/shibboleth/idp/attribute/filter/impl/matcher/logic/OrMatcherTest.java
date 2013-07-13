@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.AttributeValue;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractMatcherPolicyRuleTest;
 import net.shibboleth.idp.attribute.filter.impl.matcher.MockValuePredicateMatcher;
@@ -114,7 +113,7 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
         }
     }
 
-    @Test public void testRegressionGetValues() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void testRegressionGetValues() throws ComponentInitializationException {
         OrMatcher matcher =
                 new OrMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(Predicates.alwaysFalse()),
                         new MockValuePredicateMatcher(Predicates.alwaysFalse()), new MockValuePredicateMatcher(

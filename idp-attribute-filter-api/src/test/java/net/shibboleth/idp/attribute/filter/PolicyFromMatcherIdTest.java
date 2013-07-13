@@ -26,36 +26,35 @@ import org.testng.annotations.Test;
  * test for {@link PolicyFromMatcherId}.
  */
 public class PolicyFromMatcherIdTest extends BaseBridgingClassTester {
-    
 
-    @Test public void all() throws AttributeFilterException {
+    @Test public void all() {
         PolicyFromMatcherId rule = new PolicyFromMatcherId(Matcher.MATCHES_ALL, NAME1);
-        
+
         AttributeFilterContext context = setUpCtx();
-        
-        Assert.assertTrue(rule.matches(context)==Tristate.TRUE);
+
+        Assert.assertTrue(rule.matches(context) == Tristate.TRUE);
         Assert.assertEquals(rule.getAttributeId(), NAME1);
-    
+
         rule = new PolicyFromMatcherId(Matcher.MATCHES_ALL, "fred");
-        
-        Assert.assertTrue(rule.matches(setUpCtx())==Tristate.FALSE);
-}
-    
-    @Test public void none() throws AttributeFilterException {
-        PolicyRequirementRule rule = new PolicyFromMatcherId(Matcher.MATCHES_NONE, NAME1);
-        
-        AttributeFilterContext context = setUpCtx();
-        
-        Assert.assertTrue(rule.matches(context)==Tristate.FALSE);
-        Assert.assertTrue(new PolicyFromMatcherId(Matcher.MATCHES_NONE, "fred").matches(setUpCtx())==Tristate.FALSE);
+
+        Assert.assertTrue(rule.matches(setUpCtx()) == Tristate.FALSE);
     }
 
-    @Test public void fails() throws AttributeFilterException {
-        PolicyRequirementRule rule = new PolicyFromMatcherId(Matcher.MATCHER_FAILS, NAME1);
-        
+    @Test public void none() {
+        PolicyRequirementRule rule = new PolicyFromMatcherId(Matcher.MATCHES_NONE, NAME1);
+
         AttributeFilterContext context = setUpCtx();
-        
-        Assert.assertTrue(rule.matches(context)==Tristate.FAIL);
-        Assert.assertTrue(new PolicyFromMatcherId(Matcher.MATCHER_FAILS, "fred").matches(context)==Tristate.FALSE);
+
+        Assert.assertTrue(rule.matches(context) == Tristate.FALSE);
+        Assert.assertTrue(new PolicyFromMatcherId(Matcher.MATCHES_NONE, "fred").matches(setUpCtx()) == Tristate.FALSE);
+    }
+
+    @Test public void fails() {
+        PolicyRequirementRule rule = new PolicyFromMatcherId(Matcher.MATCHER_FAILS, NAME1);
+
+        AttributeFilterContext context = setUpCtx();
+
+        Assert.assertTrue(rule.matches(context) == Tristate.FAIL);
+        Assert.assertTrue(new PolicyFromMatcherId(Matcher.MATCHER_FAILS, "fred").matches(context) == Tristate.FALSE);
     }
 }

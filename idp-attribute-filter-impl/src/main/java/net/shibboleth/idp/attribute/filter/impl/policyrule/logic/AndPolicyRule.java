@@ -25,7 +25,6 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -55,7 +54,7 @@ public class AndPolicyRule extends AbstractComposedPolicyRule {
     * A given rule is considered to have matched if, and only if, TRUE is returned by every composed
     * rule.
     * {@inheritDoc} */
-    public Tristate matches(@Nonnull AttributeFilterContext filterContext) throws AttributeFilterException {
+    public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 

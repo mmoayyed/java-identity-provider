@@ -28,7 +28,6 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
@@ -56,7 +55,7 @@ public class OrMatcher extends AbstractComposedMatcher {
 
     /** {@inheritDoc} */
     @Nullable @NonnullElements public Set<AttributeValue> getMatchingValues(Attribute attribute,
-            AttributeFilterContext filterContext) throws AttributeFilterException {
+            AttributeFilterContext filterContext) {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 

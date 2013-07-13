@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.AttributeValue;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractMatcherPolicyRuleTest;
 import net.shibboleth.idp.attribute.filter.impl.matcher.MockValuePredicateMatcher;
@@ -127,7 +126,7 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.initialize();
     }
 
-    @Test public void emptyResults() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void emptyResults() throws ComponentInitializationException {
         AndMatcher matcher =
                 new AndMatcher(Lists.<Matcher> newArrayList(
                         new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2))),

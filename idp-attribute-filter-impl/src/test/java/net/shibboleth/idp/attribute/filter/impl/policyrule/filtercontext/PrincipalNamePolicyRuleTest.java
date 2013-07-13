@@ -17,10 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext;
 
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.PrincipalNamePolicyRule;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 
@@ -41,7 +39,7 @@ public class PrincipalNamePolicyRuleTest {
         return matcher;
     }
     
-    @Test public void testNull() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void testNull() throws ComponentInitializationException {
 
         try {
             new PrincipalNamePolicyRule().matches(null);
@@ -51,17 +49,17 @@ public class PrincipalNamePolicyRuleTest {
         }       
     }
     
-    @Test public void testUnpopulated() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void testUnpopulated() throws ComponentInitializationException {
         final PrincipalNamePolicyRule matcher = getMatcher(true);
         Assert.assertEquals(matcher.matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
     }
 
-    @Test public void testNoPrincipal() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void testNoPrincipal() throws ComponentInitializationException {
         final PrincipalNamePolicyRule matcher = getMatcher(true);
         Assert.assertEquals(matcher.matches(DataSources.populatedFilterContext(null, null, null)), Tristate.FAIL);
     }
 
-    @Test public void testCaseSensitive() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void testCaseSensitive() throws ComponentInitializationException {
 
         PrincipalNamePolicyRule matcher = getMatcher(true);
         
@@ -71,7 +69,7 @@ public class PrincipalNamePolicyRuleTest {
     }
 
     
-    @Test public void testCaseInsensitive() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void testCaseInsensitive() throws ComponentInitializationException {
 
         PrincipalNamePolicyRule matcher = getMatcher(false);
         

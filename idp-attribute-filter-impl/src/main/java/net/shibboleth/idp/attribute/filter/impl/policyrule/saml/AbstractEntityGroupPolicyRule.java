@@ -21,7 +21,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.impl.policyrule.AbstractPolicyRule;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -74,7 +73,7 @@ public abstract class AbstractEntityGroupPolicyRule extends AbstractPolicyRule {
      * @return whether the entity is in the group
      *         {@inheritDoc}
      */
-    public Tristate matches(@Nonnull AttributeFilterContext input) throws AttributeFilterException {
+    public Tristate matches(@Nonnull AttributeFilterContext input) {
 
         Constraint.isNotNull(input, "Context must be supplied");
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);

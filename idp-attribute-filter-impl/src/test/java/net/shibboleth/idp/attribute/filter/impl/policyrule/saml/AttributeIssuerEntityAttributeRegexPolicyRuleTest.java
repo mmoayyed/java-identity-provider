@@ -20,9 +20,7 @@ package net.shibboleth.idp.attribute.filter.impl.policyrule.saml;
 import java.util.regex.Pattern;
 
 import junit.framework.Assert;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeIssuerEntityAttributeRegexPolicyRule;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.annotations.Test;
@@ -48,7 +46,7 @@ public class AttributeIssuerEntityAttributeRegexPolicyRuleTest  extends BaseMeta
         return matcher;
     }
     
-    @Test public void simple() throws AttributeFilterException, ComponentInitializationException {
+    @Test public void simple() throws ComponentInitializationException {
 
         AttributeIssuerEntityAttributeRegexPolicyRule matcher = getMatcher();
         Assert.assertEquals(matcher.matches(metadataContext(jiraEntity, idpEntity, "Principal")), Tristate.FALSE);

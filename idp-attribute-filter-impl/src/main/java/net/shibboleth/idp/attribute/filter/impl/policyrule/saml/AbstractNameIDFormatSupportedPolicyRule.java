@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.impl.policyrule.AbstractPolicyRule;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -74,7 +73,7 @@ public abstract class AbstractNameIDFormatSupportedPolicyRule extends AbstractPo
      * @return true if the entity supports the required NameID format, false otherwise
      *         {@inheritDoc}
      */
-    public Tristate matches(@Nonnull AttributeFilterContext filterContext) throws AttributeFilterException {
+    public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         final SSODescriptor role = getEntitySSODescriptor(filterContext);

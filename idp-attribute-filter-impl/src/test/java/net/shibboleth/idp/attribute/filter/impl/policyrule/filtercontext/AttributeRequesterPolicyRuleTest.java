@@ -17,11 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext;
 
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.AttributeIssuerPolicyRule;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.AttributeRequesterPolicyRule;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 
@@ -47,7 +44,7 @@ public class AttributeRequesterPolicyRuleTest {
         return getMatcher(true);
     }
 
-    @Test public void testNull() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void testNull() throws ComponentInitializationException {
 
         try {
             new AttributeRequesterPolicyRule().matches(null);
@@ -58,16 +55,16 @@ public class AttributeRequesterPolicyRuleTest {
     }
 
     @Test public void testUnpopulated()
-            throws ComponentInitializationException, AttributeFilterException {
+            throws ComponentInitializationException {
         Assert.assertEquals(getMatcher().matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
     }
 
     @Test public void testNoRequester()
-            throws ComponentInitializationException, AttributeFilterException {
+            throws ComponentInitializationException {
         Assert.assertEquals(getMatcher().matches(DataSources.populatedFilterContext(null, null, null)), Tristate.FAIL);
     }
 
-    @Test public void testCaseSensitive() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void testCaseSensitive() throws ComponentInitializationException {
 
         final AttributeRequesterPolicyRule matcher = getMatcher();
 
@@ -76,7 +73,7 @@ public class AttributeRequesterPolicyRuleTest {
         Assert.assertEquals(matcher.matches(DataSources.populatedFilterContext(null, null, "requester")), Tristate.TRUE);
     }
 
-    @Test public void testCaseInsensitive() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void testCaseInsensitive() throws ComponentInitializationException {
 
         final AttributeRequesterPolicyRule matcher = getMatcher(false);
 

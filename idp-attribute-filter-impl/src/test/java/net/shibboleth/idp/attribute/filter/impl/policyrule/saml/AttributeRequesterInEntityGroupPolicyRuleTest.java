@@ -18,9 +18,7 @@
 package net.shibboleth.idp.attribute.filter.impl.policyrule.saml;
 
 import junit.framework.Assert;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeRequesterInEntityGroupPolicyRule;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.annotations.Test;
@@ -39,7 +37,7 @@ public class AttributeRequesterInEntityGroupPolicyRuleTest extends BaseMetadataT
     }
 
     
-    @Test public void parent() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void parent() throws ComponentInitializationException {
         AttributeRequesterInEntityGroupPolicyRule matcher = getMatcher("http://shibboleth.net");
         
         Assert.assertEquals(matcher.matches(metadataContext(idpEntity, jiraEntity, "Principal")), Tristate.TRUE);
@@ -49,11 +47,11 @@ public class AttributeRequesterInEntityGroupPolicyRuleTest extends BaseMetadataT
         Assert.assertEquals(matcher.matches(metadataContext(idpEntity, jiraEntity, "Principal")), Tristate.FALSE);
     }
     
-    @Test public void getter() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void getter() throws ComponentInitializationException {
         Assert.assertEquals(getMatcher("http://shibboleth.net").getEntityGroup(), "http://shibboleth.net");
     }
 
-    @Test public void noGroup() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void noGroup() throws ComponentInitializationException {
         AttributeRequesterInEntityGroupPolicyRule matcher = new AttributeRequesterInEntityGroupPolicyRule();
         matcher.setId("matcher");
         matcher.initialize();

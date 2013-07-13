@@ -19,7 +19,6 @@ package net.shibboleth.idp.attribute.filter.impl.policyrule.logic;
 
 import java.util.Collections;
 
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractMatcherPolicyRuleTest;
@@ -61,7 +60,7 @@ public class AndPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         rule.initialize();
     }
 
-    @Test public void testMatches() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void testMatches() throws ComponentInitializationException {
         AndPolicyRule rule =
                 new AndPolicyRule(Lists.<PolicyRequirementRule> newArrayList(PolicyRequirementRule.MATCHES_NONE,
                         PolicyRequirementRule.MATCHES_NONE));

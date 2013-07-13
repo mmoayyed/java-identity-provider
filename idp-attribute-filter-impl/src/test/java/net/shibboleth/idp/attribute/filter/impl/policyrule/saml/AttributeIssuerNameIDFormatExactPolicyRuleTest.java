@@ -18,9 +18,7 @@
 package net.shibboleth.idp.attribute.filter.impl.policyrule.saml;
 
 import junit.framework.Assert;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeIssuerNameIDFormatExactPolicyRule;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.annotations.Test;
@@ -39,7 +37,7 @@ public class AttributeIssuerNameIDFormatExactPolicyRuleTest extends BaseMetadata
     }
 
     
-    @Test public void simple() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void simple() throws ComponentInitializationException {
         AttributeIssuerNameIDFormatExactPolicyRule matcher = getMatcher("urn:oasis:names:tc:SAML:2.0:nameid-format:transient");
         
         Assert.assertEquals(matcher.getNameIdFormat(), "urn:oasis:names:tc:SAML:2.0:nameid-format:transient");

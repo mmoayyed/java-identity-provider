@@ -17,10 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext;
 
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.AttributeIssuerRegexpPolicyRule;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 
@@ -40,7 +38,7 @@ public class AttributeIssuerRegexpPolicyRuleTest {
         return matcher;
     }
 
-    @Test public void testAll() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void testAll() throws ComponentInitializationException {
 
         try {
             new AttributeIssuerRegexpPolicyRule().matches(null);
@@ -56,12 +54,12 @@ public class AttributeIssuerRegexpPolicyRuleTest {
     }
 
     @Test public void testUnpopulated()
-            throws ComponentInitializationException, AttributeFilterException {
+            throws ComponentInitializationException {
         Assert.assertEquals(getMatcher().matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);;
     }
 
     @Test  public void testNoIssuer()
-            throws ComponentInitializationException, AttributeFilterException {
+            throws ComponentInitializationException{
         Assert.assertEquals(getMatcher().matches(DataSources.populatedFilterContext(null, null, null)), Tristate.FAIL);;
     }
 

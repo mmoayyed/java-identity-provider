@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
 public class MatcherFromPolicyTest extends BaseBridgingClassTester {
     
 
-    @Test public void all() throws AttributeFilterException {
+    @Test public void all() {
         Matcher matcher = new MatcherFromPolicy(PolicyRequirementRule.MATCHES_ALL);
         
         AttributeFilterContext context = setUpCtx();
@@ -42,7 +42,7 @@ public class MatcherFromPolicyTest extends BaseBridgingClassTester {
         Assert.assertTrue(values.contains(VALUE2));
     }
     
-    @Test public void none() throws AttributeFilterException {
+    @Test public void none() {
         Matcher matcher = new MatcherFromPolicy(PolicyRequirementRule.MATCHES_NONE);
         
         AttributeFilterContext context = setUpCtx();
@@ -52,7 +52,7 @@ public class MatcherFromPolicyTest extends BaseBridgingClassTester {
         Assert.assertTrue(values.isEmpty());
     }
 
-    @Test public void fails() throws AttributeFilterException {
+    @Test public void fails() {
         Matcher matcher = new MatcherFromPolicy(PolicyRequirementRule.REQUIREMENT_RULE_FAILS);
         
         AttributeFilterContext context = setUpCtx();

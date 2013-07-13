@@ -18,9 +18,7 @@
 package net.shibboleth.idp.attribute.filter.impl.policyrule.saml;
 
 import junit.framework.Assert;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeIssuerEntityAttributeExactPolicyRule;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.annotations.Test;
@@ -45,7 +43,7 @@ public class AttributeIssuerEntityAttributeExactPolicyRuleTest  extends BaseMeta
         return matcher;
     }
     
-    @Test public void simple() throws AttributeFilterException, ComponentInitializationException {
+    @Test public void simple() throws ComponentInitializationException {
 
         AttributeIssuerEntityAttributeExactPolicyRule matcher = getMatcher();
         Assert.assertEquals(matcher.matches(metadataContext(jiraEntity, idpEntity, "Principal")), Tristate.FALSE);

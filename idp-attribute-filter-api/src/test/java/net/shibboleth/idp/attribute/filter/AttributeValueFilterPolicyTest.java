@@ -23,10 +23,6 @@ import java.util.Collection;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
-import net.shibboleth.idp.attribute.filter.AttributeRule;
-import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
@@ -194,8 +190,7 @@ public class AttributeValueFilterPolicyTest {
 
     }
 
-    @Test public void testValidateApply() throws ComponentInitializationException, ComponentValidationException,
-            AttributeFilterException {
+    @Test public void testValidateApply() throws ComponentInitializationException, ComponentValidationException { 
         MockMatcher matcher = new MockMatcher();
 
         final StringAttributeValue aStringAttributeValue = new StringAttributeValue("a");

@@ -18,9 +18,7 @@
 package net.shibboleth.idp.attribute.filter.impl.policyrule.saml;
 
 import junit.framework.Assert;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeIssuerInEntityGroupPolicyRule;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
@@ -40,7 +38,7 @@ public class AttributeIssuerInEntityGroupPolicyRuleTest extends BaseMetadataTest
     }
 
     
-    @Test public void parent() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void parent() throws ComponentInitializationException {
         AttributeIssuerInEntityGroupPolicyRule matcher = getMatcher("http://shibboleth.net");
         
         Assert.assertEquals(matcher.matches(metadataContext(idpEntity, jiraEntity, "Principal")), Tristate.TRUE);
@@ -50,7 +48,7 @@ public class AttributeIssuerInEntityGroupPolicyRuleTest extends BaseMetadataTest
         Assert.assertEquals(matcher.matches(metadataContext(idpEntity, jiraEntity, "Principal")), Tristate.FALSE);
     }
     
-    @Test public void orphan() throws ComponentInitializationException, AttributeFilterException {
+    @Test public void orphan() throws ComponentInitializationException {
         
         EntityDescriptor orphan = (EntityDescriptor) unmarshallElement("/data/net/shibboleth/idp/filter/impl/saml/orphan.xml");
 

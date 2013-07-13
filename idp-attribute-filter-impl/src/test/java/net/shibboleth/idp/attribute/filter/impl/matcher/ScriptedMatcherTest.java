@@ -23,7 +23,6 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -162,7 +161,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         Assert.assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));
     }
 
-    @Test public void testInitTeardown() throws AttributeFilterException, ComponentInitializationException {
+    @Test public void testInitTeardown() throws ComponentInitializationException {
         ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
 
         boolean thrown = false;

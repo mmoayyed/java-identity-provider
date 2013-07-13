@@ -18,10 +18,8 @@
 package net.shibboleth.idp.attribute.filter.impl.policyrule.saml;
 
 import junit.framework.Assert;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeRequesterEntityAttributeExactPolicyRule;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.annotations.Test;
@@ -46,7 +44,7 @@ public class AttributeRequesterEntityAttributeExactPolicyRuleTest extends BaseMe
         return matcher;
     }
 
-    @Test public void testValue() throws AttributeFilterException, ComponentInitializationException {
+    @Test public void testValue() throws ComponentInitializationException {
 
         AttributeRequesterEntityAttributeExactPolicyRule matcher = getMatcher();
         Assert.assertEquals(matcher.matches(metadataContext(null, idpEntity, "Principal")), Tristate.TRUE);
@@ -55,7 +53,7 @@ public class AttributeRequesterEntityAttributeExactPolicyRuleTest extends BaseMe
 
     }
 
-    @Test public void testFormat() throws AttributeFilterException, ComponentInitializationException {
+    @Test public void testFormat() throws ComponentInitializationException {
 
         AttributeRequesterEntityAttributeExactPolicyRule matcher =
                 getMatcher("urn:example.org:entitlements", "urn:example.org:entitlements:1234", null);
@@ -77,7 +75,7 @@ public class AttributeRequesterEntityAttributeExactPolicyRuleTest extends BaseMe
         Assert.assertEquals(matcher.matches(metadataContext(null, jiraEntity, "Principal")), Tristate.FALSE);
     }
 
-    @Test public void testNoMatch() throws AttributeFilterException, ComponentInitializationException {
+    @Test public void testNoMatch() throws ComponentInitializationException {
 
         AttributeRequesterEntityAttributeExactPolicyRule matcher =
                 getMatcher("urn:example.org:policies", "urn:example.org:policy:1235", null);
@@ -90,12 +88,12 @@ public class AttributeRequesterEntityAttributeExactPolicyRuleTest extends BaseMe
     }
 
     @Test public void testUnpopulated()
-            throws ComponentInitializationException, AttributeFilterException {
+            throws ComponentInitializationException {
         Assert.assertEquals(getMatcher().matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
     }
 
     @Test public void testNoMetadata()
-            throws ComponentInitializationException, AttributeFilterException {
+            throws ComponentInitializationException {
         Assert.assertEquals(getMatcher().matches(metadataContext(null, null, "Principal")), Tristate.FAIL);
     }
 }

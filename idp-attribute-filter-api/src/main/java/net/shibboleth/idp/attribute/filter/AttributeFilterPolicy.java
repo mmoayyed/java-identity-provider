@@ -131,10 +131,8 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
      * 
      * @return true if this policy should be active for the given request, false otherwise
      * 
-     * @throws AttributeFilterException thrown if there is a problem evaluating this filter's requirement rule
      */
-    private boolean isApplicable(@Nonnull final AttributeFilterContext filterContext)
-            throws AttributeFilterException {
+    private boolean isApplicable(@Nonnull final AttributeFilterContext filterContext) {
 
         log.debug("{} Checking if attribute filter policy is active", getLogPrefix());
 

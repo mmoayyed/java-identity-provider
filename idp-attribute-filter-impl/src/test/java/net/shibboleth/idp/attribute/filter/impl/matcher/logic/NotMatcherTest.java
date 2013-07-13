@@ -23,7 +23,6 @@ import static com.google.common.base.Predicates.or;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.AttributeValue;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractMatcherPolicyRuleTest;
 import net.shibboleth.idp.attribute.filter.impl.matcher.MockValuePredicateMatcher;
@@ -82,7 +81,7 @@ public class NotMatcherTest extends AbstractMatcherPolicyRuleTest {
         }
     }
 
-    @Test public void testInitValidateDestroy() throws AttributeFilterException, ComponentInitializationException,
+    @Test public void testInitValidateDestroy() throws ComponentInitializationException,
             ComponentValidationException {
         AbstractComposedMatcherTest.TestMatcher inMatcher = new AbstractComposedMatcherTest.TestMatcher();
         NotMatcher matcher = new NotMatcher(inMatcher);

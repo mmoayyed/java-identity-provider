@@ -20,7 +20,6 @@ package net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.impl.policyrule.AbstractRegexpPolicyRule;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
@@ -45,7 +44,7 @@ public class AuthenticationMethodRegexpPolicyRule extends AbstractRegexpPolicyRu
      * 
      *         {@inheritDoc}
      */
-    public Tristate matches(@Nonnull AttributeFilterContext filterContext) throws AttributeFilterException {
+    public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         final AttributeResolutionContext resolver = NavigationHelper.locateResolverContext(filterContext);

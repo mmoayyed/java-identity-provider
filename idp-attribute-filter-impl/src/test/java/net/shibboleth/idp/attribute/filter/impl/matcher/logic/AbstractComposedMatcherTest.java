@@ -28,7 +28,6 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
@@ -45,7 +44,7 @@ import org.testng.annotations.Test;
 public class AbstractComposedMatcherTest {
 
     @Test
-    public void testInitDestroy() throws ComponentInitializationException, AttributeFilterException, ComponentValidationException {
+    public void testInitDestroy() throws ComponentInitializationException, ComponentValidationException {
         List<Matcher> firstList = new ArrayList<Matcher>(2);
         ComposedMatcher matcher = new ComposedMatcher(Collections.EMPTY_LIST);
         

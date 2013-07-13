@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.impl.policyrule.AbstractPolicyRule;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -107,7 +106,7 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
      * @return whether the entity has the configured attribute
      *         {@inheritDoc}
      */
-    public Tristate matches(@Nonnull AttributeFilterContext filterContext) throws AttributeFilterException {
+    public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
 
         Constraint.isNotNull(filterContext, "Context must be supplied");
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);

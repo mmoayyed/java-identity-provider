@@ -24,10 +24,8 @@ import java.util.Set;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.RequestedAttribute;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeInMetadataPolicyRule;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
@@ -91,7 +89,7 @@ public class AttributeInMetadataPolicyRuleTest {
         Assert.assertFalse(matcher.getOnlyIfRequired());
     }
     
-    @Test public void noRequested() throws AttributeFilterException, ComponentInitializationException {
+    @Test public void noRequested() throws ComponentInitializationException {
 
         final Attribute attr =
                 makeAttribute("attr", Lists.newArrayList((AttributeValue) DataSources.STRING_VALUE,
@@ -108,7 +106,7 @@ public class AttributeInMetadataPolicyRuleTest {
         Assert.assertTrue(result.isEmpty());
     }
     
-    @Test public void wrongRequested() throws AttributeFilterException, ComponentInitializationException {
+    @Test public void wrongRequested() throws ComponentInitializationException {
 
         final Attribute attr =
                 makeAttribute("attr", Lists.newArrayList((AttributeValue) DataSources.STRING_VALUE,
@@ -125,7 +123,7 @@ public class AttributeInMetadataPolicyRuleTest {
         Assert.assertTrue(result.isEmpty());
     }
     
-    @Test public void isRequiredOnly() throws AttributeFilterException, ComponentInitializationException {
+    @Test public void isRequiredOnly() throws ComponentInitializationException {
 
         final Attribute attr =
                 makeAttribute("attr", Lists.newArrayList((AttributeValue) DataSources.STRING_VALUE,
@@ -146,7 +144,7 @@ public class AttributeInMetadataPolicyRuleTest {
         Assert.assertTrue(result.isEmpty());
     }
     
-    @Test public void values() throws AttributeFilterException, ComponentInitializationException {
+    @Test public void values() throws ComponentInitializationException {
     
         final Attribute attr =
                 makeAttribute("attr", Lists.newArrayList((AttributeValue) DataSources.STRING_VALUE,
@@ -163,7 +161,7 @@ public class AttributeInMetadataPolicyRuleTest {
         Assert.assertTrue(result.contains(DataSources.STRING_VALUE));
     }
     
-    @Test public void valuesButNoConvert() throws AttributeFilterException, ComponentInitializationException {
+    @Test public void valuesButNoConvert() throws ComponentInitializationException {
         
         final Attribute attr =
                 makeAttribute("attr", Lists.newArrayList((AttributeValue) DataSources.STRING_VALUE,
@@ -175,7 +173,7 @@ public class AttributeInMetadataPolicyRuleTest {
         Assert.assertTrue(result.isEmpty());
     }
 
-    @Test public void multiValues() throws AttributeFilterException, ComponentInitializationException {
+    @Test public void multiValues() throws ComponentInitializationException {
         
         final Attribute attr =
                 makeAttribute("attr", Lists.newArrayList((AttributeValue) DataSources.STRING_VALUE,

@@ -24,7 +24,6 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
@@ -42,7 +41,7 @@ import org.testng.annotations.Test;
 public class AbstractComposedPolicyRuleTest {
 
     @Test
-    public void testInitDestroy() throws ComponentInitializationException, AttributeFilterException, ComponentValidationException {
+    public void testInitDestroy() throws ComponentInitializationException, ComponentValidationException {
         List<PolicyRequirementRule> firstList = new ArrayList<PolicyRequirementRule>(2);
         ComposedPolicyRule rule = new ComposedPolicyRule(Collections.EMPTY_LIST);
         
