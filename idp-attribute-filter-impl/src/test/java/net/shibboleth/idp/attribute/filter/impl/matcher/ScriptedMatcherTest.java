@@ -24,7 +24,6 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
-import net.shibboleth.idp.attribute.filter.impl.matcher.ScriptedMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -45,12 +44,6 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     /** A script that returns null. */
     private EvaluableScript nullReturnScript;
-
-    /** A script that returns Boolean.True. */
-    private EvaluableScript trueReturnScript;
-
-    /** A script that returns Boolean.false . */
-    private EvaluableScript falseReturnScript;
 
     /** A script that returns an object other than a set. */
     private EvaluableScript invalidReturnObjectScript;
@@ -79,9 +72,6 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
                         .append("x.add(new net.shibboleth.idp.attribute.StringAttributeValue(\"a\"));").append("x;")
                         .toString());
 
-        trueReturnScript = new EvaluableScript("JavaScript", "new java.lang.Boolean(true);");
-
-        falseReturnScript = new EvaluableScript("JavaScript", "new java.lang.Boolean(false);");
     }
 
     @Test public void testGetMatcher() throws Exception {
@@ -145,31 +135,20 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         Assert.assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));
     }
 
-    @Test(expectedExceptions={AttributeFilterException.class})
-    public void testNullReturnScript() throws Exception {
+    @Test public void testNullReturnScript() throws Exception {
         ScriptedMatcher matcher = new ScriptedMatcher(nullReturnScript);
         matcher.setId("Test");
         matcher.initialize();
 
-        matcher.getMatchingValues(attribute, filterContext);
+        Assert.assertNull(matcher.getMatchingValues(attribute, filterContext));
     }
 
-    @Test(expectedExceptions={AttributeFilterException.class}) 
-    public void testInvalidReturnObjectValue() throws Exception {
+    @Test public void testInvalidReturnObjectValue() throws Exception {
         ScriptedMatcher matcher = new ScriptedMatcher(invalidReturnObjectScript);
         matcher.setId("Test");
         matcher.initialize();
 
-        matcher.getMatchingValues(attribute, filterContext);
-    }
-
-    @Test(expectedExceptions={AttributeFilterException.class}) 
-    public void testInvalidReturnObjectRule() throws Exception {
-        ScriptedMatcher matcher = new ScriptedMatcher(invalidReturnObjectScript);
-        matcher.setId("Test");
-        matcher.initialize();
-
-        matcher.matches(filterContext);
+        Assert.assertNull(matcher.getMatchingValues(attribute, filterContext));
     }
 
     @Test public void testAddedValuesScript() throws Exception {
@@ -222,13 +201,6 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
             thrown = true;
         }
         Assert.assertTrue(thrown, "getMatchingValues after destroy");
-
-        try {
-            matcher.matches(filterContext);
-        } catch (DestroyedComponentException e) {
-            thrown = true;
-        }
-        Assert.assertTrue(thrown, "apply after destroy");
     }
 
     @Test public void testEqualsHashToString() {
@@ -252,28 +224,4 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     }
     
-    @Test public void testPredicate() throws ComponentInitializationException, AttributeFilterException {
-        ScriptedMatcher matcher = new ScriptedMatcher(nullReturnScript);
-        matcher.setId("test");
-        matcher.initialize();
-
-        try {
-            matcher.matches(filterContext);
-            Assert.fail();
-        } catch (IllegalArgumentException e) {
-            // expected this
-        }
-        
-        matcher = new ScriptedMatcher(trueReturnScript);
-        matcher.setId("test");
-        matcher.initialize();
-        Assert.assertTrue(matcher.matches(filterContext));
-        
-        matcher = new ScriptedMatcher(falseReturnScript);
-        matcher.setId("test");
-        matcher.initialize();
-        Assert.assertFalse(matcher.matches(filterContext));
-
-    }
-
 }

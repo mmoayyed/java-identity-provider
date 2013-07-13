@@ -31,7 +31,6 @@ import javax.script.SimpleScriptContext;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
@@ -42,6 +41,9 @@ import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Objects;
 
 /**
@@ -51,6 +53,9 @@ import com.google.common.base.Objects;
 @ThreadSafe
 public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializableComponent implements Matcher,
         UnmodifiableComponent {
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(ScriptedMatcher.class);
 
     /** Script to be evaluated. */
     private EvaluableScript script;
@@ -95,43 +100,6 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
     }
 
     /**
-     * Calculate the PolicyRule.
-     * <p>
-     * When the script is evaluated, the following property will be available via the {@link ScriptContext}:
-     * <ul>
-     * <li><code>filterContext</code> - the current instance of {@link AttributeFilterContext}</li>
-     * </ul>
-     * The script <strong>MUST</strong> return a {@link java.lang.Boolean}
-     * </p>
-     * {@inheritDoc}
-     */
-    public boolean matches(@Nonnull final AttributeFilterContext filterContext) throws AttributeFilterException {
-        Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
-
-        final EvaluableScript currentScript = script;
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-
-        final SimpleScriptContext scriptContext = new SimpleScriptContext();
-        scriptContext.setAttribute("filterContext", filterContext, ScriptContext.ENGINE_SCOPE);
-
-        try {
-            final Object result = currentScript.eval(scriptContext);
-            if (null == result) {
-                throw new IllegalArgumentException(getLogPrefix() + " Matcher script did not return a result");
-            }
-
-            if (result instanceof Boolean) {
-                return ((Boolean) result).booleanValue();
-            } else {
-                throw new AttributeFilterException(getLogPrefix() + " Matcher script did not return a Boolean");
-            }
-        } catch (ScriptException e) {
-            throw new AttributeFilterException(getLogPrefix() + "Error while executing value matching script", e);
-        }
-    }
-
-    /**
      * Perform the AttributeValueMatching.
      * <p>
      * When the script is evaluated, the following properties will be available via the {@link ScriptContext}:
@@ -144,9 +112,8 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
      * </p>
      * {@inheritDoc}
      */
-    @Nonnull @NonnullElements @Unmodifiable public Set<AttributeValue> getMatchingValues(
-            @Nonnull final Attribute attribute, @Nonnull final AttributeFilterContext filterContext)
-            throws AttributeFilterException {
+    @Nullable @NonnullElements @Unmodifiable public Set<AttributeValue> getMatchingValues(
+            @Nonnull final Attribute attribute, @Nonnull final AttributeFilterContext filterContext) {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 
@@ -161,7 +128,8 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
         try {
             final Object result = currentScript.eval(scriptContext);
             if (null == result) {
-                throw new AttributeFilterException(getLogPrefix() + "Matcher script did not return a result");
+                log.error("{} Matcher script did not return a result", getLogPrefix());
+                return null;
             }
 
             if (result instanceof Set) {
@@ -169,10 +137,12 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
                 returnValues.retainAll((Set) result);
                 return Collections.unmodifiableSet(returnValues);
             } else {
-                throw new AttributeFilterException("Matcher script did not return a Set");
+                log.error("{} Matcher script did not return a Set", getLogPrefix());
+                return null;
             }
         } catch (ScriptException e) {
-            throw new AttributeFilterException("Error while executing value matching script", e);
+            log.error("{} Error while executing value matching script: {}", getLogPrefix(), e);
+            return null;
         }
     }
 
