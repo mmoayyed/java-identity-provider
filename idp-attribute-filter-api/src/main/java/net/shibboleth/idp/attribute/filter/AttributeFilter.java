@@ -19,7 +19,6 @@ package net.shibboleth.idp.attribute.filter;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -134,28 +133,23 @@ public class AttributeFilter extends AbstractDestructableIdentifiableInitializab
         log.debug("{} beginning process of filtering the following {} attributes: {}", new Object[] {getLogPrefix(),
                 prefilteredAttributes.size(), prefilteredAttributes.keySet(),});
 
-        try {
-            final List<AttributeFilterPolicy> policies = getFilterPolicies();
-            for (AttributeFilterPolicy policy : policies) {
-                policy.apply(filterContext);
-            }
+        final List<AttributeFilterPolicy> policies = getFilterPolicies();
+        for (AttributeFilterPolicy policy : policies) {
+            policy.apply(filterContext);
+        }
 
-            Attribute filteredAttribute;
-            for (String attributeId : filterContext.getPrefilteredAttributes().keySet()) {
-                final Collection filteredAttributeValues = getFilteredValues(attributeId, filterContext);
-                if (null != filteredAttributeValues && !filteredAttributeValues.isEmpty()) {
-                    try {
-                        filteredAttribute = prefilteredAttributes.get(attributeId).clone();
-                    } catch (CloneNotSupportedException e) {
-                        throw new AttributeFilterException(e);
-                    }
-                    filteredAttribute.setValues(filteredAttributeValues);
-                    filterContext.getFilteredAttributes().put(filteredAttribute.getId(), filteredAttribute);
+        Attribute filteredAttribute;
+        for (String attributeId : filterContext.getPrefilteredAttributes().keySet()) {
+            final Collection filteredAttributeValues = getFilteredValues(attributeId, filterContext);
+            if (null != filteredAttributeValues && !filteredAttributeValues.isEmpty()) {
+                try {
+                    filteredAttribute = prefilteredAttributes.get(attributeId).clone();
+                } catch (CloneNotSupportedException e) {
+                    throw new AttributeFilterException(e);
                 }
+                filteredAttribute.setValues(filteredAttributeValues);
+                filterContext.getFilteredAttributes().put(filteredAttribute.getId(), filteredAttribute);
             }
-        } catch (MatcherException e) {
-            log.error("{} filtering failed {}", getLogPrefix(), e);
-            filterContext.setFilteredAttributes(Collections.EMPTY_SET);
         }
     }
 
