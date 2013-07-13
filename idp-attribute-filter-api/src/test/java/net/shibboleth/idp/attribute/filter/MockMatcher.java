@@ -85,8 +85,7 @@ public class MockMatcher extends AbstractIdentifiableInitializableComponent impl
     }
 
     /** {@inheritDoc} */
-    public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
-            throws AttributeFilterException {
+    public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext) {
         if (fails) {
             return null;
         }

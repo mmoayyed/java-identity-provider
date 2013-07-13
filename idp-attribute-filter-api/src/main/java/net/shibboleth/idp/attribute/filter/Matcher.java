@@ -47,8 +47,7 @@ public interface Matcher extends IdentifiableComponent {
     public static final Matcher MATCHES_ALL = new Matcher() {
 
         /** {@inheritDoc} */
-        public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
-                throws AttributeFilterException {
+        public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext) {
             return Collections.unmodifiableSet(attribute.getValues());
         }
 
@@ -62,8 +61,7 @@ public interface Matcher extends IdentifiableComponent {
     public static final Matcher MATCHES_NONE = new Matcher() {
 
         /** {@inheritDoc} */
-        public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
-                throws AttributeFilterException {
+        public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext) {
             return Collections.emptySet();
         }
 
@@ -77,8 +75,7 @@ public interface Matcher extends IdentifiableComponent {
     public static final Matcher MATCHER_FAILS = new Matcher() {
 
         /** {@inheritDoc} */
-        public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
-                throws AttributeFilterException {
+        public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext) {
             return null;
         }
 
@@ -93,10 +90,8 @@ public interface Matcher extends IdentifiableComponent {
      * @param attribute the attribute under question.
      * @param filterContext the filter context
      * @return The result of this rule. Null if we failed.
-     * @throws AttributeFilterException never. TODO remove this
      */
     @Nullable @NonnullElements @Unmodifiable public Set<AttributeValue> getMatchingValues(
-            @Nonnull final Attribute attribute, @Nonnull final AttributeFilterContext filterContext)
-            throws AttributeFilterException;
+            @Nonnull final Attribute attribute, @Nonnull final AttributeFilterContext filterContext);
 
 }

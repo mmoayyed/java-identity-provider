@@ -39,8 +39,8 @@ import net.shibboleth.utilities.java.support.component.ValidatableComponent;
  * 
  * If the rule is true then we return all values, else we return none. If the rule fails we return null.
  */
-public class MatcherFromPolicy extends BaseBridgingClass implements Matcher,
-        IdentifiableComponent, ValidatableComponent, DestructableComponent {
+public class MatcherFromPolicy extends BaseBridgingClass implements Matcher, IdentifiableComponent,
+        ValidatableComponent, DestructableComponent {
 
     /** The rule we are shadowing. */
     private final PolicyRequirementRule rule;
@@ -50,6 +50,7 @@ public class MatcherFromPolicy extends BaseBridgingClass implements Matcher,
 
     /**
      * Constructor.
+     * 
      * @param theRule the class we are bridging to
      */
     public MatcherFromPolicy(@Nonnull PolicyRequirementRule theRule) {
@@ -59,10 +60,17 @@ public class MatcherFromPolicy extends BaseBridgingClass implements Matcher,
 
     /** {@inheritDoc} */
     @Nullable public Set<AttributeValue> getMatchingValues(@Nonnull Attribute attribute,
-            @Nonnull AttributeFilterContext filterContext) throws AttributeFilterException {
+            @Nonnull AttributeFilterContext filterContext) {
+
+        final Tristate result;
         
-        final Tristate result = rule.matches(filterContext);
-        
+        try {
+            result = rule.matches(filterContext);
+        } catch (AttributeFilterException e) {
+           // TODO
+            return null;
+        }
+
         if (Tristate.FAIL == result) {
             log.warn("{} The rule returned FAIL, returning null", getLogPrefix());
             return null;
