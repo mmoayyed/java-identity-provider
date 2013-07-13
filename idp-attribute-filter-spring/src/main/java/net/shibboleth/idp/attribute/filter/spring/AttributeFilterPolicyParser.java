@@ -69,7 +69,7 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
     protected Class getBeanClass(Element arg0) {
         return AttributeFilterPolicy.class;
     }
-
+    
     /** {@inheritDoc} */
     protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
