@@ -53,12 +53,12 @@ public class PolicyFromMatcherId extends BaseBridgingClass implements PolicyRequ
     
     /**
      * Constructor.
-     * @param matchers the class we are bridging to
+     * @param matcher the class we are bridging to
      * @param attribute the Id of the attribute in question.
      */
-    public PolicyFromMatcherId(@Nonnull Matcher matchers, @Nonnull @NotEmpty String attribute) {
-        super(matchers);
-        theMatcher = matchers;
+    public PolicyFromMatcherId(@Nonnull Matcher matcher, @Nonnull @NotEmpty String attribute) {
+        super(matcher);
+        theMatcher = matcher;
         attributeId = Constraint.isNotNull(StringSupport.trimOrNull(attribute), "attribute must not be null");
     }
     
