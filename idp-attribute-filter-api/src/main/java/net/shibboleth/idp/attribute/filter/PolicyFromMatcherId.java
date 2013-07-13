@@ -70,7 +70,7 @@ public class PolicyFromMatcherId extends BaseBridgingClass implements PolicyRequ
     }
 
     /** {@inheritDoc} */
-    @Nonnull public Tristate matches(@Nonnull AttributeFilterContext context) throws AttributeFilterException {
+    @Nonnull public Tristate matches(@Nonnull AttributeFilterContext context) {
         
         log.info("{} Applying matcher supplied as policy to all values of attribute {}", getLogPrefix(), attributeId);
 

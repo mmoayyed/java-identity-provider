@@ -50,7 +50,7 @@ public interface PolicyRequirementRule extends IdentifiableComponent {
     /** A {@link PolicyRequirementRule} that returns true matched. */
     public static final PolicyRequirementRule MATCHES_ALL = new PolicyRequirementRule() {
 
-        public Tristate matches(@Nonnull AttributeFilterContext filterContext) throws AttributeFilterException {
+        public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
             return Tristate.TRUE;
         }
 
@@ -62,7 +62,7 @@ public interface PolicyRequirementRule extends IdentifiableComponent {
     /** A {@link PolicyRequirementRule} that returns false as matched. */
     public static final PolicyRequirementRule MATCHES_NONE = new PolicyRequirementRule() {
 
-        public Tristate matches(@Nonnull AttributeFilterContext filterContext) throws AttributeFilterException {
+        public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
             return Tristate.FALSE;
         }
 
@@ -74,7 +74,7 @@ public interface PolicyRequirementRule extends IdentifiableComponent {
     /** A {@link PolicyRequirementRule} that returns failed. */
     public static final PolicyRequirementRule REQUIREMENT_RULE_FAILS = new PolicyRequirementRule() {
 
-        public Tristate matches(@Nonnull AttributeFilterContext filterContext) throws AttributeFilterException {
+        public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
             return Tristate.FAIL;
         }
 
@@ -88,8 +88,7 @@ public interface PolicyRequirementRule extends IdentifiableComponent {
      * 
      * @param filterContext the context.
      * @return whether the rule holds
-     * @throws AttributeFilterException when badness occurrs.
      */
-    Tristate matches(@Nonnull final AttributeFilterContext filterContext) throws AttributeFilterException;
+    Tristate matches(@Nonnull final AttributeFilterContext filterContext) ;
 
 }

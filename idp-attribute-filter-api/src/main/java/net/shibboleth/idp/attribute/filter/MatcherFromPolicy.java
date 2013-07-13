@@ -62,14 +62,7 @@ public class MatcherFromPolicy extends BaseBridgingClass implements Matcher, Ide
     @Nullable public Set<AttributeValue> getMatchingValues(@Nonnull Attribute attribute,
             @Nonnull AttributeFilterContext filterContext) {
 
-        final Tristate result;
-        
-        try {
-            result = rule.matches(filterContext);
-        } catch (AttributeFilterException e) {
-           // TODO
-            return null;
-        }
+        final Tristate result= rule.matches(filterContext);
 
         if (Tristate.FAIL == result) {
             log.warn("{} The rule returned FAIL, returning null", getLogPrefix());

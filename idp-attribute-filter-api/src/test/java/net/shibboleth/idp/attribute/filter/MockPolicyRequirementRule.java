@@ -98,7 +98,7 @@ public class MockPolicyRequirementRule extends AbstractIdentifiableInitializable
     }
 
     /** {@inheritDoc} */
-    public Tristate matches(@Nonnull AttributeFilterContext filterContext) throws AttributeFilterException {
+    public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
         if (fails) {
             return Tristate.FAIL;
         }
