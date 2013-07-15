@@ -1,0 +1,115 @@
+/*
+ * Licensed to the University Corporation for Advanced Internet Development, 
+ * Inc. (UCAID) under one or more contributor license agreements.  See the 
+ * NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The UCAID licenses this file to You under the Apache 
+ * License, Version 2.0 (the "License"); you may not use this file except in 
+ * compliance with the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package net.shibboleth.idp.attribute.filter.spring;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Nullable;
+
+import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
+import net.shibboleth.idp.attribute.filter.AttributeRule;
+import net.shibboleth.idp.attribute.filter.Matcher;
+import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
+import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.impl.dc.SAMLAttributeDataConnector;
+import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+
+import org.opensaml.core.xml.XMLObjectBaseTestCase;
+import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
+import org.springframework.context.support.GenericApplicationContext;
+import org.testng.Assert;
+
+import com.google.common.base.Function;
+
+/**
+ *
+ */
+public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
+
+    private static final String ATTRIBUTE_PATH = "/net/shibboleth/idp/attribute/filter/attribute/";
+    private static final String MATCHER_PATH = "/net/shibboleth/idp/attribute/filter/matcher/";
+    private static final String POLICY_RULE_PATH = "/net/shibboleth/idp/attribute/filter/policyrule/";
+
+    
+    /**
+     * Helper function to return attributes pulled from a file (on the classpath). The file is expected to contain a
+     * single <mdattr:EntityAttributes/> statement.
+     * 
+     * @param xmlFileName the file within the test directory.
+     * @return the att
+     * @throws ComponentInitializationException
+     * @throws ResolutionException
+     */
+    protected Map<String, Attribute> getAttributes(String xmlFileName) throws ComponentInitializationException,
+            ResolutionException {
+        
+        final EntityAttributes obj = (EntityAttributes) unmarshallElement(ATTRIBUTE_PATH + xmlFileName);
+
+        SAMLAttributeDataConnector connector = new SAMLAttributeDataConnector();
+        connector.setId(xmlFileName);
+        connector.setAttributesStrategy(new Function<AttributeResolutionContext, 
+                List<org.opensaml.saml.saml2.core.Attribute>>() {
+                    @Nullable public List<org.opensaml.saml.saml2.core.Attribute> apply(
+                            @Nullable AttributeResolutionContext input) {
+                        return (List) obj.getAttributes();
+                    }
+                });
+
+        connector.initialize();
+
+        return connector.doResolve(null);
+    }
+
+    protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context) {
+
+        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+                new SchemaTypeAwareXMLBeanDefinitionReader(context);
+
+        beanDefinitionReader.loadBeanDefinitions(fileName);
+
+        Collection<Type> beans = context.getBeansOfType(claz).values();
+        Assert.assertEquals(beans.size(), 1);
+
+        return (Type) beans.iterator().next();
+    }
+
+    protected PolicyRequirementRule getPolicyRule(String fileName) {
+
+        GenericApplicationContext context = new GenericApplicationContext();
+        context.setDisplayName("ApplicationContext: Policy Rule");
+
+        final AttributeFilterPolicy policy = getBean(POLICY_RULE_PATH + fileName, AttributeFilterPolicy.class, context);
+        return policy.getPolicyRequirementRule();
+    }
+
+    protected Matcher getMatcher(String fileName) {
+
+        GenericApplicationContext context = new GenericApplicationContext();
+        context.setDisplayName("ApplicationContext: Matcher");
+
+        final AttributeRule rule = getBean(MATCHER_PATH + fileName, AttributeRule.class, context);
+        return rule.getMatcher();
+
+    }
+
+}
