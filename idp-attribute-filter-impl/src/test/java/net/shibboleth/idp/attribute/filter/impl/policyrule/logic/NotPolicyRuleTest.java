@@ -44,7 +44,7 @@ public class NotPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         rule.setId("NullArgs");
         rule.initialize();
         
-        Assert.assertEquals(rule.getNegatedMatcher(), PolicyRequirementRule.MATCHES_ALL);
+        Assert.assertEquals(rule.getNegatedRule(), PolicyRequirementRule.MATCHES_ALL);
         LoggerFactory.getLogger(AbstractComposedPolicyRuleTest.class).debug(rule.toString());
 
         try {

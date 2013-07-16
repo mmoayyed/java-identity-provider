@@ -56,7 +56,7 @@ public final class NotPolicyRule extends AbstractDestructableIdentifiableInitial
      * 
      * @return matcher that is being negated
      */
-    @Nonnull public PolicyRequirementRule getNegatedMatcher() {
+    @Nonnull public PolicyRequirementRule getNegatedRule() {
         return negatedRule;
     }
 
