@@ -150,10 +150,10 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
 
         Element elem = element;
         do {
-            if (ElementSupport.isElementNamed(element, AttributeFilterPolicyParser.POLICY_REQUIREMENT_RULE)) {
+            if (ElementSupport.isElementNamed(elem, AttributeFilterPolicyParser.POLICY_REQUIREMENT_RULE)) {
                 return true;
-            } else if (ElementSupport.isElementNamed(element, AttributeRuleParser.DENY_VALUE_RULE) ||
-                       ElementSupport.isElementNamed(element, AttributeRuleParser.PERMIT_VALUE_RULE)) {
+            } else if (ElementSupport.isElementNamed(elem, AttributeRuleParser.DENY_VALUE_RULE) ||
+                       ElementSupport.isElementNamed(elem, AttributeRuleParser.PERMIT_VALUE_RULE)) {
                 return false;
             }
             elem = ElementSupport.getElementAncestor(elem);

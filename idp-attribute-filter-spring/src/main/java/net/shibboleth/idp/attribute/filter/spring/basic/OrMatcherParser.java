@@ -33,7 +33,7 @@ import org.w3c.dom.Element;
 
 // TODO testing
 /**
- * Bean definition parser for {@link OrMatcher} objects.
+ * Bean definition parser for {@link OrMatcher} or {@link OrPolicyRule} objects.
  */
 public class OrMatcherParser extends BaseFilterParser {
   

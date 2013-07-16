@@ -32,15 +32,22 @@ public class AttributeFilterBasicNamespaceHandler extends BaseSpringNamespaceHan
 
         registerBeanDefinitionParser(AnyParser.SCHEMA_TYPE, new AnyParser());
 
+        // LOGIC
+
+        registerBeanDefinitionParser(AndMatcherParser.SCHEMA_TYPE, new AndMatcherParser());
+
         registerBeanDefinitionParser(OrMatcherParser.SCHEMA_TYPE, new OrMatcherParser());
-        
+
+        registerBeanDefinitionParser(NotMatcherParser.SCHEMA_TYPE, new NotMatcherParser());
+
+        // Attribute
+
         registerBeanDefinitionParser(AttributeValueStringMatcherParser.SCHEMA_TYPE,
                 new AttributeValueStringMatcherParser());
 
+        // Policy
+
         /**
-         * registerBeanDefinitionParser(AndMatchFunctorBeanDefinitionParser.SCHEMA_TYPE, new
-         * AndMatchFunctorBeanDefinitionParser());
-         * 
          * registerBeanDefinitionParser(AnyMatchFunctorBeanDefinitionParser.SCHEMA_TYPE, new
          * AnyMatchFunctorBeanDefinitionParser());
          * 
@@ -73,9 +80,6 @@ public class AttributeFilterBasicNamespaceHandler extends BaseSpringNamespaceHan
          * 
          * registerBeanDefinitionParser(AuthenticationMethodStringMatchFunctionBeanDefinitionParser.SCHEMA_TYPE, new
          * AuthenticationMethodStringMatchFunctionBeanDefinitionParser());
-         * 
-         * registerBeanDefinitionParser(NotMatchFunctorBeanDefinitionParser.SCHEMA_TYPE, new
-         * NotMatchFunctorBeanDefinitionParser());
          * 
          * registerBeanDefinitionParser(NumOfAttributeValuesMatchFunctorBeanDefinitionParser.SCHEMA_TYPE, new
          * NumOfAttributeValuesMatchFunctorBeanDefinitionParser());

@@ -1,0 +1,9 @@
+<afp:AttributeRule attributeID="email"
+	xmlns:afp="urn:mace:shibboleth:2.0:afp" xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<afp:PermitValueRule xsi:type="basic:NOT">
+		<basic:Rule xsi:type="basic:NOT">
+			<basic:Rule xsi:type="basic:ANY" />
+		</basic:Rule>
+	</afp:PermitValueRule>
+</afp:AttributeRule>
