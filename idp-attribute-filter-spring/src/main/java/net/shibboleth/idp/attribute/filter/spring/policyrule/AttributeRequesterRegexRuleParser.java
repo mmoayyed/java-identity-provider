@@ -15,23 +15,24 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter.spring.basic;
+package net.shibboleth.idp.attribute.filter.spring.policyrule;
 
-import net.shibboleth.idp.attribute.filter.impl.matcher.AttributeScopeRegexpMatcher;
-import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
-import net.shibboleth.idp.attribute.filter.spring.matcher.AttributeScopeRegexMatcherParser;
+import javax.xml.namespace.QName;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.AttributeRequesterRegexpPolicyRule;
+import net.shibboleth.idp.attribute.filter.spring.basic.AttributeFilterBasicNamespaceHandler;
 
 /**
- * test for {@link AttributeScopeRegexMatcherParser}.
+ *  Bean definition parser for {@link AttributeRequesterRegexpPolicyRule}.
  */
-public class AttributeScopeRegexMatcherParserTest extends BaseAttributeFilterParserTest {
+public class AttributeRequesterRegexRuleParser extends AbstractRegexPolicyRuleParser {
 
-    @Test public void matcher() {
-        AttributeScopeRegexpMatcher what = (AttributeScopeRegexpMatcher) getMatcher("AttributeScopeRegex.xml");
-        
-        Assert.assertEquals(what.getRegularExpression(), "^example^..*$");
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
+            "AttributeRequesterRegex");
+
+    /** {@inheritDoc} */
+    protected Class getNativeBeanClass() {
+        return AttributeRequesterRegexpPolicyRule.class;
     }
 }

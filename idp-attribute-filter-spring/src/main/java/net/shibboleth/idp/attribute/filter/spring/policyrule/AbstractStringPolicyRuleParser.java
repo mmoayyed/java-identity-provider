@@ -15,31 +15,31 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter.spring.matcher;
+package net.shibboleth.idp.attribute.filter.spring.policyrule;
 
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 // TODO TESTING
 /**
- * Base class for regex matching functors of natural type Matcher (mostly attribute value matchers).
+ * Base class for string matching functors of natural type PolicyRule.
  */
-public abstract class AbstractRegexMatcherParser extends BaseAttributeValueMatcherParser {
+public abstract class AbstractStringPolicyRuleParser extends BasePolicyRuleParser {
 
     /** {@inheritDoc} */
-    protected void doNativeParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(config, builder);
+    protected void doNativeParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(element, builder);
 
-        final String regexp = StringSupport.trimOrNull(config.getAttributeNS(null, "regex"));
+        builder.addPropertyValue("matchString", StringSupport.trimOrNull(element.getAttributeNS(null, "value")));
 
-        if (null == regexp) {
-            throw new BeanCreationException("Regexp Attribute filter: No text provided to 'regex' attribute.");
+        boolean ignoreCase = false;
+        if (element.hasAttributeNS(null, "ignoreCase")) {
+            ignoreCase = AttributeSupport.getAttributeValueAsBoolean(element.getAttributeNodeNS(null, "ignoreCase"));
         }
-
-        builder.addPropertyValue("regularExpression", regexp);
+        builder.addPropertyValue("caseSensitive", !ignoreCase);
     }
 }

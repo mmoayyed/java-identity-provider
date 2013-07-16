@@ -93,21 +93,23 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
         return (Type) beans.iterator().next();
     }
 
-    protected PolicyRequirementRule getPolicyRule(String fileName) {
+    protected PolicyRequirementRule getPolicyRule(String fileName) throws ComponentInitializationException {
 
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: Policy Rule");
 
         final AttributeFilterPolicy policy = getBean(POLICY_RULE_PATH + fileName, AttributeFilterPolicy.class, context);
+        policy.initialize();
         return policy.getPolicyRequirementRule();
     }
 
-    protected Matcher getMatcher(String fileName) {
+    protected Matcher getMatcher(String fileName) throws ComponentInitializationException {
 
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: Matcher");
 
         final AttributeRule rule = getBean(MATCHER_PATH + fileName, AttributeRule.class, context);
+        rule.initialize();
         return rule.getMatcher();
 
     }

@@ -26,6 +26,7 @@ import net.shibboleth.idp.attribute.filter.impl.matcher.logic.NotMatcher;
 import net.shibboleth.idp.attribute.filter.impl.policyrule.logic.AndPolicyRule;
 import net.shibboleth.idp.attribute.filter.impl.policyrule.logic.NotPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -35,7 +36,7 @@ import org.testng.annotations.Test;
  */
 public class AndTest extends BaseAttributeFilterParserTest {
 
-    @Test public void matcher() {
+    @Test public void matcher() throws ComponentInitializationException {
         AndMatcher what = (AndMatcher) getMatcher("and.xml");
         
         final List<Matcher> children = what.getComposedMatchers();
@@ -45,7 +46,7 @@ public class AndTest extends BaseAttributeFilterParserTest {
         Assert.assertEquals(children.get(1).getClass(), Matcher.MATCHES_ALL.getClass());
     }
 
-    @Test public void policy() {
+    @Test public void policy() throws ComponentInitializationException {
     AndPolicyRule what = (AndPolicyRule) getPolicyRule("and.xml");
     
     final List<PolicyRequirementRule> children = what.getComposedRules();

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter.spring.basic;
+package net.shibboleth.idp.attribute.filter.spring.matcher;
 
 import java.util.Map;
 import java.util.Set;
@@ -68,9 +68,9 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
         uidEpaJS = getAttributes("uid-epawithjsmith.xml");
     }
 
-    @Test public void targetedPolicy() {
+    @Test public void targetedPolicy() throws ComponentInitializationException {
 
-        final PolicyRequirementRule rule = getPolicyRule("AttributeValueId.xml");
+        final PolicyRequirementRule rule = getPolicyRule("attributeValueId.xml");
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredAttributes(epaUid.values());
@@ -85,9 +85,9 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
         Assert.assertEquals(rule.matches(filterContext), Tristate.FALSE);
     }
 
-    @Test public void unTargetedPolicy() {
+    @Test public void unTargetedPolicy() throws ComponentInitializationException {
 
-        final PolicyRequirementRule rule = getPolicyRule("AttributeValueNoId.xml");
+        final PolicyRequirementRule rule = getPolicyRule("attributeValueNoId.xml");
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredAttributes(epaUid.values());
@@ -102,9 +102,9 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
         Assert.assertEquals(rule.matches(filterContext), Tristate.TRUE);
     }
 
-    @Test public void unTargetedMatcher() {
+    @Test public void unTargetedMatcher() throws ComponentInitializationException {
 
-        final Matcher matcher = getMatcher("AttributeValueNoId.xml");
+        final Matcher matcher = getMatcher("attributeValueNoId.xml");
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredAttributes(epaUid.values());
@@ -126,9 +126,9 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
         Assert.assertEquals(avm.getMatchString(), "jsmith");
     }
 
-    @Test public void targetedMatcher() {
+    @Test public void targetedMatcher() throws ComponentInitializationException {
 
-        final Matcher matcher = getMatcher("AttributeValueId.xml");
+        final Matcher matcher = getMatcher("attributeValueId.xml");
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredAttributes(epaUid.values());

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter.spring.matcher;
+package net.shibboleth.idp.attribute.filter.spring.policyrule;
 
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -26,9 +26,9 @@ import org.w3c.dom.Element;
 
 // TODO TESTING
 /**
- * Base class for regex matching functors of natural type Matcher (mostly attribute value matchers).
+ * Base class for regex matching functors of natural type PolicyRule.
  */
-public abstract class AbstractRegexMatcherParser extends BaseAttributeValueMatcherParser {
+public abstract class AbstractRegexPolicyRuleParser extends BasePolicyRuleParser {
 
     /** {@inheritDoc} */
     protected void doNativeParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {

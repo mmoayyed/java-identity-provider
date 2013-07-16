@@ -15,25 +15,26 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter.spring.basic;
+package net.shibboleth.idp.attribute.filter.spring.policyrule;
 
-import net.shibboleth.idp.attribute.filter.impl.matcher.AttributeScopeStringMatcher;
-import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
-import net.shibboleth.idp.attribute.filter.spring.matcher.AttributeScopeMatcherParser;
+import javax.xml.namespace.QName;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.AttributeRequesterPolicyRule;
+import net.shibboleth.idp.attribute.filter.spring.basic.AttributeFilterBasicNamespaceHandler;
 
 /**
- * test for {@link AttributeScopeMatcherParser}.
+ *  Bean definition parser for {@link AttributeRequesterPolicyRule}.
  */
-public class AttributeScopeMatcherParserTest extends BaseAttributeFilterParserTest {
+public class AttributeRequesterRuleParser extends AbstractStringPolicyRuleParser {
 
-    @Test public void matcher() {
-        AttributeScopeStringMatcher what = (AttributeScopeStringMatcher) getMatcher("AttributeScope.xml");
-        
-        Assert.assertEquals(what.getMatchString(), "jSmItH");
-        Assert.assertTrue(what.getCaseSensitive());
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
+            "AttributeRequesterString");
+
+
+    /** {@inheritDoc} */
+    protected Class getNativeBeanClass() {
+        return AttributeRequesterPolicyRule.class;
     }
 
 }

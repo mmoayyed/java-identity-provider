@@ -15,36 +15,25 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter.spring.basic;
+package net.shibboleth.idp.attribute.filter.spring.policy;
+
+import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.AttributeRequesterRegexpPolicyRule;
+import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.attribute.filter.Matcher;
-import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
-import net.shibboleth.idp.attribute.filter.impl.matcher.logic.NotMatcher;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.logic.NotPolicyRule;
-import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
 /**
- * test for {@link NotMatcherParser}.
+ * This tests not just the parsing of the rule
  */
-public class NotTest extends BaseAttributeFilterParserTest {
+public class AttributeRequesterRegexRuleParserTest extends BaseAttributeFilterParserTest {
 
-    @Test public void matcher() throws ComponentInitializationException {
-        NotMatcher what = (NotMatcher) getMatcher("not.xml");
-
-        NotMatcher child = (NotMatcher) what.getNegatedMatcher();
-
-        Assert.assertEquals(child.getNegatedMatcher().getClass(), Matcher.MATCHES_ALL.getClass());
-    }
 
     @Test public void policy() throws ComponentInitializationException {
-        NotPolicyRule what = (NotPolicyRule) getPolicyRule("not.xml");
 
-        NotPolicyRule child = (NotPolicyRule) what.getNegatedRule();
-
-        Assert.assertEquals(child.getNegatedRule().getClass(), PolicyRequirementRule.MATCHES_ALL.getClass());
+        final AttributeRequesterRegexpPolicyRule arRule = (AttributeRequesterRegexpPolicyRule) getPolicyRule("attributeRegexRequester.xml");
+        Assert.assertEquals(arRule.getRegularExpression(), "^urn:example:.*$");
     }
+ 
 }

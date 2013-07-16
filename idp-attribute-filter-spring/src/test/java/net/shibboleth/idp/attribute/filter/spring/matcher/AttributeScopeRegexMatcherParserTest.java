@@ -15,36 +15,24 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter.spring.basic;
+package net.shibboleth.idp.attribute.filter.spring.matcher;
+
+import net.shibboleth.idp.attribute.filter.impl.matcher.AttributeScopeRegexpMatcher;
+import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
+import net.shibboleth.idp.attribute.filter.spring.matcher.AttributeScopeRegexMatcherParser;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.attribute.filter.Matcher;
-import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
-import net.shibboleth.idp.attribute.filter.impl.matcher.logic.NotMatcher;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.logic.NotPolicyRule;
-import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
 /**
- * test for {@link NotMatcherParser}.
+ * test for {@link AttributeScopeRegexMatcherParser}.
  */
-public class NotTest extends BaseAttributeFilterParserTest {
+public class AttributeScopeRegexMatcherParserTest extends BaseAttributeFilterParserTest {
 
     @Test public void matcher() throws ComponentInitializationException {
-        NotMatcher what = (NotMatcher) getMatcher("not.xml");
-
-        NotMatcher child = (NotMatcher) what.getNegatedMatcher();
-
-        Assert.assertEquals(child.getNegatedMatcher().getClass(), Matcher.MATCHES_ALL.getClass());
-    }
-
-    @Test public void policy() throws ComponentInitializationException {
-        NotPolicyRule what = (NotPolicyRule) getPolicyRule("not.xml");
-
-        NotPolicyRule child = (NotPolicyRule) what.getNegatedRule();
-
-        Assert.assertEquals(child.getNegatedRule().getClass(), PolicyRequirementRule.MATCHES_ALL.getClass());
+        AttributeScopeRegexpMatcher what = (AttributeScopeRegexpMatcher) getMatcher("attributeScopeRegex.xml");
+        
+        Assert.assertEquals(what.getRegularExpression(), "^example^..*$");
     }
 }

@@ -26,7 +26,7 @@ import org.w3c.dom.Element;
 
 // TODO TESTING
 /**
- * Base class for string matching functors.
+ * Base class for string matching functors of natural type Matcher (mostly attribute value matchers).
  */
 public abstract class AbstractStringMatcherParser extends BaseAttributeValueMatcherParser {
 

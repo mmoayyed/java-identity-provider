@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter.spring.basic;
+package net.shibboleth.idp.attribute.filter.spring.matcher;
 
 import net.shibboleth.idp.attribute.filter.impl.matcher.AttributeValueRegexpMatcher;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.filter.spring.matcher.AttributeValueRegexMatcherParser;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -29,8 +30,8 @@ import org.testng.annotations.Test;
  */
 public class AttributeRegexMatcherParserTest extends BaseAttributeFilterParserTest {
 
-    @Test public void matcher() {
-        AttributeValueRegexpMatcher what = (AttributeValueRegexpMatcher) getMatcher("AttributeRegex.xml");
+    @Test public void matcher() throws ComponentInitializationException {
+        AttributeValueRegexpMatcher what = (AttributeValueRegexpMatcher) getMatcher("attributeRegex.xml");
         
         Assert.assertEquals(what.getRegularExpression(), "^jsmit.*$");
     }

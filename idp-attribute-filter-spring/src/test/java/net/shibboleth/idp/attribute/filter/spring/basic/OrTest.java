@@ -29,13 +29,14 @@ import net.shibboleth.idp.attribute.filter.impl.matcher.logic.OrMatcher;
 import net.shibboleth.idp.attribute.filter.impl.policyrule.logic.NotPolicyRule;
 import net.shibboleth.idp.attribute.filter.impl.policyrule.logic.OrPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
  * test for {@link OrMatcherParser}.
  */
 public class OrTest extends BaseAttributeFilterParserTest {
 
-    @Test public void matcher() {
+    @Test public void matcher() throws ComponentInitializationException {
         OrMatcher what = (OrMatcher) getMatcher("or.xml");
         
         final List<Matcher> children = what.getComposedMatchers();
@@ -45,7 +46,7 @@ public class OrTest extends BaseAttributeFilterParserTest {
         Assert.assertEquals(children.get(1).getClass(), Matcher.MATCHES_ALL.getClass());
     }
 
-    @Test public void policy() {
+    @Test public void policy() throws ComponentInitializationException {
     OrPolicyRule what = (OrPolicyRule) getPolicyRule("or.xml");
     
     final List<PolicyRequirementRule> children = what.getComposedRules();
