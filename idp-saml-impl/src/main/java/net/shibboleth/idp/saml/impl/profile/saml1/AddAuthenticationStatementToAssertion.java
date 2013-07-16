@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
-import net.shibboleth.idp.authn.AuthenticationRequestContext;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import org.opensaml.profile.ProfileException;
@@ -197,12 +197,12 @@ public class AddAuthenticationStatementToAssertion extends AbstractProfileAction
      * 
      * @param profileRequestContext current request context
      * 
-     * @return the authentication statement or null if no {@link AuthenticationRequestContext} is available
+     * @return the authentication statement or null if no {@link AuthenticationContext} is available
      */
     private AuthenticationStatement buildAuthenticationStatement(
             final ProfileRequestContext<Object, Response> profileRequestContext) {
-        final AuthenticationRequestContext authnCtx =
-                profileRequestContext.getSubcontext(AuthenticationRequestContext.class, false);
+        final AuthenticationContext authnCtx =
+                profileRequestContext.getSubcontext(AuthenticationContext.class, false);
         if (authnCtx == null) {
             log.debug("Action {}: Not AuthenticationRequestContext available, nothing left to do", getId());
             return null;
@@ -214,7 +214,7 @@ public class AddAuthenticationStatementToAssertion extends AbstractProfileAction
 
         final AuthenticationStatement statement = statementBuilder.buildObject();
         statement.setAuthenticationInstant(new DateTime(authnCtx.getCompletionInstant()));
-        statement.setAuthenticationMethod(authnCtx.getAttemptedWorkflow().get().getWorkflowId());
+        statement.setAuthenticationMethod(authnCtx.getAttemptedWorkflow().getId());
         return statement;
     }
 }
