@@ -1,6 +1,5 @@
 <afp:AttributeFilterPolicy id="MostBasicExample"
 	xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic" xmlns:afp="urn:mace:shibboleth:2.0:afp"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<afp:PolicyRequirementRule xsi:type="basic:AttributeValueString"
-		value="jsmith" attributeId="uid" ignoreCase="true" />
+	<afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterRegex" regex="^unr:example:.*$" />
 </afp:AttributeFilterPolicy>

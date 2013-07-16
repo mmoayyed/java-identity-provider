@@ -20,8 +20,10 @@ package net.shibboleth.idp.attribute.filter.spring.policyrule;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
 // TODO TESTING
@@ -38,7 +40,12 @@ public abstract class AbstractStringPolicyRuleParser extends BasePolicyRuleParse
 
         boolean ignoreCase = false;
         if (element.hasAttributeNS(null, "ignoreCase")) {
-            ignoreCase = AttributeSupport.getAttributeValueAsBoolean(element.getAttributeNodeNS(null, "ignoreCase"));
+            final Boolean value =
+                    AttributeSupport.getAttributeValueAsBoolean(element.getAttributeNodeNS(null, "ignoreCase"));
+            if (null == value) {
+                throw new BeanCreationException("Invalid value of 'ignoreCase' in string matching policy rule");
+            }
+            ignoreCase = value;
         }
         builder.addPropertyValue("caseSensitive", !ignoreCase);
     }

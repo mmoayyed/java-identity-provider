@@ -21,6 +21,8 @@ import net.shibboleth.idp.attribute.filter.spring.matcher.AttributeScopeMatcherP
 import net.shibboleth.idp.attribute.filter.spring.matcher.AttributeScopeRegexMatcherParser;
 import net.shibboleth.idp.attribute.filter.spring.matcher.AttributeValueRegexMatcherParser;
 import net.shibboleth.idp.attribute.filter.spring.matcher.AttributeValueStringMatcherParser;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.AttributeIssuerRegexRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.AttributeIssuerRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.AttributeRequesterRegexRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.AttributeRequesterRuleParser;
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
@@ -63,15 +65,12 @@ public class AttributeFilterBasicNamespaceHandler extends BaseSpringNamespaceHan
         registerBeanDefinitionParser(AttributeRequesterRegexRuleParser.SCHEMA_TYPE,
                 new AttributeRequesterRegexRuleParser());
 
+        registerBeanDefinitionParser(AttributeIssuerRuleParser.SCHEMA_TYPE, new AttributeIssuerRuleParser());
+
+        registerBeanDefinitionParser(AttributeIssuerRegexRuleParser.SCHEMA_TYPE, new AttributeIssuerRegexRuleParser());
         /**
          * registerBeanDefinitionParser(AnyMatchFunctorBeanDefinitionParser.SCHEMA_TYPE, new
          * AnyMatchFunctorBeanDefinitionParser());
-         * 
-         * registerBeanDefinitionParser(AttributeIssuerRegexMatchFunctionBeanDefinitionParser.SCHEMA_TYPE, new
-         * AttributeIssuerRegexMatchFunctionBeanDefinitionParser());
-         * 
-         * registerBeanDefinitionParser(AttributeIssuerStringMatchFunctionBeanDefinitionParser.SCHEMA_TYPE, new
-         * AttributeIssuerStringMatchFunctionBeanDefinitionParser());
          * 
          * registerBeanDefinitionParser(AttributeValueStringMatchFunctionBeanDefinitionParser.SCHEMA_TYPE, new
          * AttributeValueStringMatchFunctionBeanDefinitionParser());
