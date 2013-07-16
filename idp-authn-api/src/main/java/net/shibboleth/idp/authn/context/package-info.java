@@ -15,28 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.session;
-
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-/** {@link IdPSessionContext} unit test */
-public class IdPSessionContextTest {
-
-    /** Tests that everything is properly initialized during object construction. */
-    @Test public void testInstantiation() {
-        IdPSession session = new IdPSession("test", new byte[] {0, 0, 0});
-        IdPSessionContext ctx = new IdPSessionContext(session);
-
-        Assert.assertEquals(ctx.getIdPSession(), session);
-
-        try {
-            new IdPSessionContext(null);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
-    }
-}
+/**
+ * Context classes for managing authentication-related state.
+ */
+package net.shibboleth.idp.authn.context;

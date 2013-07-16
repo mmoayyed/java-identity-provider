@@ -15,8 +15,11 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.session;
+package net.shibboleth.idp.authn;
 
+import javax.security.auth.Subject;
+
+import net.shibboleth.idp.authn.AuthenticationEvent;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
@@ -34,9 +37,11 @@ public class AuthenticationEventTest {
 
         AuthenticationEvent event = new AuthenticationEvent("test", new UsernamePrincipal("bob"));
         Assert.assertTrue(event.getAuthenticationInstant() > start);
-        Assert.assertEquals(event.getAuthenticationWorkflow(), "test");
-        Assert.assertEquals(event.getAuthenticatedPrincipal(), new UsernamePrincipal("bob"));
-        Assert.assertEquals(event.getLastActivityInstant(), event.getAuthenticationInstant());
+        Assert.assertEquals(event.getAuthenticationWorkflowId(), "test");
+        
+        Assert.assertEquals(event.getSubjects().size(), 1);
+        Assert.assertTrue(
+                event.getSubjects().get(0).getPrincipals(UsernamePrincipal.class).contains(new UsernamePrincipal("bob")));
 
         try {
             new AuthenticationEvent(null, new UsernamePrincipal("bob"));
@@ -60,25 +65,11 @@ public class AuthenticationEventTest {
         }
 
         try {
-            new AuthenticationEvent("test", null);
+            new AuthenticationEvent("test", (Subject) null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
     }
 
-    /** Tests mutating the last activity instant. */
-    @Test public void testLastActivityInstant() throws Exception {
-        AuthenticationEvent event = new AuthenticationEvent("test", new UsernamePrincipal("bob"));
-
-        long now = System.currentTimeMillis();
-        // this is here to allow the event's last activity time to deviate from the 'now' time
-        Thread.sleep(50);
-
-        event.setLastActivityInstantToNow();
-        Assert.assertTrue(event.getLastActivityInstant() > now);
-
-        event.setLastActivityInstant(now);
-        Assert.assertEquals(event.getLastActivityInstant(), now);
-    }
 }

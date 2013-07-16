@@ -15,36 +15,41 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.session;
+package net.shibboleth.idp.authn.context;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 
-/** A {@link org.opensaml.messaging.context.BaseContext} that holds an {@link IdPSession}. */
-public class IdPSessionContext extends BaseContext {
+/**
+ * Context, usually attached to {@link AuthenticationContext},
+ * that carries a username (without a password) to be validated.
+ */
+public class UsernameContext extends BaseContext {
 
-    /** IdP session wrapped by this adapter. */
-    private final IdPSession session;
+    /** The username. */
+    private String username;
 
     /**
-     * Constructor.
+     * Gets the username.
      * 
-     * @param idpSession IdP session wrapped by this adapter
+     * @return the username
      */
-    public IdPSessionContext(@Nonnull final IdPSession idpSession) {
-        super();
-        session = Constraint.isNotNull(idpSession, "IdP session can not be null");
+    @Nullable public String getUsername() {
+        return username;
     }
 
     /**
-     * Gets the IdP session.
+     * Sets the username.
      * 
-     * @return the IdP session, never null
+     * @param name the username
+     * 
+     * @return this context
      */
-    @Nonnull public IdPSession getIdPSession() {
-        return session;
+    public UsernameContext setUsername(@Nullable final String name) {
+        username = name;
+        return this;
     }
+    
 }

@@ -15,6 +15,6 @@
  * limitations under the License.
  */
 
-/** APIs related to the authentication of a user. */
+/** APIs related to the authentication of a subject. */
 
 package net.shibboleth.idp.authn;

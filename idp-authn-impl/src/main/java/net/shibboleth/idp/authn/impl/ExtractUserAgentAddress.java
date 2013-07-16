@@ -23,15 +23,14 @@ import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
-import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.UserAgentAddressContext;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.UserAgentAddressContext;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
@@ -40,7 +39,7 @@ import com.google.common.net.InetAddresses;
 
 /**
  * A stage that extracts the user-agent's IP address from the incoming requests, creates an
- * {@link UserAgentAddressContext}, and attaches it to the {@link AuthenticationRequestContext}.
+ * {@link UserAgentAddressContext}, and attaches it to the {@link AuthenticationContext}.
  */
 @Events({@Event(id = EventIds.PROCEED_EVENT_ID),
         @Event(id = AuthnEventIds.NO_CREDENTIALS, description = "request does not contain user agent's IP address")})
@@ -52,7 +51,7 @@ public class ExtractUserAgentAddress extends AbstractAuthenticationAction {
     /** {@inheritDoc} */
     protected org.springframework.webflow.execution.Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
         final String addressString = Constraint.isNotNull(profileRequestContext.getHttpRequest(),
                 "HttpServletRequest cannot be null").getRemoteAddr();

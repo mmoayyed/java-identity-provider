@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn;
+package net.shibboleth.idp.authn.context;
 
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -39,12 +39,8 @@ public class UsernamePasswordContextTest {
         ctx.setUsername("");
         Assert.assertEquals(ctx.getUsername(), "");
 
-        try {
-            ctx.setUsername(null);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-            Assert.assertEquals(ctx.getUsername(), "");
-        }
+        ctx.setUsername(null);
+        Assert.assertNull(ctx.getUsername());
     }
 
     /** Tests mutating the password. */
@@ -61,11 +57,7 @@ public class UsernamePasswordContextTest {
         ctx.setPassword("");
         Assert.assertEquals(ctx.getPassword(), "");
 
-        try {
-            ctx.setPassword(null);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-            Assert.assertEquals(ctx.getPassword(), "");
-        }
+        ctx.setPassword(null);
+        Assert.assertNull(ctx.getPassword());
     }
 }

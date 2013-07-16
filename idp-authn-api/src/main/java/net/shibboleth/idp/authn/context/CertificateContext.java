@@ -15,40 +15,42 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn;
+package net.shibboleth.idp.authn.context;
 
-import java.net.InetAddress;
+import java.security.cert.Certificate;
 
-import javax.annotation.Nonnull;
-
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.BaseContext;
 
-/** A context containing the IP address of the user agent. */
-public class UserAgentAddressContext extends BaseContext {
+/**
+ * Context, usually attached to {@link AuthenticationContext}, that carries a {@link Certificate} to be
+ * validated.
+ */
+public class CertificateContext extends BaseContext {
 
-    /** Address of the user-agent host. */
-    private InetAddress address;
+    /** The certificate to be validated. */
+    @Nullable private Certificate certificate;
 
     /**
-     * Gets the address of the user-agent host.
+     * Gets the certificate to be validated.
      * 
-     * @return address of the user-agent host
+     * @return the certificate to be validated
      */
-    public InetAddress getUserAgentAddress() {
-        return address;
+    @Nullable public Certificate getCertificate() {
+        return certificate;
     }
 
     /**
-     * Sets the address of the user-agent host.
+     * Sets the certificate to be validated.
      * 
-     * @param userAgentAddress address of the user-agent host
+     * @param cert certificate to be validated
      * 
      * @return this context
      */
-    public UserAgentAddressContext setUserAgentAddress(@Nonnull final InetAddress userAgentAddress) {
-        address = Constraint.isNotNull(userAgentAddress, "User-agent address can not be null");
+    public CertificateContext setCertificate(@Nullable final Certificate cert) {
+        certificate = cert;
         return this;
     }
+    
 }

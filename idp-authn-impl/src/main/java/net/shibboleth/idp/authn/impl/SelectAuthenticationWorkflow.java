@@ -24,12 +24,12 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
-import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.authn.AuthenticationWorkflowDescriptor;
 import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.ActionSupport;
-import org.opensaml.profile.context.ProfileRequestContext;
 
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
@@ -39,8 +39,8 @@ import org.springframework.webflow.execution.RequestContext;
  * An authentication action that selects an authentication workflow to invoke.
  * <p>
  * This action selects the workflow from the potential workflows given by
- * {@link AuthenticationRequestContext#getPotentialWorkflows()}. It will first look to see if any active workflows, as
- * given by {@link AuthenticationRequestContext#getActiveWorkflows()}, are potential workflows and if so will use one.
+ * {@link AuthenticationContext#getPotentialWorkflows()}. It will first look to see if any active workflows, as
+ * given by {@link AuthenticationContext#getActiveWorkflows()}, are potential workflows and if so will use one.
  * Otherwise it will simply pick on of the inactive potential workflows.
  * </p>
  * <p>
@@ -56,7 +56,7 @@ public class SelectAuthenticationWorkflow extends AbstractAuthenticationAction {
     /** {@inheritDoc} */
     protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
         final Map<String, AuthenticationWorkflowDescriptor> potentialWorkflows =
                 authenticationContext.getPotentialWorkflows();
@@ -78,9 +78,9 @@ public class SelectAuthenticationWorkflow extends AbstractAuthenticationAction {
                 descriptor = potentialWorkflows.get(activeWorkflowId);
                 if (descriptor != null) {
                     log.debug("Action {}: selecting active authentication workflow {}", getId(),
-                            descriptor.getWorkflowId());
+                            descriptor.getId());
                     authenticationContext.setAttemptedWorkflow(descriptor);
-                    return ActionSupport.buildEvent(this, descriptor.getWorkflowId());
+                    return ActionSupport.buildEvent(this, descriptor.getId());
                 }
             }
         }
@@ -88,8 +88,8 @@ public class SelectAuthenticationWorkflow extends AbstractAuthenticationAction {
         log.debug("Action {}: no active workflows is suitable, selecting inactive workflow", getId());
 
         descriptor = potentialWorkflows.values().iterator().next();
-        log.debug("Action {}: selecting inactive authentication workflow {}", getId(), descriptor.getWorkflowId());
+        log.debug("Action {}: selecting inactive authentication workflow {}", getId(), descriptor.getId());
         authenticationContext.setAttemptedWorkflow(descriptor);
-        return ActionSupport.buildEvent(this, descriptor.getWorkflowId());
+        return ActionSupport.buildEvent(this, descriptor.getId());
     }
 }

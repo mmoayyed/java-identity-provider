@@ -25,11 +25,13 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
-import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.UsernamePasswordContext;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.profile.ActionSupport;
+
 import org.opensaml.profile.context.ProfileRequestContext;
+
 import net.shibboleth.utilities.java.support.collection.Pair;
 
 import org.opensaml.core.xml.XMLObject;
@@ -57,7 +59,7 @@ public class ExtractUsernamePasswordFromWssToken extends AbstractAuthenticationA
     /** {@inheritDoc} */
     protected org.springframework.webflow.execution.Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
         // TODO(lajoie) get the envelope from the inbound message context
         final Envelope inboundMessage = null;

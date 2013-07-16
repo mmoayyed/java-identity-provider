@@ -21,72 +21,29 @@ import java.util.Collection;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.ext.spring.webflow.Event;
-import net.shibboleth.ext.spring.webflow.Events;
-import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.authn.AuthenticationWorkflowDescriptor;
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.profile.context.ProfileRequestContext;
-import net.shibboleth.idp.session.IdPSession;
-import net.shibboleth.idp.session.IdPSessionContext;
-
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
-
-import com.google.common.base.Function;
 
 /**
- * An action that creates a {@link AuthenticationRequestContext} and sets it as a child of the current
+ * An action that creates a {@link AuthenticationContext} and sets it as a child of the current
  * {@link ProfileRequestContext}.
+ * 
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
+ * @post <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
  */
-@Events({@Event(id = EventIds.PROCEED_EVENT_ID)})
 public class InitializeAuthenticationContext extends AbstractProfileAction {
 
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(InitializeAuthenticationContext.class);
-
-    /** Strategy used to look up the current IdP session context if one exists. */
-    private Function<ProfileRequestContext, IdPSessionContext> sessionCtxLookupStrategy;
-
-    /**
-     * Constructor.
-     * <p>
-     * Sets {@link #sessionCtxLookupStrategy} to an instance of {@link ChildContextLookup}
-     * </p>
-     */
-    public InitializeAuthenticationContext() {
-        super();
-
-        sessionCtxLookupStrategy =
-                new ChildContextLookup<ProfileRequestContext, IdPSessionContext>(IdPSessionContext.class, false);
-    }
-
     /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event doExecute(@Nonnull final RequestContext springRequestContext,
-            @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
-
-        final IdPSessionContext sessionCtx = sessionCtxLookupStrategy.apply(profileRequestContext);
-
-        final IdPSession session;
-        if (sessionCtx == null) {
-            log.debug("Action {}: no user session currently exists", getId());
-            session = null;
-        } else {
-            session = sessionCtx.getIdPSession();
-            log.debug("Action {}: user session {} currently exists", getId(), session.getId());
-        }
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
         // TODO(lajoie) get configured authentication mechanisms
         Collection<AuthenticationWorkflowDescriptor> availableFlows = null;
 
-        AuthenticationRequestContext authnCtx = new AuthenticationRequestContext(session, availableFlows);
+        AuthenticationContext authnCtx = new AuthenticationContext(availableFlows);
         profileRequestContext.addSubcontext(authnCtx);
-
-        return ActionSupport.buildProceedEvent(this);
     }
 }

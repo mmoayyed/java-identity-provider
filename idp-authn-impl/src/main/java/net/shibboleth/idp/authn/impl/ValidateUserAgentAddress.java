@@ -29,14 +29,15 @@ import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
-import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.UserAgentAddressContext;
 import net.shibboleth.idp.authn.UsernamePrincipal;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.UserAgentContext;
 import net.shibboleth.idp.profile.ActionSupport;
 
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
+
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -99,18 +100,18 @@ public class ValidateUserAgentAddress extends AbstractAuthenticationAction {
     /** {@inheritDoc} */
     protected org.springframework.webflow.execution.Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
-        final UserAgentAddressContext uaaCtx =
-                authenticationContext.getSubcontext(UserAgentAddressContext.class, false);
+        final UserAgentContext uaaCtx =
+                authenticationContext.getSubcontext(UserAgentContext.class, false);
         if (uaaCtx == null) {
             log.debug("Action {}: no UserAgentAddressContext available within authentication context", getId());
             return ActionSupport.buildEvent(this, AuthnEventIds.INVALID_AUTHN_CTX);
         }
 
-        if (isAuthenticated(uaaCtx.getUserAgentAddress())) {
+        if (isAuthenticated(uaaCtx.getAddress())) {
             log.debug("Action {}: authenticated user agent", getId());
-            authenticationContext.setAuthenticatedPrincipal(new UsernamePrincipal(authenticatedUser));
+            // TODO do whatever authenticating user needs to mean
             return ActionSupport.buildProceedEvent(this);
         } else {
             log.debug("Action {}: user agent was not authenticated", getId());

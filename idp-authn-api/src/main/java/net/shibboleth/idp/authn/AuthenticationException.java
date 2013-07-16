@@ -17,6 +17,10 @@
 
 package net.shibboleth.idp.authn;
 
+import javax.annotation.Nonnull;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+
 import org.opensaml.profile.ProfileException;
 
 /** Exception indicating a problem authenticating a user. */
@@ -35,7 +39,7 @@ public class AuthenticationException extends ProfileException {
      * 
      * @param message exception message
      */
-    public AuthenticationException(final String message) {
+    public AuthenticationException(@Nonnull @NotEmpty final String message) {
         super(message);
     }
 
@@ -44,7 +48,7 @@ public class AuthenticationException extends ProfileException {
      * 
      * @param wrappedException exception to be wrapped by this one
      */
-    public AuthenticationException(final Exception wrappedException) {
+    public AuthenticationException(@Nonnull final Exception wrappedException) {
         super(wrappedException);
     }
 
@@ -54,7 +58,7 @@ public class AuthenticationException extends ProfileException {
      * @param message exception message
      * @param wrappedException exception to be wrapped by this one
      */
-    public AuthenticationException(final String message, final Exception wrappedException) {
+    public AuthenticationException(@Nonnull @NotEmpty final String message, @Nonnull final Exception wrappedException) {
         super(message, wrappedException);
     }
 }

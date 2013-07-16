@@ -22,9 +22,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
-import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.authn.UsernamePrincipal;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.ActionSupport;
+
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -50,7 +51,7 @@ public class ValidateRemoteUser extends AbstractAuthenticationAction {
     /** {@inheritDoc} */
     protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
         HttpServletRequest httpRequest =
                 Constraint.isNotNull(profileRequestContext.getHttpRequest(), "HttpServletRequest cannot be null");
@@ -62,7 +63,7 @@ public class ValidateRemoteUser extends AbstractAuthenticationAction {
         }
 
         log.debug("Action{}: HTTP request identified remote user as '{}'", getId(), remoteUser);
-        authenticationContext.setAuthenticatedPrincipal(new UsernamePrincipal(remoteUser));
+        // TODO do whatever authenticating user needs to mean
 
         return ActionSupport.buildProceedEvent(this);
     }

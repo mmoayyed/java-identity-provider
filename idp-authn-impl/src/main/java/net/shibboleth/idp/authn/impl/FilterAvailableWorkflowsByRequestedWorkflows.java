@@ -26,12 +26,12 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
-import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.authn.AuthenticationWorkflowDescriptor;
 import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.ActionSupport;
-import org.opensaml.profile.context.ProfileRequestContext;
 
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
@@ -49,7 +49,7 @@ public class FilterAvailableWorkflowsByRequestedWorkflows extends AbstractAuthen
     /** {@inheritDoc} */
     protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
         final Map<String, AuthenticationWorkflowDescriptor> potentialWorkflows =
                 authenticationContext.getPotentialWorkflows();
@@ -71,12 +71,12 @@ public class FilterAvailableWorkflowsByRequestedWorkflows extends AbstractAuthen
                 continue;
             }
 
-            if (requestedDescriptors.contains(descriptor.getWorkflowId())) {
+            if (requestedDescriptors.contains(descriptor.getId())) {
                 log.debug("Action {}: retaining workflow {}, it is a requested workflow", getId(),
-                        descriptor.getWorkflowId());
+                        descriptor.getId());
             } else {
                 log.debug("Action {}: removing workflow {}, it is not a requested workflow", getId(),
-                        descriptor.getWorkflowId());
+                        descriptor.getId());
                 descriptorItr.remove();
             }
         }

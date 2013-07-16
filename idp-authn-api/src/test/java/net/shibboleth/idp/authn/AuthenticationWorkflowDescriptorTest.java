@@ -28,7 +28,7 @@ public class AuthenticationWorkflowDescriptorTest {
     /** Tests that everything is properly initialized during object construction. */
     @Test public void testInstantation() {
         AuthenticationWorkflowDescriptor descriptor = new AuthenticationWorkflowDescriptor("test");
-        Assert.assertEquals(descriptor.getWorkflowId(), "test");
+        Assert.assertEquals(descriptor.getId(), "test");
         Assert.assertFalse(descriptor.isForcedAuthenticationSupported());
         Assert.assertFalse(descriptor.isPassiveAuthenticationSupported());
 

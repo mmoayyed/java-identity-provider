@@ -22,9 +22,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
-import net.shibboleth.idp.authn.AuthenticationRequestContext;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.ActionSupport;
+
 import org.opensaml.profile.context.ProfileRequestContext;
+
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.HttpServletSupport;
@@ -63,7 +65,7 @@ public class SendBasicHttpAuthenticationChallenge extends AbstractAuthentication
     /** {@inheritDoc} */
     protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
         HttpServletResponse httpResponse =
                 Constraint.isNotNull(profileRequestContext.getHttpResponse(), "HttpServletResponse cannot be null");

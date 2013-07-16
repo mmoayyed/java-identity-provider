@@ -15,17 +15,15 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn;
+package net.shibboleth.idp.authn.context;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.security.auth.kerberos.KerberosTicket;
-
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 
 /**
- * Context, usually attached to {@link AuthenticationRequestContext}, that carries a {@link KerberosTicket} to be
+ * Context, usually attached to {@link AuthenticationContext}, that carries a {@link KerberosTicket} to be
  * validated.
  */
 public class KerberosTicketContext extends BaseContext {
@@ -34,23 +32,24 @@ public class KerberosTicketContext extends BaseContext {
     private KerberosTicket ticket;
 
     /**
-     * Gets the Kerberos ticket to be validated.
+     * Get the Kerberos ticket to be validated.
      * 
      * @return Kerberos ticket to be validated
      */
-    @Nonnull public KerberosTicket getTicket() {
+    @Nullable public KerberosTicket getTicket() {
         return ticket;
     }
     
     /**
-     * Sets the Kerberos ticket to be validated.
+     * Set the Kerberos ticket to be validated.
      * 
      * @param kerbTicket the Kerberos ticket to be validated
      * 
      * @return this context
      */
-    public KerberosTicketContext setTicket(@Nonnull final KerberosTicket kerbTicket){
-        ticket = Constraint.isNotNull(kerbTicket, "Kerberos ticket can not be null");
+    public KerberosTicketContext setTicket(@Nullable final KerberosTicket kerbTicket){
+        ticket = kerbTicket;
         return this;
     }
+    
 }

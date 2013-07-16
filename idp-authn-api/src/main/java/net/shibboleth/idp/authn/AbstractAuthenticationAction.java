@@ -19,78 +19,78 @@ package net.shibboleth.idp.authn;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.context.ProfileRequestContext;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.action.AbstractProfileAction;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
-
-//TODO get rid of exception
 
 /**
  * A base class for authentication related actions.
  * 
  * In addition to the work performed by {@link AbstractProfileAction}, this action also looks up and makes available the
- * {@link AuthenticationRequestContext}.
+ * {@link AuthenticationContext}.
  * 
  * Authentication action implementations should override
- * {@link #doExecute(RequestContext, ProfileRequestContext, AuthenticationRequestContext)}
+ * {@link #doExecute(ProfileRequestContext, AuthenticationContext)}
  */
 public abstract class AbstractAuthenticationAction extends AbstractProfileAction {
 
     /**
-     * Strategy used to extract, and create if necessary, the {@link AuthenticationRequestContext} from the
+     * Strategy used to extract, and create if necessary, the {@link AuthenticationContext} from the
      * {@link ProfileRequestContext}.
      */
-    private Function<ProfileRequestContext, AuthenticationRequestContext> authnCtxLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext, AuthenticationContext> authnCtxLookupStrategy;
 
     /** Constructor. */
     public AbstractAuthenticationAction() {
         super();
 
         authnCtxLookupStrategy =
-                new ChildContextLookup<ProfileRequestContext, AuthenticationRequestContext>(
-                        AuthenticationRequestContext.class, false);
+                new ChildContextLookup<ProfileRequestContext, AuthenticationContext>(
+                        AuthenticationContext.class, false);
     }
 
-    /** {@inheritDoc} */
-    protected final Event doExecute(@Nonnull final RequestContext springRequestContext,
-            @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    /**
+     * Constructor.
+     * 
+     * @param strategy lookup function to locate {@link AuthenticationContext}
+     */
+    public AbstractAuthenticationAction(
+            @Nonnull Function<ProfileRequestContext, AuthenticationContext> strategy) {
+        super();
 
-        AuthenticationRequestContext authenticationContext = authnCtxLookupStrategy.apply(profileRequestContext);
+        authnCtxLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy function cannot be null");
+    }
+    
+    /** {@inheritDoc} */
+    protected final void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+
+        final AuthenticationContext authenticationContext = authnCtxLookupStrategy.apply(profileRequestContext);
         if (authenticationContext == null) {
-            throw new NoAuthenticationContextException();
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
+            return;
         }
 
-        return doExecute(springRequestContext, profileRequestContext, authenticationContext);
+        doExecute(profileRequestContext, authenticationContext);
     }
 
     /**
      * Performs this authentication action. Default implementation throws an exception.
      * 
-     * @param springRequestContext current WebFlow request context
      * @param profileRequestContext the current IdP profile request context
      * @param authenticationContext the current authentication context
      * 
-     * @return the result of this action
-     * 
      * @throws AuthenticationException thrown if there is a problem performing the authentication action
      */
-    protected Event doExecute(@Nonnull final RequestContext springRequestContext,
-            @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
-        throw new UnsupportedOperationException();
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+        throw new UnsupportedOperationException("This action is not implemented");
     }
 
-    /** Exception thrown if there is no authentication exception available. */
-    public static final class NoAuthenticationContextException extends ProfileException {
-
-        /** Serial version UID. */
-        private static final long serialVersionUID = -3111452312531745371L;
-
-    }
 }

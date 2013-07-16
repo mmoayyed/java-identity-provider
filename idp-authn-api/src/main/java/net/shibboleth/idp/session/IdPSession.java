@@ -28,6 +28,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import net.shibboleth.idp.authn.AuthenticationEvent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
@@ -43,9 +44,6 @@ import com.google.common.base.Optional;
 
 /**
  * An identity provider session.
- * 
- * <strong>NOTE:</strong> if a session has been persisted by means of a {@link SessionStore} be sure to persist the
- * session if you make any changes to its state.
  */
 @ThreadSafe
 public final class IdPSession extends BaseContext implements IdentifiableComponent {
@@ -213,8 +211,8 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
                     + " already exists");
 
             final AuthenticationEvent authnEvent = session.getAuthenticationEvent();
-            if (!authenticationEvents.containsKey(authnEvent.getAuthenticationWorkflow())) {
-                authenticationEvents.put(authnEvent.getAuthenticationWorkflow(), authnEvent);
+            if (!authenticationEvents.containsKey(authnEvent.getAuthenticationWorkflowId())) {
+                authenticationEvents.put(authnEvent.getAuthenticationWorkflowId(), authnEvent);
             }
             
             //TODO(lajoie) don't we need to update the authn event if it already exists?
@@ -253,13 +251,13 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
 
             for (ServiceSession session : serviceSessions.values()) {
                 if (session.getAuthenticationEvent().equals(event)) {
-                    throw new IllegalStateException("Authentication event " + event.getAuthenticationWorkflow()
+                    throw new IllegalStateException("Authentication event " + event.getAuthenticationWorkflowId()
                             + " is associated with the session for service " + session.getServiceId()
                             + " and so can not be removed");
                 }
             }
 
-            authenticationEvents.remove(event.getAuthenticationWorkflow(), event);
+            authenticationEvents.remove(event.getAuthenticationWorkflowId(), event);
         } finally {
             authnServiceStateLock.unlock();
         }

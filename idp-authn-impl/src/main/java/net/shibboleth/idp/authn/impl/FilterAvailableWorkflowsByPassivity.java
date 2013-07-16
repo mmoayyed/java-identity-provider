@@ -27,14 +27,13 @@ import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
-import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.authn.AuthenticationWorkflowDescriptor;
 import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.ActionSupport;
 
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
@@ -53,7 +52,7 @@ public class FilterAvailableWorkflowsByPassivity extends AbstractAuthenticationA
     /** {@inheritDoc} */
     protected org.springframework.webflow.execution.Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
         if (!profileRequestContext.isPassiveProfile()) {
             log.debug("Action {}: current profile request is not a passive request, nothing to do", getId());
@@ -76,10 +75,10 @@ public class FilterAvailableWorkflowsByPassivity extends AbstractAuthenticationA
 
             if (descriptor.isPassiveAuthenticationSupported()) {
                 log.debug("Action {}: retaining workflow {}, it supports passive authentication", getId(),
-                        descriptor.getWorkflowId());
+                        descriptor.getId());
             } else {
                 log.debug("Action {}: removing workflow {}, it does not support passive authentication", getId(),
-                        descriptor.getWorkflowId());
+                        descriptor.getId());
                 descriptorItr.remove();
             }
         }

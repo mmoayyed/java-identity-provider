@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.session;
 
+import net.shibboleth.idp.authn.AuthenticationEvent;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 

@@ -15,43 +15,42 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn;
+package net.shibboleth.idp.authn.context;
 
-import java.security.cert.X509Certificate;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.idp.session.IdPSession;
 
 import org.opensaml.messaging.context.BaseContext;
 
-/**
- * Context, usually attached to {@link AuthenticationRequestContext}, that carries an {@link X509Certificate} to be
- * validated.
- */
-public class X509CertificateContext extends BaseContext {
+/** A {@link BaseContext} that holds an {@link IdPSession}. */
+public class SessionContext extends BaseContext {
 
-    /** The certificate to be validated. */
-    private X509Certificate certificate;
+    /** IdP session wrapped by this adapter. */
+    private IdPSession session;
 
-    /**
-     * Gets the certificate to be validated.
-     * 
-     * @return the certificate to be validated
-     */
-    @Nonnull public X509Certificate getCertificate() {
-        return certificate;
+    /** Constructor. */
+    public SessionContext() {
+        super();
     }
 
     /**
-     * Sets the certificate to be validated.
+     * Get the IdP session.
      * 
-     * @param cert certificate to be validated
-     * 
-     * @return this context
+     * @return the IdP session
      */
-    public X509CertificateContext setCertificate(@Nonnull final X509Certificate cert) {
-        certificate = Constraint.isNotNull(cert, "Certificate can not be null");
-        return this;
+    @Nullable public IdPSession getIdPSession() {
+        return session;
     }
+
+    /**
+     * Set the IdP session.
+     * 
+     * @param theSession the IdP session
+     */
+    public void setIdPSession(@Nullable final IdPSession theSession) {
+        session = theSession;
+    }
+    
 }

@@ -15,18 +15,16 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn;
+package net.shibboleth.idp.authn.context;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 
 /**
- * Context, usually attached to {@link AuthenticationRequestContext}, that carries a username/password pair to be
- * validated.
+ * Context, usually attached to {@link AuthenticationContext},
+ * that carries a username/password pair to be validated.
  */
 public class UsernamePasswordContext extends BaseContext {
 
@@ -52,8 +50,8 @@ public class UsernamePasswordContext extends BaseContext {
      * 
      * @return this context
      */
-    public UsernamePasswordContext setUsername(@Nonnull final String name) {
-        username = Constraint.isNotNull(name, "Username can not be null");
+    public UsernamePasswordContext setUsername(@Nullable final String name) {
+        username = name;
         return this;
     }
 
@@ -73,8 +71,9 @@ public class UsernamePasswordContext extends BaseContext {
      * 
      * @return this context
      */
-    public UsernamePasswordContext setPassword(@Nonnull final String pass) {
-        password = Constraint.isNotNull(pass, "Password can not be null");
+    public UsernamePasswordContext setPassword(@Nullable final String pass) {
+        password = pass;
         return this;
     }
+    
 }

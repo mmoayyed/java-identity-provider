@@ -23,12 +23,13 @@ import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
-import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.ActionSupport;
 
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
+
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.ServiceSession;
 
@@ -53,7 +54,7 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
     /** {@inheritDoc} */
     protected org.springframework.webflow.execution.Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
         final MessageContext messageCtx = profileRequestContext.getInboundMessageContext();
         if (messageCtx == null) {
@@ -67,15 +68,18 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
             return ActionSupport.buildEvent(this, EventIds.INVALID_MSG_MD);
         }
 
-        if (!authenticationContext.getAttemptedWorkflow().isPresent()) {
+        if (authenticationContext.getAttemptedWorkflow() == null) {
             log.debug("Action {}: no attempted workflow descriptor available", getId());
             return ActionSupport.buildEvent(this, AuthnEventIds.INVALID_AUTHN_CTX);
         }
 
+        // TODO replace
+        /*
         if (!authenticationContext.getAuthenticatedPrincipal().isPresent()) {
             log.debug("Action {}: no authenticated principal available", getId());
             return ActionSupport.buildEvent(this, AuthnEventIds.INVALID_AUTHN_CTX);
         }
+        */
 
         updateIdpSession(authenticationContext, msgMdCtx.getMessageIssuer());
 
@@ -96,8 +100,12 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
      * @param authenticationContext current authentication context
      * @param serviceId ID of the service for which the user was authenticated
      */
-    protected void updateIdpSession(@Nonnull final AuthenticationRequestContext authenticationContext,
+    protected void updateIdpSession(@Nonnull final AuthenticationContext authenticationContext,
             @Nonnull final String serviceId) {
+        
+        // TODO probably move all this out to a separate action
+        
+        /*
         IdPSession idpSession = null;
 
         if (!authenticationContext.getActiveSession().isPresent()) {
@@ -110,5 +118,6 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
         idpSession.addServiceSession(serviceSession);
 
         idpSession.setLastActivityInstantToNow();
+        */
     }
 }

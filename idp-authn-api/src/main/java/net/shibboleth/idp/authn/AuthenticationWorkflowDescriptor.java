@@ -22,11 +22,12 @@ import javax.annotation.Nonnull;
 import com.google.common.base.Objects;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** A descriptor of an authentication workflow. */
-public class AuthenticationWorkflowDescriptor {
+public class AuthenticationWorkflowDescriptor implements IdentifiableComponent {
 
     /** The unique identifier of the authentication workflow. */
     private final String workflowId;
@@ -35,7 +36,7 @@ public class AuthenticationWorkflowDescriptor {
     private boolean supportsPassive;
 
     /** Whether this workflow supports forced authentication. */
-    private boolean supportsForcedAuthentication;
+    private boolean supportsForced;
 
     /** Maximum amount of time in milliseconds, since first usage, a workflow should be considered active. */
     private long lifetime;
@@ -52,12 +53,8 @@ public class AuthenticationWorkflowDescriptor {
         workflowId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Workflow ID can not be null or empty");
     }
 
-    /**
-     * Gets the unique identifier of the authentication workflow.
-     * 
-     * @return unique identifier of the authentication workflow
-     */
-    @Nonnull @NotEmpty public String getWorkflowId() {
+    /** {@inheritDoc} */
+    @Nonnull @NotEmpty public String getId() {
         return workflowId;
     }
 
@@ -85,7 +82,7 @@ public class AuthenticationWorkflowDescriptor {
      * @return whether this workflow supports forced authentication
      */
     public boolean isForcedAuthenticationSupported() {
-        return supportsForcedAuthentication;
+        return supportsForced;
     }
 
     /**
@@ -94,7 +91,7 @@ public class AuthenticationWorkflowDescriptor {
      * @param isSupported whether this workflow supports forced authentication.
      */
     public void setForcedAuthenticationSupported(boolean isSupported) {
-        supportsForcedAuthentication = isSupported;
+        supportsForced = isSupported;
     }
 
     /**
@@ -155,7 +152,7 @@ public class AuthenticationWorkflowDescriptor {
         }
 
         if (obj instanceof AuthenticationWorkflowDescriptor) {
-            return workflowId.equals(((AuthenticationWorkflowDescriptor) obj).getWorkflowId());
+            return workflowId.equals(((AuthenticationWorkflowDescriptor) obj).getId());
         }
 
         return false;
@@ -164,7 +161,7 @@ public class AuthenticationWorkflowDescriptor {
     /** {@inheritDoc} */
     public String toString() {
         return Objects.toStringHelper(this).add("workflowId", workflowId).add("supportsPassive", supportsPassive)
-                .add("supportsForcedAuthentication", supportsForcedAuthentication).add("lifetime", lifetime)
+                .add("supportsForcedAuthentication", supportsForced).add("lifetime", lifetime)
                 .add("inactivityTimeout", timeout).toString();
     }
 }

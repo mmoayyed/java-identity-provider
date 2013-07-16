@@ -17,10 +17,13 @@
 
 package net.shibboleth.idp.authn;
 
-/** Constants to use for {@link org.springframework.webflow.execution.Event} IDs. */
+/**
+ * Constants to use for {@link org.opensaml.profile.action.ProfileAction}
+ * {@link org.opensaml.profile.context.EventContext}s.
+ */
 public final class AuthnEventIds {
 
-    /** ID of event that indicates the authentication context is missing or corrupt in some way. */
+    /** ID of event that indicates the AuthenticationContext is missing or corrupt in some way. */
     public static final String INVALID_AUTHN_CTX = "InvalidAuthenticationContext";
 
     /** ID of event returned if there are no authentication workflow that could be used to authenticate the user. */

@@ -24,10 +24,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
-import net.shibboleth.idp.authn.AuthenticationRequestContext;
-import net.shibboleth.idp.authn.UsernamePasswordContext;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.profile.ActionSupport;
+
 import org.opensaml.profile.context.ProfileRequestContext;
+
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.collection.Pair;
@@ -50,7 +52,7 @@ public class ExtractUsernamePasswordFromBasicAuthorizationHeader extends Abstrac
     /** {@inheritDoc} */
     protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
         final String encodedCredentials = extractAuthorizationCredentials(
                 Constraint.isNotNull(profileRequestContext.getHttpRequest(), "HttpServletRequest cannot be null"));
