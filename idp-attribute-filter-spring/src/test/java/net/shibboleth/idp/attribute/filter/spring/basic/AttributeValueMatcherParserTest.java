@@ -30,6 +30,7 @@ import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
+import net.shibboleth.idp.attribute.filter.impl.matcher.AttributeValueStringMatcher;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -119,6 +120,10 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
         filterContext.setPrefilteredAttributes(uidEpaJS.values());
         result = matcher.getMatchingValues(uidEpaJS.get("uid"), filterContext);
         Assert.assertTrue(result.isEmpty());
+        
+        AttributeValueStringMatcher avm = (AttributeValueStringMatcher) matcher;
+        Assert.assertFalse(avm.getCaseSensitive());
+        Assert.assertEquals(avm.getMatchString(), "jsmith");
     }
 
     @Test public void targetedMatcher() {

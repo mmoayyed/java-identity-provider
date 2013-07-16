@@ -17,33 +17,21 @@
 
 package net.shibboleth.idp.attribute.filter.spring.basic;
 
+import net.shibboleth.idp.attribute.filter.impl.matcher.AttributeValueRegexpMatcher;
+import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
+import net.shibboleth.idp.attribute.filter.spring.matcher.AttributeValueRegexMatcherParser;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.attribute.filter.Matcher;
-import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
-import net.shibboleth.idp.attribute.filter.impl.matcher.logic.NotMatcher;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.logic.NotPolicyRule;
-import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
-
 /**
- * test for {@link NotMatcherParser}.
+ * test for {@link AttributeValueRegexMatcherParser}.
  */
-public class NotTest extends BaseAttributeFilterParserTest {
+public class AttributeRegexMatcherParserTest extends BaseAttributeFilterParserTest {
 
     @Test public void matcher() {
-        NotMatcher what = (NotMatcher) getMatcher("not.xml");
-
-        NotMatcher child = (NotMatcher) what.getNegatedMatcher();
-
-        Assert.assertEquals(child.getNegatedMatcher().getClass(), Matcher.MATCHES_ALL.getClass());
-    }
-
-    @Test public void policy() {
-        NotPolicyRule what = (NotPolicyRule) getPolicyRule("not.xml");
-
-        NotPolicyRule child = (NotPolicyRule) what.getNegatedRule();
-
-        Assert.assertEquals(child.getNegatedRule().getClass(), PolicyRequirementRule.MATCHES_ALL.getClass());
+        AttributeValueRegexpMatcher what = (AttributeValueRegexpMatcher) getMatcher("AttributeRegex.xml");
+        
+        Assert.assertEquals(what.getRegularExpression(), "^jsmit.*$");
     }
 }
