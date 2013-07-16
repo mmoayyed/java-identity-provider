@@ -42,7 +42,7 @@ import org.testng.Assert;
 import com.google.common.base.Function;
 
 /**
- *
+ * Basis of all the matcher and rule parser tests.
  */
 public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
 

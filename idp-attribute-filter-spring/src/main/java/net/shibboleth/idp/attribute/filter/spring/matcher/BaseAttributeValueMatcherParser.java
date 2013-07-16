@@ -107,9 +107,9 @@ public abstract class BaseAttributeValueMatcherParser extends BaseFilterParser {
             
             childBuilder.addPropertyValue("id", "MfP:" + myId);
             childBuilder.addConstructorArgValue(grandChildBuilder.getBeanDefinition());
+            childBuilder.addConstructorArgValue(element.getAttributeNS(null, "attributeId"));
             
             builder.addConstructorArgValue(childBuilder.getBeanDefinition());
-            builder.addConstructorArgValue(element.getAttributeNS(null, "attributeId"));
 
         } else {
             doNativeParse(element, parserContext, builder);

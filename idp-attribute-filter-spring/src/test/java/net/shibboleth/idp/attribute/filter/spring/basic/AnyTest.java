@@ -25,7 +25,7 @@ import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 
 /**
- * 
+ * Test for ANY matcher or policy Rule.
  */
 public class AnyTest extends BaseAttributeFilterParserTest {
     

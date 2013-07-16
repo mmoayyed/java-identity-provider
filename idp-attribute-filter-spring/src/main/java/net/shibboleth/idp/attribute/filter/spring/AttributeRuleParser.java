@@ -118,7 +118,7 @@ public class AttributeRuleParser extends BaseFilterParser {
 
         } else if (denyValueReference != null && !denyValueReference.isEmpty()) {
 
-            final String referenceText = getReferenceText(permitValueReference.get(0));
+            final String referenceText = getReferenceText(denyValueReference.get(0));
             if (null == referenceText) {
                 throw new BeanCreationException("Attribute Rule '" + id + "' no text or reference for "
                         + DENY_VALUE_REF);
