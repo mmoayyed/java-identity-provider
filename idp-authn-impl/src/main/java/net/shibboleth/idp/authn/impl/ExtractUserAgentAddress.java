@@ -25,7 +25,7 @@ import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.UserAgentAddressContext;
+import net.shibboleth.idp.authn.context.UserAgentContext;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -60,7 +60,7 @@ public class ExtractUserAgentAddress extends AbstractAuthenticationAction {
             return ActionSupport.buildEvent(this, AuthnEventIds.NO_CREDENTIALS);
         }
 
-        authenticationContext.getSubcontext(UserAgentAddressContext.class, true).setUserAgentAddress(
+        authenticationContext.getSubcontext(UserAgentContext.class, true).setAddress(
                 InetAddresses.forString(addressString));
 
         return ActionSupport.buildProceedEvent(this);
