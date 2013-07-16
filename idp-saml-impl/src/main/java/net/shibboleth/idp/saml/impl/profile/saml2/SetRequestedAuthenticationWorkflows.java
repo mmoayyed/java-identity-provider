@@ -29,13 +29,12 @@ import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
-import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.authn.AuthenticationWorkflowDescriptor;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.ActionSupport;
 
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
-
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnContextDeclRef;
@@ -59,7 +58,7 @@ public class SetRequestedAuthenticationWorkflows extends AbstractAuthenticationA
     /** {@inheritDoc} */
     protected org.springframework.webflow.execution.Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
         final AuthnRequest authnRequest = getAuthnRequest(profileRequestContext);
         if (authnRequest == null) {

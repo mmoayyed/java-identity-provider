@@ -17,8 +17,8 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
-import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.authn.AuthenticationWorkflowDescriptor;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 
 import org.opensaml.profile.action.EventIds;
@@ -92,7 +92,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
                 new RequestContextBuilder().setOutboundMessage(Saml1ActionTestingSupport.buildResponse())
                         .buildProfileRequestContext();
 
-        AuthenticationRequestContext authCtx = new AuthenticationRequestContext(null, null);
+        AuthenticationContext authCtx = new AuthenticationContext(null);
         profileCtx.addSubcontext(authCtx);
 
         AddAuthenticationStatementToAssertion action = new AddAuthenticationStatementToAssertion();
@@ -102,7 +102,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         try {
             action.doExecute(new MockRequestContext(), profileCtx);
             Assert.fail();
-        } catch (IllegalStateException e) {
+        } catch (NullPointerException e) {
             // ok
         }
     }
@@ -113,7 +113,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
                 new RequestContextBuilder().setOutboundMessage(Saml1ActionTestingSupport.buildResponse())
                         .buildProfileRequestContext();
 
-        AuthenticationRequestContext authCtx = new AuthenticationRequestContext(null, null);
+        AuthenticationContext authCtx = new AuthenticationContext(null);
         authCtx.setAttemptedWorkflow(new AuthenticationWorkflowDescriptor("test"));
 
         long now = System.currentTimeMillis();
