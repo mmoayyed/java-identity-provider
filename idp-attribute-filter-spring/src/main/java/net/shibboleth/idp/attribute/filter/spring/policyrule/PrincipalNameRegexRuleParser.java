@@ -15,22 +15,24 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter.spring.policy;
+package net.shibboleth.idp.attribute.filter.spring.policyrule;
 
-import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.AttributeRequesterRegexpPolicyRule;
-import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import javax.xml.namespace.QName;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.PrincipalNameRegexpPolicyRule;
+import net.shibboleth.idp.attribute.filter.spring.basic.AttributeFilterBasicNamespaceHandler;
 
-public class AttributeRequesterRegexRuleParserTest extends BaseAttributeFilterParserTest {
+/**
+ *  Bean definition parser for {@link PrincipalNameRegexpPolicyRule}.
+ */
+public class PrincipalNameRegexRuleParser extends AbstractRegexPolicyRuleParser {
 
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
+            "PrincipalNameRegex");
 
-    @Test public void policy() throws ComponentInitializationException {
-
-        final AttributeRequesterRegexpPolicyRule arRule = (AttributeRequesterRegexpPolicyRule) getPolicyRule("attributeRegexRequester.xml");
-        Assert.assertEquals(arRule.getRegularExpression(), "^urn:example:.*$");
+    /** {@inheritDoc} */
+    protected Class getNativeBeanClass() {
+        return PrincipalNameRegexpPolicyRule.class;
     }
- 
 }

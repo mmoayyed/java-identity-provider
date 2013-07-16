@@ -17,20 +17,20 @@
 
 package net.shibboleth.idp.attribute.filter.spring.policy;
 
-import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.AttributeRequesterRegexpPolicyRule;
+import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.AuthenticationMethodRegexpPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class AttributeRequesterRegexRuleParserTest extends BaseAttributeFilterParserTest {
+public class AuthenticationMethodRegexRuleParserTest extends BaseAttributeFilterParserTest {
 
 
     @Test public void policy() throws ComponentInitializationException {
 
-        final AttributeRequesterRegexpPolicyRule arRule = (AttributeRequesterRegexpPolicyRule) getPolicyRule("attributeRegexRequester.xml");
-        Assert.assertEquals(arRule.getRegularExpression(), "^urn:example:.*$");
+        final AuthenticationMethodRegexpPolicyRule rule = (AuthenticationMethodRegexpPolicyRule) getPolicyRule("authenticationMethodRegex.xml");
+        Assert.assertEquals(rule.getRegularExpression(), "^urn:oasis:names:tc:SAML:2\\.0:ac:classes:[^:]*$");
     }
  
 }

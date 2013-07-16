@@ -24,9 +24,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/**
- * This tests not just the parsing of the rule
- */
 public class AttributeIssuerRegexRuleParserTest extends BaseAttributeFilterParserTest {
 
 

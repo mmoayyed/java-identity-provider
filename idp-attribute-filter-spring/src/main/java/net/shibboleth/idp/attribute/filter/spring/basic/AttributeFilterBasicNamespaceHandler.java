@@ -25,6 +25,10 @@ import net.shibboleth.idp.attribute.filter.spring.policyrule.AttributeIssuerRege
 import net.shibboleth.idp.attribute.filter.spring.policyrule.AttributeIssuerRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.AttributeRequesterRegexRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.AttributeRequesterRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.AuthenticationMethodRegexRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.AuthenticationMethodRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.PrincipalNameRegexRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.PrincipalNameRuleParser;
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 // TODO incomplete port from v2
@@ -68,19 +72,22 @@ public class AttributeFilterBasicNamespaceHandler extends BaseSpringNamespaceHan
         registerBeanDefinitionParser(AttributeIssuerRuleParser.SCHEMA_TYPE, new AttributeIssuerRuleParser());
 
         registerBeanDefinitionParser(AttributeIssuerRegexRuleParser.SCHEMA_TYPE, new AttributeIssuerRegexRuleParser());
+
+        registerBeanDefinitionParser(PrincipalNameRuleParser.SCHEMA_TYPE, new PrincipalNameRuleParser());
+
+        registerBeanDefinitionParser(PrincipalNameRegexRuleParser.SCHEMA_TYPE, new PrincipalNameRegexRuleParser());
+
+        registerBeanDefinitionParser(AuthenticationMethodRuleParser.SCHEMA_TYPE, new AuthenticationMethodRuleParser());
+
+        registerBeanDefinitionParser(AuthenticationMethodRegexRuleParser.SCHEMA_TYPE,
+                new AuthenticationMethodRegexRuleParser());
+
         /**
          * registerBeanDefinitionParser(AnyMatchFunctorBeanDefinitionParser.SCHEMA_TYPE, new
          * AnyMatchFunctorBeanDefinitionParser());
          * 
          * registerBeanDefinitionParser(AttributeValueStringMatchFunctionBeanDefinitionParser.SCHEMA_TYPE, new
          * AttributeValueStringMatchFunctionBeanDefinitionParser());
-         * 
-         * registerBeanDefinitionParser(AuthenticationMethodRegexMatchFunctionBeanDefinitionParser.SCHEMA_TYPE, new
-         * AuthenticationMethodRegexMatchFunctionBeanDefinitionParser());
-         * 
-         * registerBeanDefinitionParser(AuthenticationMethodStringMatchFunctionBeanDefinitionParser.SCHEMA_TYPE, new
-         * AuthenticationMethodStringMatchFunctionBeanDefinitionParser());
-         * 
          * registerBeanDefinitionParser(NumOfAttributeValuesMatchFunctorBeanDefinitionParser.SCHEMA_TYPE, new
          * NumOfAttributeValuesMatchFunctorBeanDefinitionParser());
          * 
