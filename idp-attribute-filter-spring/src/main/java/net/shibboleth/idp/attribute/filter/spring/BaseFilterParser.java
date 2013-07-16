@@ -159,16 +159,6 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
             elem = ElementSupport.getElementAncestor(elem);
         } while (elem != null);
         log.warn("Element '{}' : could not find schema defined parent");
-        elem = element;
-        do {
-            if (ElementSupport.isElementNamed(element, AttributeFilterPolicyParser.POLICY_REQUIREMENT_RULE)) {
-                return true;
-            } else if (ElementSupport.isElementNamed(element, AttributeRuleParser.DENY_VALUE_RULE) ||
-                       ElementSupport.isElementNamed(element, AttributeRuleParser.PERMIT_VALUE_RULE)) {
-                return false;
-            }
-            elem = ElementSupport.getElementAncestor(elem);
-        } while (elem != null);
         return false;
     }
 }

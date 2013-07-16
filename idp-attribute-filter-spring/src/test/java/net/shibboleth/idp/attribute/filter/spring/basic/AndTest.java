@@ -23,10 +23,8 @@ import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.impl.matcher.logic.AndMatcher;
 import net.shibboleth.idp.attribute.filter.impl.matcher.logic.NotMatcher;
-import net.shibboleth.idp.attribute.filter.impl.matcher.logic.OrMatcher;
 import net.shibboleth.idp.attribute.filter.impl.policyrule.logic.AndPolicyRule;
 import net.shibboleth.idp.attribute.filter.impl.policyrule.logic.NotPolicyRule;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.logic.OrPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 
 import org.testng.Assert;
