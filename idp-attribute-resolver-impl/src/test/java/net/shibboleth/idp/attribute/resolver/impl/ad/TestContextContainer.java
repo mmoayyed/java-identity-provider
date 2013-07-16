@@ -2,9 +2,8 @@ package net.shibboleth.idp.attribute.resolver.impl.ad;
 
 import java.security.Principal;
 
-import net.shibboleth.idp.session.AuthenticationEvent;
+import net.shibboleth.idp.authn.AuthenticationEvent;
 import net.shibboleth.idp.session.IdPSession;
-import net.shibboleth.idp.session.IdPSessionContext;
 import net.shibboleth.idp.session.ServiceSession;
 
 import org.joda.time.DateTime;
@@ -35,8 +34,6 @@ class TestContextContainer extends InOutOperationContext {
         final IdPSession idpSession = new IdPSession("sessionId", new byte[2]);
         final ServiceSession serviceSession = new ServiceSession("serviceSession", event);
         idpSession.addServiceSession(serviceSession);
-        
-        new IdPSessionContext(idpSession);
     }
 
     public TestContextContainer() {
