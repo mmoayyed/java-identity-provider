@@ -34,9 +34,9 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.action.ProfileAction;
 import org.opensaml.profile.context.EventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -242,6 +242,9 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
                 return (Event) eventCtx.getEvent();
             } else if (eventCtx.getEvent() instanceof String) {
                 return ActionSupport.buildEvent(action, (String) eventCtx.getEvent());
+            } else if (eventCtx.getEvent() instanceof AttributeMap) {
+                AttributeMap map = (AttributeMap) eventCtx.getEvent();
+                return ActionSupport.buildEvent(action, map.getString("eventId", EventIds.PROCEED_EVENT_ID), map); 
             } else {
                 return null;
             }

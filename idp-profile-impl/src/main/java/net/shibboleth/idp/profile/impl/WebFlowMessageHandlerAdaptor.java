@@ -32,6 +32,7 @@ import org.opensaml.profile.context.EventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -164,6 +165,10 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
                 return (Event) eventCtx.getEvent();
             } else if (eventCtx.getEvent() instanceof String) {
                 return ActionSupport.buildEvent(messageHandler, (String) eventCtx.getEvent());
+            } else if (eventCtx.getEvent() instanceof AttributeMap) {
+                AttributeMap map = (AttributeMap) eventCtx.getEvent();
+                return ActionSupport.buildEvent(
+                        messageHandler, map.getString("eventId", EventIds.PROCEED_EVENT_ID), map); 
             } else {
                 return null;
             }
