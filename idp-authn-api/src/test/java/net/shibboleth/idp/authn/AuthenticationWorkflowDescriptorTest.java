@@ -17,17 +17,26 @@
 
 package net.shibboleth.idp.authn;
 
+import java.util.Arrays;
+
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 /** {@link AuthenticationWorkflowDescriptor} unit test. */
 public class AuthenticationWorkflowDescriptorTest {
 
+    private AuthenticationWorkflowDescriptor descriptor;
+    
+    @BeforeTest public void setUp() {
+        descriptor = new AuthenticationWorkflowDescriptor("test");
+    }
+
+    
     /** Tests that everything is properly initialized during object construction. */
     @Test public void testInstantation() {
-        AuthenticationWorkflowDescriptor descriptor = new AuthenticationWorkflowDescriptor("test");
         Assert.assertEquals(descriptor.getId(), "test");
         Assert.assertFalse(descriptor.isForcedAuthenticationSupported());
         Assert.assertFalse(descriptor.isPassiveAuthenticationSupported());
@@ -54,25 +63,8 @@ public class AuthenticationWorkflowDescriptorTest {
         }
     }
 
-    /** Tests mutating inactivity timeout. */
-    @Test public void testInactivityTimeout() {
-        AuthenticationWorkflowDescriptor descriptor = new AuthenticationWorkflowDescriptor("test");
-
-        descriptor.setInactivityTimeout(10);
-        Assert.assertEquals(descriptor.getInactivityTimeout(), 10);
-
-        try {
-            descriptor.setInactivityTimeout(-10);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-            Assert.assertEquals(descriptor.getInactivityTimeout(), 10);
-        }
-    }
-
     /** Tests mutating lifetime. */
     @Test public void testLifetime() {
-        AuthenticationWorkflowDescriptor descriptor = new AuthenticationWorkflowDescriptor("test");
-
         descriptor.setLifetime(10);
         Assert.assertEquals(descriptor.getLifetime(), 10);
 
@@ -86,8 +78,6 @@ public class AuthenticationWorkflowDescriptorTest {
 
     /** Tests mutating forced authentication support. */
     @Test public void testSupportedForcedAuthentication() {
-        AuthenticationWorkflowDescriptor descriptor = new AuthenticationWorkflowDescriptor("test");
-
         descriptor.setForcedAuthenticationSupported(true);
         Assert.assertTrue(descriptor.isForcedAuthenticationSupported());
 
@@ -97,12 +87,30 @@ public class AuthenticationWorkflowDescriptorTest {
 
     /** Tests mutating passive authentication support. */
     @Test public void testSupportedPassiveAuthentication() {
-        AuthenticationWorkflowDescriptor descriptor = new AuthenticationWorkflowDescriptor("test");
-
         descriptor.setPassiveAuthenticationSupported(true);
         Assert.assertTrue(descriptor.isPassiveAuthenticationSupported());
 
         descriptor.setPassiveAuthenticationSupported(false);
         Assert.assertFalse(descriptor.isPassiveAuthenticationSupported());
+    }
+    
+    /** Tests mutating principal set. */
+    @Test public void testSupportedPrincipals() {
+        Assert.assertTrue(descriptor.getSupportedPrincipals(UsernamePrincipal.class).isEmpty());
+        
+        // Wouldn't use this principal type for real, but it's fine for testing.
+        UsernamePrincipal foo = new UsernamePrincipal("foo");
+        UsernamePrincipal bar = new UsernamePrincipal("bar");
+        UsernamePrincipal baz = new UsernamePrincipal("baz");
+        
+        descriptor.setSupportedPrincipals(Arrays.asList(foo));
+        Assert.assertEquals(descriptor.getSupportedPrincipals(UsernamePrincipal.class).size(), 1);
+        Assert.assertTrue(descriptor.getSupportedPrincipals(UsernamePrincipal.class).contains(foo));
+
+        descriptor.setSupportedPrincipals(Arrays.asList(foo, bar));
+        Assert.assertEquals(descriptor.getSupportedPrincipals(UsernamePrincipal.class).size(), 2);
+        Assert.assertTrue(descriptor.getSupportedPrincipals(UsernamePrincipal.class).contains(foo));
+        Assert.assertTrue(descriptor.getSupportedPrincipals(UsernamePrincipal.class).contains(bar));
+        Assert.assertFalse(descriptor.getSupportedPrincipals(UsernamePrincipal.class).contains(baz));
     }
 }

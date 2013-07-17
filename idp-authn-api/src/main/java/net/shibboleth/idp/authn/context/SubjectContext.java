@@ -19,9 +19,7 @@ package net.shibboleth.idp.authn.context;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,12 +31,17 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
 import org.opensaml.messaging.context.BaseContext;
 
+import com.google.common.collect.HashMultimap;
+
 /**
  * A {@link BaseContext} that holds information about the subject of a transaction.
  * 
- * <p>The subject may or may not be authenticated, strictly speaking, but profiles
- * that operate on subjects can treat the information as "trusted" for their purposes.
- * This context must not be used to carry speculative or unverified subject information.</p> 
+ * <p>The subject may or may not be authenticated, such as in a back-channel profile, but
+ * profiles that operate on subjects can treat the information as "trusted" for their purposes.
+ * This context must not be used to carry speculative or unverified subject information.</p>
+ * 
+ * <p>The use of a multimap enables a subject to be associated with more than one instance of
+ * authentication by a particular workflow.</p>
  */
 public class SubjectContext extends BaseContext {
 
@@ -46,13 +49,13 @@ public class SubjectContext extends BaseContext {
     @Nullable private String principalName;
 
     /** The active authentication events for the subject. */
-    @Nonnull private final Map<String, AuthenticationEvent> authenticationEvents;
+    @Nonnull private final HashMultimap<String, AuthenticationEvent> authenticationEvents;
     
     /** Constructor. */
     public SubjectContext() {
         super();
         
-        authenticationEvents = new HashMap<>();
+        authenticationEvents = HashMultimap.create(5, 1);
     }
 
     /**
@@ -74,11 +77,11 @@ public class SubjectContext extends BaseContext {
     }
 
     /**
-     * Get a mutable map of workflow IDs to authentication events.
+     * Get a mutable multimap of workflow IDs to authentication events.
      * 
-     * @return  mutable map of workflow IDs to authentication events
+     * @return  mutable multimap of workflow IDs to authentication events
      */
-    @Nonnull public Map<String, AuthenticationEvent> getAuthenticationEvents() {
+    @Nonnull @NonnullElements public HashMultimap<String, AuthenticationEvent> getAuthenticationEvents() {
         return authenticationEvents;
     }
     

@@ -18,21 +18,19 @@
 package net.shibboleth.idp.authn.context;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.authn.AuthenticationEvent;
 import net.shibboleth.idp.authn.AuthenticationWorkflowDescriptor;
-import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.joda.time.DateTime;
 import org.opensaml.messaging.context.BaseContext;
@@ -41,8 +39,12 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 
-/** A context representing the state of an authentication attempt. */
-@ThreadSafe
+/**
+ * A context representing the state of an authentication attempt, this is the primary
+ * input/output context for the action flow responsible for authentication, and
+ * within that flow, the individual workflows that carry out a specific kind of
+ * authentication.
+ */
 public final class AuthenticationContext extends BaseContext {
 
     /** Time, in milliseconds since the epoch, when the authentication process started. */
@@ -54,21 +56,21 @@ public final class AuthenticationContext extends BaseContext {
     /** Whether authentication must not involve subject interaction. */
     private boolean isPassive;
 
-    /** Authentication workflows configured and available for use. */
-    @Nonnull private ImmutableMap<String, AuthenticationWorkflowDescriptor> activeWorkflows;
+    /** Authentication workflows associated with a preexisting session and available for (re)use. */
+    @Nonnull @NonnullElements private ImmutableMap<String, AuthenticationWorkflowDescriptor> activeWorkflows;
     
-    /** Authentication workflows configured and available for use. */
-    @Nonnull private final ImmutableMap<String, AuthenticationWorkflowDescriptor> availableWorkflows;
+    /** Workflows that could potentially be used to authenticate the user. */
+    @Nonnull @NonnullElements private Map<String, AuthenticationWorkflowDescriptor> potentialWorkflows;
 
-    /** Workflows that might potentially be used to authenticate the user. */
-    @Nonnull private Map<String, AuthenticationWorkflowDescriptor> potentialWorkflows;
+    /** Workflows, in order of preference, that satisfy an explicit requirement from the relying party. */
+    @Nonnull @NonnullElements private ImmutableMap<String, AuthenticationWorkflowDescriptor> requestedWorkflows;
 
-    /** Authentication workflows, in order of preference, requested by the relying party. */
-    @Nonnull private Map<String, AuthenticationWorkflowDescriptor> requestedWorkflows;
-
-    /** Authentication workflow that was attempted in order to authenticate the user. */
+    /** Authentication workflow being attempted to authenticate the user. */
     @Nullable private AuthenticationWorkflowDescriptor attemptedWorkflow;
 
+    /** A successfully processed authentication event (the output). */
+    @Nullable private AuthenticationEvent authenticationResult;
+    
     /** Time, in milliseconds since the epoch, when authentication process completed. */
     private long completionInstant;
 
@@ -82,18 +84,17 @@ public final class AuthenticationContext extends BaseContext {
         super();
 
         initiationInstant = System.currentTimeMillis();
+        
+        potentialWorkflows = new HashMap<>();
 
-        final Builder<String, AuthenticationWorkflowDescriptor> flowsBuilder = new ImmutableMap.Builder<>();
         if (availableFlows != null) {
             for (AuthenticationWorkflowDescriptor descriptor : availableFlows) {
-                flowsBuilder.put(descriptor.getId(), descriptor);
+                potentialWorkflows.put(descriptor.getId(), descriptor);
             }
         }
-        availableWorkflows = flowsBuilder.build();
-        potentialWorkflows = new HashMap<String, AuthenticationWorkflowDescriptor>(availableWorkflows);
 
         activeWorkflows = ImmutableMap.of();
-        requestedWorkflows = Collections.emptyMap();
+        requestedWorkflows = ImmutableMap.of();
     }
 
     /**
@@ -108,23 +109,23 @@ public final class AuthenticationContext extends BaseContext {
     /**
      * Gets the authentication workflows currently active for the subject.
      * 
-     * @return authentication workflows currently active for this user
+     * @return authentication workflows currently active for the subject
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, AuthenticationWorkflowDescriptor> getActiveWorkflows() {
+    @Nonnull @NonnullElements @Unmodifiable
+    public Map<String, AuthenticationWorkflowDescriptor> getActiveWorkflows() {
         return activeWorkflows;
     }
 
     /**
-     * Sets the authentication workflows, in order of preference, that must be used if user authentication is required.
+     * Sets the authentication workflows currently active for the subject.
      * 
-     * @param workflows authentication workflows, in order of preference, that must be used if user authentication is
-     *            required
+     * @param workflows authentication workflows currently active for the subject
      * 
      * @return this authentication request context
      */
     @Nonnull public AuthenticationContext setActiveWorkflows(
-            @Nullable @NonnullElements final List<AuthenticationWorkflowDescriptor> workflows) {
-        if (workflows == null || workflows.isEmpty()) {
+            @Nonnull @NonnullElements final List<AuthenticationWorkflowDescriptor> workflows) {
+        if (Constraint.isNotNull(workflows, "Workflow list cannot be null").isEmpty()) {
             activeWorkflows = ImmutableMap.of();
             return this;
         }
@@ -140,23 +141,11 @@ public final class AuthenticationContext extends BaseContext {
     }
     
     /**
-     * Gets the authentication workflows currently configured and available.
+     * Gets the set of workflows that could potentially be used for user authentication.
      * 
-     * @return authentication workflows currently configured and available
+     * @return the potentialWorkflows
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, AuthenticationWorkflowDescriptor>
-            getAvailableWorkflows() {
-        return availableWorkflows;
-    }
-
-    /**
-     * Gets the set of workflows that could potentially be used for user authentication. This collection initially
-     * starts out with the same entries at {@link #availableWorkflows} but ongoing authentication request processing may
-     * filter options out.
-     * 
-     * @return Returns the potentialWorkflows.
-     */
-    @Nonnull @Live public Map<String, AuthenticationWorkflowDescriptor> getPotentialWorkflows() {
+    @Nonnull @NonnullElements @Live public Map<String, AuthenticationWorkflowDescriptor> getPotentialWorkflows() {
         return potentialWorkflows;
     }
 
@@ -203,7 +192,7 @@ public final class AuthenticationContext extends BaseContext {
     }
     
     /**
-     * Gets the unmodifiable list of authentication workflows, in order of preference, that must be used if user
+     * Gets the list of authentication workflows, in order of preference, that must be used if user
      * authentication is required.
      * 
      * @return authentication workflows, in order of preference, that must be used if user authentication is required,
@@ -215,17 +204,17 @@ public final class AuthenticationContext extends BaseContext {
     }
 
     /**
-     * Sets the authentication workflows, in order of preference, that must be used if user authentication is required.
+     * Sets the workflows, in order of preference, that satisfy an explicit requirement from the relying party.
      * 
-     * @param workflows authentication workflows, in order of preference, that must be used if user authentication is
-     *            required
+     * @param workflows authentication workflows, satisfy an explicit requirement from the relying party
      * 
      * @return this authentication request context
      */
     @Nonnull public AuthenticationContext setRequestedWorkflows(
-            @Nullable @NonnullElements final List<AuthenticationWorkflowDescriptor> workflows) {
-        if (workflows == null || workflows.isEmpty()) {
-            requestedWorkflows = Collections.emptyMap();
+            @Nonnull @NonnullElements final List<AuthenticationWorkflowDescriptor> workflows) {
+        
+        if (Constraint.isNotNull(workflows, "Workflow list cannot be null").isEmpty()) {
+            requestedWorkflows = ImmutableMap.of();
             return this;
         }
 
@@ -240,7 +229,7 @@ public final class AuthenticationContext extends BaseContext {
     }
 
     /**
-     * Gets the authentication workflow that was attempted in order to authenticate the user.
+     * Get the authentication workflow that was attempted in order to authenticate the user.
      * 
      * @return authentication workflow that was attempted in order to authenticate the user
      */
@@ -249,7 +238,7 @@ public final class AuthenticationContext extends BaseContext {
     }
 
     /**
-     * Sets the authentication workflow that was attempted in order to authenticate the user.
+     * Set the authentication workflow that was attempted in order to authenticate the user.
      * 
      * @param workflow authentication workflow that was attempted in order to authenticate the user
      * 
@@ -261,6 +250,28 @@ public final class AuthenticationContext extends BaseContext {
         return this;
     }
 
+    /**
+     * Get the authentication event resulting from the request.
+     * 
+     * @return authentication workflow that was attempted in order to authenticate the user
+     */
+    @Nullable public AuthenticationEvent getAuthenticationResult() {
+        return authenticationResult;
+    }
+
+    /**
+     * Set the authentication event resulting from the request.
+     * 
+     * @param result authentication event resulting from the request
+     * 
+     * @return this authentication request context
+     */
+    @Nonnull public AuthenticationContext setAuthenticationResult(
+            @Nullable final AuthenticationEvent result) {
+        authenticationResult = result;
+        return this;
+    }
+    
     /**
      * Gets the time, in milliseconds since the epoch, when the authentication process ended. A value of 0 indicates
      * that authentication has not yet completed.
@@ -284,36 +295,11 @@ public final class AuthenticationContext extends BaseContext {
     /** {@inheritDoc} */
     public String toString() {
         return Objects.toStringHelper(this).add("initiationInstant", new DateTime(initiationInstant))
-                .add("availableWorkflows", availableWorkflows.keySet())
                 .add("isPassive", isPassive).add("forceAuthn", forceAuthn)
-                .add("requestedWorkflows", requestedWorkflows)
+                .add("potentialWorkflows", potentialWorkflows.keySet())
+                .add("requestedWorkflows", requestedWorkflows.keySet())
                 .add("activeWorkflows", activeWorkflows.keySet())
                 .add("completionInstant", new DateTime(completionInstant)).toString();
     }
 
-    /**
-     * Gets the currently active workflows based on the available workflows and the active session.
-     * 
-     * @param availableFlows currently available workflows
-     * @param session currently active session
-     * 
-     * @return currently active workflows
-     */
-    @Nonnull @NonnullElements public ImmutableMap<String, AuthenticationWorkflowDescriptor> getActiveWorkflowsBySession(
-            @Nonnull @NonnullElements final Map<String, AuthenticationWorkflowDescriptor> availableFlows,
-            @Nonnull final IdPSession session) {
-        final Builder<String, AuthenticationWorkflowDescriptor> activeFlowsBuilder = new ImmutableMap.Builder<>();
-
-        AuthenticationWorkflowDescriptor descriptor;
-        for (AuthenticationEvent event : session.getAuthenticateEvents()) {
-            // TODO check if event is still active
-            descriptor = availableFlows.get(event.getAuthenticationWorkflowId());
-            if (descriptor == null) {
-                continue;
-            }
-            activeFlowsBuilder.put(descriptor.getId(), descriptor);
-        }
-
-        return activeFlowsBuilder.build();
-    }
 }

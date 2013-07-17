@@ -70,14 +70,14 @@ public class SetRequestedAuthenticationWorkflows extends AbstractAuthenticationA
         log.debug("Action {}: inbound AuthnRequest requested the following workflow IDs: {}", getId(),
                 requestedWorkflowIds);
 
-        final Map<String, AuthenticationWorkflowDescriptor> availableDescritpors =
-                authenticationContext.getAvailableWorkflows();
+        final Map<String, AuthenticationWorkflowDescriptor> availableDescriptors =
+                authenticationContext.getPotentialWorkflows();
 
         final HashMap<String, AuthenticationWorkflowDescriptor> requestedWorkflows =
                 new HashMap<String, AuthenticationWorkflowDescriptor>();
         AuthenticationWorkflowDescriptor descriptor;
         for (String workflowId : requestedWorkflowIds) {
-            descriptor = availableDescritpors.get(workflowId);
+            descriptor = availableDescriptors.get(workflowId);
             if (descriptor != null) {
                 requestedWorkflows.put(workflowId, descriptor);
             } else {
@@ -132,6 +132,7 @@ public class SetRequestedAuthenticationWorkflows extends AbstractAuthenticationA
     @Nonnull protected List<String> getRequestedWorkflows(@Nonnull final AuthnRequest authnRequest) {
         final ArrayList<String> requestedRefs = new ArrayList<String>();
 
+        // TODO: break connection between workflow IDs and SAML bits
         final RequestedAuthnContext requestedCtx = authnRequest.getRequestedAuthnContext();
         if (requestedCtx == null) {
             log.debug("Action {}: inbound AuthnRequest did not contain a RequestedAuthnContext, nothing to do",

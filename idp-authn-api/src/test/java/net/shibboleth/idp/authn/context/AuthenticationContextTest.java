@@ -61,20 +61,6 @@ public class AuthenticationContextTest {
         Assert.assertEquals(ctx.getActiveWorkflows().get("test"), descriptor);
     }
     
-    /** Tests available workflow instantiation. */
-    @Test public void testAvailableWorkflows() throws Exception {
-        AuthenticationContext ctx = new AuthenticationContext(null);
-        Assert.assertTrue(ctx.getAvailableWorkflows().isEmpty());
-
-        ctx = new AuthenticationContext(Collections.EMPTY_LIST);
-        Assert.assertTrue(ctx.getAvailableWorkflows().isEmpty());
-
-        AuthenticationWorkflowDescriptor descriptor = new AuthenticationWorkflowDescriptor("test");
-        ctx = new AuthenticationContext(Arrays.asList(descriptor));
-        Assert.assertEquals(ctx.getAvailableWorkflows().size(), 1);
-        Assert.assertEquals(ctx.getAvailableWorkflows().get("test"), descriptor);
-    }
-
     /** Tests potential workflow instantiation. */
     @Test public void testPotentialWorkflows() throws Exception {
         AuthenticationContext ctx = new AuthenticationContext(null);
@@ -92,9 +78,6 @@ public class AuthenticationContextTest {
     /** Tests mutating requested workflows. */
     @Test public void testRequestedWorkflows() throws Exception {
         AuthenticationContext ctx = new AuthenticationContext(null);
-        Assert.assertTrue(ctx.getRequestedWorkflows().isEmpty());
-
-        ctx.setRequestedWorkflows(null);
         Assert.assertTrue(ctx.getRequestedWorkflows().isEmpty());
 
         ctx.setRequestedWorkflows(Collections.EMPTY_LIST);

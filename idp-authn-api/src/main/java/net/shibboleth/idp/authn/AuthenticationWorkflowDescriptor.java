@@ -17,16 +17,30 @@
 
 package net.shibboleth.idp.authn;
 
+import java.security.Principal;
+import java.util.List;
+import java.util.Set;
+
 import javax.annotation.Nonnull;
+import javax.security.auth.Subject;
 
 import com.google.common.base.Objects;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-/** A descriptor of an authentication workflow. */
+/**
+ * A descriptor of an authentication workflow.
+ * 
+ * <p>A workflow models a subflow that performs authentication in a particular way and satisfies
+ * various constraints that may apply to an authentication request. Some of these constraints are
+ * directly exposed as properties of the workflow, and others can be found by examining the list
+ * of extended {@link Principal}s that the workflow exposes.</p>
+ */
 public class AuthenticationWorkflowDescriptor implements IdentifiableComponent {
 
     /** The unique identifier of the authentication workflow. */
@@ -40,9 +54,9 @@ public class AuthenticationWorkflowDescriptor implements IdentifiableComponent {
 
     /** Maximum amount of time in milliseconds, since first usage, a workflow should be considered active. */
     private long lifetime;
-
-    /** Maximum amount of time in milliseconds, since more recent usage, a workflow should be considered active. */
-    private long timeout;
+    
+    /** Supported principals, indexed by type, that the workflow can produce. */
+    @Nonnull private Subject supportedPrincipals;
 
     /**
      * Constructor.
@@ -50,7 +64,8 @@ public class AuthenticationWorkflowDescriptor implements IdentifiableComponent {
      * @param id unique ID of this workflow, can not be null or empty
      */
     public AuthenticationWorkflowDescriptor(@Nonnull @NotEmpty final String id) {
-        workflowId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Workflow ID can not be null or empty");
+        workflowId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Workflow ID cannot be null or empty");
+        supportedPrincipals = new Subject();
     }
 
     /** {@inheritDoc} */
@@ -96,7 +111,7 @@ public class AuthenticationWorkflowDescriptor implements IdentifiableComponent {
 
     /**
      * Gets the maximum amount of time in milliseconds, since first usage, a workflow should be considered active. A
-     * value of 0 indicates that their is no upper limit on the lifetime on an active workflow.
+     * value of 0 indicates that there is no upper limit on the lifetime on an active workflow.
      * 
      * @return maximum amount of time in milliseconds a workflow should be considered active, never less than 0
      */
@@ -106,7 +121,7 @@ public class AuthenticationWorkflowDescriptor implements IdentifiableComponent {
 
     /**
      * Sets the maximum amount of time in milliseconds, since first usage, a workflow should be considered active. A
-     * value of 0 indicates that their is no upper limit on the lifetime on an active workflow.
+     * value of 0 indicates that there is no upper limit on the lifetime on an active workflow.
      * 
      * @param workflowLifetime the lifetime for the workflow, must be 0 or greater
      */
@@ -115,27 +130,28 @@ public class AuthenticationWorkflowDescriptor implements IdentifiableComponent {
     }
 
     /**
-     * Gets the maximum amount of time in milliseconds, since more recent usage, a workflow should be considered active.
-     * A value of 0 indicates that their is no inactivity timeout on an active workflow.
+     * Get a set of supported non-user-specific principals that the workflow may produce when it operates.
      * 
-     * @return Returns the duration.
+     * @param <T> type of Principal to inquire on
+     * @param c type of Principal to inquire on
+     * 
+     * @return a set of supported principals
      */
-    public long getInactivityTimeout() {
-        return timeout;
+    @Nonnull @NonnullElements @Unmodifiable public <T extends Principal> Set<T> getSupportedPrincipals(Class<T> c) {
+        return supportedPrincipals.getPrincipals(c);
     }
-
+    
     /**
-     * Sets the maximum amount of time in milliseconds, since more recent usage, a workflow should be considered active.
-     * A value of 0 indicates that their is no inactivity timeout on an active workflow.
+     * Set supported non-user-specific principals that the workflow may produce when it operates.
      * 
-     * @param inactivityTimeout the workflow timeout, must be 0 or greater
+     * @param <T> a type of principal to add, if not generic
+     * @param principals supported principals
      */
-    public void setInactivityTimeout(long inactivityTimeout) {
-        timeout =
-                Constraint.isGreaterThanOrEqual(0, inactivityTimeout,
-                        "Inactivity timeout must be greater than, or equal to, 0");
+    public <T extends Principal> void setSupportedPrincipals(@Nonnull @NonnullElements final List<T> principals) {
+        supportedPrincipals.getPrincipals().clear();
+        supportedPrincipals.getPrincipals().addAll(principals);
     }
-
+    
     /** {@inheritDoc} */
     public int hashCode() {
         return workflowId.hashCode();
@@ -161,7 +177,6 @@ public class AuthenticationWorkflowDescriptor implements IdentifiableComponent {
     /** {@inheritDoc} */
     public String toString() {
         return Objects.toStringHelper(this).add("workflowId", workflowId).add("supportsPassive", supportsPassive)
-                .add("supportsForcedAuthentication", supportsForced).add("lifetime", lifetime)
-                .add("inactivityTimeout", timeout).toString();
+                .add("supportsForcedAuthentication", supportsForced).add("lifetime", lifetime).toString();
     }
 }
