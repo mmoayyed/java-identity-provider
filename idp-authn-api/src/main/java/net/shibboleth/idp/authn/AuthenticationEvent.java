@@ -47,7 +47,7 @@ import com.google.common.collect.ImmutableSet;
 public final class AuthenticationEvent {
 
     /** The Subjects established by the authentication event. */
-    @Nonnull @NotEmpty private final List<Subject> subjects;
+    @Nonnull @NonnullElements @NotEmpty private final List<Subject> subjects;
 
     /** The identifier of the workflow used to produce this event. */
     @Nonnull @NotEmpty private final String authenticationWorkflowId;
