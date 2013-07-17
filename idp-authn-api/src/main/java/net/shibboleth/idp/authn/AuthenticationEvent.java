@@ -55,6 +55,9 @@ public final class AuthenticationEvent {
     /** The time, in milliseconds since the epoch, that the authentication completed. */
     private final long authenticationInstant;
 
+    /** The last time, in milliseconds since the epoch, this event was used to bypass authentication. */
+    private long lastActivityInstant;
+    
     /**
      * Constructor. <p>Sets the authentication instant to the current time.</p>
      * 
@@ -68,6 +71,7 @@ public final class AuthenticationEvent {
                 "Authentication method cannot be null nor empty");
         subjects = new ArrayList(Constraint.isNotEmpty(newSubjects, "Subject list cannot be null or empty"));
         authenticationInstant = System.currentTimeMillis();
+        lastActivityInstant = authenticationInstant;
     }
 
     /**
@@ -118,6 +122,31 @@ public final class AuthenticationEvent {
     public long getAuthenticationInstant() {
         return authenticationInstant;
     }
+    
+    /**
+     * Gets the last activity instant, in milliseconds since the epoch, for this event.
+     * 
+     * @return last activity instant, in milliseconds since the epoch, for this event, never less than 0
+     */
+    public long getLastActivityInstant() {
+        return lastActivityInstant;
+    }
+    
+    /**
+     * Sets the last activity instant, in milliseconds since the epoch, for this event.
+     * 
+     * @param instant last activity instant, in milliseconds since the epoch, for this event, must be greater than 0
+     */
+    public void setLastActivityInstant(final long instant) {
+        lastActivityInstant = Constraint.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
+    }
+
+    /**
+     * Sets the last activity instant, in milliseconds since the epoch, for this event to the current time.
+     */
+    public void setLastActivityInstantToNow() {
+        lastActivityInstant = System.currentTimeMillis();
+    }
 
     /** {@inheritDoc} */
     public int hashCode() {
@@ -146,7 +175,8 @@ public final class AuthenticationEvent {
     public String toString() {
         return Objects.toStringHelper(this).add("authenticationWorkflowId", authenticationWorkflowId)
                 .add("authenticatedPrincipal", getSubjectName())
-                .add("authenticationInstant", new DateTime(authenticationInstant)).toString();
+                .add("authenticationInstant", new DateTime(authenticationInstant))
+                .add("lastActivityInstant", new DateTime(lastActivityInstant)).toString();
     }
     
     /**

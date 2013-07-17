@@ -76,6 +76,19 @@ public class AuthenticationWorkflowDescriptorTest {
         }
     }
 
+    /** Tests mutating inactivity timeout. */
+    @Test public void testInactivityTimeout() {
+        descriptor.setInactivityTimeout(10);
+        Assert.assertEquals(descriptor.getInactivityTimeout(), 10);
+
+        try {
+            descriptor.setInactivityTimeout(-10);
+            Assert.fail();
+        } catch (ConstraintViolationException e) {
+            Assert.assertEquals(descriptor.getInactivityTimeout(), 10);
+        }
+    }
+    
     /** Tests mutating forced authentication support. */
     @Test public void testSupportedForcedAuthentication() {
         descriptor.setForcedAuthenticationSupported(true);

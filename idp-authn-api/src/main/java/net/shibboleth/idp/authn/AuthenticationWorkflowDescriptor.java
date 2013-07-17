@@ -55,6 +55,9 @@ public class AuthenticationWorkflowDescriptor implements IdentifiableComponent {
     /** Maximum amount of time in milliseconds, since first usage, a workflow should be considered active. */
     private long lifetime;
     
+    /** Maximum amount of time in milliseconds, since last usage, a workflow should be considered active. */
+    private long timeout;
+    
     /** Supported principals, indexed by type, that the workflow can produce. */
     @Nonnull private Subject supportedPrincipals;
 
@@ -128,7 +131,28 @@ public class AuthenticationWorkflowDescriptor implements IdentifiableComponent {
     public void setLifetime(long workflowLifetime) {
         lifetime = Constraint.isGreaterThanOrEqual(0, workflowLifetime, "Lifetime must be greater than or equal to 0");
     }
+    
+    /**
+     * Gets the maximum amount of time in milliseconds, since the last usage, a workflow should be considered active.
+     * A value of 0 indicates that there is no inactivity timeout on an active workflow.
+     * 
+     * @return the duration.
+     */
+    public long getInactivityTimeout() {
+        return timeout;
+    }
 
+    /**
+     * Sets the maximum amount of time in milliseconds, since the last usage, a workflow should be considered active.
+     * A value of 0 indicates that there is no inactivity timeout on an active workflow.
+     * 
+     * @param inactivityTimeout the workflow timeout, must be 0 or greater
+     */
+    public void setInactivityTimeout(long inactivityTimeout) {
+        timeout =
+                Constraint.isGreaterThanOrEqual(0, inactivityTimeout,
+                        "Inactivity timeout must be greater than, or equal to, 0");
+    }
     /**
      * Get a set of supported non-user-specific principals that the workflow may produce when it operates.
      * 
@@ -177,6 +201,7 @@ public class AuthenticationWorkflowDescriptor implements IdentifiableComponent {
     /** {@inheritDoc} */
     public String toString() {
         return Objects.toStringHelper(this).add("workflowId", workflowId).add("supportsPassive", supportsPassive)
-                .add("supportsForcedAuthentication", supportsForced).add("lifetime", lifetime).toString();
+                .add("supportsForcedAuthentication", supportsForced).add("lifetime", lifetime)
+                .add("inactivityTimeout", timeout).toString();
     }
 }
