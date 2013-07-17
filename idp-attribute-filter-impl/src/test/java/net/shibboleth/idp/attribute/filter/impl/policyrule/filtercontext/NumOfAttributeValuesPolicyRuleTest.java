@@ -45,14 +45,14 @@ public class NumOfAttributeValuesPolicyRuleTest {
         
         rule.setId("id");
         rule.setAttributeId(attrId);
-        rule.setMaximumValues(testMax);
-        rule.setMinimumValues(testMin);
+        rule.setMaximum(testMax);
+        rule.setMinimum(testMin);
 
         rule.initialize();
         
         Assert.assertEquals(rule.getAttributeId(), attrId);
-        Assert.assertEquals(rule.getMaximumValues(), testMax);
-        Assert.assertEquals(rule.getMinimumValues(), testMin);
+        Assert.assertEquals(rule.getMaximum(), testMax);
+        Assert.assertEquals(rule.getMinimum(), testMin);
     }
     
     @Test(expectedExceptions={ComponentInitializationException.class,}) 
@@ -75,7 +75,7 @@ public class NumOfAttributeValuesPolicyRuleTest {
         NumOfAttributeValuesPolicyRule rule = new NumOfAttributeValuesPolicyRule();
         rule.setId("id");
         rule.setAttributeId(attrId);
-        rule.setMinimumValues(testMax);
+        rule.setMinimum(testMax);
         rule.initialize();
     }
     
@@ -90,14 +90,14 @@ public class NumOfAttributeValuesPolicyRuleTest {
     public void badMin()  {
         NumOfAttributeValuesPolicyRule rule = new NumOfAttributeValuesPolicyRule();
         rule.setId("id");
-        rule.setMinimumValues(-6);
+        rule.setMinimum(-6);
     }
 
     @Test(expectedExceptions={ConstraintViolationException.class,})
     public void badMax()  {
         NumOfAttributeValuesPolicyRule rule = new NumOfAttributeValuesPolicyRule();
         rule.setId("id");
-        rule.setMaximumValues(0);
+        rule.setMaximum(0);
     }
     
     private AttributeFilterContext manufactureWith(int howMany) {
@@ -119,8 +119,8 @@ public class NumOfAttributeValuesPolicyRuleTest {
         NumOfAttributeValuesPolicyRule rule = new NumOfAttributeValuesPolicyRule();
         rule.setId("id");
         rule.setAttributeId(attrId);
-        rule.setMaximumValues(testMax);
-        rule.setMinimumValues(testMin);
+        rule.setMaximum(testMax);
+        rule.setMinimum(testMin);
 
         rule.initialize();
                 

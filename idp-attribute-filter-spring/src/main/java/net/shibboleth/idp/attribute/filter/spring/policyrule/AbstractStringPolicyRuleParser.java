@@ -23,7 +23,6 @@ import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
 // TODO TESTING

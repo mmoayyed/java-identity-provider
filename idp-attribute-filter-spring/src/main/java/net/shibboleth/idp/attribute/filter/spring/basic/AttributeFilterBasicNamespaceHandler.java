@@ -27,6 +27,7 @@ import net.shibboleth.idp.attribute.filter.spring.policyrule.AttributeRequesterR
 import net.shibboleth.idp.attribute.filter.spring.policyrule.AttributeRequesterRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.AuthenticationMethodRegexRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.AuthenticationMethodRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.NumOfAttributeValuesRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.PrincipalNameRegexRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.PrincipalNameRuleParser;
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
@@ -82,24 +83,9 @@ public class AttributeFilterBasicNamespaceHandler extends BaseSpringNamespaceHan
         registerBeanDefinitionParser(AuthenticationMethodRegexRuleParser.SCHEMA_TYPE,
                 new AuthenticationMethodRegexRuleParser());
 
+        registerBeanDefinitionParser(NumOfAttributeValuesRuleParser.SCHEMA_TYPE, new NumOfAttributeValuesRuleParser());
+
         /**
-         * registerBeanDefinitionParser(AnyMatchFunctorBeanDefinitionParser.SCHEMA_TYPE, new
-         * AnyMatchFunctorBeanDefinitionParser());
-         * 
-         * registerBeanDefinitionParser(AttributeValueStringMatchFunctionBeanDefinitionParser.SCHEMA_TYPE, new
-         * AttributeValueStringMatchFunctionBeanDefinitionParser());
-         * registerBeanDefinitionParser(NumOfAttributeValuesMatchFunctorBeanDefinitionParser.SCHEMA_TYPE, new
-         * NumOfAttributeValuesMatchFunctorBeanDefinitionParser());
-         * 
-         * registerBeanDefinitionParser(OrMatchFunctorBeanDefinitionParser.SCHEMA_TYPE, new
-         * OrMatchFunctorBeanDefinitionParser());
-         * 
-         * registerBeanDefinitionParser(PrincipalNameRegexMatchFunctionBeanDefinitionParser.SCHEMA_TYPE, new
-         * PrincipalNameRegexMatchFunctionBeanDefinitionParser());
-         * 
-         * registerBeanDefinitionParser(PrincipalNameStringMatchFunctionBeanDefinitionParser.SCHEMA_TYPE, new
-         * PrincipalNameStringMatchFunctionBeanDefinitionParser());
-         * 
          * registerBeanDefinitionParser(ScriptMatchFunctorBeanDefinitionParser.SCHEMA_TYPE, new
          * ScriptMatchFunctorBeanDefinitionParser());
          **/

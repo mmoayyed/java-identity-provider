@@ -107,7 +107,7 @@ public class NumOfAttributeValuesPolicyRule extends AbstractPolicyRule {
      * 
      * @return Returns the minimumValues.
      */
-    public int getMinimumValues() {
+    public int getMinimum() {
         return minimumValues;
     }
 
@@ -116,7 +116,7 @@ public class NumOfAttributeValuesPolicyRule extends AbstractPolicyRule {
      * 
      * @param minValues The minimumValues to set.
      */
-    public void setMinimumValues(int minValues) {
+    public void setMinimum(int minValues) {
         minimumValues =  (int) Constraint.isGreaterThanOrEqual(0, minValues, "min value must be >= 0");
     }
 
@@ -125,7 +125,7 @@ public class NumOfAttributeValuesPolicyRule extends AbstractPolicyRule {
      * 
      * @return Returns the maximumValues.
      */
-    public int getMaximumValues() {
+    public int getMaximum() {
         return maximumValues;
     }
 
@@ -134,7 +134,7 @@ public class NumOfAttributeValuesPolicyRule extends AbstractPolicyRule {
      * 
      * @param maxValues The maximumValues to set.
      */
-    public void setMaximumValues(int maxValues) {
+    public void setMaximum(int maxValues) {
         maximumValues = (int) Constraint.isGreaterThan(0, maxValues, "max value must be > 0");
     }
 
