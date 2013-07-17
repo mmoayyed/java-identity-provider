@@ -18,6 +18,11 @@
     <dependencies>
         <!-- Compile Dependencies -->
         <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-saml-api</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-profile-api</artifactId>
             <version>${project.version}</version>
