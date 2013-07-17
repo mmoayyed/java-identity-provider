@@ -31,6 +31,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.joda.time.DateTime;
 import org.opensaml.messaging.context.BaseContext;
@@ -55,6 +56,9 @@ public final class AuthenticationContext extends BaseContext {
 
     /** Whether authentication must not involve subject interaction. */
     private boolean isPassive;
+    
+    /** A non-normative hint some protocols support to indicate who the subject might be. */
+    private String hintedName;
 
     /** Authentication workflows associated with a preexisting session and available for (re)use. */
     @Nonnull @NonnullElements private ImmutableMap<String, AuthenticationWorkflowDescriptor> activeWorkflows;
@@ -188,6 +192,27 @@ public final class AuthenticationContext extends BaseContext {
      */
     @Nonnull public AuthenticationContext setForceAuthn(boolean force) {
         forceAuthn = force;
+        return this;
+    }
+    
+    /**
+     * Get a non-normative hint provided by the request about the user's identity.
+     * 
+     * @return  the username hint
+     */
+    @Nullable public String getHintedName() {
+        return hintedName;
+    }
+    
+    /**
+     * Set a non-normative hint provided by the request about the user's identity.
+     * 
+     * @param hint the username hint
+     * 
+     * @return this authentication request context
+     */
+    @Nonnull public AuthenticationContext setHintedName(@Nullable final String hint) {
+        hintedName = StringSupport.trimOrNull(hint);
         return this;
     }
     
