@@ -56,7 +56,7 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
     private final Logger log = LoggerFactory.getLogger(AbstractEntityAttributePolicyRule.class);
 
     /** The name of the entity attribute the entity must have. */
-    private String name;
+    private String attrName;
 
     /** The name format of the entity attribute the entity must have. */
     private String nameFormat;
@@ -66,8 +66,8 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
      * 
      * @return name of the entity attribute the entity must have
      */
-    @NonnullAfterInit public String getName() {
-        return name;
+    @NonnullAfterInit public String getAttributeName() {
+        return attrName;
     }
 
     /**
@@ -76,7 +76,7 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
      * @param attributeName name of the entity attribute the entity must have
      */
     public void setAttributeName(@Nullable final String attributeName) {
-        name = StringSupport.trimOrNull(attributeName);
+        attrName = StringSupport.trimOrNull(attributeName);
     }
 
     /**
@@ -103,8 +103,7 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
      * 
      * @param filterContext current request context
      * 
-     * @return whether the entity has the configured attribute
-     *         {@inheritDoc}
+     * @return whether the entity has the configured attribute {@inheritDoc}
      */
     public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
 
@@ -125,12 +124,13 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
 
         List<XMLObject> attributeValues = entityAttribute.getAttributeValues();
         if (attributeValues == null || attributeValues.isEmpty()) {
-            log.debug("{} Entity attribute {} for entity {} does not contain any values", getLogPrefix(), getName(),
-                    entityDescriptor.getEntityID());
+            log.debug("{} Entity attribute {} for entity {} does not contain any values", getLogPrefix(),
+                    getAttributeName(), entityDescriptor.getEntityID());
             return Tristate.FALSE;
         }
 
-        log.debug("{} Checking if entity attribute {} contains the required value.", getLogPrefix(), getName());
+        log.debug("{} Checking if entity attribute {} contains the required value.", getLogPrefix(), 
+                getAttributeName());
         String valueString;
         for (XMLObject attributeValue : attributeValues) {
             if (attributeValue instanceof XSAny) {
@@ -139,18 +139,18 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
                 valueString = ((XSString) attributeValue).getValue();
             } else {
                 log.debug("{} Entity attribute {} contains the unsupported value type {}, skipping it", getLogPrefix(),
-                        getName(), attributeValue.getClass().getName());
+                        getAttributeName(), attributeValue.getClass().getName());
                 continue;
             }
 
             if (valueString != null) {
                 if (entityAttributeValueMatches(valueString)) {
-                    log.debug("{} Entity attribute {} value {} meets matching requirements", getLogPrefix(), getName(),
-                            valueString);
+                    log.debug("{} Entity attribute {} value {} meets matching requirements", getLogPrefix(),
+                            getAttributeName(), valueString);
                     return Tristate.TRUE;
                 }
                 log.debug("{} Entity attribute {} value {} does not meet matching requirements", getLogPrefix(),
-                        getName(), valueString);
+                        getAttributeName(), valueString);
             }
         }
 
@@ -205,26 +205,27 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
     @Nullable private Attribute compareAttributes(List<Attribute> entityAttributes, EntityDescriptor entityDescriptor) {
 
         for (Attribute entityAttribute : entityAttributes) {
-            if (!Objects.equal(getName(), entityAttribute.getName())) {
+            if (!Objects.equal(getAttributeName(), entityAttribute.getName())) {
                 continue;
             }
 
             if (getNameFormat() == null || (Objects.equal(getNameFormat(), entityAttribute.getNameFormat()))) {
                 log.debug("{} Descriptor for {} contains an entity attribute with the name {} and the format {}",
-                        new Object[] {getLogPrefix(), entityDescriptor.getEntityID(), getName(), getNameFormat()});
+                        new Object[] {getLogPrefix(), entityDescriptor.getEntityID(), getAttributeName(),
+                                getNameFormat(),});
                 return entityAttribute;
             }
         }
 
         log.debug("{} Descriptor for {} does not contain an entity attribute with the name {} and the format {}",
-                new Object[] {getLogPrefix(), entityDescriptor.getEntityID(), getName(), getNameFormat()});
+                new Object[] {getLogPrefix(), entityDescriptor.getEntityID(), getAttributeName(), getNameFormat()});
         return null;
     }
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        if (name == null) {
+        if (attrName == null) {
             throw new ComponentInitializationException(getLogPrefix() + " Attribute name is null");
         }
     }
