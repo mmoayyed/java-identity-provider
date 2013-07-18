@@ -17,11 +17,13 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.util.Arrays;
+
+import net.shibboleth.idp.authn.AuthenticationWorkflowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 
 import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -31,14 +33,12 @@ public class InitializeAuthenticationContextTest {
     /** Test that the authentication context is properly added if an idp session exists. */
     @Test public void testAction() throws Exception {
 
-        // TODO
-        // AuthenticationWorkflowDescriptor descriptor = new AuthenticationWorkflowDescriptor("test");
-        // Collection<AuthenticationWorkflowDescriptor> availableFlows = Arrays.asList(descriptor);
+        AuthenticationWorkflowDescriptor descriptor = new AuthenticationWorkflowDescriptor("test");
 
         ProfileRequestContext profileCtx = new ProfileRequestContext();
 
         InitializeAuthenticationContext action = new InitializeAuthenticationContext();
-        action.setId("test");
+        action.setAvailableWorkflows(Arrays.asList(descriptor));
         action.initialize();
 
         action.doExecute(profileCtx);
@@ -47,9 +47,8 @@ public class InitializeAuthenticationContextTest {
         AuthenticationContext authCtx = profileCtx.getSubcontext(AuthenticationContext.class, false);
         Assert.assertNotNull(authCtx);
 
-        // TODO
-        // Assert.assertEquals(ctx.getAvailableWorkflows().size(), 1);
-        // Assert.assertEquals(ctx.getAvailableWorkflows().get("test"), descriptor);
+        Assert.assertEquals(authCtx.getPotentialWorkflows().size(), 1);
+        Assert.assertEquals(authCtx.getPotentialWorkflows().get("test"), descriptor);
     }
 
 }

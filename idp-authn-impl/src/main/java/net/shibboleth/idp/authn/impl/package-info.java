@@ -15,6 +15,5 @@
  * limitations under the License.
  */
 
-/** Implementation of various authentication workflow steps. */
-
+/** Implementation of various authentication actions. */
 package net.shibboleth.idp.authn.impl;
