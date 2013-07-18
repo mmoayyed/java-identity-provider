@@ -85,9 +85,6 @@ public class AttributeFilterBasicNamespaceHandler extends BaseSpringNamespaceHan
 
         registerBeanDefinitionParser(NumOfAttributeValuesRuleParser.SCHEMA_TYPE, new NumOfAttributeValuesRuleParser());
 
-        /**
-         * registerBeanDefinitionParser(ScriptMatchFunctorBeanDefinitionParser.SCHEMA_TYPE, new
-         * ScriptMatchFunctorBeanDefinitionParser());
-         **/
+        registerBeanDefinitionParser(ScriptedMatcherParser.SCHEMA_TYPE, new ScriptedMatcherParser());
     }
 }

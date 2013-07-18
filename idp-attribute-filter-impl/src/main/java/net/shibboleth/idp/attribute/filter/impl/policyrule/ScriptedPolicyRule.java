@@ -46,7 +46,7 @@ import com.google.common.base.Objects;
 @ThreadSafe
 public class ScriptedPolicyRule extends AbstractDestructableIdentifiableInitializableComponent implements
         PolicyRequirementRule, UnmodifiableComponent {
-    
+
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ScriptedPolicyRule.class);
 
@@ -126,7 +126,8 @@ public class ScriptedPolicyRule extends AbstractDestructableIdentifiableInitiali
                 }
                 return Tristate.FALSE;
             } else {
-                log.error("{} Matcher script did not return a Boolean", getLogPrefix());
+                log.error("{} Matcher script returned a {}, not a java.lang.Boolean", getLogPrefix(), result.getClass()
+                        .toString());
                 return Tristate.FAIL;
             }
         } catch (ScriptException e) {
