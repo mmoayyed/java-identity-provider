@@ -28,36 +28,33 @@ public class AttributeFilterSAMLNamespaceHandler extends BaseSpringNamespaceHand
 
     /** {@inheritDoc} */
     public void init() {
-        
+
+        registerBeanDefinitionParser(AttributeIssuerEntityAttributeExactRuleParser.SCHEMA_TYPE,
+                new AttributeIssuerEntityAttributeExactRuleParser());
+
+        registerBeanDefinitionParser(AttributeIssuerEntityAttributeRegexRuleParser.SCHEMA_TYPE,
+                new AttributeIssuerEntityAttributeRegexRuleParser());
+
+        registerBeanDefinitionParser(AttributeRequesterEntityAttributeExactRuleParser.SCHEMA_TYPE,
+                new AttributeRequesterEntityAttributeExactRuleParser());
+
+        registerBeanDefinitionParser(AttributeRequesterEntityAttributeRegexRuleParser.SCHEMA_TYPE,
+                new AttributeRequesterEntityAttributeRegexRuleParser());
+
+        registerBeanDefinitionParser(AttributeRequesterNameIdFormatRuleParser.SCHEMA_TYPE,
+                new AttributeRequesterNameIdFormatRuleParser());
+
+        registerBeanDefinitionParser(AttributeIssuerNameIdFormatRuleParser.SCHEMA_TYPE,
+                new AttributeIssuerNameIdFormatRuleParser());
+
+        registerBeanDefinitionParser(AttributeIssuerInEntityGroupRuleParser.SCHEMA_TYPE, 
+                new AttributeIssuerInEntityGroupRuleParser());
+
+        registerBeanDefinitionParser(AttributeRequesterInEntityGroupRuleParser.SCHEMA_TYPE,
+                new AttributeRequesterInEntityGroupRuleParser());
         /**
-        registerBeanDefinitionParser(AttributeRequesterInEntityGroupMatchFunctorBeanDefinitionParser.SCHEMA_TYPE,
-                new AttributeRequesterInEntityGroupMatchFunctorBeanDefinitionParser());
-
-        registerBeanDefinitionParser(AttributeIssuerInEntityGroupMatchFunctorBeanDefinitionParser.SCHEMA_TYPE,
-                new AttributeIssuerInEntityGroupMatchFunctorBeanDefinitionParser());
-
-        registerBeanDefinitionParser(AttributeIssuerEntityAttributeExactMatchFunctorBeanDefinitionParser.SCHEMA_TYPE,
-                new AttributeIssuerEntityAttributeExactMatchFunctorBeanDefinitionParser());
-
-        registerBeanDefinitionParser(
-                AttributeRequesterEntityAttributeExactMatchFunctorBeanDefinitionParser.SCHEMA_TYPE,
-                new AttributeRequesterEntityAttributeExactMatchFunctorBeanDefinitionParser());
-
-        registerBeanDefinitionParser(AttributeIssuerEntityAttributeRegexMatchFunctorBeanDefinitionParser.SCHEMA_TYPE,
-                new AttributeIssuerEntityAttributeRegexMatchFunctorBeanDefinitionParser());
-
-        registerBeanDefinitionParser(
-                AttributeRequesterEntityAttributeRegexMatchFunctorBeanDefinitionParser.SCHEMA_TYPE,
-                new AttributeRequesterEntityAttributeRegexMatchFunctorBeanDefinitionParser());
-
-        registerBeanDefinitionParser(AttributeIssuerNameIDFormatExactMatchFunctorBeanDefinitionParser.SCHEMA_TYPE,
-                new AttributeIssuerNameIDFormatExactMatchFunctorBeanDefinitionParser());
-
-        registerBeanDefinitionParser(AttributeRequesterNameIDFormatExactMatchFunctorBeanDefinitionParser.SCHEMA_TYPE,
-                new AttributeRequesterNameIDFormatExactMatchFunctorBeanDefinitionParser());
-        
-        registerBeanDefinitionParser(AttributeInMetadataMatchFunctorBeanDefinitionParser.SCHEMA_TYPE,
-                new AttributeInMetadataMatchFunctorBeanDefinitionParser());
-        */
+         * registerBeanDefinitionParser(AttributeInMetadataMatchFunctorBeanDefinitionParser.SCHEMA_TYPE, new
+         * AttributeInMetadataMatchFunctorBeanDefinitionParser());
+         */
     }
 }
