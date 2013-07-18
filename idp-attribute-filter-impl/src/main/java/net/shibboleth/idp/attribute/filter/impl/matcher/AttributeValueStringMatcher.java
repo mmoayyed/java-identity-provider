@@ -42,11 +42,10 @@ public class AttributeValueStringMatcher extends AbstractStringMatcher {
         }
 
         if (value instanceof StringAttributeValue) {
-            final StringAttributeValue stringValue = (StringAttributeValue) value;
-            return super.stringCompare(stringValue.getValue());
+            return super.stringCompare(((StringAttributeValue)value).getValue());
 
         } else {
-            final String valueAsString = ((AttributeValue) value).getValue().toString();
+            final String valueAsString = value.getValue().toString();
             log.warn("{} Object supplied to StringAttributeValue comparison"
                     + " was of class {}, not StringAttributeValue, comparing with {}", new Object[] {
                     getLogPrefix(), value.getClass().getName(), valueAsString,});
