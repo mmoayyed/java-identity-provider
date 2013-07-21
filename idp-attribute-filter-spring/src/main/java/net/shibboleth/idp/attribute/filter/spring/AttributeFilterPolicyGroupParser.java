@@ -73,6 +73,9 @@ public class AttributeFilterPolicyGroupParser implements BeanDefinitionParser {
         children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "PermitValueRule"));
         SpringSupport.parseCustomElements(children, context);
 
+        children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "DenyValueRule"));
+        SpringSupport.parseCustomElements(children, context);
+
         children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeFilterPolicy"));
         SpringSupport.parseCustomElements(children, context);
 
