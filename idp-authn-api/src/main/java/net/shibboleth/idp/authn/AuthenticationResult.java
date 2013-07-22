@@ -19,6 +19,7 @@ package net.shibboleth.idp.authn;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -66,7 +67,7 @@ public final class AuthenticationResult {
      * @param newSubjects a Subject collection identifying the authenticated entity
      */
     public AuthenticationResult(@Nonnull @NotEmpty final String flowId,
-            @Nonnull @NotEmpty @NonnullElements final List<Subject> newSubjects) {
+            @Nonnull @NotEmpty @NonnullElements final Collection<Subject> newSubjects) {
 
         authenticationFlowId = Constraint.isNotNull(StringSupport.trimOrNull(flowId),
                 "Authentication flow ID cannot be null nor empty");

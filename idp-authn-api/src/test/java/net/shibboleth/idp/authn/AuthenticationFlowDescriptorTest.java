@@ -19,6 +19,8 @@ package net.shibboleth.idp.authn;
 
 import java.util.Arrays;
 
+import javax.security.auth.Subject;
+
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
@@ -125,5 +127,38 @@ public class AuthenticationFlowDescriptorTest {
         Assert.assertTrue(descriptor.getSupportedPrincipals(UsernamePrincipal.class).contains(foo));
         Assert.assertTrue(descriptor.getSupportedPrincipals(UsernamePrincipal.class).contains(bar));
         Assert.assertFalse(descriptor.getSupportedPrincipals(UsernamePrincipal.class).contains(baz));
+        
+        descriptor.getSupportedPrincipals().add(baz);
+        Assert.assertEquals(descriptor.getSupportedPrincipals(UsernamePrincipal.class).size(), 3);
+        Assert.assertTrue(descriptor.getSupportedPrincipals(UsernamePrincipal.class).contains(baz));
+        
+        try {
+            descriptor.getSupportedPrincipals().add(null);
+            Assert.fail();
+        } catch (IllegalArgumentException e) {
+            
+        }
+    }
+    
+    /** Tests handling of active/inactive checks. */
+    @Test public void testActiveResults() throws InterruptedException {
+        AuthenticationResult result = new AuthenticationResult("test", new UsernamePrincipal("foo"));
+        Assert.assertTrue(descriptor.isResultActive(result));
+        
+        Thread.sleep(20);
+        
+        descriptor.setLifetime(10);
+        Assert.assertFalse(descriptor.isResultActive(result));
+        
+        descriptor.setLifetime(5000);
+        Assert.assertTrue(descriptor.isResultActive(result));
+        
+        Thread.sleep(20);
+        
+        descriptor.setInactivityTimeout(10);
+        Assert.assertFalse(descriptor.isResultActive(result));
+        
+        result.setLastActivityInstantToNow();
+        Assert.assertTrue(descriptor.isResultActive(result));
     }
 }
