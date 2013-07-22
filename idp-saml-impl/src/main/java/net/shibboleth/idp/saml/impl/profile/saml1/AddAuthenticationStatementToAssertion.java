@@ -214,7 +214,7 @@ public class AddAuthenticationStatementToAssertion extends AbstractProfileAction
 
         final AuthenticationStatement statement = statementBuilder.buildObject();
         statement.setAuthenticationInstant(new DateTime(authnCtx.getCompletionInstant()));
-        statement.setAuthenticationMethod(authnCtx.getAttemptedWorkflow().getId());
+        statement.setAuthenticationMethod(authnCtx.getAttemptedFlow().getId());
         return statement;
     }
 }

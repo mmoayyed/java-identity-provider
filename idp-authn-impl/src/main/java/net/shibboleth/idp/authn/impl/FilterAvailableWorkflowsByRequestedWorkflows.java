@@ -52,9 +52,9 @@ public class FilterAvailableWorkflowsByRequestedWorkflows extends AbstractAuthen
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
         final Map<String, AuthenticationFlowDescriptor> potentialWorkflows =
-                authenticationContext.getPotentialWorkflows();
+                authenticationContext.getPotentialFlows();
 
-        final Set<String> requestedDescriptors = authenticationContext.getRequestedWorkflows().keySet();
+        final Set<String> requestedDescriptors = authenticationContext.getRequestedFlows().keySet();
         if (requestedDescriptors.isEmpty()) {
             log.debug("Action {}: no specific workflows requested, nothing to do", getId());
             return ActionSupport.buildProceedEvent(this);

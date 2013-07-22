@@ -29,6 +29,7 @@ import javax.security.auth.Subject;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -53,10 +54,10 @@ public final class AuthenticationResult {
     @Nonnull @NotEmpty private final String authenticationFlowId;
 
     /** The time, in milliseconds since the epoch, that the authentication completed. */
-    private final long authenticationInstant;
+    @Positive private final long authenticationInstant;
 
     /** The last time, in milliseconds since the epoch, this result was used to bypass authentication. */
-    private long lastActivityInstant;
+    @Positive private long lastActivityInstant;
     
     /**
      * Constructor. <p>Sets the authentication instant to the current time.</p>
@@ -117,33 +118,27 @@ public final class AuthenticationResult {
     /**
      * Get the time, in milliseconds since the epoch, that the authentication completed.
      * 
-     * <p>Always greater or equal to 0.</p>
-     * 
      * @return time, in milliseconds since the epoch, that the authentication completed, never less than 0
      */
-    public long getAuthenticationInstant() {
+    @Positive public long getAuthenticationInstant() {
         return authenticationInstant;
     }
     
     /**
-     * Get the last time, in milliseconds since the epoch, this result was used to bypass authentication.
+     * Get the last time, in milliseconds since the epoch, this result was used for authentication.
      * 
-     * <p>Always greater or equal to 0.</p>
-     * 
-     * @return last time, in milliseconds since the epoch, this result was used to bypass authentication
+     * @return last time, in milliseconds since the epoch, this result was used for authentication
      */
-    public long getLastActivityInstant() {
+    @Positive public long getLastActivityInstant() {
         return lastActivityInstant;
     }
     
     /**
-     * Set the last time, in milliseconds since the epoch, result was used to bypass authentication.
-     * 
-     * <p>Must be greater than 0.</p>
+     * Set the last time, in milliseconds since the epoch, result was used for authentication.
      * 
      * @param instant last time, in milliseconds since the epoch, result was used to bypass authentication
      */
-    public void setLastActivityInstant(final long instant) {
+    public void setLastActivityInstant(@Positive final long instant) {
         lastActivityInstant = Constraint.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
     }
 

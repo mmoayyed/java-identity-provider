@@ -47,8 +47,8 @@ public class InitializeAuthenticationContextTest {
         AuthenticationContext authCtx = profileCtx.getSubcontext(AuthenticationContext.class, false);
         Assert.assertNotNull(authCtx);
 
-        Assert.assertEquals(authCtx.getPotentialWorkflows().size(), 1);
-        Assert.assertEquals(authCtx.getPotentialWorkflows().get("test"), descriptor);
+        Assert.assertEquals(authCtx.getPotentialFlows().size(), 1);
+        Assert.assertEquals(authCtx.getPotentialFlows().get("test"), descriptor);
     }
 
 }

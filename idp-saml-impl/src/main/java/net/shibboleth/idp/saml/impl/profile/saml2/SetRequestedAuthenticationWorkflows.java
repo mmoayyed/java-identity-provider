@@ -71,7 +71,7 @@ public class SetRequestedAuthenticationWorkflows extends AbstractAuthenticationA
                 requestedWorkflowIds);
 
         final Map<String, AuthenticationFlowDescriptor> availableDescriptors =
-                authenticationContext.getPotentialWorkflows();
+                authenticationContext.getPotentialFlows();
 
         final HashMap<String, AuthenticationFlowDescriptor> requestedWorkflows =
                 new HashMap<String, AuthenticationFlowDescriptor>();

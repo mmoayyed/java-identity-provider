@@ -114,7 +114,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
                         .buildProfileRequestContext();
 
         AuthenticationContext authCtx = new AuthenticationContext(null);
-        authCtx.setAttemptedWorkflow(new AuthenticationFlowDescriptor("test"));
+        authCtx.setAttemptedFlow(new AuthenticationFlowDescriptor("test"));
 
         long now = System.currentTimeMillis();
         // this is here to allow the event's creation time to deviate from the 'start' time

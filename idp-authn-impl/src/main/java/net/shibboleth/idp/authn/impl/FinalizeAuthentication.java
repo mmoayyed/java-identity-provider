@@ -68,7 +68,7 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
             return ActionSupport.buildEvent(this, EventIds.INVALID_MSG_MD);
         }
 
-        if (authenticationContext.getAttemptedWorkflow() == null) {
+        if (authenticationContext.getAttemptedFlow() == null) {
             log.debug("Action {}: no attempted workflow descriptor available", getId());
             return ActionSupport.buildEvent(this, AuthnEventIds.INVALID_AUTHN_CTX);
         }

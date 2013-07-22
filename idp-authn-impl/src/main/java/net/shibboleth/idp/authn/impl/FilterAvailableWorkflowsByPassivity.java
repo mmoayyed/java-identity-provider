@@ -60,7 +60,7 @@ public class FilterAvailableWorkflowsByPassivity extends AbstractAuthenticationA
         }
 
         final Map<String, AuthenticationFlowDescriptor> potentialWorkflows =
-                authenticationContext.getPotentialWorkflows();
+                authenticationContext.getPotentialFlows();
 
         final Iterator<Entry<String, AuthenticationFlowDescriptor>> descriptorItr =
                 potentialWorkflows.entrySet().iterator();

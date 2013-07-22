@@ -28,7 +28,9 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -43,13 +45,13 @@ import com.google.common.collect.ImmutableMap.Builder;
 /**
  * A context representing the state of an authentication attempt, this is the primary
  * input/output context for the action flow responsible for authentication, and
- * within that flow, the individual workflows that carry out a specific kind of
+ * within that flow, the individual flows that carry out a specific kind of
  * authentication.
  */
 public final class AuthenticationContext extends BaseContext {
 
     /** Time, in milliseconds since the epoch, when the authentication process started. */
-    private final long initiationInstant;
+    @Positive private final long initiationInstant;
 
     /** Whether to require fresh subject interaction to succeed. */
     private boolean forceAuthn;
@@ -60,28 +62,28 @@ public final class AuthenticationContext extends BaseContext {
     /** A non-normative hint some protocols support to indicate who the subject might be. */
     private String hintedName;
 
-    /** Authentication workflows associated with a preexisting session and available for (re)use. */
-    @Nonnull @NonnullElements private ImmutableMap<String, AuthenticationFlowDescriptor> activeWorkflows;
+    /** Flows that could potentially be used to authenticate the user. */
+    @Nonnull @NonnullElements private Map<String, AuthenticationFlowDescriptor> potentialFlows;
     
-    /** Workflows that could potentially be used to authenticate the user. */
-    @Nonnull @NonnullElements private Map<String, AuthenticationFlowDescriptor> potentialWorkflows;
+    /** Flows, in order of preference, that satisfy an explicit requirement from the relying party. */
+    @Nonnull @NonnullElements private ImmutableMap<String, AuthenticationFlowDescriptor> requestedFlows;
 
-    /** Workflows, in order of preference, that satisfy an explicit requirement from the relying party. */
-    @Nonnull @NonnullElements private ImmutableMap<String, AuthenticationFlowDescriptor> requestedWorkflows;
+    /** Authentication flows associated with a preexisting session and available for (re)use. */
+    @Nonnull @NonnullElements private ImmutableMap<String, AuthenticationFlowDescriptor> activeFlows;
+        
+    /** Authentication flow being attempted to authenticate the user. */
+    @Nullable private AuthenticationFlowDescriptor attemptedFlow;
 
-    /** Authentication workflow being attempted to authenticate the user. */
-    @Nullable private AuthenticationFlowDescriptor attemptedWorkflow;
-
-    /** A successfully processed authentication event (the output). */
+    /** A successfully processed authentication result (the output of the attempted flow, if any). */
     @Nullable private AuthenticationResult authenticationResult;
     
     /** Time, in milliseconds since the epoch, when authentication process completed. */
-    private long completionInstant;
+    @NonNegative private long completionInstant;
 
     /**
      * Constructor.
      *
-     * @param availableFlows authentication workflows currently available
+     * @param availableFlows authentication flows currently available
      */
     public AuthenticationContext(
             @Nullable @NonnullElements final Collection<AuthenticationFlowDescriptor> availableFlows) {
@@ -89,16 +91,16 @@ public final class AuthenticationContext extends BaseContext {
 
         initiationInstant = System.currentTimeMillis();
         
-        potentialWorkflows = new HashMap<>();
+        potentialFlows = new HashMap<>();
 
         if (availableFlows != null) {
             for (AuthenticationFlowDescriptor descriptor : availableFlows) {
-                potentialWorkflows.put(descriptor.getId(), descriptor);
+                potentialFlows.put(descriptor.getId(), descriptor);
             }
         }
 
-        activeWorkflows = ImmutableMap.of();
-        requestedWorkflows = ImmutableMap.of();
+        activeFlows = ImmutableMap.of();
+        requestedFlows = ImmutableMap.of();
     }
 
     /**
@@ -106,51 +108,50 @@ public final class AuthenticationContext extends BaseContext {
      * 
      * @return time when the authentication process started
      */
-    public long getInitiationInstant() {
+    @Positive public long getInitiationInstant() {
         return initiationInstant;
     }
 
     /**
-     * Gets the authentication workflows currently active for the subject.
+     * Gets the authentication flows currently active for the subject.
      * 
-     * @return authentication workflows currently active for the subject
+     * @return authentication flows currently active for the subject
      */
-    @Nonnull @NonnullElements @Unmodifiable
-    public Map<String, AuthenticationFlowDescriptor> getActiveWorkflows() {
-        return activeWorkflows;
+    @Nonnull @NonnullElements @Unmodifiable public Map<String, AuthenticationFlowDescriptor> getActiveFlows() {
+        return activeFlows;
     }
 
     /**
-     * Sets the authentication workflows currently active for the subject.
+     * Sets the authentication flows currently active for the subject.
      * 
-     * @param workflows authentication workflows currently active for the subject
+     * @param flows authentication flows currently active for the subject
      * 
-     * @return this authentication request context
+     * @return this authentication context
      */
-    @Nonnull public AuthenticationContext setActiveWorkflows(
-            @Nonnull @NonnullElements final List<AuthenticationFlowDescriptor> workflows) {
-        if (Constraint.isNotNull(workflows, "Workflow list cannot be null").isEmpty()) {
-            activeWorkflows = ImmutableMap.of();
+    @Nonnull public AuthenticationContext setActiveFlows(
+            @Nonnull @NonnullElements final List<AuthenticationFlowDescriptor> flows) {
+        if (Constraint.isNotNull(flows, "Flow list cannot be null").isEmpty()) {
+            activeFlows = ImmutableMap.of();
             return this;
         }
 
         Builder<String, AuthenticationFlowDescriptor> flowsBuilder = new ImmutableMap.Builder<>();
-        for (AuthenticationFlowDescriptor descriptor : workflows) {
+        for (AuthenticationFlowDescriptor descriptor : flows) {
             flowsBuilder.put(descriptor.getId(), descriptor);
         }
 
-        activeWorkflows = flowsBuilder.build();
+        activeFlows = flowsBuilder.build();
 
         return this;
     }
     
     /**
-     * Gets the set of workflows that could potentially be used for user authentication.
+     * Gets the set of flows that could potentially be used for user authentication.
      * 
-     * @return the potentialWorkflows
+     * @return the potential flows
      */
-    @Nonnull @NonnullElements @Live public Map<String, AuthenticationFlowDescriptor> getPotentialWorkflows() {
-        return potentialWorkflows;
+    @Nonnull @NonnullElements @Live public Map<String, AuthenticationFlowDescriptor> getPotentialFlows() {
+        return potentialFlows;
     }
 
     /**
@@ -167,7 +168,7 @@ public final class AuthenticationContext extends BaseContext {
      * 
      * @param passive whether subject interaction may occur
      * 
-     * @return this authentication request context
+     * @return this authentication context
      */
     @Nonnull public AuthenticationContext setIsPassive(boolean passive) {
         isPassive = passive;
@@ -188,7 +189,7 @@ public final class AuthenticationContext extends BaseContext {
      * 
      * @param force whether subject interaction must occur
      * 
-     * @return this authentication request context
+     * @return this authentication context
      */
     @Nonnull public AuthenticationContext setForceAuthn(boolean force) {
         forceAuthn = force;
@@ -209,7 +210,7 @@ public final class AuthenticationContext extends BaseContext {
      * 
      * @param hint the username hint
      * 
-     * @return this authentication request context
+     * @return this authentication context
      */
     @Nonnull public AuthenticationContext setHintedName(@Nullable final String hint) {
         hintedName = StringSupport.trimOrNull(hint);
@@ -217,82 +218,79 @@ public final class AuthenticationContext extends BaseContext {
     }
     
     /**
-     * Gets the list of authentication workflows, in order of preference, that must be used if user
+     * Gets the list of authentication flows, in order of preference, that must be used if user
      * authentication is required.
      * 
-     * @return authentication workflows, in order of preference, that must be used if user authentication is required,
-     *         never null nor containing null elements
+     * @return authentication flows, in order of preference, that must be used if user authentication is required
      */
     @Nonnull @NonnullElements @Unmodifiable public Map<String, AuthenticationFlowDescriptor>
-            getRequestedWorkflows() {
-        return requestedWorkflows;
+            getRequestedFlows() {
+        return requestedFlows;
     }
 
     /**
-     * Sets the workflows, in order of preference, that satisfy an explicit requirement from the relying party.
+     * Sets the flows, in order of preference, that satisfy an explicit requirement from the relying party.
      * 
-     * @param workflows authentication workflows, satisfy an explicit requirement from the relying party
+     * @param flows authentication flows, satisfy an explicit requirement from the relying party
      * 
-     * @return this authentication request context
+     * @return this authentication context
      */
-    @Nonnull public AuthenticationContext setRequestedWorkflows(
-            @Nonnull @NonnullElements final List<AuthenticationFlowDescriptor> workflows) {
+    @Nonnull public AuthenticationContext setRequestedFlows(
+            @Nonnull @NonnullElements final List<AuthenticationFlowDescriptor> flows) {
         
-        if (Constraint.isNotNull(workflows, "Workflow list cannot be null").isEmpty()) {
-            requestedWorkflows = ImmutableMap.of();
+        if (Constraint.isNotNull(flows, "Flow list cannot be null").isEmpty()) {
+            requestedFlows = ImmutableMap.of();
             return this;
         }
 
         Builder<String, AuthenticationFlowDescriptor> flowsBuilder = new ImmutableMap.Builder<>();
-        for (AuthenticationFlowDescriptor descriptor : workflows) {
+        for (AuthenticationFlowDescriptor descriptor : flows) {
             flowsBuilder.put(descriptor.getId(), descriptor);
         }
 
-        requestedWorkflows = flowsBuilder.build();
+        requestedFlows = flowsBuilder.build();
 
         return this;
     }
 
     /**
-     * Get the authentication workflow that was attempted in order to authenticate the user.
+     * Get the authentication flow that was attempted in order to authenticate the user.
      * 
-     * @return authentication workflow that was attempted in order to authenticate the user
+     * @return authentication flow that was attempted in order to authenticate the user
      */
-    @Nullable public AuthenticationFlowDescriptor getAttemptedWorkflow() {
-        return attemptedWorkflow;
+    @Nullable public AuthenticationFlowDescriptor getAttemptedFlow() {
+        return attemptedFlow;
     }
 
     /**
-     * Set the authentication workflow that was attempted in order to authenticate the user.
+     * Set the authentication flow that was attempted in order to authenticate the user.
      * 
-     * @param workflow authentication workflow that was attempted in order to authenticate the user
+     * @param flow authentication flow that was attempted in order to authenticate the user
      * 
-     * @return this authentication request context
+     * @return this authentication context
      */
-    @Nonnull public AuthenticationContext setAttemptedWorkflow(
-            @Nullable final AuthenticationFlowDescriptor workflow) {
-        attemptedWorkflow = workflow;
+    @Nonnull public AuthenticationContext setAttemptedFlow(@Nullable final AuthenticationFlowDescriptor flow) {
+        attemptedFlow = flow;
         return this;
     }
 
     /**
-     * Get the authentication event resulting from the request.
+     * Get the authentication result produced by the attempted flow.
      * 
-     * @return authentication workflow that was attempted in order to authenticate the user
+     * @return authentication result, if any
      */
     @Nullable public AuthenticationResult getAuthenticationResult() {
         return authenticationResult;
     }
 
     /**
-     * Set the authentication event resulting from the request.
+     * Set the authentication result produced by the attempted flow.
      * 
-     * @param result authentication event resulting from the request
+     * @param result authentication result, if any
      * 
-     * @return this authentication request context
+     * @return this authentication context
      */
-    @Nonnull public AuthenticationContext setAuthenticationResult(
-            @Nullable final AuthenticationResult result) {
+    @Nonnull public AuthenticationContext setAuthenticationResult(@Nullable final AuthenticationResult result) {
         authenticationResult = result;
         return this;
     }
@@ -303,14 +301,14 @@ public final class AuthenticationContext extends BaseContext {
      * 
      * @return time when the authentication process ended
      */
-    public long getCompletionInstant() {
+    @NonNegative public long getCompletionInstant() {
         return completionInstant;
     }
 
     /**
      * Sets the completion time of the authentication attempt to the current time.
      * 
-     * @return this authentication request context
+     * @return this authentication context
      */
     @Nonnull public AuthenticationContext setCompletionInstant() {
         completionInstant = System.currentTimeMillis();
@@ -321,9 +319,9 @@ public final class AuthenticationContext extends BaseContext {
     public String toString() {
         return Objects.toStringHelper(this).add("initiationInstant", new DateTime(initiationInstant))
                 .add("isPassive", isPassive).add("forceAuthn", forceAuthn)
-                .add("potentialWorkflows", potentialWorkflows.keySet())
-                .add("requestedWorkflows", requestedWorkflows.keySet())
-                .add("activeWorkflows", activeWorkflows.keySet())
+                .add("potentialFlows", potentialFlows.keySet())
+                .add("requestedFlows", requestedFlows.keySet())
+                .add("activeFlows", activeFlows.keySet())
                 .add("completionInstant", new DateTime(completionInstant)).toString();
     }
 

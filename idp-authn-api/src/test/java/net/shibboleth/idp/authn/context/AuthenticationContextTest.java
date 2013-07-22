@@ -53,43 +53,43 @@ public class AuthenticationContextTest {
         final AuthenticationFlowDescriptor descriptor = new AuthenticationFlowDescriptor("test");
 
         AuthenticationContext ctx = new AuthenticationContext(null);
-        Assert.assertTrue(ctx.getActiveWorkflows().isEmpty());
+        Assert.assertTrue(ctx.getActiveFlows().isEmpty());
         
-        ctx.setActiveWorkflows(Arrays.asList(descriptor));
+        ctx.setActiveFlows(Arrays.asList(descriptor));
 
-        Assert.assertEquals(ctx.getActiveWorkflows().size(), 1);
-        Assert.assertEquals(ctx.getActiveWorkflows().get("test"), descriptor);
+        Assert.assertEquals(ctx.getActiveFlows().size(), 1);
+        Assert.assertEquals(ctx.getActiveFlows().get("test"), descriptor);
     }
     
     /** Tests potential workflow instantiation. */
     @Test public void testPotentialWorkflows() throws Exception {
         AuthenticationContext ctx = new AuthenticationContext(null);
-        Assert.assertTrue(ctx.getPotentialWorkflows().isEmpty());
+        Assert.assertTrue(ctx.getPotentialFlows().isEmpty());
 
         ctx = new AuthenticationContext(Collections.EMPTY_LIST);
-        Assert.assertTrue(ctx.getPotentialWorkflows().isEmpty());
+        Assert.assertTrue(ctx.getPotentialFlows().isEmpty());
 
         AuthenticationFlowDescriptor descriptor = new AuthenticationFlowDescriptor("test");
         ctx = new AuthenticationContext(Arrays.asList(descriptor));
-        Assert.assertEquals(ctx.getPotentialWorkflows().size(), 1);
-        Assert.assertEquals(ctx.getPotentialWorkflows().get("test"), descriptor);
+        Assert.assertEquals(ctx.getPotentialFlows().size(), 1);
+        Assert.assertEquals(ctx.getPotentialFlows().get("test"), descriptor);
     }
 
     /** Tests mutating requested workflows. */
     @Test public void testRequestedWorkflows() throws Exception {
         AuthenticationContext ctx = new AuthenticationContext(null);
-        Assert.assertTrue(ctx.getRequestedWorkflows().isEmpty());
+        Assert.assertTrue(ctx.getRequestedFlows().isEmpty());
 
-        ctx.setRequestedWorkflows(Collections.EMPTY_LIST);
-        Assert.assertTrue(ctx.getRequestedWorkflows().isEmpty());
+        ctx.setRequestedFlows(Collections.EMPTY_LIST);
+        Assert.assertTrue(ctx.getRequestedFlows().isEmpty());
 
         AuthenticationFlowDescriptor descriptor1 = new AuthenticationFlowDescriptor("test1");
         AuthenticationFlowDescriptor descriptor2 = new AuthenticationFlowDescriptor("test2");
 
-        ctx.setRequestedWorkflows(Arrays.asList(descriptor1, descriptor2));
+        ctx.setRequestedFlows(Arrays.asList(descriptor1, descriptor2));
 
-        Iterator<AuthenticationFlowDescriptor> iterator = ctx.getRequestedWorkflows().values().iterator();
-        Assert.assertEquals(ctx.getRequestedWorkflows().size(), 2);
+        Iterator<AuthenticationFlowDescriptor> iterator = ctx.getRequestedFlows().values().iterator();
+        Assert.assertEquals(ctx.getRequestedFlows().size(), 2);
         Assert.assertEquals(iterator.next(), descriptor1);
         Assert.assertEquals(iterator.next(), descriptor2);
     }
@@ -97,11 +97,11 @@ public class AuthenticationContextTest {
     /** Tests mutating attempted workflows. */
     @Test public void testAttemptedWorkflow() throws Exception {
         AuthenticationContext ctx = new AuthenticationContext(null);
-        Assert.assertNull(ctx.getAttemptedWorkflow());
+        Assert.assertNull(ctx.getAttemptedFlow());
 
         AuthenticationFlowDescriptor descriptor = new AuthenticationFlowDescriptor("test");
-        ctx.setAttemptedWorkflow(descriptor);
-        Assert.assertEquals(ctx.getAttemptedWorkflow(), descriptor);
+        ctx.setAttemptedFlow(descriptor);
+        Assert.assertEquals(ctx.getAttemptedFlow(), descriptor);
     }
 
     /** Tests setting completion instant. */
