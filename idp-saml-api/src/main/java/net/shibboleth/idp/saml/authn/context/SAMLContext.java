@@ -15,9 +15,11 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn.context;
+package net.shibboleth.idp.saml.authn.context;
 
 import javax.annotation.Nullable;
+
+import net.shibboleth.idp.authn.context.AuthenticationContext;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.saml.saml2.core.Assertion;
