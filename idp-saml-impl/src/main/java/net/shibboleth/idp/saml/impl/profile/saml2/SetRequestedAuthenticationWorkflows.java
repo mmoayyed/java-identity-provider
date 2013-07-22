@@ -29,7 +29,7 @@ import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
-import net.shibboleth.idp.authn.AuthenticationWorkflowDescriptor;
+import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.ActionSupport;
 
@@ -70,12 +70,12 @@ public class SetRequestedAuthenticationWorkflows extends AbstractAuthenticationA
         log.debug("Action {}: inbound AuthnRequest requested the following workflow IDs: {}", getId(),
                 requestedWorkflowIds);
 
-        final Map<String, AuthenticationWorkflowDescriptor> availableDescriptors =
+        final Map<String, AuthenticationFlowDescriptor> availableDescriptors =
                 authenticationContext.getPotentialWorkflows();
 
-        final HashMap<String, AuthenticationWorkflowDescriptor> requestedWorkflows =
-                new HashMap<String, AuthenticationWorkflowDescriptor>();
-        AuthenticationWorkflowDescriptor descriptor;
+        final HashMap<String, AuthenticationFlowDescriptor> requestedWorkflows =
+                new HashMap<String, AuthenticationFlowDescriptor>();
+        AuthenticationFlowDescriptor descriptor;
         for (String workflowId : requestedWorkflowIds) {
             descriptor = availableDescriptors.get(workflowId);
             if (descriptor != null) {

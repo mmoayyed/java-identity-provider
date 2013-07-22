@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
-import net.shibboleth.idp.authn.AuthenticationWorkflowDescriptor;
+import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 
@@ -114,7 +114,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
                         .buildProfileRequestContext();
 
         AuthenticationContext authCtx = new AuthenticationContext(null);
-        authCtx.setAttemptedWorkflow(new AuthenticationWorkflowDescriptor("test"));
+        authCtx.setAttemptedWorkflow(new AuthenticationFlowDescriptor("test"));
 
         long now = System.currentTimeMillis();
         // this is here to allow the event's creation time to deviate from the 'start' time
