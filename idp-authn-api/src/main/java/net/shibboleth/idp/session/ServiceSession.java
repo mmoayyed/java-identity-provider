@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.authn.AuthenticationEvent;
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -45,7 +45,7 @@ public final class ServiceSession extends BaseContext {
     private long lastActivityInstant;
 
     /** The authentication event associated with this service. */
-    private AuthenticationEvent authenticationEvent;
+    private AuthenticationResult authenticationEvent;
 
     /**
      * Constructor. Initializes creation and last activity instant to the current time.
@@ -53,7 +53,7 @@ public final class ServiceSession extends BaseContext {
      * @param id the identifier of the service associated with this session
      * @param event authentication event used to authenticate the principal to this service
      */
-    public ServiceSession(@Nonnull @NotEmpty final String id, @Nonnull final AuthenticationEvent event) {
+    public ServiceSession(@Nonnull @NotEmpty final String id, @Nonnull final AuthenticationResult event) {
         serviceId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Service ID can not be null nor empty");
         creationInstant = System.currentTimeMillis();
         lastActivityInstant = creationInstant;
@@ -108,7 +108,7 @@ public final class ServiceSession extends BaseContext {
      * 
      * @return authentication event currently associated with this session
      */
-    @Nonnull public AuthenticationEvent getAuthenticationEvent() {
+    @Nonnull public AuthenticationResult getAuthenticationEvent() {
         return authenticationEvent;
     }
 
@@ -117,7 +117,7 @@ public final class ServiceSession extends BaseContext {
      * 
      * @param event authentication event currently associated with this session
      */
-    public void setAuthenticationEvent(@Nonnull final AuthenticationEvent event) {
+    public void setAuthenticationEvent(@Nonnull final AuthenticationResult event) {
         authenticationEvent = Constraint.isNotNull(event, "Authentication event can not be null");
     }
 

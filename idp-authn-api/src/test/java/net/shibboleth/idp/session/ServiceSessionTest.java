@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.session;
 
-import net.shibboleth.idp.authn.AuthenticationEvent;
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
@@ -33,7 +33,7 @@ public class ServiceSessionTest {
         // this is here to allow the event's creation time to deviate from the 'start' time
         Thread.sleep(50);
 
-        AuthenticationEvent event = new AuthenticationEvent("test", new UsernamePrincipal("bob"));
+        AuthenticationResult event = new AuthenticationResult("test", new UsernamePrincipal("bob"));
 
         ServiceSession session = new ServiceSession("test", event);
         Assert.assertEquals(session.getAuthenticationEvent(), event);
@@ -73,7 +73,7 @@ public class ServiceSessionTest {
     /** Tests mutating the last activity instant. */
     @Test public void testLastActivityInstant() throws Exception {
         ServiceSession session =
-                new ServiceSession("test", new AuthenticationEvent("test", new UsernamePrincipal("bob")));
+                new ServiceSession("test", new AuthenticationResult("test", new UsernamePrincipal("bob")));
 
         long now = System.currentTimeMillis();
         // this is here to allow the event's last activity time to deviate from the 'now' time
@@ -88,7 +88,7 @@ public class ServiceSessionTest {
 
     /** Tests setting the authentication event. */
     @Test public void testAuthenticationEvent() {
-        AuthenticationEvent event = new AuthenticationEvent("test", new UsernamePrincipal("bob"));
+        AuthenticationResult event = new AuthenticationResult("test", new UsernamePrincipal("bob"));
 
         ServiceSession session = new ServiceSession("test", event);
         session.setAuthenticationEvent(event);

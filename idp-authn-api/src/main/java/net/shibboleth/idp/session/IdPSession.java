@@ -28,7 +28,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.authn.AuthenticationEvent;
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
@@ -64,7 +64,7 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
     private long lastActivityInstant;
 
     /** The authentication events that have occurred within the scope of this session. */
-    private final ConcurrentMap<String, AuthenticationEvent> authenticationEvents;
+    private final ConcurrentMap<String, AuthenticationResult> authenticationEvents;
 
     /** The service which have been authenticated to in this session. */
     private final ConcurrentMap<String, ServiceSession> serviceSessions;
@@ -91,7 +91,7 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
         creationInstant = System.currentTimeMillis();
         lastActivityInstant = creationInstant;
 
-        authenticationEvents = new ConcurrentHashMap<String, AuthenticationEvent>(5);
+        authenticationEvents = new ConcurrentHashMap<String, AuthenticationResult>(5);
         serviceSessions = new ConcurrentHashMap<String, ServiceSession>(10);
     }
 
@@ -148,7 +148,7 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
      * 
      * @return unmodifiable set of authentication events that have occurred within the scope of this session
      */
-    @Nonnull @NonnullElements @NotLive public Set<AuthenticationEvent> getAuthenticateEvents() {
+    @Nonnull @NonnullElements @NotLive public Set<AuthenticationResult> getAuthenticateEvents() {
         return new HashSet(authenticationEvents.values());
     }
 
@@ -159,7 +159,7 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
      * 
      * @return the authentication event
      */
-    @Nonnull public Optional<AuthenticationEvent> getAuthenticationEvent(@Nullable final String workflowId) {
+    @Nonnull public Optional<AuthenticationResult> getAuthenticationEvent(@Nullable final String workflowId) {
         final String trimmedId = StringSupport.trimOrNull(workflowId);
 
         if (trimmedId == null) {
@@ -196,7 +196,7 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
     }
 
     /**
-     * Adds a new service session to this IdP session. The {@link AuthenticationEvent} associated with the
+     * Adds a new service session to this IdP session. The {@link AuthenticationResult} associated with the
      * {@link ServiceSession} is associated with this {@link IdPSession} if it has not been so already.
      * 
      * @param session the service session
@@ -210,9 +210,9 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
             Constraint.isFalse(serviceSessions.containsKey(serviceId), "A session for service " + serviceId
                     + " already exists");
 
-            final AuthenticationEvent authnEvent = session.getAuthenticationEvent();
-            if (!authenticationEvents.containsKey(authnEvent.getAuthenticationWorkflowId())) {
-                authenticationEvents.put(authnEvent.getAuthenticationWorkflowId(), authnEvent);
+            final AuthenticationResult authnEvent = session.getAuthenticationEvent();
+            if (!authenticationEvents.containsKey(authnEvent.getAuthenticationFlowId())) {
+                authenticationEvents.put(authnEvent.getAuthenticationFlowId(), authnEvent);
             }
             
             //TODO(lajoie) don't we need to update the authn event if it already exists?
@@ -243,7 +243,7 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
      * 
      * @param event the event to disassociate
      */
-    public void removeAuthenticationEvent(@Nonnull final AuthenticationEvent event) {
+    public void removeAuthenticationEvent(@Nonnull final AuthenticationResult event) {
         Constraint.isNotNull(event, "Authentication event can not be null");
 
         try {
@@ -251,13 +251,13 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
 
             for (ServiceSession session : serviceSessions.values()) {
                 if (session.getAuthenticationEvent().equals(event)) {
-                    throw new IllegalStateException("Authentication event " + event.getAuthenticationWorkflowId()
+                    throw new IllegalStateException("Authentication event " + event.getAuthenticationFlowId()
                             + " is associated with the session for service " + session.getServiceId()
                             + " and so can not be removed");
                 }
             }
 
-            authenticationEvents.remove(event.getAuthenticationWorkflowId(), event);
+            authenticationEvents.remove(event.getAuthenticationFlowId(), event);
         } finally {
             authnServiceStateLock.unlock();
         }

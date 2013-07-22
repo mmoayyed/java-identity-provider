@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
-import net.shibboleth.idp.authn.AuthenticationEvent;
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
@@ -49,7 +49,7 @@ public class SubjectContext extends BaseContext {
     @Nullable private String principalName;
 
     /** The active authentication events for the subject. */
-    @Nonnull private final HashMultimap<String, AuthenticationEvent> authenticationEvents;
+    @Nonnull private final HashMultimap<String, AuthenticationResult> authenticationEvents;
     
     /** Constructor. */
     public SubjectContext() {
@@ -81,19 +81,19 @@ public class SubjectContext extends BaseContext {
      * 
      * @return  mutable multimap of workflow IDs to authentication events
      */
-    @Nonnull @NonnullElements public HashMultimap<String, AuthenticationEvent> getAuthenticationEvents() {
+    @Nonnull @NonnullElements public HashMultimap<String, AuthenticationResult> getAuthenticationEvents() {
         return authenticationEvents;
     }
     
     /**
-     * Get an immutable list of Subjects extracted from every AuthenticationEvent
+     * Get an immutable list of Subjects extracted from every AuthenticationResult
      * associated with the context.
      * 
      * @return immutable list of Subjects 
      */
     @Nonnull @Unmodifiable @NonnullElements public List<Subject> getSubjects() {
         List<Subject> composite = new ArrayList<>();
-        for (AuthenticationEvent e : getAuthenticationEvents().values()) {
+        for (AuthenticationResult e : getAuthenticationEvents().values()) {
             composite.addAll(e.getSubjects());
         }
         return Collections.unmodifiableList(composite);

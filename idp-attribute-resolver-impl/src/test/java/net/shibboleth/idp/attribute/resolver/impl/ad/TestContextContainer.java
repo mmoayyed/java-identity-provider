@@ -2,7 +2,7 @@ package net.shibboleth.idp.attribute.resolver.impl.ad;
 
 import java.security.Principal;
 
-import net.shibboleth.idp.authn.AuthenticationEvent;
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.ServiceSession;
 
@@ -25,7 +25,7 @@ class TestContextContainer extends InOutOperationContext {
         final BasicMessageMetadataContext basic = new BasicMessageMetadataContext();
         basic.setMessageIssuer(relyingParty);
         
-        AuthenticationEvent event = new AuthenticationEvent(authnMethod, new Principal() {   
+        AuthenticationResult event = new AuthenticationResult(authnMethod, new Principal() {   
             public String getName() {
                 return principalName;
             }

@@ -19,7 +19,7 @@ package net.shibboleth.idp.authn.impl;
 
 import java.util.Arrays;
 
-import net.shibboleth.idp.authn.AuthenticationWorkflowDescriptor;
+import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 
 import org.opensaml.profile.action.ActionTestingSupport;
@@ -33,7 +33,7 @@ public class InitializeAuthenticationContextTest {
     /** Test that the authentication context is properly added if an idp session exists. */
     @Test public void testAction() throws Exception {
 
-        AuthenticationWorkflowDescriptor descriptor = new AuthenticationWorkflowDescriptor("test");
+        AuthenticationFlowDescriptor descriptor = new AuthenticationFlowDescriptor("test");
 
         ProfileRequestContext profileCtx = new ProfileRequestContext();
 

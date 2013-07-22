@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
-import net.shibboleth.idp.authn.AuthenticationWorkflowDescriptor;
+import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.ActionSupport;
@@ -58,7 +58,7 @@ public class SelectAuthenticationWorkflow extends AbstractAuthenticationAction {
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
-        final Map<String, AuthenticationWorkflowDescriptor> potentialWorkflows =
+        final Map<String, AuthenticationFlowDescriptor> potentialWorkflows =
                 authenticationContext.getPotentialWorkflows();
         if (potentialWorkflows.isEmpty()) {
             log.debug("Action {}: no potential workflows available");
@@ -68,7 +68,7 @@ public class SelectAuthenticationWorkflow extends AbstractAuthenticationAction {
         log.debug("Action {}: selecting authentication workflow from the following potential workflows: {}", getId(),
                 potentialWorkflows.keySet());
 
-        AuthenticationWorkflowDescriptor descriptor;
+        AuthenticationFlowDescriptor descriptor;
 
         final Set<String> activeWorkflowIds = authenticationContext.getActiveWorkflows().keySet();
         if (!activeWorkflowIds.isEmpty()) {

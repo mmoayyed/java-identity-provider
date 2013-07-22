@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 
-import net.shibboleth.idp.authn.AuthenticationWorkflowDescriptor;
+import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -50,7 +50,7 @@ public class AuthenticationContextTest {
 
     /** Tests active workflows. */
     @Test public void testActiveWorkFlows() throws Exception {
-        final AuthenticationWorkflowDescriptor descriptor = new AuthenticationWorkflowDescriptor("test");
+        final AuthenticationFlowDescriptor descriptor = new AuthenticationFlowDescriptor("test");
 
         AuthenticationContext ctx = new AuthenticationContext(null);
         Assert.assertTrue(ctx.getActiveWorkflows().isEmpty());
@@ -69,7 +69,7 @@ public class AuthenticationContextTest {
         ctx = new AuthenticationContext(Collections.EMPTY_LIST);
         Assert.assertTrue(ctx.getPotentialWorkflows().isEmpty());
 
-        AuthenticationWorkflowDescriptor descriptor = new AuthenticationWorkflowDescriptor("test");
+        AuthenticationFlowDescriptor descriptor = new AuthenticationFlowDescriptor("test");
         ctx = new AuthenticationContext(Arrays.asList(descriptor));
         Assert.assertEquals(ctx.getPotentialWorkflows().size(), 1);
         Assert.assertEquals(ctx.getPotentialWorkflows().get("test"), descriptor);
@@ -83,12 +83,12 @@ public class AuthenticationContextTest {
         ctx.setRequestedWorkflows(Collections.EMPTY_LIST);
         Assert.assertTrue(ctx.getRequestedWorkflows().isEmpty());
 
-        AuthenticationWorkflowDescriptor descriptor1 = new AuthenticationWorkflowDescriptor("test1");
-        AuthenticationWorkflowDescriptor descriptor2 = new AuthenticationWorkflowDescriptor("test2");
+        AuthenticationFlowDescriptor descriptor1 = new AuthenticationFlowDescriptor("test1");
+        AuthenticationFlowDescriptor descriptor2 = new AuthenticationFlowDescriptor("test2");
 
         ctx.setRequestedWorkflows(Arrays.asList(descriptor1, descriptor2));
 
-        Iterator<AuthenticationWorkflowDescriptor> iterator = ctx.getRequestedWorkflows().values().iterator();
+        Iterator<AuthenticationFlowDescriptor> iterator = ctx.getRequestedWorkflows().values().iterator();
         Assert.assertEquals(ctx.getRequestedWorkflows().size(), 2);
         Assert.assertEquals(iterator.next(), descriptor1);
         Assert.assertEquals(iterator.next(), descriptor2);
@@ -99,7 +99,7 @@ public class AuthenticationContextTest {
         AuthenticationContext ctx = new AuthenticationContext(null);
         Assert.assertNull(ctx.getAttemptedWorkflow());
 
-        AuthenticationWorkflowDescriptor descriptor = new AuthenticationWorkflowDescriptor("test");
+        AuthenticationFlowDescriptor descriptor = new AuthenticationFlowDescriptor("test");
         ctx.setAttemptedWorkflow(descriptor);
         Assert.assertEquals(ctx.getAttemptedWorkflow(), descriptor);
     }

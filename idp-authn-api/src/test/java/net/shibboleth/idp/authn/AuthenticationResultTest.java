@@ -19,15 +19,15 @@ package net.shibboleth.idp.authn;
 
 import javax.security.auth.Subject;
 
-import net.shibboleth.idp.authn.AuthenticationEvent;
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** {@link AuthenticationEvent} unit test. */
-public class AuthenticationEventTest {
+/** {@link AuthenticationResult} unit test. */
+public class AuthenticationResultTest {
 
     /** Tests that everything is properly initialized during object construction. */
     @Test public void testInstantiation() throws Exception {
@@ -35,37 +35,37 @@ public class AuthenticationEventTest {
         // this is here to allow the event's creation time to deviate from the 'start' time
         Thread.sleep(50);
 
-        AuthenticationEvent event = new AuthenticationEvent("test", new UsernamePrincipal("bob"));
+        AuthenticationResult event = new AuthenticationResult("test", new UsernamePrincipal("bob"));
         Assert.assertTrue(event.getAuthenticationInstant() > start);
-        Assert.assertEquals(event.getAuthenticationWorkflowId(), "test");
+        Assert.assertEquals(event.getAuthenticationFlowId(), "test");
         
         Assert.assertEquals(event.getSubjects().size(), 1);
         Assert.assertTrue(
                 event.getSubjects().get(0).getPrincipals(UsernamePrincipal.class).contains(new UsernamePrincipal("bob")));
 
         try {
-            new AuthenticationEvent(null, new UsernamePrincipal("bob"));
+            new AuthenticationResult(null, new UsernamePrincipal("bob"));
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new AuthenticationEvent("", new UsernamePrincipal("bob"));
+            new AuthenticationResult("", new UsernamePrincipal("bob"));
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new AuthenticationEvent("  ", new UsernamePrincipal("bob"));
+            new AuthenticationResult("  ", new UsernamePrincipal("bob"));
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new AuthenticationEvent("test", (Subject) null);
+            new AuthenticationResult("test", (Subject) null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 

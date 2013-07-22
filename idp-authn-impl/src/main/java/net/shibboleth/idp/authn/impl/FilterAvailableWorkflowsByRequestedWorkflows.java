@@ -26,7 +26,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
-import net.shibboleth.idp.authn.AuthenticationWorkflowDescriptor;
+import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.ActionSupport;
@@ -51,7 +51,7 @@ public class FilterAvailableWorkflowsByRequestedWorkflows extends AbstractAuthen
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
-        final Map<String, AuthenticationWorkflowDescriptor> potentialWorkflows =
+        final Map<String, AuthenticationFlowDescriptor> potentialWorkflows =
                 authenticationContext.getPotentialWorkflows();
 
         final Set<String> requestedDescriptors = authenticationContext.getRequestedWorkflows().keySet();
@@ -60,9 +60,9 @@ public class FilterAvailableWorkflowsByRequestedWorkflows extends AbstractAuthen
             return ActionSupport.buildProceedEvent(this);
         }
 
-        final Iterator<Entry<String, AuthenticationWorkflowDescriptor>> descriptorItr =
+        final Iterator<Entry<String, AuthenticationFlowDescriptor>> descriptorItr =
                 potentialWorkflows.entrySet().iterator();
-        AuthenticationWorkflowDescriptor descriptor;
+        AuthenticationFlowDescriptor descriptor;
         while (descriptorItr.hasNext()) {
             descriptor = descriptorItr.next().getValue();
             if (descriptor == null) {

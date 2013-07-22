@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.session;
 
-import net.shibboleth.idp.authn.AuthenticationEvent;
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
@@ -88,8 +88,8 @@ public class IdPSessionTest {
 
     /** Tests adding service sessions. */
     @Test public void testAddServiceSessions() {
-        AuthenticationEvent event1 = new AuthenticationEvent("foo", new UsernamePrincipal("john"));
-        AuthenticationEvent event2 = new AuthenticationEvent("bar", new UsernamePrincipal("john"));
+        AuthenticationResult event1 = new AuthenticationResult("foo", new UsernamePrincipal("john"));
+        AuthenticationResult event2 = new AuthenticationResult("bar", new UsernamePrincipal("john"));
 
         ServiceSession svcSession1 = new ServiceSession("svc1", event1);
         ServiceSession svcSession2 = new ServiceSession("svc2", event2);
@@ -170,7 +170,7 @@ public class IdPSessionTest {
 
     /** Tests removing service sessions. */
     @Test public void testRemoveServiceSession() {
-        AuthenticationEvent event1 = new AuthenticationEvent("foo", new UsernamePrincipal("john"));
+        AuthenticationResult event1 = new AuthenticationResult("foo", new UsernamePrincipal("john"));
 
         ServiceSession svcSession1 = new ServiceSession("svc1", event1);
         ServiceSession svcSession2 = new ServiceSession("svc2", event1);
@@ -204,8 +204,8 @@ public class IdPSessionTest {
 
     /** Tests remove authentication events. */
     @Test public void testRemoveAuthenticationEvent() {
-        AuthenticationEvent event1 = new AuthenticationEvent("foo", new UsernamePrincipal("john"));
-        AuthenticationEvent event2 = new AuthenticationEvent("bar", new UsernamePrincipal("john"));
+        AuthenticationResult event1 = new AuthenticationResult("foo", new UsernamePrincipal("john"));
+        AuthenticationResult event2 = new AuthenticationResult("bar", new UsernamePrincipal("john"));
 
         ServiceSession svcSession1 = new ServiceSession("svc1", event1);
         ServiceSession svcSession2 = new ServiceSession("svc2", event2);

@@ -25,13 +25,13 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-/** {@link AuthenticationWorkflowDescriptor} unit test. */
-public class AuthenticationWorkflowDescriptorTest {
+/** {@link AuthenticationFlowDescriptor} unit test. */
+public class AuthenticationFlowDescriptorTest {
 
-    private AuthenticationWorkflowDescriptor descriptor;
+    private AuthenticationFlowDescriptor descriptor;
     
     @BeforeTest public void setUp() {
-        descriptor = new AuthenticationWorkflowDescriptor("test");
+        descriptor = new AuthenticationFlowDescriptor("test");
     }
 
     
@@ -42,21 +42,21 @@ public class AuthenticationWorkflowDescriptorTest {
         Assert.assertFalse(descriptor.isPassiveAuthenticationSupported());
 
         try {
-            new AuthenticationWorkflowDescriptor(null);
+            new AuthenticationFlowDescriptor(null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new AuthenticationWorkflowDescriptor("");
+            new AuthenticationFlowDescriptor("");
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new AuthenticationWorkflowDescriptor("  ");
+            new AuthenticationFlowDescriptor("  ");
             Assert.fail();
         } catch (ConstraintViolationException e) {
 

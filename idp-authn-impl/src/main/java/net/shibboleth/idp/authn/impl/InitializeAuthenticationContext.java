@@ -21,7 +21,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.authn.AuthenticationWorkflowDescriptor;
+import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
@@ -48,7 +48,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
     private final Logger log = LoggerFactory.getLogger(InitializeAuthenticationContext.class);
     
     /** The workflows to make available for possible use. */
-    @Nonnull @NonnullElements private ImmutableList<AuthenticationWorkflowDescriptor> availableWorkflows;
+    @Nonnull @NonnullElements private ImmutableList<AuthenticationFlowDescriptor> availableWorkflows;
 
     /** Constructor. */
     InitializeAuthenticationContext() {
@@ -60,7 +60,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
      * 
      * @return  workflows available for possible use
      */
-    @Nonnull @NonnullElements @Unmodifiable public List<AuthenticationWorkflowDescriptor> getAvailableWorkflows() {
+    @Nonnull @NonnullElements @Unmodifiable public List<AuthenticationFlowDescriptor> getAvailableWorkflows() {
         return availableWorkflows;
     }
     
@@ -70,7 +70,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
      * @param workflows the workflows available for possible use
      */
     public void setAvailableWorkflows(
-            @Nonnull @NonnullElements final List<AuthenticationWorkflowDescriptor> workflows) {
+            @Nonnull @NonnullElements final List<AuthenticationFlowDescriptor> workflows) {
         availableWorkflows = ImmutableList.copyOf(Constraint.isNotNull(workflows, "Workflow list cannot be null"));
     }
     

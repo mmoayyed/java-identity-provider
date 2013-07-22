@@ -40,35 +40,35 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Describes an act of authentication event. The event may be composite, in the sense that it
- * may consist of a combination of separate exchanges that make up a single overall event. 
+ * Describes an act of authentication. The result may be composite, in the sense that it
+ * may represent a combination of separate exchanges that make up a single overall result. 
  */
 @ThreadSafe
-public final class AuthenticationEvent {
+public final class AuthenticationResult {
 
-    /** The Subjects established by the authentication event. */
+    /** The Subjects established by the authentication result. */
     @Nonnull @NonnullElements @NotEmpty private final List<Subject> subjects;
 
-    /** The identifier of the workflow used to produce this event. */
-    @Nonnull @NotEmpty private final String authenticationWorkflowId;
+    /** The identifier of the flow used to produce this result. */
+    @Nonnull @NotEmpty private final String authenticationFlowId;
 
     /** The time, in milliseconds since the epoch, that the authentication completed. */
     private final long authenticationInstant;
 
-    /** The last time, in milliseconds since the epoch, this event was used to bypass authentication. */
+    /** The last time, in milliseconds since the epoch, this result was used to bypass authentication. */
     private long lastActivityInstant;
     
     /**
      * Constructor. <p>Sets the authentication instant to the current time.</p>
      * 
-     * @param workflowId the workflow used to authenticate the subject
+     * @param flowId the workflow used to authenticate the subject
      * @param newSubjects a Subject collection identifying the authenticated entity
      */
-    public AuthenticationEvent(@Nonnull @NotEmpty final String workflowId,
+    public AuthenticationResult(@Nonnull @NotEmpty final String flowId,
             @Nonnull @NotEmpty @NonnullElements final List<Subject> newSubjects) {
 
-        authenticationWorkflowId = Constraint.isNotNull(StringSupport.trimOrNull(workflowId),
-                "Authentication method cannot be null nor empty");
+        authenticationFlowId = Constraint.isNotNull(StringSupport.trimOrNull(flowId),
+                "Authentication flow ID cannot be null nor empty");
         subjects = new ArrayList(Constraint.isNotEmpty(newSubjects, "Subject list cannot be null or empty"));
         authenticationInstant = System.currentTimeMillis();
         lastActivityInstant = authenticationInstant;
@@ -77,21 +77,21 @@ public final class AuthenticationEvent {
     /**
      * Constructor. <p>Sets the authentication instant to the current time.</p>
      * 
-     * @param workflowId the workflow used to authenticate the subject
+     * @param flowId the workflow used to authenticate the subject
      * @param subject a Subject identifying the authenticated entity
      */
-    public AuthenticationEvent(@Nonnull @NotEmpty final String workflowId, @Nonnull final Subject subject) {
-        this(workflowId, ImmutableList.of(Constraint.isNotNull(subject, "Subject cannot be null")));
+    public AuthenticationResult(@Nonnull @NotEmpty final String flowId, @Nonnull final Subject subject) {
+        this(flowId, ImmutableList.of(Constraint.isNotNull(subject, "Subject cannot be null")));
     }
 
     /**
      * Constructor. <p>Sets the authentication instant to the current time.</p>
      * 
-     * @param workflowId the workflow used to authenticate the subject
+     * @param flowId the workflow used to authenticate the subject
      * @param principal a Principal identifying the authenticated entity
      */
-    public AuthenticationEvent(@Nonnull @NotEmpty final String workflowId, @Nonnull final Principal principal) {
-        this(workflowId, ImmutableList.of(
+    public AuthenticationResult(@Nonnull @NotEmpty final String flowId, @Nonnull final Principal principal) {
+        this(flowId, ImmutableList.of(
                 new Subject(false, ImmutableSet.of(Constraint.isNotNull(principal, "Principal cannot be null")),
                         Collections.EMPTY_SET, Collections.EMPTY_SET)));
     }
@@ -106,16 +106,18 @@ public final class AuthenticationEvent {
     }
 
     /**
-     * Gets the workflow used to authenticate the principal.
+     * Get the flow used to authenticate the principal.
      * 
-     * @return workflow used to authenticate the principal
+     * @return flow used to authenticate the principal
      */
-    @Nonnull @NotEmpty public String getAuthenticationWorkflowId() {
-        return authenticationWorkflowId;
+    @Nonnull @NotEmpty public String getAuthenticationFlowId() {
+        return authenticationFlowId;
     }
 
     /**
-     * Gets the time, in milliseconds since the epoch, that the authentication completed.
+     * Get the time, in milliseconds since the epoch, that the authentication completed.
+     * 
+     * <p>Always greater or equal to 0.</p>
      * 
      * @return time, in milliseconds since the epoch, that the authentication completed, never less than 0
      */
@@ -124,25 +126,29 @@ public final class AuthenticationEvent {
     }
     
     /**
-     * Gets the last activity instant, in milliseconds since the epoch, for this event.
+     * Get the last time, in milliseconds since the epoch, this result was used to bypass authentication.
      * 
-     * @return last activity instant, in milliseconds since the epoch, for this event, never less than 0
+     * <p>Always greater or equal to 0.</p>
+     * 
+     * @return last time, in milliseconds since the epoch, this result was used to bypass authentication
      */
     public long getLastActivityInstant() {
         return lastActivityInstant;
     }
     
     /**
-     * Sets the last activity instant, in milliseconds since the epoch, for this event.
+     * Set the last time, in milliseconds since the epoch, result was used to bypass authentication.
      * 
-     * @param instant last activity instant, in milliseconds since the epoch, for this event, must be greater than 0
+     * <p>Must be greater than 0.</p>
+     * 
+     * @param instant last time, in milliseconds since the epoch, result was used to bypass authentication
      */
     public void setLastActivityInstant(final long instant) {
         lastActivityInstant = Constraint.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
     }
 
     /**
-     * Sets the last activity instant, in milliseconds since the epoch, for this event to the current time.
+     * Sets the last activity instant, in milliseconds since the epoch, for this result to the current time.
      */
     public void setLastActivityInstantToNow() {
         lastActivityInstant = System.currentTimeMillis();
@@ -150,7 +156,7 @@ public final class AuthenticationEvent {
 
     /** {@inheritDoc} */
     public int hashCode() {
-        return authenticationWorkflowId.hashCode();
+        return authenticationFlowId.hashCode();
     }
 
     /** {@inheritDoc} */
@@ -163,9 +169,9 @@ public final class AuthenticationEvent {
             return true;
         }
 
-        if (obj instanceof AuthenticationEvent) {
-            return Objects.equal(getAuthenticationWorkflowId(),
-                    ((AuthenticationEvent) obj).getAuthenticationWorkflowId());
+        if (obj instanceof AuthenticationResult) {
+            return Objects.equal(getAuthenticationFlowId(),
+                    ((AuthenticationResult) obj).getAuthenticationFlowId());
         }
 
         return false;
@@ -173,7 +179,7 @@ public final class AuthenticationEvent {
 
     /** {@inheritDoc} */
     public String toString() {
-        return Objects.toStringHelper(this).add("authenticationWorkflowId", authenticationWorkflowId)
+        return Objects.toStringHelper(this).add("authenticationFlowId", authenticationFlowId)
                 .add("authenticatedPrincipal", getSubjectName())
                 .add("authenticationInstant", new DateTime(authenticationInstant))
                 .add("lastActivityInstant", new DateTime(lastActivityInstant)).toString();
