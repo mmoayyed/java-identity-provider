@@ -17,38 +17,44 @@
 
 package net.shibboleth.idp.authn.impl;
 
-import java.util.Arrays;
-
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 
 import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-/** {@link InitializeAuthenticationContext} unit test. */
+import com.google.common.collect.ImmutableList;
+
+/** {@link InitializeAuthenticationContext} unit test and base class for further action tests. */
 public class InitializeAuthenticationContextTest {
 
-    /** Test that the authentication context is properly added if an idp session exists. */
-    @Test public void testAction() throws Exception {
+    protected ProfileRequestContext prc;
+    protected ImmutableList<AuthenticationFlowDescriptor> authenticationFlows;
+    
+    @BeforeMethod public void setUp() throws Exception {        
+        prc = new ProfileRequestContext();
 
-        AuthenticationFlowDescriptor descriptor = new AuthenticationFlowDescriptor("test");
-
-        ProfileRequestContext profileCtx = new ProfileRequestContext();
+        authenticationFlows = ImmutableList.of(new AuthenticationFlowDescriptor("test1"),
+                new AuthenticationFlowDescriptor("test2"), new AuthenticationFlowDescriptor("test3"));
 
         InitializeAuthenticationContext action = new InitializeAuthenticationContext();
-        action.setAvailableWorkflows(Arrays.asList(descriptor));
+        action.setAvailableFlows(authenticationFlows);
         action.initialize();
 
-        action.doExecute(profileCtx);
-        ActionTestingSupport.assertProceedEvent(profileCtx);
-
-        AuthenticationContext authCtx = profileCtx.getSubcontext(AuthenticationContext.class, false);
-        Assert.assertNotNull(authCtx);
-
-        Assert.assertEquals(authCtx.getPotentialFlows().size(), 1);
-        Assert.assertEquals(authCtx.getPotentialFlows().get("test"), descriptor);
+        action.doExecute(prc);
     }
 
+    /** Test that the authentication context is properly added. */
+    @Test public void testAction() throws Exception {
+        
+        ActionTestingSupport.assertProceedEvent(prc);
+        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        Assert.assertNotNull(authCtx);
+
+        Assert.assertEquals(authCtx.getPotentialFlows().size(), 3);
+        Assert.assertNotNull(authCtx.getPotentialFlows().get("test1"));
+    }
 }

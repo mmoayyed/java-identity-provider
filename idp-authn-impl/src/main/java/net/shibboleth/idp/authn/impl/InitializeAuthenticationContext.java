@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.authn.impl;
 
-import java.util.List;
+import java.util.Collection;
 
 import javax.annotation.Nonnull;
 
@@ -47,41 +47,40 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(InitializeAuthenticationContext.class);
     
-    /** The workflows to make available for possible use. */
-    @Nonnull @NonnullElements private ImmutableList<AuthenticationFlowDescriptor> availableWorkflows;
+    /** The flows to make available for possible use. */
+    @Nonnull @NonnullElements private ImmutableList<AuthenticationFlowDescriptor> availableFlows;
 
     /** Constructor. */
     InitializeAuthenticationContext() {
-        availableWorkflows = ImmutableList.of();
+        availableFlows = ImmutableList.of();
     }
     
     /**
-     * Get the workflows available for possible use.
+     * Get the flows available for possible use.
      * 
-     * @return  workflows available for possible use
+     * @return  flows available for possible use
      */
-    @Nonnull @NonnullElements @Unmodifiable public List<AuthenticationFlowDescriptor> getAvailableWorkflows() {
-        return availableWorkflows;
+    @Nonnull @NonnullElements @Unmodifiable public Collection<AuthenticationFlowDescriptor> getAvailableFlows() {
+        return availableFlows;
     }
     
     /**
-     * Set the workflows available for possible use.
+     * Set the flows available for possible use.
      * 
-     * @param workflows the workflows available for possible use
+     * @param flows the flows available for possible use
      */
-    public void setAvailableWorkflows(
-            @Nonnull @NonnullElements final List<AuthenticationFlowDescriptor> workflows) {
-        availableWorkflows = ImmutableList.copyOf(Constraint.isNotNull(workflows, "Workflow list cannot be null"));
+    public void setAvailableFlows(@Nonnull @NonnullElements final Collection<AuthenticationFlowDescriptor> flows) {
+        availableFlows = ImmutableList.copyOf(Constraint.isNotNull(flows, "Flow collection cannot be null"));
     }
     
     /** {@inheritDoc} */
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
-        if (availableWorkflows.isEmpty()) {
-            log.warn("No authentication workflows are configured for use.");
+        if (availableFlows.isEmpty()) {
+            log.warn("No authentication flows are configured for use.");
         }
         
-        AuthenticationContext authnCtx = new AuthenticationContext(availableWorkflows);
+        AuthenticationContext authnCtx = new AuthenticationContext(availableFlows);
         profileRequestContext.addSubcontext(authnCtx);
     }
 }
