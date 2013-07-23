@@ -19,9 +19,14 @@ package net.shibboleth.idp.attribute.resolver.impl.dc.ldap;
 
 import javax.annotation.Nonnull;
 
+import org.apache.velocity.VelocityContext;
+import org.ldaptive.SearchFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.velocity.Template;
 
@@ -29,7 +34,10 @@ import net.shibboleth.utilities.java.support.velocity.Template;
  * An {@link ExecutableSearchFilterBuilder} that generates the search filter to be executed by evaluating a
  * {@link Template} against the currently resolved attributes within a {@link AttributeResolutionContext}.
  */
-public class TemplatedExecutableSearchFilterBuilder implements ExecutableSearchBuilder<ExecutableSearchFilter> {
+public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSearchFilterBuilder {
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(TemplatedExecutableSearchFilterBuilder.class);
 
     /** Template evaluated to generate a search filter. */
     private final Template template;
@@ -40,13 +48,17 @@ public class TemplatedExecutableSearchFilterBuilder implements ExecutableSearchB
      * @param searchRequestTemplate template evaluated to generate a search request
      */
     public TemplatedExecutableSearchFilterBuilder(@Nonnull final Template searchRequestTemplate) {
-        template = Constraint.isNotNull(searchRequestTemplate, "Search reqeust template can not be null");
+        template = Constraint.isNotNull(searchRequestTemplate, "Search request template can not be null");
     }
 
     /** {@inheritDoc} */
     public ExecutableSearchFilter build(@Nonnull final AttributeResolutionContext resolutionContext)
             throws ResolutionException {
-        // TODO Auto-generated method stub
-        return null;
+        final AttributeRecipientContext subContext = resolutionContext.getSubcontext(AttributeRecipientContext.class);
+        log.trace("Creating search filter using context {}", subContext);
+        final VelocityContext context = new VelocityContext();
+        context.put("requestContext", subContext);
+        final SearchFilter searchFilter = new SearchFilter(template.merge(context));
+        return super.build(searchFilter);
     }
 }

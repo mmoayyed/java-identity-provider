@@ -23,13 +23,11 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
+import org.apache.velocity.app.VelocityEngine;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DefaultConnectionFactory;
-import org.ldaptive.LdapException;
-import org.ldaptive.Response;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchFilter;
-import org.ldaptive.SearchResult;
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.testng.Assert;
 import org.testng.annotations.AfterTest;
@@ -43,7 +41,6 @@ import com.unboundid.ldap.sdk.LDAPException;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
@@ -54,6 +51,7 @@ import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.LdapDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.velocity.Template;
 
 /**
  * Tests for {@link LdapDataConnector}
@@ -71,38 +69,6 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     /** In-memory directory server. */
     private InMemoryDirectoryServer directoryServer;
-
-    /** Simple search filter builder that leverages a custom filter. */
-    private class TestSearchFilterBuilder implements ExecutableSearchBuilder<ExecutableSearchFilter> {
-
-        /** {@inheritDoc} */
-        @Nonnull public ExecutableSearchFilter build(@Nonnull AttributeResolutionContext resolutionContext)
-                throws ResolutionException {
-            final AttributeRecipientContext subContext =
-                    resolutionContext.getSubcontext(AttributeRecipientContext.class);
-            return new ExecutableSearchFilter() {
-
-                private final SearchFilter sf = new SearchFilter(String.format("(uid=%s)", subContext.getPrincipal()));
-
-                /** {@inheritDoc} */
-                @Nonnull public String getResultCacheKey() {
-                    return String.valueOf(sf.hashCode());
-                }
-
-                /** {@inheritDoc} */
-                @Nonnull public SearchResult execute(@Nonnull final SearchExecutor executor,
-                        @Nonnull final ConnectionFactory factory) throws LdapException {
-                    final Response<SearchResult> response = executor.search(factory, sf);
-                    return response.getResult();
-                }
-
-                /** {@inheritDoc} */
-                public String toString() {
-                    return sf.toString();
-                }
-            };
-        }
-    }
 
     /**
      * Creates an UnboundID in-memory directory server. Leverages LDIF found in test resources.
@@ -129,6 +95,26 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
     }
 
     /**
+     * Create a new velocity engine with minimal properties.
+     * 
+     * @return velocity engine
+     */
+    private VelocityEngine getEngine() {
+        VelocityEngine engine = new VelocityEngine();
+        try {
+            engine.addProperty("string.resource.loader.class",
+                    "org.apache.velocity.runtime.resource.loader.StringResourceLoader");
+            engine.addProperty("classpath.resource.loader.class",
+                    "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+            engine.addProperty("resource.loader", "classpath, string");
+            engine.init();
+        } catch (Exception e) {
+            Assert.fail("couldn't create engine", e);
+        }
+        return engine;
+    }
+
+    /**
      * Creates an LDAP data connector using the supplied builder and strategy. Sets defaults values if the parameters
      * are null.
      * 
@@ -146,7 +132,8 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         searchExecutor.setBaseDn(TEST_BASE_DN);
         searchExecutor.setReturnAttributes(TEST_RETURN_ATTRIBUTES);
         connector.setSearchExecutor(searchExecutor);
-        connector.setExecutableSearchBuilder(builder == null ? new TestSearchFilterBuilder() : builder);
+        connector.setExecutableSearchBuilder(builder == null ? new ParameterizedExecutableSearchFilterBuilder(
+                "(uid={principalName})") : builder);
         connector.setValidator(connector.new SearchValidator(new SearchFilter("(ou=people)")));
         connector.setMappingStrategy(strategy == null ? new StringAttributeValueMappingStrategy() : strategy);
         return connector;
@@ -183,7 +170,8 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
             // OK
         }
 
-        ExecutableSearchBuilder requestBuilder = new TestSearchFilterBuilder();
+        ExecutableSearchBuilder requestBuilder =
+                new ParameterizedExecutableSearchFilterBuilder("(uid={principalName})");
         connector.setExecutableSearchBuilder(requestBuilder);
         try {
             connector.initialize();
@@ -219,13 +207,28 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void resolve() throws ComponentInitializationException, ResolutionException {
-        LdapDataConnector connector = createLdapDataConnector(null, null);
+        ParameterizedExecutableSearchFilterBuilder builder =
+                new ParameterizedExecutableSearchFilterBuilder("(uid={principalName})");
+        resolve(builder);
+    }
+
+    @Test public void resolveTemplate() throws ComponentInitializationException, ResolutionException {
+        VelocityEngine engine = getEngine();
+        Template template = Template.fromTemplate(engine, "(uid=${requestContext.principal})");
+        TemplatedExecutableSearchFilterBuilder builder = new TemplatedExecutableSearchFilterBuilder(template);
+        resolve(builder);
+    }
+
+    protected void resolve(ExecutableSearchBuilder builder) throws ComponentInitializationException,
+            ResolutionException {
+        LdapDataConnector connector = createLdapDataConnector(builder, new StringAttributeValueMappingStrategy());
         connector.initialize();
 
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         Map<String, Attribute> attrs = connector.doResolve(context);
+        Assert.assertNotNull(attrs);
         // check total attributes: uid, cn, sn, mail
         Assert.assertTrue(attrs.size() == 4);
         // check uid

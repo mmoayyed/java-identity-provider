@@ -19,26 +19,20 @@ package net.shibboleth.idp.attribute.resolver.impl.dc.ldap;
 
 import javax.annotation.Nonnull;
 
-import org.ldaptive.ConnectionFactory;
-import org.ldaptive.LdapException;
-import org.ldaptive.Response;
-import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchFilter;
-import org.ldaptive.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * An {@link ExecutableSearchFilterBuilder} that generates the search filter to be executed by evaluating a
  * parameterized filter string against the currently resolved attributes within a {@link AttributeResolutionContext}.
  */
-public class ParameterizedExecutableSearchFilterBuilder implements ExecutableSearchBuilder<ExecutableSearchFilter> {
+public class ParameterizedExecutableSearchFilterBuilder extends AbstractExecutableSearchFilterBuilder {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ParameterizedExecutableSearchFilterBuilder.class);
@@ -59,28 +53,9 @@ public class ParameterizedExecutableSearchFilterBuilder implements ExecutableSea
     public ExecutableSearchFilter build(@Nonnull final AttributeResolutionContext resolutionContext)
             throws ResolutionException {
         final AttributeRecipientContext subContext = resolutionContext.getSubcontext(AttributeRecipientContext.class);
+        log.trace("Creating search filter using context {}", subContext);
         final SearchFilter sf = new SearchFilter(searchFilter);
         sf.setParameter("principalName", subContext.getPrincipal());
-
-        return new ExecutableSearchFilter() {
-
-            /** {@inheritDoc} */
-            @Nonnull public String getResultCacheKey() {
-                return String.valueOf(sf.hashCode());
-            }
-
-            /** {@inheritDoc} */
-            @Nonnull public SearchResult execute(@Nonnull final SearchExecutor executor,
-                    @Nonnull final ConnectionFactory factory) throws LdapException {
-                final Response<SearchResult> response = executor.search(factory, sf);
-                log.trace("Search returned response {}", response);
-                return response.getResult();
-            }
-
-            /** {@inheritDoc} */
-            public String toString() {
-                return sf.toString();
-            }
-        };
+        return super.build(sf);
     }
 }
