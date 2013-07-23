@@ -32,21 +32,23 @@ import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.joda.time.DateTime;
-import org.opensaml.messaging.context.BaseContext;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * An identity provider session.
  */
 @ThreadSafe
-public final class IdPSession extends BaseContext implements IdentifiableComponent {
+public final class IdPSession implements IdentifiableComponent {
 
     /** Name of {@link org.slf4j.MDC} attribute that holds the current session ID: <code>idp.session.id</code>. */
     public static final String MDC_ATTRIBUTE = "idp.session.id";
@@ -63,17 +65,17 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
     /** Last activity instant, in milliseconds since the epoch, for this session. */
     private long lastActivityInstant;
 
-    /** The authentication events that have occurred within the scope of this session. */
-    private final ConcurrentMap<String, AuthenticationResult> authenticationEvents;
+    /** Tracks authentication results that have occurred during this session. */
+    private final ConcurrentMap<String, AuthenticationResult> authenticationResults;
 
-    /** The service which have been authenticated to in this session. */
+    /** Tracks services which have been issued authentication tokens during this session. */
     private final ConcurrentMap<String, ServiceSession> serviceSessions;
 
     /**
-     * Lock used to serialize requests that operate on {@link #authenticationEvents} and {@link #serviceSessions} in the
-     * same call.
+     * Lock used to serialize requests that operate on {@link #authenticationResults} and {@link #serviceSessions}
+     * in the same call.
      */
-    private final Lock authnServiceStateLock = new ReentrantLock();
+    private final Lock authnServiceStateLock;
 
     /**
      * Constructor.
@@ -81,18 +83,20 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
      * @param sessionId identifier for this session
      * @param sessionSecret secrete for this session
      */
-    public IdPSession(@Nonnull @NotEmpty final String sessionId, @Nonnull byte[] sessionSecret) {
+    public IdPSession(@Nonnull @NotEmpty final String sessionId, @Nonnull final byte[] sessionSecret) {
         id = Constraint.isNotNull(StringSupport.trimOrNull(sessionId), "Session ID can not be null or empty");
 
-        Constraint.isNotNull(sessionSecret, "Session secret can not be null");
+        Constraint.isNotNull(sessionSecret, "Session secret cannot be null");
         secret = new byte[sessionSecret.length];
         System.arraycopy(sessionSecret, 0, secret, 0, sessionSecret.length);
 
         creationInstant = System.currentTimeMillis();
         lastActivityInstant = creationInstant;
 
-        authenticationEvents = new ConcurrentHashMap<String, AuthenticationResult>(5);
+        authenticationResults = new ConcurrentHashMap<String, AuthenticationResult>(5);
         serviceSessions = new ConcurrentHashMap<String, ServiceSession>(10);
+        
+        authnServiceStateLock = new ReentrantLock();
     }
 
     /** {@inheritDoc} */
@@ -101,7 +105,7 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
     }
 
     /**
-     * Gets a secret associated with the session. This is useful for things like encrypting session cookies.
+     * Get a secret associated with the session. This is useful for things like encrypting session cookies.
      * 
      * @return secret associated with the session
      */
@@ -110,7 +114,7 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
     }
 
     /**
-     * Gets the time, in milliseconds since the epoch, when this session was created.
+     * Get the time, in milliseconds since the epoch, when this session was created.
      * 
      * @return time this session was created, never less than 0
      */
@@ -119,7 +123,7 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
     }
 
     /**
-     * Gets the last activity instant, in milliseconds since the epoch, for the session.
+     * Get the last activity instant, in milliseconds since the epoch, for the session.
      * 
      * @return last activity instant, in milliseconds since the epoch, for the session, never less than 0
      */
@@ -128,45 +132,40 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
     }
 
     /**
-     * Sets the last activity instant, in milliseconds since the epoch, for the session.
+     * Set the last activity instant, in milliseconds since the epoch, for the session.
      * 
      * @param instant last activity instant, in milliseconds since the epoch, for the session, must be greater than 0
      */
-    public void setLastActivityInstant(long instant) {
+    public void setLastActivityInstant(@Positive final long instant) {
         lastActivityInstant = Constraint.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
     }
 
     /**
-     * Sets the last activity instant, in milliseconds since the epoch, for the session to the current time.
+     * Set the last activity instant, in milliseconds since the epoch, for the session to the current time.
      */
     public void setLastActivityInstantToNow() {
         lastActivityInstant = System.currentTimeMillis();
     }
 
     /**
-     * Gets the unmodifiable set of authentication events that have occurred within the scope of this session.
+     * Get the unmodifiable set of authentication results that have occurred during this session.
      * 
-     * @return unmodifiable set of authentication events that have occurred within the scope of this session
+     * @return unmodifiable set of authentication results
      */
-    @Nonnull @NonnullElements @NotLive public Set<AuthenticationResult> getAuthenticateEvents() {
-        return new HashSet(authenticationEvents.values());
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<AuthenticationResult> getAuthenticationResults() {
+        return new HashSet(authenticationResults.values());
     }
 
     /**
-     * Gets the authentication event given its workflow ID.
+     * Get the authentication event given its workflow ID.
      * 
-     * @param workflowId the ID of the authentication workflow
+     * @param flowId the ID of the authentication workflow
      * 
      * @return the authentication event
      */
-    @Nonnull public Optional<AuthenticationResult> getAuthenticationEvent(@Nullable final String workflowId) {
-        final String trimmedId = StringSupport.trimOrNull(workflowId);
-
-        if (trimmedId == null) {
-            return Optional.absent();
-        }
-
-        return Optional.fromNullable(authenticationEvents.get(trimmedId));
+    @Nullable public AuthenticationResult getAuthenticationResult(@Nonnull @NotEmpty final String flowId) {
+        return authenticationResults.get(
+                Constraint.isNotNull(StringSupport.trimOrNull(flowId), "Flow ID cannot be null or empty"));
     }
 
     /**
@@ -174,12 +173,12 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
      * 
      * @return unmodifiable collection of service sessions associated with this session
      */
-    @Nonnull @NonnullElements @NotLive public Set<ServiceSession> getServiceSessions() {
-        return new HashSet(serviceSessions.values());
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<ServiceSession> getServiceSessions() {
+        return ImmutableSet.copyOf(serviceSessions.values());
     }
 
     /**
-     * The session service for the given service.
+     * Get the ServiceSession for a given service.
      * 
      * @param serviceId ID of the service
      * 
@@ -211,8 +210,8 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
                     + " already exists");
 
             final AuthenticationResult authnEvent = session.getAuthenticationEvent();
-            if (!authenticationEvents.containsKey(authnEvent.getAuthenticationFlowId())) {
-                authenticationEvents.put(authnEvent.getAuthenticationFlowId(), authnEvent);
+            if (!authenticationResults.containsKey(authnEvent.getAuthenticationFlowId())) {
+                authenticationResults.put(authnEvent.getAuthenticationFlowId(), authnEvent);
             }
             
             //TODO(lajoie) don't we need to update the authn event if it already exists?
@@ -257,7 +256,7 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
                 }
             }
 
-            authenticationEvents.remove(event.getAuthenticationFlowId(), event);
+            authenticationResults.remove(event.getAuthenticationFlowId(), event);
         } finally {
             authnServiceStateLock.unlock();
         }
@@ -289,7 +288,7 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
     public String toString() {
         return Objects.toStringHelper(this).add("sessionId", id).add("creatingInstant", new DateTime(creationInstant))
                 .add("lastActivityInstant", new DateTime(lastActivityInstant))
-                .add("authenticationEvents", getAuthenticateEvents()).add("serviceSessions", getServiceSessions())
+                .add("authenticationResults", getAuthenticationResults()).add("serviceSessions", getServiceSessions())
                 .toString();
     }
 }
