@@ -67,6 +67,23 @@ public abstract class AbstractAuthenticationAction extends AbstractProfileAction
 
         authnCtxLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy function cannot be null");
     }
+
+    /** {@inheritDoc} */
+    protected final boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext)
+            throws ProfileException {
+
+        final AuthenticationContext authenticationContext = authnCtxLookupStrategy.apply(profileRequestContext);
+        if (authenticationContext == null) {
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
+            return false;
+        }
+
+        if (doPreExecute(profileRequestContext, authenticationContext)) {
+            return super.doPreExecute(profileRequestContext);
+        } else {
+            return false;
+        }
+    }
     
     /** {@inheritDoc} */
     protected final void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
@@ -80,6 +97,21 @@ public abstract class AbstractAuthenticationAction extends AbstractProfileAction
         doExecute(profileRequestContext, authenticationContext);
     }
 
+    /**
+     * Performs this authentication action's pre-execute step. Default implementation just returns true.
+     * 
+     * @param profileRequestContext the current IdP profile request context
+     * @param authenticationContext the current authentication context
+     * 
+     * @return true iff execution should continue
+     * 
+     * @throws AuthenticationException thrown if there is a problem performing the authentication action
+     */
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+        return true;
+    }
+    
     /**
      * Performs this authentication action. Default implementation throws an exception.
      * 
