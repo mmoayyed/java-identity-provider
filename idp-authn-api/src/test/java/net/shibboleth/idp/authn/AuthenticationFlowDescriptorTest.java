@@ -19,12 +19,10 @@ package net.shibboleth.idp.authn;
 
 import java.util.Arrays;
 
-import javax.security.auth.Subject;
-
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link AuthenticationFlowDescriptor} unit test. */
@@ -32,7 +30,7 @@ public class AuthenticationFlowDescriptorTest {
 
     private AuthenticationFlowDescriptor descriptor;
     
-    @BeforeTest public void setUp() {
+    @BeforeMethod public void setUp() {
         descriptor = new AuthenticationFlowDescriptor("test");
     }
 
