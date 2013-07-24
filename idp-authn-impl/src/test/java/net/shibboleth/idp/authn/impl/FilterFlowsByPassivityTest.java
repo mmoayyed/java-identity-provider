@@ -26,15 +26,15 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-/** {@link FilterPotentialFlowsByPassivity} unit test. */
-public class FilterPotentialFlowsByPassivityTest extends InitializeAuthenticationContextTest {
+/** {@link FilterFlowsByPassivity} unit test. */
+public class FilterFlowsByPassivityTest extends InitializeAuthenticationContextTest {
     
-    private FilterPotentialFlowsByPassivity action; 
+    private FilterFlowsByPassivity action; 
     
     @BeforeMethod public void setUp() throws Exception {
         super.setUp();
         
-        action = new FilterPotentialFlowsByPassivity();
+        action = new FilterFlowsByPassivity();
         action.initialize();
     }
     

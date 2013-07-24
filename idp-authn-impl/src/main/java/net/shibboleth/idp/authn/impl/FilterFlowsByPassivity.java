@@ -38,12 +38,12 @@ import org.slf4j.LoggerFactory;
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
- * @post <pre>AuthenticationContext.getPotentialFlows()</pre> is modified as above.
+ * @post AuthenticationContext.getPotentialFlows() is modified as above.
  */
-public class FilterPotentialFlowsByPassivity extends AbstractAuthenticationAction {
+public class FilterFlowsByPassivity extends AbstractAuthenticationAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(FilterPotentialFlowsByPassivity.class);
+    private final Logger log = LoggerFactory.getLogger(FilterFlowsByPassivity.class);
 
     /** {@inheritDoc} */
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
