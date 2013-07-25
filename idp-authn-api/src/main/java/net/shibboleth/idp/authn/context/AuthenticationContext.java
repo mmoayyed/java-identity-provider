@@ -129,7 +129,7 @@ public final class AuthenticationContext extends BaseContext {
      * 
      * @return this authentication context
      */
-    @Nonnull public AuthenticationContext setActiveFlows(
+    @Nonnull public AuthenticationContext setActiveResults(
             @Nonnull @NonnullElements final Collection<AuthenticationResult> results) {
         if (Constraint.isNotNull(results, "Flow collection cannot be null").isEmpty()) {
             activeResults = ImmutableMap.of();

@@ -58,7 +58,7 @@ public class AuthenticationContextTest {
         AuthenticationContext ctx = new AuthenticationContext(null);
         Assert.assertTrue(ctx.getActiveResults().isEmpty());
         
-        ctx.setActiveFlows(Arrays.asList(result));
+        ctx.setActiveResults(Arrays.asList(result));
 
         Assert.assertEquals(ctx.getActiveResults().size(), 1);
         Assert.assertEquals(ctx.getActiveResults().get("test"), result);
