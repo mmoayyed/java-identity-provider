@@ -35,8 +35,8 @@ public class UserTest {
 
     @Test(dataProvider = "userRelyingPartyIdAttributesDateAttributes")
     public void hasApprovedAttributes(final User user, final String relyingPartyId,
-            final Collection<Attribute<?>> approvedAttributes, final DateTime date,
-            final Collection<Attribute<?>> notApprovedAttributes) {
+            final Collection<Attribute> approvedAttributes, final DateTime date,
+            final Collection<Attribute> notApprovedAttributes) {
         Collection<AttributeRelease> attributeReleases =
                 AttributeRelease.createAttributeReleases(approvedAttributes, date);
         user.setAttributeReleases(relyingPartyId, attributeReleases);

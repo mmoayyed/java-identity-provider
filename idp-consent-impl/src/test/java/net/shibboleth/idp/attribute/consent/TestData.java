@@ -129,51 +129,51 @@ public class TestData {
         return displayDescriptions;
     }
 
-    private static Attribute<?> getRandomAttribute() {
-        Attribute<String> attribute = new Attribute<String>(getRandomAttributeId());
+    private static Attribute getRandomAttribute() {
+        Attribute attribute = new Attribute(getRandomAttributeId());
         attribute.setValues(getRandomAttributeValues());
         attribute.setDisplayNames(getRandomDisplayNames());
         attribute.setDisplayDescriptions(getRandomDisplayDescriptions());
         return attribute;
     }
 
-    private static Attribute<?> getRandomNumberedAttribute() {
+    private static Attribute getRandomNumberedAttribute() {
         return new Attribute("attribute_" + (random.nextInt(9) + 1));
     }
 
-    private static Collection<Attribute<?>> getRandomAttributes() {
-        Map<String, Attribute<?>> attributes = new HashMap<String, Attribute<?>>();
+    private static Collection<Attribute> getRandomAttributes() {
+        Map<String, Attribute> attributes = new HashMap<String, Attribute>();
         // 1-10
         for (int i = 0; i < random.nextInt(10) + 1; i++) {
-            Attribute<?> attribute = getRandomAttribute();
+            Attribute attribute = getRandomAttribute();
             attributes.put(attribute.getId(), attribute);
         }
         return attributes.values();
     }
 
-    private static Collection<Attribute<?>> getRandomNumberedAttributes() {
-        Map<String, Attribute<?>> attributes = new HashMap<String, Attribute<?>>();
+    private static Collection<Attribute> getRandomNumberedAttributes() {
+        Map<String, Attribute> attributes = new HashMap<String, Attribute>();
         // 0-10
         for (int i = 0; i < random.nextInt(10) + 1; i++) {
-            Attribute<?> attribute = getRandomNumberedAttribute();
+            Attribute attribute = getRandomNumberedAttribute();
             attributes.put(attribute.getId(), attribute);
         }
         return attributes.values();
     }
 
-    private static Collection<Attribute<?>> getRandomAttributesWithUserIdAttribute() {
-        Collection<Attribute<?>> attributes = new HashSet<Attribute<?>>(getRandomNumberedAttributes());
-        Attribute<String> userIdAttribute = new Attribute<String>("userId");
+    private static Collection<Attribute> getRandomAttributesWithUserIdAttribute() {
+        Collection<Attribute> attributes = new HashSet<Attribute>(getRandomNumberedAttributes());
+        Attribute userIdAttribute = new Attribute("userId");
         userIdAttribute.setValues(Arrays.asList(new String[] {"userId-value"}));
         attributes.add(userIdAttribute);
         return attributes;
     }
 
-    private static Collection<Attribute<?>> createLocalizedAttributes(Locale locale) {
-        Map<String, Attribute<?>> attributes = new HashMap<String, Attribute<?>>();
+    private static Collection<Attribute> createLocalizedAttributes(Locale locale) {
+        Map<String, Attribute> attributes = new HashMap<String, Attribute>();
         // 1-10
         for (int i = 0; i < random.nextInt(10) + 1; i++) {
-            Attribute<?> attribute = getRandomAttribute();
+            Attribute attribute = getRandomAttribute();
 
             Map<Locale, String> displayNames = new HashMap<Locale, String>();
             displayNames.put(locale, attribute.getId() + "-" + locale.getLanguage() + "-name");

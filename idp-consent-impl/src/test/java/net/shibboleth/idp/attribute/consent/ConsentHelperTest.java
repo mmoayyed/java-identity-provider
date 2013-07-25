@@ -57,8 +57,8 @@ public class ConsentHelperTest extends AbstractTestNGSpringContextTests {
     private String userIdAttribute;
 
     @Test(dataProvider = "attributesAttributesWithUserIdAttribute")
-    public void findUserId(Collection<Attribute<?>> attributesExludingUserId,
-            Collection<Attribute<?>> attributesIncludingUserId) {
+    public void findUserId(Collection<Attribute> attributesExludingUserId,
+            Collection<Attribute> attributesIncludingUserId) {
         String userId = ConsentHelper.findUserId(userIdAttribute, attributesIncludingUserId);
         assertNotNull("userId-value", userId);
 
@@ -99,10 +99,10 @@ public class ConsentHelperTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test(dataProvider = "numberedAttributes")
-    public void removeBlacklistedAttributes(Collection<Attribute<?>> allAttributes) {
-        Collection<Attribute<?>> attributes =
+    public void removeBlacklistedAttributes(Collection<Attribute> allAttributes) {
+        Collection<Attribute> attributes =
                 ConsentHelper.removeBlacklistedAttributes(attributeBlacklist, allAttributes);
-        for (Attribute<?> attribute : attributes) {
+        for (Attribute attribute : attributes) {
             if (attributeBlacklist.contains(attribute.getId())) {
                 fail("Blacklisted attribute found");
             }
@@ -110,9 +110,9 @@ public class ConsentHelperTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test(dataProvider = "numberedAttributes")
-    public void sortAttributes(Collection<Attribute<?>> unsortedAttributes) {
+    public void sortAttributes(Collection<Attribute> unsortedAttributes) {
 
-        SortedSet<Attribute<?>> attributes = ConsentHelper.sortAttributes(attributeSortOrder, unsortedAttributes);
+        SortedSet<Attribute> attributes = ConsentHelper.sortAttributes(attributeSortOrder, unsortedAttributes);
 
         int pos = 0;
         boolean onlyUnlisted = false;

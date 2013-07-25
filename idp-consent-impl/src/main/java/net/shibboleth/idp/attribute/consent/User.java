@@ -113,10 +113,10 @@ public class User {
      * @param attributes Collection of @see Attribute, the attributes which are going to be released
      * @return true if the user has given attribute release consent to all attributes.
      */
-    public boolean hasApprovedAttributes(final String relyingPartyId, final Collection<Attribute<?>> attributes) {
+    public boolean hasApprovedAttributes(final String relyingPartyId, final Collection<Attribute> attributes) {
         Collection<AttributeRelease> attributeReleases = getAttributeReleases(relyingPartyId);
 
-        for (Attribute<?> attribute : attributes) {
+        for (Attribute attribute : attributes) {
             boolean approved = false;
             for (AttributeRelease attributeRelease : attributeReleases) {
                 if (attributeRelease.contains(attribute)) {

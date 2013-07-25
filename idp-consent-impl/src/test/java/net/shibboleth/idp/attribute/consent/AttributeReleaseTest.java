@@ -37,13 +37,13 @@ import org.testng.annotations.Test;
 public class AttributeReleaseTest {
 
     @Test(dataProvider = "attributesDate")
-    public void createAttributeReleases(Collection<Attribute<?>> attributes, DateTime date) {
+    public void createAttributeReleases(Collection<Attribute> attributes, DateTime date) {
         Collection<AttributeRelease> attributeReleases = AttributeRelease.createAttributeReleases(attributes, date);
 
         assertEquals(attributes.size(), attributeReleases.size());
 
         for (AttributeRelease attributeRelease : attributeReleases) {
-            Attribute<?> attribute = checkAttribute(attributes, attributeRelease.getAttributeId());
+            Attribute attribute = checkAttribute(attributes, attributeRelease.getAttributeId());
             assertEquals(attribute.getId(), attributeRelease.getAttributeId());
             String valueHash = ConsentHelper.hashAttributeValues(attribute);
             assertEquals(valueHash, attributeRelease.getValuesHash());
@@ -52,19 +52,19 @@ public class AttributeReleaseTest {
     }
 
     @Test(dataProvider = "attributesDateAttribute")
-    public void contains(Collection<Attribute<?>> attributes, DateTime date, Attribute otherAttribute) {
+    public void contains(Collection<Attribute> attributes, DateTime date, Attribute otherAttribute) {
         Collection<AttributeRelease> attributeReleases = AttributeRelease.createAttributeReleases(attributes, date);
 
         for (AttributeRelease attributeRelease : attributeReleases) {
-            Attribute<?> attribute = checkAttribute(attributes, attributeRelease.getAttributeId());
+            Attribute attribute = checkAttribute(attributes, attributeRelease.getAttributeId());
             assertTrue(attributeRelease.contains(attribute));
             assertFalse(attributeRelease.contains(otherAttribute));
         }
     }
 
-    private static Attribute<?> checkAttribute(Collection<Attribute<?>> attributes, String attributeId) {
+    private static Attribute checkAttribute(Collection<Attribute> attributes, String attributeId) {
         assertTrue(!attributes.isEmpty());
-        for (Attribute<?> attribute : attributes) {
+        for (Attribute attribute : attributes) {
             if (attribute.getId().equals(attributeId)) {
                 attributes.remove(attribute);
                 return attribute;

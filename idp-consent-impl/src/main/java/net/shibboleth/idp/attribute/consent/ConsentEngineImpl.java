@@ -70,11 +70,11 @@ public class ConsentEngineImpl implements ConsentEngine {
     public void determineConsent(final ConsentContext consentContext) throws ConsentException {
 
         Assert.notNull(consentContext, "No consent context found");
-        Assert.state(consentContext.getOwner().getClass().equals(ProfileRequestContext.class),
+        Assert.state(consentContext.getParent().getClass().equals(ProfileRequestContext.class),
                 "Owner of a consent context must be a profile context");
 
         final String relyingPartyId = ConsentHelper.getRelyingParty(consentContext);
-        Collection<Attribute<?>> attributes = consentContext.getUserAttributes().values();
+        Collection<Attribute> attributes = consentContext.getUserAttributes().values();
 
         final String userId = ConsentHelper.findUserId(userIdAttribute, attributes);
         Assert.notNull(userId, "No userId found");
@@ -145,7 +145,7 @@ public class ConsentEngineImpl implements ConsentEngine {
      * @param attributes A collection of attributes.
      */
     private void showAttributeReleaseView(final ConsentContext consentContext, final User user,
-            final String relyingPartyId, final Collection<Attribute<?>> attributes) {
+            final String relyingPartyId, final Collection<Attribute> attributes) {
 
         final HttpServletRequest request = ConsentHelper.getRequest(consentContext);
         final HttpServletResponse response = ConsentHelper.getResponse(consentContext);

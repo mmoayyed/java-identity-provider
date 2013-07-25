@@ -125,7 +125,7 @@ public class LocalizationHelper {
      * @param userLocale The user's preferred locale.
      * @return Returns the localized name of an attribute.
      */
-    public String getAttributeName(final Attribute<?> attribute, final Locale userLocale) {
+    public String getAttributeName(final Attribute attribute, final Locale userLocale) {
         final Locale locale = selectLocale(attribute.getDisplayNames().keySet(), userLocale);
         logger.debug("Locale {} choosen for attribute {} name", locale, attribute.getId());
         if (locale == null) {
@@ -141,7 +141,7 @@ public class LocalizationHelper {
      * @param userLocale The user's preferred locale.
      * @return Returns the localized description of an attribute.
      */
-    public String getAttributeDescription(final Attribute<?> attribute, final Locale userLocale) {
+    public String getAttributeDescription(final Attribute attribute, final Locale userLocale) {
         final Locale locale = selectLocale(attribute.getDisplayDescriptions().keySet(), userLocale);
         logger.debug("Locale {} choosen for attribute {} description", locale, attribute.getId());
         if (locale == null) {

@@ -27,9 +27,6 @@ import javax.annotation.Resource;
 import net.shibboleth.idp.attribute.consent.AttributeRelease;
 import net.shibboleth.idp.attribute.consent.User;
 
-import org.infinispan.Cache;
-import org.infinispan.config.Configuration;
-import org.infinispan.manager.CacheManager;
 import org.springframework.util.Assert;
 
 /** Cache implementation. */
