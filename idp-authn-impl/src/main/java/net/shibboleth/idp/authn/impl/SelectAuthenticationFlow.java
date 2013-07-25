@@ -56,6 +56,8 @@ import org.slf4j.LoggerFactory;
  * @event {@link AuthnEventIds#NO_REQUESTED_FLOW}
  * @event Selected flow ID to execute
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
+ * @pre The content of {@link AuthenticationContext#getPotentialFlows()} are assumed to be acceptable
+ * with respect to passive and forced authentication requirements. 
  * @post If a result is reused, {@link AuthenticationContext#getAuthenticationResult()} will return
  * that result. Otherwise, {@link AuthenticationContext#getAttemptedFlow()} will return the flow
  * selected for execution and returned as an event.
