@@ -21,7 +21,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 
+import javax.security.auth.Subject;
+
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
+import net.shibboleth.idp.authn.AuthenticationResult;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -48,21 +51,21 @@ public class AuthenticationContextTest {
         Assert.assertTrue(ctx.isForceAuthn());
     }
 
-    /** Tests active workflows. */
-    @Test public void testActiveWorkFlows() throws Exception {
-        final AuthenticationFlowDescriptor descriptor = new AuthenticationFlowDescriptor("test");
+    /** Tests active results. */
+    @Test public void testActiveResults() throws Exception {
+        final AuthenticationResult result = new AuthenticationResult("test", new Subject());
 
         AuthenticationContext ctx = new AuthenticationContext(null);
-        Assert.assertTrue(ctx.getActiveFlows().isEmpty());
+        Assert.assertTrue(ctx.getActiveResults().isEmpty());
         
-        ctx.setActiveFlows(Arrays.asList(descriptor));
+        ctx.setActiveFlows(Arrays.asList(result));
 
-        Assert.assertEquals(ctx.getActiveFlows().size(), 1);
-        Assert.assertEquals(ctx.getActiveFlows().get("test"), descriptor);
+        Assert.assertEquals(ctx.getActiveResults().size(), 1);
+        Assert.assertEquals(ctx.getActiveResults().get("test"), result);
     }
     
-    /** Tests potential workflow instantiation. */
-    @Test public void testPotentialWorkflows() throws Exception {
+    /** Tests potential flow instantiation. */
+    @Test public void testPotentialFlows() throws Exception {
         AuthenticationContext ctx = new AuthenticationContext(null);
         Assert.assertTrue(ctx.getPotentialFlows().isEmpty());
 
@@ -75,8 +78,8 @@ public class AuthenticationContextTest {
         Assert.assertEquals(ctx.getPotentialFlows().get("test"), descriptor);
     }
 
-    /** Tests mutating requested workflows. */
-    @Test public void testRequestedWorkflows() throws Exception {
+    /** Tests mutating requested flows. */
+    @Test public void testRequestedFlows() throws Exception {
         AuthenticationContext ctx = new AuthenticationContext(null);
         Assert.assertTrue(ctx.getRequestedFlows().isEmpty());
 
@@ -88,14 +91,14 @@ public class AuthenticationContextTest {
 
         ctx.setRequestedFlows(Arrays.asList(descriptor1, descriptor2));
 
-        Iterator<AuthenticationFlowDescriptor> iterator = ctx.getRequestedFlows().values().iterator();
+        Iterator<AuthenticationFlowDescriptor> iterator = ctx.getRequestedFlows().iterator();
         Assert.assertEquals(ctx.getRequestedFlows().size(), 2);
         Assert.assertEquals(iterator.next(), descriptor1);
         Assert.assertEquals(iterator.next(), descriptor2);
     }
 
-    /** Tests mutating attempted workflows. */
-    @Test public void testAttemptedWorkflow() throws Exception {
+    /** Tests mutating attempted flow. */
+    @Test public void testAttemptedFlow() throws Exception {
         AuthenticationContext ctx = new AuthenticationContext(null);
         Assert.assertNull(ctx.getAttemptedFlow());
 

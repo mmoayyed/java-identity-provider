@@ -26,9 +26,12 @@ public final class AuthnEventIds {
     /** ID of event that indicates the AuthenticationContext is missing or corrupt in some way. */
     public static final String INVALID_AUTHN_CTX = "InvalidAuthenticationContext";
 
-    /** ID of event returned if there are no authentication workflow that could be used to authenticate the user. */
-    public static final String NO_POTENTIAL_WORKFLOW = "NoPotentialWorkflow";
+    /** ID of event returned if there are no authentication flows that could be used to authenticate the user. */
+    public static final String NO_POTENTIAL_FLOW = "NoPotentialFlow";
 
+    /** ID of event returned if there no authentication flows that can satisfy the request's requirements. */
+    public static final String NO_REQUESTED_FLOW = "NoRequestedFlow";
+    
     /** ID of event returned if there are no credentials available in the request. */
     public static final String NO_CREDENTIALS = "NoCredentials";
 

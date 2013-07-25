@@ -39,6 +39,7 @@ import org.joda.time.DateTime;
 import org.opensaml.messaging.context.BaseContext;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 
@@ -60,16 +61,16 @@ public final class AuthenticationContext extends BaseContext {
     private boolean isPassive;
     
     /** A non-normative hint some protocols support to indicate who the subject might be. */
-    private String hintedName;
+    @Nullable private String hintedName;
 
     /** Flows that could potentially be used to authenticate the user. */
     @Nonnull @NonnullElements private Map<String, AuthenticationFlowDescriptor> potentialFlows;
     
     /** Flows, in order of preference, that satisfy an explicit requirement from the relying party. */
-    @Nonnull @NonnullElements private ImmutableMap<String, AuthenticationFlowDescriptor> requestedFlows;
+    @Nonnull @NonnullElements private ImmutableList<AuthenticationFlowDescriptor> requestedFlows;
 
-    /** Authentication flows associated with a preexisting session and available for (re)use. */
-    @Nonnull @NonnullElements private ImmutableMap<String, AuthenticationFlowDescriptor> activeFlows;
+    /** Authentication results associated with an active session and available for (re)use. */
+    @Nonnull @NonnullElements private ImmutableMap<String, AuthenticationResult> activeResults;
         
     /** Authentication flow being attempted to authenticate the user. */
     @Nullable private AuthenticationFlowDescriptor attemptedFlow;
@@ -99,8 +100,8 @@ public final class AuthenticationContext extends BaseContext {
             }
         }
 
-        activeFlows = ImmutableMap.of();
-        requestedFlows = ImmutableMap.of();
+        activeResults = ImmutableMap.of();
+        requestedFlows = ImmutableList.of();
     }
 
     /**
@@ -113,34 +114,34 @@ public final class AuthenticationContext extends BaseContext {
     }
 
     /**
-     * Gets the authentication flows currently active for the subject.
+     * Gets the authentication results currently active for the subject.
      * 
-     * @return authentication flows currently active for the subject
+     * @return authentication results currently active for the subject
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, AuthenticationFlowDescriptor> getActiveFlows() {
-        return activeFlows;
+    @Nonnull @NonnullElements @Unmodifiable public Map<String, AuthenticationResult> getActiveResults() {
+        return activeResults;
     }
 
     /**
-     * Sets the authentication flows currently active for the subject.
+     * Sets the authentication results currently active for the subject.
      * 
-     * @param flows authentication flows currently active for the subject
+     * @param results authentication results currently active for the subject
      * 
      * @return this authentication context
      */
     @Nonnull public AuthenticationContext setActiveFlows(
-            @Nonnull @NonnullElements final List<AuthenticationFlowDescriptor> flows) {
-        if (Constraint.isNotNull(flows, "Flow list cannot be null").isEmpty()) {
-            activeFlows = ImmutableMap.of();
+            @Nonnull @NonnullElements final Collection<AuthenticationResult> results) {
+        if (Constraint.isNotNull(results, "Flow collection cannot be null").isEmpty()) {
+            activeResults = ImmutableMap.of();
             return this;
         }
 
-        Builder<String, AuthenticationFlowDescriptor> flowsBuilder = new ImmutableMap.Builder<>();
-        for (AuthenticationFlowDescriptor descriptor : flows) {
-            flowsBuilder.put(descriptor.getId(), descriptor);
+        Builder<String, AuthenticationResult> resultsBuilder = new ImmutableMap.Builder<>();
+        for (AuthenticationResult result : results) {
+            resultsBuilder.put(result.getAuthenticationFlowId(), result);
         }
 
-        activeFlows = flowsBuilder.build();
+        activeResults = resultsBuilder.build();
 
         return this;
     }
@@ -218,18 +219,16 @@ public final class AuthenticationContext extends BaseContext {
     }
     
     /**
-     * Gets the list of authentication flows, in order of preference, that must be used if user
-     * authentication is required.
+     * Get the flows, in order of preference, that satisfy an explicit requirement from the relying party.
      * 
-     * @return authentication flows, in order of preference, that must be used if user authentication is required
+     * @return authentication flows, in order of preference, specified by the relying party
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, AuthenticationFlowDescriptor>
-            getRequestedFlows() {
+    @Nonnull @NonnullElements @Unmodifiable public List<AuthenticationFlowDescriptor> getRequestedFlows() {
         return requestedFlows;
     }
 
     /**
-     * Sets the flows, in order of preference, that satisfy an explicit requirement from the relying party.
+     * Set the flows, in order of preference, that satisfy an explicit requirement from the relying party.
      * 
      * @param flows authentication flows, satisfy an explicit requirement from the relying party
      * 
@@ -239,22 +238,19 @@ public final class AuthenticationContext extends BaseContext {
             @Nonnull @NonnullElements final List<AuthenticationFlowDescriptor> flows) {
         
         if (Constraint.isNotNull(flows, "Flow list cannot be null").isEmpty()) {
-            requestedFlows = ImmutableMap.of();
+            requestedFlows = ImmutableList.of();
             return this;
         }
 
-        Builder<String, AuthenticationFlowDescriptor> flowsBuilder = new ImmutableMap.Builder<>();
-        for (AuthenticationFlowDescriptor descriptor : flows) {
-            flowsBuilder.put(descriptor.getId(), descriptor);
-        }
-
-        requestedFlows = flowsBuilder.build();
+        requestedFlows = ImmutableList.copyOf(flows);
 
         return this;
     }
 
     /**
      * Get the authentication flow that was attempted in order to authenticate the user.
+     * 
+     * <p>This is not set if an existing result was reused for SSO.</p>
      * 
      * @return authentication flow that was attempted in order to authenticate the user
      */
@@ -264,6 +260,8 @@ public final class AuthenticationContext extends BaseContext {
 
     /**
      * Set the authentication flow that was attempted in order to authenticate the user.
+     * 
+     * <p>Do not set if an existing result was reused for SSO.</p>
      * 
      * @param flow authentication flow that was attempted in order to authenticate the user
      * 
@@ -275,7 +273,7 @@ public final class AuthenticationContext extends BaseContext {
     }
 
     /**
-     * Get the authentication result produced by the attempted flow.
+     * Get the authentication result produced by the attempted flow, or reused for SSO.
      * 
      * @return authentication result, if any
      */
@@ -284,7 +282,7 @@ public final class AuthenticationContext extends BaseContext {
     }
 
     /**
-     * Set the authentication result produced by the attempted flow.
+     * Set the authentication result produced by the attempted flow, or reused for SSO.
      * 
      * @param result authentication result, if any
      * 
@@ -320,8 +318,8 @@ public final class AuthenticationContext extends BaseContext {
         return Objects.toStringHelper(this).add("initiationInstant", new DateTime(initiationInstant))
                 .add("isPassive", isPassive).add("forceAuthn", forceAuthn)
                 .add("potentialFlows", potentialFlows.keySet())
-                .add("requestedFlows", requestedFlows.keySet())
-                .add("activeFlows", activeFlows.keySet())
+                .add("requestedFlows", requestedFlows)
+                .add("activeFlows", activeResults.keySet())
                 .add("completionInstant", new DateTime(completionInstant)).toString();
     }
 
