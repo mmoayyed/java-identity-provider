@@ -18,51 +18,55 @@
 package net.shibboleth.idp.authn.impl;
 
 import javax.annotation.Nonnull;
+import javax.servlet.http.HttpServletRequest;
 
-import net.shibboleth.ext.spring.webflow.Event;
-import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UserAgentContext;
-import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.net.InetAddresses;
 
 /**
- * A stage that extracts the user-agent's IP address from the incoming requests, creates an
- * {@link UserAgentAddressContext}, and attaches it to the {@link AuthenticationContext}.
+ * An action that extracts the user-agent's IP address from the incoming request, creates a
+ * {@link UserAgentContext}, and attaches it to the {@link AuthenticationContext}.
+ * 
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
+ * @event {@link AuthnEventIds#NO_CREDENTIALS}
+ * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
+ * @post If ProfileRequestContext.getHttpRequest() != null, the content of getRemoteAddr() will be
+ * attached via a {@link UserAgentContext}, provided it is a valid IP address.
  */
-@Events({@Event(id = EventIds.PROCEED_EVENT_ID),
-        @Event(id = AuthnEventIds.NO_CREDENTIALS, description = "request does not contain user agent's IP address")})
 public class ExtractUserAgentAddress extends AbstractAuthenticationAction {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ExtractUserAgentAddress.class);
-
+    
     /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event doExecute(@Nonnull final RequestContext springRequestContext,
-            @Nonnull final ProfileRequestContext profileRequestContext,
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
-        final String addressString = Constraint.isNotNull(profileRequestContext.getHttpRequest(),
-                "HttpServletRequest cannot be null").getRemoteAddr();
-        if (!InetAddresses.isInetAddress(addressString)) {
-            log.debug("Action {}: User agent's IP address, {}, is not a valid IP address", getId(), addressString);
-            return ActionSupport.buildEvent(this, AuthnEventIds.NO_CREDENTIALS);
+        final HttpServletRequest request = profileRequestContext.getHttpRequest();
+        if (request == null) {
+            log.debug("{} profile request context does not contain an HttpServletRequest", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
+            return;
+        }
+        
+        final String addressString = request.getRemoteAddr();
+        if (addressString == null || !InetAddresses.isInetAddress(addressString)) {
+            log.debug("{} User agent's address, {}, is not a valid IP address", getLogPrefix(), addressString);
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
+            return;
         }
 
         authenticationContext.getSubcontext(UserAgentContext.class, true).setAddress(
                 InetAddresses.forString(addressString));
-
-        return ActionSupport.buildProceedEvent(this);
     }
 }
