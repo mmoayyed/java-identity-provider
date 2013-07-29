@@ -31,6 +31,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.net.HttpHeaders;
+
 /**
  * An action that extracts the user-agent's identifier from the incoming request, creates a
  * {@link UserAgentContext}, and attaches it to the {@link AuthenticationContext}.
@@ -57,7 +59,7 @@ public class ExtractUserAgentIdentifier extends AbstractAuthenticationAction {
             return;
         }
         
-        final String agent = request.getHeader("User-Agent");
+        final String agent = request.getHeader(HttpHeaders.USER_AGENT);
         if (agent == null) {
             log.debug("{} User-Agent header not found in request", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
