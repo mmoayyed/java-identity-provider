@@ -42,16 +42,17 @@ import org.slf4j.LoggerFactory;
  * {@link AuthenticationContext} has been fully populated. It uses the potential flows,
  * the requested flows (if any), and the active results, to decide how to proceed.</p>
  * 
- * <p>If there are no requested flows, then an active result will be reused, unless
- * the request requires forced authentication. If not possible, then a potential flow
- * will be selected and its ID returned as the result of the action.</p>
+ * <p>If there are no requested flows, then an active result will be reused with the
+ * default Proceed event returned, unless the request requires forced authentication.
+ * If not possible, then a potential flow will be selected and its ID returned as the
+ * result of the action.</p>
  * 
  * <p>If there are requested flows, then the "favorSSO" option determines whether
  * to select a flow specifically in the order specified, or to favor an active, but
  * "qualifying" result, over a new one. Forced authentication trumps the
  * use of any active result.</p>
  * 
- * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID} (reuse of a result)
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID} (reuse of a result, i.e., SSO)
  * @event {@link AuthnEventIds#NO_POTENTIAL_FLOW}
  * @event {@link AuthnEventIds#NO_REQUESTED_FLOW}
  * @event Selected flow ID to execute
@@ -192,7 +193,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
      * @param profileRequestContext the current IdP profile request context
      * @param authenticationContext the current authentication context
      */
-    private void doNoRequestedFlows(@Nonnull final ProfileRequestContext profileRequestContext,
+    private void doSelectNoRequestedFlows(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
         log.debug("{} no specific flows requested", getLogPrefix());
@@ -218,7 +219,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
      * @param profileRequestContext the current IdP profile request context
      * @param authenticationContext the current authentication context
      */
-    private void doRequestedFlows(@Nonnull final ProfileRequestContext profileRequestContext,
+    private void doSelectRequestedFlows(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
         final List<AuthenticationFlowDescriptor> requestedFlows = authenticationContext.getRequestedFlows();
@@ -248,9 +249,9 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                 authenticationContext.getPotentialFlows().keySet());
 
         if (authenticationContext.getRequestedFlows().isEmpty()) {
-            doNoRequestedFlows(profileRequestContext, authenticationContext);
+            doSelectNoRequestedFlows(profileRequestContext, authenticationContext);
         } else {
-            doRequestedFlows(profileRequestContext, authenticationContext);
+            doSelectRequestedFlows(profileRequestContext, authenticationContext);
         }
     }
     
