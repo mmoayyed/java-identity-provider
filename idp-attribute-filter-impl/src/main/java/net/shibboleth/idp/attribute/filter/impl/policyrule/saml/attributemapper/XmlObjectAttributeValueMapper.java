@@ -24,6 +24,8 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.core.xml.XMLObject;
 import org.slf4j.Logger;
@@ -37,8 +39,33 @@ public class XmlObjectAttributeValueMapper extends BaseAttributeValueMapper {
     /** logger . */
     private Logger log = LoggerFactory.getLogger(XmlObjectAttributeValueMapper.class);
     
+    /** Do we treat the entire AttributeValue as the object to be embedded. */
+    private boolean includeAttributeValue;
+    
+    /** Do we include the attribute value, or just its first child?
+     * @return Returns the includeAttributeValue.
+     */
+    public boolean setIncludeAttributeValue() {
+        return includeAttributeValue;
+    }
+
+    /** Sets whether we look at the AttributeValue, or just its child.
+     * @param doInclude The includeAttributeValue to set.
+     */
+    public void setIncludeAttributeValue(boolean doInclude) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        includeAttributeValue = doInclude;
+    }
+
+    
     /** {@inheritDoc} */
-    @Nullable protected AttributeValue decodeValue(final XMLObject object)  {
+    @Nullable protected AttributeValue decodeValue(@Nonnull final XMLObject object)  {
+        Constraint.isNotNull(object, "Object supplied to must not be null");
+        
+        if (includeAttributeValue) {
+            return new XMLObjectAttributeValue(object);
+        }
+        
         final List<XMLObject> children = object.getOrderedChildren();
         
         if (null == children || children.isEmpty()) {

@@ -67,6 +67,7 @@ public class AttributeValueMapperTest extends MappingTests {
 
         final StringAttributeValueMapper mapper = new StringAttributeValueMapper();
 
+        mapper.setLogPrefix("testString");
         mapper.initialize();
         final List<AttributeValue> result = mapper.decodeValues(getValues("stdFormat"));
 
@@ -86,6 +87,7 @@ public class AttributeValueMapperTest extends MappingTests {
 
         ScopedStringAttributeValueMapper mapper = new ScopedStringAttributeValueMapper();
 
+        mapper.setLogPrefix("testScopedString");
         mapper.initialize();
         List<AttributeValue> result = mapper.decodeValues(getValues("stdFormat"));
         Assert.assertEquals(result.size(), 1);
@@ -95,6 +97,7 @@ public class AttributeValueMapperTest extends MappingTests {
 
         mapper = new ScopedStringAttributeValueMapper();
         mapper.setDelimiter("0b3IgaX");
+        mapper.setLogPrefix("testScopedString2");
         mapper.initialize();
         result = mapper.decodeValues(getValues("stdFormat"));
         Assert.assertEquals(result.size(), 1);
@@ -110,6 +113,7 @@ public class AttributeValueMapperTest extends MappingTests {
 
         ByteAttributeValueMapper mapper = new ByteAttributeValueMapper();
         
+        mapper.setLogPrefix("testByte");
         mapper.initialize();
         final List<AttributeValue> result = mapper.decodeValues(getValues("stdFormat"));
         Assert.assertEquals(result.size(), 4);
@@ -126,6 +130,7 @@ public class AttributeValueMapperTest extends MappingTests {
 
         XmlObjectAttributeValueMapper mapper = new XmlObjectAttributeValueMapper();
         
+        mapper.setLogPrefix("testXMLObject");
         mapper.initialize();
         final List<AttributeValue> result = mapper.decodeValues(getValues("stdFormat"));
         Assert.assertEquals(result.size(), 1);

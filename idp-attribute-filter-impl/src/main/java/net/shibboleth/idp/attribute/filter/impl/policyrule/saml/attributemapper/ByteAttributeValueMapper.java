@@ -32,7 +32,7 @@ import org.opensaml.core.xml.XMLObject;
 public class ByteAttributeValueMapper extends BaseAttributeValueMapper {
 
     /** {@inheritDoc} */
-    @Nullable protected AttributeValue decodeValue(final XMLObject object) {
+    @Nullable protected AttributeValue decodeValue(@Nonnull final XMLObject object) {
         final String value = getStringValue(object);
         if (null == value) {
             return null;
@@ -46,6 +46,6 @@ public class ByteAttributeValueMapper extends BaseAttributeValueMapper {
 
     /** {@inheritDoc} */
     @Nonnull protected String getAttributeTypeName() {
-        return "Byte";
+        return "Bas64Encoded";
     }
 }

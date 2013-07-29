@@ -50,8 +50,8 @@ import org.slf4j.LoggerFactory;
 public class RequestedAttributeMapper extends AbstractIdentifiableInitializableComponent {
 
     /** log. */
-    private Logger log = LoggerFactory.getLogger(RequestedAttributeMapper.class);
-    
+    private final Logger log = LoggerFactory.getLogger(RequestedAttributeMapper.class);
+
     /** The internal names to generate. */
     private List<String> attributeAliases = Collections.EMPTY_LIST;
 
@@ -68,7 +68,7 @@ public class RequestedAttributeMapper extends AbstractIdentifiableInitializableC
     private BaseAttributeValueMapper valueMapper;
 
     /**
-     * sets the list of internal identifiers.
+     * Sets the list of internal identifiers.
      * 
      * @param aliases the list
      */
@@ -90,9 +90,9 @@ public class RequestedAttributeMapper extends AbstractIdentifiableInitializableC
     }
 
     /**
-     * gets the list of internal identifiers.
+     * Gets the list of internal identifiers.
      * 
-     * @return newIds the list
+     * @return the identifiers
      */
     @Nonnull @NonnullElements @Unmodifiable public List<String> getAliases() {
         return attributeAliases;
@@ -109,12 +109,12 @@ public class RequestedAttributeMapper extends AbstractIdentifiableInitializableC
     }
 
     /**
-     * Get the class which converts types.
+     * Gets the SAML attribute name.
      * 
-     * @return Returns the valueMapper.
+     * @return the name
      */
-    @NonnullAfterInit public BaseAttributeValueMapper getValueMapper() {
-        return valueMapper;
+    @NonnullAfterInit public String getSAMLName() {
+        return theSAMLName;
     }
 
     /**
@@ -127,26 +127,17 @@ public class RequestedAttributeMapper extends AbstractIdentifiableInitializableC
     }
 
     /**
-     * Gets the SAML attribute name.
+     * Get the class which converts types.
      * 
-     * @return the name
+     * @return Returns the valueMapper.
      */
-    @NonnullAfterInit public String getSAMLName() {
-        return theSAMLName;
+    @NonnullAfterInit public BaseAttributeValueMapper getValueMapper() {
+        return valueMapper;
     }
 
     /** {@inheritDoc} */
     public void setId(@Nullable String id) {
         super.setId(id);
-    }
-
-    /**
-     * Get the (optional) attribute format.
-     * 
-     * @return Returns the format.
-     */
-    @Nullable public String getAttributeFormat() {
-        return StringSupport.trimOrNull(attributeFormat);
     }
 
     /**
@@ -156,6 +147,15 @@ public class RequestedAttributeMapper extends AbstractIdentifiableInitializableC
      */
     public void setAttributeFormat(String format) {
         attributeFormat = format;
+    }
+
+    /**
+     * Get the (optional) attribute format.
+     * 
+     * @return Returns the format.
+     */
+    @Nullable public String getAttributeFormat() {
+        return StringSupport.trimOrNull(attributeFormat);
     }
 
     /** {@inheritDoc} */
@@ -170,59 +170,69 @@ public class RequestedAttributeMapper extends AbstractIdentifiableInitializableC
         logPrefix = null;
         valueMapper.setLogPrefix(getLogPrefix());
     }
+    
+    /** Does the attribute match the provided parameterisation.
+     * @param attribute the attribute to consider
+     * @return whether it matches.
+     */
+    protected boolean attributeMatches(@Nonnull org.opensaml.saml.saml2.core.Attribute attribute) {
+        final String name = attribute.getName();
+
+        if (!name.equals(theSAMLName)) {
+            log.debug("{} SAML attribute name {} does not match {}", getLogPrefix(), name, getId());
+            return false;
+        }
+
+        final String format = attribute.getNameFormat();
+        if (getAttributeFormat() != null && !getAttributeFormat().equals(format)) {
+            log.debug("{} SAML name format {} does not match {}", getLogPrefix(), format, getAttributeFormat());
+            return false;
+        }       
+        return true;
+    }
 
     /**
-     * Map the SAML attribute to the required output type.  We have to be careful about handling
-     * attributes types.  If the input has values but we fail to convert them then that is different
-     * from not having any values and we signal this by putting in a name, but no attribute.
+     * Map the SAML attribute to the required output type. We have to be careful about handling attributes types. If the
+     * input has values but we fail to convert them then that is different from not having any values and we signal this
+     * by putting in a name, but no attribute.
      * 
      * @param prototype the SAML attribute
-     * @return the appropriate multimap map of names to {@link RequestedAttribute}s. 
-     *
+     * @return the appropriate multimap map of names to {@link RequestedAttribute}s.
+     * 
      */
-    @Nonnull @NullableElements protected Map<String, RequestedAttribute> mapAttribute(
+    @Nonnull @NullableElements protected Map<String, RequestedAttribute> mapAttribute(@Nonnull
             org.opensaml.saml.saml2.metadata.RequestedAttribute prototype) {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-
-        final String name = prototype.getName();
         
-        if (!name.equals(theSAMLName)) {
-            log.debug("{} SAML attribute name {} does not match {}", getLogPrefix(), name, getId());
-            return Collections.EMPTY_MAP;
-        }
-        
-        final String format = prototype.getNameFormat();
-        if (getAttributeFormat() != null && !getAttributeFormat().equals(format)) {
-            log.debug("{} SAML name format {} does not match {}", getLogPrefix(), format, getAttributeFormat());
+        if (!attributeMatches(prototype)) {
             return Collections.EMPTY_MAP;
         }
 
-
-        List<XMLObject> inputValues =  prototype.getAttributeValues();
-        List<AttributeValue> outputValues = getValueMapper().decodeValues(inputValues);
+        final List<XMLObject> inputValues = prototype.getAttributeValues();
+        final List<AttributeValue> outputValues = getValueMapper().decodeValues(inputValues);
         
-        boolean noMatch = !inputValues.isEmpty() && outputValues.isEmpty();
+        final boolean noMatch = !inputValues.isEmpty() && outputValues.isEmpty();
 
-        final Map<String, RequestedAttribute> output =  new HashMap<String, RequestedAttribute>(inputValues.size());
+        final Map<String, RequestedAttribute> output = new HashMap<String, RequestedAttribute>(inputValues.size());
 
         log.debug("{} attribute id {} and aliases {} will be created", getLogPrefix(), getId(), getAliases());
 
-        
         if (noMatch) {
+            // NOTE this is different from not matching, so we set a NULL entry
             log.debug("{} Attribute value conversion yielded no suitable values", getLogPrefix());
             output.put(getId(), null);
-            for (String alias: getAliases()) {
+            for (String alias : getAliases()) {
                 output.put(alias, null);
             }
             return output;
         }
-  
+
         RequestedAttribute out = new RequestedAttribute(getId());
         out.setRequired(prototype.isRequired());
         out.setValues(outputValues);
         output.put(getId(), out);
-        
+
         for (String id : attributeAliases) {
             out = new RequestedAttribute(id);
             out.setRequired(prototype.isRequired());

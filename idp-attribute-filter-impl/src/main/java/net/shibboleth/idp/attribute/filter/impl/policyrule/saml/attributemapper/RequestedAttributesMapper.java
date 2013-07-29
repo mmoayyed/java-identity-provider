@@ -26,6 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.RequestedAttribute;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -37,9 +38,11 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 /**
- * This class represents the content of a attribute-map file, hence it describes (and then does) the mappings from a
- * {@link List} of SAML2 {@link org.opensaml.saml.saml2.metadata.RequestedAttribute} into a multimap going from (SAML2)
- * attributeId to idp {@link RequestedAttribute}s (or null if the mapping failed for type reasons).
+ * This class conceptually represents the content of a attribute-map file, hence it describes (and then does) the
+ * mappings from a {@link List} of SAML2 {@link org.opensaml.saml.saml2.metadata.RequestedAttribute} into a multimap
+ * going from (SAML2) attributeId to idp {@link RequestedAttribute}s (or null if the mapping failed for type reasons).
+ * 
+ * TODO Make more general &lt;Foo extends IdPAttribute, Bar extents SAMLAttribute&gt;
  */
 public class RequestedAttributesMapper extends AbstractIdentifiableInitializableComponent {
 
@@ -53,7 +56,7 @@ public class RequestedAttributesMapper extends AbstractIdentifiableInitializable
     private String logPrefix;
 
     /**
-     * return the mappers.
+     * Get the mappers.
      * 
      * @return Returns the mappers.
      */
@@ -69,7 +72,7 @@ public class RequestedAttributesMapper extends AbstractIdentifiableInitializable
     public void setMappers(@Nonnull List<RequestedAttributeMapper> theMappers) {
         mappers = Constraint.isNotNull(theMappers, "mappers list must be non null");
     }
-    
+
     /** {@inheritDoc} */
     public void setId(@Nullable String id) {
         super.setId(id);
@@ -82,16 +85,16 @@ public class RequestedAttributesMapper extends AbstractIdentifiableInitializable
      * @return a map from IdP AttributeId to RequestedAttributes (or NULL).
      */
     public Multimap<String, RequestedAttribute> mapAttributes(
-            List<org.opensaml.saml.saml2.metadata.RequestedAttribute> prototypes) {
+            @Nonnull @NonnullElements List<org.opensaml.saml.saml2.metadata.RequestedAttribute> prototypes) {
 
         Multimap<String, RequestedAttribute> result = ArrayListMultimap.create();
 
         for (org.opensaml.saml.saml2.metadata.RequestedAttribute prototype : prototypes) {
-            for (RequestedAttributeMapper mapper: mappers) {
+            for (RequestedAttributeMapper mapper : mappers) {
 
                 Map<String, RequestedAttribute> mappedAttributes = mapper.mapAttribute(prototype);
 
-                log.debug("{} SAML attribute '{}' mapped to {} Attributes by mapper '{}'", getLogPrefix(),
+                log.debug("{} SAML attribute '{}' mapped to {} attributes by mapper '{}'", getLogPrefix(),
                         prototype.getName(), mappedAttributes.size(), mapper.getId());
 
                 for (Entry<String, RequestedAttribute> entry : mappedAttributes.entrySet()) {
@@ -112,7 +115,7 @@ public class RequestedAttributesMapper extends AbstractIdentifiableInitializable
     }
 
     /**
-     * return a string which is to be prepended to all log messages.
+     * Return a string which is to be prepended to all log messages.
      * 
      * @return "Attribute Mappers '<ID>' :"
      */

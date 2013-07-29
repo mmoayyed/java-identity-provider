@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.core.xml.XMLObject;
 
@@ -32,6 +33,7 @@ public class StringAttributeValueMapper extends BaseAttributeValueMapper {
 
     /** {@inheritDoc} */
     @Nullable protected AttributeValue decodeValue(final XMLObject object) {
+        Constraint.isNotNull(object, "Object supplied to must not be null");
         String value = getStringValue(object);
         if (null == value) {
             return null;

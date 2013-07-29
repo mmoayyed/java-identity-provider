@@ -53,13 +53,14 @@ public class ScopedStringAttributeValueMapper extends BaseAttributeValueMapper {
      */
     public void setDelimiter(@Nonnull @NotEmpty String delim) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        String trimmed = StringSupport.trimOrNull(delim);
-        Constraint.isNotNull(trimmed, "ScopedStringAttributeDecoder: delimiter can not be null");
-        delimiter = delim;
+        final String trimmed = StringSupport.trimOrNull(delim);
+        Constraint.isNotNull(trimmed, "ScopedStringAttributeDecoder: delimiter can not be empty null");
+        delimiter = trimmed;
     }
 
     /** {@inheritDoc} */
-    @Nullable protected AttributeValue decodeValue(final XMLObject object) {
+    @Nullable protected AttributeValue decodeValue(@Nonnull final XMLObject object) {
+        Constraint.isNotNull(object, "Object supplied to must not be null");
         final String stringValue = getStringValue(object);
 
         if (null == stringValue) {
