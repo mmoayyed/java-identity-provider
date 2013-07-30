@@ -126,7 +126,5 @@ public class ExtractUsernamePasswordFromFormRequest extends AbstractAuthenticati
 
         authenticationContext.getSubcontext(UsernamePasswordContext.class, true).setUsername(username)
                 .setPassword(password);
-
-        ActionSupport.buildProceedEvent(profileRequestContext);
     }
 }

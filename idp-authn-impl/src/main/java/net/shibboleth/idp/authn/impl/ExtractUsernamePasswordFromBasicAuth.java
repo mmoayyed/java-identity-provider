@@ -85,8 +85,6 @@ public class ExtractUsernamePasswordFromBasicAuth extends AbstractAuthentication
         
         authenticationContext.getSubcontext(UsernamePasswordContext.class, true)
                 .setUsername(decodedCredentials.getFirst()).setPassword(decodedCredentials.getSecond());
-
-        ActionSupport.buildProceedEvent(profileRequestContext);
     }
 
     /**
