@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.filter.attributemapper.AbstractSAMLAttributeValueMapper;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.core.xml.XMLObject;
@@ -29,7 +30,7 @@ import org.opensaml.core.xml.XMLObject;
 /**
  * Mapping extract a {@link org.opensaml.core.xml.schema.XSString} from an {@link AttributeValue}.
  */
-public class StringAttributeValueMapper extends BaseAttributeValueMapper {
+public class StringAttributeValueMapper extends AbstractSAMLAttributeValueMapper {
 
     /** {@inheritDoc} */
     @Nullable protected AttributeValue decodeValue(final XMLObject object) {

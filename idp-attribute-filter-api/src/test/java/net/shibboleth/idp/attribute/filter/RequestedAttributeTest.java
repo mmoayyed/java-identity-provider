@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter;
 
+import net.shibboleth.idp.attribute.filter.attributemapper.RequestedAttribute;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

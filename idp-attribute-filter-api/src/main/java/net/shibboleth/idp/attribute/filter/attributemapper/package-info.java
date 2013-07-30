@@ -14,40 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package net.shibboleth.idp.attribute.filter;
-
-import net.shibboleth.idp.attribute.Attribute;
-
 /**
- * IdP Representation of the SAML2 RequestedAttribute.
+ * Classes in this package are to do with the import of attributes
+ * as an adjunct to filtering.
  */
-public class RequestedAttribute extends Attribute {
 
-    /** Is this attribute required. */
-    private boolean isRequired;
-    
-    /**
-     * Constructor.
-     *
-     * @param attributeId the id
-     */
-    public RequestedAttribute(String attributeId) {
-        super(attributeId);
-    }
-
-    /** Is this attribute marked as required.
-     * @return Returns the isRequired flag
-     */
-    public boolean getIsRequired() {
-        return isRequired;
-    }
-
-    /** Set whether this attribute is to be marked as required.
-     * @param required The flag to set.
-     */
-    public void setRequired(boolean required) {
-        this.isRequired = required;
-    }
-
-}
+package net.shibboleth.idp.attribute.filter.attributemapper;

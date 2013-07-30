@@ -24,7 +24,7 @@ import java.util.Set;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.RequestedAttribute;
+import net.shibboleth.idp.attribute.filter.attributemapper.RequestedAttribute;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 

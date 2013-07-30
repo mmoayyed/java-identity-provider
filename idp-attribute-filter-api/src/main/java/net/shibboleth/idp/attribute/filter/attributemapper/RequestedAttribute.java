@@ -15,19 +15,39 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter.impl.policyrule.saml.attributemapper;
+package net.shibboleth.idp.attribute.filter.attributemapper;
 
-import net.shibboleth.idp.attribute.filter.attributemapper.AbstractSAMLAttributesMapper;
-import net.shibboleth.idp.attribute.filter.attributemapper.RequestedAttribute;
+import net.shibboleth.idp.attribute.Attribute;
 
 /**
- * This class conceptually represents the content of a attribute-map file, hence it describes (and then does) the
- * mappings from a {@link java.util.List} of SAML2 {@link org.opensaml.saml.saml2.metadata.RequestedAttribute} into a
- * {@link com.google.common.collect.Multimap} going from (SAML2) attributeId to idp {@link RequestedAttribute}s (or null
- * if the mapping failed for type reasons).
- * 
+ * IdP Representation of the SAML2 RequestedAttribute.
  */
-public class RequestedAttributesMapper extends
-        AbstractSAMLAttributesMapper<org.opensaml.saml.saml2.metadata.RequestedAttribute, RequestedAttribute> {
+public class RequestedAttribute extends Attribute {
+
+    /** Is this attribute required. */
+    private boolean isRequired;
+    
+    /**
+     * Constructor.
+     *
+     * @param attributeId the id
+     */
+    public RequestedAttribute(String attributeId) {
+        super(attributeId);
+    }
+
+    /** Is this attribute marked as required.
+     * @return Returns the isRequired flag
+     */
+    public boolean getIsRequired() {
+        return isRequired;
+    }
+
+    /** Set whether this attribute is to be marked as required.
+     * @param required The flag to set.
+     */
+    public void setRequired(boolean required) {
+        this.isRequired = required;
+    }
 
 }

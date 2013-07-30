@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
+import net.shibboleth.idp.attribute.filter.attributemapper.AbstractSAMLAttributeValueMapper;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -34,7 +35,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Decoder for {@link XMLObject} into {@link XMLObjectAttributeValue}.
  */
-public class XmlObjectAttributeValueMapper extends BaseAttributeValueMapper {
+public class XmlObjectAttributeValueMapper extends AbstractSAMLAttributeValueMapper {
 
     /** logger . */
     private Logger log = LoggerFactory.getLogger(XmlObjectAttributeValueMapper.class);

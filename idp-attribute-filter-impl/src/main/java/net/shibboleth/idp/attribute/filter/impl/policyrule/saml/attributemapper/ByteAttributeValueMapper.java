@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
+import net.shibboleth.idp.attribute.filter.attributemapper.AbstractSAMLAttributeValueMapper;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
 
 import org.opensaml.core.xml.XMLObject;
@@ -29,7 +30,7 @@ import org.opensaml.core.xml.XMLObject;
 /**
  * Mapping extract a {@link ByteAttributeValue} from an AttributeValue.
  */
-public class ByteAttributeValueMapper extends BaseAttributeValueMapper {
+public class ByteAttributeValueMapper extends AbstractSAMLAttributeValueMapper {
 
     /** {@inheritDoc} */
     @Nullable protected AttributeValue decodeValue(@Nonnull final XMLObject object) {

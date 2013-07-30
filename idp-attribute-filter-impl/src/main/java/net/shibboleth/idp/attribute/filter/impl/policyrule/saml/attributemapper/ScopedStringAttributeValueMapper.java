@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
+import net.shibboleth.idp.attribute.filter.attributemapper.AbstractSAMLAttributeValueMapper;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -32,7 +33,7 @@ import org.opensaml.core.xml.XMLObject;
 /**
  * Mapping to extract a {@link net.shibboleth.idp.attribute.ScopedStringAttributeValue} from an AttributeValue.
  */
-public class ScopedStringAttributeValueMapper extends BaseAttributeValueMapper {
+public class ScopedStringAttributeValueMapper extends AbstractSAMLAttributeValueMapper {
 
     /** The scope delimiter. */
     private String delimiter = "@";

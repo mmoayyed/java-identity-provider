@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter.impl.policyrule.saml.attributemapper;
+package net.shibboleth.idp.attribute.filter.attributemapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,10 +48,10 @@ import org.slf4j.LoggerFactory;
 /**
  * The base of the classes that map SAML2 attribute values into IdP attribute values.
  */
-public abstract class BaseAttributeValueMapper extends AbstractInitializableComponent {
+public abstract class AbstractSAMLAttributeValueMapper extends AbstractInitializableComponent {
 
     /** logger. */
-    private final Logger log = LoggerFactory.getLogger(BaseAttributeValueMapper.class);
+    private final Logger log = LoggerFactory.getLogger(AbstractSAMLAttributeValueMapper.class);
 
     /** The String used to prefix log message. */
     private String logPrefix;
