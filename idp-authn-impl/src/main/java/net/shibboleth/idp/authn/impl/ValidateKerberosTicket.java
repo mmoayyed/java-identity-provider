@@ -19,23 +19,21 @@ package net.shibboleth.idp.authn.impl;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import org.opensaml.profile.ProfileException;
+import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AuthenticationException;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
-
 /**
- *
+ * TODO.
  */
-public class ValidateKerberosTicket extends AbstractProfileAction {
+public class ValidateKerberosTicket extends AbstractAuthenticationAction {
 
     /** {@inheritDoc} */
-    protected Event doExecute(@Nonnull final RequestContext springRequestContext,
-            @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
-        // TODO Auto-generated method stub
-        return null;
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+        throw new AuthenticationException("Not implemented.");
     }
 
 }
