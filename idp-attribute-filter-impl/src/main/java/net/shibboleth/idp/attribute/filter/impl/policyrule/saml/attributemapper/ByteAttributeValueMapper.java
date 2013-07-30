@@ -46,6 +46,6 @@ public class ByteAttributeValueMapper extends BaseAttributeValueMapper {
 
     /** {@inheritDoc} */
     @Nonnull protected String getAttributeTypeName() {
-        return "Bas64Encoded";
+        return "Base64Encoded";
     }
 }
