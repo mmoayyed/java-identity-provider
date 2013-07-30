@@ -25,7 +25,7 @@
 
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-storage-api</artifactId>
+            <artifactId>opensaml-saml-api</artifactId>
             <version>${opensaml.version}</version>
         </dependency>
 

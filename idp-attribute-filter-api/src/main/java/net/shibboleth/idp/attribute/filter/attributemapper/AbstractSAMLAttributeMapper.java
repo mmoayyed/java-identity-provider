@@ -148,8 +148,8 @@ public abstract class AbstractSAMLAttributeMapper
      * 
      * @param format The attributeFormat to set.
      */
-    public void setAttributeFormat(String format) {
-        attributeFormat = format;
+    public void setAttributeFormat(@Nullable final String format) {
+        attributeFormat = StringSupport.trimOrNull(format);
     }
 
     /**
@@ -158,7 +158,7 @@ public abstract class AbstractSAMLAttributeMapper
      * @return Returns the format.
      */
     @Nullable public String getAttributeFormat() {
-        return StringSupport.trimOrNull(attributeFormat);
+        return attributeFormat;
     }
 
     /** {@inheritDoc} */
@@ -175,7 +175,7 @@ public abstract class AbstractSAMLAttributeMapper
     }
 
     /**
-     * Does the attribute match the provided parameterisation.
+     * Determines if the attribute matches the provided parameterisation.
      * 
      * @param attribute the attribute to consider
      * @return whether it matches.
@@ -188,8 +188,14 @@ public abstract class AbstractSAMLAttributeMapper
             return false;
         }
 
-        final String format = attribute.getNameFormat();
-        if (getAttributeFormat() != null && !getAttributeFormat().equals(format)) {
+        // Ignore format if it's "unspecified".
+        String format = attribute.getNameFormat();
+        if (org.opensaml.saml.saml2.core.Attribute.UNSPECIFIED.equals(format)) {
+            format = null;
+        }
+        
+        if (getAttributeFormat() != null && format != null && !getAttributeFormat().equals(format)
+                && !org.opensaml.saml.saml2.core.Attribute.UNSPECIFIED.equals(getAttributeFormat())) {
             log.debug("{} SAML name format {} does not match {}", getLogPrefix(), format, getAttributeFormat());
             return false;
         }
