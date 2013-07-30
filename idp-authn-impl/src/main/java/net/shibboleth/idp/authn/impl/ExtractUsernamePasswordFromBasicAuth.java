@@ -134,7 +134,7 @@ public class ExtractUsernamePasswordFromBasicAuth extends AbstractAuthentication
             }
         }
 
-        log.debug("{} request did not contain a well-formed Basic authorization header value");
+        log.debug("{} request did not contain a well-formed Basic authorization header value", getLogPrefix());
         return null;
     }
 }
