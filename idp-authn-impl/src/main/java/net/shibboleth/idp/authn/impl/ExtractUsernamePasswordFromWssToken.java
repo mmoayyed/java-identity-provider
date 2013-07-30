@@ -28,8 +28,9 @@ import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
-import net.shibboleth.idp.profile.ActionSupport;
 
+import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.utilities.java.support.collection.Pair;
@@ -43,7 +44,6 @@ import org.opensaml.soap.wssecurity.Username;
 import org.opensaml.soap.wssecurity.UsernameToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
 
 //TODO(lajoie) should we support nonce and created checks?  probably
 
@@ -54,26 +54,39 @@ import org.springframework.webflow.execution.RequestContext;
 public class ExtractUsernamePasswordFromWssToken extends AbstractAuthenticationAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ExtractUsernamePasswordFromWssToken.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractUsernamePasswordFromWssToken.class);
+
+    /** Inbound message to operate on. */
+    @Nullable private Envelope inboundMessage;
 
     /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event doExecute(@Nonnull final RequestContext springRequestContext,
-            @Nonnull final ProfileRequestContext profileRequestContext,
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
-
-        // TODO(lajoie) get the envelope from the inbound message context
-        final Envelope inboundMessage = null;
-
+        
+        final MessageContext inCtx = profileRequestContext.getInboundMessageContext();
+        if (inCtx == null || !(inCtx.getMessage() instanceof Envelope)) {
+            log.debug("{} inbound message context missing or doesn't contain a SOAP Envelope", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
+            return false;
+        }
+        
+        inboundMessage = (Envelope) inCtx.getMessage();
+        return true;
+    }
+    
+    /** {@inheritDoc} */
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+        
         final Pair<String, String> usernamePassword = extractUsernamePassword(inboundMessage);
         if (usernamePassword == null) {
-            log.debug("Action {}: inbound message does not contain a username and password", getId());
-            return ActionSupport.buildEvent(this, AuthnEventIds.NO_CREDENTIALS);
+            log.debug("{} inbound message does not contain a username and password", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
+            return;
         }
 
         authenticationContext.getSubcontext(UsernamePasswordContext.class, true)
                 .setUsername(usernamePassword.getFirst()).setPassword(usernamePassword.getSecond());
-
-        return ActionSupport.buildProceedEvent(this);
     }
 
     /**
@@ -83,7 +96,7 @@ public class ExtractUsernamePasswordFromWssToken extends AbstractAuthenticationA
      * 
      * @return the username and password
      */
-    @Nullable protected Pair<String, String> extractUsernamePassword(@Nonnull final Envelope message) {
+    @Nullable private Pair<String, String> extractUsernamePassword(@Nonnull final Envelope message) {
         final UsernameToken usernameToken = getUsernameToken(message);
         if (usernameToken == null) {
             return null;
@@ -91,13 +104,13 @@ public class ExtractUsernamePasswordFromWssToken extends AbstractAuthenticationA
 
         final Username username = usernameToken.getUsername();
         if (username == null) {
-            log.debug("Action {}: <UsernameToken> does not contain a <Username>", getId());
+            log.debug("{} <UsernameToken> does not contain a <Username>", getLogPrefix());
             return null;
         }
 
         final List<XMLObject> passwords = usernameToken.getUnknownXMLObjects(Password.ELEMENT_NAME);
         if (passwords == null || passwords.size() == 0) {
-            log.debug("Action {}: <UsernameToken> does not contain a <Password>", getId());
+            log.debug("{} <UsernameToken> does not contain a <Password>", getLogPrefix());
             return null;
         }
 
@@ -106,13 +119,13 @@ public class ExtractUsernamePasswordFromWssToken extends AbstractAuthenticationA
         while (passwordsItr.hasNext()) {
             password = (Password) passwordsItr.next();
             if (password.getType() != null && !password.getType().equals(Password.TYPE_PASSWORD_TEXT)) {
-                log.debug("Action {}: skipping password with unsupported type {}", getId(), password.getType());
+                log.debug("{} skipping password with unsupported type {}", getLogPrefix(), password.getType());
                 password = null;
             }
         }
 
         if (password == null) {
-            log.debug("Action {}: <UsernameToken> does not contain a support <Password>", getId());
+            log.debug("{} <UsernameToken> does not contain a support <Password>", getLogPrefix());
             return null;
         }
         return new Pair<String, String>(username.getValue(), password.getValue());
@@ -125,19 +138,19 @@ public class ExtractUsernamePasswordFromWssToken extends AbstractAuthenticationA
      * 
      * @return the extracted token
      */
-    @Nullable protected UsernameToken getUsernameToken(Envelope message) {
+    @Nullable private UsernameToken getUsernameToken(@Nonnull final Envelope message) {
         final Header header = message.getHeader();
 
         final List<XMLObject> securityHeaders = header.getUnknownXMLObjects(Security.ELEMENT_NAME);
         if (securityHeaders == null || securityHeaders.size() == 0) {
-            log.debug("Action {}: inbound message does not contain <Security>", getId());
+            log.debug("{} inbound message does not contain <Security>", getLogPrefix());
             return null;
         }
 
         final List<XMLObject> usernameTokens =
                 ((Security) securityHeaders.get(0)).getUnknownXMLObjects(UsernameToken.ELEMENT_NAME);
         if (usernameTokens == null || usernameTokens.size() == 0) {
-            log.debug("Action {}: inbound message security header does not contain <UsernameToken>", getId());
+            log.debug("{} inbound message security header does not contain <UsernameToken>", getLogPrefix());
             return null;
         }
 
