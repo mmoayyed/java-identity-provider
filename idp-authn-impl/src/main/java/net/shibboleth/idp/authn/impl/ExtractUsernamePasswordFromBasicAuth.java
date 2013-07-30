@@ -89,7 +89,7 @@ public class ExtractUsernamePasswordFromBasicAuth extends AbstractAuthentication
 
     /**
      * Gets the encoded credentials passed in via the {@link HttpHeaders#AUTHORIZATION} header. This method checks to
-     * ensure that the authentication scheme is {@link SendBasicHttpAuthenticationChallenge#BASIC} and then strips off
+     * ensure that the authentication scheme is {@link HttpServletRequest#BASIC_AUTH} and then strips off
      * and returns the follow on Base64-encoded credentials.
      * 
      * @param httpRequest current HTTP request
