@@ -84,7 +84,7 @@ public class SendHTTPBasicAuthChallenge extends AbstractProfileAction {
     /** {@inheritDoc} */
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
-        HttpServletResponse httpResponse = profileRequestContext.getHttpResponse();
+        final HttpServletResponse httpResponse = profileRequestContext.getHttpResponse();
         if (httpResponse == null) {
             log.debug("{} profile request context did not contain HttpServletResponse", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);

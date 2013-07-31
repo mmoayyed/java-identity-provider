@@ -33,6 +33,11 @@
             <artifactId>velocity</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.owasp.esapi</groupId>
+            <artifactId>esapi</artifactId>
+        </dependency>
+
         <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->
@@ -41,9 +46,16 @@
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-profile-api</artifactId>
-            <version>${project.version}</version>
+            <version>${opensaml.version}</version>
             <scope>test</scope>
             <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-saml-impl</artifactId>
+            <version>${opensaml.version}</version>
+            <scope>test</scope>
         </dependency>
         
     </dependencies>

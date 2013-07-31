@@ -1,0 +1,23 @@
+##
+## Velocity Template for DisplayUsernamePasswordPage action
+##
+## Velocity context may contain the following properties
+## context - ProfileRequestContext
+## encoder - ESAPI Encoder
+## action - String - the action URL for the form
+## usernameFieldName - String - the field name for collecting username
+## passwordFieldName - String - the field name for collecting password
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+    <body>
+        
+        <form action="${action}" method="post">
+            Username: <input type="text" name="${usernameFieldName}" value=""/> <br/>
+            Password: <input type="text" name="${passwordFieldName}" value=""/> <br/>
+            
+            <input type="submit" value="Login"/>
+        </form>
+        
+    </body>
+</html>
