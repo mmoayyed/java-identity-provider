@@ -23,14 +23,15 @@ import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 
+import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AuthenticationException;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -58,11 +59,14 @@ import org.slf4j.LoggerFactory;
  * @pre <pre>ProfileRequestContext.getHttpResponse() != null</pre>
  * @post A Velocity template is rendered to the client.
  */
-public class DisplayUsernamePasswordPage extends AbstractProfileAction {
+public class DisplayUsernamePasswordPage extends AbstractAuthenticationAction {
     
     /** Name of the Velocity {@link Context} attribute to which the current {@link ProfileRequestContext} is bound. */
     public static final String REQUEST_CTX_VCTX_ATTRIB = "context";
 
+    /** Name of the Velocity {@link Context} attribute to which the most recent login exception is bound. */
+    public static final String LOGIN_EXCEPTION_CTX_VCTX_ATTRIB = "loginException";
+    
     /** Name of the Velocity {@link Context} attribute to which the ESAPI {@link Encoder} is bound. */
     public static final String ESAPI_VCTCX_ATTRIB = "encoder";
 
@@ -163,7 +167,8 @@ public class DisplayUsernamePasswordPage extends AbstractProfileAction {
     }
     
     /** {@inheritDoc} */
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
         final HttpServletResponse httpResponse = profileRequestContext.getHttpResponse();
         if (httpResponse == null || profileRequestContext.getHttpRequest() == null) {
@@ -173,7 +178,7 @@ public class DisplayUsernamePasswordPage extends AbstractProfileAction {
             return;
         }
         
-        final Context templateContext = buildTemplateContext(profileRequestContext);
+        final Context templateContext = buildTemplateContext(profileRequestContext, authenticationContext);
 
         HttpServletSupport.setContentType(httpResponse, "text/html");
         HttpServletSupport.setUTF8Encoding(httpResponse);
@@ -196,18 +201,23 @@ public class DisplayUsernamePasswordPage extends AbstractProfileAction {
      * Builds a Velocity {@link Context} which contains the current {@link ProfileRequestContext}.
      * 
      * @param profileRequestContext the current profile request context
+     * @param authenticationContext the current authentication context
      * 
      * @return the constructed Velocity context
      */
-    @Nonnull protected Context buildTemplateContext(@Nonnull final ProfileRequestContext profileRequestContext) {
+    @Nonnull protected Context buildTemplateContext(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext) {
 
         final Encoder esapiEncoder = ESAPI.encoder();
         final HttpServletRequest request = profileRequestContext.getHttpRequest();
 
         final VelocityContext templateContext = new VelocityContext();
 
-        templateContext.put(REQUEST_CTX_VCTX_ATTRIB, profileRequestContext);
         templateContext.put(ESAPI_VCTCX_ATTRIB, esapiEncoder);
+        templateContext.put(REQUEST_CTX_VCTX_ATTRIB, profileRequestContext);
+        if (authenticationContext.getLoginException() != null) {
+            templateContext.put(LOGIN_EXCEPTION_CTX_VCTX_ATTRIB, authenticationContext.getLoginException());
+        }
 
         templateContext.put(ACTION_URL_VCTCX_ATTRIB,
                 esapiEncoder.encodeForHTMLAttribute(request.getContextPath() + request.getServletPath()));
@@ -217,5 +227,5 @@ public class DisplayUsernamePasswordPage extends AbstractProfileAction {
 
         return templateContext;
     }
-    
+
 }
