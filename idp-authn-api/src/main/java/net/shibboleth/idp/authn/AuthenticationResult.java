@@ -18,27 +18,21 @@
 package net.shibboleth.idp.authn;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.security.auth.Subject;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.joda.time.DateTime;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -48,8 +42,8 @@ import com.google.common.collect.ImmutableSet;
 @ThreadSafe
 public final class AuthenticationResult {
 
-    /** The Subjects established by the authentication result. */
-    @Nonnull @NonnullElements @NotEmpty private final List<Subject> subjects;
+    /** The Subject established by the authentication result. */
+    @Nonnull private final Subject subject;
 
     /** The identifier of the flow used to produce this result. */
     @Nonnull @NotEmpty private final String authenticationFlowId;
@@ -61,29 +55,20 @@ public final class AuthenticationResult {
     @Positive private long lastActivityInstant;
     
     /**
-     * Constructor. <p>Sets the authentication instant to the current time.</p>
+     * Constructor.
+     * 
+     * <p>Sets the authentication instant to the current time.</p>
      * 
      * @param flowId the workflow used to authenticate the subject
-     * @param newSubjects a Subject collection identifying the authenticated entity
+     * @param newSubject a Subject identifying the authenticated entity
      */
-    public AuthenticationResult(@Nonnull @NotEmpty final String flowId,
-            @Nonnull @NotEmpty @NonnullElements final Collection<Subject> newSubjects) {
+    public AuthenticationResult(@Nonnull @NotEmpty final String flowId, @Nonnull final Subject newSubject) {
 
         authenticationFlowId = Constraint.isNotNull(StringSupport.trimOrNull(flowId),
                 "Authentication flow ID cannot be null nor empty");
-        subjects = new ArrayList(Constraint.isNotEmpty(newSubjects, "Subject list cannot be null or empty"));
+        subject = Constraint.isNotNull(newSubject, "Subject list cannot be null or empty");
         authenticationInstant = System.currentTimeMillis();
         lastActivityInstant = authenticationInstant;
-    }
-
-    /**
-     * Constructor. <p>Sets the authentication instant to the current time.</p>
-     * 
-     * @param flowId the workflow used to authenticate the subject
-     * @param subject a Subject identifying the authenticated entity
-     */
-    public AuthenticationResult(@Nonnull @NotEmpty final String flowId, @Nonnull final Subject subject) {
-        this(flowId, ImmutableList.of(Constraint.isNotNull(subject, "Subject cannot be null")));
     }
 
     /**
@@ -93,9 +78,8 @@ public final class AuthenticationResult {
      * @param principal a Principal identifying the authenticated entity
      */
     public AuthenticationResult(@Nonnull @NotEmpty final String flowId, @Nonnull final Principal principal) {
-        this(flowId, ImmutableList.of(
-                new Subject(false, ImmutableSet.of(Constraint.isNotNull(principal, "Principal cannot be null")),
-                        Collections.EMPTY_SET, Collections.EMPTY_SET)));
+        this(flowId, new Subject(false, ImmutableSet.of(Constraint.isNotNull(principal, "Principal cannot be null")),
+                Collections.EMPTY_SET, Collections.EMPTY_SET));
     }
     
     /**
@@ -103,8 +87,8 @@ public final class AuthenticationResult {
      * 
      * @return a Subject collection
      */
-    @Unmodifiable @Nonnull @NotEmpty @NonnullElements public List<Subject> getSubjects() {
-        return Collections.unmodifiableList(subjects);
+    @Nonnull public Subject getSubject() {
+        return subject;
     }
 
     /**
@@ -187,10 +171,8 @@ public final class AuthenticationResult {
      * @return a principal name for logging/debugging
      */
     @Nullable private String getSubjectName() {
-        for (Subject s : subjects) {
-            for (Principal p : s.getPrincipals()) {
-                return p.getName();
-            }
+        for (Principal p : getSubject().getPrincipals()) {
+            return p.getName();
         }
         
         return null;

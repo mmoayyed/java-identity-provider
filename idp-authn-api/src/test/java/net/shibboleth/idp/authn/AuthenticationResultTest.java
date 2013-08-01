@@ -39,9 +39,7 @@ public class AuthenticationResultTest {
         Assert.assertTrue(event.getAuthenticationInstant() > start);
         Assert.assertEquals(event.getAuthenticationFlowId(), "test");
         
-        Assert.assertEquals(event.getSubjects().size(), 1);
-        Assert.assertTrue(
-                event.getSubjects().get(0).getPrincipals(UsernamePrincipal.class).contains(new UsernamePrincipal("bob")));
+        Assert.assertTrue(event.getSubject().getPrincipals(UsernamePrincipal.class).contains(new UsernamePrincipal("bob")));
 
         try {
             new AuthenticationResult(null, new UsernamePrincipal("bob"));

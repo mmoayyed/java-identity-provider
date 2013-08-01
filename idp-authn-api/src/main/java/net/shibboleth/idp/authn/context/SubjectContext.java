@@ -94,7 +94,7 @@ public class SubjectContext extends BaseContext {
     @Nonnull @Unmodifiable @NonnullElements public List<Subject> getSubjects() {
         List<Subject> composite = new ArrayList<>();
         for (AuthenticationResult e : getAuthenticationEvents().values()) {
-            composite.addAll(e.getSubjects());
+            composite.add(e.getSubject());
         }
         return Collections.unmodifiableList(composite);
     }

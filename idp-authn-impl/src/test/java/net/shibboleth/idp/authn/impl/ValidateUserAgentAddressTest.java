@@ -109,7 +109,7 @@ public class ValidateUserAgentAddressTest extends InitializeAuthenticationContex
         action.execute(prc);
         ActionTestingSupport.assertProceedEvent(prc);
         Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubjects().iterator().next().getPrincipals(
+        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(
                 UsernamePrincipal.class).iterator().next().getName(), "foo");
     }
     
