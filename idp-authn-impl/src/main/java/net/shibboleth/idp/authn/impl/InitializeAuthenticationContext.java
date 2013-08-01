@@ -25,6 +25,7 @@ import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.ProfileException;
@@ -70,6 +71,8 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
      * @param flows the flows available for possible use
      */
     public void setAvailableFlows(@Nonnull @NonnullElements final Collection<AuthenticationFlowDescriptor> flows) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         availableFlows = ImmutableList.copyOf(Constraint.isNotNull(flows, "Flow collection cannot be null"));
     }
     

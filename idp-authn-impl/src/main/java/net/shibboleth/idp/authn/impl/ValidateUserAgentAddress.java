@@ -40,6 +40,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.IPRange;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -99,6 +100,8 @@ public class ValidateUserAgentAddress extends AbstractAuthenticationAction {
      * @param name  the principal name to use
      */
     public void setPrincipalName(@Nonnull @NotEmpty final String name) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         principalName = Constraint.isNotNull(StringSupport.trimOrNull(name), "Principal name cannot be null or empty");
     }
     
@@ -117,6 +120,8 @@ public class ValidateUserAgentAddress extends AbstractAuthenticationAction {
      * @param ranges the IP range(s) to authenticate
      */
     public void setDesignatedRanges(@Nonnull @NonnullElements Collection<IPRange> ranges) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         designatedRanges = ImmutableList.copyOf(Iterables.filter(ranges, Predicates.notNull()));
     }
     

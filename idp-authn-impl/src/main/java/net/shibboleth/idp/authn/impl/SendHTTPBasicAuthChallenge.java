@@ -27,6 +27,7 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -78,6 +79,8 @@ public class SendHTTPBasicAuthChallenge extends AbstractProfileAction {
      * @param newRealm authentication realm
      */
     public void setRealm(@Nonnull @NotEmpty String newRealm) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         realm = Constraint.isNotNull(StringSupport.trimOrNull(newRealm), "Realm name cannot be null or empty");
     }
     

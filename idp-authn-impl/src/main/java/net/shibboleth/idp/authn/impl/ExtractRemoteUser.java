@@ -30,6 +30,7 @@ import net.shibboleth.idp.authn.context.UsernameContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -86,6 +87,8 @@ public class ExtractRemoteUser extends AbstractAuthenticationAction {
      * @param flag value to set  
      */
     void setCheckRemoteUser(boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         checkRemoteUser = flag;
     }
     
@@ -104,6 +107,8 @@ public class ExtractRemoteUser extends AbstractAuthenticationAction {
      * @param attributes    list of request attributes to check
      */
     void setCheckAttributes(List<String> attributes) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         checkAttributes = ImmutableList.copyOf(Collections2.filter(attributes, Predicates.notNull()));
     }
     
@@ -122,6 +127,8 @@ public class ExtractRemoteUser extends AbstractAuthenticationAction {
      * @param headers list of request headers to check
      */
     void setCheckHeaders(List<String> headers) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         checkHeaders = ImmutableList.copyOf(Collections2.filter(headers, Predicates.notNull()));
     }
     

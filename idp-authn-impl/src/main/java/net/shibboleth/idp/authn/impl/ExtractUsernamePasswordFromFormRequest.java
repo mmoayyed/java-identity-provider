@@ -26,6 +26,7 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -76,6 +77,8 @@ public class ExtractUsernamePasswordFromFormRequest extends AbstractAuthenticati
      * @param fieldName the username parameter name
      */
     public void setUsernameFieldName(@Nonnull @NotEmpty final String fieldName) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         usernameFieldName = Constraint.isNotNull(
                 StringSupport.trimOrNull(fieldName), "Username field name cannot be null or empty.");
     }
@@ -95,6 +98,8 @@ public class ExtractUsernamePasswordFromFormRequest extends AbstractAuthenticati
      * @param fieldName the password parameter name
      */
     public void setPasswordFieldName(@Nonnull @NotEmpty final String fieldName) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         passwordFieldName = Constraint.isNotNull(
                 StringSupport.trimOrNull(fieldName), "Password field name cannot be null or empty.");
     }
