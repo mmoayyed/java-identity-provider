@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc.ldap;
 
-import java.beans.PropertyDescriptor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,21 +25,23 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder;
-import net.shibboleth.idp.attribute.resolver.impl.dc.MappingStrategy;
-import net.shibboleth.idp.attribute.resolver.impl.dc.Validator;
+import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.ExecutableSearchFilter;
 import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.LdapDataConnector;
-import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.ParameterizedExecutableSearchFilterBuilder;
+import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.TemplatedExecutableSearchFilterBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.BaseDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.DataConnectorNamespaceHandler;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.velocity.Template;
+import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
+import org.apache.velocity.VelocityContext;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
-import org.ldaptive.ConnectionFactory;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.SearchExecutor;
@@ -61,12 +62,11 @@ import org.ldaptive.sasl.SaslConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import com.google.common.cache.Cache;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfileRequestContext;
 
 /** Bean definition Parser for a {@link LdapDataConnector}. */
 public class LdapDataConnectorParser extends BaseDataConnectorParser {
@@ -115,12 +115,13 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
         final BeanFactory beanFactory = createBeanFactory(springBeans);
         addPropertyDescriptorValues(builder, beanFactory, LdapDataConnector.class);
 
-        // TODO this should use the Templated builder once the velocity engine is working
         ExecutableSearchBuilder searchBuilder = getBean(beanFactory, ExecutableSearchBuilder.class);
         if (searchBuilder == null) {
             final SearchExecutor searchExecutor = beanFactory.getBean(SearchExecutor.class);
-            searchBuilder =
-                    new ParameterizedExecutableSearchFilterBuilder(searchExecutor.getSearchFilter().getFilter());
+            final Template template =
+                    Template.fromTemplate(VelocityEngine.newVelocityEngine(), searchExecutor.getSearchFilter()
+                            .getFilter());
+            searchBuilder = new TemplatedExecutableSearchFilterBuilder(template);
             log.debug("no executable search builder configured, created {}", searchBuilder);
             builder.addPropertyValue("executableSearchBuilder", searchBuilder);
         }
@@ -155,8 +156,6 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
                 AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(config, new QName(
                         "noResultIsError")));
 
-        final String templateEngine = config.getAttribute("templateEngine");
-
         final ConnectionConfig connectionConfig = v2Parser.createConnectionConfig();
         final DefaultConnectionFactory connectionFactory = new DefaultConnectionFactory(connectionConfig);
         final String connectionStrategy = AttributeSupport.getAttributeValue(config, new QName("connectionStrategy"));
@@ -184,9 +183,20 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
 
         final SearchExecutor searchExecutor = v2Parser.createSearchExecutor();
 
-        // TODO this should use the Templated builder once the velocity engine is working
-        ExecutableSearchBuilder searchBuilder =
-                new ParameterizedExecutableSearchFilterBuilder(searchExecutor.getSearchFilter().getFilter());
+        final Template template =
+                Template.fromTemplate(VelocityEngine.newVelocityEngine(), searchExecutor.getSearchFilter().getFilter());
+        ExecutableSearchBuilder searchBuilder = new TemplatedExecutableSearchFilterBuilder(template) {
+            @Override public ExecutableSearchFilter build(@Nonnull final AttributeResolutionContext resolutionContext)
+                    throws ResolutionException {
+                final VelocityContext context = new VelocityContext();
+                final V2SAMLProfileRequestContext requestContext =
+                        new V2SAMLProfileRequestContext(resolutionContext, resolutionContext.getId());
+                log.trace("Creating search filter using v2 request context {}", requestContext);
+                context.put("requestContext", requestContext);
+                final SearchFilter searchFilter = new SearchFilter(merge(context));
+                return super.build(searchFilter);
+            }
+        };
 
         final BlockingConnectionPool connectionPool = v2Parser.createConnectionPool();
         if (connectionPool != null) {

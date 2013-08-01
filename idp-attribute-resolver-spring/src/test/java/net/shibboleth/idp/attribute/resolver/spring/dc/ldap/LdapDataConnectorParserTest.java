@@ -21,11 +21,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.impl.TestSources;
+import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder;
 import net.shibboleth.idp.attribute.resolver.impl.dc.MappingStrategy;
 import net.shibboleth.idp.attribute.resolver.impl.dc.Validator;
 import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.LdapDataConnector;
-import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.ParameterizedExecutableSearchFilterBuilder;
 import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -86,6 +88,13 @@ public class LdapDataConnectorParserTest {
                 getLdapDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-v2.xml");
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
+
+        dataConnector.initialize();
+        AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        Map<String, Attribute> attrs = dataConnector.doResolve(context);
+        Assert.assertNotNull(attrs);
     }
 
     @Test public void springConfig() throws ComponentInitializationException, ServiceException, ResolutionException {
@@ -93,6 +102,13 @@ public class LdapDataConnectorParserTest {
                 getLdapDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-spring.xml");
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
+
+        dataConnector.initialize();
+        AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        Map<String, Attribute> attrs = dataConnector.doResolve(context);
+        Assert.assertNotNull(attrs);
     }
 
     protected LdapDataConnector getLdapDataConnector(final String springContext) {
@@ -153,13 +169,12 @@ public class LdapDataConnectorParserTest {
         SearchExecutor searchExecutor = dataConnector.getSearchExecutor();
         AssertJUnit.assertNotNull(searchExecutor);
         AssertJUnit.assertEquals("ou=people,dc=shibboleth,dc=net", searchExecutor.getBaseDn());
-        AssertJUnit.assertEquals("(uid={principalName})", searchExecutor.getSearchFilter().getFilter());
+        AssertJUnit.assertNotNull(searchExecutor.getSearchFilter().getFilter());
 
         Validator validator = dataConnector.getValidator();
         AssertJUnit.assertNotNull(validator);
 
-        ParameterizedExecutableSearchFilterBuilder searchBuilder =
-                (ParameterizedExecutableSearchFilterBuilder) dataConnector.getExecutableSearchBuilder();
+        ExecutableSearchBuilder searchBuilder = dataConnector.getExecutableSearchBuilder();
         AssertJUnit.assertNotNull(searchBuilder);
 
         MappingStrategy mappingStrategy = dataConnector.getMappingStrategy();

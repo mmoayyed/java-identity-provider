@@ -54,11 +54,25 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
     /** {@inheritDoc} */
     public ExecutableSearchFilter build(@Nonnull final AttributeResolutionContext resolutionContext)
             throws ResolutionException {
-        final AttributeRecipientContext subContext = resolutionContext.getSubcontext(AttributeRecipientContext.class);
-        log.trace("Creating search filter using context {}", subContext);
         final VelocityContext context = new VelocityContext();
-        context.put("requestContext", subContext);
-        final SearchFilter searchFilter = new SearchFilter(template.merge(context));
+        log.trace("Creating search filter using attribute resolution context {}", resolutionContext);
+        context.put("resolutionContext", resolutionContext);
+        final AttributeRecipientContext recipientContext =
+                resolutionContext.getSubcontext(AttributeRecipientContext.class);
+        log.trace("Creating search filter using attribute recipient context {}", recipientContext);
+        context.put("recipientContext", recipientContext);
+        final SearchFilter searchFilter = new SearchFilter(merge(context));
         return super.build(searchFilter);
+    }
+
+    /**
+     * Invokes {@link Template#merge(org.apache.velocity.context.Context)} on the supplied context.
+     * 
+     * @param context to merge
+     * 
+     * @return result of the merge operation
+     */
+    protected String merge(@Nonnull final VelocityContext context) {
+        return template.merge(context);
     }
 }

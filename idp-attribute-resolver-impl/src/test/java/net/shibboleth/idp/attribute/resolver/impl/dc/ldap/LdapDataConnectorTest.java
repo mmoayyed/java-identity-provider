@@ -23,7 +23,6 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
-import org.apache.velocity.app.VelocityEngine;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.SearchExecutor;
@@ -52,6 +51,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.velocity.Template;
+import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
 
 /**
  * Tests for {@link LdapDataConnector}
@@ -92,26 +92,6 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
      */
     @AfterTest public void teardownDirectoryServer() {
         directoryServer.shutDown(true);
-    }
-
-    /**
-     * Create a new velocity engine with minimal properties.
-     * 
-     * @return velocity engine
-     */
-    private VelocityEngine getEngine() {
-        VelocityEngine engine = new VelocityEngine();
-        try {
-            engine.addProperty("string.resource.loader.class",
-                    "org.apache.velocity.runtime.resource.loader.StringResourceLoader");
-            engine.addProperty("classpath.resource.loader.class",
-                    "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-            engine.addProperty("resource.loader", "classpath, string");
-            engine.init();
-        } catch (Exception e) {
-            Assert.fail("couldn't create engine", e);
-        }
-        return engine;
     }
 
     /**
@@ -213,8 +193,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void resolveTemplate() throws ComponentInitializationException, ResolutionException {
-        VelocityEngine engine = getEngine();
-        Template template = Template.fromTemplate(engine, "(uid=${requestContext.principal})");
+        Template template = Template.fromTemplate(VelocityEngine.newVelocityEngine(), "(uid=${recipientContext.principal})");
         TemplatedExecutableSearchFilterBuilder builder = new TemplatedExecutableSearchFilterBuilder(template);
         resolve(builder);
     }

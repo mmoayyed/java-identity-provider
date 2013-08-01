@@ -14,7 +14,7 @@
         principalCredential="password">
         <dc:FilterTemplate>
             <![CDATA[
-                (uid={principalName})
+                (uid=${requestContext.principalName})
             ]]>
         </dc:FilterTemplate>
         <dc:ConnectionPool
