@@ -35,10 +35,11 @@ public class SendHTTPBasicAuthChallengeTest extends InitializeAuthenticationCont
         super.setUp();
         
         action = new SendHTTPBasicAuthChallenge();
-        action.initialize();
     }
     
     @Test public void testNoServlet() throws Exception {
+        action.initialize();
+        
         action.execute(prc);
         
         ActionTestingSupport.assertEvent(prc, EventIds.INVALID_PROFILE_CTX);
@@ -47,6 +48,7 @@ public class SendHTTPBasicAuthChallengeTest extends InitializeAuthenticationCont
     @Test public void testDefault() throws Exception {
         MockHttpServletResponse response = new MockHttpServletResponse();
         prc.setHttpResponse(response);
+        action.initialize();
         
         action.execute(prc);
         ActionTestingSupport.assertProceedEvent(prc);
@@ -58,6 +60,7 @@ public class SendHTTPBasicAuthChallengeTest extends InitializeAuthenticationCont
         MockHttpServletResponse response = new MockHttpServletResponse();
         prc.setHttpResponse(response);
         action.setRealm("foo");
+        action.initialize();
         
         action.execute(prc);
         ActionTestingSupport.assertProceedEvent(prc);
