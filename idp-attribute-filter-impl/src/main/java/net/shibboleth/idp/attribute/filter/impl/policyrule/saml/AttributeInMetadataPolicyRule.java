@@ -64,11 +64,13 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
         final Multimap<String, RequestedAttribute> requestedAttributes = filterContext.getRequestedAttributes();
 
         if (null == requestedAttributes || requestedAttributes.isEmpty()) {
-            log.debug("{} The peer's metadata did not have appropriate requested attributes available",
-                    getLogPrefix());
             if (matchIfMetadataSilent) {
+                log.debug("{} The peer's metadata did not have appropriate requested attributes available"
+                        + ", returning all the input values", getLogPrefix());
                 return Collections.unmodifiableSet(attribute.getValues());
             } else {
+                log.debug("{} The peer's metadata did not have appropriate requested attributes available"
+                        + ", returning no values", getLogPrefix());
                 return Collections.EMPTY_SET;
             }
         }
@@ -76,15 +78,14 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
         final Collection<RequestedAttribute> requestedAttributeList = requestedAttributes.get(attribute.getId());
 
         if (null == requestedAttributeList) {
-            log.debug("{} Attribute {} not found in metadata", getLogPrefix(),
-                    attribute.getId());
+            log.debug("{} Attribute {} not found in metadata", getLogPrefix(), attribute.getId());
             return Collections.EMPTY_SET;
         }
-        
+
         final Set<AttributeValue> values = new HashSet<AttributeValue>();
-        
-        for (RequestedAttribute requestedAttribute: requestedAttributeList) {
-            
+
+        for (RequestedAttribute requestedAttribute : requestedAttributeList) {
+
             if (null == requestedAttribute) {
                 log.info("{} Attribute {} found in metadata but with no values that could be decoded");
                 continue;
@@ -94,7 +95,7 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
                 log.debug("{} Attribute {} found in metadata, but was not required", getLogPrefix(), attribute.getId());
                 continue;
             }
-            
+
             values.addAll(filterValues(attribute, requestedAttribute.getValues()));
         }
         return values;
