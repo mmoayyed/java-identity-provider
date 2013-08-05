@@ -40,7 +40,6 @@ public class SchemaTypeAwareXMLBeanDefinitionReader extends XmlBeanDefinitionRea
 
         setDocumentReaderClass(SchemaTypeAwareBeanDefinitionDocumentReader.class);
 
-        // this also sets namespaceAware to true
-        setValidating(false);
+        setValidationMode(VALIDATION_XSD);
     }
 }
