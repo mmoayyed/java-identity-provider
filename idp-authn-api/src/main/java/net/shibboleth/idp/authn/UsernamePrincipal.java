@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.authn;
 
-import java.security.Principal;
-
 import javax.annotation.Nonnull;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -28,10 +26,10 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import com.google.common.base.Objects;
 
 /** Principal based on a username. */
-public final class UsernamePrincipal implements Principal {
+public class UsernamePrincipal implements CloneablePrincipal {
 
     /** The username. */
-    @Nonnull @NotEmpty private final String username;
+    @Nonnull @NotEmpty private String username;
 
     /**
      * Constructor.
@@ -72,5 +70,12 @@ public final class UsernamePrincipal implements Principal {
     /** {@inheritDoc} */
     public String toString() {
         return Objects.toStringHelper(this).add("username", username).toString();
+    }
+    
+    /** {@inheritDoc} */
+    public UsernamePrincipal clone() throws CloneNotSupportedException {
+        UsernamePrincipal copy = (UsernamePrincipal) super.clone();
+        copy.username = username;
+        return copy;
     }
 }

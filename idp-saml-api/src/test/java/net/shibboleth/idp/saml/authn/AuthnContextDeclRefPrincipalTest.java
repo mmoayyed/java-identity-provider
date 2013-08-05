@@ -33,8 +33,9 @@ public class AuthnContextDeclRefPrincipalTest extends XMLObjectBaseTestCase {
      * Tests that everything is properly initialized during object construction.
      *  
      * @throws MarshallingException
+     * @throws CloneNotSupportedException 
      */
-    @Test public void testInstantiation() throws MarshallingException {
+    @Test public void testInstantiation() throws MarshallingException, CloneNotSupportedException {
         AuthnContextDeclRefPrincipal principal = new AuthnContextDeclRefPrincipal("http://opensaml.org/mydecl");
         Assert.assertEquals(principal.getName(), "http://opensaml.org/mydecl");
 
@@ -42,6 +43,9 @@ public class AuthnContextDeclRefPrincipalTest extends XMLObjectBaseTestCase {
         ref.setAuthnContextDeclRef("http://opensaml.org/mydecl");
         Element xml = getMarshaller(AuthnContextDeclRef.DEFAULT_ELEMENT_NAME).marshall(ref);
         assertXMLEquals(xml.getOwnerDocument(), principal.getAuthnContextDeclRef());
+        
+        AuthnContextDeclRefPrincipal principal2 = principal.clone();
+        assertXMLEquals(xml.getOwnerDocument(), principal2.getAuthnContextDeclRef());
         
         try {
             new AuthnContextDeclRefPrincipal(null);

@@ -17,14 +17,15 @@
 
 package net.shibboleth.idp.saml.authn;
 
-import java.security.Principal;
-
 import javax.annotation.Nonnull;
 
+import org.opensaml.core.xml.XMLRuntimeException;
 import org.opensaml.core.xml.io.MarshallingException;
+import org.opensaml.core.xml.io.UnmarshallingException;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.saml2.core.AuthnContextDecl;
 
+import net.shibboleth.idp.authn.CloneablePrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
@@ -32,13 +33,13 @@ import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 import com.google.common.base.Objects;
 
 /** Principal based on a SAML AuthnContextDecl. */
-public final class AuthnContextDeclPrincipal implements Principal {
+public final class AuthnContextDeclPrincipal implements CloneablePrincipal {
 
     /** The declaration. */
-    @Nonnull private final AuthnContextDecl authnContextDecl;
+    @Nonnull private AuthnContextDecl authnContextDecl;
 
     /** Serialized form of declaration. */
-    @Nonnull @NotEmpty private final String name;
+    @Nonnull @NotEmpty private String name;
     
     /**
      * Constructor.
@@ -92,5 +93,19 @@ public final class AuthnContextDeclPrincipal implements Principal {
     /** {@inheritDoc} */
     public String toString() {
         return Objects.toStringHelper(this).add("authnContextDecl", name).toString();
+    }
+
+    /** {@inheritDoc} */
+    public AuthnContextDeclPrincipal clone() throws CloneNotSupportedException {
+        AuthnContextDeclPrincipal copy = (AuthnContextDeclPrincipal) super.clone();
+        try {
+            copy.authnContextDecl = XMLObjectSupport.cloneXMLObject(authnContextDecl, true);
+            copy.name = SerializeSupport.nodeToString(
+                    Constraint.isNotNull(XMLObjectSupport.getMarshaller(copy.authnContextDecl),
+                            "No marshaller for AuthnContextDecl").marshall(copy.authnContextDecl));
+        } catch (MarshallingException | UnmarshallingException e) {
+            throw new XMLRuntimeException(e);
+        }
+        return copy;
     }
 }

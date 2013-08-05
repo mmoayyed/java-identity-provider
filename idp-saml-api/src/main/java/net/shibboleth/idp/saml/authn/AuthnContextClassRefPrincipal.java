@@ -17,13 +17,13 @@
 
 package net.shibboleth.idp.saml.authn;
 
-import java.security.Principal;
 
 import javax.annotation.Nonnull;
 
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 
+import net.shibboleth.idp.authn.CloneablePrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -31,10 +31,10 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import com.google.common.base.Objects;
 
 /** Principal based on a SAML AuthnContextClassRef. */
-public final class AuthnContextClassRefPrincipal implements Principal {
+public final class AuthnContextClassRefPrincipal implements CloneablePrincipal {
 
     /** The class ref. */
-    @Nonnull @NotEmpty private final String authnContextClassRef;
+    @Nonnull @NotEmpty private String authnContextClassRef;
 
     /**
      * Constructor.
@@ -89,5 +89,12 @@ public final class AuthnContextClassRefPrincipal implements Principal {
     /** {@inheritDoc} */
     public String toString() {
         return Objects.toStringHelper(this).add("authnContextClassRef", authnContextClassRef).toString();
+    }
+
+    /** {@inheritDoc} */
+    public AuthnContextClassRefPrincipal clone() throws CloneNotSupportedException {
+        AuthnContextClassRefPrincipal copy = (AuthnContextClassRefPrincipal) super.clone();
+        copy.authnContextClassRef = authnContextClassRef;
+        return copy;
     }
 }

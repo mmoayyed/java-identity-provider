@@ -34,8 +34,9 @@ public class AuthnContextClassRefPrincipalTest extends XMLObjectBaseTestCase {
      * Tests that everything is properly initialized during object construction.
      *  
      * @throws MarshallingException
+     * @throws CloneNotSupportedException 
      */
-    @Test public void testInstantiation() throws MarshallingException {
+    @Test public void testInstantiation() throws MarshallingException, CloneNotSupportedException {
         AuthnContextClassRefPrincipal principal = new AuthnContextClassRefPrincipal(AuthnContext.KERBEROS_AUTHN_CTX);
         Assert.assertEquals(principal.getName(), AuthnContext.KERBEROS_AUTHN_CTX);
 
@@ -43,6 +44,9 @@ public class AuthnContextClassRefPrincipalTest extends XMLObjectBaseTestCase {
         ref.setAuthnContextClassRef(AuthnContext.KERBEROS_AUTHN_CTX);
         Element xml = getMarshaller(AuthnContextClassRef.DEFAULT_ELEMENT_NAME).marshall(ref);
         assertXMLEquals(xml.getOwnerDocument(), principal.getAuthnContextClassRef());
+        
+        AuthnContextClassRefPrincipal principal2 = principal.clone();
+        assertXMLEquals(xml.getOwnerDocument(), principal2.getAuthnContextClassRef());
         
         try {
             new AuthnContextClassRefPrincipal(null);
