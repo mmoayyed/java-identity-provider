@@ -18,8 +18,9 @@
 package net.shibboleth.idp.authn.context;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,7 +32,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
 import org.opensaml.messaging.context.BaseContext;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
 
 /**
  * A {@link BaseContext} that holds information about the subject of a transaction.
@@ -48,14 +49,14 @@ public class SubjectContext extends BaseContext {
     /** Canonical principal name of subject. */
     @Nullable private String principalName;
 
-    /** The active authentication events for the subject. */
-    @Nonnull private final HashMultimap<String, AuthenticationResult> authenticationEvents;
+    /** The active authentication results for the subject. */
+    @Nonnull private final Map<String, AuthenticationResult> authenticationResults;
     
     /** Constructor. */
     public SubjectContext() {
         super();
         
-        authenticationEvents = HashMultimap.create(5, 1);
+        authenticationResults = new HashMap(5);
     }
 
     /**
@@ -77,12 +78,12 @@ public class SubjectContext extends BaseContext {
     }
 
     /**
-     * Get a mutable multimap of workflow IDs to authentication events.
+     * Get a mutable map of authentication flow IDs to authentication results.
      * 
-     * @return  mutable multimap of workflow IDs to authentication events
+     * @return  mutable map of authentication flow IDs to authentication results
      */
-    @Nonnull @NonnullElements public HashMultimap<String, AuthenticationResult> getAuthenticationEvents() {
-        return authenticationEvents;
+    @Nonnull @NonnullElements public Map<String, AuthenticationResult> getAuthenticationResults() {
+        return authenticationResults;
     }
     
     /**
@@ -93,10 +94,10 @@ public class SubjectContext extends BaseContext {
      */
     @Nonnull @Unmodifiable @NonnullElements public List<Subject> getSubjects() {
         List<Subject> composite = new ArrayList<>();
-        for (AuthenticationResult e : getAuthenticationEvents().values()) {
+        for (AuthenticationResult e : getAuthenticationResults().values()) {
             composite.add(e.getSubject());
         }
-        return Collections.unmodifiableList(composite);
+        return ImmutableList.copyOf(composite);
     }
     
 }

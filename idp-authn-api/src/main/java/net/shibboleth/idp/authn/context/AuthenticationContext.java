@@ -63,6 +63,9 @@ public final class AuthenticationContext extends BaseContext {
     /** A non-normative hint some protocols support to indicate who the subject might be. */
     @Nullable private String hintedName;
 
+    /** The canonical principal name associated with the active session. */
+    @Nullable private String canonicalPrincipalName;
+    
     /** Flows that could potentially be used to authenticate the user. */
     @Nonnull @NonnullElements private Map<String, AuthenticationFlowDescriptor> potentialFlows;
     
@@ -218,6 +221,27 @@ public final class AuthenticationContext extends BaseContext {
      */
     @Nonnull public AuthenticationContext setHintedName(@Nullable final String hint) {
         hintedName = StringSupport.trimOrNull(hint);
+        return this;
+    }
+    
+    /**
+     * Get the canonical principal name associated with the active session, if any.
+     * 
+     * @return  the canonical principal name associated with the active session
+     */
+    @Nullable public String getCanonicalPrincipalName() {
+        return canonicalPrincipalName;
+    }
+    
+    /**
+     * Get the canonical principal name associated with the active session, if any.
+     * 
+     * @param principalName the principal name to set
+     * 
+     * @return this authentication context
+     */
+    @Nonnull public AuthenticationContext setCanonicalPrincipalName(@Nullable final String principalName) {
+        canonicalPrincipalName = StringSupport.trimOrNull(principalName);
         return this;
     }
     
