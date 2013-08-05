@@ -203,8 +203,8 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractAuthenticationA
         javax.security.auth.login.LoginContext jaasLoginCtx;
         
         if (getLoginConfigType() != null) {
-            log.debug("{} using custom JAAS configuration type {} with parameters: {}", getLogPrefix(),
-                    getLoginConfigType(), getLoginConfigParameters());
+            log.debug("{} using custom JAAS configuration type {} with parameters of type {}", getLogPrefix(),
+                    getLoginConfigType(), getLoginConfigParameters().getClass().getName());
             Configuration loginConfig = Configuration.getInstance(getLoginConfigType(), getLoginConfigParameters());
             jaasLoginCtx = new javax.security.auth.login.LoginContext(getLoginConfigName(), subject,
                     new SimpleCallbackHandler(), loginConfig);

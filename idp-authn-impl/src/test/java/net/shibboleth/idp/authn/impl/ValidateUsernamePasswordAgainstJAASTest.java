@@ -18,9 +18,15 @@
 package net.shibboleth.idp.authn.impl;
 
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.security.URIParameter;
+
 import javax.security.auth.login.LoginException;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 
@@ -28,13 +34,44 @@ import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import com.unboundid.ldap.listener.InMemoryDirectoryServer;
+import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
+import com.unboundid.ldap.listener.InMemoryListenerConfig;
+import com.unboundid.ldap.sdk.LDAPException;
 
 /** {@link ValidateUsernamePasswordAgainstJAAS} unit test. */
 public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthenticationContextTest {
     
     private ValidateUsernamePasswordAgainstJAAS action; 
+
+    private InMemoryDirectoryServer directoryServer;
+
+    /**
+     * Creates an UnboundID in-memory directory server. Leverages LDIF found in test resources.
+     * 
+     * @throws LDAPException if the in-memory directory server cannot be created
+     */
+    @BeforeClass public void setupDirectoryServer() throws LDAPException {
+
+        InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig("dc=shibboleth,dc=net");
+        config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", 10389));
+        config.addAdditionalBindCredentials("cn=Directory Manager", "password");
+        directoryServer = new InMemoryDirectoryServer(config);
+        directoryServer.importFromLDIF(true, "src/test/resources/net/shibboleth/idp/authn/impl/loginLDAPTest.ldif");
+        directoryServer.startListening();
+    }
+
+    /**
+     * Shutdown the in-memory directory server.
+     */
+    @AfterClass public void teardownDirectoryServer() {
+        directoryServer.shutDown(true);
+    }
     
     @BeforeMethod public void setUp() throws Exception {
         super.setUp();
@@ -84,14 +121,19 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
         Assert.assertTrue(ac.getLoginException() instanceof LoginException);
     }
 
-    /*
     @Test public void testAuthorized() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRemoteUser("baz");
+        request.addParameter("username", "PETER_THE_PRINCIPAL");
+        request.addParameter("password", "changeit");
         prc.setHttpRequest(request);
 
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
+
+        action.setLoginConfigType("JavaLoginConfig");
+        System.out.println(getCurrentDir());
+        action.setLoginConfigParameters(new URIParameter(new URI(getCurrentDir() + "src/test/resources/net/shibboleth/idp/authn/impl/jaas.config")));
+        action.initialize();
         
         doExtract(prc);
         
@@ -99,13 +141,22 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
         ActionTestingSupport.assertProceedEvent(prc);
         Assert.assertNotNull(ac.getAuthenticationResult());
         Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(
-                UsernamePrincipal.class).iterator().next().getName(), "baz");
+                UsernamePrincipal.class).iterator().next().getName(), "PETER_THE_PRINCIPAL");
     }
-    */
 
     private void doExtract(ProfileRequestContext prc) throws Exception {
         ExtractUsernamePasswordFromFormRequest extract = new ExtractUsernamePasswordFromFormRequest();
         extract.initialize();
         extract.execute(prc);
+    }
+
+    private String getCurrentDir() throws IOException {
+
+        String currentDir = new java.io.File(".").getCanonicalPath();
+
+        currentDir = currentDir.replace(File.separatorChar, '/');
+        currentDir = "file://" + currentDir + "/";
+
+        return currentDir;
     }
 }

@@ -57,6 +57,18 @@
             <version>${opensaml.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.unboundid</groupId>
+            <artifactId>unboundid-ldapsdk</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ldaptive</groupId>
+            <artifactId>ldaptive</artifactId>
+            <scope>test</scope>
+        </dependency>
         
     </dependencies>
     
