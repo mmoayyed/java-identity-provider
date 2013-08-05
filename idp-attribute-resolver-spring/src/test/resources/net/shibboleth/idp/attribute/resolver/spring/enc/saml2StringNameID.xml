@@ -5,5 +5,11 @@
 	xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
 	nameFormat="S2_NAMEID_FORMAT" 
 	nameQualifier="S2_NAMEID_QUALIFIER"
+	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver classpath:/schema/shibboleth-2.0-attribute-resolver.xsd
+                        urn:mace:shibboleth:2.0:resolver:pc classpath:/schema/shibboleth-2.0-attribute-resolver-pc.xsd
+                        urn:mace:shibboleth:2.0:resolver:ad classpath:/schema/shibboleth-2.0-attribute-resolver-ad.xsd
+                        urn:mace:shibboleth:2.0:resolver:dc classpath:/schema/shibboleth-2.0-attribute-resolver-dc.xsd
+                        urn:mace:shibboleth:2.0:attribute:encoder classpath:/schema/shibboleth-2.0-attribute-encoder.xsd
+                        urn:mace:shibboleth:2.0:security classpath:/schema/shibboleth-2.0-security.xsd"
 /> 
  

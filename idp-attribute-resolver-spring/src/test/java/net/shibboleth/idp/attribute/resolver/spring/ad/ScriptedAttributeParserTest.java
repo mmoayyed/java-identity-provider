@@ -48,7 +48,7 @@ public class ScriptedAttributeParserTest extends BaseAttributeDefinitionParserTe
     }
     
     @Test public void dupl() {
-        ScriptedAttributeDefinition attrDef = getAttributeDefn("scriptedAttributeDupl.xml", ScriptedAttributeDefinition.class);
+        ScriptedAttributeDefinition attrDef = getAttributeDefn("scriptedAttributeDupl.xml", ScriptedAttributeDefinition.class, true);
 
         Assert.assertEquals(attrDef.getId(), "scriptedDupl");
         Assert.assertEquals(attrDef.getScript().getScriptLanguage(), "javascript");

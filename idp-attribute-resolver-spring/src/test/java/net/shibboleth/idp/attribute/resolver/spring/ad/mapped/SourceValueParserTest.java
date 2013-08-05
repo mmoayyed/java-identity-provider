@@ -34,7 +34,7 @@ public class SourceValueParserTest extends BaseAttributeDefinitionParserTest {
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + SourceValueParserTest.class);
 
-        return getBean(ATTRIBUTE_FILE_PATH + "mapped/" + fileName, SourceValue.class, context);
+        return getBean(ATTRIBUTE_FILE_PATH + "mapped/" + fileName, SourceValue.class, context, true);
     }
 
     @Test public void simple() {

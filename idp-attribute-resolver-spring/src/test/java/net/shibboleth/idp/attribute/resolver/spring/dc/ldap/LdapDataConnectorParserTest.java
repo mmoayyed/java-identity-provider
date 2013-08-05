@@ -118,6 +118,7 @@ public class LdapDataConnectorParserTest {
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
+        beanDefinitionReader.setValidating(false);
         beanDefinitionReader.loadBeanDefinitions(springContext);
 
         return (LdapDataConnector) context.getBean("myLDAP");

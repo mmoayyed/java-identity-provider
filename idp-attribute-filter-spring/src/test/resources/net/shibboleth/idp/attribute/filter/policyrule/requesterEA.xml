@@ -1,7 +1,10 @@
 <afp:AttributeFilterPolicy id="MostBasicExample"
 	xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic" xmlns:afp="urn:mace:shibboleth:2.0:afp"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:saml="urn:mace:shibboleth:2.0:afp:mf:saml">
+	xmlns:saml="urn:mace:shibboleth:2.0:afp:mf:saml"
+	xsi:schemaLocation="urn:mace:shibboleth:2.0:afp classpath:/schema/shibboleth-2.0-afp.xsd
+                        urn:mace:shibboleth:2.0:afp:mf:basic classpath:/schema/shibboleth-2.0-afp-mf-basic.xsd
+                        urn:mace:shibboleth:2.0:afp:mf:saml classpath:/schema/shibboleth-2.0-afp-mf-saml.xsd">
 	<afp:PolicyRequirementRule xsi:type="saml:AttributeRequesterEntityAttributeExactMatch"
                        attributeName="urn:example.org:policy"
                        attributeValue="urn:example.org:policy:ABCD1234" />

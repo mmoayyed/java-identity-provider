@@ -36,7 +36,7 @@ public class DependencyTest extends BaseAttributeDefinitionParserTest {
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + DependencyTest.class);
 
-        return getBean(ATTRIBUTE_FILE_PATH + fileName, ResolverPluginDependency.class, context);
+        return getBean(ATTRIBUTE_FILE_PATH + fileName, ResolverPluginDependency.class, context, true);
     }
 
     @Test public void testOrphan() throws ComponentInitializationException, ServiceException, ResolutionException {

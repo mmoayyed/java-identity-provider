@@ -32,20 +32,25 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
 
 /**
- * Test for {@link SimpleAttributeDefinitionParser} and by extension
- * {@link BaseAttributeDefinitionParser}.
+ * Test for {@link SimpleAttributeDefinitionParser} and by extension {@link BaseAttributeDefinitionParser}.
  */
-public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBaseTestCase  {
-    
-    public static final String ATTRIBUTE_FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/ad/"; 
-    public static final String DATACONNECTOR_FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/dc/"; 
-    public static final String ENCODER_FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/enc/"; 
+public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBaseTestCase {
 
-    protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context) {
+    public static final String ATTRIBUTE_FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/ad/";
+
+    public static final String DATACONNECTOR_FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/dc/";
+
+    public static final String ENCODER_FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/enc/";
+
+    protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context,
+            boolean supressValid) {
 
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
+        if (supressValid) {
+            beanDefinitionReader.setValidating(false);
+        }
         beanDefinitionReader.loadBeanDefinitions(fileName);
 
         Collection<Type> beans = context.getBeansOfType(claz).values();
@@ -54,43 +59,69 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         return (Type) beans.iterator().next();
     }
 
-    protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz, GenericApplicationContext context) {
+    protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context) {
+        return getBean(fileName, claz, context, false);
+    }
+
+    protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz,
+            GenericApplicationContext context) {
 
         return getBean(ATTRIBUTE_FILE_PATH + fileName, claz, context);
     }
-    
-    protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, String beanFileName, Class<Type> claz) {
-    
+
+    protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz,
+            GenericApplicationContext context, boolean supressValidation) {
+
+        return getBean(ATTRIBUTE_FILE_PATH + fileName, claz, context, supressValidation);
+    }
+
+    protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, String beanFileName,
+            Class<Type> claz) {
+        return getAttributeDefn(fileName, beanFileName, claz, false);
+
+    }
+
+    protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, String beanFileName,
+                Class<Type> claz, boolean supressValidation) {
+
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + claz);
         XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
-        
+
         configReader.loadBeanDefinitions(ATTRIBUTE_FILE_PATH + beanFileName);
-    
-        return getAttributeDefn(fileName, claz, context);
+
+        return getAttributeDefn(fileName, claz, context, supressValidation);
     }
-    
+
     protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz) {
-
-        GenericApplicationContext context = new GenericApplicationContext();
-        context.setDisplayName("ApplicationContext: " + claz);
-
-        return getAttributeDefn(fileName, claz, context);
+        return getAttributeDefn(fileName, claz, false);
+        
     }
-    
-    protected <Type extends BaseDataConnector> Type getDataConnector(String fileName, Class<Type> claz) {
-        
+        protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz, boolean supressValid) {
+
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + claz);
-        
-        return getBean(DATACONNECTOR_FILE_PATH + fileName, claz, context);
+
+        return getAttributeDefn(fileName, claz, context, supressValid);
+    }
+
+    protected <Type extends BaseDataConnector> Type getDataConnector(String fileName, Class<Type> claz) {
+        return getDataConnector(fileName, claz, false);
+    }
+
+    protected <Type extends BaseDataConnector> Type getDataConnector(String fileName, Class<Type> claz, boolean supressValid) {
+
+        GenericApplicationContext context = new GenericApplicationContext();
+        context.setDisplayName("ApplicationContext: " + claz);
+
+        return getBean(DATACONNECTOR_FILE_PATH + fileName, claz, context, supressValid);
     }
 
     protected <Type extends AttributeEncoder> Type getAttributeEncoder(String fileName, Class<Type> claz) {
-        
+
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + claz);
-        
+
         return getBean(ENCODER_FILE_PATH + fileName, claz, context);
 
     }

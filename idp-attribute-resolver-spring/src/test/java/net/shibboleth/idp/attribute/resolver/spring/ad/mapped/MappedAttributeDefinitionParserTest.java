@@ -30,12 +30,16 @@ import org.testng.annotations.Test;
 public class MappedAttributeDefinitionParserTest extends BaseAttributeDefinitionParserTest {
 
     private MappedAttributeDefinition getDefinition(String fileName) {
+        return getDefinition(fileName, false);
+    }
 
-        return getAttributeDefn("mapped/" + fileName, MappedAttributeDefinition.class);
+    private MappedAttributeDefinition getDefinition(String fileName, boolean supressValid) {
+
+        return getAttributeDefn("mapped/" + fileName, MappedAttributeDefinition.class, supressValid);
     }
 
     @Test public void defaultCase() {
-        MappedAttributeDefinition defn = getDefinition("mapped.xml");
+        MappedAttributeDefinition defn = getDefinition("mapped.xml", true);
 
         Assert.assertTrue(defn.isPassThru());
         Assert.assertEquals(defn.getValueMaps().size(), 2);

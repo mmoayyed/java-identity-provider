@@ -35,7 +35,7 @@ public class ValueMapParserTest extends BaseAttributeDefinitionParserTest {
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + ValueMapParserTest.class);
 
-        return getBean(ATTRIBUTE_FILE_PATH + "mapped/" + fileName, ValueMap.class, context);
+        return getBean(ATTRIBUTE_FILE_PATH + "mapped/" + fileName, ValueMap.class, context, true);
     }
 
     @Test public void valueMap() {

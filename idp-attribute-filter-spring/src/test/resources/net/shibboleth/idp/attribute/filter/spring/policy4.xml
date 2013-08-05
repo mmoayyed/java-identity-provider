@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <afp:AttributeFilterPolicyGroup
 	xmlns:afp="urn:mace:shibboleth:2.0:afp" xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic"
+    xsi:schemaLocation="urn:mace:shibboleth:2.0:afp classpath:/schema/shibboleth-2.0-afp.xsd
+                        urn:mace:shibboleth:2.0:afp:mf:basic classpath:/schema/shibboleth-2.0-afp-mf-basic.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="PolicyExample2">
 	<afp:AttributeRule attributeID="affiliation" id="wobble">
 		<afp:PermitValueRule xmlns="urn:mace:shibboleth:2.0:afp:mf:basic"

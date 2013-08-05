@@ -70,7 +70,7 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
 
     @Test public void targetedPolicy() throws ComponentInitializationException {
 
-        final PolicyRequirementRule rule = getPolicyRule("attributeValueId.xml");
+        final PolicyRequirementRule rule = getPolicyRule("attributeValueId.xml", true);
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredAttributes(epaUid.values());
@@ -128,7 +128,7 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
 
     @Test public void targetedMatcher() throws ComponentInitializationException {
 
-        final Matcher matcher = getMatcher("attributeValueId.xml");
+        final Matcher matcher = getMatcher("attributeValueId.xml", true);
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredAttributes(epaUid.values());

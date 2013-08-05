@@ -51,7 +51,7 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
 }
     
     @Test public void populated() throws ComponentInitializationException {
-        BaseAttributeDefinition attrDef = getAttributeDefn("simpleAttributePopulated.xml", SimpleAttributeDefinition.class);
+        BaseAttributeDefinition attrDef = getAttributeDefn("simpleAttributePopulated.xml", SimpleAttributeDefinition.class, true);
         
         attrDef.initialize();
         
@@ -108,6 +108,6 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
     }
 
     @Test public void bad() throws ComponentInitializationException {
-        getAttributeDefn("simpleAttributeBadValues.xml", SimpleAttributeDefinition.class);
+        getAttributeDefn("simpleAttributeBadValues.xml", SimpleAttributeDefinition.class, true);
     }
 }
