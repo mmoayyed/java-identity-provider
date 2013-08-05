@@ -33,7 +33,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-/** {@link FilterFlowsByPassivity} unit test. */
+/** {@link SelectAuthenticationFlow} unit test. */
 public class SelectAuthenticationFlowTest extends InitializeAuthenticationContextTest {
     
     private SelectAuthenticationFlow action; 
