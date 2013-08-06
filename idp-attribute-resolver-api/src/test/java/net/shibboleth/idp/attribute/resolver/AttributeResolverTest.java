@@ -122,25 +122,39 @@ public class AttributeResolverTest {
         definitions.add(new MockAttributeDefinition("foo", new Attribute("test")));
         definitions.add(null);
         definitions.add(new MockAttributeDefinition("bar", new Attribute("test")));
-        definitions.add(new MockAttributeDefinition("foo", new Attribute("test")));
 
         AttributeResolver resolver = new AttributeResolver(" foo ", definitions, null);
         resolver.initialize();
         Assert.assertNotNull(resolver.getAttributeDefinitions());
         Assert.assertEquals(resolver.getAttributeDefinitions().size(), 2);
+        
+        definitions.add(new MockAttributeDefinition("foo", new Attribute("test")));
+        try {
+            new AttributeResolver(" foo ", definitions, null);
+            Assert.fail();
+        } catch (IllegalArgumentException e) {
+            // OK
+        }
     }
 
     /** Test getting, setting, overwriting, defensive collection copy. */
     @Test public void setDataConnectors() throws Exception {
-        LazySet<BaseDataConnector> connectors = new LazySet<BaseDataConnector>();
+        ArrayList<BaseDataConnector> connectors = new ArrayList<BaseDataConnector>();
         connectors.add(new MockDataConnector("foo", (Map) null));
         connectors.add(null);
         connectors.add(new MockDataConnector("bar", (Map) null));
-        connectors.add(new MockDataConnector("foo", (Map) null));
 
         AttributeResolver resolver = new AttributeResolver("foo", null, connectors);
         Assert.assertNotNull(resolver.getDataConnectors());
         Assert.assertEquals(resolver.getDataConnectors().size(), 2);
+
+        connectors.add(new MockDataConnector("foo", (Map) null));
+        try {
+            new AttributeResolver(" foo ", null, connectors);
+            Assert.fail();
+        } catch (IllegalArgumentException e) {
+            // OK
+        }
     }
 
     /** Test that a simple resolve returns the expected results. */
