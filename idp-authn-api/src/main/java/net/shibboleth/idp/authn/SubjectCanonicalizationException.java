@@ -19,16 +19,14 @@ package net.shibboleth.idp.authn;
 
 import javax.annotation.Nullable;
 
-import org.opensaml.profile.ProfileException;
-
 /** Exception indicating a problem authenticating a user. */
-public class AuthenticationException extends ProfileException {
+public class SubjectCanonicalizationException extends Exception {
 
     /** Serial version UID. */
-    private static final long serialVersionUID = 6587176160411149029L;
+    private static final long serialVersionUID = -53582988179606741L;
 
     /** Constructor. */
-    public AuthenticationException() {
+    public SubjectCanonicalizationException() {
         super();
     }
 
@@ -37,7 +35,7 @@ public class AuthenticationException extends ProfileException {
      * 
      * @param message exception message
      */
-    public AuthenticationException(@Nullable final String message) {
+    public SubjectCanonicalizationException(@Nullable final String message) {
         super(message);
     }
 
@@ -46,7 +44,7 @@ public class AuthenticationException extends ProfileException {
      * 
      * @param wrappedException exception to be wrapped by this one
      */
-    public AuthenticationException(@Nullable final Exception wrappedException) {
+    public SubjectCanonicalizationException(@Nullable final Exception wrappedException) {
         super(wrappedException);
     }
 
@@ -56,7 +54,8 @@ public class AuthenticationException extends ProfileException {
      * @param message exception message
      * @param wrappedException exception to be wrapped by this one
      */
-    public AuthenticationException(@Nullable final String message, @Nullable final Exception wrappedException) {
+    public SubjectCanonicalizationException(@Nullable final String message,
+            @Nullable final Exception wrappedException) {
         super(message, wrappedException);
     }
 }
