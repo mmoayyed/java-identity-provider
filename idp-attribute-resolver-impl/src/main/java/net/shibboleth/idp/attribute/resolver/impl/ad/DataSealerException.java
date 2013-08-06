@@ -17,10 +17,12 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
-import net.shibboleth.idp.ShibbolethException;
+import javax.annotation.Nullable;
+
 //TODO This needs to find a better home 
+
 /** Exceptions during use of the {@link DataSealer}. */
-public class DataSealerException extends ShibbolethException {
+public class DataSealerException extends Exception {
 
     /**
      * serialVersionUID.
@@ -39,7 +41,7 @@ public class DataSealerException extends ShibbolethException {
      * 
      * @param message exception message
      */
-    public DataSealerException(String message) {
+    public DataSealerException(@Nullable final String message) {
         super(message);
     }
 
@@ -48,7 +50,7 @@ public class DataSealerException extends ShibbolethException {
      * 
      * @param wrappedException exception to be wrapped by this one
      */
-    public DataSealerException(Exception wrappedException) {
+    public DataSealerException(@Nullable final Exception wrappedException) {
         super(wrappedException);
     }
 
@@ -58,7 +60,7 @@ public class DataSealerException extends ShibbolethException {
      * @param message exception message
      * @param wrappedException exception to be wrapped by this one
      */
-    public DataSealerException(String message, Exception wrappedException) {
+    public DataSealerException(@Nullable final String message, @Nullable final Exception wrappedException) {
         super(message, wrappedException);
     }
 }

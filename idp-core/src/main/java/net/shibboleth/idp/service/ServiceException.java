@@ -19,12 +19,10 @@ package net.shibboleth.idp.service;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.ShibbolethException;
-
 /**
  * Base exception for Service related errors.
  */
-public class ServiceException extends ShibbolethException {
+public class ServiceException extends Exception {
 
     /** Serial version UID. */
     private static final long serialVersionUID = 5875639786427807960L;
