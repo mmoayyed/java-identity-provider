@@ -45,6 +45,7 @@ public class RequestedAttributesMapperTest extends MappingTests {
         
         RequestedAttributeMapper result = new RequestedAttributeMapper();
         result.setId(name);
+        result.setAttributeIds(Collections.singletonList(name));
         result.setSAMLName(samlFormat);
         result.setValueMapper(mapper);
         return result;

@@ -17,13 +17,11 @@
 
 package net.shibboleth.idp.attribute.filter.impl.policyrule.saml.attributemapper;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.attributemapper.RequestedAttributeMapper;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.attributemapper.ScopedStringAttributeValueMapper;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.attributemapper.StringAttributeValueMapper;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.saml.saml2.metadata.RequestedAttribute;
@@ -60,7 +58,7 @@ public class RequestedAttributeMapperTest extends MappingTests {
         final RequestedAttributeMapper mapper = new RequestedAttributeMapper();
 
         Assert.assertNull(mapper.getId());
-        Assert.assertTrue(mapper.getAliases().isEmpty());
+        Assert.assertTrue(mapper.getAttributeIds().isEmpty());
         Assert.assertNull(mapper.getAttributeFormat());
         Assert.assertNull(mapper.getSAMLName());
         Assert.assertNull(mapper.getValueMapper());
@@ -82,7 +80,7 @@ public class RequestedAttributeMapperTest extends MappingTests {
         }
         mapper.setValueMapper(new StringAttributeValueMapper());
 
-        mapper.setAliases(Collections.singletonList("one"));
+        mapper.setAttributeIds(Collections.singletonList("one"));
         mapper.setAttributeFormat(THE_FORMAT);
 
         mapper.initialize();
@@ -90,7 +88,7 @@ public class RequestedAttributeMapperTest extends MappingTests {
         Assert.assertEquals(mapper.getSAMLName(), SAML_NAME_ONE);
         Assert.assertEquals(mapper.getAttributeFormat(), THE_FORMAT);
 
-        final List<String> list = mapper.getAliases();
+        final List<String> list = mapper.getAttributeIds();
         Assert.assertEquals(list.size(), 1);
         Assert.assertEquals(list.get(0), "one");
 
@@ -103,7 +101,7 @@ public class RequestedAttributeMapperTest extends MappingTests {
         mapper.setId(ID);
         mapper.setSAMLName(SAML_NAME_ONE);
         mapper.setValueMapper(new StringAttributeValueMapper());
-        mapper.setAliases(Collections.singletonList("one"));
+        mapper.setAttributeIds(Arrays.asList("one", ID));
         mapper.setAttributeFormat(THE_FORMAT);
         mapper.initialize();
 
@@ -125,6 +123,7 @@ public class RequestedAttributeMapperTest extends MappingTests {
         mapper.setSAMLName(SAML_NAME_TWO);
         mapper.setAttributeFormat(THE_FORMAT);
         mapper.setValueMapper(new StringAttributeValueMapper());
+        mapper.setAttributeIds(Collections.singletonList(ID));
         mapper.initialize();
         Assert.assertTrue(mapper.mapAttribute(getAttr(SAML_NAME_TWO)).isEmpty());
 
@@ -134,6 +133,7 @@ public class RequestedAttributeMapperTest extends MappingTests {
         RequestedAttributeMapper mapper = new RequestedAttributeMapper();
 
         mapper.setId(ID);
+        mapper.setAttributeIds(Collections.singletonList(ID));
         mapper.setSAMLName(SAML_NAME_TWO);
         mapper.setValueMapper(new StringAttributeValueMapper());
         mapper.initialize();
@@ -150,6 +150,7 @@ public class RequestedAttributeMapperTest extends MappingTests {
         RequestedAttributeMapper mapper = new RequestedAttributeMapper();
 
         mapper.setId(ID);
+        mapper.setAttributeIds(Collections.singletonList(ID));
         mapper.setSAMLName(SAML_NAME_THREE);
         mapper.setValueMapper(new ScopedStringAttributeValueMapper());
         mapper.initialize();

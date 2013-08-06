@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.filter.attributemapper;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -42,21 +41,25 @@ import org.opensaml.core.xml.XMLObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
+
 /**
  * Basis of all classes which map SAML2 {@link org.opensaml.saml.saml2.core.Attribute} into an IdP {@link Attribute}.
  * 
  * @param <InType> the input (SAML2 attribute) type
  * @param <OutType> the output (IdP Attribute) type
  */
-public abstract class AbstractSAMLAttributeMapper 
-        <InType extends org.opensaml.saml.saml2.core.Attribute, OutType extends Attribute>
+public abstract class AbstractSAMLAttributeMapper<InType extends org.opensaml.saml.saml2.core.Attribute, 
+                                                  OutType extends Attribute>
         extends AbstractIdentifiableInitializableComponent implements AttributeMapper<InType, OutType> {
 
     /** log. */
     private final Logger log = LoggerFactory.getLogger(AbstractSAMLAttributeMapper.class);
 
     /** The internal names to generate. */
-    private List<String> attributeAliases = Collections.EMPTY_LIST;
+    private List<String> attributeIds = Collections.EMPTY_LIST;
 
     /** The attribute format. */
     private String attributeFormat;
@@ -73,23 +76,15 @@ public abstract class AbstractSAMLAttributeMapper
     /**
      * Sets the list of internal identifiers.
      * 
-     * @param aliases the list
+     * @param theIds the list
      */
-    public void setAliases(@Nullable @NullableElements final List<String> aliases) {
+    public void setAttributeIds(@Nullable @NullableElements final List<String> theIds) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        if (null == aliases) {
+        if (null == theIds) {
             return;
         }
 
-        final ArrayList<String> newList = new ArrayList<String>(aliases.size());
-
-        for (String s : aliases) {
-            final String trimmed = StringSupport.trimOrNull(s);
-            if (null != trimmed) {
-                newList.add(trimmed);
-            }
-        }
-        attributeAliases = Collections.unmodifiableList(newList);
+        attributeIds = ImmutableList.copyOf(Collections2.filter(theIds, Predicates.notNull()));
     }
 
     /**
@@ -97,8 +92,8 @@ public abstract class AbstractSAMLAttributeMapper
      * 
      * @return the identifiers
      */
-    @Nonnull @NonnullElements @Unmodifiable public List<String> getAliases() {
-        return attributeAliases;
+    @Nonnull @NonnullElements @Unmodifiable public List<String> getAttributeIds() {
+        return attributeIds;
     }
 
     /**
@@ -170,6 +165,10 @@ public abstract class AbstractSAMLAttributeMapper
         if (null == valueMapper) {
             throw new ComponentInitializationException(getLogPrefix() + " No value mapper present");
         }
+        if (attributeIds.isEmpty()) {
+            throw new ComponentInitializationException(getLogPrefix() + 
+                    " At least one attribute Id should be provided");
+        }
         logPrefix = null;
         valueMapper.setLogPrefix(getLogPrefix());
     }
@@ -193,7 +192,7 @@ public abstract class AbstractSAMLAttributeMapper
         if (org.opensaml.saml.saml2.core.Attribute.UNSPECIFIED.equals(format)) {
             format = null;
         }
-        
+
         if (getAttributeFormat() != null && format != null && !getAttributeFormat().equals(format)
                 && !org.opensaml.saml.saml2.core.Attribute.UNSPECIFIED.equals(getAttributeFormat())) {
             log.debug("{} SAML name format {} does not match {}", getLogPrefix(), format, getAttributeFormat());
@@ -226,13 +225,12 @@ public abstract class AbstractSAMLAttributeMapper
 
         final Map<String, OutType> output = new HashMap<String, OutType>(inputValues.size());
 
-        log.debug("{} attribute id {} and aliases {} will be created", getLogPrefix(), getId(), getAliases());
+        log.debug("{} attribute id {} and aliases {} will be created", getLogPrefix(), getId(), getAttributeIds());
 
         if (noMatch) {
             // NOTE this is different from not matching, so we set a NULL entry
             log.debug("{} Attribute value conversion yielded no suitable values", getLogPrefix());
-            output.put(getId(), null);
-            for (String alias : getAliases()) {
+            for (String alias : getAttributeIds()) {
                 output.put(alias, null);
             }
             return output;
@@ -240,9 +238,8 @@ public abstract class AbstractSAMLAttributeMapper
 
         OutType out = newAttribute(prototype, getId());
         out.setValues(outputValues);
-        output.put(getId(), out);
 
-        for (String id : attributeAliases) {
+        for (String id : attributeIds) {
             out = newAttribute(prototype, getId());
             out.setValues(outputValues);
             output.put(id, out);
