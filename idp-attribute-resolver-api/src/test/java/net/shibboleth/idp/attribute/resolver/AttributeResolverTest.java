@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -117,7 +118,7 @@ public class AttributeResolverTest {
 
     /** Test getting, setting, overwriting, defensive collection copy. */
     @Test public void setAttributeDefinitions() throws Exception {
-        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        ArrayList<BaseAttributeDefinition> definitions = new ArrayList<BaseAttributeDefinition>();
         definitions.add(new MockAttributeDefinition("foo", new Attribute("test")));
         definitions.add(null);
         definitions.add(new MockAttributeDefinition("bar", new Attribute("test")));

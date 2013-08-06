@@ -87,6 +87,9 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         if (definitions != null) {
             for (BaseAttributeDefinition definition : definitions) {
                 if (definition != null) {
+                    if (checkedDefinitions.containsKey(definition.getId())) {
+                        log.error("{} duplicate Attribute Definition with id {}", logPrefix, definition.getId());
+                    }
                     checkedDefinitions.put(definition.getId(), definition);
                 }
             }
@@ -97,6 +100,9 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         if (connectors != null) {
             for (BaseDataConnector connector : connectors) {
                 if (connector != null) {
+                    if (checkedConnectors.containsKey(connector.getId())) {
+                        log.error("{} duplicate Data Connector Definition with id {}", logPrefix, connector.getId());
+                    }
                     checkedConnectors.put(connector.getId(), connector);
                 }
             }
