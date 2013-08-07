@@ -180,7 +180,7 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
 
         if (!isDenyRule) {
             if (null == matchingValues) {
-                log.warn("{} Filter failed.  Not attributes released for attribute '{}'", getLogPrefix(),
+                log.warn("{} Filter failed. No values released for attribute '{}'", getLogPrefix(),
                         getAttributeId());
             } else {
                 log.debug("{} Filter has permitted the release of {} values for attribute '{}'", getLogPrefix(),
@@ -189,7 +189,7 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
             }
         } else {
             if (null == matchingValues) {
-                log.warn("{} Filter failed.  all attributed denied for attribute '{}'", getLogPrefix(),
+                log.warn("{} Filter failed. All values denied for attribute '{}'", getLogPrefix(),
                         getAttributeId());
                 filterContext.addDeniedAttributeValues(attribute.getId(), attribute.getValues());
             } else {

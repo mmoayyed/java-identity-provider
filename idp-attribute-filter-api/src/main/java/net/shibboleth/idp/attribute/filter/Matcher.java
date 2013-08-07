@@ -30,7 +30,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 
-/** Java definition of MatchFunctorType ass applied to value filtering. */
+/** Java definition of MatchFunctorType as applied to value filtering. */
 @ThreadSafe
 public interface Matcher extends IdentifiableComponent {
 
