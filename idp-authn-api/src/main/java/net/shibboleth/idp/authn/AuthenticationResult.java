@@ -44,6 +44,9 @@ public final class AuthenticationResult {
 
     /** The Subject established by the authentication result. */
     @Nonnull private final Subject subject;
+    
+    /** The canonical principal name derived from the subject. */
+    @Nullable private String canonicalPrincipalName;
 
     /** The identifier of the flow used to produce this result. */
     @Nonnull @NotEmpty private final String authenticationFlowId;
@@ -91,6 +94,24 @@ public final class AuthenticationResult {
         return subject;
     }
 
+    /**
+     * Get the canonical principal name derived from the subject, if any.
+     * 
+     * @return  the canonical principal name derived from the subject
+     */
+    @Nullable public String getCanonicalPrincipalName() {
+        return canonicalPrincipalName;
+    }
+    
+    /**
+     * Set the canonical principal name derived from the subject, if any.
+     * 
+     * @param principalName the principal name to set
+     */
+    public void setCanonicalPrincipalName(@Nullable final String principalName) {
+        canonicalPrincipalName = StringSupport.trimOrNull(principalName);
+    }
+    
     /**
      * Get the flow used to authenticate the principal.
      * 

@@ -234,7 +234,7 @@ public final class AuthenticationContext extends BaseContext {
     }
     
     /**
-     * Get the canonical principal name associated with the active session, if any.
+     * Set the canonical principal name associated with the active session, if any.
      * 
      * @param principalName the principal name to set
      * 
