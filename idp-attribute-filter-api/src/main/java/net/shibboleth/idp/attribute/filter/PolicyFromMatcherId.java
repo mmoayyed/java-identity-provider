@@ -59,7 +59,7 @@ public class PolicyFromMatcherId extends BaseBridgingClass implements PolicyRequ
     public PolicyFromMatcherId(@Nonnull Matcher matcher, @Nonnull @NotEmpty String attribute) {
         super(matcher);
         theMatcher = matcher;
-        attributeId = Constraint.isNotNull(StringSupport.trimOrNull(attribute), "attribute must not be null");
+        attributeId = Constraint.isNotNull(StringSupport.trimOrNull(attribute), "attribute must not be null or empty");
     }
     
     /** Gets the Id of the attribute in question. 
@@ -83,13 +83,13 @@ public class PolicyFromMatcherId extends BaseBridgingClass implements PolicyRequ
         final Set<AttributeValue> result = theMatcher.getMatchingValues(attribute, context);
 
         if (null == result) {
-            log.warn("{} matcher returned null, returning FAIL", getLogPrefix());
+            log.warn("{} Matcher returned null, returning FAIL", getLogPrefix());
             return Tristate.FAIL;
         } else if (!result.isEmpty()) {
-            log.debug("{} matcher returned some values.  Return TRUE", getLogPrefix());
+            log.debug("{} Matcher returned some values.  Return TRUE", getLogPrefix());
             return Tristate.TRUE;
         } else {
-            log.debug("{} matcher returned no values for the attribute {}.  Return FALSE", getLogPrefix(), attributeId);
+            log.debug("{} Matcher returned no values for the attribute {}.  Return FALSE", getLogPrefix(), attributeId);
             return Tristate.FALSE;
         }
     }

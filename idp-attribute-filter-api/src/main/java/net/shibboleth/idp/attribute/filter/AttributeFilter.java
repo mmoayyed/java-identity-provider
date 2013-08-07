@@ -52,7 +52,7 @@ import com.google.common.collect.Iterables;
 
 //TODO(lajoie) perf metrics
 
-/** Services that filters out attributes and values based upon loaded policies. */
+/** Service that filters out attributes and values based upon loaded policies. */
 @ThreadSafe
 public class AttributeFilter extends AbstractDestructableIdentifiableInitializableComponent implements
         ValidatableComponent, DestructableComponent, UnmodifiableComponent {
@@ -217,7 +217,7 @@ public class AttributeFilter extends AbstractDestructableIdentifiableInitializab
      * 
      * @return Returns the logPrefix.
      */
-    public String getLogPrefix() {
+    protected String getLogPrefix() {
         String result;
 
         result = logPrefix;
@@ -227,5 +227,4 @@ public class AttributeFilter extends AbstractDestructableIdentifiableInitializab
         }
         return result;
     }
-
 }

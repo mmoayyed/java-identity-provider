@@ -68,10 +68,10 @@ public class MatcherFromPolicy extends BaseBridgingClass implements Matcher, Ide
             log.warn("{} The rule returned FAIL, returning null", getLogPrefix());
             return null;
         } else if (Tristate.FALSE == result) {
-            log.debug("{} The rule returned false, no values returned", getLogPrefix());
+            log.debug("{} The rule returned FALSE, no values returned", getLogPrefix());
             return Collections.EMPTY_SET;
         } else {
-            log.debug("{} The rule returned false, all values returned", getLogPrefix());
+            log.debug("{} The rule returned TRUE, all values returned", getLogPrefix());
             return Collections.unmodifiableSet(attribute.getValues());
         }
     }

@@ -30,16 +30,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 
-/**
- * Java definition of MatchFunctorType.
- * 
- * Because this can be called in two modes it has two methods.
- * <p>
- * Implementations of this interface <strong>MUST</strong> implement appropriate {@link Object#equals(Object)} and
- * {@link Object#hashCode()} methods.
- * </p>
- */
-// TODO - why?
+/** Java definition of MatchFunctorType ass applied to value filtering. */
 @ThreadSafe
 public interface Matcher extends IdentifiableComponent {
 
@@ -47,12 +38,12 @@ public interface Matcher extends IdentifiableComponent {
     public static final Matcher MATCHES_ALL = new Matcher() {
 
         /** {@inheritDoc} */
-        public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext) {
+        public Set<AttributeValue> getMatchingValues(@Nonnull Attribute attribute,
+                @Nonnull AttributeFilterContext filterContext) {
             return Collections.unmodifiableSet(attribute.getValues());
         }
 
         @Nullable public String getId() {
-            // TODO Auto-generated method stub
             return "MATCHES_ALL";
         }
     };
@@ -61,12 +52,12 @@ public interface Matcher extends IdentifiableComponent {
     public static final Matcher MATCHES_NONE = new Matcher() {
 
         /** {@inheritDoc} */
-        public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext) {
+        public Set<AttributeValue> getMatchingValues(@Nonnull Attribute attribute,
+                @Nonnull AttributeFilterContext filterContext) {
             return Collections.emptySet();
         }
 
         @Nullable public String getId() {
-            // TODO Auto-generated method stub
             return "MATCHES_NONE";
         }
     };
@@ -75,15 +66,16 @@ public interface Matcher extends IdentifiableComponent {
     public static final Matcher MATCHER_FAILS = new Matcher() {
 
         /** {@inheritDoc} */
-        public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext) {
+        public Set<AttributeValue> getMatchingValues(@Nonnull Attribute attribute,
+                @Nonnull AttributeFilterContext filterContext) {
             return null;
         }
 
         @Nullable public String getId() {
-            // TODO Auto-generated method stub
             return "MATCHER_FAILS";
         }
     };
+
     /**
      * Return those {@link AttributeValues} which match this rule, or null if the matcher failed.
      * 

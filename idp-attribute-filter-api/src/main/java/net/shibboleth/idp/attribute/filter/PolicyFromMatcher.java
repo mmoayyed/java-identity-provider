@@ -44,7 +44,6 @@ public class PolicyFromMatcher extends BaseBridgingClass implements PolicyRequir
     
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(PolicyFromMatcher.class);
-
     
     /**
      * Constructor.
@@ -63,14 +62,14 @@ public class PolicyFromMatcher extends BaseBridgingClass implements PolicyRequir
         for (Attribute attribute : context.getPrefilteredAttributes().values()) {
             Set<AttributeValue> result = matcher.getMatchingValues(attribute, context);
             if (null == result) {
-                log.warn("{} matcher returned null, returning FAIL", getLogPrefix());
+                log.warn("{} Matcher returned null, returning FAIL", getLogPrefix());
                 return Tristate.FAIL;
             } else if (!result.isEmpty()) {
-                log.debug("{} matcher returned some values.  Return TRUE", getLogPrefix());
+                log.debug("{} Matcher returned some values.  Return TRUE", getLogPrefix());
                 return Tristate.TRUE;
             }
         }
-        log.debug("{} matcher returned no values for any attribute.  Return FALSE", getLogPrefix());
+        log.debug("{} Matcher returned no values for any attribute.  Return FALSE", getLogPrefix());
         return Tristate.FALSE;
     }
 }

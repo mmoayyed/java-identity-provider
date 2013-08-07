@@ -86,7 +86,7 @@ public abstract class BaseBridgingClass extends AbstractDestructableIdentifiable
      * 
      * @return Returns the logPrefix.
      */
-    public String getLogPrefix() {
+    protected String getLogPrefix() {
         String result;
 
         result = logPrefix;

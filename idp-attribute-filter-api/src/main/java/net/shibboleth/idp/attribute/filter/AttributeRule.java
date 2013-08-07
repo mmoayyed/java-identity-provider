@@ -55,6 +55,9 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeRule.class);
 
+    /** Log prefix. */
+    private String logPrefix;
+
     /**
      * Unique ID of the attribute this rule applies to. <code>
         <attribute name="attributeID" type="string" use="required">
@@ -170,26 +173,28 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
         Constraint.isNotNull(attribute, "To-be-filtered attribute can not be null");
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 
-        log.debug("Filtering values for attribute '{}' which currently contains {} values", getAttributeId(), attribute
-                .getValues().size());
+        log.debug("{} Filtering values for attribute '{}' which currently contains {} values", getLogPrefix(),
+                getAttributeId(), attribute.getValues().size());
 
         final Set<AttributeValue> matchingValues = matcher.getMatchingValues(attribute, filterContext);
 
         if (!isDenyRule) {
             if (null == matchingValues) {
-                log.warn("Filter failed.  Not attributes released for attribute '{}'", getAttributeId());
+                log.warn("{} Filter failed.  Not attributes released for attribute '{}'", getLogPrefix(),
+                        getAttributeId());
             } else {
-                log.debug("Filter has permitted the release of {} values for attribute '{}'", matchingValues.size(),
-                        attribute.getId());
+                log.debug("{} Filter has permitted the release of {} values for attribute '{}'", getLogPrefix(),
+                        matchingValues.size(), attribute.getId());
                 filterContext.addPermittedAttributeValues(attribute.getId(), matchingValues);
             }
         } else {
             if (null == matchingValues) {
-                log.warn("Filter failed.  all attributed denied for attribute '{}'", getAttributeId());
+                log.warn("{} Filter failed.  all attributed denied for attribute '{}'", getLogPrefix(),
+                        getAttributeId());
                 filterContext.addDeniedAttributeValues(attribute.getId(), attribute.getValues());
             } else {
-                log.debug("Filter has denied the release of {} values for attribute '{}'", matchingValues.size(),
-                        attribute.getId());
+                log.debug("{} Filter has denied the release of {} values for attribute '{}'", getLogPrefix(),
+                        matchingValues.size(), attribute.getId());
                 filterContext.addDeniedAttributeValues(attribute.getId(), matchingValues);
             }
         }
@@ -204,17 +209,35 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
+        logPrefix = null;
 
         if (null == getAttributeId()) {
-            throw new ComponentInitializationException("Attribute Rule '" + getId()
-                    + "': No attribute specified for this attribute value filter policy");
+            throw new ComponentInitializationException(getLogPrefix()
+                    + " No attribute specified for this attribute value filter policy");
         }
 
         if (matcher == null) {
-            throw new ComponentInitializationException("Attribute Rule '" + getId()
-                    + "': must have a permit rule or a deny rule");
+            throw new ComponentInitializationException(getLogPrefix()
+                    + " Must have a permit rule or a deny rule");
         }
 
         ComponentSupport.initialize(matcher);
     }
+
+    /**
+     * Get the prefix for logging.
+     * 
+     * @return Returns the logPrefix.
+     */
+    protected String getLogPrefix() {
+        String result;
+
+        result = logPrefix;
+        if (null == result) {
+            result = new StringBuffer("Attribute filtering engine '").append(getId()).append("' ").toString();
+            logPrefix = result;
+        }
+        return result;
+    }
+
 }

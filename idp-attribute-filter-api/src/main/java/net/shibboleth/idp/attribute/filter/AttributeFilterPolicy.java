@@ -31,6 +31,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
@@ -81,11 +82,10 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
      * @param attributeRules value filtering policies employed if this policy is active
      */
     public AttributeFilterPolicy(@Nonnull @NotEmpty String policyId, @Nonnull PolicyRequirementRule requirementRule,
-            @Nullable Collection<AttributeRule> attributeRules) {
+            @Nullable @NullableElements Collection<AttributeRule> attributeRules) {
         setId(policyId);
 
-        rule =
-                Constraint.isNotNull(requirementRule, "Attribute filter policy activiation criterion can not be null");
+        rule = Constraint.isNotNull(requirementRule, "Attribute filter policy activiation criterion can not be null");
 
         ArrayList<AttributeRule> checkedPolicies = new ArrayList<AttributeRule>();
         CollectionSupport.addIf(checkedPolicies, attributeRules, Predicates.notNull());
@@ -141,18 +141,16 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
         if (isActive == Tristate.FAIL) {
             log.warn("{} Policy requirement rule failed for this request", getLogPrefix());
         } else if (isActive == Tristate.FALSE) { 
-            log.debug("{} policy is active for this request", getLogPrefix());
+            log.debug("{} Policy is active for this request", getLogPrefix());
         } else {
-            log.debug("{} policy is not active for this request", getLogPrefix());
+            log.debug("{} Policy is not active for this request", getLogPrefix());
         }
 
         return isActive == Tristate.TRUE;
     }
 
     /**
-     * Applies this filter policy to the given filter context. Note, this method does not check whether this policy is
-     * applicable, it is up to the caller to ensure that is true (e.g. via {@link #isApplicable(AttributeFilterContext)}
-     * ).
+     * Applies this filter policy to the given filter context if it is applicable.
      * 
      * @param filterContext current filter context
      * 

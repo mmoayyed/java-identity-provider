@@ -30,7 +30,7 @@ import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
  *
  * All function can return {@link Tristate#TRUE} or {@link Tristate#FALSE} (as expected), 
  * but if something odd happens during enumeration (like not being able to find something
- * in the context then they return {@link Tristate#FAIL}.
+ * in the context) then they return {@link Tristate#FAIL}.
  */
 @ThreadSafe
 public interface PolicyRequirementRule extends IdentifiableComponent {
@@ -84,11 +84,11 @@ public interface PolicyRequirementRule extends IdentifiableComponent {
     };
 
     /**
-     * Evaluate what this rule means. <br/>
+     * Evaluate what this rule means.
      * 
      * @param filterContext the context.
      * @return whether the rule holds
      */
-    Tristate matches(@Nonnull final AttributeFilterContext filterContext) ;
+    Tristate matches(@Nonnull final AttributeFilterContext filterContext);
 
 }
