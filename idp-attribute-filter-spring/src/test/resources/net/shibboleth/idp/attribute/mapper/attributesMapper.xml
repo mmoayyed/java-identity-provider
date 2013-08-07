@@ -54,7 +54,7 @@
 
 	<bean id="RequestedAttributesMapper"
 		class="net.shibboleth.idp.attribute.filter.impl.policyrule.saml.attributemapper.RequestedAttributesMapper"
-		init-method="initialize" p:id="Mappers">
+		init-method="initialize" p:id="RequestedAttributesMapper">
 		<property name="mappers">
 			<list>
 				<bean parent="abstractStringMapper" p:id="eduPersonAssurance" p:SAMLName="urn:oid:1.3.6.1.4.1.5923.1.1.1.11">
