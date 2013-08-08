@@ -26,7 +26,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Base class for matchers that perform an regular expression match of a given attribute string value against entity
- * attribute value. Most of the work is done by {@link AbstractEntityAttributePolicyRule}, this class purely handle the
+ * attribute value. Most of the work is done by {@link AbstractEntityAttributePolicyRule}, this class purely handles the
  * comparison.
  */
 public abstract class AbstractEntityAttributeRegexPolicyRule extends AbstractEntityAttributePolicyRule {

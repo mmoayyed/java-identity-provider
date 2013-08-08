@@ -68,8 +68,6 @@ public class ScriptedPolicyRule extends AbstractDestructableIdentifiableInitiali
     /** {@inheritDoc} */
     public void setId(@Nullable final String id) {
         super.setId(id);
-        // clear cache
-        logPrefix = null;
     };
 
     /**
@@ -144,6 +142,8 @@ public class ScriptedPolicyRule extends AbstractDestructableIdentifiableInitiali
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
+        // clear cached name
+        logPrefix = null;
 
         if (null == script) {
             // never met so long as we have the assert in the constructor
@@ -151,6 +151,7 @@ public class ScriptedPolicyRule extends AbstractDestructableIdentifiableInitiali
         }
     }
 
+    // TODO do we still need this?
     /** {@inheritDoc} */
     public boolean equals(Object obj) {
         if (obj == null) {

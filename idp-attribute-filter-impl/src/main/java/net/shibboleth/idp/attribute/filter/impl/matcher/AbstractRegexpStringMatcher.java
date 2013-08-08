@@ -37,7 +37,7 @@ public abstract class AbstractRegexpStringMatcher extends AbstractMatcher {
     /**
      * Gets the regular expression to match.
      * 
-     * @return rsegular expression to match
+     * @return the regular expression
      */
     @NonnullAfterInit public String getRegularExpression() {
         return regex.pattern();
@@ -60,7 +60,7 @@ public abstract class AbstractRegexpStringMatcher extends AbstractMatcher {
      * 
      * @return true if the value matches the given match string, false if not
      */
-    public boolean regexpCompare(@Nullable final String value) {
+    protected final boolean regexpCompare(@Nullable final String value) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         if (regex == null || value == null) {
             return false;
@@ -76,7 +76,7 @@ public abstract class AbstractRegexpStringMatcher extends AbstractMatcher {
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        if (null == regex){
+        if (null == regex) {
             throw new ComponentInitializationException(getLogPrefix() + " No regular expression provided"); 
         }
     }

@@ -50,6 +50,9 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractEntityGro
             log.warn("{} Could not locate recipient context", getLogPrefix());
             return null;
         }
-        return recipient.getAttributeRecipientMetadata();
-    }
+        final EntityDescriptor result = recipient.getAttributeRecipientMetadata();
+        if (null == result) {
+            log.warn("{} No Attribute Requester found", getLogPrefix());
+        }
+        return result;    }
 }

@@ -78,24 +78,24 @@ public abstract class AbstractNameIDFormatSupportedPolicyRule extends AbstractPo
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         final SSODescriptor role = getEntitySSODescriptor(filterContext);
         if (role == null) {
-            log.debug("entity does contain an appropriate SSO role descriptor");
+            // logged in concrete class.
             return Tristate.FALSE;
         }
 
         final List<NameIDFormat> supportedFormats = role.getNameIDFormats();
         if (supportedFormats == null || supportedFormats.isEmpty()) {
-            log.debug("entity SSO role descriptor does not list any supported NameID formats");
+            log.debug("{} Entity SSO role descriptor does not list any supported NameID formats", getLogPrefix());
             return Tristate.FALSE;
         }
 
         for (NameIDFormat supportedFormat : supportedFormats) {
             if (nameIdFormat.equals(supportedFormat.getFormat())) {
-                log.debug("entity does support the NameID format '{}'", nameIdFormat);
+                log.debug("{} Entity does support the NameID format '{}'", getLogPrefix(), nameIdFormat);
                 return Tristate.TRUE;
             }
         }
 
-        log.debug("entity does not support the NameID format '{}'", nameIdFormat);
+        log.debug("{} Entity does not support the NameID format '{}'", getLogPrefix(), nameIdFormat);
         return Tristate.FALSE;
     }
     

@@ -52,7 +52,10 @@ public class AttributeIssuerInEntityGroupPolicyRule extends AbstractEntityGroupP
             log.warn("{} Could not locate recipient context", getLogPrefix());
             return null;
         }
-        return recipient.getAttributeIssuerMetadata();
+        final EntityDescriptor result = recipient.getAttributeIssuerMetadata();
+        if (null == result) {
+            log.warn("{} No Attribute Issuer found", getLogPrefix());
+        }
+        return result;
     }
-
 }

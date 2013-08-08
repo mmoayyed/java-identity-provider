@@ -17,7 +17,10 @@
 
 package net.shibboleth.idp.attribute.filter.impl.policyrule;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -33,7 +36,7 @@ public abstract class AbstractPolicyRule extends AbstractIdentifiableInitializab
     private String logPrefix;
 
     /** {@inheritDoc} */
-    public void setId(String id) {
+    public void setId(@Nonnull @NotEmpty String id) {
         super.setId(id);
     }
 

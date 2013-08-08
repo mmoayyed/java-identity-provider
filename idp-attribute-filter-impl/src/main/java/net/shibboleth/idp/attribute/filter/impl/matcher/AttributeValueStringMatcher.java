@@ -27,7 +27,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Test that an {@link AttributeValue} is a string match to the configured string.<br/>
- * If the value is not a {@link StringAttributeValue} string it is coerced into a string.
+ * If the value is not a {@link StringAttributeValue} string it is coerced into a string via the value's
+ * {@link AttributeValue#toString()} method.
  */
 public class AttributeValueStringMatcher extends AbstractStringMatcher {
 
@@ -36,21 +37,21 @@ public class AttributeValueStringMatcher extends AbstractStringMatcher {
 
     /** {@inheritDoc} */
     public boolean compareAttributeValue(@Nullable final AttributeValue value) {
-        
+
         if (null == value) {
             return false;
         }
 
         if (value instanceof StringAttributeValue) {
-            return super.stringCompare(((StringAttributeValue)value).getValue());
+            return super.stringCompare(((StringAttributeValue) value).getValue());
 
         } else {
             final String valueAsString = value.getValue().toString();
             log.warn("{} Object supplied to StringAttributeValue comparison"
-                    + " was of class {}, not StringAttributeValue, comparing with {}", new Object[] {
-                    getLogPrefix(), value.getClass().getName(), valueAsString,});
+                    + " was of class {}, not StringAttributeValue, comparing with {}", new Object[] {getLogPrefix(),
+                    value.getClass().getName(), valueAsString,});
             return super.stringCompare(valueAsString);
-        } 
+        }
     }
 
 }

@@ -74,13 +74,14 @@ public class AndMatcher extends AbstractComposedMatcher {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        Iterator<Matcher> matcherItr = currentMatchers.iterator();
+        final Iterator<Matcher> matcherItr = currentMatchers.iterator();
 
+        // pre-load the set with the first contents
         Set<AttributeValue> match = matcherItr.next().getMatchingValues(attribute, filterContext);
         if (null == match) {
             return null;
         }
-        Set<AttributeValue> matchingValues = new HashSet(match);
+        final Set<AttributeValue> matchingValues = new HashSet(match);
         while (matcherItr.hasNext()) {
             match = matcherItr.next().getMatchingValues(attribute, filterContext);
             if (null == match) {

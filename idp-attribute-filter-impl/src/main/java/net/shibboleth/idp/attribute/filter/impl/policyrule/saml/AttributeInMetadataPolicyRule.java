@@ -30,6 +30,7 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.attributemapper.RequestedAttribute;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
@@ -55,78 +56,7 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
 
     /** The String used to prefix log message. */
     private String logPrefix;
-
-    /** {@inheritDoc} */
-    @Nonnull public Set<AttributeValue> getMatchingValues(@Nonnull final Attribute attribute,
-            @Nonnull final AttributeFilterContext filterContext) {
-
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        final Multimap<String, RequestedAttribute> requestedAttributes = filterContext.getRequestedAttributes();
-
-        if (null == requestedAttributes || requestedAttributes.isEmpty()) {
-            if (matchIfMetadataSilent) {
-                log.debug("{} The peer's metadata did not have appropriate requested attributes available"
-                        + ", returning all the input values", getLogPrefix());
-                return Collections.unmodifiableSet(attribute.getValues());
-            } else {
-                log.debug("{} The peer's metadata did not have appropriate requested attributes available"
-                        + ", returning no values", getLogPrefix());
-                return Collections.EMPTY_SET;
-            }
-        }
-
-        final Collection<RequestedAttribute> requestedAttributeList = requestedAttributes.get(attribute.getId());
-
-        if (null == requestedAttributeList) {
-            log.debug("{} Attribute {} not found in metadata", getLogPrefix(), attribute.getId());
-            return Collections.EMPTY_SET;
-        }
-
-        final Set<AttributeValue> values = new HashSet<AttributeValue>();
-
-        for (RequestedAttribute requestedAttribute : requestedAttributeList) {
-
-            if (null == requestedAttribute) {
-                log.info("{} Attribute {} found in metadata but with no values that could be decoded");
-                continue;
-            }
-
-            if (!requestedAttribute.getIsRequired() && onlyIfRequired) {
-                log.debug("{} Attribute {} found in metadata, but was not required", getLogPrefix(), attribute.getId());
-                continue;
-            }
-
-            values.addAll(filterValues(attribute, requestedAttribute.getValues()));
-        }
-        return values;
-    }
-
-    /**
-     * Given an attribute and the requested values do the filtering.
-     * 
-     * @param attribute the attribute
-     * @param requestedValues the values
-     * @return the result of the filter
-     */
-    @Nonnull private Set<AttributeValue> filterValues(@Nullable final Attribute attribute,
-            final Set<AttributeValue> requestedValues) {
-
-        if (null == requestedValues || requestedValues.isEmpty()) {
-            log.debug("{} Attribute {} found in metadata and no values specified", getLogPrefix(), attribute.getId());
-            return attribute.getValues();
-        }
-
-        final Set<AttributeValue> result = new HashSet<AttributeValue>(attribute.getValues().size());
-
-        for (AttributeValue attributeValue : attribute.getValues()) {
-            if (requestedValues.contains(attributeValue)) {
-                result.add(attributeValue);
-            }
-        }
-        log.debug("{} Values matched with metadata for Attribute {} : {}", getLogPrefix(), attribute.getId(), result);
-        return result;
-    }
-
+    
     /**
      * Gets whether optionally requested attributes should be matched.
      * 
@@ -166,6 +96,79 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
     /** {@inheritDoc} */
     public void setId(@Nullable String id) {
         super.setId(id);
+    }
+
+    /** {@inheritDoc} */
+    @Nonnull public Set<AttributeValue> getMatchingValues(@Nonnull final Attribute attribute,
+            @Nonnull final AttributeFilterContext filterContext) {
+
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        final Multimap<String, RequestedAttribute> requestedAttributes = filterContext.getRequestedAttributes();
+
+        if (null == requestedAttributes || requestedAttributes.isEmpty()) {
+            if (matchIfMetadataSilent) {
+                log.debug("{} The peer's metadata did not have appropriate requested attributes available"
+                        + ", returning all the input values", getLogPrefix());
+                return Collections.unmodifiableSet(attribute.getValues());
+            } else {
+                log.debug("{} The peer's metadata did not have appropriate requested attributes available"
+                        + ", returning no values", getLogPrefix());
+                return Collections.EMPTY_SET;
+            }
+        }
+
+        final Collection<RequestedAttribute> requestedAttributeList = requestedAttributes.get(attribute.getId());
+
+        if (null == requestedAttributeList) {
+            log.debug("{} Attribute {} not found in metadata", getLogPrefix(), attribute.getId());
+            return Collections.EMPTY_SET;
+        }
+
+        final Set<AttributeValue> values = new HashSet<AttributeValue>();
+
+        for (RequestedAttribute requestedAttribute : requestedAttributeList) {
+
+            if (null == requestedAttribute) {
+                log.info("{} Attribute {} found in metadata but with no values that"
+                        + " could be decoded, values not matched");
+                continue;
+            }
+
+            if (!requestedAttribute.getIsRequired() && onlyIfRequired) {
+                log.debug("{} Attribute {} found in metadata, but was not required" + ", values not matched",
+                        getLogPrefix(), attribute.getId());
+                continue;
+            }
+
+            values.addAll(filterValues(attribute, requestedAttribute.getValues()));
+        }
+        return values;
+    }
+
+    /**
+     * Given an attribute and the requested values do the filtering.
+     * 
+     * @param attribute the attribute
+     * @param requestedValues the values
+     * @return the result of the filter
+     */
+    @Nonnull private Set<AttributeValue> filterValues(@Nullable final Attribute attribute,
+            @Nonnull @NonnullElements final Set<AttributeValue> requestedValues) {
+
+        if (null == requestedValues || requestedValues.isEmpty()) {
+            log.debug("{} Attribute {} found in metadata and no values specified", getLogPrefix(), attribute.getId());
+            return attribute.getValues();
+        }
+
+        final Set<AttributeValue> result = new HashSet<AttributeValue>(attribute.getValues().size());
+
+        for (AttributeValue attributeValue : attribute.getValues()) {
+            if (requestedValues.contains(attributeValue)) {
+                result.add(attributeValue);
+            }
+        }
+        log.debug("{} Values matched with metadata for Attribute {} : {}", getLogPrefix(), attribute.getId(), result);
+        return result;
     }
 
     /**

@@ -116,11 +116,10 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
             @Nonnull final Attribute attribute, @Nonnull final AttributeFilterContext filterContext) {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
-
-        final EvaluableScript currentScript = script;
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
+        final EvaluableScript currentScript = script;
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
         scriptContext.setAttribute("filterContext", filterContext, ScriptContext.ENGINE_SCOPE);
         scriptContext.setAttribute("attribute", attribute, ScriptContext.ENGINE_SCOPE);
@@ -128,7 +127,7 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
         try {
             final Object result = currentScript.eval(scriptContext);
             if (null == result) {
-                log.error("{} Matcher script did not return a result", getLogPrefix());
+                log.error("{} Matcher script did not return a result.", getLogPrefix());
                 return null;
             }
 
@@ -137,7 +136,7 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
                 returnValues.retainAll((Set) result);
                 return Collections.unmodifiableSet(returnValues);
             } else {
-                log.error("{} Matcher script did not return a Set", getLogPrefix());
+                log.error("{} Matcher script did not return a Set.", getLogPrefix());
                 return null;
             }
         } catch (ScriptException e) {
@@ -161,6 +160,7 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
         }
     }
 
+    // TODO : Do we still need these?
     /** {@inheritDoc} */
     public boolean equals(Object obj) {
         if (obj == null) {

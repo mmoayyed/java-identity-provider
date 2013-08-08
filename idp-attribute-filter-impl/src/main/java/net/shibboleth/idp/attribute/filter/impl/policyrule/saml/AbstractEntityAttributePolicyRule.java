@@ -112,20 +112,20 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
 
         EntityDescriptor entityDescriptor = getEntityMetadata(filterContext);
         if (entityDescriptor == null) {
-            log.warn("{} No metadata available for the entity", getLogPrefix());
+            log.warn("{} No metadata available for the entity, returning FAIL", getLogPrefix());
             return Tristate.FAIL;
         }
 
         Attribute entityAttribute = getEntityAttribute(entityDescriptor);
         if (entityAttribute == null) {
-            log.debug("{} No entityAttribute for the entity", getLogPrefix());
+            log.debug("{} No entityAttribute for the entity, returning FALSE", getLogPrefix());
             return Tristate.FALSE;
         }
 
         List<XMLObject> attributeValues = entityAttribute.getAttributeValues();
         if (attributeValues == null || attributeValues.isEmpty()) {
-            log.debug("{} Entity attribute {} for entity {} does not contain any values", getLogPrefix(),
-                    getAttributeName(), entityDescriptor.getEntityID());
+            log.debug("{} Entity attribute {} for entity {} does not contain any values, returning FALSE",
+                    getLogPrefix(), getAttributeName(), entityDescriptor.getEntityID());
             return Tristate.FALSE;
         }
 
@@ -189,6 +189,7 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
             return null;
         }
 
+        //  TODO this is syntatic sugar for checkstyle.  Remove and relax the rules. 
         return compareAttributes(entityAttributes, entityDescriptor);
     }
 

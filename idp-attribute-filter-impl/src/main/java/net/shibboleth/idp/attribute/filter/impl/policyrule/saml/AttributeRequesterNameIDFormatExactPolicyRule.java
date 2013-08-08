@@ -54,7 +54,7 @@ public class AttributeRequesterNameIDFormatExactPolicyRule extends AbstractNameI
         if (role instanceof SSODescriptor) {
             return (SSODescriptor) role;
         }
-        log.debug("{} provided Role was null or not an SSODescriptor", getLogPrefix());
+        log.warn("{} Provided Role was null or not an SSODescriptor", getLogPrefix());
         return null;
     }
 

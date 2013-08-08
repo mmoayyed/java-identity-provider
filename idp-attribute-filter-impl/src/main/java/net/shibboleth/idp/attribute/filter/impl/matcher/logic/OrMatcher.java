@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -54,8 +55,8 @@ public class OrMatcher extends AbstractComposedMatcher {
     }
 
     /** {@inheritDoc} */
-    @Nullable @NonnullElements public Set<AttributeValue> getMatchingValues(Attribute attribute,
-            AttributeFilterContext filterContext) {
+    @Nullable @NonnullElements public Set<AttributeValue> getMatchingValues(@Nonnull Attribute attribute,
+            @Nonnull AttributeFilterContext filterContext) {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 

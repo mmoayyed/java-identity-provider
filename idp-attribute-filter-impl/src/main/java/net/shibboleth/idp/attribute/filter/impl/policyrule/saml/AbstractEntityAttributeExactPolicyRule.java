@@ -27,7 +27,7 @@ import com.google.common.base.Objects;
 
 /**
  * Base class for matchers that perform an exact match of a given attribute string value against entity attribute
- * value.  Most of the work is done by {@link AbstractEntityAttributePolicyRule}, this class purely handle the
+ * value.  Most of the work is done by {@link AbstractEntityAttributePolicyRule}, this class purely handles the
  * comparison.
  */
 public abstract class AbstractEntityAttributeExactPolicyRule extends AbstractEntityAttributePolicyRule {

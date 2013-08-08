@@ -69,5 +69,4 @@ public class AttributeIssuerPolicyRule extends AbstractStringPolicyRule {
 
         return stringCompare(issuer);
     }
-
 }

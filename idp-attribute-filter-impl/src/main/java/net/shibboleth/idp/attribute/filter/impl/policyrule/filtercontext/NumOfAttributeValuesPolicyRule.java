@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.impl.policyrule.AbstractPolicyRule;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -53,13 +54,13 @@ public class NumOfAttributeValuesPolicyRule extends AbstractPolicyRule {
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         if (null == attributeId) {
-            throw new ComponentInitializationException(getLogPrefix() + " no AttributeID specified");
+            throw new ComponentInitializationException(getLogPrefix() + " No AttributeID specified");
         }
         if (minimumValues < 0) {
-            throw new ComponentInitializationException(getLogPrefix() + " a minimum value >= 0 must be specified");
+            throw new ComponentInitializationException(getLogPrefix() + " A minimum value >= 0 must be specified");
         }
         if (maximumValues <= 0) {
-            throw new ComponentInitializationException(getLogPrefix() + " a maximum value > 0 must be specified");
+            throw new ComponentInitializationException(getLogPrefix() + " A maximum value > 0 must be specified");
         }
     }
 
@@ -89,7 +90,7 @@ public class NumOfAttributeValuesPolicyRule extends AbstractPolicyRule {
      * 
      * @return Returns the attributeId.
      */
-    public String getAttributeId() {
+    @NonnullAfterInit public String getAttributeId() {
         return attributeId;
     }
 

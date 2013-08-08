@@ -41,7 +41,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 /**
- * Base class for {@link Matcher} implementations that are compositions of other
+ * Base class for {@link Matcher} implementations that are compositions of two or more other
  * {@link Matcher}s.
  */
 public abstract class AbstractComposedMatcher extends AbstractDestructableIdentifiableInitializableComponent implements

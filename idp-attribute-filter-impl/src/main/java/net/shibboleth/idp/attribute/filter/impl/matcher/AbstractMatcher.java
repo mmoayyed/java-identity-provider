@@ -27,6 +27,8 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.Matcher;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -36,7 +38,6 @@ import org.slf4j.LoggerFactory;
 /**
  * This is the bases of all implementations of {@link Matcher} which do some sort of comparison.<br/>
  * <br/>
- * 
  */
 
 public abstract class AbstractMatcher extends AbstractIdentifiableInitializableComponent implements Matcher {
@@ -62,12 +63,12 @@ public abstract class AbstractMatcher extends AbstractIdentifiableInitializableC
     /**
      * {@inheritDoc}
      */
-    public Set<AttributeValue> getMatchingValues(@Nonnull final Attribute attribute,
-            @Nonnull final AttributeFilterContext filterContext) {
+    @Nonnull @NonnullElements @Unmodifiable public Set<AttributeValue> getMatchingValues(
+            @Nonnull final Attribute attribute, @Nonnull final AttributeFilterContext filterContext) {
 
-        HashSet matchedValues = new HashSet();
+        final HashSet matchedValues = new HashSet();
 
-        log.debug("{} Applying value predicate to all values of Attribute '{}'", getLogPrefix(), attribute.getId());
+        log.debug("{} Applying value comparison to all values of Attribute '{}'", getLogPrefix(), attribute.getId());
 
         for (AttributeValue value : attribute.getValues()) {
             if (compareAttributeValue(value)) {
@@ -80,6 +81,7 @@ public abstract class AbstractMatcher extends AbstractIdentifiableInitializableC
 
     /**
      * Given a value do we match?
+     * 
      * @param value the value to look at
      * @return yes if we do, otherwise no.
      */

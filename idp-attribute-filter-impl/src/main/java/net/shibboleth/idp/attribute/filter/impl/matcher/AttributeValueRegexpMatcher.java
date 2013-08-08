@@ -27,7 +27,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Test that an {@link AttributeValue} is a regexp match to the configured string. <br/>
- * If the value is not a {@link StringAttributeValue} string it is coerced into a string.
+ * If the value is not a {@link StringAttributeValue} string it is coerced into a string via the value's
+ * {@link AttributeValue#toString()} method.
  */
 public class AttributeValueRegexpMatcher extends AbstractRegexpStringMatcher {
 
@@ -43,14 +44,14 @@ public class AttributeValueRegexpMatcher extends AbstractRegexpStringMatcher {
 
         if (value instanceof StringAttributeValue) {
             final StringAttributeValue stringValue = (StringAttributeValue) value;
-            return super.regexpCompare(stringValue.getValue());
+            return regexpCompare(stringValue.getValue());
 
         } else {
             final String valueAsString = ((AttributeValue) value).getValue().toString();
             log.warn("{} Object supplied to StringAttributeValue comparison"
                     + " was of class {}, not StringAttributeValue, comparing with {}", new Object[] {
                     getLogPrefix(), value.getClass().getName(), valueAsString,});
-            return super.regexpCompare(valueAsString);
+            return regexpCompare(valueAsString);
         } 
     }
 

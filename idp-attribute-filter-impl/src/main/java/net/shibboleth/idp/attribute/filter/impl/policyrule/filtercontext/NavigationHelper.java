@@ -35,7 +35,6 @@ public final class NavigationHelper {
 
     /** (hidden) Constructor. */
     private NavigationHelper() {
-
     }
 
     /**
@@ -54,9 +53,6 @@ public final class NavigationHelper {
 
         final AttributeResolutionContext resolutionContext =
                 parent.getSubcontext(AttributeResolutionContext.class, false);
-        if (null == resolutionContext) {
-            return null;
-        }
         return resolutionContext;
     }
 
@@ -71,10 +67,6 @@ public final class NavigationHelper {
 
         final AttributeRecipientContext recipientContext =
                 filterContext.getSubcontext(AttributeRecipientContext.class, false);
-
-        if (null == recipientContext) {
-            return null;
-        }
 
         return recipientContext;
     }

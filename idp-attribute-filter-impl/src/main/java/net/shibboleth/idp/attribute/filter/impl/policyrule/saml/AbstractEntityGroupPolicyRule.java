@@ -30,7 +30,6 @@ import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 /**
  * Base class for matchers that check if a given entity is in an entity group.<br/>
  * 
@@ -61,7 +60,7 @@ public abstract class AbstractEntityGroupPolicyRule extends AbstractPolicyRule {
      * 
      * @param group entity group to match against
      */
-    public void setEntityGroup(String group) {
+    public void setEntityGroup(@Nullable String group) {
         entityGroup = StringSupport.trimOrNull(group);
     }
 
@@ -78,15 +77,14 @@ public abstract class AbstractEntityGroupPolicyRule extends AbstractPolicyRule {
         Constraint.isNotNull(input, "Context must be supplied");
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
-        final EntityDescriptor entity = getEntityMetadata(input);
         if (entityGroup == null) {
             log.warn("{} No entity group specified, unable to check if entity is in group", getLogPrefix());
             return Tristate.FAIL;
         }
 
+        final EntityDescriptor entity = getEntityMetadata(input);
         if (entity == null) {
-            log.warn("{} No entity metadata available, unable to check if entity is in group {}", getLogPrefix(),
-                    entityGroup);
+            // logged in concrete class
             return Tristate.FAIL;
         }
 
