@@ -24,7 +24,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-// TODO TESTING
 /**
  * Base class for regex matching functors of natural type Matcher (mostly attribute value matchers).
  */

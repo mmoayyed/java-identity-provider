@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 /**
- * Classes which parse Matchers.
+ * Classes which parse beans which are natural "Matchers" (that is to say that they look at attribute values).
+ * <br/> The bulk of the work is done in the base class 
+ * {@link net.shibboleth.idp.attribute.filter.spring.matcher.BaseAttributeValueMatcherParser}. 
  */
 
 package net.shibboleth.idp.attribute.filter.spring.matcher;

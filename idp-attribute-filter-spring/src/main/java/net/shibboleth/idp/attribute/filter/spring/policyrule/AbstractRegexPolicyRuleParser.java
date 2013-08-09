@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter.spring.policyrule;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.BeanCreationException;
@@ -24,14 +26,14 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-// TODO TESTING
 /**
  * Base class for regex matching functors of natural type PolicyRule.
  */
 public abstract class AbstractRegexPolicyRuleParser extends BasePolicyRuleParser {
 
     /** {@inheritDoc} */
-    protected void doNativeParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doNativeParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, builder);
 
         final String regexp = StringSupport.trimOrNull(config.getAttributeNS(null, "regex"));

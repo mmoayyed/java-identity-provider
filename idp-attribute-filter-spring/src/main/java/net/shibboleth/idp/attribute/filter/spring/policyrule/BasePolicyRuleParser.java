@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter.spring.policyrule;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.attribute.filter.MatcherFromPolicy;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 
@@ -47,12 +49,12 @@ public abstract class BasePolicyRuleParser extends BaseFilterParser {
      * @param configElement the config element to inspect
      * @return whether here is a an attribute Id
      */
-    protected boolean hasAttributeId(Element configElement) {
+    protected boolean hasAttributeId(@Nonnull final Element configElement) {
         return configElement.hasAttributeNS(null, "attributeId");
     }
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
+    @Nonnull protected Class getBeanClass(@Nonnull final Element element) {
         if (isPolicyRule(element)) {
             return getNativeBeanClass();
         } else {
@@ -63,7 +65,8 @@ public abstract class BasePolicyRuleParser extends BaseFilterParser {
     /**
      * Parse bean definition. If needs be inject it into a parent bean. {@inheritDoc}
      */
-    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
         final String myId = builder.getBeanDefinition().getAttribute("qualifiedId").toString();
@@ -88,7 +91,7 @@ public abstract class BasePolicyRuleParser extends BaseFilterParser {
      * 
      * @return the class.
      */
-    protected abstract Class getNativeBeanClass();
+    @Nonnull protected abstract Class getNativeBeanClass();
 
     /**
      * Parser the native bean class. This is either called direct or then injected into the nesting class.

@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeIssuerNameIDFormatExactPolicyRule;
@@ -31,8 +32,7 @@ public class AttributeIssuerNameIdFormatRuleParser extends AbstractNameIdFormatR
             "AttributeIssuerNameIDFormatExactMatch");
     
     /** {@inheritDoc} */
-    protected Class getNativeBeanClass() {
+    @Nonnull protected Class getNativeBeanClass() {
         return AttributeIssuerNameIDFormatExactPolicyRule.class;
     }
-
 }

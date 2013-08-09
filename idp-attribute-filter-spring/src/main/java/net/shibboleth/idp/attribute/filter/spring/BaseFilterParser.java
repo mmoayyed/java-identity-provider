@@ -17,8 +17,10 @@
 
 package net.shibboleth.idp.attribute.filter.spring;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.RandomIdentifierGenerationStrategy;
@@ -34,15 +36,14 @@ import org.w3c.dom.Element;
 
 import com.google.common.base.Strings;
 
-// TODO incomplete v2 port
 /**
- * Base class for Spring bean definition parsers within the filter engine configuration. This base class is responsible
- * for generating an ID for the Spring bean that is unique within all the policy components loaded.
+ * Base class for Spring bean definition parsers within the filter engine configuration. <br>
+ * This base class is responsible for generating an ID for the Spring bean that is unique within all the policy
+ * components loaded. This in turn underpins our implementation of referencing in the language.
  */
 public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParser {
 
     /** Generator of unique IDs. */
-    // TODO correct random identifier ?
     private static IdentifierGenerationStrategy idGen = new RandomIdentifierGenerationStrategy();
 
     /** Class logger. */
@@ -57,11 +58,12 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
      * 
      * @return unique ID for the component
      */
-    protected String getQualifiedId(Element configElement, String componentNamespace, String localId) {
-        Element afpgElement = configElement.getOwnerDocument().getDocumentElement();
-        String policyGroupId = StringSupport.trimOrNull(afpgElement.getAttributeNS(null, "id"));
+    @Nonnull @NotEmpty protected String getQualifiedId(@Nonnull final Element configElement,
+            @Nonnull final String componentNamespace, @Nullable final String localId) {
+        final Element afpgElement = configElement.getOwnerDocument().getDocumentElement();
+        final String policyGroupId = StringSupport.trimOrNull(afpgElement.getAttributeNS(null, "id"));
 
-        StringBuilder qualifiedId = new StringBuilder();
+        final StringBuilder qualifiedId = new StringBuilder();
         qualifiedId.append("/");
         qualifiedId.append(AttributeFilterPolicyGroupParser.ELEMENT_NAME.getLocalPart());
         qualifiedId.append(":");
@@ -88,8 +90,8 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
      * @return the text.
      * 
      */
-    @Nullable protected String getReferenceText(Element element) {
-        String reference = StringSupport.trimOrNull(element.getAttributeNS(null, "ref"));
+    @Nullable protected String getReferenceText(@Nonnull final Element element) {
+        final String reference = StringSupport.trimOrNull(element.getAttributeNS(null, "ref"));
 
         return reference;
     }
@@ -103,7 +105,8 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
      * 
      * @return absolute form of the reference
      */
-    protected String getAbsoluteReference(Element configElement, String componentNamespace, String reference) {
+    @Nonnull @NotEmpty protected String getAbsoluteReference(@Nonnull final Element configElement,
+            @Nonnull @NotEmpty final String componentNamespace, @Nonnull @NotEmpty final String reference) {
         if (reference.startsWith("/")) {
             return reference;
         } else {
@@ -115,9 +118,12 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
      * {@inheritDoc}
      * 
      * Calculate the qualified id once, and set both the id property as well as a qualified id metadata attribute used
-     * by the resolveId() method.
+     * by the {@link #resolveId()} method.<br/>
+     * If we auto-generate a name then we issue a warning so users can (1) correct this, but also so they can make sense
+     * of the logging in the filters which uses the id extensively.
      */
-    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
         final String suppliedId = StringSupport.trimOrNull(element.getAttributeNS(null, "id"));
@@ -128,7 +134,7 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
                     element.getLocalName(), generatedId);
 
         } else {
-            log.debug("Element '{}' id attribute {} is mapped to '{}'", element.getLocalName(), suppliedId, 
+            log.debug("Element '{}' 'id' attribute '{}' is mapped to '{}'", element.getLocalName(), suppliedId,
                     generatedId);
         }
 
@@ -136,24 +142,26 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
     }
 
     /** {@inheritDoc} */
-    protected String
-            resolveId(Element configElement, AbstractBeanDefinition beanDefinition, ParserContext parserContext) {
+    @Nonnull @NotEmpty protected String resolveId(@Nonnull final Element configElement,
+            @Nonnull final AbstractBeanDefinition beanDefinition, @Nonnull final ParserContext parserContext) {
         return beanDefinition.getAttribute("qualifiedId").toString();
     }
 
     /**
      * Is this inside a &lt;PolicyRequirementRule&gt; or an permit or deny rule?.
+     * <br/> This is used when parsing the various rules (&lt;MatchFunctorType&gt;) since
+     * the bean we summon up depends on where we find ourselves.
      * @param element the element under question
      * @return true if it is inside a policy requirement rule, false otherwise.
      */
-    protected boolean isPolicyRule(final Element element) {
+    protected boolean isPolicyRule(@Nonnull final Element element) {
 
         Element elem = element;
         do {
             if (ElementSupport.isElementNamed(elem, AttributeFilterPolicyParser.POLICY_REQUIREMENT_RULE)) {
                 return true;
-            } else if (ElementSupport.isElementNamed(elem, AttributeRuleParser.DENY_VALUE_RULE) ||
-                       ElementSupport.isElementNamed(elem, AttributeRuleParser.PERMIT_VALUE_RULE)) {
+            } else if (ElementSupport.isElementNamed(elem, AttributeRuleParser.DENY_VALUE_RULE)
+                    || ElementSupport.isElementNamed(elem, AttributeRuleParser.PERMIT_VALUE_RULE)) {
                 return false;
             }
             elem = ElementSupport.getElementAncestor(elem);

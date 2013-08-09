@@ -32,7 +32,6 @@ import net.shibboleth.idp.attribute.filter.spring.policyrule.PrincipalNameRegexR
 import net.shibboleth.idp.attribute.filter.spring.policyrule.PrincipalNameRuleParser;
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
-// TODO incomplete port from v2
 /** Namespace handler for the attribute filter engine basic match functions. */
 public class AttributeFilterBasicNamespaceHandler extends BaseSpringNamespaceHandler {
 

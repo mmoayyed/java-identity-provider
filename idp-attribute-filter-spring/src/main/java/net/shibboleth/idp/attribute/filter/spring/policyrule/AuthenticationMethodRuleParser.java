@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.spring.policyrule;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.AuthenticationMethodPolicyRule;
@@ -33,7 +34,7 @@ public class AuthenticationMethodRuleParser extends AbstractStringPolicyRulePars
 
 
     /** {@inheritDoc} */
-    protected Class getNativeBeanClass() {
+    @Nonnull protected Class getNativeBeanClass() {
         return AuthenticationMethodPolicyRule.class;
     }
 

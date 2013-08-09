@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 /**
- * This is where the parsers for filters that are natural policy rules
- * are implemented. 
+ * This is where the parsers for filters that are natural policy rules (that is to make their 
+ * decisions based on the context, not the attribute values are implemented. 
+ * Nearly all the work is done in {@link net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser}
  */
 
 package net.shibboleth.idp.attribute.filter.spring.policyrule;

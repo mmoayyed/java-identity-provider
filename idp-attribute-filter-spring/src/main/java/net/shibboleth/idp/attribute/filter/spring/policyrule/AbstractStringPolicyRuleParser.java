@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter.spring.policyrule;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
@@ -25,14 +27,14 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-// TODO TESTING
 /**
  * Base class for string matching functors of natural type PolicyRule.
  */
 public abstract class AbstractStringPolicyRuleParser extends BasePolicyRuleParser {
 
     /** {@inheritDoc} */
-    protected void doNativeParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(element, builder);
 
         builder.addPropertyValue("matchString", StringSupport.trimOrNull(element.getAttributeNS(null, "value")));

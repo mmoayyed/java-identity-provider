@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.spring.policyrule;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.AttributeIssuerRegexpPolicyRule;
@@ -32,7 +33,7 @@ public class AttributeIssuerRegexRuleParser extends AbstractRegexPolicyRuleParse
             "AttributeIssuerRegex");
 
     /** {@inheritDoc} */
-    protected Class getNativeBeanClass() {
+    @Nonnull protected Class getNativeBeanClass() {
         return AttributeIssuerRegexpPolicyRule.class;
     }
 }

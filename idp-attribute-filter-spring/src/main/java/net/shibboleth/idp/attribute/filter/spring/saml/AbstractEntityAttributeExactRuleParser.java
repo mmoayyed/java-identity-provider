@@ -17,20 +17,22 @@
 
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
+import javax.annotation.Nonnull;
+
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-// TODO TESTING
 /**
- * Base definition for all EntityAttributeExact Parsers.
+ * Base definition for EntityAttributeExact Parsers (issuer/requester).
  */
 public abstract class AbstractEntityAttributeExactRuleParser extends AbstractEntityAttributeRuleParser {
 
     /** {@inheritDoc} */
-    protected void doNativeParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
-        
+
         builder.addPropertyValue("value", element.getAttributeNS(null, "attributeValue"));
 
     }

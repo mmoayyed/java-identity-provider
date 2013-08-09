@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeRequesterEntityAttributeExactPolicyRule;
@@ -31,9 +32,8 @@ public class AttributeRequesterEntityAttributeExactRuleParser extends AbstractEn
             "AttributeRequesterEntityAttributeExactMatch");
     
     /** {@inheritDoc} */
-    protected Class getNativeBeanClass() {
+    @Nonnull protected Class getNativeBeanClass() {
         
         return AttributeRequesterEntityAttributeExactPolicyRule.class;
     }
-
 }

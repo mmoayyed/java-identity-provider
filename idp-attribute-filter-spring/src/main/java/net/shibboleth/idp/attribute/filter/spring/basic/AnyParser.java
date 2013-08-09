@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.spring.basic;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.Matcher;
@@ -34,7 +35,7 @@ public class AnyParser extends BaseFilterParser {
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "ANY");
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
+    @Nonnull protected Class getBeanClass(@Nonnull final Element element) {
         if (isPolicyRule(element)) {
             return PolicyRequirementRule.MATCHES_ALL.getClass();
         }

@@ -17,23 +17,23 @@
 
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-// TODO TESTING
 /**
  * Base definition for all NameIdFormat Parsers.
  */
 public abstract class AbstractNameIdFormatRuleParser extends BasePolicyRuleParser {
 
     /** {@inheritDoc} */
-    protected void doNativeParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
 
         builder.addPropertyValue("nameIdFormat", element.getAttributeNS(null, "nameIdFormat"));
-
     }
-
 }

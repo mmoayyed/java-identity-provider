@@ -39,7 +39,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-// TODO testing
 /**
  * Bean definition parser for {@link ScriptedPolicyRule} or {@link ScriptedMatcher} objects.
  */
@@ -62,7 +61,7 @@ public class ScriptedMatcherParser extends BaseFilterParser {
     private String logPrefix;
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
+    @Nonnull protected Class getBeanClass(@Nonnull final Element element) {
         if (isPolicyRule(element)) {
             return ScriptedPolicyRule.class;
         }
@@ -75,10 +74,10 @@ public class ScriptedMatcherParser extends BaseFilterParser {
      * @param config The DOM we are interested in
      * @return The script as a string or throws an {@link BeanCreationException}
      */
-    @Nonnull private String getScript(Element config) {
+    @Nonnull private String getScript(@Nonnull final Element config) {
         String script = null;
-        List<Element> scriptElem = ElementSupport.getChildElements(config, SCRIPT_ELEMENT_NAME);
-        List<Element> scriptFileElem = ElementSupport.getChildElements(config, SCRIPT_FILE_ELEMENT_NAME);
+        final List<Element> scriptElem = ElementSupport.getChildElements(config, SCRIPT_ELEMENT_NAME);
+        final List<Element> scriptFileElem = ElementSupport.getChildElements(config, SCRIPT_FILE_ELEMENT_NAME);
         if (scriptElem != null && scriptElem.size() > 0) {
             if (scriptFileElem != null && scriptFileElem.size() > 0) {
                 log.info("{} definition contains both <Script> and <ScriptFile> elements, using the <Script> element",
@@ -91,8 +90,7 @@ public class ScriptedMatcherParser extends BaseFilterParser {
                 try {
                     script = StringSupport.inputStreamToString(new FileInputStream(scriptFile), null);
                 } catch (IOException e) {
-                    throw new BeanCreationException("{} Unable to read script file {}"
-                            + logPrefix, scriptFile, e);
+                    throw new BeanCreationException("{} Unable to read script file {}" + logPrefix, scriptFile, e);
                 }
             }
         }
@@ -103,8 +101,11 @@ public class ScriptedMatcherParser extends BaseFilterParser {
         return script;
     }
 
-    /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    /**
+     * {@inheritDoc} Both types of bean take the same constructor, so the parser is simplified.
+     */
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
         final String myId = builder.getBeanDefinition().getAttribute("qualifiedId").toString();
@@ -119,7 +120,7 @@ public class ScriptedMatcherParser extends BaseFilterParser {
         }
         log.debug("{}: scripting language: {}.", logPrefix, scriptLanguage);
 
-        String script = getScript(config);
+        final String script = getScript(config);
         log.debug("{} script: {}.", logPrefix, script);
         try {
             builder.addConstructorArgValue(new EvaluableScript(scriptLanguage, script));

@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.filter.spring;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
@@ -69,15 +70,18 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
     protected Class getBeanClass(Element arg0) {
         return AttributeFilterPolicy.class;
     }
-    
+
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    // TODO Add checkstyle supression
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
         final String policyId = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
         log.info("Parsing configuration for attribute filter policy {}", policyId);
         builder.addConstructorArgValue(policyId);
 
+        // Get the policy requirement, either inline or referenced
         final List<Element> policyRequirements = ElementSupport.getChildElements(config, POLICY_REQUIREMENT_RULE);
         if (policyRequirements != null && policyRequirements.size() > 0) {
             final ManagedList<BeanDefinition> requirements =
@@ -103,6 +107,7 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
             }
         }
 
+        // Get the attribute rules, both inline or referenced.
         final ManagedList attributeRules = new ManagedList();
         final List<Element> rules = ElementSupport.getChildElements(config, ATTRIBUTE_RULE);
         if (rules != null && rules.size() > 0) {

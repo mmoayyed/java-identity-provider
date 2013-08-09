@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.filter.spring;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.AttributeRule;
@@ -70,8 +71,10 @@ public class AttributeRuleParser extends BaseFilterParser {
         return AttributeRule.class;
     }
 
+    // TODO checkstyle supression.
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
         final String id = builder.getBeanDefinition().getAttribute("qualifiedId").toString();

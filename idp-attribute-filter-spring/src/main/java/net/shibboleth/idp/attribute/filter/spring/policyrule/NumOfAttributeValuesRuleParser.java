@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.spring.policyrule;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.NumOfAttributeValuesPolicyRule;
@@ -28,7 +29,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- *  Bean definition parser for {@link NumOfAttributeValuesPolicyRule}.
+ * Bean definition parser for {@link NumOfAttributeValuesPolicyRule}.
  */
 public class NumOfAttributeValuesRuleParser extends BasePolicyRuleParser {
 
@@ -37,20 +38,21 @@ public class NumOfAttributeValuesRuleParser extends BasePolicyRuleParser {
             "NumberOfAttributeValues");
 
     /** {@inheritDoc} */
-    protected Class getNativeBeanClass() {
+    @Nonnull protected Class getNativeBeanClass() {
         return NumOfAttributeValuesPolicyRule.class;
     }
 
     /** {@inheritDoc} */
-    protected void doNativeParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doNativeParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, builder);
 
         final String attributeId = StringSupport.trimOrNull(config.getAttributeNS(null, "attributeID"));
         builder.addPropertyValue("attributeId", attributeId);
-        
+
         final String minimum = StringSupport.trimOrNull(config.getAttributeNS(null, "minimum"));
         builder.addPropertyValue("minimum", minimum);
-        
+
         final String maximum = StringSupport.trimOrNull(config.getAttributeNS(null, "maximum"));
         builder.addPropertyValue("maximum", maximum);
     }

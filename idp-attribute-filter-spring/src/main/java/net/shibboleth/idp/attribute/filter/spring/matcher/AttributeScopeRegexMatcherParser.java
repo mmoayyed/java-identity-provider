@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.spring.matcher;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.impl.matcher.AttributeScopeRegexpMatcher;
@@ -32,7 +33,7 @@ public class AttributeScopeRegexMatcherParser extends AbstractRegexMatcherParser
             "AttributeScopeRegex");
 
     /** {@inheritDoc} */
-    protected Class getNativeBeanClass() {
+    @Nonnull protected Class getNativeBeanClass() {
         return AttributeScopeRegexpMatcher.class;
     }
 }

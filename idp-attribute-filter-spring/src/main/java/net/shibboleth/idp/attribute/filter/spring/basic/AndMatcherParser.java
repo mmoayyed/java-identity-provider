@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.filter.spring.basic;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.impl.matcher.logic.AndMatcher;
@@ -31,17 +32,18 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-// TODO testing
 /**
- * Bean definition parser for {@link AndMatcher} or {@link AndPolicyRule} objects.
+ * Bean definition parser for {@link AndMatcher} or {@link AndPolicyRule} objects.<br/>
+ * These both take as a constructor a list of {@link net.shibboleth.idp.attribute.filter.Matcher} or {@Link
+ * net.shibboleth.idp.attribute.filter.PolicyRequirementRule} so the parsing code is common.
  */
 public class AndMatcherParser extends BaseFilterParser {
-  
+
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "AND");
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
+    @Nonnull protected Class getBeanClass(@Nonnull final Element element) {
         if (isPolicyRule(element)) {
             return AndPolicyRule.class;
         }
@@ -49,14 +51,15 @@ public class AndMatcherParser extends BaseFilterParser {
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element configElement, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element configElement, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(configElement, parserContext, builder);
 
         final String myId = builder.getBeanDefinition().getAttribute("qualifiedId").toString();
 
         builder.addPropertyValue("id", myId);
 
-        List<Element> ruleElements =
+        final List<Element> ruleElements =
                 ElementSupport.getChildElementsByTagNameNS(configElement,
                         AttributeFilterBasicNamespaceHandler.NAMESPACE, "Rule");
 

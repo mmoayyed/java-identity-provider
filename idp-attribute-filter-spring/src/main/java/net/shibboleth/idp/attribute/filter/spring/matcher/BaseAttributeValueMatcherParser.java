@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter.spring.matcher;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.attribute.filter.MatcherFromPolicy;
 import net.shibboleth.idp.attribute.filter.PolicyFromMatcher;
 import net.shibboleth.idp.attribute.filter.PolicyFromMatcherId;
@@ -28,6 +30,7 @@ import org.w3c.dom.Element;
 
 /**
  * Base function for all Attribute Value matchers. <br/>
+ * 
  * This function takes care of the bean nesting needed to convert the bean (which is a natural matcher) into the correct
  * type. Specifically:<br/>
  * <table>
@@ -52,17 +55,18 @@ import org.w3c.dom.Element;
 public abstract class BaseAttributeValueMatcherParser extends BaseFilterParser {
 
     /**
-     * Helper function to determine if the Attribute Matcher has the attribute Id Specified.
+     * Helper function to determine if the Attribute Matcher has the attribute Id Specified. This influences decisions
+     * bioth in parsing and in which bean to summon.
      * 
      * @param configElement the config element to inspect
      * @return whether here is a an attribute Id
      */
-    protected boolean hasAttributeId(Element configElement) {
+    protected boolean hasAttributeId(@Nonnull final Element configElement) {
         return configElement.hasAttributeNS(null, "attributeId");
     }
 
-    /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
+    /** {@inheritDoc} The table at the top describes the precise work. */
+    @Nonnull protected Class getBeanClass(@Nonnull final Element element) {
         if (isPolicyRule(element)) {
             if (hasAttributeId(element)) {
                 return PolicyFromMatcherId.class;
@@ -78,37 +82,39 @@ public abstract class BaseAttributeValueMatcherParser extends BaseFilterParser {
         }
     }
 
-    /** Parse bean definition.  If needs be inject it into a parent bean (or two). 
-     * {@inheritDoc} */
-    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    /**
+     * Parse bean definition. If needs be we inject it into a parent bean (or two). {@inheritDoc}
+     */
+    protected void doParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
-        
+
         final String myId = builder.getBeanDefinition().getAttribute("qualifiedId").toString();
 
         builder.addPropertyValue("id", myId);
-        
+
         if (isPolicyRule(element)) {
             BeanDefinitionBuilder childBuilder = BeanDefinitionBuilder.genericBeanDefinition(getNativeBeanClass());
 
             doNativeParse(element, parserContext, childBuilder);
             childBuilder.addPropertyValue("id", "PMId:" + myId);
-            
+
             builder.addConstructorArgValue(childBuilder.getBeanDefinition());
             if (hasAttributeId(element)) {
                 builder.addConstructorArgValue(element.getAttributeNS(null, "attributeId"));
             }
         } else if (hasAttributeId(element)) {
-            // Bean inside PolicyFromMatcherId inside MatcherFromPolicy 
+            // Bean inside PolicyFromMatcherId inside MatcherFromPolicy
             BeanDefinitionBuilder childBuilder = BeanDefinitionBuilder.genericBeanDefinition(PolicyFromMatcherId.class);
             BeanDefinitionBuilder grandChildBuilder = BeanDefinitionBuilder.genericBeanDefinition(getNativeBeanClass());
-            
+
             doNativeParse(element, parserContext, grandChildBuilder);
             grandChildBuilder.addPropertyValue("id", "PMId:" + myId);
-            
+
             childBuilder.addPropertyValue("id", "MfP:" + myId);
             childBuilder.addConstructorArgValue(grandChildBuilder.getBeanDefinition());
             childBuilder.addConstructorArgValue(element.getAttributeNS(null, "attributeId"));
-            
+
             builder.addConstructorArgValue(childBuilder.getBeanDefinition());
 
         } else {
@@ -121,14 +127,14 @@ public abstract class BaseAttributeValueMatcherParser extends BaseFilterParser {
      * 
      * @return the class.
      */
-    protected abstract Class getNativeBeanClass();
+    @Nonnull protected abstract Class getNativeBeanClass();
 
-    /** Parser the native bean class.  This is either called direct or then injected into 
-     * the nesting class.
+    /**
+     * Parse the native bean class. This is either called direct or then injected into the nesting class.
+     * 
      * @param element the config
      * @param parserContext the context
      * @param builder the builder
      */
-    protected abstract void doNativeParse(Element element, ParserContext parserContext,
-            BeanDefinitionBuilder builder); 
-    }
+    protected abstract void doNativeParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder);
+}

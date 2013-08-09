@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeIssuerInEntityGroupPolicyRule;
@@ -31,8 +32,7 @@ public class AttributeIssuerInEntityGroupRuleParser extends AbstractEntityGroupR
             "AttributeIssuerInEntityGroup");
    
     /** {@inheritDoc} */
-    protected Class getNativeBeanClass() {
+    @Nonnull protected Class getNativeBeanClass() {
        return AttributeIssuerInEntityGroupPolicyRule.class;
     }
-
 }

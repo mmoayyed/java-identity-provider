@@ -23,9 +23,9 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-// TODO TESTING
 /**
- * Base definition for all EntityAttribute Parsers.
+ * Base definition for all EntityAttribute Parsers.<br/> the common attributes 
+ * are 'attributeName' and 'attributeNameFormat'.
  */
 public abstract class AbstractEntityAttributeRuleParser extends BasePolicyRuleParser {
 
@@ -37,7 +37,5 @@ public abstract class AbstractEntityAttributeRuleParser extends BasePolicyRulePa
         if (element.hasAttributeNS(null, "attributeNameFormat")) {
             builder.addPropertyValue("nameFormat", element.getAttributeNS(null, "attributeNameFormat"));
         }
-
     }
-
 }

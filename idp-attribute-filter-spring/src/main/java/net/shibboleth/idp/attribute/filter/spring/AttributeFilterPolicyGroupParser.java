@@ -20,6 +20,8 @@ package net.shibboleth.idp.attribute.filter.spring;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.spring.SpringSupport;
@@ -33,9 +35,14 @@ import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/** Bean definition parser for an attribute filter policy group. */
+/**
+ * Bean definition parser for &lt;afp:AttributeFilterPolicyGroup&gt;, top top level of the filter "stack". <br.>
+ * 
+ * There is no bean being summoned up here. Rather we just parse all the children. Then over in the service all the *
+ * {@link net.shibboleth.idp.attribute.filter.AttributeFilterPolicy} beans are sucked out of spring by type and injected
+ * into a new {@link net.shibboleth.idp.attribute.filter.AttributeFilter}.
+ */
 public class AttributeFilterPolicyGroupParser implements BeanDefinitionParser {
-
     /** Element name. */
     public static final QName ELEMENT_NAME = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
             "AttributeFilterPolicyGroup");
@@ -56,7 +63,7 @@ public class AttributeFilterPolicyGroupParser implements BeanDefinitionParser {
     private final Logger log = LoggerFactory.getLogger(AttributeFilterPolicyGroupParser.class);
 
     /** {@inheritDoc} */
-    public BeanDefinition parse(Element config, ParserContext context) {
+    @Nullable public BeanDefinition parse(@Nonnull final Element config, @Nonnull final ParserContext context) {
         String policyId = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
 
         log.debug("Parsing attribute filter policy group {}", policyId);
