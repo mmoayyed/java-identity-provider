@@ -57,47 +57,54 @@
 		init-method="initialize" p:id="RequestedAttributesMapper">
 		<property name="mappers">
 			<list>
-				<bean parent="abstractStringMapper" p:id="eduPersonAssurance" p:SAMLName="urn:oid:1.3.6.1.4.1.5923.1.1.1.11">
+				<bean parent="abstractStringMapper">
+					<property name="id" value="eduPersonAssurance" />
+					<property name="SAMLName" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.11" />
 					<property name="attributeIds">
 						<list>
-                            <value>eduPersonAssurance</value>
+							<value>eduPersonAssurance</value>
 							<value>otherPersonAssurance</value>
 						</list>
 					</property>
 				</bean>
-				<bean parent="abstractStringMapper" p:SAMLName="http://example.org/name/for/Attribute" p:id="otherSAMEName" 
-				      p:attributeFormat="http://example.org/Format">
-                    <property name="attributeIds">
-                        <list>
-                            <value>eduPersonAssurance</value>
-                        </list>
-                    </property>
+				<bean parent="abstractStringMapper">
+					<property name="SAMLName" value="http://example.org/name/for/Attribute" />
+					<property name="id" value="otherSAMEName" />
+					<property name="attributeFormat" value="http://example.org/Format " />
+					<property name="attributeIds">
+						<list>
+							<value>eduPersonAssurance</value>
+						</list>
+					</property>
 				</bean>
-				<bean parent="abstractStringMapper" p:sAMLName="urn:oid:1.3.6.1.4.1.5923.1.1.1.9" p:id="eduPersonScopedAffiliation"
-                    p:attributeFormat="format">
+				<bean parent="abstractStringMapper">
+					<property name="sAMLName" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.9" />
+					<property name="id" value=" eduPersonScopedAffiliation " />
+					<property name="attributeFormat" value=" format " />
 					<property name="valueMapper">
 						<bean
 							class="net.shibboleth.idp.attribute.filter.impl.policyrule.saml.attributemapper.ScopedStringAttributeValueMapper"
 							p:delimiter="#" />
 					</property>
-                    <property name="attributeIds">
-                        <list>
-                            <value>eduPersonScopedAffiliation</value>
-                        </list>
-                    </property>
+					<property name="attributeIds">
+						<list>
+							<value>eduPersonScopedAffiliation</value>
+						</list>
+					</property>
 				</bean>
-				<bean parent="abstractStringMapper"
-					p:attributeFormat="format"
-					p:sAMLName="urn:oid:1.3.6.1.4.1.5923.1.1.1.10" p:id="eduPersonTargetedID">
+				<bean parent="abstractStringMapper">
+				    <property name="attributeFormat" value="format"/>
+					<property name="sAMLName" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.10"/>
+					<property name="id" value="eduPersonTargetedID"/>
 					<property name="valueMapper">
 						<bean
 							class="net.shibboleth.idp.attribute.filter.impl.policyrule.saml.attributemapper.XmlObjectAttributeValueMapper" />
 					</property>
-                    <property name="attributeIds">
-                        <list>
-                            <value>eduPersonTargetedID</value>
-                        </list>
-                    </property>
+					<property name="attributeIds">
+						<list>
+							<value>eduPersonTargetedID</value>
+						</list>
+					</property>
 				</bean>
 			</list>
 		</property>
