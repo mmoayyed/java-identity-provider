@@ -23,8 +23,9 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.security.auth.Subject;
 
-import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
@@ -59,7 +60,7 @@ import com.google.common.collect.ImmutableSet;
  * @post If AuthenticationContext.getSubcontext(UsernameContext.class, false).getUsername() != null, then
  * an {@link AuthenticationResult} is saved to the {@link AuthenticationContext}.
  */
-public class ValidateRemoteUser extends AbstractAuthenticationAction {
+public class ValidateRemoteUser extends AbstractValidationAction {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ValidateRemoteUser.class);
@@ -173,9 +174,7 @@ public class ValidateRemoteUser extends AbstractAuthenticationAction {
 
         log.debug("{} validated user '{}'", getLogPrefix(), usernameContext.getUsername());
         
-        AuthenticationResult result = new AuthenticationResult(authenticationContext.getAttemptedFlow().getId(),
-                new UsernamePrincipal(usernameContext.getUsername()));
-        authenticationContext.setAuthenticationResult(result);
+        buildAuthenticationResult(authenticationContext);
     }
     
     /**
@@ -198,5 +197,11 @@ public class ValidateRemoteUser extends AbstractAuthenticationAction {
             return !getBlacklistedUsernames().contains(username)
                     && (getMatchExpression() == null || getMatchExpression().matcher(username).matches());
         }
+    }
+
+    /** {@inheritDoc} */
+    @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) throws AuthenticationException {
+        subject.getPrincipals().add(new UsernamePrincipal(usernameContext.getUsername()));
+        return subject;
     }
 }

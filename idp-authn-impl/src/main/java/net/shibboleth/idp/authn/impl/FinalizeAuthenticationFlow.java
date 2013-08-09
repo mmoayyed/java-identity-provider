@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.authn.impl;
 
-import java.security.Principal;
-
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
@@ -26,9 +24,9 @@ import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.CloneablePrincipal;
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -40,9 +38,8 @@ import org.slf4j.LoggerFactory;
  * An authentication action that runs at the end of a completed authentication flow and
  * finalizes the content of the {@link AuthenticationResult} produced.
  * 
- * <p>The {@link Subject} is extended with a copy of any {@CloneablePrincipal} objects returned
- * by {@link AuthenticationFlowDescriptor#getSupportedPrincipals()}, and fed into the
- * {@link SubjectCanonicalizer} returned by {@link AuthenticationFlowDescriptor#getSubjectCanonicalizer()}.</p>
+ * <p>The {@link Subject} is fed into the {@link SubjectCanonicalizer} returned by
+ * {@link AuthenticationFlowDescriptor#getSubjectCanonicalizer()}.</p>
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link AuthnEventIds#IDENTITY_SWITCH} if the c14n result does not match
@@ -86,19 +83,6 @@ public class FinalizeAuthenticationFlow extends AbstractAuthenticationAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         
-        log.debug("{} adding additional Principal objects from flow descriptor '{}' to authenticated subject",
-                getLogPrefix(), attemptedFlow.getId());
-        
-        for (Principal p : attemptedFlow.getSupportedPrincipals()) {
-            if (p instanceof CloneablePrincipal) {
-                try {
-                    authenticationResult.getSubject().getPrincipals().add(((CloneablePrincipal) p).clone());
-                } catch (CloneNotSupportedException e) {
-                    log.error(getLogPrefix() + " error cloning principal for addition to authenticated subject", e);
-                }
-            }
-        }
-        
         log.debug("{} performing subject canonicalization using {}", getLogPrefix(),
                 attemptedFlow.getSubjectCanonicalizer().getId());
         try {
@@ -106,7 +90,7 @@ public class FinalizeAuthenticationFlow extends AbstractAuthenticationAction {
                     attemptedFlow.getSubjectCanonicalizer().canonicalize(authenticationResult.getSubject()));
         } catch (SubjectCanonicalizationException e) {
             log.error(getLogPrefix() + " error canonicalizing subject", e);
-            authenticationContext.setLoginException(e);
+            authenticationContext.getSubcontext(AuthenticationErrorContext.class, true).addException(e);
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_CREDENTIALS);
             return;
         }

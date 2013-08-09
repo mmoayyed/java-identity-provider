@@ -28,6 +28,7 @@ import javax.security.auth.login.LoginException;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 
 import org.opensaml.profile.action.ActionTestingSupport;
@@ -39,6 +40,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
@@ -77,6 +79,8 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
         super.setUp();
         
         action = new ValidateUsernamePasswordAgainstJAAS();
+        action.setUnknownUsernameErrors(ImmutableList.of("DN_RESOLUTION_FAILURE"));
+        action.setInvalidPasswordErrors(ImmutableList.of("INVALID_CREDENTIALS"));
     }
 
     @Test public void testMissingFlow() throws Exception {
@@ -118,9 +122,57 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
         
         action.execute(prc);
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
-        Assert.assertTrue(ac.getLoginException() instanceof LoginException);
+        AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class, false);
+        Assert.assertEquals(errorCtx.getExceptions().size(), 1);
+        Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
     }
 
+    @Test public void testBadUsername() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("username", "foo");
+        request.addParameter("password", "bar");
+        prc.setHttpRequest(request);
+
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        ac.setAttemptedFlow(authenticationFlows.get(0));
+        action.setLoginConfigType("JavaLoginConfig");
+        System.out.println(getCurrentDir());
+        action.setLoginConfigParameters(new URIParameter(new URI(getCurrentDir() + "src/test/resources/net/shibboleth/idp/authn/impl/jaas.config")));
+        action.initialize();
+        
+        doExtract(prc);
+        
+        action.execute(prc);
+        ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
+        AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class, false);
+        Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
+        Assert.assertTrue(errorCtx.isUnknownUsername());
+        Assert.assertFalse(errorCtx.isInvalidPassword());
+    }
+
+    @Test public void testBadPassword() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("username", "PETER_THE_PRINCIPAL");
+        request.addParameter("password", "bar");
+        prc.setHttpRequest(request);
+
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        ac.setAttemptedFlow(authenticationFlows.get(0));
+        action.setLoginConfigType("JavaLoginConfig");
+        System.out.println(getCurrentDir());
+        action.setLoginConfigParameters(new URIParameter(new URI(getCurrentDir() + "src/test/resources/net/shibboleth/idp/authn/impl/jaas.config")));
+        action.initialize();
+        
+        doExtract(prc);
+        
+        action.execute(prc);
+        ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
+        AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class, false);
+        Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
+        Assert.assertFalse(errorCtx.isUnknownUsername());
+        Assert.assertTrue(errorCtx.isInvalidPassword());
+    }
+    
     @Test public void testAuthorized() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("username", "PETER_THE_PRINCIPAL");

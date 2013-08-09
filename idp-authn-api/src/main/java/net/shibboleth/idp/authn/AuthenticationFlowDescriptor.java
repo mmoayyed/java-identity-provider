@@ -221,7 +221,7 @@ public class AuthenticationFlowDescriptor implements IdentifiableComponent {
      * @param principals supported principals to add
      */
     public <T extends Principal> void setSupportedPrincipals(@Nonnull @NonnullElements final Collection<T> principals) {
-        Constraint.isNotNull(principals, "Principal list cannot be null.");
+        Constraint.isNotNull(principals, "Principal collection cannot be null.");
         
         supportedPrincipals.getPrincipals().clear();
         supportedPrincipals.getPrincipals().addAll(Collections2.filter(principals, Predicates.notNull()));

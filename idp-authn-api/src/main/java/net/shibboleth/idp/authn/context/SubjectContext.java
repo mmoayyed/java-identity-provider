@@ -40,9 +40,6 @@ import com.google.common.collect.ImmutableList;
  * <p>The subject may or may not be authenticated, such as in a back-channel profile, but
  * profiles that operate on subjects can treat the information as "trusted" for their purposes.
  * This context must not be used to carry speculative or unverified subject information.</p>
- * 
- * <p>The use of a multimap enables a subject to be associated with more than one instance of
- * authentication by a particular workflow.</p>
  */
 public class SubjectContext extends BaseContext {
 

@@ -32,6 +32,7 @@ import org.owasp.esapi.Encoder;
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -64,8 +65,8 @@ public class DisplayUsernamePasswordPage extends AbstractAuthenticationAction {
     /** Name of the Velocity {@link Context} attribute to which the current {@link ProfileRequestContext} is bound. */
     public static final String REQUEST_CTX_VCTX_ATTRIB = "context";
 
-    /** Name of the Velocity {@link Context} attribute to which the most recent login exception is bound. */
-    public static final String LOGIN_EXCEPTION_CTX_VCTX_ATTRIB = "loginException";
+    /** Name of the Velocity {@link Context} attribute to which the {@link AuthenticationErrorContext} is bound. */
+    public static final String AUTHN_EXCEPTION_CTX_VCTX_ATTRIB = "authnErrorContext";
     
     /** Name of the Velocity {@link Context} attribute to which the ESAPI {@link Encoder} is bound. */
     public static final String ESAPI_VCTCX_ATTRIB = "encoder";
@@ -215,8 +216,11 @@ public class DisplayUsernamePasswordPage extends AbstractAuthenticationAction {
 
         templateContext.put(ESAPI_VCTCX_ATTRIB, esapiEncoder);
         templateContext.put(REQUEST_CTX_VCTX_ATTRIB, profileRequestContext);
-        if (authenticationContext.getLoginException() != null) {
-            templateContext.put(LOGIN_EXCEPTION_CTX_VCTX_ATTRIB, authenticationContext.getLoginException());
+        
+        AuthenticationErrorContext errorCtx =
+                authenticationContext.getSubcontext(AuthenticationErrorContext.class, false);
+        if (errorCtx != null) {
+            templateContext.put(AUTHN_EXCEPTION_CTX_VCTX_ATTRIB, errorCtx);
         }
 
         templateContext.put(ACTION_URL_VCTCX_ATTRIB,

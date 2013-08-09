@@ -30,7 +30,7 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginException;
 
-import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
@@ -62,7 +62,7 @@ import org.slf4j.LoggerFactory;
  * an {@link AuthenticationResult} is saved to the {@link AuthenticationContext} on a successful login.
  * On a failed login, the {@link LoginException} will be preserved in the {@link AuthenticationContext}.
  */
-public class ValidateUsernamePasswordAgainstJAAS extends AbstractAuthenticationAction {
+public class ValidateUsernamePasswordAgainstJAAS extends AbstractValidationAction {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ValidateUsernamePasswordAgainstJAAS.class);
@@ -176,29 +176,28 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractAuthenticationA
 
         try {
             log.debug("{} attempting to authenticate user {}", getLogPrefix(), upContext.getUsername());
-            Subject subject = authenticate();
+            authenticate();
             log.debug("{} login by '{}' succeeded", getLogPrefix(), upContext.getUsername());
-            subject.getPrincipals().add(new UsernamePrincipal(upContext.getUsername()));
-            AuthenticationResult result =
-                    new AuthenticationResult(authenticationContext.getAttemptedFlow().getId(), subject);
-            authenticationContext.setAuthenticationResult(result);
+            buildAuthenticationResult(authenticationContext);
         } catch (Exception e) {
             log.debug(getLogPrefix() + " login by '" + upContext.getUsername() + "' failed", e);
-            authenticationContext.setLoginException(e);
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_CREDENTIALS);
+            handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.INVALID_CREDENTIALS);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) throws AuthenticationException {
+        subject.getPrincipals().add(new UsernamePrincipal(upContext.getUsername()));
+        return subject;
     }
     
     /**
      * Create a JAAS configuration and attempt a login with it.
      * 
-     * @return  the subject returned by the JAAS login process
      * @throws LoginException if the JAAS login process fails
      * @throws NoSuchAlgorithmException if a JAAS configuration cannot be created
      */
-    @Nonnull private Subject authenticate() throws LoginException, NoSuchAlgorithmException {
-        
-        Subject subject = new Subject();
+    private void authenticate() throws LoginException, NoSuchAlgorithmException {
         
         javax.security.auth.login.LoginContext jaasLoginCtx;
         
@@ -206,18 +205,17 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractAuthenticationA
             log.debug("{} using custom JAAS configuration type {} with parameters of type {}", getLogPrefix(),
                     getLoginConfigType(), getLoginConfigParameters().getClass().getName());
             Configuration loginConfig = Configuration.getInstance(getLoginConfigType(), getLoginConfigParameters());
-            jaasLoginCtx = new javax.security.auth.login.LoginContext(getLoginConfigName(), subject,
+            jaasLoginCtx = new javax.security.auth.login.LoginContext(getLoginConfigName(), getSubject(),
                     new SimpleCallbackHandler(), loginConfig);
         } else {
             log.debug("{} using system JAAS configuration", getLogPrefix());
-            jaasLoginCtx = new javax.security.auth.login.LoginContext(getLoginConfigName(), subject,
+            jaasLoginCtx = new javax.security.auth.login.LoginContext(getLoginConfigName(), getSubject(),
                     new SimpleCallbackHandler());
         }
 
         jaasLoginCtx.login();
-        return jaasLoginCtx.getSubject();
     }
-
+    
     /**
      * A callback handler that provides static name and password data to a JAAS login process.
      * 

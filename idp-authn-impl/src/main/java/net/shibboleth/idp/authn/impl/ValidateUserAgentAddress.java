@@ -23,8 +23,9 @@ import java.util.Collections;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.security.auth.Subject;
 
-import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
@@ -65,7 +66,7 @@ import com.google.common.collect.Iterables;
  * content of getAddress() satisfies a configured address range, an {@link AuthenticationResult} is
  * saved to the {@link AuthenticationContext}.
  */
-public class ValidateUserAgentAddress extends AbstractAuthenticationAction {
+public class ValidateUserAgentAddress extends AbstractValidationAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateUserAgentAddress.class);
@@ -168,9 +169,7 @@ public class ValidateUserAgentAddress extends AbstractAuthenticationAction {
         }
         
         log.debug("{} authenticated user agent", getLogPrefix());
-        AuthenticationResult result = new AuthenticationResult(authenticationContext.getAttemptedFlow().getId(),
-                new UsernamePrincipal(getPrincipalName()));
-        authenticationContext.setAuthenticationResult(result);
+        buildAuthenticationResult(authenticationContext);
     }
 
     /**
@@ -190,6 +189,12 @@ public class ValidateUserAgentAddress extends AbstractAuthenticationAction {
         }
         
         return false;
+    }
+
+    /** {@inheritDoc} */
+    @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) throws AuthenticationException {
+        subject.getPrincipals().add(new UsernamePrincipal(getPrincipalName()));
+        return subject;
     }
 
 }
