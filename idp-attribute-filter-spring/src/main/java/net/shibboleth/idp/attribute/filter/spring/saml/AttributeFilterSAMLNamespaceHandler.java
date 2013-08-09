@@ -19,7 +19,6 @@ package net.shibboleth.idp.attribute.filter.spring.saml;
 
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
-// TODO incomplete port from v2
 /** Namespace handler for the attribute filter engine SAML match functions. */
 public class AttributeFilterSAMLNamespaceHandler extends BaseSpringNamespaceHandler {
 
@@ -47,14 +46,12 @@ public class AttributeFilterSAMLNamespaceHandler extends BaseSpringNamespaceHand
         registerBeanDefinitionParser(AttributeIssuerNameIdFormatRuleParser.SCHEMA_TYPE,
                 new AttributeIssuerNameIdFormatRuleParser());
 
-        registerBeanDefinitionParser(AttributeIssuerInEntityGroupRuleParser.SCHEMA_TYPE, 
+        registerBeanDefinitionParser(AttributeIssuerInEntityGroupRuleParser.SCHEMA_TYPE,
                 new AttributeIssuerInEntityGroupRuleParser());
 
         registerBeanDefinitionParser(AttributeRequesterInEntityGroupRuleParser.SCHEMA_TYPE,
                 new AttributeRequesterInEntityGroupRuleParser());
-        /**
-         * registerBeanDefinitionParser(AttributeInMetadataMatchFunctorBeanDefinitionParser.SCHEMA_TYPE, new
-         * AttributeInMetadataMatchFunctorBeanDefinitionParser());
-         */
+
+        registerBeanDefinitionParser(AttributeInMetadataRuleParser.SCHEMA_TYPE, new AttributeInMetadataRuleParser());
     }
 }
