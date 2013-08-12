@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An action that checks for a {@link UsernamePasswordContext} and directly produces an {@link AuthenticationResult}
- * based on that identity by acquiring a TGT and optional service ticket from Kerberos.
+ * based on that identity by binding to LDAP.
  *  
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link AuthnEventIds#INVALID_AUTHN_CTX}
@@ -47,7 +47,8 @@ import org.slf4j.LoggerFactory;
  * an {@link AuthenticationResult} is saved to the {@link AuthenticationContext} on a successful login.
  * On a failed login, the {@link AbstractValidationAction#handleError()} method is called.
  */
-public class ValidateUsernamePasswordAgainstKerberos extends AbstractValidationAction {
+public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationAction {
+
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ValidateUsernamePasswordAgainstKerberos.class);
@@ -91,5 +92,5 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractValidationA
         subject.getPrincipals().add(new UsernamePrincipal(upContext.getUsername()));
         return subject;
     }
-
+    
 }

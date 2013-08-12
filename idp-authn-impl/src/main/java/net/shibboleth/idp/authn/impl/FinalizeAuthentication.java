@@ -35,9 +35,7 @@ import com.google.common.base.Strings;
 /**
  * An authentication action that runs after a completed authentication flow (or the reuse
  * of an active result) and transfers information from the {@link AuthenticationContext}
- * to a {@link SubjectContext} for use by other components.
- * 
- * <p>The {@link SubjectContext} is attached as a direct child of the {@link ProfileRequestContext}.</p>
+ * to a {@link SubjectContext} child of the {@link ProfileRequestContext} for use by other components.
  * 
  * <p>The context is populated based on the presence of a canonical principal name, and also includes
  * the completed {@link AuthenticationResult} and any other active results found in the context.</p>
@@ -46,7 +44,7 @@ import com.google.common.base.Strings;
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
  * @post If AuthenticationContext.getCanonicalPrincipalName() != null,
  * then ProfileRequestContext.getSubcontext(SubjectContext.class, false) != null 
- * @post AuthenticationContext.setCompletionInstant() was called.
+ * @post AuthenticationContext.setCompletionInstant() was called
  */
 public class FinalizeAuthentication extends AbstractAuthenticationAction {
 
@@ -54,11 +52,11 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
-        if (!Strings.isNullOrEmpty(authenticationContext.getCanonicalPrincipalName())) {
-            return true;
+        if (Strings.isNullOrEmpty(authenticationContext.getCanonicalPrincipalName())) {
+            return false;
         }
         
-        return false;
+        return true;
     }
     
     /** {@inheritDoc} */

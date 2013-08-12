@@ -70,7 +70,7 @@ public class SubjectContext extends BaseContext {
      * 
      * @param name the canonical principal name
      */
-    public void setPrincipalName(@Nullable String name) {
+    public void setPrincipalName(@Nullable final String name) {
         principalName = name;
     }
 

@@ -174,7 +174,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
 
         log.debug("{} validated user '{}'", getLogPrefix(), usernameContext.getUsername());
         
-        buildAuthenticationResult(authenticationContext);
+        buildAuthenticationResult(profileRequestContext, authenticationContext);
     }
     
     /**

@@ -26,6 +26,7 @@ import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
@@ -33,7 +34,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.EventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -213,18 +213,21 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
             
     /**
      * Normally called upon successful completion of credential validation, calls the {@link #populateSubject(Subject)}
-     * abstract method, and stores an {@AuthenticationResult} in the {@link AuthenticationContext}.
+     * abstract method, stores an {@AuthenticationResult} in the {@link AuthenticationContext}, and attaches a
+     * {@link SubjectCanonicalizationContext} to the {@link ProfileRequestContext} in preparation for c14n to occur.
      * 
+     * @param profileRequestContext the current profile request context
      * @param authenticationContext the current authentication context
      * 
      * @throws AuthenticationException thrown if there is a problem performing the authentication action
      */
-    protected void buildAuthenticationResult(@Nonnull final AuthenticationContext authenticationContext)
-            throws AuthenticationException {
+    protected void buildAuthenticationResult(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         
-        authenticationContext.setAuthenticationResult(
-                new AuthenticationResult(authenticationContext.getAttemptedFlow().getId(),
-                        populateSubject(authenticatedSubject)));
+        AuthenticationResult result = new AuthenticationResult(authenticationContext.getAttemptedFlow().getId(),
+                populateSubject(authenticatedSubject));
+        authenticationContext.setAuthenticationResult(result);
+        profileRequestContext.addSubcontext(new SubjectCanonicalizationContext(result.getSubject()), true);
     }
 
     /**

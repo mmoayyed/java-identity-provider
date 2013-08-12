@@ -86,9 +86,9 @@ public final class AuthenticationResult {
     }
     
     /**
-     * Get the Subject collection identifying the authenticated entity.
+     * Get the Subject identifying the authenticated entity.
      * 
-     * @return a Subject collection
+     * @return a Subject identifying the authenticated entity
      */
     @Nonnull public Subject getSubject() {
         return subject;

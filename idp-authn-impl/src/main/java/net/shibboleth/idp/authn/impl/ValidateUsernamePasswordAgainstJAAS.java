@@ -30,6 +30,7 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginException;
 
+import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationResult;
@@ -60,7 +61,7 @@ import org.slf4j.LoggerFactory;
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false).getAttemptedFlow() != null</pre>
  * @post If AuthenticationContext.getSubcontext(UsernamePasswordContext.class, false) != null, then
  * an {@link AuthenticationResult} is saved to the {@link AuthenticationContext} on a successful login.
- * On a failed login, the {@link LoginException} will be preserved in the {@link AuthenticationContext}.
+ * On a failed login, the {@link AbstractValidationAction#handleError()} method is called.
  */
 public class ValidateUsernamePasswordAgainstJAAS extends AbstractValidationAction {
 
@@ -178,7 +179,7 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractValidationActio
             log.debug("{} attempting to authenticate user {}", getLogPrefix(), upContext.getUsername());
             authenticate();
             log.debug("{} login by '{}' succeeded", getLogPrefix(), upContext.getUsername());
-            buildAuthenticationResult(authenticationContext);
+            buildAuthenticationResult(profileRequestContext, authenticationContext);
         } catch (Exception e) {
             log.debug(getLogPrefix() + " login by '" + upContext.getUsername() + "' failed", e);
             handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.INVALID_CREDENTIALS);

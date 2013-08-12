@@ -169,7 +169,7 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
         }
         
         log.debug("{} authenticated user agent", getLogPrefix());
-        buildAuthenticationResult(authenticationContext);
+        buildAuthenticationResult(profileRequestContext, authenticationContext);
     }
 
     /**

@@ -18,92 +18,88 @@
 package net.shibboleth.idp.authn.impl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
-import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
 
 /**
  * An authentication action that runs at the end of a completed authentication flow and
- * finalizes the content of the {@link AuthenticationResult} produced.
+ * finalizes the content of the {@link AuthenticationResult} it produced.
  * 
- * <p>The {@link Subject} is fed into the {@link SubjectCanonicalizer} returned by
- * {@link AuthenticationFlowDescriptor#getSubjectCanonicalizer()}.</p>
+ * <p>The principal name obtained from a {@link SubjectCanonicalizationContext} child of the
+ * {@link ProfileRequestContext} is transferred into the {@link AuthenticationResult}.</p>
+ * 
+ * <p>If the {@link AuthenticationContext} contains a pre-existing principal name, it is compared
+ * to the value placed in the result, possibly resulting in an {@link AuthnEventIds#IDENTITY_SWITCH}
+ * event. Otherwise, the principal name is copied into the {@link AuthenticationContext}.</p>
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @event {@link AuthnEventIds#IDENTITY_SWITCH} if the c14n result does not match
+ * @event {@link AuthnEventIds#INVALID_SUBJECT_C14N_CTX}
+ * @event {@link AuthnEventIds#IDENTITY_SWITCH}
  * {@link AuthenticationContext#getCanonicalPrincipalName()}
- * @event {@link AuthnEventIds#INVALID_CREDENTIALS} - if the c14n step fails
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
  * @post If AuthenticationContext.getAuthenticationResult() != null,
  * then the steps above are performed.
- * @post AuthenticationContext.getAuthenticationResult() is updated.
  */
 public class FinalizeAuthenticationFlow extends AbstractAuthenticationAction {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(FinalizeAuthenticationFlow.class);
     
-    /** Authentication flow to finalize. */
-    private AuthenticationFlowDescriptor attemptedFlow;
+    /** SubjectCanonicalizationContext to operate on. */
+    @Nullable private SubjectCanonicalizationContext scContext;
     
     /** Result of flow. */
-    private AuthenticationResult authenticationResult;
+    @Nullable private AuthenticationResult authenticationResult;
     
     /** Principal currently active from session. */
-    private String principalFromSession;
+    @Nullable private String principalFromSession;
     
     /** {@inheritDoc} */
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
-        attemptedFlow = authenticationContext.getAttemptedFlow();
         authenticationResult = authenticationContext.getAuthenticationResult();
-        
-        if (attemptedFlow != null && authenticationResult != null) {
-            principalFromSession = authenticationContext.getCanonicalPrincipalName();
-            return true;
+        if (authenticationResult == null) {
+            return false;
+        }
+                
+        scContext = profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, false);
+        if (scContext == null || Strings.isNullOrEmpty(scContext.getPrincipalName())) {
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
+            return false;
         }
         
-        return false;
+        principalFromSession = authenticationContext.getCanonicalPrincipalName();
+        return true;
     }
     
     /** {@inheritDoc} */
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         
-        log.debug("{} performing subject canonicalization using {}", getLogPrefix(),
-                attemptedFlow.getSubjectCanonicalizer().getId());
-        try {
-            authenticationResult.setCanonicalPrincipalName(
-                    attemptedFlow.getSubjectCanonicalizer().canonicalize(authenticationResult.getSubject()));
-        } catch (SubjectCanonicalizationException e) {
-            log.error(getLogPrefix() + " error canonicalizing subject", e);
-            authenticationContext.getSubcontext(AuthenticationErrorContext.class, true).addException(e);
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_CREDENTIALS);
-            return;
-        }
+        log.debug("{} result of subject canonicalization: '{}'", getLogPrefix(), scContext.getPrincipalName());
         
-        log.debug("{} result of subject canonicalization: '{}'", getLogPrefix(),
-                authenticationResult.getCanonicalPrincipalName());
+        authenticationResult.setCanonicalPrincipalName(scContext.getPrincipalName());
         
         if (principalFromSession != null) {
             if (!principalFromSession.equals(authenticationResult.getCanonicalPrincipalName())) {
                 log.warn("{} detected identity switch from '{}' to '{}'", getLogPrefix(), principalFromSession,
                         authenticationResult.getCanonicalPrincipalName());
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.IDENTITY_SWITCH);
-                return;
             }
         } else {
             authenticationContext.setCanonicalPrincipalName(authenticationResult.getCanonicalPrincipalName());
