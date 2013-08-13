@@ -46,7 +46,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  * directly exposed as properties of the flow, and others can be found by examining the list
  * of extended {@link Principal}s that the flow exposes.</p>
  */
-public class AuthenticationFlowDescriptor implements IdentifiableComponent {
+public class AuthenticationFlowDescriptor implements IdentifiableComponent, PrincipalSupportingComponent {
 
     /** The unique identifier of the authentication flow. */
     private final String flowId;
@@ -187,14 +187,7 @@ public class AuthenticationFlowDescriptor implements IdentifiableComponent {
         return true;
     }
     
-    /**
-     * Get an immutable set of supported non-user-specific principals that the flow may produce when it operates.
-     * 
-     * @param <T> type of Principal to inquire on
-     * @param c type of Principal to inquire on
-     * 
-     * @return a set of supported principals
-     */
+    /** {@inheritDoc} */
     @Nonnull @NonnullElements @Unmodifiable public <T extends Principal> Set<T> getSupportedPrincipals(Class<T> c) {
         return supportedPrincipals.getPrincipals(c);
     }

@@ -19,14 +19,17 @@ package net.shibboleth.idp.authn;
 
 import java.security.Principal;
 import java.util.Collections;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.security.auth.Subject;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -40,7 +43,7 @@ import com.google.common.collect.ImmutableSet;
  * may represent a combination of separate exchanges that make up a single overall result. 
  */
 @ThreadSafe
-public final class AuthenticationResult {
+public class AuthenticationResult implements PrincipalSupportingComponent {
 
     /** The Subject established by the authentication result. */
     @Nonnull private final Subject subject;
@@ -94,6 +97,12 @@ public final class AuthenticationResult {
         return subject;
     }
 
+    /** {@inheritDoc} */
+    @Nonnull @NonnullElements @Unmodifiable public <T extends Principal> Set<T> getSupportedPrincipals(
+            @Nonnull final Class<T> c) {
+        return subject.getPrincipals(c);
+    }
+    
     /**
      * Get the canonical principal name derived from the subject, if any.
      * 

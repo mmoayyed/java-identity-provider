@@ -20,6 +20,7 @@ package net.shibboleth.idp.authn;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.security.auth.Subject;
@@ -46,7 +47,8 @@ import com.google.common.collect.Lists;
  * A base class for authentication related actions that validate credentials and produce an
  * {@link AuthenticationResult}.
  */
-public abstract class AbstractValidationAction extends AbstractAuthenticationAction {
+public abstract class AbstractValidationAction extends AbstractAuthenticationAction
+    implements PrincipalSupportingComponent {
 
     /** Basis for {@link AuthenticationResult}. */
     @Nonnull private final Subject authenticatedSubject;
@@ -168,6 +170,11 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         accountDisabledErrors = Lists.newArrayList(Collections2.filter(messages, Predicates.notNull()));
     }
     
+    /** {@inheritDoc} */
+    @Nonnull @NonnullElements @Unmodifiable public <T extends Principal> Set<T> getSupportedPrincipals(
+            @Nonnull final Class<T> c) {
+        return authenticatedSubject.getPrincipals(c);
+    }
     
     /**
      * Set supported non-user-specific principals that the action will include in the subjects
