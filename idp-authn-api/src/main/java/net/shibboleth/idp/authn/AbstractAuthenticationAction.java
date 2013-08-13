@@ -51,23 +51,18 @@ public abstract class AbstractAuthenticationAction extends AbstractProfileAction
     public AbstractAuthenticationAction() {
         super();
 
-        authnCtxLookupStrategy =
-                new ChildContextLookup<ProfileRequestContext, AuthenticationContext>(
-                        AuthenticationContext.class, false);
+        authnCtxLookupStrategy = new ChildContextLookup(AuthenticationContext.class, false);
     }
 
     /**
-     * Constructor.
+     * Set the context lookup strategy.
      * 
-     * @param strategy lookup function to locate {@link AuthenticationContext}
+     * @param strategy  lookup strategy function for {@link AuthenticationContext}.
      */
-    public AbstractAuthenticationAction(
-            @Nonnull Function<ProfileRequestContext, AuthenticationContext> strategy) {
-        super();
-
-        authnCtxLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy function cannot be null");
+    public void setLookupStrategy(@Nonnull final Function<ProfileRequestContext, AuthenticationContext> strategy) {
+        authnCtxLookupStrategy = Constraint.isNotNull(strategy, "Strategy cannot be null");
     }
-
+    
     /** {@inheritDoc} */
     protected final boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext)
             throws ProfileException {

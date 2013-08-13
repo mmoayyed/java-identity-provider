@@ -26,11 +26,15 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
+
+import com.google.common.base.Function;
 
 /**
  * An action that operates on a {@link SubjectCanonicalizationContext} child of the current
@@ -46,16 +50,35 @@ import org.opensaml.profile.context.ProfileRequestContext;
  */
 public class SimpleSubjectCanonicalization extends AbstractProfileAction {
 
+    /**
+     * Strategy used to find the {@link SubjectCanonicalizationContext} from the
+     * {@link ProfileRequestContext}.
+     */
+    @Nonnull private Function<ProfileRequestContext, SubjectCanonicalizationContext> scCtxLookupStrategy;
+    
     /** SubjectCanonicalizationContext to operate on. */
     @Nullable private SubjectCanonicalizationContext scContext;
     
     /** Constructor. */
     SimpleSubjectCanonicalization() {
+        super();
+        
+        scCtxLookupStrategy = new ChildContextLookup(SubjectCanonicalizationContext.class, false);
     }
 
+    /**
+     * Set the context lookup strategy.
+     * 
+     * @param strategy  lookup strategy function for {@link SubjectCanonicalizationContext}.
+     */
+    public void setLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, SubjectCanonicalizationContext> strategy) {
+        scCtxLookupStrategy = Constraint.isNotNull(strategy, "Strategy cannot be null");
+    }
+    
     /** {@inheritDoc} */
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
-        scContext = profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, false);
+        scContext = scCtxLookupStrategy.apply(profileRequestContext);
         if (scContext == null) {
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
             return false;
