@@ -19,7 +19,6 @@ package net.shibboleth.idp.authn.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.security.URIParameter;
 
 import javax.security.auth.login.LoginException;
