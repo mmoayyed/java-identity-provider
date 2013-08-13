@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.authn.impl;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -30,6 +29,7 @@ import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
+import net.shibboleth.utilities.java.support.net.UriSupport;
 
 import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -48,8 +48,8 @@ import com.unboundid.ldap.sdk.LDAPException;
 
 /** {@link ValidateUsernamePasswordAgainstJAAS} unit test. */
 public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthenticationContextTest {
-    
-    private ValidateUsernamePasswordAgainstJAAS action; 
+
+    private ValidateUsernamePasswordAgainstJAAS action;
 
     private InMemoryDirectoryServer directoryServer;
 
@@ -74,10 +74,10 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
     @AfterClass public void teardownDirectoryServer() {
         directoryServer.shutDown(true);
     }
-    
+
     @BeforeMethod public void setUp() throws Exception {
         super.setUp();
-        
+
         action = new ValidateUsernamePasswordAgainstJAAS();
         action.setUnknownUsernameErrors(ImmutableList.of("DN_RESOLUTION_FAILURE"));
         action.setInvalidPasswordErrors(ImmutableList.of("INVALID_CREDENTIALS"));
@@ -85,15 +85,15 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
 
     @Test public void testMissingFlow() throws Exception {
         action.initialize();
-        
+
         action.execute(prc);
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_AUTHN_CTX);
     }
-    
+
     @Test public void testMissingUser() throws Exception {
         prc.getSubcontext(AuthenticationContext.class, false).setAttemptedFlow(authenticationFlows.get(0));
         action.initialize();
-        
+
         action.execute(prc);
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
     }
@@ -103,7 +103,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
         ac.setAttemptedFlow(authenticationFlows.get(0));
         ac.getSubcontext(UsernamePasswordContext.class, true);
         action.initialize();
-        
+
         action.execute(prc);
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
     }
@@ -117,9 +117,9 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         action.initialize();
-        
+
         doExtract(prc);
-        
+
         action.execute(prc);
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
         AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class, false);
@@ -137,11 +137,12 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
         ac.setAttemptedFlow(authenticationFlows.get(0));
         action.setLoginConfigType("JavaLoginConfig");
         System.out.println(getCurrentDir());
-        action.setLoginConfigParameters(new URIParameter(new URI(getCurrentDir() + "src/test/resources/net/shibboleth/idp/authn/impl/jaas.config")));
+        action.setLoginConfigParameters(new URIParameter(UriSupport.fileURIFromAbsolutePath(getCurrentDir()
+                + "/src/test/resources/net/shibboleth/idp/authn/impl/jaas.config")));
         action.initialize();
-        
+
         doExtract(prc);
-        
+
         action.execute(prc);
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
         AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class, false);
@@ -160,11 +161,12 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
         ac.setAttemptedFlow(authenticationFlows.get(0));
         action.setLoginConfigType("JavaLoginConfig");
         System.out.println(getCurrentDir());
-        action.setLoginConfigParameters(new URIParameter(new URI(getCurrentDir() + "src/test/resources/net/shibboleth/idp/authn/impl/jaas.config")));
+        action.setLoginConfigParameters(new URIParameter(UriSupport.fileURIFromAbsolutePath(getCurrentDir()
+                + "/src/test/resources/net/shibboleth/idp/authn/impl/jaas.config")));
         action.initialize();
-        
+
         doExtract(prc);
-        
+
         action.execute(prc);
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
         AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class, false);
@@ -172,7 +174,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
         Assert.assertFalse(errorCtx.isUnknownUsername());
         Assert.assertTrue(errorCtx.isInvalidPassword());
     }
-    
+
     @Test public void testAuthorized() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("username", "PETER_THE_PRINCIPAL");
@@ -184,16 +186,17 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
 
         action.setLoginConfigType("JavaLoginConfig");
         System.out.println(getCurrentDir());
-        action.setLoginConfigParameters(new URIParameter(new URI(getCurrentDir() + "src/test/resources/net/shibboleth/idp/authn/impl/jaas.config")));
+        action.setLoginConfigParameters(new URIParameter(UriSupport.fileURIFromAbsolutePath(getCurrentDir()
+                + "/src/test/resources/net/shibboleth/idp/authn/impl/jaas.config")));
         action.initialize();
-        
+
         doExtract(prc);
-        
+
         action.execute(prc);
         ActionTestingSupport.assertProceedEvent(prc);
         Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(
-                UsernamePrincipal.class).iterator().next().getName(), "PETER_THE_PRINCIPAL");
+        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
+                .next().getName(), "PETER_THE_PRINCIPAL");
     }
 
     private void doExtract(ProfileRequestContext prc) throws Exception {
@@ -204,11 +207,8 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
 
     private String getCurrentDir() throws IOException {
 
-        String currentDir = new java.io.File(".").getCanonicalPath();
+        final String currentDir = new java.io.File(".").getCanonicalPath();
 
-        currentDir = currentDir.replace(File.separatorChar, '/');
-        currentDir = "file://" + currentDir + "/";
-
-        return currentDir;
+        return currentDir.replace(File.separatorChar, '/');
     }
 }
