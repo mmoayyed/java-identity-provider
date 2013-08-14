@@ -288,7 +288,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         final Attribute resolvedAttribute = definition.resolve(resolutionContext);
 
         if (null == resolvedAttribute) {
-            log.debug("{} attribute definition {} produced no attribute", logPrefix, attributeId);
+            log.warn("{} attribute definition {} produced no attribute", logPrefix, attributeId);
         } else {
             log.debug("{} attribute definition {} produced an attribute with {} values", new Object[] {logPrefix,
                     attributeId, resolvedAttribute.getValues().size(),});
