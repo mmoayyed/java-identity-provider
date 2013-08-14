@@ -41,7 +41,8 @@ public final class PluginDependencySupport {
 
     /**
      * Gets the values, as a single set, from all dependencies. This method only supports dependencies which contain an
-     * attribute specifier (i.e. {@link ResolverPluginDependency#getDependencyAttributeId()} does not equal null).
+     * attribute specifier (i.e. {@link ResolverPluginDependency#getDependencyAttributeId()} does not equal null). It
+     * is therefore used inside Attribute definitions which only process a single attribute as input.
      * 
      * <p>
      * <strong>NOTE</strong>, this method does *not* actually trigger any attribute definition or data connector
@@ -54,16 +55,16 @@ public final class PluginDependencySupport {
      * 
      * @return the merged value set
      */
-    public static Set<AttributeValue> getMergedAttributeValues(
+    @Nonnull @NonnullElements public static Set<AttributeValue> getMergedAttributeValues(
             @Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull @NonnullElements final Collection<ResolverPluginDependency> dependencies) {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
         Constraint.isNotNull(dependencies, "Resolver dependency collection can not be null");
 
-        Set<AttributeValue> values = new HashSet<AttributeValue>();
+        final Set<AttributeValue> values = new HashSet<AttributeValue>();
 
-        Attribute resolvedAttribute;
         for (ResolverPluginDependency dependency : dependencies) {
+            final Attribute resolvedAttribute;
             Constraint.isNotNull(dependency, "Resolver dependency can not be null");
 
             ResolvedAttributeDefinition attributeDefinition =
@@ -96,7 +97,8 @@ public final class PluginDependencySupport {
      * Gets the values from all dependencies. Attributes, with the same identifier but from different resolver plugins,
      * will have their values merged into a single set within this method's returned map. This method is the equivalent
      * of calling {@link #getMergedAttributeValues(AttributeResolutionContext, Collection)} for all attributes resolved
-     * by all the given dependencies.
+     * by all the given dependencies.  This is therefore used when an attribute definition may have multiple input
+     * attributes (for instance scripted or templated definitions).
      * 
      * <p>
      * <strong>NOTE</strong>, this method does *not* actually trigger any attribute definition or data connector
@@ -113,19 +115,19 @@ public final class PluginDependencySupport {
             @Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull final Collection<ResolverPluginDependency> dependencies) {
 
-        HashMap<String, Set<AttributeValue>> result = new HashMap<String, Set<AttributeValue>>();
+        final HashMap<String, Set<AttributeValue>> result = new HashMap<String, Set<AttributeValue>>();
 
         for (ResolverPluginDependency dependency : dependencies) {
             Constraint.isNotNull(dependency, "Resolver dependency can not be null");
 
-            ResolvedAttributeDefinition attributeDefinition =
+            final ResolvedAttributeDefinition attributeDefinition =
                     resolutionContext.getResolvedAttributeDefinitions().get(dependency.getDependencyPluginId());
             if (attributeDefinition != null) {
                 addAttributeValues(attributeDefinition.getResolvedAttribute(), result);
                 continue;
             }
 
-            ResolvedDataConnector dataConnector =
+            final ResolvedDataConnector dataConnector =
                     resolutionContext.getResolvedDataConnectors().get(dependency.getDependencyPluginId());
             if (dataConnector != null) {
                 if (null != dataConnector.getResolvedAttributes()) {

@@ -117,7 +117,7 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException;
     
     /**
-     * return a string which is to be prepended to all log messages.
+     * Return a string which is to be prepended to all log messages.
      * 
      * @return "Data connector '<definitionID>' :"
      */

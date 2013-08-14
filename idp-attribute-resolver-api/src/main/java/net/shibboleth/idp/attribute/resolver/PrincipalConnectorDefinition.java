@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
 import org.opensaml.messaging.context.BaseContext;
 
 /**
- * Definition of a Principal Connector. <b/> This is the component which takes a context and produces the unique
+ * Definition of a Principal Connector. <br/> This is the component which takes a context and produces the unique
  * principal. Examples are
  * <ul>
  * <li><em>BaseSubjectNamePrincipalConnectors</em> which sit at the beginning of (for instance) the AA flow and collect

@@ -27,7 +27,11 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Objects;
 
-/** Represents the dependency of one {@link BaseResolverPlugin} upon another plugin. */
+/**
+ * Represents the dependency of one {@link BaseResolverPlugin} upon another plugin. Note that this serves for
+ * dependencies both on data connectors (in which case the {@link #dependencyAttributeId} member will be null) or
+ * attributes. The dependency analysis stages is aware of this difference and relies on it.
+ */
 @ThreadSafe
 public final class ResolverPluginDependency {
 
@@ -56,14 +60,15 @@ public final class ResolverPluginDependency {
     @Nonnull public String getDependencyPluginId() {
         return dependencyPluginId;
     }
-    
-    /** Set the attributeId.
+
+    /**
+     * Set the attributeId.
      * 
      * @param attributeId ID of the attribute, produced by the identified plugin, whose values will be used by the
      *            dependent plugin
      */
     public void setDependencyAttributeId(@Nullable String attributeId) {
-        dependencyAttributeId =StringSupport.trimOrNull(attributeId);
+        dependencyAttributeId = StringSupport.trimOrNull(attributeId);
     }
 
     /**

@@ -24,18 +24,23 @@ import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 
-/** A context which carries Information about the Recipient of the attribute.  This is the
- *  principal, the "self" entityID and the RecipientEntityID. */
+/** A context which carries Information about the recipient of the attribute.  This is the
+ *  principal, the "self" entityID and the RecipientEntityID.
+ *  <br/>TODO
+ *  This context is here mostly as a temporary scaffolding to allow development of the 
+ *  attribute filter and resolver.  We expect it to change.
+ *   
+ *   */
 @NotThreadSafe
 public class AttributeRecipientContext extends BaseContext {
 
-    /** The unique principal. This is required by some resolvers and injected during setup. */
+    /** The unique principal. This is required by some resolvers and filters and injected during setup. */
     private String principal;
     
-    /** The local entityID. This is required by some resolvers and injected during setup. */
+    /** The local entityID. This is required by some resolvers and filters and injected during setup. */
     private String attributeIssuerID;
     
-    /** The other entityID. This is required by some resolvers and injected during setup. */
+    /** The other entityID. This is required by some resolvers and filters and injected during setup. */
     private String attributeRecipientID;
     
     /** How was the principal Authenticated? */

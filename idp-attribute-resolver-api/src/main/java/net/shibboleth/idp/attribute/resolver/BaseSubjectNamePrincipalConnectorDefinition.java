@@ -23,6 +23,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -41,8 +42,10 @@ import com.google.common.collect.ImmutableSet;
 
 /**
  * The base implementation of all SAML Subject Name Connectors.<b/> This takes on the heavy lifting of finding the
- * MessageContext containing the SAML message being processed, looking up the nameID and so forth. 
- * Concrete implementations take care of the other plumbing.
+ * MessageContext containing the SAML message being processed, looking up the nameID and so forth. Concrete
+ * implementations take care of the other plumbing.
+ * 
+ * TODO This is highly likly to change, or even become irrelevant.
  */
 public abstract class BaseSubjectNamePrincipalConnectorDefinition extends BaseResolverPlugin<String> implements
         PrincipalConnectorDefinition<AttributeResolutionContext> {
@@ -51,6 +54,9 @@ public abstract class BaseSubjectNamePrincipalConnectorDefinition extends BaseRe
      * The nameID format we are interested in.
      */
     private String nameIDFormat;
+
+    /** The log prefix. */
+    private String logPrefix;
 
     /**
      * Those relying parties we serve.
@@ -101,14 +107,13 @@ public abstract class BaseSubjectNamePrincipalConnectorDefinition extends BaseRe
     }
 
     /**
-     * Function to set up the context navigation mechanism. This is used to go from a
-     * {@link AttributeResolutionContext} to a {@link MessageContext} containing a SAML protocol message represented by
-     * a {@link SAMLObject}.
+     * Function to set up the context navigation mechanism. This is used to go from a {@link AttributeResolutionContext}
+     * to a {@link MessageContext} containing a SAML protocol message represented by a {@link SAMLObject}.
      * 
-     * @param function the navigation function. 
+     * @param function the navigation function.
      */
-    public void setContextFinderStrategy(final Function<AttributeResolutionContext, 
-            MessageContext<SAMLObject>> function) {
+    public void
+            setContextFinderStrategy(final Function<AttributeResolutionContext, MessageContext<SAMLObject>> function) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         contextFinderStrategy = function;
     }
@@ -120,12 +125,12 @@ public abstract class BaseSubjectNamePrincipalConnectorDefinition extends BaseRe
      * @return the {@link MessageContext} never null.
      * @throws ResolutionException if we could not find the context.
      */
-    @Nonnull protected MessageContext<SAMLObject> locateSamlMessageContext(
-            final AttributeResolutionContext inputContext) throws ResolutionException {
+    @Nonnull protected MessageContext<SAMLObject>
+            locateSamlMessageContext(final AttributeResolutionContext inputContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         final MessageContext<SAMLObject> samlContext = contextFinderStrategy.apply(inputContext);
         if (null == samlContext) {
-            throw new ResolutionException("Principal Connector" + getId() + " could not locate input message");
+            throw new ResolutionException(getLogPrefix() + " could not locate input message");
         }
         return samlContext;
     }
@@ -133,11 +138,12 @@ public abstract class BaseSubjectNamePrincipalConnectorDefinition extends BaseRe
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
+        logPrefix = null;
         if (null == nameIDFormat) {
-            throw new ComponentInitializationException("Principal Connector " + getId() + " no valid format supplied");
+            throw new ComponentInitializationException(getLogPrefix() + " no valid format supplied");
         }
         if (null == contextFinderStrategy) {
-            throw new ComponentInitializationException("Principal Connector " + getId()
+            throw new ComponentInitializationException(getLogPrefix()
                     + " no valid SAML context finder strategy supplied");
         }
     }
@@ -163,8 +169,9 @@ public abstract class BaseSubjectNamePrincipalConnectorDefinition extends BaseRe
      * @throws ResolutionException if we could not navigate the structures directly.
      */
     @Nonnull public String formatOf(final AttributeResolutionContext context) throws ResolutionException {
-        final SAMLObject object = locateSamlMessageContext(context)
-                .getSubcontext(SamlSubjectNameIdentifierContext.class, true).getSubjectNameIdentifier();
+        final SAMLObject object =
+                locateSamlMessageContext(context).getSubcontext(SamlSubjectNameIdentifierContext.class, true)
+                        .getSubjectNameIdentifier();
 
         if (object instanceof NameID) {
             final NameID nameId = (NameID) object;
@@ -173,7 +180,7 @@ public abstract class BaseSubjectNamePrincipalConnectorDefinition extends BaseRe
             final NameIdentifier nameIdentifier = (NameIdentifier) object;
             return nameIdentifier.getFormat();
         }
-        throw new ResolutionException("Principal Connector" + getId() + " message was a "
+        throw new ResolutionException(getLogPrefix() + " message was a "
                 + (object == null ? "null" : object.getClass().toString()) + ", not a NameId or a NameIdentifier");
     }
 
@@ -186,8 +193,9 @@ public abstract class BaseSubjectNamePrincipalConnectorDefinition extends BaseRe
      * @throws ResolutionException if we could not navigate the structures directly.
      */
     @Nonnull protected String contentOf(final AttributeResolutionContext context) throws ResolutionException {
-        final SAMLObject object = locateSamlMessageContext(context)
-                .getSubcontext(SamlSubjectNameIdentifierContext.class, true).getSubjectNameIdentifier();
+        final SAMLObject object =
+                locateSamlMessageContext(context).getSubcontext(SamlSubjectNameIdentifierContext.class, true)
+                        .getSubjectNameIdentifier();
 
         if (object instanceof NameID) {
             final NameID nameId = (NameID) object;
@@ -196,8 +204,25 @@ public abstract class BaseSubjectNamePrincipalConnectorDefinition extends BaseRe
             final NameIdentifier nameIdentifier = (NameIdentifier) object;
             return nameIdentifier.getNameIdentifier();
         }
-        throw new ResolutionException("Principal Connector" + getId() + " message was a "
+        throw new ResolutionException(getLogPrefix() + " message was a "
                 + (object == null ? "null" : object.getClass().toString()) + ", not a NameId or a NameIdentifier");
     }
 
+    /**
+     * Return a string which is to be prepended to all log messages.
+     * 
+     * @return "Principal Connector '<definitionID>' :"
+     */
+    @Nonnull @NotEmpty protected String getLogPrefix() {
+        // local cache of cached entry to allow unsynchronised clearing of per class cache.
+        String prefix = logPrefix;
+        if (null == prefix) {
+            StringBuilder builder = new StringBuilder("Principal Connector '").append(getId()).append("':");
+            prefix = builder.toString();
+            if (null == logPrefix) {
+                logPrefix = prefix;
+            }
+        }
+        return prefix;
+    }
 }
