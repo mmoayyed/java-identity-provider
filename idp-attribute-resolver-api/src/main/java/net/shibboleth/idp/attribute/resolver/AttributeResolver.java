@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -67,7 +68,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
     private final Map<String, BaseDataConnector> dataConnectors;
 
     /** cache for the log prefix - to save multiple recalculations. */
-    private String logPrefix;
+    private final String logPrefix;
 
     /**
      * Constructor.
@@ -83,8 +84,9 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
 
         logPrefix = new StringBuilder("Attribute Resolver '").append(getId()).append("':").toString();
 
-        HashMap<String, BaseAttributeDefinition> checkedDefinitions = new HashMap<String, BaseAttributeDefinition>();
+        Map<String, BaseAttributeDefinition> checkedDefinitions;
         if (definitions != null) {
+            checkedDefinitions = new HashMap<String, BaseAttributeDefinition>(definitions.size());
             for (BaseAttributeDefinition definition : definitions) {
                 if (definition != null) {
                     if (checkedDefinitions.containsKey(definition.getId())) {
@@ -94,11 +96,14 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
                     checkedDefinitions.put(definition.getId(), definition);
                 }
             }
+        } else {
+            checkedDefinitions = Collections.EMPTY_MAP;
         }
         attributeDefinitions = ImmutableMap.copyOf(checkedDefinitions);
 
-        HashMap<String, BaseDataConnector> checkedConnectors = new HashMap<String, BaseDataConnector>();
+        Map<String, BaseDataConnector> checkedConnectors;
         if (connectors != null) {
+            checkedConnectors = new HashMap<String, BaseDataConnector>(connectors.size());
             for (BaseDataConnector connector : connectors) {
                 if (connector != null) {
                     if (checkedConnectors.containsKey(connector.getId())) {
@@ -108,6 +113,8 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
                     checkedConnectors.put(connector.getId(), connector);
                 }
             }
+        } else {
+            checkedConnectors = Collections.EMPTY_MAP;
         }
         dataConnectors = ImmutableMap.copyOf(checkedConnectors);
     }
@@ -169,6 +176,17 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         }
     }
 
+    /** {@inheritDoc} */
+    protected void doDestroy() {
+        for (BaseResolverPlugin plugin : attributeDefinitions.values()) {
+            plugin.destroy();
+        }
+
+        for (BaseResolverPlugin plugin : dataConnectors.values()) {
+            plugin.destroy();
+        }
+    }
+
     /**
      * Resolves the attribute for the give request. Note, if attributes are requested,
      * {@link AttributeResolutionContext#getRequestedAttributes()}, the resolver will <strong>not</strong> fail if they
@@ -208,17 +226,6 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
                 .keySet());
 
         return;
-    }
-
-    /** {@inheritDoc} */
-    protected void doDestroy() {
-        for (BaseResolverPlugin plugin : attributeDefinitions.values()) {
-            plugin.destroy();
-        }
-
-        for (BaseResolverPlugin plugin : dataConnectors.values()) {
-            plugin.destroy();
-        }
     }
 
     /**
@@ -282,7 +289,6 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
 
         if (null == resolvedAttribute) {
             log.debug("{} attribute definition {} produced no attribute", logPrefix, attributeId);
-            // TODO why would we record this?
         } else {
             log.debug("{} attribute definition {} produced an attribute with {} values", new Object[] {logPrefix,
                     attributeId, resolvedAttribute.getValues().size(),});
