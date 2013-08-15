@@ -41,7 +41,6 @@ import org.opensaml.messaging.context.BaseContext;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * A context representing the state of an authentication attempt, this is the primary
@@ -67,13 +66,13 @@ public final class AuthenticationContext extends BaseContext {
     @Nullable private String canonicalPrincipalName;
     
     /** Flows that could potentially be used to authenticate the user. */
-    @Nonnull @NonnullElements private Map<String, AuthenticationFlowDescriptor> potentialFlows;
+    @Nonnull @NonnullElements private final Map<String, AuthenticationFlowDescriptor> potentialFlows;
     
     /** Flows, in order of preference, that satisfy an explicit requirement from the relying party. */
     @Nonnull @NonnullElements private ImmutableList<AuthenticationFlowDescriptor> requestedFlows;
 
     /** Authentication results associated with an active session and available for (re)use. */
-    @Nonnull @NonnullElements private ImmutableMap<String, AuthenticationResult> activeResults;
+    @Nonnull @NonnullElements private final Map<String, AuthenticationResult> activeResults;
         
     /** Authentication flow being attempted to authenticate the user. */
     @Nullable private AuthenticationFlowDescriptor attemptedFlow;
@@ -95,7 +94,7 @@ public final class AuthenticationContext extends BaseContext {
 
         initiationInstant = System.currentTimeMillis();
         
-        potentialFlows = new HashMap<>();
+        potentialFlows = new HashMap();
 
         if (availableFlows != null) {
             for (AuthenticationFlowDescriptor descriptor : availableFlows) {
@@ -103,7 +102,7 @@ public final class AuthenticationContext extends BaseContext {
             }
         }
 
-        activeResults = ImmutableMap.of();
+        activeResults = new HashMap();
         requestedFlows = ImmutableList.of();
     }
 
@@ -122,7 +121,7 @@ public final class AuthenticationContext extends BaseContext {
      * @return authentication results currently active for the subject
      */
     @Nonnull @NonnullElements @Unmodifiable public Map<String, AuthenticationResult> getActiveResults() {
-        return activeResults;
+        return ImmutableMap.copyOf(activeResults);
     }
 
     /**
@@ -134,17 +133,12 @@ public final class AuthenticationContext extends BaseContext {
      */
     @Nonnull public AuthenticationContext setActiveResults(
             @Nonnull @NonnullElements final Collection<AuthenticationResult> results) {
-        if (Constraint.isNotNull(results, "Flow collection cannot be null").isEmpty()) {
-            activeResults = ImmutableMap.of();
-            return this;
-        }
+        Constraint.isNotNull(results, "AuthenticationResult collection cannot be null");
 
-        Builder<String, AuthenticationResult> resultsBuilder = new ImmutableMap.Builder<>();
+        activeResults.clear();
         for (AuthenticationResult result : results) {
-            resultsBuilder.put(result.getAuthenticationFlowId(), result);
+            activeResults.put(result.getAuthenticationFlowId(), result);
         }
-
-        activeResults = resultsBuilder.build();
 
         return this;
     }
