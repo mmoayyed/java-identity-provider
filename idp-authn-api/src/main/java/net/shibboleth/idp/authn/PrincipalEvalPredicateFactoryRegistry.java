@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn;
 
+import java.security.Principal;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,13 +29,14 @@ import org.slf4j.LoggerFactory;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
- * A registry of mappings between a type of matching operator and a corresponding
- * {@link PrincipalEvalPredicateFactory} that returns predicates enforcing
- * a particular set of matching rules for that operator.
+ * A registry of mappings between a custom {@link Principal} subtype with a matching operator
+ * and a corresponding {@link PrincipalEvalPredicateFactory} that returns predicates enforcing
+ * a particular set of matching rules for that operator and subtype.
  */
 public final class PrincipalEvalPredicateFactoryRegistry {
 
@@ -42,7 +44,7 @@ public final class PrincipalEvalPredicateFactoryRegistry {
     private final Logger log = LoggerFactory.getLogger(PrincipalEvalPredicateFactoryRegistry.class);
     
     /** Storage for the registry mappings. */
-    private Map<String, PrincipalEvalPredicateFactory> registry;
+    private Map<Pair<Class<? extends Principal>, String>, PrincipalEvalPredicateFactory> registry;
 
     /** Constructor. */
     public PrincipalEvalPredicateFactoryRegistry() {
@@ -54,27 +56,32 @@ public final class PrincipalEvalPredicateFactoryRegistry {
      * 
      * @param fromMap  map to populate registry with
      */
-    public PrincipalEvalPredicateFactoryRegistry(
-            @Nonnull @NonnullElements Map<String, PrincipalEvalPredicateFactory> fromMap) {
+    public PrincipalEvalPredicateFactoryRegistry(@Nonnull @NonnullElements
+            Map<Pair<Class<? extends Principal>, String>, PrincipalEvalPredicateFactory> fromMap) {
         registry = new ConcurrentHashMap(Constraint.isNotNull(fromMap, "Source map cannot be null"));
     }
     
     /**
-     * Get a registered predicate factory for a given operator string, if any.
+     * Get a registered predicate factory for a given principal type and operator string, if any.
      * 
+     * @param principalType a principal subtype
      * @param operator  an operator string
      * @return a corresponding predicate factory, or null
      */
-    @Nullable public PrincipalEvalPredicateFactory lookup(@Nonnull @NotEmpty final String operator) {
+    @Nullable public PrincipalEvalPredicateFactory lookup(@Nonnull final Class<? extends Principal> principalType,
+            @Nonnull @NotEmpty final String operator) {
+        Constraint.isNotNull(principalType, "Principal subtype cannot be null");
         String trimmed = Constraint.isNotNull(StringSupport.trimOrNull(operator), "Operator cannot be null or empty");
         
-        PrincipalEvalPredicateFactory factory = registry.get(trimmed);
+        Pair key = new Pair(principalType, trimmed);
+        PrincipalEvalPredicateFactory factory = registry.get(key);
         if (factory != null) {
-            log.debug("Registry located predicate factory of type {} for operator {}", factory.getClass().getName(),
-                    trimmed);
+            log.debug("Registry located predicate factory of type {} for principal type {} and operator {}",
+                    factory.getClass().getName(), principalType, trimmed);
             return factory;
         } else {
-            log.debug("Registry failed to locate predicate factory for operator {}", trimmed);
+            log.debug("Registry failed to locate predicate factory for principal type {} and operator {}",
+                    principalType, trimmed);
             return null;
         }
     }
@@ -82,27 +89,33 @@ public final class PrincipalEvalPredicateFactoryRegistry {
     /**
      * Register a predicate factory for a given operator string.
      * 
+     * @param principalType a principal subtype
      * @param operator  an operator string
      * @param factory   the predicate factory to register
      */
-    public void register(@Nonnull @NotEmpty final String operator,
-            @Nonnull PrincipalEvalPredicateFactory factory) {
+    public void register(@Nonnull final Class<? extends Principal> principalType,
+            @Nonnull @NotEmpty final String operator, @Nonnull PrincipalEvalPredicateFactory factory) {
+        Constraint.isNotNull(principalType, "Principal subtype cannot be null");
         String trimmed = Constraint.isNotNull(StringSupport.trimOrNull(operator), "Operator cannot be null or empty");
         Constraint.isNotNull(factory, "PrincipalEvalPredicateFactory cannot be null");
         
-        log.debug("Registering predicate factory of type {} for operator {}", factory.getClass().getName(), operator);
-        registry.put(trimmed, factory);
+        log.debug("Registering predicate factory of type {} for principal type {} and operator {}",
+                factory.getClass().getName(), principalType, operator);
+        registry.put(new Pair(principalType, trimmed), factory);
     }
     
     /**
      * Deregister a predicate factory for a given operator string.
      * 
+     * @param principalType a principal subtype
      * @param operator  an operator string
      */
-    public void deregister(@Nonnull @NotEmpty final String operator) {
+    public void deregister(@Nonnull final Class<? extends Principal> principalType,
+            @Nonnull @NotEmpty final String operator) {
+        Constraint.isNotNull(principalType, "Principal subtype cannot be null");
         String trimmed = Constraint.isNotNull(StringSupport.trimOrNull(operator), "Operator cannot be null or empty");
         
-        log.debug("Deregistering predicate factory for operator {}", operator);
-        registry.remove(trimmed);
+        log.debug("Deregistering predicate factory for principal type {} and operator {}", principalType, operator);
+        registry.remove(new Pair(principalType, trimmed));
     }
 }
