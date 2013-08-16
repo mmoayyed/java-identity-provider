@@ -25,6 +25,7 @@ import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.PrincipalEvalPredicateFactoryRegistry;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -38,13 +39,15 @@ public class AuthenticationContextTest {
         // this is here to allow the event's creation time to deviate from the 'start' time
         Thread.sleep(50);
 
-        AuthenticationContext ctx = new AuthenticationContext(null);
+        AuthenticationContext ctx = new AuthenticationContext(
+                Collections.<AuthenticationFlowDescriptor>emptyList(), new PrincipalEvalPredicateFactoryRegistry());
         Assert.assertTrue(ctx.getInitiationInstant() > start);
     }
 
     /** Tests mutating forcing authentication. */
     @Test public void testForcingAuthentication() throws Exception {
-        AuthenticationContext ctx = new AuthenticationContext(null);
+        AuthenticationContext ctx = new AuthenticationContext(
+                Collections.<AuthenticationFlowDescriptor>emptyList(), new PrincipalEvalPredicateFactoryRegistry());
         Assert.assertFalse(ctx.isForceAuthn());
 
         ctx.setForceAuthn(true);
@@ -55,7 +58,8 @@ public class AuthenticationContextTest {
     @Test public void testActiveResults() throws Exception {
         final AuthenticationResult result = new AuthenticationResult("test", new Subject());
 
-        AuthenticationContext ctx = new AuthenticationContext(null);
+        AuthenticationContext ctx = new AuthenticationContext(
+                Collections.<AuthenticationFlowDescriptor>emptyList(), new PrincipalEvalPredicateFactoryRegistry());
         Assert.assertTrue(ctx.getActiveResults().isEmpty());
         
         ctx.setActiveResults(Arrays.asList(result));
@@ -66,24 +70,23 @@ public class AuthenticationContextTest {
     
     /** Tests potential flow instantiation. */
     @Test public void testPotentialFlows() throws Exception {
-        AuthenticationContext ctx = new AuthenticationContext(null);
-        Assert.assertTrue(ctx.getPotentialFlows().isEmpty());
-
-        ctx = new AuthenticationContext(Collections.EMPTY_LIST);
+        AuthenticationContext ctx = new AuthenticationContext(
+                Collections.<AuthenticationFlowDescriptor>emptyList(), new PrincipalEvalPredicateFactoryRegistry());
         Assert.assertTrue(ctx.getPotentialFlows().isEmpty());
 
         AuthenticationFlowDescriptor descriptor = new AuthenticationFlowDescriptor("test");
-        ctx = new AuthenticationContext(Arrays.asList(descriptor));
+        ctx = new AuthenticationContext(Arrays.asList(descriptor), new PrincipalEvalPredicateFactoryRegistry());
         Assert.assertEquals(ctx.getPotentialFlows().size(), 1);
         Assert.assertEquals(ctx.getPotentialFlows().get("test"), descriptor);
     }
 
     /** Tests mutating requested flows. */
     @Test public void testRequestedFlows() throws Exception {
-        AuthenticationContext ctx = new AuthenticationContext(null);
+        AuthenticationContext ctx = new AuthenticationContext(
+                Collections.<AuthenticationFlowDescriptor>emptyList(), new PrincipalEvalPredicateFactoryRegistry());
         Assert.assertTrue(ctx.getRequestedFlows().isEmpty());
 
-        ctx.setRequestedFlows(Collections.EMPTY_LIST);
+        ctx.setRequestedFlows(Collections.<AuthenticationFlowDescriptor>emptyList());
         Assert.assertTrue(ctx.getRequestedFlows().isEmpty());
 
         AuthenticationFlowDescriptor descriptor1 = new AuthenticationFlowDescriptor("test1");
@@ -99,7 +102,8 @@ public class AuthenticationContextTest {
 
     /** Tests mutating attempted flow. */
     @Test public void testAttemptedFlow() throws Exception {
-        AuthenticationContext ctx = new AuthenticationContext(null);
+        AuthenticationContext ctx = new AuthenticationContext(
+                Collections.<AuthenticationFlowDescriptor>emptyList(), new PrincipalEvalPredicateFactoryRegistry());
         Assert.assertNull(ctx.getAttemptedFlow());
 
         AuthenticationFlowDescriptor descriptor = new AuthenticationFlowDescriptor("test");
@@ -109,7 +113,8 @@ public class AuthenticationContextTest {
 
     /** Tests setting completion instant. */
     @Test public void testCompletionInstant() throws Exception {
-        AuthenticationContext ctx = new AuthenticationContext(null);
+        AuthenticationContext ctx = new AuthenticationContext(
+                Collections.<AuthenticationFlowDescriptor>emptyList(), new PrincipalEvalPredicateFactoryRegistry());
         Assert.assertEquals(ctx.getCompletionInstant(), 0);
 
         long now = System.currentTimeMillis();

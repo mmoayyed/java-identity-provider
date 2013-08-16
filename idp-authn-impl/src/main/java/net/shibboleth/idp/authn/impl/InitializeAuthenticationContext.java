@@ -17,11 +17,14 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
+import net.shibboleth.idp.authn.PrincipalEvalPredicateFactoryRegistry;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
@@ -34,6 +37,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -49,11 +54,15 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
     private final Logger log = LoggerFactory.getLogger(InitializeAuthenticationContext.class);
     
     /** The flows to make available for possible use. */
-    @Nonnull @NonnullElements private ImmutableList<AuthenticationFlowDescriptor> availableFlows;
+    @Nonnull @NonnullElements private List<AuthenticationFlowDescriptor> availableFlows;
+    
+    /** The registry of predicate factories for custom principal evaluation. */
+    @Nonnull private PrincipalEvalPredicateFactoryRegistry evalRegistry;
 
     /** Constructor. */
     InitializeAuthenticationContext() {
-        availableFlows = ImmutableList.of();
+        availableFlows = new ArrayList();
+        evalRegistry = new PrincipalEvalPredicateFactoryRegistry();
     }
     
     /**
@@ -62,7 +71,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
      * @return  flows available for possible use
      */
     @Nonnull @NonnullElements @Unmodifiable public Collection<AuthenticationFlowDescriptor> getAvailableFlows() {
-        return availableFlows;
+        return ImmutableList.copyOf(availableFlows);
     }
     
     /**
@@ -72,10 +81,33 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
      */
     public void setAvailableFlows(@Nonnull @NonnullElements final Collection<AuthenticationFlowDescriptor> flows) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        Constraint.isNotNull(flows, "Flow collection cannot be null");
         
-        availableFlows = ImmutableList.copyOf(Constraint.isNotNull(flows, "Flow collection cannot be null"));
+        availableFlows.clear();
+        availableFlows.addAll(Collections2.filter(flows, Predicates.notNull()));
     }
     
+    /**
+     * Get the registry of predicate factories for custom principal evaluation.
+     * 
+     * @return predicate factory registry
+     */
+    @Nonnull public PrincipalEvalPredicateFactoryRegistry getPrincipalPredicateFactoryEvalRegistry() {
+        return evalRegistry;
+    }
+    
+    /**
+     * Set the registry of predicate factories for custom principal evaluation.
+     * 
+     * @param registry predicate factory registry
+     */
+    public void setPrincipalEvalPredicateFactoryRegistry(
+            @Nonnull final PrincipalEvalPredicateFactoryRegistry registry) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        evalRegistry = Constraint.isNotNull(registry, "Registry cannot be null");
+    }
+        
     /** {@inheritDoc} */
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
@@ -83,7 +115,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
             log.warn("No authentication flows are configured for use.");
         }
         
-        AuthenticationContext authnCtx = new AuthenticationContext(availableFlows);
+        AuthenticationContext authnCtx = new AuthenticationContext(availableFlows, evalRegistry);
         profileRequestContext.addSubcontext(authnCtx);
     }
 }

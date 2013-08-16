@@ -77,7 +77,7 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractValidationA
             return false;
         }
         
-        return true;
+        return super.doPreExecute(profileRequestContext, authenticationContext);
     }
     
     /** {@inheritDoc} */

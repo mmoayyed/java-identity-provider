@@ -159,7 +159,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
             return false;
         }
         
-        return true;
+        return super.doPreExecute(profileRequestContext, authenticationContext);
     }
     
     /** {@inheritDoc} */

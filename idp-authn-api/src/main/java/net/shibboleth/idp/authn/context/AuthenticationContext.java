@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
+import net.shibboleth.idp.authn.PrincipalEvalPredicateFactoryRegistry;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -67,6 +68,9 @@ public final class AuthenticationContext extends BaseContext {
     
     /** Flows that could potentially be used to authenticate the user. */
     @Nonnull @NonnullElements private final Map<String, AuthenticationFlowDescriptor> potentialFlows;
+
+    /** The registry of predicate factories for custom principal evaluation. */
+    @Nonnull private final PrincipalEvalPredicateFactoryRegistry evalRegistry;
     
     /** Flows, in order of preference, that satisfy an explicit requirement from the relying party. */
     @Nonnull @NonnullElements private ImmutableList<AuthenticationFlowDescriptor> requestedFlows;
@@ -87,20 +91,21 @@ public final class AuthenticationContext extends BaseContext {
      * Constructor.
      *
      * @param availableFlows authentication flows currently available
+     * @param registry predicate factory registry for principal evaluation
      */
     public AuthenticationContext(
-            @Nullable @NonnullElements final Collection<AuthenticationFlowDescriptor> availableFlows) {
+            @Nonnull @NonnullElements final Collection<AuthenticationFlowDescriptor> availableFlows,
+            @Nonnull final PrincipalEvalPredicateFactoryRegistry registry) {
         super();
 
         initiationInstant = System.currentTimeMillis();
         
         potentialFlows = new HashMap();
-
-        if (availableFlows != null) {
-            for (AuthenticationFlowDescriptor descriptor : availableFlows) {
-                potentialFlows.put(descriptor.getId(), descriptor);
-            }
+        for (AuthenticationFlowDescriptor descriptor : availableFlows) {
+            potentialFlows.put(descriptor.getId(), descriptor);
         }
+        
+        evalRegistry = Constraint.isNotNull(registry, "PrincipalEvalPredicateFactoryRegistry cannot be null");
 
         activeResults = new HashMap();
         requestedFlows = ImmutableList.of();
@@ -151,7 +156,16 @@ public final class AuthenticationContext extends BaseContext {
     @Nonnull @NonnullElements @Live public Map<String, AuthenticationFlowDescriptor> getPotentialFlows() {
         return potentialFlows;
     }
-
+    
+    /**
+     * Get the registry of predicate factories for custom principal evaluation.
+     * 
+     * @return predicate factory registry
+     */
+    @Nonnull public PrincipalEvalPredicateFactoryRegistry getPrincipalEvalPredicateFactoryRegistry() {
+        return evalRegistry;
+    }
+    
     /**
      * Get whether subject interaction is allowed.
      * 

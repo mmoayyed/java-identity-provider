@@ -78,7 +78,7 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
             return false;
         }
         
-        return true;
+        return super.doPreExecute(profileRequestContext, authenticationContext);
     }
     
     /** {@inheritDoc} */

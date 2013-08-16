@@ -76,11 +76,11 @@ public final class PrincipalEvalPredicateFactoryRegistry {
         Pair key = new Pair(principalType, trimmed);
         PrincipalEvalPredicateFactory factory = registry.get(key);
         if (factory != null) {
-            log.debug("Registry located predicate factory of type {} for principal type {} and operator {}",
+            log.debug("Registry located predicate factory of type '{}' for principal type '{}' and operator '{}'",
                     factory.getClass().getName(), principalType, trimmed);
             return factory;
         } else {
-            log.debug("Registry failed to locate predicate factory for principal type {} and operator {}",
+            log.debug("Registry failed to locate predicate factory for principal type '{}' and operator '{}'",
                     principalType, trimmed);
             return null;
         }
@@ -99,7 +99,7 @@ public final class PrincipalEvalPredicateFactoryRegistry {
         String trimmed = Constraint.isNotNull(StringSupport.trimOrNull(operator), "Operator cannot be null or empty");
         Constraint.isNotNull(factory, "PrincipalEvalPredicateFactory cannot be null");
         
-        log.debug("Registering predicate factory of type {} for principal type {} and operator {}",
+        log.debug("Registering predicate factory of type '{}' for principal type '{}' and operator '{}'",
                 factory.getClass().getName(), principalType, operator);
         registry.put(new Pair(principalType, trimmed), factory);
     }
@@ -115,7 +115,7 @@ public final class PrincipalEvalPredicateFactoryRegistry {
         Constraint.isNotNull(principalType, "Principal subtype cannot be null");
         String trimmed = Constraint.isNotNull(StringSupport.trimOrNull(operator), "Operator cannot be null or empty");
         
-        log.debug("Deregistering predicate factory for principal type {} and operator {}", principalType, operator);
+        log.debug("Deregistering predicate factory for principal type '{}' and operator '{}'", principalType, operator);
         registry.remove(new Pair(principalType, trimmed));
     }
 }

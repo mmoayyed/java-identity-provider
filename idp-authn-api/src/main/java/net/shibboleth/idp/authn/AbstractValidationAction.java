@@ -27,6 +27,7 @@ import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
+import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -37,6 +38,8 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.EventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
@@ -50,6 +53,9 @@ import com.google.common.collect.Lists;
 public abstract class AbstractValidationAction extends AbstractAuthenticationAction
     implements PrincipalSupportingComponent {
 
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(AbstractValidationAction.class);
+    
     /** Basis for {@link AuthenticationResult}. */
     @Nonnull private final Subject authenticatedSubject;
     
@@ -217,7 +223,44 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
     @Nonnull protected Subject getSubject() {
         return authenticatedSubject;
     }
+
+    /** {@inheritDoc} */
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+        
+        // If the request mandates particular principals, evaluate this validating component to see if it
+        // can produce a matching principal. This skips validators chained together in flows that aren't
+        // able to satisfy the request.
+        final RequestedPrincipalContext rpCtx =
+                authenticationContext.getSubcontext(RequestedPrincipalContext.class, false);
+        if (rpCtx != null) {
+            log.debug("{} Request contains principal requirements, evaluating for compatibility", getLogPrefix());
+            for (Principal p : rpCtx.getRequestedPrincipals()) {
+                final PrincipalEvalPredicateFactory factory =
+                        authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
+                                p.getClass(), rpCtx.getOperator());
+                if (factory != null) {
+                    if (factory.getPredicate(p).apply(this)) {
+                        log.debug("{} Compatible with principal type '{}' and operator '{}'", getLogPrefix(),
+                                p.getClass(), rpCtx.getOperator());
+                        return true;
+                    } else {
+                        log.debug("{} Not compatible with principal type '{}' and operator '{}'", getLogPrefix(),
+                                p.getClass(), rpCtx.getOperator());
+                    }
+                } else {
+                    log.debug("{} No comparison logic registered for principal type '{}' and operator '{}'",
+                            getLogPrefix(), p.getClass(), rpCtx.getOperator());
+                }
+            }
             
+            log.info("{} Skipping validator, not compatible with request's principal requirements", getLogPrefix());
+            return false;
+        }
+        
+        return true;
+    }
+    
     /**
      * Normally called upon successful completion of credential validation, calls the {@link #populateSubject(Subject)}
      * abstract method, stores an {@AuthenticationResult} in the {@link AuthenticationContext}, and attaches a
