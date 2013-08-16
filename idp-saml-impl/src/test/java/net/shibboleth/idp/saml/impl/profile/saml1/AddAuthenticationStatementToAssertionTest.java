@@ -17,12 +17,16 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
+import java.util.Collections;
+
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
+import net.shibboleth.idp.authn.PrincipalEvalPredicateFactoryRegistry;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
+
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.saml.profile.SamlEventIds;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionTestingSupport;
@@ -92,7 +96,8 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
                 new RequestContextBuilder().setOutboundMessage(Saml1ActionTestingSupport.buildResponse())
                         .buildProfileRequestContext();
 
-        AuthenticationContext authCtx = new AuthenticationContext(null);
+        AuthenticationContext authCtx = new AuthenticationContext(Collections.<AuthenticationFlowDescriptor>emptyList(),
+                new PrincipalEvalPredicateFactoryRegistry());
         profileCtx.addSubcontext(authCtx);
 
         AddAuthenticationStatementToAssertion action = new AddAuthenticationStatementToAssertion();
@@ -113,7 +118,8 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
                 new RequestContextBuilder().setOutboundMessage(Saml1ActionTestingSupport.buildResponse())
                         .buildProfileRequestContext();
 
-        AuthenticationContext authCtx = new AuthenticationContext(null);
+        AuthenticationContext authCtx = new AuthenticationContext(Collections.<AuthenticationFlowDescriptor>emptyList(),
+                new PrincipalEvalPredicateFactoryRegistry());
         authCtx.setAttemptedFlow(new AuthenticationFlowDescriptor("test"));
 
         long now = System.currentTimeMillis();
