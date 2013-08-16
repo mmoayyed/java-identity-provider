@@ -83,6 +83,17 @@ public class InexactPrincipalEvalPredicateFactoryTest {
         Assert.assertFalse(factory.getPredicate(baz).apply(sample));
     }
 
+    @Test public void testMultiplePrincipalMatchMap() {
+        AuthenticationResult sample = new AuthenticationResult("test", new Subject());
+        sample.getSubject().getPrincipals().add(new UsernamePrincipal("bar"));
+        sample.getSubject().getPrincipals().add(new UsernamePrincipal("baz"));
+        InexactPrincipalEvalPredicateFactory mapFactory = new InexactPrincipalEvalPredicateFactory();
+        mapFactory.setMatchingRules(factory.getMatchingRules().asMap());
+        Assert.assertTrue(mapFactory.getPredicate(foo).apply(sample));
+        Assert.assertFalse(mapFactory.getPredicate(bar).apply(sample));
+        Assert.assertFalse(mapFactory.getPredicate(baz).apply(sample));
+    }
+
     @Test public void testMultiplePrincipalNoMatch() {
         AuthenticationResult sample = new AuthenticationResult("test", new Subject());
         sample.getSubject().getPrincipals().add(new UsernamePrincipal("foo"));

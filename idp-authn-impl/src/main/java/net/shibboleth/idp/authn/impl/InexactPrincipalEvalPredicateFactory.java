@@ -18,6 +18,7 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.security.Principal;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -75,11 +76,11 @@ public class InexactPrincipalEvalPredicateFactory implements PrincipalEvalPredic
      * 
      * @param rules matching rules
      */
-    public void setMatchingRules(@Nonnull @NonnullElements final Map<String,Set<String>> rules) {
+    public void setMatchingRules(@Nonnull @NonnullElements final Map<String,Collection<String>> rules) {
         Constraint.isNotNull(rules, "Map cannot be null");
         matchingRules.clear();
         
-        for (Map.Entry<String,Set<String>> e : rules.entrySet()) {
+        for (Map.Entry<String,Collection<String>> e : rules.entrySet()) {
             if (!Strings.isNullOrEmpty(e.getKey()) && e.getValue() != null) {
                 matchingRules.putAll(e.getKey(), new HashSet(Collections2.filter(e.getValue(), Predicates.notNull())));
             }
