@@ -29,7 +29,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.Matcher;
-import net.shibboleth.idp.attribute.filter.attributemapper.RequestedAttribute;
+import net.shibboleth.idp.attribute.mapper.RequestedAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
