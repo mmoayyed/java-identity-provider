@@ -70,7 +70,7 @@ public final class AuthenticationContext extends BaseContext {
     @Nonnull @NonnullElements private final Map<String, AuthenticationFlowDescriptor> potentialFlows;
 
     /** The registry of predicate factories for custom principal evaluation. */
-    @Nonnull private final PrincipalEvalPredicateFactoryRegistry evalRegistry;
+    @Nonnull private PrincipalEvalPredicateFactoryRegistry evalRegistry;
     
     /** Flows, in order of preference, that satisfy an explicit requirement from the relying party. */
     @Nonnull @NonnullElements private ImmutableList<AuthenticationFlowDescriptor> requestedFlows;
@@ -87,25 +87,15 @@ public final class AuthenticationContext extends BaseContext {
     /** Time, in milliseconds since the epoch, when authentication process completed. */
     @NonNegative private long completionInstant;
 
-    /**
-     * Constructor.
-     *
-     * @param availableFlows authentication flows currently available
-     * @param registry predicate factory registry for principal evaluation
-     */
-    public AuthenticationContext(
-            @Nonnull @NonnullElements final Collection<AuthenticationFlowDescriptor> availableFlows,
-            @Nonnull final PrincipalEvalPredicateFactoryRegistry registry) {
+    /** Constructor. */
+    public AuthenticationContext() {
         super();
 
         initiationInstant = System.currentTimeMillis();
         
         potentialFlows = new HashMap();
-        for (AuthenticationFlowDescriptor descriptor : availableFlows) {
-            potentialFlows.put(descriptor.getId(), descriptor);
-        }
         
-        evalRegistry = Constraint.isNotNull(registry, "PrincipalEvalPredicateFactoryRegistry cannot be null");
+        evalRegistry = new PrincipalEvalPredicateFactoryRegistry();
 
         activeResults = new HashMap();
         requestedFlows = ImmutableList.of();
@@ -164,6 +154,16 @@ public final class AuthenticationContext extends BaseContext {
      */
     @Nonnull public PrincipalEvalPredicateFactoryRegistry getPrincipalEvalPredicateFactoryRegistry() {
         return evalRegistry;
+    }
+
+    /**
+     * Set the registry of predicate factories for custom principal evaluation.
+     * 
+     * @param registry predicate factory registry
+     */
+    public void setPrincipalEvalPredicateFactoryRegistry(
+            @Nonnull final PrincipalEvalPredicateFactoryRegistry registry) {
+        evalRegistry = Constraint.isNotNull(registry, "PrincipalEvalPredicateFactoryRegistry cannot be null");
     }
     
     /**

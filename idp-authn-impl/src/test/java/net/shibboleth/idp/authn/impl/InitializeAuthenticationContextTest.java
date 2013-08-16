@@ -36,6 +36,7 @@ public class InitializeAuthenticationContextTest {
     
     @BeforeMethod public void setUp() throws Exception {        
         prc = new ProfileRequestContext();
+        prc.addSubcontext(new AuthenticationContext(), true);
 
         authenticationFlows = ImmutableList.of(new AuthenticationFlowDescriptor("test1"),
                 new AuthenticationFlowDescriptor("test2"), new AuthenticationFlowDescriptor("test3"));
@@ -44,7 +45,7 @@ public class InitializeAuthenticationContextTest {
         action.setAvailableFlows(authenticationFlows);
         action.initialize();
 
-        action.doExecute(prc);
+        action.execute(prc);
     }
 
     /** Test that the authentication context is properly added. */

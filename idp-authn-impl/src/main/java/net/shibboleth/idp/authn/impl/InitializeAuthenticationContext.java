@@ -19,10 +19,12 @@ package net.shibboleth.idp.authn.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.PrincipalEvalPredicateFactoryRegistry;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -31,8 +33,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,21 +48,20 @@ import com.google.common.collect.ImmutableList;
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @post <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
  */
-public class InitializeAuthenticationContext extends AbstractProfileAction {
+public class InitializeAuthenticationContext extends AbstractAuthenticationAction {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(InitializeAuthenticationContext.class);
     
     /** The flows to make available for possible use. */
-    @Nonnull @NonnullElements private List<AuthenticationFlowDescriptor> availableFlows;
+    @Nonnull @NonnullElements private Collection<AuthenticationFlowDescriptor> availableFlows;
     
     /** The registry of predicate factories for custom principal evaluation. */
-    @Nonnull private PrincipalEvalPredicateFactoryRegistry evalRegistry;
+    @Nullable private PrincipalEvalPredicateFactoryRegistry evalRegistry;
 
     /** Constructor. */
     InitializeAuthenticationContext() {
         availableFlows = new ArrayList();
-        evalRegistry = new PrincipalEvalPredicateFactoryRegistry();
     }
     
     /**
@@ -105,17 +104,24 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
             @Nonnull final PrincipalEvalPredicateFactoryRegistry registry) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        evalRegistry = Constraint.isNotNull(registry, "Registry cannot be null");
+        evalRegistry = Constraint.isNotNull(registry, "PrincipalEvalPredicateFactoryRegistry cannot be null");
     }
         
     /** {@inheritDoc} */
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
-        if (availableFlows.isEmpty()) {
-            log.warn("No authentication flows are configured for use.");
+        if (evalRegistry != null) {
+            log.debug("{} Installing custom PrincipalEvalPredicateFactoryRegistry into AuthenticationContext",
+                    getLogPrefix());
+            authenticationContext.setPrincipalEvalPredicateFactoryRegistry(evalRegistry);
         }
         
-        AuthenticationContext authnCtx = new AuthenticationContext(availableFlows, evalRegistry);
-        profileRequestContext.addSubcontext(authnCtx);
+        log.debug("{} Installing {} authentication flows into AuthenticationContext", getLogPrefix(),
+                availableFlows.size());
+        for (AuthenticationFlowDescriptor desc : availableFlows) {
+            authenticationContext.getPotentialFlows().put(desc.getId(), desc);
+        }
     }
+    
 }
