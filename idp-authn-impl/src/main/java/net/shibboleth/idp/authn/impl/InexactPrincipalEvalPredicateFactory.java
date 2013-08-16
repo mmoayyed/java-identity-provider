@@ -80,7 +80,7 @@ public class InexactPrincipalEvalPredicateFactory implements PrincipalEvalPredic
         matchingRules.clear();
         
         for (Map.Entry<String,Set<String>> e : rules.entrySet()) {
-            if (Strings.isNullOrEmpty(e.getKey()) && e.getValue() != null) {
+            if (!Strings.isNullOrEmpty(e.getKey()) && e.getValue() != null) {
                 matchingRules.putAll(e.getKey(), new HashSet(Collections2.filter(e.getValue(), Predicates.notNull())));
             }
         }
