@@ -113,9 +113,8 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
         final Set<StringAttributeValue> mappedValues = new HashSet<StringAttributeValue>();
 
         for (SourceValue sourceValue : sourceValues) {
-            final Matcher m;
-            String newValue;
-            newValue = null;
+            String newValue = null;
+
             if (sourceValue.isPartialMatch()) {
                 log.debug("Performing partial match comparison.");
                 if (attributeValue.contains(sourceValue.getValue())) {
@@ -130,7 +129,8 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
                     if (sourceValue.isIgnoreCase()) {
                         flags = Pattern.CASE_INSENSITIVE;
                     }
-                    m = Pattern.compile(sourceValue.getValue(), flags).matcher(attributeValue);
+                    // TODO pre-compile Pattern in setter ?
+                    final Matcher m = Pattern.compile(sourceValue.getValue(), flags).matcher(attributeValue);
                     if (m.matches()) {
                         newValue = m.replaceAll(returnValue);
                         log.debug("Attribute value '{}' matches regular expression it will be mapped to '{}'",
