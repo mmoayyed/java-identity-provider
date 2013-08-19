@@ -72,7 +72,7 @@ public class StaticDataConnector extends BaseDataConnector {
             return;
         } 
         
-        Map<String, Attribute> map = new HashMap<String, Attribute>(newValues.size());
+        final Map<String, Attribute> map = new HashMap<String, Attribute>(newValues.size());
         for (Attribute attr:newValues) {
             if (null == attr) {
                 continue;
@@ -88,7 +88,7 @@ public class StaticDataConnector extends BaseDataConnector {
             final AttributeResolutionContext resolutionContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        log.debug("Data connector '{}': Resolving static attribute {}", getId(), attributes);
+        log.debug("{} Resolving static attribute {}", getLogPrefix(), attributes);
         return attributes;
     }
 
@@ -97,8 +97,8 @@ public class StaticDataConnector extends BaseDataConnector {
         super.doInitialize();
 
         if (null == attributes) {
-            throw new ComponentInitializationException("Static Data connector " + getId()
-                    + " does not have values set up.");
+            throw new ComponentInitializationException(getLogPrefix()
+                    + " No values set up.");
         }
     }
 }

@@ -46,13 +46,11 @@ public class ComputedIDDataConnector extends BaseComputedIDDataConnector {
         super.doInitialize();
 
         if (null == getSalt()) {
-            throw new ComponentInitializationException("ComputedIDDataConnector definition '" + getId()
-                    + "': no salt set");
+            throw new ComponentInitializationException(getLogPrefix() + " No salt set");
         }
 
         if (getSalt().length < 16) {
-            throw new ComponentInitializationException("ComputedIDDataConnector definition '" + getId()
-                    + "': salt must be at least 16 bytes in size");
+            throw new ComponentInitializationException(getLogPrefix() + " Salt must be at least 16 bytes in size");
         }
 
     }
@@ -67,14 +65,14 @@ public class ComputedIDDataConnector extends BaseComputedIDDataConnector {
                 resolutionContext.getSubcontext(AttributeRecipientContext.class);
 
         if (null == attributeRecipientContext) {
-            log.warn("Attribute definition '{}' no attribute recipient context provided ", getId());
+            log.warn("{} No attribute recipient context provided ", getLogPrefix());
             return null;
         }
 
         String attributeRecipientID = attributeRecipientContext.getAttributeRecipientID();
         
         if (attributeRecipientID == null) {
-            log.warn("ComputedIDDataConnector '{}' : No Attribute Recipient ID located, unable to compute ID", getId());
+            log.warn(" No Attribute Recipient ID located, unable to compute ID", getLogPrefix());
             return null;
         }
 

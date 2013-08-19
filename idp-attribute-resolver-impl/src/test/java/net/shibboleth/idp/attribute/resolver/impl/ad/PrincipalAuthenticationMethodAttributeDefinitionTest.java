@@ -17,18 +17,16 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
-import javax.annotation.Nullable;
-
 import junit.framework.Assert;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.annotations.Test;
-
-import com.google.common.base.Function;
 
 /**
  * Test for {@link PrincipalAuthenticationMethodAttributeDefinition}
@@ -36,35 +34,21 @@ import com.google.common.base.Function;
 public class PrincipalAuthenticationMethodAttributeDefinitionTest {
     
     @Test
-    public void nullStrategy() {
-        PrincipalAuthenticationMethodAttributeDefinition defn = new PrincipalAuthenticationMethodAttributeDefinition();
-        defn.setId("id");
-        
-        try {
-            defn.initialize();
-            Assert.fail();
-        } catch (ComponentInitializationException e) {
-            // ok
-        }
-    }
-
-    @Test
     public void emptyMethod() throws ComponentInitializationException, ResolutionException {
         PrincipalAuthenticationMethodAttributeDefinition defn = new PrincipalAuthenticationMethodAttributeDefinition();
         defn.setId("id");
-        defn.setLookupStrategy(new Strategy(""));
         defn.initialize();
-        Assert.assertNull(defn.doAttributeDefinitionResolve(null));
+        Assert.assertNull(defn.doAttributeDefinitionResolve(TestSources.createResolutionContext("princ", "issuer", "recipient")));
     }
     
     @Test
     public void usual() throws ComponentInitializationException, ResolutionException {
         PrincipalAuthenticationMethodAttributeDefinition defn = new PrincipalAuthenticationMethodAttributeDefinition();
         defn.setId("id");
-        defn.setLookupStrategy(new Strategy("Method"));
         defn.initialize();
-        
-        Attribute result = defn.doAttributeDefinitionResolve(null);
+        AttributeResolutionContext arc = TestSources.createResolutionContext("princ", "issuer", "recipient");
+        arc.getSubcontext(AttributeRecipientContext.class).setPrincipalAuthenticationMethod("Method");
+        Attribute result = defn.doAttributeDefinitionResolve(arc);
         
         Assert.assertEquals(result.getValues().size(), 1);
         
@@ -72,32 +56,5 @@ public class PrincipalAuthenticationMethodAttributeDefinitionTest {
         Assert.assertEquals(value.getValue(), "Method");
     }
     
-    @Test
-    public void getterSetter() {
-        PrincipalAuthenticationMethodAttributeDefinition defn = new PrincipalAuthenticationMethodAttributeDefinition();
-        defn.setId("id");
-        Assert.assertNull(defn.getLookupStrategy());
-        defn.setLookupStrategy(new Strategy("Method"));
-        Assert.assertEquals(((Strategy)defn.getLookupStrategy()).getValue(), "Method");
-    }
     
-    public class Strategy implements Function<AttributeResolutionContext, String> {
-
-        private final String value;
-        
-        public Strategy(String what) {
-            value = what;
-        }
-        
-        public String getValue() {
-            return value;
-        }
-        
-        /** {@inheritDoc} */
-        @Nullable public String apply(@Nullable AttributeResolutionContext input) {
-            return value;
-        }
-        
-    }
-
 }

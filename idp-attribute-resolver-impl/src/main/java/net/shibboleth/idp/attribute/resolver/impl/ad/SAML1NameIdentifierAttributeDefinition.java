@@ -44,11 +44,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An attribute definition the creates attributes whose values are {@link NameIdentifier}.
- * 
+ * <br/>
  * When building the NameIdentifier the textual content of the NameIdentifier is the value of the source attribute. If a
  * {@link #nameIdQualifier} is provided that value is used as the NameIdentifier's name qualifier otherwise the
- * attribute issuer's entity ID is used. The attribute requester's entity ID is always used as the NameIdentifier's SP
- * name qualifier.
+ * attribute issuer's entity ID is used. 
  */
 
 public class SAML1NameIdentifierAttributeDefinition extends BaseAttributeDefinition {
@@ -134,7 +133,6 @@ public class SAML1NameIdentifierAttributeDefinition extends BaseAttributeDefinit
         if (null == attributeRecipientContext) {
             throw new ResolutionException(getLogPrefix() + " no attribute recipient context provided ");
         }
-        final String attributeIssuerID = StringSupport.trimOrNull(attributeRecipientContext.getAttributeIssuerID());
 
         NameIdentifier nameIdentifier = nameIdentifierBuilder.buildObject();
         nameIdentifier.setNameIdentifier(nameIdValue);
@@ -143,6 +141,7 @@ public class SAML1NameIdentifierAttributeDefinition extends BaseAttributeDefinit
             log.debug("{} Format set to '{}'", getLogPrefix(), nameIdFormat);
             nameIdentifier.setFormat(nameIdFormat);
         }
+        final String attributeIssuerID = StringSupport.trimOrNull(attributeRecipientContext.getAttributeIssuerID());
 
         if (nameIdQualifier != null) {
             nameIdentifier.setNameQualifier(nameIdQualifier);

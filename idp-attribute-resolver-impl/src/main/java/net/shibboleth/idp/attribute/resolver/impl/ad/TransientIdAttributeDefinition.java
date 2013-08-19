@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An attribute definition that generates random identifiers useful for transient subject IDs.
- * 
+ * <br/>
  * Information about the created IDs are stored within a provided {@link StorageService}.
  * The identifier itself is the record key, and the value combines the principal name
  * with the identifier of the recipient.

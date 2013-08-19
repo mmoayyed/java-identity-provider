@@ -85,8 +85,9 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
         for (AttributeValue dependencyValue : dependencyValues) {
             if (!(dependencyValue instanceof StringAttributeValue)) {
                 throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
-                        + "This attribute definition only operates on attribute values of type "
-                        + StringAttributeValue.class.getName()));
+                        + "This attribute definition only supports attribute value types of "
+                        + StringAttributeValue.class.getName() + " not values of type "
+                        + dependencyValue.getClass().getName()));
             }
 
             resultantAttribute.getValues().add(

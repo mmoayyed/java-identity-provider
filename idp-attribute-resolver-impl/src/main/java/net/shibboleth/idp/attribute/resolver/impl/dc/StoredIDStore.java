@@ -98,7 +98,7 @@ public class StoredIDStore extends AbstractInitializableComponent {
      * 
      * @return the data source;
      */
-    @Nullable @NonnullAfterInit public DataSource getDataSource() {
+    @NonnullAfterInit public DataSource getDataSource() {
         return dataSource;
     }
 
@@ -135,7 +135,7 @@ public class StoredIDStore extends AbstractInitializableComponent {
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         if (null == dataSource) {
-            throw new ComponentInitializationException("StoredId Store: No database connection provided");
+            throw new ComponentInitializationException(getLogPrefix() + " No database connection provided");
         }
     }
 
@@ -163,18 +163,19 @@ public class StoredIDStore extends AbstractInitializableComponent {
         sqlBuilder.append(" AND ");
         sqlBuilder.append(localIdColumn).append(" = ?");
 
-        String sql = sqlBuilder.toString();
+        final String sql = sqlBuilder.toString();
         Connection dbConn = dataSource.getConnection();
         try {
-            log.debug("Selecting number of persistent ID entries based on prepared sql statement: {}", sql);
+            log.debug("{} Selecting number of persistent ID entries based on prepared sql statement: {}",
+                    getLogPrefix(), sql);
             PreparedStatement statement = dbConn.prepareStatement(sql);
             statement.setQueryTimeout(queryTimeout);
 
-            log.debug("Setting prepared statement parameter {}: {}", 1, localEntity);
+            log.debug("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 1, localEntity);
             statement.setString(1, localEntity);
-            log.debug("Setting prepared statement parameter {}: {}", 2, peerEntity);
+            log.debug("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 2, peerEntity);
             statement.setString(2, peerEntity);
-            log.debug("Setting prepared statement parameter {}: {}", 3, localId);
+            log.debug("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 3, localId);
             statement.setString(3, localId);
 
             ResultSet rs = statement.executeQuery();
@@ -211,18 +212,18 @@ public class StoredIDStore extends AbstractInitializableComponent {
         sqlBuilder.append(" AND ").append(localIdColumn).append(" = ?");
         String sql = sqlBuilder.toString();
 
-        log.debug("Selecting all persistent ID entries based on prepared sql statement: {}", sql);
+        log.debug("{} Selecting all persistent ID entries based on prepared sql statement: {}", getLogPrefix(), sql);
 
         Connection dbConn = dataSource.getConnection();
         try {
             PreparedStatement statement = dbConn.prepareStatement(sql);
             statement.setQueryTimeout(queryTimeout);
 
-            log.debug("Setting prepared statement parameter {}: {}", 1, localEntity);
+            log.debug("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 1, localEntity);
             statement.setString(1, localEntity);
-            log.debug("Setting prepared statement parameter {}: {}", 2, peerEntity);
+            log.debug("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 2, peerEntity);
             statement.setString(2, peerEntity);
-            log.debug("Setting prepared statement parameter {}: {}", 3, localId);
+            log.debug("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 3, localId);
             statement.setString(3, localId);
 
             return buildIdentifierEntries(statement.executeQuery());
@@ -232,7 +233,7 @@ public class StoredIDStore extends AbstractInitializableComponent {
                     dbConn.close();
                 }
             } catch (SQLException e) {
-                log.error("Error closing database connection", e);
+                log.error("{} Error closing database connection {}", getLogPrefix(), e);
             }
         }
     }
@@ -271,14 +272,14 @@ public class StoredIDStore extends AbstractInitializableComponent {
         }
         String sql = sqlBuilder.toString();
 
-        log.debug("Selecting persistent ID entry based on prepared sql statement: {}", sql);
+        log.debug("{} Selecting persistent ID entry based on prepared sql statement: {}", getLogPrefix(), sql);
 
         Connection dbConn = dataSource.getConnection();
         try {
             PreparedStatement statement = dbConn.prepareStatement(sql);
             statement.setQueryTimeout(queryTimeout);
 
-            log.debug("Setting prepared statement parameter {}: {}", 1, persistentId);
+            log.debug("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 1, persistentId);
             statement.setString(1, persistentId);
 
             List<PersistentIdEntry> entries = buildIdentifierEntries(statement.executeQuery());
@@ -288,7 +289,7 @@ public class StoredIDStore extends AbstractInitializableComponent {
             }
 
             if (entries.size() > 1) {
-                log.warn("More than one identifier found, only the first will be used");
+                log.warn("{} More than one identifier found, only the first will be used", getLogPrefix());
             }
 
             return entries.get(0);
@@ -298,42 +299,10 @@ public class StoredIDStore extends AbstractInitializableComponent {
                     dbConn.close();
                 }
             } catch (SQLException e) {
-                log.error("Error closing database connection", e);
+                log.error("{} Error closing database connection {}", getLogPrefix(), e);
             }
         }
     }
-
-    /*
-     * TODO This function is not used and is commented out for now
-     * 
-     * public PersistentIdEntry getActivePersistentIdEntry(String localEntity, String peerEntity, String localId,
-     * boolean isActive) throws SQLException {
-     * ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this); StringBuilder sqlBuilder = new
-     * StringBuilder(idEntrySelectSQL); sqlBuilder.append(localEntityColumn).append(" = ?");
-     * sqlBuilder.append(" AND ").append(peerEntityColumn).append(" = ?");
-     * sqlBuilder.append(" AND ").append(localIdColumn).append(" = ?"); if (isActive) {
-     * sqlBuilder.append(" AND ").append(deactivationTimeColumn).append(" IS NULL"); } else {
-     * sqlBuilder.append(" AND ").append(deactivationTimeColumn).append(" IS NOT NULL"); } String sql =
-     * sqlBuilder.toString();
-     * 
-     * log.debug("Selecting persistent ID entry based on prepared sql statement: {}", sql); Connection dbConn =
-     * dataSource.getConnection(); try { PreparedStatement statement = dbConn.prepareStatement(sql);
-     * statement.setQueryTimeout(queryTimeout);
-     * 
-     * log.debug("Setting prepared statement parameter {}: {}", 1, localEntity); statement.setString(1, localEntity);
-     * log.debug("Setting prepared statement parameter {}: {}", 2, peerEntity); statement.setString(2, peerEntity);
-     * log.debug("Setting prepared statement parameter {}: {}", 3, localId); statement.setString(3, localId);
-     * 
-     * log.debug("Getting active persistent Id entries."); List<PersistentIdEntry> entries =
-     * buildIdentifierEntries(statement.executeQuery());
-     * 
-     * if (entries == null || entries.size() == 0) { return null; }
-     * 
-     * if (entries.size() > 1) { log.warn("More than one active identifier, only the first will be used"); }
-     * 
-     * return entries.get(0); } finally { try { if (dbConn != null && !dbConn.isClosed()) { dbConn.close(); } } catch
-     * (SQLException e) { log.error("Error closing database connection", e); } } }
-     */
 
     /**
      * Gets the currently active identifier entry for a (principal, peer, local) tuple.
@@ -357,20 +326,20 @@ public class StoredIDStore extends AbstractInitializableComponent {
         sqlBuilder.append(" AND ").append(deactivationTimeColumn).append(" IS NULL");
         String sql = sqlBuilder.toString();
 
-        log.debug("Selecting active persistent ID entry based on prepared sql statement: {}", sql);
+        log.debug("{} Selecting active persistent ID entry based on prepared sql statement: {}", getLogPrefix(), sql);
         Connection dbConn = dataSource.getConnection();
         try {
             PreparedStatement statement = dbConn.prepareStatement(sql);
             statement.setQueryTimeout(queryTimeout);
 
-            log.debug("Setting prepared statement parameter {}: {}", 1, localEntity);
+            log.debug("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 1, localEntity);
             statement.setString(1, localEntity);
-            log.debug("Setting prepared statement parameter {}: {}", 2, peerEntity);
+            log.debug("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 2, peerEntity);
             statement.setString(2, peerEntity);
-            log.debug("Setting prepared statement parameter {}: {}", 3, localId);
+            log.debug("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 3, localId);
             statement.setString(3, localId);
 
-            log.debug("Getting active persistent Id entries.");
+            log.debug("{} Getting active persistent Id entries.", getLogPrefix());
             List<PersistentIdEntry> entries = buildIdentifierEntries(statement.executeQuery());
 
             if (entries == null || entries.size() == 0) {
@@ -378,7 +347,7 @@ public class StoredIDStore extends AbstractInitializableComponent {
             }
 
             if (entries.size() > 1) {
-                log.warn("More than one active identifier, only the first will be used");
+                log.warn("{} More than one active identifier, only the first will be used", getLogPrefix());
             }
 
             return entries.get(0);
@@ -388,49 +357,10 @@ public class StoredIDStore extends AbstractInitializableComponent {
                     dbConn.close();
                 }
             } catch (SQLException e) {
-                log.error("Error closing database connection", e);
+                log.error("{} Error closing database connection: {}", getLogPrefix(), e);
             }
         }
     }
-
-    // TODO (rdw) This is not used and may be rmeoved
-    /*
-     * Gets the list of deactivated IDs for a given (principal, peer, local) tuple.
-     * 
-     * @param localId local component of the Id
-     * 
-     * @param peerEntity entity ID of the peer the ID is for
-     * 
-     * @param localEntity entity ID of the ID issuer
-     * 
-     * @return list of deactivated identifiers
-     * 
-     * @throws SQLException thrown if there is a problem communication with the database
-     * 
-     * public List<PersistentIdEntry> getDeactivatedPersistentIdEntries(String localEntity, String peerEntity, String
-     * localId) throws SQLException { StringBuilder sqlBuilder = new StringBuilder(idEntrySelectSQL);
-     * sqlBuilder.append(localEntityColumn).append(" = ?");
-     * sqlBuilder.append(" AND ").append(peerEntityColumn).append(" = ?");
-     * sqlBuilder.append(" AND ").append(localIdColumn).append(" = ?");
-     * sqlBuilder.append(" AND ").append(deactivationTimeColumn).append(" IS NOT NULL"); String sql =
-     * sqlBuilder.toString();
-     * 
-     * log.debug("Selecting deactivated persistent ID entries based on prepared sql statement: {}", sql); Connection
-     * dbConn = dataSource.getConnection(); try { PreparedStatement statement = dbConn.prepareStatement(sql);
-     * statement.setQueryTimeout(queryTimeout);
-     * 
-     * log.debug("Setting prepared statement parameter {}: {}", 1, localEntity); statement.setString(1, localEntity);
-     * log.debug("Setting prepared statement parameter {}: {}", 2, peerEntity); statement.setString(2, peerEntity);
-     * log.debug("Setting prepared statement parameter {}: {}", 3, localId); statement.setString(3, localId);
-     * 
-     * log.debug("Getting deactivated persistent Id entries"); List<PersistentIdEntry> entries =
-     * buildIdentifierEntries(statement.executeQuery());
-     * 
-     * if (entries == null || entries.size() == 0) { return null; }
-     * 
-     * return entries; } finally { try { if (dbConn != null && !dbConn.isClosed()) { dbConn.close(); } } catch
-     * (SQLException e) { log.error("Error closing database connection", e); } } }
-     */
 
     /**
      * Check that the entry meets the constraints imposed by the SQL DDL.
@@ -444,31 +374,31 @@ public class StoredIDStore extends AbstractInitializableComponent {
      * @param entry what to look at
      * @throws SQLException if we go against the constraint.
      */
-    protected void validatePersistentIdEntry(PersistentIdEntry entry) throws SQLException {
+    protected void validatePersistentIdEntry(@Nonnull PersistentIdEntry entry) throws SQLException {
         boolean doThrow = false;
 
         if (null == entry.getAttributeIssuerId()) {
-            log.warn("Entry {} has null attribute Issuer Id", entry);
+            log.warn("{} Entry {} has null attribute Issuer Id", getLogPrefix(), entry);
             doThrow = true;
         }
 
         if (null == entry.getAttributeConsumerId()) {
-            log.warn("Entry {} has null attribute consumer Id", entry);
+            log.warn("{} Entry {} has null attribute consumer Id", getLogPrefix(), entry);
             doThrow = true;
         }
 
         if (null == entry.getPrincipalName()) {
-            log.warn("Entry {} has null principalName", entry);
+            log.warn("{} Entry {} has null principalName", getLogPrefix(), entry);
             doThrow = true;
         }
 
         if (null == entry.getLocalId()) {
-            log.warn("Entry {} has null localId", entry);
+            log.warn("{} Entry {} has null localId", getLogPrefix(), entry);
             doThrow = true;
         }
 
         if (null == entry.getPersistentId()) {
-            log.warn("Entry {} has null persistentId", entry);
+            log.warn("{} Entry {} has null persistentId", getLogPrefix(), entry);
             doThrow = true;
         }
 
@@ -482,8 +412,8 @@ public class StoredIDStore extends AbstractInitializableComponent {
      * 
      * @return the SQL statement
      */
-    private String getInsertSql() {
-        StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ");
+    @Nonnull private String getInsertSql() {
+        final StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ");
         sqlBuilder.append(table).append(" (");
         sqlBuilder.append(localEntityColumn).append(", ");
         sqlBuilder.append(peerEntityColumn).append(", ");
@@ -504,38 +434,41 @@ public class StoredIDStore extends AbstractInitializableComponent {
      * 
      * @throws SQLException thrown is there is a problem writing to the database
      */
-    public void storePersistentIdEntry(PersistentIdEntry entry) throws SQLException {
+    public void storePersistentIdEntry(@Nonnull PersistentIdEntry entry) throws SQLException {
 
         validatePersistentIdEntry(entry);
 
-        String sql = getInsertSql();
+        final String sql = getInsertSql();
 
         Connection dbConn = dataSource.getConnection();
         try {
-            log.debug("Storing persistent ID entry based on prepared sql statement: {}", sql);
+            log.debug("{} Storing persistent ID entry based on prepared sql statement: {}", getLogPrefix(), sql);
             PreparedStatement statement = dbConn.prepareStatement(sql);
             statement.setQueryTimeout(queryTimeout);
 
-            log.debug("Setting prepared statement parameter {}: {}", 1, entry.getAttributeIssuerId());
+            log.debug("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 1, 
+                    entry.getAttributeIssuerId());
             statement.setString(1, entry.getAttributeIssuerId());
-            log.debug("Setting prepared statement parameter {}: {}", 2, entry.getAttributeConsumerId());
+            log.debug("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 2,
+                    entry.getAttributeConsumerId());
             statement.setString(2, entry.getAttributeConsumerId());
-            log.debug("Setting prepared statement parameter {}: {}", 3, entry.getPrincipalName());
+            log.debug("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 3, entry.getPrincipalName());
             statement.setString(3, entry.getPrincipalName());
-            log.debug("Setting prepared statement parameter {}: {}", 4, entry.getLocalId());
+            log.debug("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 4, entry.getLocalId());
             statement.setString(4, entry.getLocalId());
-            log.debug("Setting prepared statement parameter {}: {}", 5, entry.getPersistentId());
+            log.debug("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 5, entry.getPersistentId());
             statement.setString(5, entry.getPersistentId());
 
             if (entry.getPeerProvidedId() == null) {
-                log.debug("Setting prepared statement parameter {}: {}", 6, Types.VARCHAR);
+                log.debug("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 6, Types.VARCHAR);
                 statement.setNull(6, Types.VARCHAR);
             } else {
-                log.debug("Setting prepared statement parameter {}: {}", 6, entry.getPeerProvidedId());
+                log.debug("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 6,
+                        entry.getPeerProvidedId());
                 statement.setString(6, entry.getPeerProvidedId());
             }
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            log.debug("Setting prepared statement parameter {}: {}", 7, timestamp.toString());
+            log.debug("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 7, timestamp.toString());
             statement.setTimestamp(7, timestamp);
 
             log.debug(statement.toString());
@@ -547,7 +480,7 @@ public class StoredIDStore extends AbstractInitializableComponent {
                     dbConn.close();
                 }
             } catch (SQLException e) {
-                log.error("Error closing database connection", e);
+                log.error("{} Error closing database connection: {}", e);
             }
         }
     }
@@ -581,7 +514,7 @@ public class StoredIDStore extends AbstractInitializableComponent {
                     dbConn.close();
                 }
             } catch (SQLException e) {
-                log.error("Error closing database connection", e);
+                log.error("{} Error closing database connection: {}", getLogPrefix(), e);
             }
         }
     }
@@ -611,9 +544,18 @@ public class StoredIDStore extends AbstractInitializableComponent {
             entry.setDeactivationTime(resultSet.getTimestamp(deactivationTimeColumn));
             entries.add(entry);
 
-            log.trace("entry {} added to results", entry.toString());
+            log.trace("{} Entry {} added to results", getLogPrefix(), entry.toString());
         }
 
         return entries;
+    }
+
+    /**
+     * Return a string which is to be prepended to all log messages.
+     * 
+     * @return "Stored Id Store:"
+     */
+    @Nonnull @NotEmpty protected String getLogPrefix() {
+        return "Stored Id Store:";
     }
 }

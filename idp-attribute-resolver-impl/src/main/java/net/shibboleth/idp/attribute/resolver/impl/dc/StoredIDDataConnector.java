@@ -78,7 +78,7 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
      * 
      * @param source the {@link DataSource}.
      */
-    public void setDataSource(DataSource source) {
+    public void setDataSource(@Nullable DataSource source) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         dataSource = source;
     }
@@ -88,7 +88,7 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
      * 
      * @return data store used to manage stored IDs
      */
-    @Nonnull public StoredIDStore getStoredIDStore() {
+    @NonnullAfterInit public StoredIDStore getStoredIDStore() {
         return pidStore;
     }
 
@@ -115,13 +115,12 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         if (null == dataSource) {
-            throw new ComponentInitializationException("StoredIdConnector " + getId()
-                    + ": No database connection provided");
+            throw new ComponentInitializationException(getLogPrefix() + " No database connection provided");
         }
 
         if (null != getSalt() && getSalt().length < 16) {
-            throw new ComponentInitializationException("StoredIDDataConnector definition '" + getId()
-                    + "': If provided, the salt must be at least 16 bytes in size");
+            throw new ComponentInitializationException(getLogPrefix()
+                    + " If provided, the salt must be at least 16 bytes in size");
         }
 
         StoredIDStore store = new StoredIDStore();
@@ -155,7 +154,7 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
     @Nonnull protected PersistentIdEntry createPersistentId(@Nonnull @NotEmpty String principalName,
             @Nonnull @NotEmpty String localEntityId, @Nonnull @NotEmpty String peerEntityId,
             @Nonnull @NotEmpty String localId) throws SQLException, ResolutionException {
-        PersistentIdEntry entry = new PersistentIdEntry();
+        final PersistentIdEntry entry = new PersistentIdEntry();
         entry.setAttributeIssuerId(Constraint.isNotNull(StringSupport.trimOrNull(localEntityId),
                 "Attribute Issuer entity Id must not be null"));
         entry.setPeerEntityId(Constraint.isNotNull(StringSupport.trimOrNull(peerEntityId),
@@ -176,7 +175,7 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
         }
 
         while (pidStore.getPersistentIdEntry(persistentId, false) != null) {
-            log.debug("Generated persistent ID was already assigned to another user, regenerating");
+            log.debug("{} Generated persistent ID was already assigned to another user, regenerating", getLogPrefix());
             persistentId = UUID.randomUUID().toString();
         }
 
@@ -199,30 +198,32 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
      * 
      * @throws ResolutionException thrown if there is a problem retrieving or storing the persistent ID
      */
-    @Nonnull @NotEmpty protected String getStoredId(String principalName, String localEntityId, String spEntityId,
-            String localId) throws ResolutionException {
+    @Nonnull @NotEmpty protected String getStoredId(@Nonnull @NotEmpty String principalName,
+            @Nonnull @NotEmpty String localEntityId, @Nonnull @NotEmpty String spEntityId,
+            @Nonnull @NotEmpty String localId) throws ResolutionException {
         PersistentIdEntry idEntry;
         try {
-            log.debug("Checking for existing, active, stored ID for principal '{}'", principalName);
+            log.debug("{} Checking for existing, active, stored ID for principal '{}'", getLogPrefix(), principalName);
             idEntry = pidStore.getActivePersistentIdEntry(localEntityId, spEntityId, localId);
             if (idEntry == null) {
-                log.debug("No existing, active, stored ID, creating a new one for principal '{}'", principalName);
+                log.debug("{} No existing, active, stored ID, creating a new one for principal '{}'", getLogPrefix(),
+                        principalName);
                 idEntry = createPersistentId(principalName, localEntityId, spEntityId, localId);
                 pidStore.storePersistentIdEntry(idEntry);
-                log.debug("Created stored ID '{}'", idEntry);
+                log.debug("{} Created stored ID '{}'", getLogPrefix(), idEntry);
             } else {
-                log.debug("Located existing stored ID {}", idEntry);
+                log.debug("{} Located existing stored ID {}", getLogPrefix(), idEntry);
             }
 
             final String pid = StringSupport.trimOrNull(idEntry.getPersistentId());
             if (null == pid) {
-                log.debug("Attribute resolution '{}': returned persistent ID was empty", getId());
-                throw new ResolutionException("Attribute resolution '"+getId()+"': returned persistent ID was empty");
+                log.debug("{} Returned persistent ID was empty", getLogPrefix());
+                throw new ResolutionException(getLogPrefix() + " Returned persistent ID was empty");
             }
-            
+
             return pid;
         } catch (SQLException e) {
-            log.debug("Attribute resolution '{}': Database error retrieving persistent identifier", getId(), e);
+            log.debug("{} Database error retrieving persistent identifier", getLogPrefix(), e);
             throw new ResolutionException("Database error retrieving persistent identifier", e);
         }
     }
@@ -237,14 +238,14 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
                 resolutionContext.getSubcontext(AttributeRecipientContext.class);
 
         if (null == attributeRecipientContext) {
-            log.warn("Attribute definition '{}' no attribute recipient context provided ", getId());
+            log.warn("{} No attribute recipient context provided ", getLogPrefix());
             return null;
         }
 
         final String principal = StringSupport.trimOrNull(attributeRecipientContext.getPrincipal());
 
         if (null == principal) {
-            log.warn("StoredID '{}' : No principal available, skipping ID creation", getId());
+            log.warn("{} No principal available, skipping ID creation", getLogPrefix());
             return null;
         }
 
@@ -256,14 +257,14 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
 
         final String attributeIssuerID = StringSupport.trimOrNull(attributeRecipientContext.getAttributeIssuerID());
         if (null == attributeIssuerID) {
-            log.warn("StoredID '{}' : Could not get attribute issuer ID, skipping ID creation", getId());
+            log.warn("{} Could not get attribute issuer ID, skipping ID creation", getLogPrefix());
             return null;
         }
 
         final String attributeRecipientID =
                 StringSupport.trimOrNull(attributeRecipientContext.getAttributeRecipientID());
         if (null == attributeRecipientID) {
-            log.warn("StoredID '{}' : Could not get attribute recipient ID, skipping ID creation", getId());
+            log.warn("{} Could not get attribute recipient ID, skipping ID creation", getLogPrefix());
             return null;
         }
 

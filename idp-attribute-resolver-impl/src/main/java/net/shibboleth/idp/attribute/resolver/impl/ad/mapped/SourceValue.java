@@ -17,11 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.ad.mapped;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Objects;
@@ -53,7 +50,7 @@ public class SourceValue {
      * @param theIgnoreCase whether case should be ignored when matching
      * @param thePartialMatch whether partial matches should be allowed
      */
-    public SourceValue(String theValue, boolean theIgnoreCase, boolean thePartialMatch) {
+    public SourceValue(@Nullable String theValue, boolean theIgnoreCase, boolean thePartialMatch) {
         value = StringSupport.trimOrNull(theValue);
         ignoreCase = theIgnoreCase;
         partialMatch = thePartialMatch;

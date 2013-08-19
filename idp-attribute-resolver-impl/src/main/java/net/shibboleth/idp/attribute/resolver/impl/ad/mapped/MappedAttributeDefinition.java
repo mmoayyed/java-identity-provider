@@ -50,11 +50,10 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
- * Implementation of Mapped Attributes.
- * 
- * An attribute definition take the values from previous resolution stages and convert as it creates the output
- * attribute. Each value is compared with a lookup table (a {@link java.util.Collection} of @link{ValueMap}s and if it
- * matches then the appropriate value(s) is/are substituted. Non matches are either passed through or are removed
+ * Implementation of Mapped Attributes. <br/>
+ * An attribute definition that takes the values from previous resolution stages and converts them as it creates the
+ * output attribute. Each value is compared with a lookup table (a {@link java.util.Collection} of @link{ValueMap}s) and
+ * if it matches then the appropriate value(s) is/are substituted. Non matches are either passed through or are removed
  * depending on the setting 'passThru'.
  * */
 @ThreadSafe
@@ -65,12 +64,12 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
 
     /** Value maps. */
     private Set<ValueMap> valueMaps = Collections.emptySet();
-    
+
     /** Whether the definition passes thru unmatched values. */
     private boolean passThru;
-    
+
     /** Default return value. */
-    @Nullable private StringAttributeValue defaultValue; 
+    @Nullable private StringAttributeValue defaultValue;
 
     /**
      * Gets the functions used to map an input value to an output value.
@@ -131,18 +130,18 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /**
-     * Gets whether the definition passes thru unmatched values.
+     * Gets whether the definition passes unmatched values through.
      * 
-     * @return whether the definition passes thru unmatched values.
+     * @return whether the definition passes unmatched values unchanged or suppresses them.
      */
     public boolean isPassThru() {
         return passThru;
     }
 
     /**
-     * Sets whether the definition passes thru unmatched values.
+     * Sets whether the definition passes unmatched values through.
      * 
-     * @param newPassThru whether the definition passes thru unmatched values.
+     * @param newPassThru whether the definition passes unmatched values unchanged or suppresses them.
      */
     public void setPassThru(boolean newPassThru) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -159,9 +158,9 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
      */
     protected Set<AttributeValue> mapValue(@Nullable String value) {
         log.debug("Attribute Definition {}: mapping depdenency attribute value {}", getId(), value);
-        
+
         final String trimmedValue = StringSupport.trimOrNull(value);
-        LazySet<AttributeValue> mappedValues = new LazySet<AttributeValue>();
+        final LazySet<AttributeValue> mappedValues = new LazySet<AttributeValue>();
 
         boolean valueMapMatch = false;
         if (null != trimmedValue) {
@@ -182,11 +181,11 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
         }
 
         log.debug("Attribute Definition {}: mapped depdenency attribute value {} to the values {}", new Object[] {
-                getId(), value, mappedValues, });
-        
+                getId(), value, mappedValues,});
+
         return mappedValues;
     }
-    
+
     /** {@inheritDoc} */
     @Nonnull protected Attribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
@@ -200,12 +199,11 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
 
         // Bucket for results
         final Attribute resultAttribute = new Attribute(getId());
-       
+
         if (unmappedResults == null || unmappedResults.isEmpty()) {
             log.debug("Attribute Definition {}: No values from dependencies", getId());
             if (null != defaultValue) {
-                log.debug(
-                        "Attribute Definition {}: Default value of {} added as the value for this attribute",
+                log.debug("Attribute Definition {}: Default value of {} added as the value for this attribute",
                         getId(), defaultValue);
                 resultAttribute.getValues().add(defaultValue);
             }
@@ -217,8 +215,8 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
                             + getId() + "' does not support dependency values of type "
                             + unmappedValue.getClass().getName()));
                 }
-    
-                Set<AttributeValue> mappingResult = mapValue(((StringAttributeValue)unmappedValue).getValue());
+
+                Set<AttributeValue> mappingResult = mapValue(((StringAttributeValue) unmappedValue).getValue());
                 resultAttribute.getValues().addAll(mappingResult);
             }
         }

@@ -32,6 +32,7 @@ import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;
@@ -68,6 +69,8 @@ public class CryptoTransientIdAttributeDefinition extends BaseAttributeDefinitio
     @Nonnull protected Attribute doAttributeDefinitionResolve(@Nonnull AttributeResolutionContext resolutionContext)
             throws ResolutionException {
 
+        Constraint.isNotNull(resolutionContext, "resolution context was null");
+
         final AttributeRecipientContext attributeRecipientContext =
                 resolutionContext.getSubcontext(AttributeRecipientContext.class);
 
@@ -100,9 +103,10 @@ public class CryptoTransientIdAttributeDefinition extends BaseAttributeDefinitio
                 .append(principalName);
 
         try {
-            String transientId =
+            final String transientId =
                     dataSealer.wrap(principalTokenIdBuilder.toString(), System.currentTimeMillis() + idLifetime);
-            Set<AttributeValue> vals = Collections.singleton((AttributeValue) new StringAttributeValue(transientId));
+            final Set<AttributeValue> vals =
+                    Collections.singleton((AttributeValue) new StringAttributeValue(transientId));
             result.setValues(vals);
         } catch (DataSealerException e) {
             throw new ResolutionException(getLogPrefix() + " Caught exception wrapping principal identifier. {}", e);
@@ -126,6 +130,7 @@ public class CryptoTransientIdAttributeDefinition extends BaseAttributeDefinitio
      * @param lifetime time, in milliseconds, that ids are valid for.
      */
     public void setIdLifetime(long lifetime) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         idLifetime = lifetime;
     }
 
@@ -135,6 +140,7 @@ public class CryptoTransientIdAttributeDefinition extends BaseAttributeDefinitio
      * @param sealer object used to protect and encrypt the data
      */
     public void setDataSealer(@Nonnull DataSealer sealer) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         dataSealer = Constraint.isNotNull(sealer, "DataSealer may not be null");
     }
 

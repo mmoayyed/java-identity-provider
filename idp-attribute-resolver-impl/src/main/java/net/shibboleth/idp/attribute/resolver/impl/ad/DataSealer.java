@@ -351,11 +351,11 @@ public class DataSealer {
     @Nonnull public String unwrap(@Nonnull String wrapped) throws DataSealerException {
 
         try {
-            byte[] in = Base64Support.decode(wrapped);
+            final byte[] in = Base64Support.decode(wrapped);
 
-            Cipher cipher = Cipher.getInstance(cipherAlgorithm);
-            int ivSize = cipher.getBlockSize();
-            byte[] iv = new byte[ivSize];
+            final Cipher cipher = Cipher.getInstance(cipherAlgorithm);
+            final int ivSize = cipher.getBlockSize();
+            final byte[] iv = new byte[ivSize];
 
 
             if (in.length < ivSize) {
@@ -368,11 +368,11 @@ public class DataSealer {
             IvParameterSpec ivSpec = new IvParameterSpec(iv);
             cipher.init(Cipher.DECRYPT_MODE, cipherKey, ivSpec);
 
-            byte[] encryptedHandle = new byte[in.length - iv.length];
+            final byte[] encryptedHandle = new byte[in.length - iv.length];
             System.arraycopy(in, ivSize, encryptedHandle, 0, in.length - iv.length);
 
             // decrypt the rest of the data and setup the streams
-            byte[] decryptedBytes = cipher.doFinal(encryptedHandle);
+            final byte[] decryptedBytes = cipher.doFinal(encryptedHandle);
             return extractAndCheckDecryptedData(decryptedBytes);
 
         } catch (GeneralSecurityException e) {
@@ -392,32 +392,32 @@ public class DataSealer {
             throws DataSealerException {
         
         try {
-            Mac mac = Mac.getInstance(macAlgorithm);
+            final Mac mac = Mac.getInstance(macAlgorithm);
             mac.init(macKey);
-            int macSize = mac.getMacLength();
+            final int macSize = mac.getMacLength();
             
             ByteArrayInputStream byteStream = new ByteArrayInputStream(decryptedBytes);
             GZIPInputStream compressedData = new GZIPInputStream(byteStream);
             DataInputStream dataInputStream = new DataInputStream(compressedData);
 
             // extract the components
-            byte[] decodedMac = new byte[macSize];
-            int bytesRead;
+            final byte[] decodedMac = new byte[macSize];
+            final int bytesRead;
 
             bytesRead = dataInputStream.read(decodedMac);
             if (bytesRead != macSize) {
                 log.error("Error parsing unwrapped data, unable to extract HMAC.");
                 throw new DataSealerException("Error parsing unwrapped data, unable to extract HMAC.");
             }
-            long decodedExpirationTime = dataInputStream.readLong();
-            String decodedData = dataInputStream.readUTF();
+            final long decodedExpirationTime = dataInputStream.readLong();
+            final String decodedData = dataInputStream.readUTF();
 
             if (System.currentTimeMillis() > decodedExpirationTime) {
                 log.info("Unwrapped data has expired.");
                 throw new DataExpiredException("Unwrapped data has expired.");
             }
 
-            byte[] generatedMac = getMAC(mac, decodedData, decodedExpirationTime);
+            final byte[] generatedMac = getMAC(mac, decodedData, decodedExpirationTime);
 
             if (!Arrays.equals(decodedMac, generatedMac)) {
                 log.warn("Unwrapped data failed integrity check.");
@@ -455,18 +455,18 @@ public class DataSealer {
         }
 
         try {
-            Mac mac = Mac.getInstance(macAlgorithm);
+            final Mac mac = Mac.getInstance(macAlgorithm);
             mac.init(macKey);
 
-            Cipher cipher = Cipher.getInstance(cipherAlgorithm);
-            byte[] iv = new byte[cipher.getBlockSize()];
+            final Cipher cipher = Cipher.getInstance(cipherAlgorithm);
+            final byte[] iv = new byte[cipher.getBlockSize()];
             random.nextBytes(iv);
             IvParameterSpec ivSpec = new IvParameterSpec(iv);
             cipher.init(Cipher.ENCRYPT_MODE, cipherKey, ivSpec);
 
-            ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-            GZIPOutputStream compressedStream = new GZIPOutputStream(byteStream);
-            DataOutputStream dataStream = new DataOutputStream(compressedStream);
+            final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+            final GZIPOutputStream compressedStream = new GZIPOutputStream(byteStream);
+            final DataOutputStream dataStream = new DataOutputStream(compressedStream);
 
             dataStream.write(getMAC(mac, data, exp));
             dataStream.writeLong(exp);
@@ -477,9 +477,9 @@ public class DataSealer {
             compressedStream.finish();
             byteStream.flush();
 
-            byte[] encryptedData = cipher.doFinal(byteStream.toByteArray());
+            final byte[] encryptedData = cipher.doFinal(byteStream.toByteArray());
 
-            byte[] handleBytes = new byte[iv.length + encryptedData.length];
+            final byte[] handleBytes = new byte[iv.length + encryptedData.length];
             System.arraycopy(iv, 0, handleBytes, 0, iv.length);
             System.arraycopy(encryptedData, 0, handleBytes, iv.length, encryptedData.length);
 
@@ -507,13 +507,13 @@ public class DataSealer {
 
         String decrypted;
         try {
-            Cipher cipher = Cipher.getInstance(cipherAlgorithm);
-            byte[] iv = new byte[cipher.getBlockSize()];
+            final Cipher cipher = Cipher.getInstance(cipherAlgorithm);
+            final byte[] iv = new byte[cipher.getBlockSize()];
             random.nextBytes(iv);
-            IvParameterSpec ivSpec = new IvParameterSpec(iv);
+            final IvParameterSpec ivSpec = new IvParameterSpec(iv);
             cipher.init(Cipher.ENCRYPT_MODE, cipherKey, ivSpec);
-            byte[] cipherText = cipher.doFinal("test".getBytes());
-            cipher = Cipher.getInstance(cipherAlgorithm);
+            final byte[] cipherText = cipher.doFinal("test".getBytes());
+
             cipher.init(Cipher.DECRYPT_MODE, cipherKey, ivSpec);
             decrypted = new String(cipher.doFinal(cipherText));
         } catch (GeneralSecurityException e) {
@@ -526,9 +526,9 @@ public class DataSealer {
             throw new DataSealerException("Round trip encryption/decryption test unsuccessful.");
         }
 
-        byte[] code;
+        final byte[] code;
         try {
-            Mac mac = Mac.getInstance(macAlgorithm);
+            final Mac mac = Mac.getInstance(macAlgorithm);
             mac.init(macKey);
             mac.update("foo".getBytes());
             code = mac.doFinal();
@@ -586,7 +586,7 @@ public class DataSealer {
      */
     private void loadKeys() throws GeneralSecurityException, IOException {
         if (cipherKey == null || macKey == null) {
-            KeyStore ks = KeyStore.getInstance(keystoreType);
+            final KeyStore ks = KeyStore.getInstance(keystoreType);
             FileInputStream fis = null;
             try {
                 fis = new java.io.FileInputStream(keystorePath);

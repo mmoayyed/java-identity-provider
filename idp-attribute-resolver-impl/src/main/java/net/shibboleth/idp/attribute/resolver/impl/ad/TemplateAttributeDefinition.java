@@ -60,10 +60,10 @@ import com.google.common.base.Predicates;
  * Template Language. Dependencies may have multiple values, however multiples dependencies must have the same number of
  * values. In the case of multi-valued dependencies, the template will be evaluated multiples times, iterating over each
  * dependency.
- * 
+ * <br/>
  * The template is inserted into the engine with a unique name derived from this class and from the id supplied for this
  * attribute.
- * 
+ * <br/>
  * This is marked not thread safe since the constructor cannot do a safe check & insert of the template into the
  * repository.
  */
@@ -196,7 +196,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
                 log.debug("{} result of template evaluating was '{}'", getLogPrefix(), templateResult);
                 resultantAttribute.getValues().add(new StringAttributeValue(templateResult));
             } catch (VelocityException e) {
-                // TODO (rdw) uncovered path
+                // uncovered path
                 log.error(getLogPrefix() + " unable to evaluate velocity template", e);
                 throw new ResolutionException("Unable to evaluate template", e);
             }
@@ -224,6 +224,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
         templateText = StringSupport.trimOrNull(templateText);
 
         if (null == templateText) {
+            // V2 compatibility - define our own template
             StringBuffer defaultTemplate = new StringBuffer();
             for (String id : sourceAttributes) {
                 defaultTemplate.append("${").append(id).append("} ");
@@ -245,10 +246,10 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
      * Set up a map which can be used to populate the template. The key is the attribute name and the value is the
      * iterator to give all the names. We also return how deep the iteration will be and throw an exception if there is
      * a mismatch in number of elements in any attribute.
-     * 
+     * <br/>
      * Finally, the names of the source attributes is checked against the dependency attributes and if there is a
      * mismatch then a warning is emitted.
-     * 
+     *
      * @param resolutionContext to look for dependencies in.
      * @param sourceValues to populate with the attribute iterators
      * @return how many values in the attributes

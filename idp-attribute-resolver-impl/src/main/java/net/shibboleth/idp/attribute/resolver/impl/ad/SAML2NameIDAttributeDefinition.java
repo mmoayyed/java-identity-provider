@@ -43,11 +43,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An attribute definition that creates attributes whose values are {@link NameID}.
- * 
+ * An attribute definition that creates attributes whose values are {@link NameID}. <br/>
  * When building the NameID the textual content of the NameID is the value of the source attribute. If a
  * {@link #nameIdQualifier} is provided that value is used as the NameID's name qualifier otherwise the attribute
- * issuer's entity ID is used. The attribute requester's entity ID is always used as the NameID's SP name qualifier.
+ * issuer's entity ID is used. If a {@link #nameIdSPQualifier} is provided then that valid is used as the NameID's SP
+ * name qualifier, otherwise the the attribute recipient's entityID is used.
  */
 
 public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {

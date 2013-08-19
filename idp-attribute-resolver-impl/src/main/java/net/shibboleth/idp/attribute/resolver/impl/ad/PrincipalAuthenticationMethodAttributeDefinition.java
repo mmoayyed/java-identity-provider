@@ -25,17 +25,15 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
 
 /**
  * An attribute definition which returns an attribute with a single value - the AuthenticationMethod.
@@ -45,33 +43,19 @@ public class PrincipalAuthenticationMethodAttributeDefinition extends BaseAttrib
     /** Log. */
     private final Logger log = LoggerFactory.getLogger(PrincipalAuthenticationMethodAttributeDefinition.class);
 
-    /**
-     * How to find the AuthNMthod from the given context. TODO needs to be finalised.
-     */
-    private Function<AttributeResolutionContext, String> lookupStrategy;
-
-    /**
-     * Set the strategy to allow us to find the authrN method.
-     * 
-     * @param strategy the strategy
-     */
-    public void setLookupStrategy(Function<AttributeResolutionContext, String> strategy) {
-        lookupStrategy = strategy;
-    }
-
-    /**
-     * Get the strategy to allow us to find the authrN method.
-     * 
-     * @return strategy the strategy
-     */
-    @Nullable @NonnullAfterInit public Function<AttributeResolutionContext, String> getLookupStrategy() {
-        return lookupStrategy;
-    }
-
     /** {@inheritDoc} */
     @Nullable protected Attribute doAttributeDefinitionResolve(
             @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
-        final String method = StringSupport.trimOrNull(lookupStrategy.apply(resolutionContext));
+        
+        final AttributeRecipientContext attributeRecipientContext =
+                resolutionContext.getSubcontext(AttributeRecipientContext.class);
+
+        if (null == attributeRecipientContext) {
+            throw new ResolutionException(getLogPrefix() + " no attribute recipient context provided ");
+        }
+
+        
+        final String method = StringSupport.trimOrNull(attributeRecipientContext.getPrincipalAuthenticationMethod());
 
         if (null == method) {
             log.info("{} null or empty method was returned", getLogPrefix());
@@ -86,8 +70,5 @@ public class PrincipalAuthenticationMethodAttributeDefinition extends BaseAttrib
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        if (null == lookupStrategy) {
-            throw new ComponentInitializationException(getLogPrefix() + " no lookup strategy found");
-        }
     }
 }

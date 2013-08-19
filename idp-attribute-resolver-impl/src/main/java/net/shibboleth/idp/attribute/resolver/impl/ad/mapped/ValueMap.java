@@ -110,18 +110,18 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
     /** {@inheritDoc} */
     @Nullable public Set<StringAttributeValue> apply(@Nullable String attributeValue) {
         log.debug("Attempting to map attribute value '{}'", attributeValue);
-        Set<StringAttributeValue> mappedValues = new HashSet<StringAttributeValue>();
-        Matcher m;
+        final Set<StringAttributeValue> mappedValues = new HashSet<StringAttributeValue>();
 
-        String newValue;
         for (SourceValue sourceValue : sourceValues) {
+            final Matcher m;
+            String newValue;
             newValue = null;
             if (sourceValue.isPartialMatch()) {
                 log.debug("Performing partial match comparison.");
                 if (attributeValue.contains(sourceValue.getValue())) {
+                    newValue = returnValue;
                     log.debug("Attribute value '{}' matches source value '{}' it will be mapped to '{}'", new Object[] {
                             attributeValue, sourceValue.getValue(), newValue,});
-                    newValue = returnValue;
                 }
             } else {
                 log.debug("Performing regular expression based comparison");

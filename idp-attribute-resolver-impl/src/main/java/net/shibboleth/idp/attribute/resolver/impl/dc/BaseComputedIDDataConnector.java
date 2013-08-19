@@ -123,12 +123,11 @@ public abstract class BaseComputedIDDataConnector extends BaseDataConnector {
         super.doInitialize();
 
         if (null == getSourceAttributeId()) {
-            throw new ComponentInitializationException("Stored/Computer Connector'" + getId()
-                    + "': No source attribute present.");
+            throw new ComponentInitializationException(getLogPrefix() + " No source attribute present.");
         }
-       
+
         //
-        // We don't test the salt because in the StoredIdcase we may never need it.  The concrete
+        // We don't test the salt because in the StoredIdcase we may never need it. The concrete
         // classes can test if they want.
         //
 
@@ -151,37 +150,38 @@ public abstract class BaseComputedIDDataConnector extends BaseDataConnector {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         if (null == attributeDefinition || null == attributeDefinition.getResolvedAttribute()) {
-            log.warn("Source attribute {} for connector {} was not present in dependencies", getSourceAttributeId(),
-                    getId());
+            log.warn("{} Source attribute {} for connector {} was not present in dependencies", getLogPrefix(),
+                    getSourceAttributeId(), getId());
             return null;
         }
 
         final Set<AttributeValue> attributeValues = attributeDefinition.getResolvedAttribute().getValues();
         if (attributeValues == null || attributeValues.isEmpty()) {
-            log.debug("Source attribute {} for connector {} provide no values", getSourceAttributeId(), getId());
+            log.debug("{} Source attribute {} for connector {} provide no values", getLogPrefix(),
+                    getSourceAttributeId(), getId());
             return null;
         }
 
         if (attributeValues.size() > 1) {
-            log.warn("Source attribute {} for connector {} has more than one value, only the first value is used",
-                    getSourceAttributeId(), getId());
+            log.warn("{} Source attribute {} for connector {} has more than one value, only the first value is used",
+                    getLogPrefix(), getSourceAttributeId(), getId());
         }
 
         final AttributeValue attributeValue = attributeValues.iterator().next();
-        
-        String val;
+
+        final String val;
 
         if (attributeValue instanceof StringAttributeValue) {
             val = StringSupport.trimOrNull(((StringAttributeValue) attributeValue).getValue());
         } else {
-            log.warn("Source attribute {} for connector {} was not a string type.  Not used", getSourceAttributeId(),
-                    getId());
+            log.warn("{} Source attribute {} for connector {} was not a string type.  Not used",
+                    getSourceAttributeId(), getLogPrefix(), getId());
             return null;
         }
-        
+
         if (val == null) {
-            log.warn("Attribute {} for connector resolved as empty or null.  Not used", getSourceAttributeId(),
-                    getId());
+            log.warn("{} Attribute {} for connector resolved as empty or null.  Not used", getLogPrefix(),
+                    getSourceAttributeId(), getId());
         }
         return val;
     }
@@ -194,8 +194,8 @@ public abstract class BaseComputedIDDataConnector extends BaseDataConnector {
      * @return the hash, or null if the attribute could not be resolved.
      * @throws ResolutionException if we could not get the SP Id.
      */
-    @Nullable protected String generateComputedId(@Nonnull String spEntityId,
-            @Nullable String sourceValue) throws ResolutionException {
+    @Nullable protected String generateComputedId(@Nonnull String spEntityId, @Nullable String sourceValue)
+            throws ResolutionException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 

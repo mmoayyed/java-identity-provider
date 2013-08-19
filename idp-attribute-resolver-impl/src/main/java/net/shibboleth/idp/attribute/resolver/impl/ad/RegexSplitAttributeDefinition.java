@@ -30,9 +30,9 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -92,7 +92,8 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
             if (!(dependencyValue instanceof StringAttributeValue)) {
                 throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
                         + "This attribute definition only operates on attribute values of type "
-                        + StringAttributeValue.class.getName() + " not " + dependencyValue.getClass().getName()));
+                        + StringAttributeValue.class.getName() + "; was given " 
+                        + dependencyValue.getClass().getName()));
             }
 
             log.debug("{} applying regexp '{}' to input value '{}'", new Object[] {getLogPrefix(), regexp.pattern(),
@@ -103,8 +104,8 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
                         getLogPrefix(), matcher.group(1), regexp.pattern(), dependencyValue.getValue(),});
                 resultantAttribute.getValues().add(new StringAttributeValue(matcher.group(1)));
             } else {
-                log.debug("{} Regexp '{}' did not match anything in input value '{}'",
-                        new Object[] {getLogPrefix(), regexp.pattern(), dependencyValue.getValue()});
+                log.debug("{} Regexp '{}' did not match anything in input value '{}'", new Object[] {getLogPrefix(),
+                        regexp.pattern(), dependencyValue.getValue(),});
             }
         }
 
