@@ -49,6 +49,8 @@ import com.google.common.collect.Lists;
 /**
  * A base class for authentication related actions that validate credentials and produce an
  * {@link AuthenticationResult}.
+ * 
+ * @event {@link AuthnEventIds#REQUEST_UNSUPPORTED}
  */
 public abstract class AbstractValidationAction extends AbstractAuthenticationAction
     implements PrincipalSupportingComponent {
@@ -255,6 +257,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
             }
             
             log.info("{} Skipping validator, not compatible with request's principal requirements", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
             return false;
         }
         

@@ -29,8 +29,8 @@ public final class AuthnEventIds {
     /** ID of event returned if there are no authentication flows that could be used to authenticate the user. */
     public static final String NO_POTENTIAL_FLOW = "NoPotentialFlow";
 
-    /** ID of event returned if there no authentication flows that can satisfy the request's requirements. */
-    public static final String NO_REQUESTED_FLOW = "NoRequestedFlow";
+    /** ID of event returned if the request's authentication requirements can't be met by an action or flow. */
+    public static final String REQUEST_UNSUPPORTED = "RequestUnsupported";
     
     /** ID of event returned if there are no credentials available in the request. */
     public static final String NO_CREDENTIALS = "NoCredentials";

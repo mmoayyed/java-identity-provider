@@ -85,7 +85,7 @@ public class SelectAuthenticationFlowTest extends InitializeAuthenticationContex
         
         action.execute(prc);
         
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_REQUESTED_FLOW);
+        ActionTestingSupport.assertEvent(prc, AuthnEventIds.REQUEST_UNSUPPORTED);
     }
 
     @Test public void testRequestNoneActive() throws ProfileException {

@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID} (reuse of a result, i.e., SSO)
  * @event {@link AuthnEventIds#NO_POTENTIAL_FLOW}
- * @event {@link AuthnEventIds#NO_REQUESTED_FLOW}
+ * @event {@link AuthnEventIds#REQUEST_UNSUPPORTED}
  * @event Selected flow ID to execute
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
  * @pre The content of {@link AuthenticationContext#getPotentialFlows()} are assumed to be acceptable
@@ -141,7 +141,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         }
         
         log.info("{} none of the potential authentication flows can satisfy the request", getLogPrefix());
-        ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_REQUESTED_FLOW);
+        ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
     }
     
     /**
@@ -183,7 +183,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             }
             
             log.info("{} none of the potential authentication flows can satisfy the request", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_REQUESTED_FLOW);
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
         }
     }
 

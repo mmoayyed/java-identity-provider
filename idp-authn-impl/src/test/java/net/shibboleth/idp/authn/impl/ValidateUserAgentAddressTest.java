@@ -18,11 +18,13 @@
 package net.shibboleth.idp.authn.impl;
 
 
+import java.security.Principal;
 import java.util.Arrays;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.net.IPRange;
 
@@ -45,6 +47,7 @@ public class ValidateUserAgentAddressTest extends InitializeAuthenticationContex
         action = new ValidateUserAgentAddress();
         action.setPrincipalName("foo");
         action.setDesignatedRanges(Arrays.asList(IPRange.parseCIDRBlock("192.168.1.0/24")));
+        action.setSupportedPrincipals(Arrays.asList(new TestPrincipal("UserAgentAuthentication")));
         action.initialize();
     }
     
@@ -96,13 +99,39 @@ public class ValidateUserAgentAddressTest extends InitializeAuthenticationContex
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
     }
 
-    @Test public void testAuthorized() throws Exception {
+    @Test public void testIncompatible() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRemoteAddr("192.168.1.1");
         prc.setHttpRequest(request);
 
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
+        ac.getPrincipalEvalPredicateFactoryRegistry().register(
+                TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
+        
+        RequestedPrincipalContext rpc = new RequestedPrincipalContext("exact",
+                Arrays.<Principal>asList(new TestPrincipal("PasswordAuthentication")));
+        ac.addSubcontext(rpc, true);
+        
+        doExtract(prc);
+        
+        action.execute(prc);
+        ActionTestingSupport.assertEvent(prc, AuthnEventIds.REQUEST_UNSUPPORTED);
+    }
+
+    @Test public void testCompatible() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteAddr("192.168.1.1");
+        prc.setHttpRequest(request);
+
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        ac.setAttemptedFlow(authenticationFlows.get(0));
+        ac.getPrincipalEvalPredicateFactoryRegistry().register(
+                TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
+        
+        RequestedPrincipalContext rpc = new RequestedPrincipalContext("exact",
+                Arrays.<Principal>asList(new TestPrincipal("UserAgentAuthentication")));
+        ac.addSubcontext(rpc, true);
         
         doExtract(prc);
         
@@ -118,4 +147,6 @@ public class ValidateUserAgentAddressTest extends InitializeAuthenticationContex
         extract.initialize();
         extract.execute(prc);
     }
+    
+    
 }
