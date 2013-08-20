@@ -18,8 +18,6 @@
 package net.shibboleth.idp.authn.context;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
 
 import javax.security.auth.Subject;
 
@@ -74,25 +72,6 @@ public class AuthenticationContextTest {
         ctx.getPotentialFlows().put(descriptor.getId(), descriptor);
         Assert.assertEquals(ctx.getPotentialFlows().size(), 1);
         Assert.assertEquals(ctx.getPotentialFlows().get("test"), descriptor);
-    }
-
-    /** Tests mutating requested flows. */
-    @Test public void testRequestedFlows() throws Exception {
-        AuthenticationContext ctx = new AuthenticationContext();
-        Assert.assertTrue(ctx.getRequestedFlows().isEmpty());
-
-        ctx.setRequestedFlows(Collections.<AuthenticationFlowDescriptor>emptyList());
-        Assert.assertTrue(ctx.getRequestedFlows().isEmpty());
-
-        AuthenticationFlowDescriptor descriptor1 = new AuthenticationFlowDescriptor("test1");
-        AuthenticationFlowDescriptor descriptor2 = new AuthenticationFlowDescriptor("test2");
-
-        ctx.setRequestedFlows(Arrays.asList(descriptor1, descriptor2));
-
-        Iterator<AuthenticationFlowDescriptor> iterator = ctx.getRequestedFlows().iterator();
-        Assert.assertEquals(ctx.getRequestedFlows().size(), 2);
-        Assert.assertEquals(iterator.next(), descriptor1);
-        Assert.assertEquals(iterator.next(), descriptor2);
     }
 
     /** Tests mutating attempted flow. */

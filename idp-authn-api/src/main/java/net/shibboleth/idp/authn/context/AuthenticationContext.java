@@ -19,7 +19,6 @@ package net.shibboleth.idp.authn.context;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -40,7 +39,6 @@ import org.joda.time.DateTime;
 import org.opensaml.messaging.context.BaseContext;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -69,15 +67,12 @@ public final class AuthenticationContext extends BaseContext {
     /** Flows that could potentially be used to authenticate the user. */
     @Nonnull @NonnullElements private final Map<String, AuthenticationFlowDescriptor> potentialFlows;
 
-    /** The registry of predicate factories for custom principal evaluation. */
-    @Nonnull private PrincipalEvalPredicateFactoryRegistry evalRegistry;
-    
-    /** Flows, in order of preference, that satisfy an explicit requirement from the relying party. */
-    @Nonnull @NonnullElements private ImmutableList<AuthenticationFlowDescriptor> requestedFlows;
-
     /** Authentication results associated with an active session and available for (re)use. */
     @Nonnull @NonnullElements private final Map<String, AuthenticationResult> activeResults;
         
+    /** The registry of predicate factories for custom principal evaluation. */
+    @Nonnull private PrincipalEvalPredicateFactoryRegistry evalRegistry;
+
     /** Authentication flow being attempted to authenticate the user. */
     @Nullable private AuthenticationFlowDescriptor attemptedFlow;
     
@@ -94,11 +89,9 @@ public final class AuthenticationContext extends BaseContext {
         initiationInstant = System.currentTimeMillis();
         
         potentialFlows = new HashMap();
+        activeResults = new HashMap();
         
         evalRegistry = new PrincipalEvalPredicateFactoryRegistry();
-
-        activeResults = new HashMap();
-        requestedFlows = ImmutableList.of();
     }
 
     /**
@@ -249,35 +242,6 @@ public final class AuthenticationContext extends BaseContext {
         canonicalPrincipalName = StringSupport.trimOrNull(principalName);
         return this;
     }
-    
-    /**
-     * Get the flows, in order of preference, that satisfy an explicit requirement from the relying party.
-     * 
-     * @return authentication flows, in order of preference, specified by the relying party
-     */
-    @Nonnull @NonnullElements @Unmodifiable public List<AuthenticationFlowDescriptor> getRequestedFlows() {
-        return requestedFlows;
-    }
-
-    /**
-     * Set the flows, in order of preference, that satisfy an explicit requirement from the relying party.
-     * 
-     * @param flows authentication flows, satisfy an explicit requirement from the relying party
-     * 
-     * @return this authentication context
-     */
-    @Nonnull public AuthenticationContext setRequestedFlows(
-            @Nonnull @NonnullElements final List<AuthenticationFlowDescriptor> flows) {
-        
-        if (Constraint.isNotNull(flows, "Flow list cannot be null").isEmpty()) {
-            requestedFlows = ImmutableList.of();
-            return this;
-        }
-
-        requestedFlows = ImmutableList.copyOf(flows);
-
-        return this;
-    }
 
     /**
      * Get the authentication flow that was attempted in order to authenticate the user.
@@ -351,8 +315,8 @@ public final class AuthenticationContext extends BaseContext {
                 .add("isPassive", isPassive).add("forceAuthn", forceAuthn).add("hintedName", hintedName)
                 .add("canonicalPrincipalName", canonicalPrincipalName)
                 .add("potentialFlows", potentialFlows.keySet())
-                .add("requestedFlows", requestedFlows)
-                .add("activeFlows", activeResults.keySet())
+                .add("activeResults", activeResults.keySet())
+                .add("attemptedFlow", attemptedFlow)
                 .add("completionInstant", new DateTime(completionInstant)).toString();
     }
 

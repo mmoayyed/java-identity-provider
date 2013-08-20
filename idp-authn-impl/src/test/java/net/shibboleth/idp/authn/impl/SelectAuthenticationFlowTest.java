@@ -17,14 +17,16 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.security.Principal;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.security.auth.Subject;
 
-import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionTestingSupport;
@@ -33,6 +35,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
+
 /** {@link SelectAuthenticationFlow} unit test. */
 public class SelectAuthenticationFlowTest extends InitializeAuthenticationContextTest {
     
@@ -40,6 +44,10 @@ public class SelectAuthenticationFlowTest extends InitializeAuthenticationContex
     
     @BeforeMethod public void setUp() throws Exception {
         super.setUp();
+     
+        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        authCtx.getPrincipalEvalPredicateFactoryRegistry().register(
+                TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         
         action = new SelectAuthenticationFlow();
         action.initialize();
@@ -81,7 +89,9 @@ public class SelectAuthenticationFlowTest extends InitializeAuthenticationContex
 
     @Test public void testRequestNoMatch() throws ProfileException {
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
-        authCtx.setRequestedFlows(Arrays.asList(new AuthenticationFlowDescriptor("foo")));
+        RequestedPrincipalContext rpc = new RequestedPrincipalContext("exact",
+                Arrays.<Principal>asList(new TestPrincipal("foo")));
+        authCtx.addSubcontext(rpc, true);
         
         action.execute(prc);
         
@@ -90,7 +100,9 @@ public class SelectAuthenticationFlowTest extends InitializeAuthenticationContex
 
     @Test public void testRequestNoneActive() throws ProfileException {
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
-        authCtx.setRequestedFlows(Arrays.asList(authCtx.getPotentialFlows().get("test3")));
+        List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"));
+        authCtx.addSubcontext(new RequestedPrincipalContext("exact", principals), true);
+        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(principals);
         
         action.execute(prc);
         
@@ -100,10 +112,13 @@ public class SelectAuthenticationFlowTest extends InitializeAuthenticationContex
 
     @Test public void testRequestPickInactive() throws ProfileException {
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
+                new TestPrincipal("test2"));
+        authCtx.addSubcontext(new RequestedPrincipalContext("exact", principals), true);
         AuthenticationResult active = new AuthenticationResult("test2", new Subject());
+        active.getSubject().getPrincipals().add(new TestPrincipal("test2"));
         authCtx.setActiveResults(Arrays.asList(active));
-        authCtx.setRequestedFlows(
-                Arrays.asList(authCtx.getPotentialFlows().get("test3"), authCtx.getPotentialFlows().get("test2")));
+        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(ImmutableList.of(principals.get(0)));
         
         action.execute(prc);
         
@@ -113,10 +128,13 @@ public class SelectAuthenticationFlowTest extends InitializeAuthenticationContex
 
     @Test public void testRequestPickActive() throws ProfileException {
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
+                new TestPrincipal("test2"));
+        authCtx.addSubcontext(new RequestedPrincipalContext("exact", principals), true);
         AuthenticationResult active = new AuthenticationResult("test3", new Subject());
+        active.getSubject().getPrincipals().add(new TestPrincipal("test3"));
         authCtx.setActiveResults(Arrays.asList(active));
-        authCtx.setRequestedFlows(
-                Arrays.asList(authCtx.getPotentialFlows().get("test3"), authCtx.getPotentialFlows().get("test2")));
+        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(ImmutableList.of(principals.get(0)));
         
         action.execute(prc);
         
@@ -126,10 +144,13 @@ public class SelectAuthenticationFlowTest extends InitializeAuthenticationContex
 
     @Test public void testRequestFavorSSO() throws ProfileException {
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
+                new TestPrincipal("test2"));
+        authCtx.addSubcontext(new RequestedPrincipalContext("exact", principals), true);
         AuthenticationResult active = new AuthenticationResult("test2", new Subject());
+        active.getSubject().getPrincipals().add(new TestPrincipal("test2"));
         authCtx.setActiveResults(Arrays.asList(active));
-        authCtx.setRequestedFlows(
-                Arrays.asList(authCtx.getPotentialFlows().get("test3"), authCtx.getPotentialFlows().get("test2")));
+        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(ImmutableList.of(principals.get(0)));
         
         action.setFavorSSO(true);
         action.execute(prc);

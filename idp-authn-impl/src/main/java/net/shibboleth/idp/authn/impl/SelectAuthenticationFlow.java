@@ -17,39 +17,48 @@
 
 package net.shibboleth.idp.authn.impl;
 
-import java.util.List;
+import java.security.Principal;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.PrincipalEvalPredicateFactory;
+import net.shibboleth.idp.authn.PrincipalSupportingComponent;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Predicate;
+
 /**
- * An authentication action that selects an authentication flow to invoke, or reuses an
+ * An authentication action that selects an authentication flow to invoke, or re-uses an
  * existing result for SSO.
  * 
  * <p>This is the heart of the authentication processing sequence, and runs after the
  * {@link AuthenticationContext} has been fully populated. It uses the potential flows,
- * the requested flows (if any), and the active results, to decide how to proceed.</p>
+ * the {@link RequestedPrincipalContext} (if any), and the active results, to decide how
+ * to proceed.</p>
  * 
- * <p>If there are no requested flows, then an active result will be reused with the
- * default Proceed event returned, unless the request requires forced authentication.
- * If not possible, then a potential flow will be selected and its ID returned as the
- * result of the action.</p>
+ * <p>If there is no {@link RequestedPrincipalContext}, then an active result will be
+ * reused with the default Proceed event returned, unless the request requires forced
+ * authentication. If not possible, then a potential flow will be selected and its ID
+ * returned as the result of the action.</p>
  * 
- * <p>If there are requested flows, then the "favorSSO" option determines whether
- * to select a flow specifically in the order specified, or to favor an active, but
- * "qualifying" result, over a new one. Forced authentication trumps the
+ * <p>If there are requested principals, then the results or flows chosen must "match"
+ * the request information according to the {@link PrincipalEvalPredicateFactoryRegistry}
+ * attached to the context. The "favorSSO" option determines whether to select a flow
+ * specifically in the order specified by the {@link RequestedPrincipalContext}, or to favor
+ * an active but matching result, over a new flow. Forced authentication trumps the
  * use of any active result.</p>
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID} (reuse of a result, i.e., SSO)
@@ -71,6 +80,9 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
     /** Whether SSO trumps explicit relying party flow preference. */
     private boolean favorSSO;
     
+    /** A subordinate RequestedPrincipalContext, if any. */
+    @Nullable private RequestedPrincipalContext requestedPrincipalCtx; 
+    
     /**
      * Get whether SSO should trump explicit relying party flow preference.
      * 
@@ -89,6 +101,77 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         favorSSO = flag;
     }
 
+    /** {@inheritDoc} */
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+        
+        requestedPrincipalCtx = authenticationContext.getSubcontext(RequestedPrincipalContext.class, false);
+        return true;
+    }
+    
+    /** {@inheritDoc} */
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+
+        if (requestedPrincipalCtx == null) {
+            doSelectNoRequestedPrincipals(profileRequestContext, authenticationContext);
+        } else {
+            doSelectRequestedPrincipals(profileRequestContext, authenticationContext);
+        }
+    }
+
+    /**
+     * Executes the selection process in the absence of specific requested principals.
+     * 
+     * @param profileRequestContext the current IdP profile request context
+     * @param authenticationContext the current authentication context
+     */
+    private void doSelectNoRequestedPrincipals(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext) {
+        
+        log.debug("{} no specific Principals requested", getLogPrefix());
+        
+        if (authenticationContext.isForceAuthn()) {
+            log.debug("{} forced authentication requested, selecting an inactive flow", getLogPrefix());
+            if (authenticationContext.getPotentialFlows().isEmpty()) {
+                log.error("{} no potential flows to choose from, authentication will fail", getLogPrefix());
+                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_POTENTIAL_FLOW);
+                return;
+            }
+            selectInactiveFlow(profileRequestContext, authenticationContext,
+                    authenticationContext.getPotentialFlows().values().iterator().next());
+        } else if (authenticationContext.getActiveResults().isEmpty()) {
+            log.debug("{} no active results available, selecting an inactive flow", getLogPrefix());
+            if (authenticationContext.getPotentialFlows().isEmpty()) {
+                log.error("{} no potential flows to choose from, authentication will fail", getLogPrefix());
+                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_POTENTIAL_FLOW);
+                return;
+            }
+            selectInactiveFlow(profileRequestContext, authenticationContext,
+                    authenticationContext.getPotentialFlows().values().iterator().next());
+        } else {
+            // Pick a result to reuse.
+            selectActiveResult(profileRequestContext, authenticationContext,
+                    authenticationContext.getActiveResults().values().iterator().next());
+        }
+    }
+
+    /**
+     * Selects an inactive flow and completes processing.
+     * 
+     * @param profileRequestContext the current IdP profile request context
+     * @param authenticationContext the current authentication context
+     * @param descriptor the flow to select
+     */
+    private void selectInactiveFlow(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext,
+            @Nonnull final AuthenticationFlowDescriptor descriptor) {
+
+        log.debug("{} selecting inactive authentication flow {}", getLogPrefix(), descriptor.getId());
+        authenticationContext.setAttemptedFlow(descriptor);
+        ActionSupport.buildEvent(profileRequestContext, descriptor.getId());
+    }    
+    
     /**
      * Selects an active result and completes processing.
      * 
@@ -105,125 +188,19 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         authenticationContext.setAuthenticationResult(result);
         ActionSupport.buildProceedEvent(profileRequestContext);
     }
-    
-    /**
-     * Selects an inactive flow and completes processing.
-     * 
-     * @param profileRequestContext the current IdP profile request context
-     * @param authenticationContext the current authentication context
-     * @param descriptor the flow to select
-     */
-    private void selectInactiveFlow(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext,
-            @Nonnull final AuthenticationFlowDescriptor descriptor) {
-
-        log.debug("{} selecting inactive authentication flow {}", getLogPrefix(), descriptor.getId());
-        authenticationContext.setAttemptedFlow(descriptor);
-        ActionSupport.buildEvent(profileRequestContext, descriptor.getId());
-    }
 
     /**
-     * Selects an inactive flow based on the requested flows and completes processing.
+     * Executes the selection process in the presence of specific requested Principals, requiring
+     * evaluation of potential flows and results for Principal-compatibility with request.
      * 
      * @param profileRequestContext the current IdP profile request context
      * @param authenticationContext the current authentication context
      */
-    private void selectRequestedInactiveFlow(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) {
-
-        Map<String,AuthenticationFlowDescriptor> potentialFlows = authenticationContext.getPotentialFlows();
-        
-        for (AuthenticationFlowDescriptor descriptor : authenticationContext.getRequestedFlows()) {
-            if (potentialFlows.containsKey(descriptor.getId())) {
-                selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);
-                return;
-            }
-        }
-        
-        log.info("{} none of the potential authentication flows can satisfy the request", getLogPrefix());
-        ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
-    }
-    
-    /**
-     * Selects a flow or an active result based on the requested flows and completes processing.
-     * 
-     * @param profileRequestContext the current IdP profile request context
-     * @param authenticationContext the current authentication context
-     */
-    private void selectRequestedFlow(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) {
-
-        if (favorSSO) {
-            log.debug("{} giving priority to active results that meet requested requirements");
-            
-            Map<String,AuthenticationResult> activeResults = authenticationContext.getActiveResults();
-            for (AuthenticationFlowDescriptor descriptor : authenticationContext.getRequestedFlows()) {
-                if (activeResults.containsKey(descriptor.getId())) {
-                    selectActiveResult(profileRequestContext, authenticationContext,
-                            activeResults.get(descriptor.getId()));
-                    return;
-                }
-            }
-            selectRequestedInactiveFlow(profileRequestContext, authenticationContext);
-            return;
-            
-        } else {
-            Map<String,AuthenticationResult> activeResults = authenticationContext.getActiveResults();
-            Map<String,AuthenticationFlowDescriptor> potentialFlows = authenticationContext.getPotentialFlows();
-            
-            for (AuthenticationFlowDescriptor descriptor : authenticationContext.getRequestedFlows()) {
-                if (activeResults.containsKey(descriptor.getId())) {
-                    selectActiveResult(profileRequestContext, authenticationContext,
-                            activeResults.get(descriptor.getId()));
-                    return;
-                } else if (potentialFlows.containsKey(descriptor.getId())) {
-                    selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);
-                    return;
-                }
-            }
-            
-            log.info("{} none of the potential authentication flows can satisfy the request", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
-        }
-    }
-
-    /**
-     * Executes the selection process in the absence of specific requested flows.
-     * 
-     * @param profileRequestContext the current IdP profile request context
-     * @param authenticationContext the current authentication context
-     */
-    private void doSelectNoRequestedFlows(@Nonnull final ProfileRequestContext profileRequestContext,
+    private void doSelectRequestedPrincipals(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
-        log.debug("{} no specific flows requested", getLogPrefix());
-        
-        if (authenticationContext.isForceAuthn()) {
-            log.debug("{} forced authentication requested, selecting an inactive flow", getLogPrefix());
-            selectInactiveFlow(profileRequestContext, authenticationContext,
-                    authenticationContext.getPotentialFlows().values().iterator().next());
-        } else if (authenticationContext.getActiveResults().isEmpty()) {
-            log.debug("{} no active results available, selecting an inactive flow", getLogPrefix());
-            selectInactiveFlow(profileRequestContext, authenticationContext,
-                    authenticationContext.getPotentialFlows().values().iterator().next());
-        } else {
-            // Pick a result to reuse.
-            selectActiveResult(profileRequestContext, authenticationContext,
-                    authenticationContext.getActiveResults().values().iterator().next());
-        }
-    }
-
-    /**
-     * Executes the selection process in the presence of specific requested flows.
-     * 
-     * @param profileRequestContext the current IdP profile request context
-     * @param authenticationContext the current authentication context
-     */
-    private void doSelectRequestedFlows(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) {
-        
-        final List<AuthenticationFlowDescriptor> requestedFlows = authenticationContext.getRequestedFlows();
-        log.debug("{} requested flows: {}", getLogPrefix(), requestedFlows);
+        log.debug("{} specific principals requested with '{}' operator: {}", getLogPrefix(),
+                requestedPrincipalCtx.getOperator(), requestedPrincipalCtx.getRequestedPrincipals());
         
         if (authenticationContext.isForceAuthn()) {
             log.debug("{} forced authentication requested, selecting an inactive flow", getLogPrefix());
@@ -235,24 +212,123 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             selectRequestedFlow(profileRequestContext, authenticationContext);
         }
     }
-    
-    /** {@inheritDoc} */
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
-        if (authenticationContext.getPotentialFlows().isEmpty()) {
-            log.debug("{} no potential workflows available", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_POTENTIAL_FLOW);
+    /**
+     * Selects an inactive flow in the presence of specific requested Principals, and completes processing.
+     * 
+     * @param profileRequestContext the current IdP profile request context
+     * @param authenticationContext the current authentication context
+     */
+    private void selectRequestedInactiveFlow(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext) {
+
+        Map<String,AuthenticationFlowDescriptor> potentialFlows = authenticationContext.getPotentialFlows();
+        
+        // Check each flow for compatibility with request. Don't check for an active result also.
+        for (Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
+            log.debug("{} Checking for an inactive flow compatible with operator '{}' and principal '{}'",
+                    getLogPrefix(), requestedPrincipalCtx.getOperator(), p);
+            PrincipalEvalPredicateFactory factory =
+                    authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
+                            p.getClass(), requestedPrincipalCtx.getOperator());
+            if (factory != null) {
+                Predicate<PrincipalSupportingComponent> predicate = factory.getPredicate(p);
+                for (AuthenticationFlowDescriptor descriptor : potentialFlows.values()) {
+                    if (predicate.apply(descriptor)) {
+                        selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);
+                        return;
+                    }
+                }
+            } else {
+                log.warn("{} Configuration does not support requested principal evaluation with "
+                        + "operator '{}' and type '{}'", getLogPrefix(), requestedPrincipalCtx.getOperator(),
+                        p.getClass());
+            }
         }
-
-        log.debug("{} selecting authentication flow from the following potential flows: {}", getLogPrefix(),
-                authenticationContext.getPotentialFlows().keySet());
-
-        if (authenticationContext.getRequestedFlows().isEmpty()) {
-            doSelectNoRequestedFlows(profileRequestContext, authenticationContext);
-        } else {
-            doSelectRequestedFlows(profileRequestContext, authenticationContext);
-        }
+        
+        
+        log.info("{} none of the potential authentication flows can satisfy the request", getLogPrefix());
+        ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
     }
     
+    /**
+     * Selects a flow or an active result in the presence of specific requested Principals and completes processing.
+     * 
+     * @param profileRequestContext the current IdP profile request context
+     * @param authenticationContext the current authentication context
+     */
+    private void selectRequestedFlow(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext) {
+
+        Map<String,AuthenticationResult> activeResults = authenticationContext.getActiveResults();
+
+        if (favorSSO) {
+            log.debug("{} giving priority to active results that meet request requirements");
+            
+            // Check each active result for compatibility with request.
+            for (Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
+                log.debug("{} Checking for an active result compatible with operator '{}' and principal '{}'",
+                        getLogPrefix(), requestedPrincipalCtx.getOperator(), p);
+                PrincipalEvalPredicateFactory factory =
+                        authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
+                                p.getClass(), requestedPrincipalCtx.getOperator());
+                if (factory != null) {
+                    Predicate<PrincipalSupportingComponent> predicate = factory.getPredicate(p);
+                    for (AuthenticationResult result : activeResults.values()) {
+                        if (predicate.apply(result)) {
+                            selectActiveResult(profileRequestContext, authenticationContext, result);
+                            return;
+                        }
+                    }
+                } else {
+                    log.warn("{} Configuration does not support requested principal evaluation with "
+                            + "operator '{}' and type '{}'", getLogPrefix(), requestedPrincipalCtx.getOperator(),
+                            p.getClass());
+                }
+            }
+            
+            // We know at this point there are no active results that will fit, so drop into inactive.
+            selectRequestedInactiveFlow(profileRequestContext, authenticationContext);
+            return;
+
+        } else {
+            Map<String,AuthenticationFlowDescriptor> potentialFlows = authenticationContext.getPotentialFlows();
+
+            // In this branch, we check each flow for compatibility *and* then double check to see if an active
+            // result from that flow also exists and is compatible. This favors a matching inactive flow that is
+            // higher in request precedence than an active result.
+            for (Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
+                log.debug("{} Checking for an inactive flow or active result compatible with "
+                        + "operator '{}' and principal '{}'", getLogPrefix(), requestedPrincipalCtx.getOperator(), p);
+                PrincipalEvalPredicateFactory factory =
+                        authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
+                                p.getClass(), requestedPrincipalCtx.getOperator());
+                if (factory != null) {
+                    Predicate<PrincipalSupportingComponent> predicate = factory.getPredicate(p);
+                    for (AuthenticationFlowDescriptor descriptor : potentialFlows.values()) {
+                        if (predicate.apply(descriptor)) {
+                            
+                            // Now check for an active result we can use from this flow. Not all results from a flow
+                            // will necessarily match the request just because the flow might.
+                            AuthenticationResult result = activeResults.get(descriptor.getId());
+                            if (result == null || !predicate.apply(result)) {
+                                selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);
+                            } else {
+                                selectActiveResult(profileRequestContext, authenticationContext, result);
+                            }
+                            return;
+                        }
+                    }
+                } else {
+                    log.warn("{} Configuration does not support requested principal evaluation with "
+                            + "operator '{}' and type '{}'", getLogPrefix(), requestedPrincipalCtx.getOperator(),
+                            p.getClass());
+                }
+            }
+            
+            log.info("{} none of the potential authentication flows can satisfy the request", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
+        }
+    }
+        
 }
