@@ -58,6 +58,9 @@ public class AuthenticationErrorContext extends BaseContext {
 
     /** Indicates at least one action detected a disabled account. */
     private boolean accountDisabled;
+
+    /** Indicates at least one action detected a password needing reset. */
+    private boolean passwordReset;
     
     /** Constructor. */
     public AuthenticationErrorContext() {
@@ -132,6 +135,15 @@ public class AuthenticationErrorContext extends BaseContext {
     }
 
     /**
+     * Get the password reset indicator.
+     * 
+     * @return password reset indicator
+     */
+    public boolean isPasswordReset() {
+        return passwordReset;
+    }
+    
+    /**
      * Set the unknown username indicator.
      * 
      * @param flag the indicator to set
@@ -175,5 +187,14 @@ public class AuthenticationErrorContext extends BaseContext {
     public void setAccountDisabled(boolean flag) {
         accountDisabled = flag;
     }
-        
+
+    /**
+     * Set the password reset indicator.
+     * 
+     * @param flag the indicator to set
+     */
+    public void setPasswordReset(boolean flag) {
+        passwordReset = flag;
+    }
+
 }
