@@ -8,6 +8,7 @@
                            http://www.springframework.org/schema/util/spring-util.xsd"
        default-init-method="initialize">
 
+    <!-- BeanPostProcessor auto-wraps OpenSAML ProfileActions in WebFlowProfileActionAdaptor. -->
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
     <!-- Spring-aware action that bootstraps us. We need *something* to create a profile context. -->
