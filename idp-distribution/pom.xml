@@ -17,6 +17,8 @@
 
     <properties>
         <assembly-directory>target/${project.artifactId}</assembly-directory>
+        <!-- TODO Remove Jetty version override later -->
+        <jetty.version>9.1.0-SNAPSHOT</jetty.version>
     </properties>
 
     <repositories>
@@ -34,6 +36,17 @@
                 <enabled>false</enabled>
             </releases>
         </repository>
+        
+        <!-- TODO Jetty SNAPSHOT repository, to be removed later. -->
+        <repository>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>sonatype-snapshots</id>
+            <name>Sonatype Jetty Snapshots</name>
+            <url>http://oss.sonatype.org/content/groups/jetty</url>
+        </repository>
+        
     </repositories>
 
     <dependencies>
@@ -129,7 +142,7 @@
                                 <artifactItem>
                                     <groupId>net.shibboleth.utilities.jetty9</groupId>
                                     <artifactId>jetty9-dta-ssl</artifactId>
-                                    <version>1.0.0-SNAPSHOT</version>
+                                    <version>1.0-SNAPSHOT</version>
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>${assembly-directory}/jetty/lib/shibboleth</outputDirectory>

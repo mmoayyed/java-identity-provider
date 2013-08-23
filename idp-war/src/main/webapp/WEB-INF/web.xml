@@ -13,12 +13,13 @@
     <!-- Spring 2.0 application context files. Files are loaded in the order they appear with subsequent files overwriting 
         same named beans in previous files. -->
     
-    <!-- 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>$IDP_HOME$/conf/internal.xml; $IDP_HOME$/conf/service.xml;</param-value>
+        <!-- 
+        <param-value>/opt/idp/conf/internal.xml; $IDP_HOME$/conf/service.xml;</param-value>
+         -->
+         <param-value>file:/opt/idp/conf/internal.xml</param-value>
     </context-param>
-    -->
 
     <!-- Spring 2.0 listener used to load up the configuration -->
     <listener>
@@ -44,6 +45,21 @@
     <!-- <servlet> <servlet-name>ProfileRequestDispatcher</servlet-name> <servlet-class>edu.internet2.middleware.shibboleth.common.profile.ProfileRequestDispatcherServlet</servlet-class> 
         <load-on-startup>1</load-on-startup> </servlet> <servlet-mapping> <servlet-name>ProfileRequestDispatcher</servlet-name> <url-pattern>/profile/*</url-pattern> 
         </servlet-mapping> -->
+        
+    <servlet>
+        <servlet-name>profile</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>file:/opt/idp/conf/profile-servlet.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>profile</servlet-name>
+        <url-pattern>/profile/*</url-pattern>
+    </servlet-mapping>
 
     <!-- Authentication Engine Entry Point -->
     <!-- ... <servlet-mapping> <servlet-name>AuthenticationEngine</servlet-name> <url-pattern>/AuthnEngine</url-pattern> 

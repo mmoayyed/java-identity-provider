@@ -1,0 +1,39 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:webflow="http://www.springframework.org/schema/webflow-config"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd
+       ">
+
+    <!-- The registry of executable flow definitions -->
+    <webflow:flow-registry id="flowRegistry" flow-builder-services="flowBuilderServices"
+        base-path="file:/opt/idp/flows">
+
+        <webflow:flow-location id="Status" path="/status/status-flow.xml" />
+
+    </webflow:flow-registry>
+
+    <!-- Maps request paths to flows in the flowRegistry -->
+    <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping">
+        <property name="order" value="0" />
+        <property name="flowRegistry" ref="flowRegistry" />
+    </bean>
+
+    <!-- Dispatches requests mapped to flows to FlowHandler implementations -->
+    <bean id="flowHandlerAdapter" class="org.springframework.webflow.mvc.servlet.FlowHandlerAdapter">
+        <property name="flowExecutor" ref="flowExecutor" />
+    </bean>
+
+    <!-- The central service for executing flows -->
+    <webflow:flow-executor id="flowExecutor" />
+
+    <!-- Plugs in a custom creator for Web Flow views -->
+    <webflow:flow-builder-services id="flowBuilderServices" development="true"
+        view-factory-creator="mvcViewFactoryCreator" />
+
+    <bean id="mvcViewFactoryCreator" class="org.springframework.webflow.mvc.builder.MvcViewFactoryCreator">
+        <property name="viewResolvers" ref="viewResolver" />
+    </bean>
+        
+</beans>

@@ -3,9 +3,5 @@
 
 <Configure class="org.eclipse.jetty.webapp.WebAppContext">
     <Set name="contextPath">/idp</Set>
-    <Set name="war">../webapps</Set>
-    <Call name="setInitParameter">
-        <Arg>contextConfigLocation</Arg>
-        <Arg>file:../conf/internal.xml</Arg>
-    </Call>
+    <Set name="war">/opt/idp/webapps</Set>
 </Configure>

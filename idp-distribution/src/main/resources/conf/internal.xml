@@ -9,9 +9,4 @@
 
     <!-- TODO incomplete -->
 
-    <!-- 
-    <import resource="webflow-config.xml" />
-    <import resource="velocity-config.xml" />
-    -->
-
 </beans>
