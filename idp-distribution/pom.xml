@@ -36,7 +36,7 @@
                 <enabled>false</enabled>
             </releases>
         </repository>
-        
+
         <!-- TODO Jetty SNAPSHOT repository, to be removed later. -->
         <repository>
             <snapshots>
@@ -46,7 +46,7 @@
             <name>Sonatype Jetty Snapshots</name>
             <url>http://oss.sonatype.org/content/groups/jetty</url>
         </repository>
-        
+
     </repositories>
 
     <dependencies>
@@ -75,6 +75,7 @@
                         </goals>
                         <configuration>
                             <artifactItems>
+                                <!-- Expand the war to webapps/ -->
                                 <artifactItem>
                                     <groupId>net.shibboleth.idp</groupId>
                                     <artifactId>idp-war</artifactId>
@@ -82,6 +83,7 @@
                                     <type>war</type>
                                     <outputDirectory>${assembly-directory}/webapps</outputDirectory>
                                 </artifactItem>
+                                <!-- Unpack Jetty distribution -->
                                 <artifactItem>
                                     <groupId>${jetty.groupId}</groupId>
                                     <artifactId>jetty-distribution</artifactId>
@@ -93,6 +95,30 @@
                                         **/webapps/**,
                                         **/webapps.demo/**
                                     </excludes>
+                                </artifactItem>
+                                <!-- Copy flows and templates -->
+                                <!-- TODO Deal with clobbering of identical filenames across modules -->
+                                <artifactItem>
+                                    <groupId>net.shibboleth.idp</groupId>
+                                    <artifactId>idp-authn-impl</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <includes>
+                                        flows/**,
+                                        templates/**
+                                    </includes>
+                                    <outputDirectory>${assembly-directory}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>net.shibboleth.idp</groupId>
+                                    <artifactId>idp-saml-impl</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <includes>
+                                        flows/**,
+                                        templates/**
+                                    </includes>
+                                    <outputDirectory>${assembly-directory}</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -187,15 +213,19 @@
                             <target>
                                 <!-- Make files in bin executable. -->
                                 <chmod dir="${assembly-directory}/bin" perm="755" includes="**/*.sh" />
+                                <!-- For the following <move/> tasks, set failonerror to false so that 'mvn clean <goal>' 
+                                    is not required. -->
                                 <!-- Disable Jetty start.d/*.ini files by renaming with ".disabled" suffix. -->
-                                <move todir="${assembly-directory}/jetty-distribution-${jetty.version}/start.d">
+                                <move todir="${assembly-directory}/jetty-distribution-${jetty.version}/start.d"
+                                    failonerror="false">
                                     <fileset dir="${assembly-directory}/jetty-distribution-${jetty.version}/start.d">
                                         <include name="**/*.ini" />
                                     </fileset>
                                     <mapper type="glob" from="*" to="*.disabled" />
                                 </move>
                                 <!-- Rename "jetty-distribution-<version>" to "jetty". -->
-                                <move file="${assembly-directory}/jetty-distribution-${jetty.version}" tofile="${assembly-directory}/jetty" />
+                                <move file="${assembly-directory}/jetty-distribution-${jetty.version}" tofile="${assembly-directory}/jetty"
+                                    failonerror="false" />
                             </target>
                         </configuration>
                     </execution>
