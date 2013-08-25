@@ -87,7 +87,8 @@
                                 <artifactItem>
                                     <groupId>${jetty.groupId}</groupId>
                                     <artifactId>jetty-distribution</artifactId>
-                                    <version>${jetty.version}</version>
+                                    <!-- TODO Build against specific snapshot version until start.d/ directory stabilizes. -->
+                                    <version>9.1.0-20130823.093112-37</version>
                                     <type>zip</type>
                                     <outputDirectory>${assembly-directory}</outputDirectory>
                                     <excludes>
