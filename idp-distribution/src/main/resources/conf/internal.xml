@@ -9,4 +9,16 @@
 
     <!-- TODO incomplete -->
 
+    <!-- Velocity configuration -->
+    <bean id="velocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+        <property name="configLocation" value="file:/opt/idp/conf/velocity.properties" />
+    </bean>
+
+    <!-- Velocity view resolver -->
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+        <property name="cache" value="true" />
+        <property name="prefix" value="" />
+        <property name="suffix" value=".vm" />
+    </bean>
+
 </beans>
