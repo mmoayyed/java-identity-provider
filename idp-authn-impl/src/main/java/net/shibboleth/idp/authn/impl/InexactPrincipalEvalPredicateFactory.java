@@ -92,7 +92,7 @@ public class InexactPrincipalEvalPredicateFactory implements PrincipalEvalPredic
         return new InexactMatchPredicate(candidate);
     }
     
-    /** Implementation of an exact-matching predicate. */
+    /** Implementation of an inexact-matching predicate. */
     private class InexactMatchPredicate implements Predicate<PrincipalSupportingComponent> {
 
         /** The principal object to compare against. */
