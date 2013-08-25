@@ -42,11 +42,12 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 
 /**
- * An action that creates a {@link AuthenticationContext} and sets it as a child of the current
- * {@link ProfileRequestContext}.
+ * An action that populates an {@link AuthenticationContext} with the {@link AuthenticationFlowDescriptor}
+ * objects configured into the IdP, and optionally a customized {@link PrincipalEvalPredicateFactoryRegistry}.
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @post <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
+ * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
+ * @post The AuthenticationContext is modified as above.
  */
 public class InitializeAuthenticationContext extends AbstractAuthenticationAction {
 
