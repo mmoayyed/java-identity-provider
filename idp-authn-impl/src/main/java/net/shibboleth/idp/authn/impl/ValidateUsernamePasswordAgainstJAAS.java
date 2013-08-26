@@ -30,10 +30,8 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginException;
 
-import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
-import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -44,24 +42,25 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An action that checks for a {@link UsernamePasswordContext} and directly produces an {@link AuthenticationResult}
- * based on that identity by invoking a JAAS configuration.
+ * An action that checks for a {@link UsernamePasswordContext} and directly produces an
+ * {@link net.shibboleth.idp.authn.AuthenticationResult} based on that identity by invoking a JAAS configuration.
  * 
  * <p>Various optional properties are supported to control the JAAS configuration process.</p>
  *  
- * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @event {@link AuthnEventIds#INVALID_AUTHN_CTX}
+ * @event {@link EventIds#PROCEED_EVENT_ID}
+ * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false).getAttemptedFlow() != null</pre>
  * @post If AuthenticationContext.getSubcontext(UsernamePasswordContext.class, false) != null, then
  * an {@link AuthenticationResult} is saved to the {@link AuthenticationContext} on a successful login.
- * On a failed login, the {@link AbstractValidationAction#handleError()} method is called.
+ * On a failed login, the {@link net.shibboleth.idp.authn.AbstractValidationAction#handleError()} method is called.
  */
 public class ValidateUsernamePasswordAgainstJAAS extends AbstractValidationAction {
 
@@ -151,7 +150,7 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractValidationActio
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         if (authenticationContext.getAttemptedFlow() == null) {
             log.debug("{} no attempted flow within authentication context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
         

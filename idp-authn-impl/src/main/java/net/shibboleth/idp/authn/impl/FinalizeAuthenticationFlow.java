@@ -28,6 +28,7 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 
 import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,8 +47,8 @@ import com.google.common.base.Strings;
  * to the value placed in the result, possibly resulting in an {@link AuthnEventIds#IDENTITY_SWITCH}
  * event. Otherwise, the principal name is copied into the {@link AuthenticationContext}.</p>
  * 
- * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @event {@link AuthnEventIds#INVALID_SUBJECT_C14N_CTX}
+ * @event {@link EventIds#PROCEED_EVENT_ID}
+ * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link AuthnEventIds#IDENTITY_SWITCH}
  * {@link AuthenticationContext#getCanonicalPrincipalName()}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
@@ -79,7 +80,7 @@ public class FinalizeAuthenticationFlow extends AbstractAuthenticationAction {
                 
         scContext = profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, false);
         if (scContext == null || Strings.isNullOrEmpty(scContext.getPrincipalName())) {
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
         

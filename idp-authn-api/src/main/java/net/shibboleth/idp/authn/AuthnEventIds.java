@@ -23,9 +23,6 @@ package net.shibboleth.idp.authn;
  */
 public final class AuthnEventIds {
 
-    /** ID of event that indicates the AuthenticationContext is missing or corrupt in some way. */
-    public static final String INVALID_AUTHN_CTX = "InvalidAuthenticationContext";
-
     /** ID of event returned if there are no authentication flows that could be used to authenticate the user. */
     public static final String NO_POTENTIAL_FLOW = "NoPotentialFlow";
 
@@ -40,9 +37,6 @@ public final class AuthnEventIds {
     
     /** ID of event returned if the authentication result does not match the identity in an existing session. */
     public static final String IDENTITY_SWITCH = "IdentitySwitch";
-
-    /** ID of event that indicates the SubjectCanonicalizationContext is missing or corrupt in some way. */
-    public static final String INVALID_SUBJECT_C14N_CTX = "InvalidSubjectCanonicalizationContext";
     
     /** ID of event returned if a Subject cannot be canonicalized. */
     public static final String SUBJECT_C14N_ERROR = "SubjectCanonicalizationError";

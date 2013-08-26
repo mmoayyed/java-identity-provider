@@ -23,23 +23,23 @@ import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
-import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 
 import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An action that checks for a {@link UsernamePasswordContext} and directly produces an {@link AuthenticationResult}
- * based on that identity by binding to LDAP.
+ * An action that checks for a {@link UsernamePasswordContext} and directly produces an
+ * {@link net.shibboleth.idp.authn.AuthenticationResult} based on that identity by binding to LDAP.
  *  
- * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @event {@link AuthnEventIds#INVALID_AUTHN_CTX}
+ * @event {@link EventIds#PROCEED_EVENT_ID}
+ * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false).getAttemptedFlow() != null</pre>
@@ -61,7 +61,7 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         if (authenticationContext.getAttemptedFlow() == null) {
             log.debug("{} no attempted flow within authentication context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
         

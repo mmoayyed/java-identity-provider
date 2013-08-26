@@ -27,7 +27,6 @@ import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
-import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -38,6 +37,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,13 +47,13 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * An action that checks for a {@link UsernameContext} and directly produces an {@link AuthenticationResult}
- * based on that identity.
+ * An action that checks for a {@link UsernameContext} and directly produces an
+ * {@link net.shibboleth.idp.authn.AuthenticationResult} based on that identity.
  * 
  * <p>Various optional properties are supported to control the validation process.</p>
  *  
- * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @event {@link AuthnEventIds#INVALID_AUTHN_CTX}
+ * @event {@link EventIds#PROCEED_EVENT_ID}
+ * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false).getAttemptedFlow() != null</pre>
@@ -142,7 +142,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         if (authenticationContext.getAttemptedFlow() == null) {
             log.debug("{} no attempted flow within authentication context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
         

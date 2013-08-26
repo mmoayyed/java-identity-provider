@@ -32,6 +32,7 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.Function;
@@ -41,8 +42,8 @@ import com.google.common.base.Function;
  * {@link ProfileRequestContext}, and transforms the input {@link Subject} into a principal name
  * by searching for one and only one {@link UsernamePrincipal} custom principal.
  * 
- * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @event {@link AuthnEventIds#INVALID_SUBJECT_C14N_CTX}
+ * @event {@link EventIds#PROCEED_EVENT_ID}
+ * @event {@link EventIds#INVALID_SUBJECT_C14N_CTX}
  * @event {@link AuthnEventIds#SUBJECT_C14N_ERROR}
  * @pre <pre>ProfileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, false) != null</pre>
  * @post <pre>SubjectCanonicalizationContext.getPrincipalName() != null
@@ -80,7 +81,7 @@ public class SimpleSubjectCanonicalization extends AbstractProfileAction {
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
         scContext = scCtxLookupStrategy.apply(profileRequestContext);
         if (scContext == null) {
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
         

@@ -27,13 +27,13 @@ import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
-import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UserAgentContext;
 
 import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -55,10 +55,10 @@ import com.google.common.collect.Iterables;
 
 /**
  * An action that ensures that a user-agent address found within a {@link UserAgentContext}
- * is within a given range and generates an {@link AuthenticationResult}.
+ * is within a given range and generates an {@link net.shibboleth.idp.authn.AuthenticationResult}.
  *  
- * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @event {@link AuthnEventIds#INVALID_AUTHN_CTX}
+ * @event {@link EventIds#PROCEED_EVENT_ID}
+ * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
  * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false).getAttemptedFlow() != null</pre>
@@ -138,7 +138,7 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         if (authenticationContext.getAttemptedFlow() == null) {
             log.debug("{} no attempted flow within authentication context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
         

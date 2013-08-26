@@ -25,6 +25,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 
@@ -38,6 +39,8 @@ import com.google.common.base.Function;
  * 
  * Authentication action implementations should override
  * {@link #doExecute(ProfileRequestContext, AuthenticationContext)}
+ * 
+ * @event {@link EventIds#INVALID_PROFILE_CTX}
  */
 public abstract class AbstractAuthenticationAction extends AbstractProfileAction {
 
@@ -69,7 +72,7 @@ public abstract class AbstractAuthenticationAction extends AbstractProfileAction
 
         final AuthenticationContext authenticationContext = authnCtxLookupStrategy.apply(profileRequestContext);
         if (authenticationContext == null) {
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
 
@@ -85,7 +88,7 @@ public abstract class AbstractAuthenticationAction extends AbstractProfileAction
 
         final AuthenticationContext authenticationContext = authnCtxLookupStrategy.apply(profileRequestContext);
         if (authenticationContext == null) {
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return;
         }
 

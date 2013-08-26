@@ -27,6 +27,7 @@ import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionTestingSupport;
+import org.opensaml.profile.action.EventIds;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -55,7 +56,7 @@ public class FinalizeAuthenticationFlowTest extends InitializeAuthenticationCont
         authCtx.setAuthenticationResult(result);
         action.execute(prc);
         
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
+        ActionTestingSupport.assertEvent(prc, EventIds.INVALID_PROFILE_CTX);
     }
 
     @Test public void testNoPrincipalName() throws ProfileException {
@@ -66,7 +67,7 @@ public class FinalizeAuthenticationFlowTest extends InitializeAuthenticationCont
         
         action.execute(prc);
         
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
+        ActionTestingSupport.assertEvent(prc, EventIds.INVALID_PROFILE_CTX);
     }
 
     @Test public void testValid() throws Exception {

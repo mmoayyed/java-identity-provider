@@ -25,6 +25,7 @@ import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionTestingSupport;
+import org.opensaml.profile.action.EventIds;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -44,7 +45,7 @@ public class SimpleSubjectCanonicalizationTest extends InitializeAuthenticationC
     @Test public void testNoContext() throws ProfileException {
         action.execute(prc);
         
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
+        ActionTestingSupport.assertEvent(prc, EventIds.INVALID_PROFILE_CTX);
     }
 
     @Test public void testNoPrincipal() throws ProfileException {

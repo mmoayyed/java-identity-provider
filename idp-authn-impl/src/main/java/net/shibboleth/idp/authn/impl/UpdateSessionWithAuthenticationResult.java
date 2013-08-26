@@ -23,7 +23,6 @@ import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
-import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.ActionSupport;
 
@@ -44,7 +43,7 @@ import org.springframework.webflow.execution.RequestContext;
         @Event(id = EventIds.PROCEED_EVENT_ID),
         @Event(id = EventIds.INVALID_MSG_CTX, description = "Inbound message context does not exist"),
         @Event(id = EventIds.INVALID_MSG_MD, description = "Inbound message metadata does not exist"),
-        @Event(id = AuthnEventIds.INVALID_AUTHN_CTX,
+        @Event(id = EventIds.INVALID_PROFILE_CTX,
                 description = "Authentication context doesn't indicated an attempted workflow")})
 public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticationAction {
 
@@ -70,7 +69,7 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
 
         if (authenticationContext.getAttemptedFlow() == null) {
             log.debug("Action {}: no attempted workflow descriptor available", getId());
-            return ActionSupport.buildEvent(this, AuthnEventIds.INVALID_AUTHN_CTX);
+            return ActionSupport.buildEvent(this, EventIds.INVALID_PROFILE_CTX);
         }
 
         // TODO replace

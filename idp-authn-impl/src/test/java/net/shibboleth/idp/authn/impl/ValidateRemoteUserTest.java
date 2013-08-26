@@ -27,6 +27,7 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionTestingSupport;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.Assert;
@@ -50,7 +51,7 @@ public class ValidateRemoteUserTest extends InitializeAuthenticationContextTest 
 
     @Test public void testMissingFlow() throws ProfileException {
         action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_AUTHN_CTX);
+        ActionTestingSupport.assertEvent(prc, EventIds.INVALID_PROFILE_CTX);
     }
     
     @Test public void testMissingUser() throws ProfileException {
