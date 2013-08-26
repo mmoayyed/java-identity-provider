@@ -36,7 +36,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.context.EventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -306,7 +305,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @param profileRequestContext the current profile request context
      * @param authenticationContext the current authentication context
      * @param e the exception to process
-     * @param eventId the event to "return" via an {@link EventContext}
+     * @param eventId the event to "return" via an {@link org.opensaml.profile.context.EventContext}
      */
     protected void handleError(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext, @Nonnull final Exception e,
