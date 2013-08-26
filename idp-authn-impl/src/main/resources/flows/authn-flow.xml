@@ -2,10 +2,20 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow classpath:/org/springframework/webflow/engine/model/builder/spring-webflow-2.0.xsd">
 
+    <!--
+    This is the Authentication subflow. It handles retrieval of an existing session,
+    set up and eventual selection of an subflow or active AuthenticationResult, and
+    finalization of the processing such as updating a session, before returning control
+    to the calling flow.
+    -->
+    
+    <!-- START FLOW SETUP -->
     <action-state id="InitializeAuthenticationContext">
         <evaluate expression="InitializeAuthenticationContext" />
         <transition on="proceed" to="ExtractActiveAuthenticationResults" />
     </action-state>
+    
+    <!-- TODO: session extraction goes here -->
     
     <action-state id="ExtractActiveAuthenticationResults">
         <evaluate expression="ExtractActiveAuthenticationResults" />
@@ -21,7 +31,14 @@
         <evaluate expression="FilterFlowsByPassivity" />
         <transition on="proceed" to="SelectAuthenticationFlow" />
     </action-state>
+    <!-- END FLOW SETUP -->
     
+    <!--
+    The Select action is the "dispatching" step. Proceed here routes around
+    calling a new subflow, and goes directly to the Finalize step. Anything
+    starting with "AuthenticationFlow/" is a flow descriptor that we send
+    control to to attempt a login.
+    -->
     <action-state id="SelectAuthenticationFlow">
         <evaluate expression="SelectAuthenticationFlow" />
         
@@ -32,24 +49,44 @@
         <transition on="#{currentEvent.id.startsWith('AuthenticationFlow/')}" to="CallAuthenticationFlow" />
     </action-state>
 
+    <!--
+    This invokes an authentication flow to attempt a login. Anything but proceed
+    is an error, otherwise the called flow is finalized.
+    -->
     <subflow-state id="CallAuthenticationFlow" subflow="#{currentEvent.id}">
         <transition on="proceed" to="FinalizeAuthenticationFlow" />
         
         <transition on="#{true}" to="#{currentEvent.id}" />
     </subflow-state>
     
+    <!-- This wraps up a fresh login by checking on the result of subject c14n. -->
     <action-state id="FinalizeAuthenticationFlow">
         <evaluate expression="FinalizeAuthenticationFlow" />
         
-        <transition on="proceed" to="proceed" />
+        <transition on="proceed" to="FinalizeAuthentication" />
         
-        <!-- TODO: support appropriate behavior for IdentitySwitch here -->
+        <!-- TODO: support appropriate behavior for IdentitySwitch here, maybe as a subflow -->
     </action-state>
 
+    <!-- Wraps up the subflow by producing a SubjectContext. -->
+    <action-state id="FinalizeAuthentication">
+        <evaluate expression="FinalizeAuthentication" />
+    </action-state>
+
+    <!-- Successful completion of subflow. -->
     <end-state id="proceed" />
+
+    <!-- Error events to reflect back from this subflow. -->    
+    <end-state id="IdentitySwitch" />
+    <end-state id="InputOutputError" />
+    <end-state id="InvalidCredentials" />
+    <end-state id="InvalidProfileContext" />
+    <end-state id="NoCredentials" />
     <end-state id="NoPotentialFlow" />
     <end-state id="RequestUnsupported" />
+    <end-state id="SubjectCanonicalizationError" />
 
+    <!-- Default is to turn any event into its own end-state. -->
     <global-transitions>
         <transition on="#{true}" to="#{currentEvent.id}" />
     </global-transitions>
