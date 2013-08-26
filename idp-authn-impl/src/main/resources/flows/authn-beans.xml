@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.2.xsd
+                           http://www.springframework.org/schema/util classpath:/org/springframework/beans/factory/xml/spring-util-3.2.xsd"
+                           
+       default-init-method="initialize">
+
+    <import resource="authn-flow-descriptors.xml" />
+    <import resource="authn-comparison.xml" />
+
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    
+    <!-- The beans to inject to configure the initialization of the subsystem come from the imported files above. -->
+    
+    <bean id="InitializeAuthenticationContext" class="net.shibboleth.idp.authn.impl.InitializeAuthenticationContext" scope="prototype"
+        p:availableFlows-ref="AvailableAuthenticationFlows" p:principalEvalPredicateFactoryRegistry-ref="AuthnComparisonRegistry" />
+
+    <!-- TODO: action to check for session and populate SessionContext. -->
+    
+    <bean id="ExtractActiveAuthenticationResults" class="net.shibboleth.idp.authn.impl.ExtractActiveAuthenticationResults" scope="prototype" />
+
+    <bean id="FilterFlowsByForcedAuthn" class="net.shibboleth.idp.authn.impl.FilterFlowsByForcedAuthn" scope="prototype" />
+
+    <bean id="FilterFlowsByPassivity" class="net.shibboleth.idp.authn.impl.FilterFlowsByPassivity" scope="prototype" />
+
+    <bean id="SelectAuthenticationFlow" class="net.shibboleth.idp.authn.impl.SelectAuthenticationFlow" scope="prototype"
+        p:favorSSO="false" />
+    
+    <bean id="FinalizeAuthenticationFlow" class="net.shibboleth.idp.authn.impl.FinalizeAuthenticationFlow" scope="prototype" />
+    
+    <bean id="FinalizeAuthentication" class="net.shibboleth.idp.authn.impl.FinalizeAuthentication" scope="prototype" />
+    
+    <!-- TODO: action to copy result back to session. -->
+    
+</beans>

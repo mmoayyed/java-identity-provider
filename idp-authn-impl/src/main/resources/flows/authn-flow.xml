@@ -1,0 +1,59 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow classpath:/org/springframework/webflow/engine/model/builder/spring-webflow-2.0.xsd">
+
+    <action-state id="InitializeAuthenticationContext">
+        <evaluate expression="InitializeAuthenticationContext" />
+        <transition on="proceed" to="ExtractActiveAuthenticationResults" />
+    </action-state>
+    
+    <action-state id="ExtractActiveAuthenticationResults">
+        <evaluate expression="ExtractActiveAuthenticationResults" />
+        <transition on="proceed" to="FilterFlowsByForcedAuthn" />
+    </action-state>
+    
+    <action-state id="FilterFlowsByForcedAuthn">
+        <evaluate expression="FilterFlowsByForcedAuthn" />
+        <transition on="proceed" to="FilterFlowsByPassivity" />
+    </action-state>
+    
+    <action-state id="FilterFlowsByPassivity">
+        <evaluate expression="FilterFlowsByPassivity" />
+        <transition on="proceed" to="SelectAuthenticationFlow" />
+    </action-state>
+    
+    <action-state id="SelectAuthenticationFlow">
+        <evaluate expression="SelectAuthenticationFlow" />
+        
+        <!-- proceed indicates SSO (reuse of active result) -->
+        <transition on="proceed" to="FinalizeAuthentication" />
+
+        <!-- Call a subflow with the same ID as the event. -->
+        <transition on="#{currentEvent.id.startsWith('AuthenticationFlow/')}" to="CallAuthenticationFlow" />
+    </action-state>
+
+    <subflow-state id="CallAuthenticationFlow" subflow="#{currentEvent.id}">
+        <transition on="proceed" to="FinalizeAuthenticationFlow" />
+        
+        <transition on="#{true}" to="#{currentEvent.id}" />
+    </subflow-state>
+    
+    <action-state id="FinalizeAuthenticationFlow">
+        <evaluate expression="FinalizeAuthenticationFlow" />
+        
+        <transition on="proceed" to="proceed" />
+        
+        <!-- TODO: support appropriate behavior for IdentitySwitch here -->
+    </action-state>
+
+    <end-state id="proceed" />
+    <end-state id="NoPotentialFlow" />
+    <end-state id="RequestUnsupported" />
+
+    <global-transitions>
+        <transition on="#{true}" to="#{currentEvent.id}" />
+    </global-transitions>
+
+    <bean-import resource="authn-beans.xml" />
+
+</flow>
