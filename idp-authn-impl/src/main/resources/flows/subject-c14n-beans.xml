@@ -9,17 +9,8 @@
                            
        default-init-method="initialize">
 
-    <!--
-    This file provisions the Authentication subflow with information about the configured login mechanisms
-    available for use. The actual beans and subflows that make up those mechanisms are in their own files,
-    but this pulls them together with deployer-supplied metadata to describe them to the system.
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     
-    You can turn on and off individual mechanisms by adding and remove them here. Nothing left out will
-    be used, regardless any other files loaded by the Spring container.
-    -->
-
-    <util:list id="AvailableAuthenticationFlows">
-        
-    </util:list>
-
+    <bean id="SimpleSubjectCanonicalization" class="net.shibboleth.idp.authn.impl.SimpleSubjectCanonicalization" scope="prototype" />
+    
 </beans>

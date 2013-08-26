@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.2.xsd
+                           http://www.springframework.org/schema/util classpath:/org/springframework/beans/factory/xml/spring-util-3.2.xsd"
+                           
+       default-init-method="initialize">
+
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    
+    <bean id="ExtractUserAgentAddress" class="net.shibboleth.idp.authn.impl.ExtractUserAgentAddress" scope="prototype" />
+        
+    <bean id="ValidateUserAgentAddress" class="net.shibboleth.idp.authn.impl.ValidateUserAgentAddress" scope="prototype"
+        p:principalName="jdoe" p:designatedRanges-ref="AddressRangesToValidate" />
+
+    <!-- Address range(s) to allow are specified in the list below. -->
+    
+    <util:list id="AddressRangesToValidate">
+        <value>
+            <bean class="net.shibboleth.utilities.java.support.net.IPRange" factory-method="parseCIDRBlock" c:cidrBlock="127.0.0.1/32" />
+        </value>
+    </util:list>
+
+    <!--
+    You can add additional range lists and ValidateUserAgentAddress bean definitions
+    if you want to map different ranges to different users. Just give the bean(s) different
+    ids and wire them in sequence into the ipaddress-authn-flow.xml file.
+    -->
+
+</beans>

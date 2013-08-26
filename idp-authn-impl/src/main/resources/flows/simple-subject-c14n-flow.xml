@@ -1,0 +1,31 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow classpath:/org/springframework/webflow/engine/model/builder/spring-webflow-2.0.xsd">
+
+    <!-- This is a one-step subflow that does Subject Canonicalization using the simplest built-in action. -->
+    
+    <action-state id="SimpleSubjectCanonicalization">
+        <evaluate expression="SimpleSubjectCanonicalization" />
+    </action-state>
+
+    <!-- Successful completion of subflow. -->
+    <end-state id="proceed" />
+
+    <!-- Error events to reflect back from this subflow. -->    
+    <end-state id="IdentitySwitch" />
+    <end-state id="InputOutputError" />
+    <end-state id="InvalidCredentials" />
+    <end-state id="InvalidProfileContext" />
+    <end-state id="NoCredentials" />
+    <end-state id="NoPotentialFlow" />
+    <end-state id="RequestUnsupported" />
+    <end-state id="SubjectCanonicalizationError" />
+
+    <!-- Default is to turn any event into its own end-state. -->
+    <global-transitions>
+        <transition on="#{true}" to="#{currentEvent.id}" />
+    </global-transitions>
+
+    <bean-import resource="subject-c14n-beans.xml" />
+
+</flow>
