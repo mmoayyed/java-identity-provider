@@ -43,7 +43,7 @@ import com.google.common.base.Function;
  * by searching for one and only one {@link UsernamePrincipal} custom principal.
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
- * @event {@link EventIds#INVALID_SUBJECT_C14N_CTX}
+ * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link AuthnEventIds#SUBJECT_C14N_ERROR}
  * @pre <pre>ProfileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, false) != null</pre>
  * @post <pre>SubjectCanonicalizationContext.getPrincipalName() != null
