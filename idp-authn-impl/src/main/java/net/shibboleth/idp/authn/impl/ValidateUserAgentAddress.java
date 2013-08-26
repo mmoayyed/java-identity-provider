@@ -50,8 +50,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 /**
  * An action that ensures that a user-agent address found within a {@link UserAgentContext}
@@ -123,7 +123,7 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
     public void setDesignatedRanges(@Nonnull @NonnullElements Collection<IPRange> ranges) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        designatedRanges = ImmutableList.copyOf(Iterables.filter(ranges, Predicates.notNull()));
+        designatedRanges = Lists.newArrayList(Iterables.filter(ranges, Predicates.notNull()));
     }
     
     /** {@inheritDoc} */
