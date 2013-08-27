@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
+import javax.xml.datatype.Duration;
 
 import org.opensaml.storage.StorageSerializer;
 
@@ -37,6 +38,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.DomTypeSupport;
 
 /**
  * A descriptor for an authentication flow.
@@ -143,6 +145,17 @@ public class AuthenticationFlowDescriptor implements IdentifiableComponent, Prin
     public void setLifetime(long flowLifetime) {
         lifetime = Constraint.isGreaterThanOrEqual(0, flowLifetime, "Lifetime must be greater than or equal to 0");
     }
+
+    /**
+     * Sets the maximum amount of time in milliseconds, since first usage, a flow should be considered active. A
+     * value of 0 indicates that there is no upper limit on the lifetime on an active flow.
+     * 
+     * @param flowLifetime the lifetime for the flow, must be 0 or greater
+     */
+    public void setLifetime(@Nonnull final Duration flowLifetime) {
+        long converted = DomTypeSupport.durationToLong(Constraint.isNotNull(flowLifetime, "Duration cannot be null"));
+        lifetime = Constraint.isGreaterThanOrEqual(0, converted, "Lifetime must be greater than or equal to 0");
+    }
     
     /**
      * Gets the maximum amount of time in milliseconds, since the last usage, a flow should be considered active.
@@ -163,6 +176,19 @@ public class AuthenticationFlowDescriptor implements IdentifiableComponent, Prin
     public void setInactivityTimeout(long inactivityTimeout) {
         timeout = Constraint.isGreaterThanOrEqual(0, inactivityTimeout,
                 "Inactivity timeout must be greater than or equal to 0");
+    }
+
+    /**
+     * Sets the maximum amount of time in milliseconds, since the last usage, a flow should be considered active.
+     * A value of 0 indicates that there is no inactivity timeout on an active flow.
+     * 
+     * @param inactivityTimeout the flow timeout, must be 0 or greater
+     */
+    public void setInactivityTimeout(Duration inactivityTimeout) {
+        long converted =
+                DomTypeSupport.durationToLong(Constraint.isNotNull(inactivityTimeout, "Duration cannot be null"));
+        timeout =
+                Constraint.isGreaterThanOrEqual(0, converted, "Inactivity timeout must be greater than or equal to 0");
     }
     
     /**
