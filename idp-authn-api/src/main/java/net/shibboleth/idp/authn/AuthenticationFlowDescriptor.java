@@ -24,7 +24,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
-import javax.xml.datatype.Duration;
 
 import org.opensaml.storage.StorageSerializer;
 
@@ -32,13 +31,13 @@ import com.google.common.base.Objects;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 
+import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.DomTypeSupport;
 
 /**
  * A descriptor for an authentication flow.
@@ -60,10 +59,10 @@ public class AuthenticationFlowDescriptor implements IdentifiableComponent, Prin
     private boolean supportsForced;
 
     /** Maximum amount of time in milliseconds, since first usage, a flow should be considered active. */
-    private long lifetime;
+    @Duration private long lifetime;
     
     /** Maximum amount of time in milliseconds, since last usage, a flow should be considered active. */
-    private long timeout;
+    @Duration private long timeout;
     
     /**
      * Supported principals, indexed by type, that the flow can produce.
@@ -142,21 +141,10 @@ public class AuthenticationFlowDescriptor implements IdentifiableComponent, Prin
      * 
      * @param flowLifetime the lifetime for the flow, must be 0 or greater
      */
-    public void setLifetime(long flowLifetime) {
+    public void setLifetime(@Duration long flowLifetime) {
         lifetime = Constraint.isGreaterThanOrEqual(0, flowLifetime, "Lifetime must be greater than or equal to 0");
     }
 
-    /**
-     * Sets the maximum amount of time in milliseconds, since first usage, a flow should be considered active. A
-     * value of 0 indicates that there is no upper limit on the lifetime on an active flow.
-     * 
-     * @param flowLifetime the lifetime for the flow, must be 0 or greater
-     */
-    public void setLifetime(@Nonnull final Duration flowLifetime) {
-        long converted = DomTypeSupport.durationToLong(Constraint.isNotNull(flowLifetime, "Duration cannot be null"));
-        lifetime = Constraint.isGreaterThanOrEqual(0, converted, "Lifetime must be greater than or equal to 0");
-    }
-    
     /**
      * Gets the maximum amount of time in milliseconds, since the last usage, a flow should be considered active.
      * A value of 0 indicates that there is no inactivity timeout on an active flow.
@@ -173,22 +161,9 @@ public class AuthenticationFlowDescriptor implements IdentifiableComponent, Prin
      * 
      * @param inactivityTimeout the flow timeout, must be 0 or greater
      */
-    public void setInactivityTimeout(long inactivityTimeout) {
+    public void setInactivityTimeout(@Duration long inactivityTimeout) {
         timeout = Constraint.isGreaterThanOrEqual(0, inactivityTimeout,
                 "Inactivity timeout must be greater than or equal to 0");
-    }
-
-    /**
-     * Sets the maximum amount of time in milliseconds, since the last usage, a flow should be considered active.
-     * A value of 0 indicates that there is no inactivity timeout on an active flow.
-     * 
-     * @param inactivityTimeout the flow timeout, must be 0 or greater
-     */
-    public void setInactivityTimeout(Duration inactivityTimeout) {
-        long converted =
-                DomTypeSupport.durationToLong(Constraint.isNotNull(inactivityTimeout, "Duration cannot be null"));
-        timeout =
-                Constraint.isGreaterThanOrEqual(0, converted, "Inactivity timeout must be greater than or equal to 0");
     }
     
     /**
