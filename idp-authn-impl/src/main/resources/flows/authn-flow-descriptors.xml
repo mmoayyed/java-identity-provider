@@ -5,9 +5,7 @@
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.2.xsd
-                           http://www.springframework.org/schema/util classpath:/org/springframework/beans/factory/xml/spring-util-3.2.xsd"
-                           
-       default-init-method="initialize">
+                           http://www.springframework.org/schema/util classpath:/org/springframework/beans/factory/xml/spring-util-3.2.xsd">
 
     <!--
     This file provisions the Authentication subflow with information about the configured login mechanisms
@@ -19,7 +17,23 @@
     -->
 
     <util:list id="AvailableAuthenticationFlows">
-        
+        <!--
+        <value>
+            <bean c:id="AuthenticationFlow/IPAddress" class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
+                    p:passiveAuthenticationSupported="true"
+                    p:forcedAuthenticationSupported="false"
+                    p:lifetime="60000" p:inactivityTimeout="0">
+                <prop name="supportedPrincipals">
+                    <list>
+                        <value>
+                            <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
+                                c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocol" />
+                        </value>
+                    </list>
+                </prop>
+            </bean>
+        </value>
+        -->
     </util:list>
 
 </beans>
