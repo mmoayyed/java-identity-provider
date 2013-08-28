@@ -62,7 +62,7 @@ public class AuthenticationFlowDescriptor implements IdentifiableComponent, Prin
     @Duration private long lifetime;
     
     /** Maximum amount of time in milliseconds, since last usage, a flow should be considered active. */
-    @Duration private long timeout;
+    @Duration private long inactivityTimeout;
     
     /**
      * Supported principals, indexed by type, that the flow can produce.
@@ -147,22 +147,22 @@ public class AuthenticationFlowDescriptor implements IdentifiableComponent, Prin
 
     /**
      * Gets the maximum amount of time in milliseconds, since the last usage, a flow should be considered active.
-     * A value of 0 indicates that there is no inactivity timeout on an active flow.
+     * A value of 0 indicates that there is no inactivity inactivityTimeout on an active flow.
      * 
      * @return the duration.
      */
     public long getInactivityTimeout() {
-        return timeout;
+        return inactivityTimeout;
     }
 
     /**
      * Sets the maximum amount of time in milliseconds, since the last usage, a flow should be considered active.
      * A value of 0 indicates that there is no inactivity timeout on an active flow.
      * 
-     * @param inactivityTimeout the flow timeout, must be 0 or greater
+     * @param timeout the flow inactivity timeout, must be 0 or greater
      */
-    public void setInactivityTimeout(@Duration long inactivityTimeout) {
-        timeout = Constraint.isGreaterThanOrEqual(0, inactivityTimeout,
+    public void setInactivityTimeout(@Duration long timeout) {
+        inactivityTimeout = Constraint.isGreaterThanOrEqual(0, timeout,
                 "Inactivity timeout must be greater than or equal to 0");
     }
     
@@ -261,6 +261,6 @@ public class AuthenticationFlowDescriptor implements IdentifiableComponent, Prin
     public String toString() {
         return Objects.toStringHelper(this).add("flowId", flowId).add("supportsPassive", supportsPassive)
                 .add("supportsForcedAuthentication", supportsForced).add("lifetime", lifetime)
-                .add("inactivityTimeout", timeout).toString();
+                .add("inactivityTimeout", inactivityTimeout).toString();
     }
 }
