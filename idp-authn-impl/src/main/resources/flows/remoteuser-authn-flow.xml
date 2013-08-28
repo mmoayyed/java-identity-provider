@@ -3,23 +3,20 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow classpath:/org/springframework/webflow/engine/model/builder/spring-webflow-2.0.xsd">
 
     <!--
-    This is a login flow for IP Address-based pseudo-authentication.
+    This is a login flow for container-based pseudo-authentication.
     
     All login flows are required to invoke a Subject Canonicalization subflow
     before completing, and must return the result of that subflow as their
     result, barring an error of some other kind earlier.
     -->
     
-    <action-state id="ExtractUserAgentAddress">
-        <evaluate expression="ExtractUserAgentAddress" />
-        <transition on="proceed" to="ValidateUserAgentAddress" />
+    <action-state id="ExtractRemoteUser">
+        <evaluate expression="ExtractRemoteUser" />
+        <transition on="proceed" to="ValidateRemoteUser" />
     </action-state>
     
-    <action-state id="ValidateUserAgentAddress">
-        <evaluate expression="ValidateUserAgentAddress" />
-        
-        <!--  Example to wire a second validation range in using a differently named bean. -->
-        <!-- <transition on="InvalidCredentials" to="ValidateUserAgentAddress2" /> -->
+    <action-state id="ValidateRemoteUser">
+        <evaluate expression="ValidateRemoteUser" />
         
         <transition on="proceed" to="CallSubjectCanonicalization" />
     </action-state>
@@ -44,6 +41,6 @@
         <transition on="#{true}" to="#{currentEvent.id}" />
     </global-transitions>
 
-    <bean-import resource="ipaddress-authn-beans.xml" />
+    <bean-import resource="remoteuser-authn-beans.xml" />
 
 </flow>

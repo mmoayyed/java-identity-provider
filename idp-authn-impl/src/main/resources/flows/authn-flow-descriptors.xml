@@ -18,21 +18,17 @@
 
     <util:list id="AvailableAuthenticationFlows">
         <!--
-        <value>
-            <bean c:id="AuthenticationFlow/IPAddress" class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
-                    p:passiveAuthenticationSupported="true"
-                    p:forcedAuthenticationSupported="false"
-                    p:lifetime="60000" p:inactivityTimeout="0">
-                <prop name="supportedPrincipals">
-                    <list>
-                        <value>
-                            <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
-                                c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocol" />
-                        </value>
-                    </list>
-                </prop>
-            </bean>
-        </value>
+        <bean c:id="AuthenticationFlow/IPAddress" class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
+                p:passiveAuthenticationSupported="true"
+                p:forcedAuthenticationSupported="false"
+                p:lifetime="PT60S" p:inactivityTimeout="0">
+            <property name="supportedPrincipals">
+                <list>
+                    <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
+                        c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocol" />
+                </list>
+            </property>
+        </bean>
         -->
     </util:list>
 

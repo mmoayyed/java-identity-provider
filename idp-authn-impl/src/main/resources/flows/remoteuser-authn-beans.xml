@@ -11,21 +11,24 @@
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     
-    <bean id="ExtractUserAgentAddress" class="net.shibboleth.idp.authn.impl.ExtractUserAgentAddress" scope="prototype" />
+    <bean id="ExtractRemoteUser" class="net.shibboleth.idp.authn.impl.ExtractRemoteUser" scope="prototype"
+            p:checkRemoteUser="true">
         
-    <bean id="ValidateUserAgentAddress" class="net.shibboleth.idp.authn.impl.ValidateUserAgentAddress" scope="prototype"
-            p:principalName="jdoe">
-        <property name="designatedRanges">
+        <!-- Also supports extraction from a header or server attribute. -->
+        <!--
+        <property name="checkHeaders">
             <list>
-                <bean class="net.shibboleth.utilities.java.support.net.IPRange" factory-method="parseCIDRBlock" c:cidrBlock="127.0.0.1/32" />
+                <value>HeaderToCheck</value>
             </list>
         </property>
+        <property name="checkAttributes">
+            <list>
+                <value>AttributeToCheck</value>
+            </list>
+        </property>
+        -->
     </bean>
-
-    <!--
-    You can add additional ValidateUserAgentAddress bean definitions if you want to map
-    different ranges to different users. Just give the bean(s) different ids and wire them
-    in sequence into the ipaddress-authn-flow.xml file.
-    -->
+        
+    <bean id="ValidateRemoteUser" class="net.shibboleth.idp.authn.impl.ValidateRemoteUser" scope="prototype"/>
 
 </beans>
