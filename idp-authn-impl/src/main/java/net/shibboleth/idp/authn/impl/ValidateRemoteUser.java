@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * An action that checks for a {@link UsernameContext} and directly produces an
@@ -78,15 +78,6 @@ public class ValidateRemoteUser extends AbstractValidationAction {
     @Nullable private Pattern matchExpression;
     
     /**
-     * Get the whitelisted usernames.
-     * 
-     * @return the whitelisted usernames
-     */
-    @Nonnull @NonnullElements @Unmodifiable public Set<String> getWhitelistedUsernames() {
-        return whitelistedUsernames;
-    }
-
-    /**
      * Set the whitelisted usernames.
      * 
      * @param whitelist whitelist to set
@@ -94,16 +85,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
     public void setWhitelistedUsernames(@Nonnull @NonnullElements final Collection<String> whitelist) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        whitelistedUsernames = ImmutableSet.copyOf(Collections2.filter(whitelist, Predicates.notNull()));
-    }
-
-    /**
-     * Get the blacklisted usernames.
-     * 
-     * @return the blacklisted usernames
-     */
-    @Nonnull @NonnullElements @Unmodifiable public Set<String> getBlacklistedUsernames() {
-        return blacklistedUsernames;
+        whitelistedUsernames = Sets.newHashSet(Collections2.filter(whitelist, Predicates.notNull()));
     }
 
     /**
@@ -114,16 +96,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
     public void setBlacklistedUsernames(@Nonnull @NonnullElements final Collection<String> blacklist) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        blacklistedUsernames = ImmutableSet.copyOf(Collections2.filter(blacklist, Predicates.notNull()));
-    }
-
-    /**
-     * Get a matching expression to apply for acceptance.
-     * 
-     * @return a matching expression
-     */
-    @Nullable public Pattern getMatchExpression() {
-        return matchExpression;
+        blacklistedUsernames = Sets.newHashSet(Collections2.filter(blacklist, Predicates.notNull()));
     }
 
     /**
@@ -185,17 +158,17 @@ public class ValidateRemoteUser extends AbstractValidationAction {
      */
     private boolean isAuthenticated(@Nonnull @NotEmpty final String username) {
         
-        if (!getWhitelistedUsernames().contains(username)) {
+        if (!whitelistedUsernames.contains(username)) {
             // Not in whitelist. Only accept if a regexp applies.
-            if (getMatchExpression() == null) {
+            if (matchExpression == null) {
                 return false;
             } else {
-                return getMatchExpression().matcher(username).matches();
+                return matchExpression.matcher(username).matches();
             }
         } else {
             // In whitelist. Check blacklist, and if necessary a regexp.
-            return !getBlacklistedUsernames().contains(username)
-                    && (getMatchExpression() == null || getMatchExpression().matcher(username).matches());
+            return !blacklistedUsernames.contains(username)
+                    && (matchExpression == null || matchExpression.matcher(username).matches());
         }
     }
 

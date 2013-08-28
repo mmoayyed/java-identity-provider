@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -28,7 +29,6 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernameContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 /**
  * An action that extracts an asserted user identity from the incoming request, creates a
@@ -60,25 +60,16 @@ public class ExtractRemoteUser extends AbstractAuthenticationAction {
     private boolean checkRemoteUser;
     
     /** List of request attributes to check for an identity. */
-    @Nonnull @NonnullElements private ImmutableList<String> checkAttributes;
+    @Nonnull @NonnullElements private List<String> checkAttributes;
 
     /** List of request headers to check for an identity. */
-    @Nonnull @NonnullElements private ImmutableList<String> checkHeaders;
+    @Nonnull @NonnullElements private List<String> checkHeaders;
     
     /** Constructor. */
     ExtractRemoteUser() {
         checkRemoteUser = true;
-        checkAttributes = ImmutableList.of();
-        checkHeaders = ImmutableList.of();
-    }
-
-    /**
-     * Get whether to check REMOTE_USER for an identity.
-     * 
-     * @return  whether to check REMOTE_USER for an identity
-     */
-    boolean getCheckRemoteUser() {
-        return checkRemoteUser;
+        checkAttributes = Collections.emptyList();
+        checkHeaders = Collections.emptyList();
     }
     
     /**
@@ -91,15 +82,6 @@ public class ExtractRemoteUser extends AbstractAuthenticationAction {
         
         checkRemoteUser = flag;
     }
-    
-    /**
-     * Get an immutable list of request attributes to check for an identity.
-     * 
-     * @return list of request attributes to check for an identity
-     */
-    @Nonnull @NonnullElements @Unmodifiable List<String> getCheckAttributes() {
-        return checkAttributes;
-    }
 
     /**
      * Set the list of request attributes to check for an identity.
@@ -109,16 +91,7 @@ public class ExtractRemoteUser extends AbstractAuthenticationAction {
     void setCheckAttributes(List<String> attributes) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        checkAttributes = ImmutableList.copyOf(Collections2.filter(attributes, Predicates.notNull()));
-    }
-    
-    /**
-     * Get an immutable list of request headers to check for an identity.
-     * 
-     * @return list of request headers to check for an identity
-     */
-    @Nonnull @NonnullElements @Unmodifiable List<String> getCheckHeaders() {
-        return checkHeaders;
+        checkAttributes = Lists.newArrayList(Collections2.filter(attributes, Predicates.notNull()));
     }
 
     /**
@@ -129,13 +102,13 @@ public class ExtractRemoteUser extends AbstractAuthenticationAction {
     void setCheckHeaders(List<String> headers) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        checkHeaders = ImmutableList.copyOf(Collections2.filter(headers, Predicates.notNull()));
+        checkHeaders = Lists.newArrayList(Collections2.filter(headers, Predicates.notNull()));
     }
     
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         
-        if (!getCheckRemoteUser() && getCheckAttributes().isEmpty() && getCheckHeaders().isEmpty()) {
+        if (!checkRemoteUser && checkAttributes.isEmpty() && checkHeaders.isEmpty()) {
             log.debug("{} configuration contains no headers or attributes to check", getLogPrefix());
             throw new ComponentInitializationException("ExtractRemoteUser action configuration is invalid");
         }
@@ -153,7 +126,7 @@ public class ExtractRemoteUser extends AbstractAuthenticationAction {
         }
         
         String username;
-        if (getCheckRemoteUser()) {
+        if (checkRemoteUser) {
             username = request.getRemoteUser();
             if (username != null && !username.isEmpty()) {
                 log.debug("{} user identity extracted from REMOTE_USER: {}", getLogPrefix(), username);
@@ -162,7 +135,7 @@ public class ExtractRemoteUser extends AbstractAuthenticationAction {
             }
         }
         
-        for (String s : getCheckAttributes()) {
+        for (String s : checkAttributes) {
             Object attr = request.getAttribute(s);
             if (attr != null && !attr.toString().isEmpty()) {
                 log.debug("{} user identity extracted from attribute {}: {}", getLogPrefix(), s, attr);
@@ -171,7 +144,7 @@ public class ExtractRemoteUser extends AbstractAuthenticationAction {
             }
         }
 
-        for (String s : getCheckHeaders()) {
+        for (String s : checkHeaders) {
             username = request.getHeader(s);
             if (username != null && !username.isEmpty()) {
                 log.debug("{} user identity extracted from header {}: {}", getLogPrefix(), s, username);
