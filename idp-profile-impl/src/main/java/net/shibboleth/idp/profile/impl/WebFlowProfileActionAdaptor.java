@@ -26,8 +26,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ProfileAction;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 
 /**
@@ -69,11 +67,10 @@ public class WebFlowProfileActionAdaptor<InboundMessageType, OutboundMessageType
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+    @Nonnull protected void doExecute(
             @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
                     throws ProfileException {
 
         action.execute(profileRequestContext);
-        return getResult(action, profileRequestContext);
     }
 }
