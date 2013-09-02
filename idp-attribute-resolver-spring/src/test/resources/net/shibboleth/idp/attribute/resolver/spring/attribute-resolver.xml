@@ -38,7 +38,7 @@
     </resolver:DataConnector>
 
     <!-- Schema: Core schema attributes-->
-    <!--
+    
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="uid" sourceAttributeID="uid">
         <resolver:Dependency ref="myLDAP" />
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:uid" />
@@ -158,10 +158,10 @@
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:initials" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:2.5.4.43" friendlyName="initials" />
     </resolver:AttributeDefinition>
-     -->
+    
 
     <!-- Schema: inetOrgPerson attributes-->
-    <!--
+    
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="departmentNumber" sourceAttributeID="departmentNumber">
         <resolver:Dependency ref="myLDAP" />
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:departmentNumber" />
@@ -197,10 +197,10 @@
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:preferredLanguage" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:2.16.840.1.113730.3.1.39" friendlyName="preferredLanguage" />
     </resolver:AttributeDefinition>
-    -->
+    
 
     <!-- Schema: eduPerson attributes -->
-    <!--
+    <!--  
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="eduPersonAffiliation" sourceAttributeID="eduPersonAffiliation">
         <resolver:Dependency ref="myLDAP" />
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:eduPersonAffiliation" />
@@ -262,14 +262,12 @@
     </resolver:AttributeDefinition>
     -->
         
-    <!--
     <resolver:AttributeDefinition xsi:type="ad:SAML2NameID" id="eduPersonTargetedID" 
                                   nameIdFormat="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" sourceAttributeID="computedID">
         <resolver:Dependency ref="computedID" />
         <resolver:AttributeEncoder xsi:type="enc:SAML1XMLObject" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.10" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2XMLObject" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.10" friendlyName="eduPersonTargetedID" />
     </resolver:AttributeDefinition>
-    -->
     
     <!-- Do NOT use the version of eduPersonTargetedID defined below unless you understand 
          why it was deprecated and know that this reason does not apply to you. -->
@@ -322,32 +320,30 @@
         <dc:Column columnName="fqlft" attributeID="gpa" type="Float" />
     </resolver:DataConnector>
      -->
+     
+   <resolver:DataConnector id="myLDAP" xsi:type="dc:Static"/>
 
     <!-- Example LDAP Connector -->
-    <!--
+    <!-- TODO
     <resolver:DataConnector id="myLDAP" xsi:type="dc:LDAPDirectory"
-        ldapURL="ldap://ldap.example.org" 
-        baseDN="ou=people,dc=example,dc=org" 
-        principal="uid=myservice,ou=system"
-        principalCredential="myServicePassword">
+        ldapURL="ldap://localhost:10391" 
+        baseDN="dc=shibboleth,dc=net" 
+        principal="cn=Directory Manager"
+        principalCredential="password">
         <dc:FilterTemplate>
             <![CDATA[
-                (uid=$requestContext.principalName)
+                (uid=$requestContext.uid)
             ]]>
         </dc:FilterTemplate>
     </resolver:DataConnector>
     -->
-    
     <!-- Computed targeted ID connector -->
-    <!--
+
     <resolver:DataConnector xsi:type="dc:ComputedId"
-                            id="computedID"
-                            generatedAttributeID="computedID"
-                            sourceAttributeID="uid"
-                            salt="your random string here">
+        id="computedID" generatedAttributeID="computedID" sourceAttributeID="uid"
+        salt="your random string here">
         <resolver:Dependency ref="myLDAP" />
     </resolver:DataConnector> 
-    -->
 
     <!-- ========================================== -->
     <!--      Principal Connectors                  -->

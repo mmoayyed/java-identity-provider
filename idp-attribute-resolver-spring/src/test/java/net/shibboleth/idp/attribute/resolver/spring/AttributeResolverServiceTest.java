@@ -27,18 +27,38 @@ import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
+import com.unboundid.ldap.listener.InMemoryDirectoryServer;
+import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
+import com.unboundid.ldap.listener.InMemoryListenerConfig;
+import com.unboundid.ldap.sdk.LDAPException;
 
 /** A work in progress to test the attribute resolver service. */
 // TODO incomplete
-public class AttributeResolverServiceTest {
+public class AttributeResolverServiceTest extends OpenSAMLInitBaseTestCase {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeResolverServiceTest.class);
+    private InMemoryDirectoryServer directoryServer;
+
+    @BeforeTest public void setupDirectoryServer() throws LDAPException {
+
+        InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig("dc=shibboleth,dc=net");
+        config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", 10391));
+        config.addAdditionalBindCredentials("cn=Directory Manager", "password");
+        directoryServer = new InMemoryDirectoryServer(config);
+        directoryServer
+                .importFromLDIF(true,
+                        "src/test/resources/net/shibboleth/idp/attribute/resolver/spring/ldapDataConnectorTest.ldif");
+        directoryServer.startListening();
+    }
 
     // stub test
     @Test public void one() throws ComponentInitializationException, ServiceException, ResolutionException {
