@@ -51,7 +51,7 @@
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:0.9.2342.19200300.100.1.3" friendlyName="mail" />
     </resolver:AttributeDefinition>
 
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="homePhone" sourceAttributeID="homePhone">
+    <resolver:AttributeDefinition xsi:type="ad:Simple" id="homePhone" sourceAttributeID="homephone">
         <resolver:Dependency ref="myLDAP" />
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:homePhone" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:0.9.2342.19200300.100.1.20" friendlyName="homePhone" />
@@ -141,7 +141,7 @@
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:2.5.4.18" friendlyName="postOfficeBox" />
     </resolver:AttributeDefinition>
 
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="telephoneNumber" sourceAttributeID="telephoneNumber">
+    <resolver:AttributeDefinition xsi:type="ad:Simple" id="telephoneNumber" sourceAttributeID="phone">
         <resolver:Dependency ref="myLDAP" />
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:telephoneNumber" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:2.5.4.20" friendlyName="telephoneNumber" />
@@ -321,10 +321,8 @@
     </resolver:DataConnector>
      -->
      
-   <resolver:DataConnector id="myLDAP" xsi:type="dc:Static"/>
 
     <!-- Example LDAP Connector -->
-    <!-- TODO
     <resolver:DataConnector id="myLDAP" xsi:type="dc:LDAPDirectory"
         ldapURL="ldap://localhost:10391" 
         baseDN="dc=shibboleth,dc=net" 
@@ -332,11 +330,10 @@
         principalCredential="password">
         <dc:FilterTemplate>
             <![CDATA[
-                (uid=$requestContext.uid)
+                (uid=$requestContext.principalName)
             ]]>
         </dc:FilterTemplate>
     </resolver:DataConnector>
-    -->
     <!-- Computed targeted ID connector -->
 
     <resolver:DataConnector xsi:type="dc:ComputedId"
