@@ -18,11 +18,17 @@
 package net.shibboleth.idp.attribute.resolver.spring;
 
 import java.util.Map;
+import java.util.Set;
+
+import javax.sql.DataSource;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.impl.DatabaseTestingSupport;
+import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -46,18 +52,34 @@ public class AttributeResolverServiceTest extends OpenSAMLInitBaseTestCase {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeResolverServiceTest.class);
+    
+    /* LDAP */
     private InMemoryDirectoryServer directoryServer;
+    
+    private static final String LDAP_INIT_FILE = "src/test/resources/net/shibboleth/idp/attribute/resolver/spring/ldapDataConnectorTest.ldif";
+    
+    /** DataBase initialise */
+    private static final String DB_INIT_FILE = "/net/shibboleth/idp/attribute/resolver/spring/RdbmsStore.sql";
 
-    @BeforeTest public void setupDirectoryServer() throws LDAPException {
+    /** DataBase Populate */
+    private static final String DB_DATA_FILE = "/net/shibboleth/idp/attribute/resolver/spring/RdbmsData.sql";
 
+    private DataSource datasource;
+
+    @BeforeTest public void setupDataConnectors() throws LDAPException {
+
+        // LDAP
         InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig("dc=shibboleth,dc=net");
         config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", 10391));
         config.addAdditionalBindCredentials("cn=Directory Manager", "password");
         directoryServer = new InMemoryDirectoryServer(config);
-        directoryServer
-                .importFromLDIF(true,
-                        "src/test/resources/net/shibboleth/idp/attribute/resolver/spring/ldapDataConnectorTest.ldif");
+        directoryServer.importFromLDIF(true,LDAP_INIT_FILE);
         directoryServer.startListening();
+        
+        //RDBMS
+        datasource = DatabaseTestingSupport.GetMockDataSource(DB_INIT_FILE, "myTestDB");
+        DatabaseTestingSupport.InitializeDataSourceFromFile(DB_DATA_FILE, datasource);
+
     }
 
     // stub test
@@ -80,16 +102,90 @@ public class AttributeResolverServiceTest extends OpenSAMLInitBaseTestCase {
         attributeResolverService.start();
 
         // try to resolve some attributes
-        AttributeResolutionContext resolutionContext = new AttributeResolutionContext();
+        final AttributeResolutionContext resolutionContext = TestSources.createResolutionContext("PETER_THE_PRINCIPAL", "issuer", "recipient");
         attributeResolverService.resolveAttributes(resolutionContext);
         Map<String, Attribute> resolvedAttributes = resolutionContext.getResolvedAttributes();
         log.debug("resolved attributes '{}'", resolvedAttributes);
 
-        // just one attribute for now
-        Assert.assertEquals(resolvedAttributes.size(), 1);
-        Assert.assertNotNull(resolvedAttributes.get("eduPersonAffiliation"));
-        Assert.assertEquals(resolvedAttributes.get("eduPersonAffiliation").getValues().size(), 1);
-        Assert.assertTrue(resolvedAttributes.get("eduPersonAffiliation").getValues()
-                .contains(new StringAttributeValue("member")));
+        Assert.assertEquals(resolvedAttributes.size(), 12);
+
+        // Static
+        Attribute attribute = resolvedAttributes.get("eduPersonAffiliation");
+        Assert.assertNotNull(attribute);
+        Set<AttributeValue> values = attribute.getValues();
+        Assert.assertEquals(values.size(), 1);
+        Assert.assertTrue(values.contains(new StringAttributeValue("member")));
+
+        // LDAP
+        attribute = resolvedAttributes.get("uid");
+        Assert.assertNotNull(attribute);
+        values = attribute.getValues();
+        Assert.assertEquals(values.size(), 1);
+        Assert.assertTrue(values.contains(new StringAttributeValue("PETER_THE_PRINCIPAL")));
+
+        attribute = resolvedAttributes.get("email");
+        Assert.assertNotNull(attribute);
+        values = attribute.getValues();
+        Assert.assertEquals(values.size(), 2);
+        Assert.assertTrue(values.contains(new StringAttributeValue("peterprincipal@shibboleth.net")));
+        Assert.assertTrue(values.contains(new StringAttributeValue("peter.principal@shibboleth.net")));
+        
+        attribute = resolvedAttributes.get("surname");
+        Assert.assertNotNull(attribute);
+        values = attribute.getValues();
+        Assert.assertEquals(values.size(), 1);
+        Assert.assertTrue(values.contains(new StringAttributeValue("Principal")));
+
+        attribute = resolvedAttributes.get("commonName");
+        Assert.assertNotNull(attribute);
+        values = attribute.getValues();
+        Assert.assertEquals(values.size(), 3);
+        Assert.assertTrue(values.contains(new StringAttributeValue("Peter Principal")));
+        Assert.assertTrue(values.contains(new StringAttributeValue("Peter J Principal")));
+        Assert.assertTrue(values.contains(new StringAttributeValue("pete principal")));
+
+        attribute = resolvedAttributes.get("homePhone");
+        Assert.assertNotNull(attribute);
+        values = attribute.getValues();
+        Assert.assertEquals(values.size(), 1);
+        Assert.assertTrue(values.contains(new StringAttributeValue("555-111-2222")));
+        
+        // Computed
+        attribute = resolvedAttributes.get("eduPersonTargetedID");
+        Assert.assertNotNull(attribute);
+        values = attribute.getValues();
+        Assert.assertEquals(values.size(), 1);
+
+        // RDBMS  TODO wire in the template
+        attribute = resolvedAttributes.get("pagerNumber");
+        Assert.assertNotNull(attribute);
+        values = attribute.getValues();
+        Assert.assertEquals(values.size(), 1);
+        Assert.assertTrue(values.contains(new StringAttributeValue("555-123-4567")));
+
+        attribute = resolvedAttributes.get("mobileNumber");
+        Assert.assertNotNull(attribute);
+        values = attribute.getValues();
+        Assert.assertEquals(values.size(), 1);
+        Assert.assertTrue(values.contains(new StringAttributeValue("444-123-4567")));
+        
+        attribute = resolvedAttributes.get("street");
+        Assert.assertNotNull(attribute);
+        values = attribute.getValues();
+        Assert.assertEquals(values.size(), 1);
+        Assert.assertTrue(values.contains(new StringAttributeValue("TheStreet")));
+        
+        attribute = resolvedAttributes.get("title");
+        Assert.assertNotNull(attribute);
+        values = attribute.getValues();
+        Assert.assertEquals(values.size(), 1);
+        Assert.assertTrue(values.contains(new StringAttributeValue("Monsieur")));
+
+        attribute = resolvedAttributes.get("departmentNumber");
+        Assert.assertNotNull(attribute);
+        values = attribute.getValues();
+        Assert.assertEquals(values.size(), 1);
+        Assert.assertTrue(values.contains(new StringAttributeValue("#4321")));
+
     }
 }
