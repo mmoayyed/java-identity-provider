@@ -17,7 +17,7 @@
     -->
 
     <util:list id="AvailableAuthenticationFlows">
-        <!--
+        
         <bean c:id="AuthenticationFlow/IPAddress" class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
                 p:passiveAuthenticationSupported="true"
                 p:forcedAuthenticationSupported="false"
@@ -29,7 +29,35 @@
                 </list>
             </property>
         </bean>
-        -->
+        
+        <bean c:id="AuthenticationFlow/RemoteUser" class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
+                p:passiveAuthenticationSupported="false"
+                p:forcedAuthenticationSupported="true"
+                p:lifetime="PT60M" p:inactivityTimeout="PT30M">
+            <property name="supportedPrincipals">
+                <list>
+                    <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
+                        c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" />
+                    <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
+                        c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:Password" />
+                </list>
+            </property>
+        </bean>
+
+        <bean c:id="AuthenticationFlow/JAASForm" class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
+                p:passiveAuthenticationSupported="false"
+                p:forcedAuthenticationSupported="true"
+                p:lifetime="PT60M" p:inactivityTimeout="PT30M">
+            <property name="supportedPrincipals">
+                <list>
+                    <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
+                        c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" />
+                    <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
+                        c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:Password" />
+                </list>
+            </property>
+        </bean>
+        
     </util:list>
 
 </beans>

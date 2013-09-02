@@ -1,0 +1,63 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow classpath:/org/springframework/webflow/engine/model/builder/spring-webflow-2.0.xsd">
+
+    <!--
+    This is a login flow for form-based JAAS-backed authentication.
+    
+    All login flows are required to invoke a Subject Canonicalization subflow
+    before completing, and must return the result of that subflow as their
+    result, barring an error of some other kind earlier.
+    -->
+    
+    <view-state id="DisplayUsernamePasswordPage" view="login">
+        <on-render>
+            <!--
+            TODO: Eventually would like to populate subcontexts directly into viewScope, but they aren't Serializable.
+            For now, I'm injecting some class types so a Velocity template can navigate the context tree. 
+            -->
+            <evaluate expression="T(net.shibboleth.idp.authn.context.AuthenticationContext)" result="viewScope.classAuthenticationContext" />
+            <evaluate expression="T(net.shibboleth.idp.authn.context.AuthenticationErrorContext)" result="viewScope.classAuthenticationErrorContext" />
+            <!-- This should work once we fix the serializability requirement for view scope. -->
+            <!-- <evaluate expression="T(org.owasp.esapi.ESAPI).encoder()" result="viewScope.esapiEncoder" />  -->
+        </on-render>
+        <transition on="proceed" to="ExtractUsernamePasswordFromFormRequest" />
+    </view-state>
+    
+    <action-state id="ExtractUsernamePasswordFromFormRequest">
+        <evaluate expression="ExtractUsernamePasswordFromFormRequest" />
+        <transition on="proceed" to="ValidateUsernamePasswordAgainstJAAS" />
+    </action-state>
+    
+    <action-state id="ValidateUsernamePasswordAgainstJAAS">
+        <evaluate expression="ValidateUsernamePasswordAgainstJAAS" />
+        
+        <transition on="proceed" to="CallSubjectCanonicalization" />
+        
+        <transition on="NoCredentials" to="DisplayUsernamePasswordPage" />
+        <transition on="InvalidCredentials" to="DisplayUsernamePasswordPage" />
+    </action-state>
+
+    <subflow-state id="CallSubjectCanonicalization" subflow="SubjectC14N/Simple"/>
+    
+    <!-- Successful completion of subflow. -->
+    <end-state id="proceed" />
+
+    <!-- Error events to reflect back from this subflow. -->    
+    <end-state id="IdentitySwitch" />
+    <end-state id="InputOutputError" />
+    <end-state id="InvalidCredentials" />
+    <end-state id="InvalidProfileContext" />
+    <end-state id="NoCredentials" />
+    <end-state id="NoPotentialFlow" />
+    <end-state id="RequestUnsupported" />
+    <end-state id="SubjectCanonicalizationError" />
+
+    <!-- Default is to turn any event into its own end-state. -->
+    <global-transitions>
+        <transition on="#{true}" to="#{currentEvent.id}" />
+    </global-transitions>
+
+    <bean-import resource="jaas-form-authn-beans.xml" />
+
+</flow>
