@@ -320,7 +320,7 @@
                         </annotation>
                     </element>
                 </sequence>
-                <attribute name="velocityEngine" type="string" fixed="shibboleth.VelocityEngine">
+                <attribute name="velocityEngine" type="string">
                     <annotation>
                         <documentation>Name of the velocity engine defined within the application.</documentation>
                     </annotation>

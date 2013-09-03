@@ -217,7 +217,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="templateEngine" type="string" fixed="shibboleth.TemplateEngine">
+                <attribute name="templateEngine" type="string">
                     <annotation>
                         <documentation>
                             Name of the template engine defined within the application.
@@ -575,7 +575,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="templateEngine" type="string" fixed="shibboleth.TemplateEngine">
+                <attribute name="templateEngine" type="string">
                     <annotation>
                         <documentation>Name of the template engine defined within the application.</documentation>
                     </annotation>
