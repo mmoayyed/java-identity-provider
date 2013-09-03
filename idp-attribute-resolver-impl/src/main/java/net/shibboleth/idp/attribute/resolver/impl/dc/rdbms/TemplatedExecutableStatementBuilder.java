@@ -18,34 +18,159 @@
 package net.shibboleth.idp.attribute.resolver.impl.dc.rdbms;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.velocity.Template;
+
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfileRequestContext;
 
 /**
  * An {@link ExecutableStatementBuilder} that generates the SQL statement to be executed by evaluating a
  * {@link Template} against the currently resolved attributes within a {@link AttributeResolutionContext}.
  */
-public class TemplatedExecutableStatementBuilder implements ExecutableSearchBuilder<ExecutableStatement> {
+public class TemplatedExecutableStatementBuilder extends AbstractExecutableStatementBuilder {
 
-    /** Template evaluated to generate a SQL query. */
-    private final Template template;
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(TemplatedExecutableStatementBuilder.class);
+
+    /** Template to be evaluated. */
+    private Template template;
+
+    /** Template (as Text) to be evaluated. */
+    private String templateText;
+
+    /** VelocityEngine. */
+    private VelocityEngine engine;
+
+    /** Do we need to make ourself V2 Compatible? */
+    private boolean v2Compatibility;
 
     /**
-     * Constructor.
+     * Gets the template text to be evaluated.
      * 
-     * @param sqlTemplate template evaluated to generate a SQL query
+     * @return the template
      */
-    public TemplatedExecutableStatementBuilder(@Nonnull final Template sqlTemplate) {
-        template = Constraint.isNotNull(sqlTemplate, "SQL template can not be null");
+    @NonnullAfterInit public Template getTemplate() {
+        return template;
+    }
+
+    /**
+     * Gets the template text to be evaluated.
+     * 
+     * @return the template
+     */
+    @NonnullAfterInit public String getTemplateText() {
+        return templateText;
+    }
+
+    /**
+     * Sets the template to be evaluated.
+     * 
+     * @param velocityTemplate template to be evaluated
+     */
+    public void setTemplateText(@Nullable String velocityTemplate) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        templateText = StringSupport.trimOrNull(velocityTemplate);
+    }
+
+    /**
+     * Gets the {@link VelocityEngine} to be used.
+     * 
+     * @return the template
+     */
+    @Nullable @NonnullAfterInit public VelocityEngine getVelocityEngine() {
+        return engine;
+    }
+
+    /**
+     * Sets the {@link VelocityEngine} to be used.
+     * 
+     * @param velocityEngine engine to be used
+     */
+    public synchronized void setVelocityEngine(VelocityEngine velocityEngine) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        engine = velocityEngine;
+    }
+
+    /**
+     * Are we in V2 Compatibility mode?
+     * 
+     * @return Returns the v2Compat.
+     */
+    public boolean isV2Compatibility() {
+        return v2Compatibility;
+    }
+
+    /**
+     * What is out V2 Compatibility mode.
+     * 
+     * @param compat The mode to set.
+     */
+    public void setV2Compatibility(boolean compat) {
+        v2Compatibility = compat;
+    }
+
+    /**
+     * Invokes {@link Template#merge(org.apache.velocity.context.Context)} on the supplied context.
+     * 
+     * @param context to merge
+     * 
+     * @return result of the merge operation
+     */
+    protected String merge(@Nonnull final VelocityContext context) {
+        final String result = template.merge(context);
+        log.debug("Template text {} yields {}", templateText, result);
+        return result;
+    }
+
+    /**
+     * Apply the context to the template. {@inheritDoc}
+     */
+    protected String getSQLQuery(AttributeResolutionContext resolutionContext) {
+        final VelocityContext context = new VelocityContext();
+        log.trace("Creating search filter using attribute resolution context {}", resolutionContext);
+        context.put("resolutionContext", resolutionContext);
+        final AttributeRecipientContext recipientContext =
+                resolutionContext.getSubcontext(AttributeRecipientContext.class);
+        log.trace("Creating search filter using attribute recipient context {}", recipientContext);
+        context.put("recipientContext", recipientContext);
+        if (isV2Compatibility()) {
+            final V2SAMLProfileRequestContext requestContext =
+                    new V2SAMLProfileRequestContext(resolutionContext, resolutionContext.getId());
+            log.trace("Adding v2 request context {}", requestContext);
+            context.put("requestContext", requestContext);
+        }
+        return merge(context);
     }
 
     /** {@inheritDoc} */
-    public ExecutableStatement build(AttributeResolutionContext resolutionContext) throws ResolutionException {
-        // TODO Auto-generated method stub
-        return null;
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        if (null == engine) {
+            throw new ComponentInitializationException(
+                    "TemplatedExecutableStatementBuilder: no velocity engine was configured");
+        }
+
+        if (null == templateText) {
+            throw new ComponentInitializationException(
+                    "TemplatedExecutableStatementBuilder: no template text must be non null");
+        }
+
+        template = Template.fromTemplate(engine, templateText);
     }
+
 }

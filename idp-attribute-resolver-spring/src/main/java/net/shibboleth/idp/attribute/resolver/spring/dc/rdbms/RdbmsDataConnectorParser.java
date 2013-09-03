@@ -17,23 +17,15 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc.rdbms;
 
-import java.util.Map;
-
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.Attribute;
-import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder;
-import net.shibboleth.idp.attribute.resolver.impl.dc.MappingStrategy;
-import net.shibboleth.idp.attribute.resolver.impl.dc.Validator;
-import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.LdapDataConnector;
-import net.shibboleth.idp.attribute.resolver.impl.dc.rdbms.FormatExecutableStatementBuilder;
 import net.shibboleth.idp.attribute.resolver.impl.dc.rdbms.RdbmsDataConnector;
+import net.shibboleth.idp.attribute.resolver.impl.dc.rdbms.TemplatedExecutableStatementBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.BaseDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.DataConnectorNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.dc.ManagedConnectionParser;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -44,8 +36,6 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
-
-import com.google.common.cache.Cache;
 
 /** Bean definition Parser for a {@link RdbmsDataConnector}. */
 public class RdbmsDataConnectorParser extends BaseDataConnectorParser {
@@ -119,30 +109,52 @@ public class RdbmsDataConnectorParser extends BaseDataConnectorParser {
                 AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(config, new QName(
                         "noResultIsError")));
 
-        final String templateEngine = config.getAttribute("templateEngine");
-
         final DataSource datasource = parser.createDataSource();
         builder.addPropertyValue("DataSource", datasource);
 
-        final Element queryTemplate =
-                ElementSupport.getFirstChildElement(config, new QName(DataConnectorNamespaceHandler.NAMESPACE,
-                        "QueryTemplate"));
-        // TODO this should use the Templated builder once the velocity engine is working
-        final FormatExecutableStatementBuilder statementBuilder =
-                new FormatExecutableStatementBuilder(StringSupport.trimOrNull(queryTemplate.getTextContent()));
-        Long queryTimeout =
-                AttributeSupport.getDurationAttributeValueAsLong(AttributeSupport.getAttribute(config, new QName(
-                        "queryTimeout")));
-        if (queryTimeout == null) {
-            queryTimeout = Long.valueOf(5000);
-        }
-        statementBuilder.setQueryTimeout(queryTimeout.intValue());
-        builder.addPropertyValue("executableSearchBuilder", statementBuilder);
+        final BeanDefinitionBuilder templateBuilder = constuctTemplateBuilder(config);
+        builder.addPropertyValue("executableSearchBuilder", templateBuilder.getBeanDefinition());
 
         // TODO add support for cacheResults and ResultCache
         if (noResultAnError != null && noResultAnError.booleanValue()) {
             builder.addPropertyValue("noResultAnError", true);
         }
         builder.setInitMethodName("initialize");
+    }
+
+    /**
+     * Construct the definition of the template driven search builder.
+     * 
+     * @param config the configuration.
+     * @return the bean definition for the template search builder.
+     */
+    private BeanDefinitionBuilder constuctTemplateBuilder(Element config) {
+        BeanDefinitionBuilder templateBuilder =
+                BeanDefinitionBuilder.genericBeanDefinition(TemplatedExecutableStatementBuilder.class);
+
+        String velocityEngineRef = StringSupport.trimOrNull(config.getAttribute("templateEngine"));
+        if (null == velocityEngineRef) {
+            velocityEngineRef = "shibboleth.VelocityEngine";
+        }
+        templateBuilder.addPropertyReference("velocityEngine", velocityEngineRef);
+
+        templateBuilder.addPropertyValue("v2Compatibility", true);
+
+        Long queryTimeout =
+                AttributeSupport.getDurationAttributeValueAsLong(AttributeSupport.getAttribute(config, new QName(
+                        "queryTimeout")));
+        if (queryTimeout == null) {
+            queryTimeout = Long.valueOf(5000);
+        }
+        templateBuilder.addPropertyValue("queryTimeout", queryTimeout.intValue());
+
+        final Element queryTemplate =
+                ElementSupport.getFirstChildElement(config, new QName(DataConnectorNamespaceHandler.NAMESPACE,
+                        "QueryTemplate"));
+        final String queryText = queryTemplate.getTextContent();
+        templateBuilder.addPropertyValue("templateText", queryText);
+
+        templateBuilder.setInitMethodName("initialize");
+        return templateBuilder;
     }
 }

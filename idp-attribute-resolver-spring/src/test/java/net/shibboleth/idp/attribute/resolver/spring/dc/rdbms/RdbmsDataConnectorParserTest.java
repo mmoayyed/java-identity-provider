@@ -34,6 +34,7 @@ import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
 import org.testng.AssertJUnit;
@@ -63,7 +64,7 @@ public class RdbmsDataConnectorParserTest {
         datasource = DatabaseTestingSupport.GetMockDataSource(INIT_FILE, "RDBMSDataConnectorStore");
         DatabaseTestingSupport.InitializeDataSourceFromFile(DATA_FILE, datasource);
     }
-
+    
     @Test public void v2Config() throws ComponentInitializationException, ServiceException, ResolutionException {
         RdbmsDataConnector dataConnector =
                 getRdbmsDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-v2.xml", false);
@@ -82,6 +83,10 @@ public class RdbmsDataConnectorParserTest {
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + RdbmsDataConnectorParserTest.class);
 
+        XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
+
+        configReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/velocity.xml");
+        
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 

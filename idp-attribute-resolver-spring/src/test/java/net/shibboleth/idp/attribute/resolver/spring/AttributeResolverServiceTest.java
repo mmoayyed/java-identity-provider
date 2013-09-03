@@ -36,6 +36,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -87,6 +88,10 @@ public class AttributeResolverServiceTest extends OpenSAMLInitBaseTestCase {
 
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + AttributeResolverServiceTest.class);
+        
+        XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
+
+        configReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/ad/velocity.xml");
 
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);

@@ -48,8 +48,6 @@ public class ResolverPluginDependencyParser extends AbstractSingleBeanDefinition
         String pluginId = StringSupport.trimOrNull(config.getAttributeNS(null, "ref"));
         log.info("Parsing configuration for {} with pluginId : {}", config.getLocalName(), pluginId);
         builder.addConstructorArgValue(pluginId);
-
-        log.info("Parsing configuration for {} with attributeId : {}", config.getLocalName());
     }
 
     /** {@inheritDoc} */

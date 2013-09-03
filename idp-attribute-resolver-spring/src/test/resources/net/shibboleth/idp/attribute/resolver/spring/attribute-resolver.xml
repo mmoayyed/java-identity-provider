@@ -309,13 +309,9 @@
 	        jdbcUserName="SA"
 	        jdbcPassword="" />
         <dc:QueryTemplate>
-<!--        <![CDATA[  TODO
+            <![CDATA[ 
                 SELECT * FROM student WHERE userid = '$requestContext.principalName'
             ]]>
-            -->
-            <![CDATA[
-                SELECT * FROM student WHERE userid = 'PETER_THE_PRINCIPAL'
-            ]]>           
         </dc:QueryTemplate>
     </resolver:DataConnector>
      

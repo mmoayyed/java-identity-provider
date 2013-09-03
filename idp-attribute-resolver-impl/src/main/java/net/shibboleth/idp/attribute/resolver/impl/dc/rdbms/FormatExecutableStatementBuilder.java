@@ -17,30 +17,20 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.dc.rdbms;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * An {@link ExecutableStatementBuilder} that generates the SQL statement to be executed by invoking
  * {@link String#format(String, Object...) with {@link AttributeRecipientContext#getPrincipal()}.
  */
-public class FormatExecutableStatementBuilder implements ExecutableSearchBuilder<ExecutableStatement> {
+public class FormatExecutableStatementBuilder extends AbstractExecutableStatementBuilder {
 
     /** SQL query string. */
     private final String sqlQuery;
-
-    /** Query timeout. */
-    private int queryTimeout;
 
     /**
      * Constructor.
@@ -59,50 +49,14 @@ public class FormatExecutableStatementBuilder implements ExecutableSearchBuilder
      */
     public FormatExecutableStatementBuilder(@Nonnull final String query, @Nonnull final int timeout) {
         sqlQuery = Constraint.isNotNull(query, "SQL query can not be null");
-        queryTimeout = (int) Constraint.isGreaterThanOrEqual(0, timeout, "Query timeout must be greater than zero");
-    }
-
-    /** 
-     * Gets the timeout of the SQL query.
-     * 
-     * @return timeout of the SQL query in seconds
-     */
-    public int getQueryTimeout() {
-        return queryTimeout;
-    }
-
-    /** 
-     * Sets the timeout of the SQL query.
-     * 
-     * @param timeout of the SQL query in seconds
-     */
-    public void setQueryTimeout(final int timeout) {
-        queryTimeout = timeout;
+        setQueryTimeout((int) Constraint.isGreaterThanOrEqual(0, timeout, "Query timeout must be greater than zero"));
     }
 
     /** {@inheritDoc} */
-    public ExecutableStatement build(AttributeResolutionContext resolutionContext) throws ResolutionException {
+    protected String getSQLQuery(AttributeResolutionContext resolutionContext) {
         final AttributeRecipientContext subContext = resolutionContext.getSubcontext(AttributeRecipientContext.class);
         final String query = String.format(sqlQuery, subContext);
-
-        return new ExecutableStatement() {
-
-            /** {@inheritDoc} */
-            @Nonnull public String getResultCacheKey() {
-                return query;
-            }
-
-            /** {@inheritDoc} */
-            @Nonnull public ResultSet execute(@Nonnull Connection connection) throws SQLException {
-                final Statement stmt = connection.createStatement();
-                stmt.setQueryTimeout(queryTimeout);
-                return stmt.executeQuery(query);
-            }
-
-            /** {@inheritDoc} */
-            public String toString() {
-                return query;
-            }
-        };
+        return query;
     }
+
 }

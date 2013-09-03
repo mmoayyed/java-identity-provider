@@ -9,6 +9,7 @@
     urn:mace:shibboleth:2.0:services classpath:/schema/shibboleth-2.0-services.xsd">
 
     <srv:Service id="shibboleth.AttributeResolver" xsi:type="attribute-resolver:ShibbolethAttributeResolver">
+        <srv:ConfigurationResource file="net/shibboleth/idp/attribute/resolver/spring/velocity.xml" xsi:type="resource:ClasspathResource"/>
         <srv:ConfigurationResource file="net/shibboleth/idp/attribute/resolver/spring/attribute-resolver.xml" xsi:type="resource:ClasspathResource"/>
     </srv:Service>
 
