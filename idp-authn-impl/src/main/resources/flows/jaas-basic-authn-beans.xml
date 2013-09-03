@@ -19,7 +19,7 @@
             <bean class="java.security.URIParameter">
                 <constructor-arg>
                     <bean class="java.net.URI">
-                        <constructor-arg value="file:///Users/scantor/Documents/workspace/3.0/java-shib-testbed/src/main/resources/conf/jaas.config" />
+                        <constructor-arg value="file://$IDP_HOME/conf/jaas.config" />
                     </bean>
                 </constructor-arg>
             </bean>
