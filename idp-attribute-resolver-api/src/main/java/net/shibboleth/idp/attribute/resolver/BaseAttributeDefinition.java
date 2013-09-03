@@ -264,15 +264,15 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
                     resolvedAttribute.getValues());
         }
 
-        log.debug("{} associating the following display descriptions"
+        log.trace("{} associating the following display descriptions"
                 + " with the resolved attribute: {}", getLogPrefix(), getDisplayDescriptions());
         resolvedAttribute.setDisplayDescriptions(getDisplayDescriptions());
 
-        log.debug("{} associating the following display names with the resolved attribute: {}",
+        log.trace("{} associating the following display names with the resolved attribute: {}",
                 getLogPrefix(), getDisplayNames());
         resolvedAttribute.setDisplayNames(getDisplayNames());
 
-        log.debug("{} associating the following encoders with the resolved attribute: {}",
+        log.trace("{} associating the following encoders with the resolved attribute: {}",
                 getLogPrefix(), getAttributeEncoders());
         resolvedAttribute.setEncoders(getAttributeEncoders());
 

@@ -269,10 +269,10 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         Constraint.isNotNull(attributeId, "Attribute ID can not be null");
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
-        log.debug("{} beginning to resolve attribute definition {}", logPrefix, attributeId);
+        log.trace("{} beginning to resolve attribute definition {}", logPrefix, attributeId);
 
         if (resolutionContext.getResolvedAttributeDefinitions().containsKey(attributeId)) {
-            log.debug("{} attribute definition {} was already resolved, nothing to do", logPrefix, attributeId);
+            log.trace("{} attribute definition {} was already resolved, nothing to do", logPrefix, attributeId);
             return;
         }
 
@@ -284,7 +284,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
 
         resolveDependencies(definition, resolutionContext);
 
-        log.debug("{} resolving attribute definition {}", logPrefix, attributeId);
+        log.trace("{} resolving attribute definition {}", logPrefix, attributeId);
         final Attribute resolvedAttribute = definition.resolve(resolutionContext);
 
         if (null == resolvedAttribute) {
@@ -312,9 +312,8 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         Constraint.isNotNull(connectorId, "Data connector ID can not be null");
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
-        log.debug("{} beginning to resolve data connector {}", logPrefix, connectorId);
         if (resolutionContext.getResolvedDataConnectors().containsKey(connectorId)) {
-            log.debug("{} data connector {} was already resolved, nothing to do", logPrefix, connectorId);
+            log.trace("{} data connector {} was already resolved, nothing to do", logPrefix, connectorId);
             return;
         }
 

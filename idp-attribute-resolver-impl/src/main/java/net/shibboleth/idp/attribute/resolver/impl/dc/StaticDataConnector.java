@@ -88,7 +88,7 @@ public class StaticDataConnector extends BaseDataConnector {
             final AttributeResolutionContext resolutionContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        log.debug("{} Resolving static attribute {}", getLogPrefix(), attributes);
+        log.trace("{} Resolved attributes: {}", getLogPrefix(), attributes);
         return attributes;
     }
 

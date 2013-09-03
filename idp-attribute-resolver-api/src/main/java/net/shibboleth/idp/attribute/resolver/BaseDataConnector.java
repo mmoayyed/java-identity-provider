@@ -88,7 +88,7 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
                     getLogPrefix(), result.size(), result.keySet(),});
             for (String attrName : result.keySet()) {
                 Attribute attr = result.get(attrName);
-                log.debug("Data connector '{}': Attribute '{}': Values '{}'",
+                log.debug("{} Attribute '{}': Values '{}'",
                         new Object[] {getLogPrefix(), attrName, attr.getValues(),});
             }
         }
@@ -133,5 +133,4 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
         }
         return prefix;
     }
-
 }

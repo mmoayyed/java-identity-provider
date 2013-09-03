@@ -39,6 +39,8 @@ import org.opensaml.saml.saml2.metadata.provider.MetadataProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Objects;
+
 /**
  * Emulation code for Scripted Attributes.
  */
@@ -928,4 +930,13 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
 
     }
 
+    /** {@inheritDoc}. */
+    public String toString() {
+        return Objects.toStringHelper(V2SAMLProfileRequestContext.class).
+                                      add("Id", getId()).
+                                      add("PrincipalName", getPrincipalName()).
+                                      add("PeerEntityId", getPeerEntityId()).
+                                      add("LocalEntityId", getLocalEntityId()).
+                                      toString();
+    }
 }

@@ -189,16 +189,16 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
         if (resultsCache != null) {
             final String cacheKey = executable.getResultCacheKey();
             resolvedAttributes = resultsCache.getIfPresent(cacheKey);
-            log.debug("Data connector '{}': cache found resolved attributes {} using cache {}", new Object[] {getId(),
+            log.trace("Data connector '{}': cache found resolved attributes {} using cache {}", new Object[] {getId(),
                     resolvedAttributes, resultsCache,});
             if (resolvedAttributes == null) {
                 resolvedAttributes = retrieveAttributes(executable);
-                log.debug("Data connector '{}': resolved attributes {}", getId(), resolvedAttributes);
+                log.trace("Data connector '{}': resolved attributes {}", getId(), resolvedAttributes);
                 resultsCache.put(cacheKey, resolvedAttributes);
             }
         } else {
             resolvedAttributes = retrieveAttributes(executable);
-            log.debug("Data connector '{}': resolved attributes {}", getId(), resolvedAttributes);
+            log.trace("{} Resolved attributes: {}", getLogPrefix(), resolvedAttributes);
         }
 
         return resolvedAttributes;
