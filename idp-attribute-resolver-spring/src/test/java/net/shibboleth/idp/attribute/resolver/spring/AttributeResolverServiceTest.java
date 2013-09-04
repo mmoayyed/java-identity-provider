@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -82,6 +83,15 @@ public class AttributeResolverServiceTest extends OpenSAMLInitBaseTestCase {
         DatabaseTestingSupport.InitializeDataSourceFromFile(DB_DATA_FILE, datasource);
 
     }
+    
+    /**
+     * Shutdown the in-memory directory server.
+     */
+    @AfterTest public void teardownDataConnectors() {
+        directoryServer.shutDown(true);
+    }
+
+
 
     // stub test
     @Test public void one() throws ComponentInitializationException, ServiceException, ResolutionException {

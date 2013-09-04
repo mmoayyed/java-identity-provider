@@ -74,7 +74,23 @@
                   p:filter="(uid=${recipientContext.principal})"/>
           </property>
         </bean>
+        <bean class="net.shibboleth.idp.attribute.resolver.impl.dc.ldap.TemplatedExecutableSearchFilterBuilder"
+              p:templateText="(uid=${recipientContext.principal})"
+              p:velocityEngine-ref="ldap.VelocityEngine"
+              init-method="initialize" />
+        <bean id="ldap.VelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+	      <property name="velocityProperties">
+	        <props>
+	          <prop key="resource.loader">classpath, string</prop>
+	          <prop key="classpath.resource.loader.class">
+	            org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+	          </prop>
+	          <prop key="string.resource.loader.class">
+	            org.apache.velocity.runtime.resource.loader.StringResourceLoader
+	          </prop>
+	        </props>
+	      </property>
+        </bean>
       </beans>
-    </resolver:DataConnector>
-    
+    </resolver:DataConnector>    
 </resolver:AttributeResolver>

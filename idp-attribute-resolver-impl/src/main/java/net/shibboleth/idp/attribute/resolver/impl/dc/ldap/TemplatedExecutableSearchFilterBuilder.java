@@ -18,17 +18,24 @@
 package net.shibboleth.idp.attribute.resolver.impl.dc.ldap;
 
 import javax.annotation.Nonnull;
-
-import org.apache.velocity.VelocityContext;
-import org.ldaptive.SearchFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.velocity.Template;
+
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.ldaptive.SearchFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfileRequestContext;
 
 /**
  * An {@link ExecutableSearchFilterBuilder} that generates the search filter to be executed by evaluating a
@@ -40,27 +47,104 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
     private final Logger log = LoggerFactory.getLogger(TemplatedExecutableSearchFilterBuilder.class);
 
     /** Template evaluated to generate a search filter. */
-    private final Template template;
+    private Template template;
+
+    /** Template (as Text) to be evaluated. */
+    private String templateText;
+
+    /** VelocityEngine. */
+    private VelocityEngine engine;
+
+    /** Do we need to make ourself V2 Compatible? */
+    private boolean v2Compatibility;
 
     /**
-     * Constructor.
+     * Gets the template to be evaluated.
      * 
-     * @param searchRequestTemplate template evaluated to generate a search request
+     * @return the template
      */
-    public TemplatedExecutableSearchFilterBuilder(@Nonnull final Template searchRequestTemplate) {
-        template = Constraint.isNotNull(searchRequestTemplate, "Search request template can not be null");
+    @NonnullAfterInit public Template getTemplate() {
+        return template;
+    }
+
+    /**
+     * Gets the template text to be evaluated.
+     * 
+     * @return the template text
+     */
+    @NonnullAfterInit public String getTemplateText() {
+        return templateText;
+    }
+
+    /**
+     * Sets the template to be evaluated.
+     * 
+     * @param velocityTemplate template to be evaluated
+     */
+    public void setTemplateText(@Nullable String velocityTemplate) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        templateText = StringSupport.trimOrNull(velocityTemplate);
+    }
+
+    /**
+     * Gets the {@link VelocityEngine} to be used.
+     * 
+     * @return the template
+     */
+    @Nullable @NonnullAfterInit public VelocityEngine getVelocityEngine() {
+        return engine;
+    }
+
+    /**
+     * Sets the {@link VelocityEngine} to be used.
+     * 
+     * @param velocityEngine engine to be used
+     */
+    public synchronized void setVelocityEngine(VelocityEngine velocityEngine) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        engine = velocityEngine;
+    }
+
+    /**
+     * Are we in V2 Compatibility mode?
+     * 
+     * @return Returns the v2Compat.
+     */
+    public boolean isV2Compatibility() {
+        return v2Compatibility;
+    }
+
+    /**
+     * What is out V2 Compatibility mode.
+     * 
+     * @param compat The mode to set.
+     */
+    public void setV2Compatibility(boolean compat) {
+        v2Compatibility = compat;
     }
 
     /** {@inheritDoc} */
     public ExecutableSearchFilter build(@Nonnull final AttributeResolutionContext resolutionContext)
             throws ResolutionException {
+        
         final VelocityContext context = new VelocityContext();
         log.trace("Creating search filter using attribute resolution context {}", resolutionContext);
         context.put("resolutionContext", resolutionContext);
+        
         final AttributeRecipientContext recipientContext =
                 resolutionContext.getSubcontext(AttributeRecipientContext.class);
         log.trace("Creating search filter using attribute recipient context {}", recipientContext);
         context.put("recipientContext", recipientContext);
+        
+        if (isV2Compatibility()) {
+            final V2SAMLProfileRequestContext requestContext =
+                    new V2SAMLProfileRequestContext(resolutionContext, resolutionContext.getId());
+            log.trace("Adding v2 request context {}", requestContext);
+            context.put("requestContext", requestContext);
+        }
+
         final SearchFilter searchFilter = new SearchFilter(merge(context));
         return super.build(searchFilter);
     }
@@ -74,7 +158,24 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
      */
     protected String merge(@Nonnull final VelocityContext context) {
         final String result = template.merge(context);
-        log.debug("Template with id {} yields {}", template.getTemplateName(), result);
+        log.debug("Template text {} yields {}", templateText, result);
         return result;
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        if (null == engine) {
+            throw new ComponentInitializationException(
+                    "TemplatedExecutableStatementBuilder: no velocity engine was configured");
+        }
+
+        if (null == templateText) {
+            throw new ComponentInitializationException(
+                    "TemplatedExecutableStatementBuilder: no template text must be non null");
+        }
+
+        template = Template.fromTemplate(engine, templateText);
     }
 }

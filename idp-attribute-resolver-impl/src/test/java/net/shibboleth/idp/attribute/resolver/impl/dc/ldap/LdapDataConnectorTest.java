@@ -193,8 +193,10 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void resolveTemplate() throws ComponentInitializationException, ResolutionException {
-        Template template = Template.fromTemplate(VelocityEngine.newVelocityEngine(), "(uid=${recipientContext.principal})");
-        TemplatedExecutableSearchFilterBuilder builder = new TemplatedExecutableSearchFilterBuilder(template);
+        TemplatedExecutableSearchFilterBuilder builder = new TemplatedExecutableSearchFilterBuilder();
+        builder.setTemplateText("(uid=${recipientContext.principal})");
+        builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
+        builder.initialize();
         resolve(builder);
     }
 

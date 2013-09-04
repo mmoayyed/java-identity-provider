@@ -41,6 +41,7 @@ import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.SearchValidator;
 import org.ldaptive.provider.ProviderConfig;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
 import org.testng.AssertJUnit;
@@ -115,6 +116,10 @@ public class LdapDataConnectorParserTest {
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + LdapDataConnectorParserTest.class);
 
+        XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
+
+        configReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/velocity.xml");
+        
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 

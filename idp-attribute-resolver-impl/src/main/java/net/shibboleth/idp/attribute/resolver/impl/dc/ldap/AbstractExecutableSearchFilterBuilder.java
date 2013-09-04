@@ -29,11 +29,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 
 /**
  * Abstract executable search filter builder for implementations that can provide a search filter.
  */
-public abstract class AbstractExecutableSearchFilterBuilder implements ExecutableSearchBuilder<ExecutableSearchFilter> {
+public abstract class AbstractExecutableSearchFilterBuilder extends AbstractInitializableComponent implements ExecutableSearchBuilder<ExecutableSearchFilter> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractExecutableSearchFilterBuilder.class);

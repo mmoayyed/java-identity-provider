@@ -25,21 +25,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder;
-import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.ExecutableSearchFilter;
 import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.LdapDataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.TemplatedExecutableSearchFilterBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.BaseDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.DataConnectorNamespaceHandler;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.velocity.Template;
-import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
-import org.apache.velocity.VelocityContext;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.Credential;
@@ -65,8 +59,6 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
-
-import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfileRequestContext;
 
 /** Bean definition Parser for a {@link LdapDataConnector}. */
 public class LdapDataConnectorParser extends BaseDataConnectorParser {
@@ -114,17 +106,6 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
         final Element springBeans = getSpringBeansElement(config);
         final BeanFactory beanFactory = createBeanFactory(springBeans);
         addPropertyDescriptorValues(builder, beanFactory, LdapDataConnector.class);
-
-        ExecutableSearchBuilder searchBuilder = getBean(beanFactory, ExecutableSearchBuilder.class);
-        if (searchBuilder == null) {
-            final SearchExecutor searchExecutor = beanFactory.getBean(SearchExecutor.class);
-            final Template template =
-                    Template.fromTemplate(VelocityEngine.newVelocityEngine(), searchExecutor.getSearchFilter()
-                            .getFilter());
-            searchBuilder = new TemplatedExecutableSearchFilterBuilder(template);
-            log.debug("no executable search builder configured, created {}", searchBuilder);
-            builder.addPropertyValue("executableSearchBuilder", searchBuilder);
-        }
 
         final Boolean noResultAnError =
                 AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(config, new QName(
@@ -180,23 +161,9 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
         if (!props.isEmpty()) {
             connectionFactory.getProvider().getProviderConfig().setProperties(props);
         }
-
-        final SearchExecutor searchExecutor = v2Parser.createSearchExecutor();
-
-        final Template template =
-                Template.fromTemplate(VelocityEngine.newVelocityEngine(), searchExecutor.getSearchFilter().getFilter());
-        ExecutableSearchBuilder searchBuilder = new TemplatedExecutableSearchFilterBuilder(template) {
-            @Override public ExecutableSearchFilter build(@Nonnull final AttributeResolutionContext resolutionContext)
-                    throws ResolutionException {
-                final VelocityContext context = new VelocityContext();
-                final V2SAMLProfileRequestContext requestContext =
-                        new V2SAMLProfileRequestContext(resolutionContext, resolutionContext.getId());
-                log.trace("Creating search filter using v2 request context {}", requestContext);
-                context.put("requestContext", requestContext);
-                final SearchFilter searchFilter = new SearchFilter(merge(context));
-                return super.build(searchFilter);
-            }
-        };
+        
+        final BeanDefinitionBuilder templateBuilder = v2Parser.createTemplateBuilder();
+        builder.addPropertyValue("executableSearchBuilder", templateBuilder.getBeanDefinition());
 
         final BlockingConnectionPool connectionPool = v2Parser.createConnectionPool();
         if (connectionPool != null) {
@@ -208,9 +175,9 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
         }
 
         // TODO add support for cacheResults and ResultCache
+        final SearchExecutor searchExecutor = v2Parser.createSearchExecutor();
 
         builder.addPropertyValue("searchExecutor", searchExecutor);
-        builder.addPropertyValue("executableSearchBuilder", searchBuilder);
         if (noResultAnError != null && noResultAnError.booleanValue()) {
             builder.addPropertyValue("noResultAnError", true);
         }
@@ -275,6 +242,38 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
             }
             return connectionConfig;
         }
+        
+        /**
+         * Construct the definition of the template driven search builder.
+         * 
+         * @return the bean definition for the template search builder.
+         */
+        public  BeanDefinitionBuilder createTemplateBuilder() {
+            BeanDefinitionBuilder templateBuilder =
+                    BeanDefinitionBuilder.genericBeanDefinition(TemplatedExecutableSearchFilterBuilder.class);
+
+            String velocityEngineRef = StringSupport.trimOrNull(configElement.getAttribute("templateEngine"));
+            if (null == velocityEngineRef) {
+                velocityEngineRef = "shibboleth.VelocityEngine";
+            }
+            templateBuilder.addPropertyReference("velocityEngine", velocityEngineRef);
+
+            templateBuilder.addPropertyValue("v2Compatibility", true);
+
+            String filter = null;
+            final Element filterElement =
+                    ElementSupport.getFirstChildElement(configElement, new QName(
+                            DataConnectorNamespaceHandler.NAMESPACE, "FilterTemplate"));
+            if (filterElement != null) {
+                filter = StringSupport.trimOrNull(filterElement.getTextContent().trim());
+            }
+
+            templateBuilder.addPropertyValue("templateText", filter);
+
+            templateBuilder.setInitMethodName("initialize");
+            return templateBuilder;
+        }
+
 
         /**
          * Creates a new search executor from a v2 XML configuration.

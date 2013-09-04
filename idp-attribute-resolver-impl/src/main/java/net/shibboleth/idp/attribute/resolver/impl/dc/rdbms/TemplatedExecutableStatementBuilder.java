@@ -57,7 +57,7 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
     private boolean v2Compatibility;
 
     /**
-     * Gets the template text to be evaluated.
+     * Gets the template to be evaluated.
      * 
      * @return the template
      */
@@ -68,7 +68,7 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
     /**
      * Gets the template text to be evaluated.
      * 
-     * @return the template
+     * @return the template text
      */
     @NonnullAfterInit public String getTemplateText() {
         return templateText;
@@ -143,10 +143,12 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
         final VelocityContext context = new VelocityContext();
         log.trace("Creating search filter using attribute resolution context {}", resolutionContext);
         context.put("resolutionContext", resolutionContext);
+        
         final AttributeRecipientContext recipientContext =
                 resolutionContext.getSubcontext(AttributeRecipientContext.class);
         log.trace("Creating search filter using attribute recipient context {}", recipientContext);
         context.put("recipientContext", recipientContext);
+
         if (isV2Compatibility()) {
             final V2SAMLProfileRequestContext requestContext =
                     new V2SAMLProfileRequestContext(resolutionContext, resolutionContext.getId());
