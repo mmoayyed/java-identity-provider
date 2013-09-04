@@ -31,6 +31,8 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.security.DataSealer;
+import net.shibboleth.utilities.java.support.security.DataSealerException;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -53,11 +55,12 @@ public class CryptoTransientIdAttributeDefinitionTest {
      * 
      * @throws IOException
      * @throws DataSealerException
+     * @throws ComponentInitializationException 
      */
-    @BeforeClass public void setupDataSealser() throws IOException, DataSealerException {
+    @BeforeClass public void setupDataSealser() throws IOException, DataSealerException, ComponentInitializationException {
         final File out = File.createTempFile("testDataSeal", "file");
 
-        final InputStream inStream = DataSealerTest.class.getResourceAsStream("/data/SealerKeyStore.jks");
+        final InputStream inStream = CryptoTransientIdAttributeDefinitionTest.class.getResourceAsStream("/data/SealerKeyStore.jks");
 
         final String keyStorePath = out.getAbsolutePath();
 
@@ -79,7 +82,7 @@ public class CryptoTransientIdAttributeDefinitionTest {
         dataSealer.setKeystorePassword("password");
         dataSealer.setKeystorePath(keyStorePath);
 
-        dataSealer.init();
+        dataSealer.initialize();
 
     }
 

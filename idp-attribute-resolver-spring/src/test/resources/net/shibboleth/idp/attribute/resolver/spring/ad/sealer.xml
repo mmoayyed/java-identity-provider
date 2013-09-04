@@ -4,15 +4,11 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
-<bean  id="shibboleth.TransientIDDataSealer" class="net.shibboleth.idp.attribute.resolver.impl.ad.DataSealer"
-        init-method="init">
+<bean  id="shibboleth.TransientIDDataSealer" class="net.shibboleth.utilities.java.support.security.DataSealer"
+        init-method="initialize">
     <property name="keystorePath" value="src/test/resources/net/shibboleth/idp/attribute/resolver/spring/ad/SealerKeyStore.jks" />
     <property name="keystorePassword" value="password" />
     <property name="cipherKeyAlias" value="secret" />
     <property name="cipherKeyPassword" value="kpassword" />
-
-    <property name="macKeyAlias" value="secret" />
-    <property name="macKeyPassword" value="kpassword" />
-    
 </bean>
 </beans>
