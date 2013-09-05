@@ -18,6 +18,7 @@
 package edu.internet2.middleware.shibboleth.common.attribute.provider;
 
 import java.util.Collection;
+
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -32,10 +33,10 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
-import org.opensaml.saml.saml2.metadata.provider.MetadataProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -181,8 +182,8 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * 
      * @return null
      */
-    public MetadataProvider getMetadataProvider() {
-        log.error("AttributeDefinition: '{}' call unsupported method getMetadataProvider", getId());
+    public MetadataResolver getMetadataResolver() {
+        log.error("AttributeDefinition: '{}' call unsupported method getMetadataResolver", getId());
         return null;
     }
 
@@ -411,8 +412,8 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * 
      * @param param ignored.
      */
-    public void setMetadataProvider(Object param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setMetadataProvider", getId());
+    public void setMetadataResolver(Object param) {
+        log.error("AttributeDefinition: '{}' call unsupported method setMetadataResolver", getId());
 
     }
 
