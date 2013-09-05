@@ -42,7 +42,7 @@ public class CryptoTransientIdAttributeDefinitionParserTest extends BaseAttribut
         CryptoTransientIdAttributeDefinition defn = getDefinition("cryptoWithTime.xml");
         
         DataSealer sealer = defn.getDataSealer();
-        Assert.assertEquals(sealer.getMacKeyAlias(), "secret");
+        Assert.assertEquals(sealer.getCipherKeyAlias(), "secret");
         defn.initialize();
         
         Assert.assertEquals(defn.getIdLifetime(), 3 * 60 * 1000);
@@ -56,7 +56,7 @@ public class CryptoTransientIdAttributeDefinitionParserTest extends BaseAttribut
         defn.initialize();
         
         DataSealer sealer = defn.getDataSealer();
-        Assert.assertEquals(sealer.getMacKeyAlias(), "secret");
+        Assert.assertEquals(sealer.getCipherKeyAlias(), "secret");
         
         Assert.assertEquals(defn.getIdLifetime(), 4 * 3600 * 1000);
     }

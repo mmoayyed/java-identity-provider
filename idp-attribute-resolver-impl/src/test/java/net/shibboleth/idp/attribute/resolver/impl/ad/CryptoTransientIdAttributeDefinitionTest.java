@@ -76,9 +76,6 @@ public class CryptoTransientIdAttributeDefinitionTest {
         dataSealer.setCipherKeyAlias("secret");
         dataSealer.setCipherKeyPassword("kpassword");
 
-        dataSealer.setMacKeyAlias("secret");
-        dataSealer.setMacKeyPassword("kpassword");
-
         dataSealer.setKeystorePassword("password");
         dataSealer.setKeystorePath(keyStorePath);
 
