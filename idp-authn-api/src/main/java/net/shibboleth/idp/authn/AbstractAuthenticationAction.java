@@ -18,6 +18,7 @@
 package net.shibboleth.idp.authn;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -49,6 +50,9 @@ public abstract class AbstractAuthenticationAction extends AbstractProfileAction
      * {@link ProfileRequestContext}.
      */
     @Nonnull private Function<ProfileRequestContext, AuthenticationContext> authnCtxLookupStrategy;
+    
+    /** AuthenticationContext to operate on. */
+    @Nullable private AuthenticationContext authnContext;
 
     /** Constructor. */
     public AbstractAuthenticationAction() {
@@ -70,13 +74,13 @@ public abstract class AbstractAuthenticationAction extends AbstractProfileAction
     protected final boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext)
             throws ProfileException {
 
-        final AuthenticationContext authenticationContext = authnCtxLookupStrategy.apply(profileRequestContext);
-        if (authenticationContext == null) {
+        authnContext = authnCtxLookupStrategy.apply(profileRequestContext);
+        if (authnContext == null) {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
 
-        if (doPreExecute(profileRequestContext, authenticationContext)) {
+        if (doPreExecute(profileRequestContext, authnContext)) {
             return super.doPreExecute(profileRequestContext);
         } else {
             return false;
@@ -86,13 +90,7 @@ public abstract class AbstractAuthenticationAction extends AbstractProfileAction
     /** {@inheritDoc} */
     protected final void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
-        final AuthenticationContext authenticationContext = authnCtxLookupStrategy.apply(profileRequestContext);
-        if (authenticationContext == null) {
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return;
-        }
-
-        doExecute(profileRequestContext, authenticationContext);
+        doExecute(profileRequestContext, authnContext);
     }
 
     /**
