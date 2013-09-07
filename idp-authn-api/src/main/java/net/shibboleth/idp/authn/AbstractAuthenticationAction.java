@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.ProfileException;
@@ -67,6 +68,8 @@ public abstract class AbstractAuthenticationAction extends AbstractProfileAction
      * @param strategy  lookup strategy function for {@link AuthenticationContext}.
      */
     public void setLookupStrategy(@Nonnull final Function<ProfileRequestContext, AuthenticationContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         authnCtxLookupStrategy = Constraint.isNotNull(strategy, "Strategy cannot be null");
     }
     

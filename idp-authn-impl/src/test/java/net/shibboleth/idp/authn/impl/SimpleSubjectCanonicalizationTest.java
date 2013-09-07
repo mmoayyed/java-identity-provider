@@ -17,11 +17,14 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.util.Arrays;
+
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.utilities.java.support.collection.Pair;
 
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionTestingSupport;
@@ -39,6 +42,8 @@ public class SimpleSubjectCanonicalizationTest extends InitializeAuthenticationC
         super.setUp();
         
         action = new SimpleSubjectCanonicalization();
+        action.setTransforms(
+                Arrays.asList(new Pair<>("^(.+)@osu\\.edu$", "$1")));
         action.initialize();
     }
     
@@ -73,6 +78,18 @@ public class SimpleSubjectCanonicalizationTest extends InitializeAuthenticationC
     @Test public void testSuccess() throws ProfileException {
         Subject subject = new Subject();
         subject.getPrincipals().add(new UsernamePrincipal("foo"));
+        prc.addSubcontext(new SubjectCanonicalizationContext(subject));
+        
+        action.execute(prc);
+        
+        ActionTestingSupport.assertProceedEvent(prc);
+        SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class, false);
+        Assert.assertEquals(sc.getPrincipalName(), "foo");
+    }
+
+    @Test public void testTransform() throws ProfileException {
+        Subject subject = new Subject();
+        subject.getPrincipals().add(new UsernamePrincipal("foo@osu.edu"));
         prc.addSubcontext(new SubjectCanonicalizationContext(subject));
         
         action.execute(prc);
