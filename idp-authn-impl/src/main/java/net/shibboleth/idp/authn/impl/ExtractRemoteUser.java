@@ -23,7 +23,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 
-import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AbstractExtractionAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -51,7 +51,7 @@ import com.google.common.collect.Lists;
  * @post If ProfileRequestContext.getHttpRequest() != null, the content of either the getRemoteUser()
  * method or a designated header or attribute will be attached via a {@link UsernameContext}.
  */
-public class ExtractRemoteUser extends AbstractAuthenticationAction {
+public class ExtractRemoteUser extends AbstractExtractionAction {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ExtractRemoteUser.class);
@@ -130,7 +130,8 @@ public class ExtractRemoteUser extends AbstractAuthenticationAction {
             username = request.getRemoteUser();
             if (username != null && !username.isEmpty()) {
                 log.debug("{} user identity extracted from REMOTE_USER: {}", getLogPrefix(), username);
-                authenticationContext.getSubcontext(UsernameContext.class, true).setUsername(username);
+                authenticationContext.getSubcontext(UsernameContext.class, true).setUsername(
+                        applyTransforms(username));
                 return;
             }
         }
@@ -139,7 +140,8 @@ public class ExtractRemoteUser extends AbstractAuthenticationAction {
             Object attr = request.getAttribute(s);
             if (attr != null && !attr.toString().isEmpty()) {
                 log.debug("{} user identity extracted from attribute {}: {}", getLogPrefix(), s, attr);
-                authenticationContext.getSubcontext(UsernameContext.class, true).setUsername(attr.toString());
+                authenticationContext.getSubcontext(UsernameContext.class, true).setUsername(
+                        applyTransforms(attr.toString()));
                 return;
             }
         }
@@ -148,7 +150,8 @@ public class ExtractRemoteUser extends AbstractAuthenticationAction {
             username = request.getHeader(s);
             if (username != null && !username.isEmpty()) {
                 log.debug("{} user identity extracted from header {}: {}", getLogPrefix(), s, username);
-                authenticationContext.getSubcontext(UsernameContext.class, true).setUsername(username);
+                authenticationContext.getSubcontext(UsernameContext.class, true).setUsername(
+                        applyTransforms(username));
                 return;
             }
         }

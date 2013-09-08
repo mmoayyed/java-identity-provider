@@ -20,7 +20,7 @@ package net.shibboleth.idp.authn.impl;
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 
-import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AbstractExtractionAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -43,7 +43,7 @@ import com.google.common.net.InetAddresses;
  * @post If ProfileRequestContext.getHttpRequest() != null, the content of getRemoteAddr() will be
  * attached via a {@link UserAgentContext}, provided it is a valid IP address.
  */
-public class ExtractUserAgentAddress extends AbstractAuthenticationAction {
+public class ExtractUserAgentAddress extends AbstractExtractionAction {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ExtractUserAgentAddress.class);
@@ -59,7 +59,7 @@ public class ExtractUserAgentAddress extends AbstractAuthenticationAction {
             return;
         }
         
-        final String addressString = request.getRemoteAddr();
+        final String addressString = applyTransforms(request.getRemoteAddr());
         if (addressString == null || !InetAddresses.isInetAddress(addressString)) {
             log.debug("{} User agent's address, {}, is not a valid IP address", getLogPrefix(), addressString);
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);

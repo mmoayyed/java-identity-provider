@@ -23,6 +23,7 @@ import java.util.Arrays;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernameContext;
+import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.profile.action.ActionTestingSupport;
@@ -103,6 +104,22 @@ public class ExtractRemoteUserTest extends InitializeAuthenticationContextTest {
         prc.setHttpRequest(request);
         action.setCheckAttributes(Arrays.asList("Username"));
         action.setCheckHeaders(Arrays.asList("X-Username"));
+        action.initialize();
+        
+        action.execute(prc);
+        ActionTestingSupport.assertProceedEvent(prc);
+        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        UsernameContext unCtx = authCtx.getSubcontext(UsernameContext.class, false);
+        Assert.assertNotNull(unCtx, "No UsernameContext attached");
+        Assert.assertEquals(unCtx.getUsername(), "foo");
+    }
+
+    @Test public void testTransforms() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteUser("Foo@osu.edu");
+        prc.setHttpRequest(request);
+        action.setTransforms(Arrays.asList(new Pair<>("^(.+)@osu\\.edu$", "$1")));
+        action.setLowercase(true);
         action.initialize();
         
         action.execute(prc);

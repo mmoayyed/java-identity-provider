@@ -23,7 +23,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AbstractExtractionAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  * An authentication stage that extracts a username/password from the WSS Username/Password attached to a SOAP message.
  * As should be obvious, this assumes that the inbound message is a SOAP {@link Envelope}.
  */
-public class ExtractUsernamePasswordFromWssToken extends AbstractAuthenticationAction {
+public class ExtractUsernamePasswordFromWssToken extends AbstractExtractionAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractUsernamePasswordFromWssToken.class);

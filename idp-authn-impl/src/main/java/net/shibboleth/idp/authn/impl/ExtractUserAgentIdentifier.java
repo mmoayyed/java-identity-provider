@@ -20,7 +20,7 @@ package net.shibboleth.idp.authn.impl;
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 
-import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AbstractExtractionAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -43,7 +43,7 @@ import com.google.common.net.HttpHeaders;
  * @post If ProfileRequestContext.getHttpRequest() != null, the content of the User-Agent header will be
  * attached via a {@link UserAgentContext}.
  */
-public class ExtractUserAgentIdentifier extends AbstractAuthenticationAction {
+public class ExtractUserAgentIdentifier extends AbstractExtractionAction {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ExtractUserAgentIdentifier.class);
@@ -66,6 +66,6 @@ public class ExtractUserAgentIdentifier extends AbstractAuthenticationAction {
             return;
         }
 
-        authenticationContext.getSubcontext(UserAgentContext.class, true).setIdentifier(agent);
+        authenticationContext.getSubcontext(UserAgentContext.class, true).setIdentifier(applyTransforms(agent));
     }
 }

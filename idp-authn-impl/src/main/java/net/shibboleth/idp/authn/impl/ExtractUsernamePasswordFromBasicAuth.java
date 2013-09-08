@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
-import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AbstractExtractionAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -55,7 +55,7 @@ import com.google.common.net.HttpHeaders;
  * @post If ProfileRequestContext.getHttpRequest() != null, the content of the {@link HttpHeaders#AUTHORIZATION}
  * header is parsed and any correctly-encoded information will be attached via a {@link UsernamePasswordContext}.
  */
-public class ExtractUsernamePasswordFromBasicAuth extends AbstractAuthenticationAction {
+public class ExtractUsernamePasswordFromBasicAuth extends AbstractExtractionAction {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ExtractUsernamePasswordFromBasicAuth.class);
@@ -83,8 +83,8 @@ public class ExtractUsernamePasswordFromBasicAuth extends AbstractAuthentication
             return;
         }
         
-        authenticationContext.getSubcontext(UsernamePasswordContext.class, true)
-                .setUsername(decodedCredentials.getFirst()).setPassword(decodedCredentials.getSecond());
+        authenticationContext.getSubcontext(UsernamePasswordContext.class, true).setUsername(
+                applyTransforms(decodedCredentials.getFirst())).setPassword(decodedCredentials.getSecond());
     }
 
     /**

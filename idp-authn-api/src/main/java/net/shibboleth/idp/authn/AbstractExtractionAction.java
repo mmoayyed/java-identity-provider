@@ -25,9 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.Pair;
@@ -35,41 +33,19 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.AbstractProfileAction;
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-
 /**
- * A base class for subject canonicalization actions.
+ * A base class for authentication actions that extract usernames for subsequent use.
  * 
- * In addition to the work performed by {@link AbstractProfileAction}, this action also looks up and makes available the
- * {@link SubjectCanonicalizationContext}.
- * 
- * Authentication action implementations should override
- * {@link #doExecute(ProfileRequestContext, SubjectCanonicalizationContext)}
- * 
- * @event {@link EventIds#INVALID_PROFILE_CTX}
+ * <p>The base class adds a common mechanism for applying regular expression transforms to
+ * the username prior to being added to the context tree. 
  */
-public abstract class AbstractSubjectCanonicalizationAction extends AbstractProfileAction {
+public abstract class AbstractExtractionAction extends AbstractAuthenticationAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AbstractSubjectCanonicalizationAction.class);
-    
-    /**
-     * Strategy used to find the {@link SubjectCanonicalizationContext} from the
-     * {@link ProfileRequestContext}.
-     */
-    @Nonnull private Function<ProfileRequestContext, SubjectCanonicalizationContext> scCtxLookupStrategy;
-    
-    /** SubjectCanonicalizationContext to operate on. */
-    @Nullable private SubjectCanonicalizationContext scContext;
+    private final Logger log = LoggerFactory.getLogger(AbstractExtractionAction.class);
     
     /** Match patterns and replacement strings to apply. */
     @Nonnull @NonnullElements private List<Pair<Pattern,String>> transforms;
@@ -84,27 +60,14 @@ public abstract class AbstractSubjectCanonicalizationAction extends AbstractProf
     private boolean trim;
     
     /** Constructor. */
-    public AbstractSubjectCanonicalizationAction() {
+    public AbstractExtractionAction() {
         super();
-        
-        scCtxLookupStrategy = new ChildContextLookup(SubjectCanonicalizationContext.class, false);
-        transforms = Collections.emptyList();
 
+        transforms = Collections.emptyList();
+        
         uppercase = false;
         lowercase = false;
         trim = false;
-    }
-
-    /**
-     * Set the context lookup strategy.
-     * 
-     * @param strategy  lookup strategy function for {@link SubjectCanonicalizationContext}.
-     */
-    public void setLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, SubjectCanonicalizationContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        scCtxLookupStrategy = Constraint.isNotNull(strategy, "Strategy cannot be null");
     }
 
     /**
@@ -157,55 +120,6 @@ public abstract class AbstractSubjectCanonicalizationAction extends AbstractProf
         trim = flag;
     }
     
-    /** {@inheritDoc} */
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
-        scContext = scCtxLookupStrategy.apply(profileRequestContext);
-        if (scContext == null) {
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        }
-        
-        if (doPreExecute(profileRequestContext, scContext)) {
-            return super.doPreExecute(profileRequestContext);
-        } else {
-            return false;
-        }
-    }
-
-    /** {@inheritDoc} */
-    protected final void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
-
-        doExecute(profileRequestContext, scContext);
-    }
-
-    /**
-     * Performs this c14n action's pre-execute step. Default implementation just returns true.
-     * 
-     * @param profileRequestContext the current IdP profile request context
-     * @param c14nContext the current subject canonicalization context
-     * 
-     * @return true iff execution should continue
-     * 
-     * @throws SubjectCanonicalizationException thrown if there is a problem performing the authentication action
-     */
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
-        return true;
-    }
-    
-    /**
-     * Performs this authentication action. Default implementation throws an exception.
-     * 
-     * @param profileRequestContext the current IdP profile request context
-     * @param c14nContext the current subject canonicalization context
-     * 
-     * @throws SubjectCanonicalizationException thrown if there is a problem performing the authentication action
-     */
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
-        throw new UnsupportedOperationException("This action is not implemented");
-    }
-    
     /**
      * Apply any configured regular expression replacements to an input value and return the result.
      * 
@@ -229,7 +143,7 @@ public abstract class AbstractSubjectCanonicalizationAction extends AbstractProf
             log.debug("{} converting input string '{}' to uppercase", getLogPrefix(), s);
             s = input.toUpperCase();
         }
-
+        
         if (transforms.isEmpty()) {
             return s;
         }
@@ -244,4 +158,5 @@ public abstract class AbstractSubjectCanonicalizationAction extends AbstractProf
         
         return s;
     }
+
 }

@@ -19,7 +19,7 @@ package net.shibboleth.idp.authn.impl;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AbstractExtractionAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 
@@ -28,7 +28,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 /**
  * TODO.
  */
-public class ExtractX509CertificateFromWssToken extends AbstractAuthenticationAction {
+public class ExtractX509CertificateFromWssToken extends AbstractExtractionAction {
 
     /** {@inheritDoc} */
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,

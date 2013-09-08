@@ -20,7 +20,7 @@ package net.shibboleth.idp.authn.impl;
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 
-import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AbstractExtractionAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * @post If ProfileRequestContext.getHttpRequest() != null, a pair of form or query parameters is
  * extracted to populate a {@link UsernamePasswordContext}.
  */
-public class ExtractUsernamePasswordFromFormRequest extends AbstractAuthenticationAction {
+public class ExtractUsernamePasswordFromFormRequest extends AbstractExtractionAction {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ExtractUsernamePasswordFromFormRequest.class);
@@ -129,7 +129,7 @@ public class ExtractUsernamePasswordFromFormRequest extends AbstractAuthenticati
             return;
         }
 
-        authenticationContext.getSubcontext(UsernamePasswordContext.class, true).setUsername(username)
+        authenticationContext.getSubcontext(UsernamePasswordContext.class, true).setUsername(applyTransforms(username))
                 .setPassword(password);
     }
 }
