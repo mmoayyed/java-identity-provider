@@ -110,7 +110,6 @@ public abstract class AbstractSubjectCanonicalizationAction extends AbstractProf
                     StringSupport.trimOrNull(p.getSecond()), "Replacement expression cannot be null")));
         }
     }
-
     
     /** {@inheritDoc} */
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
@@ -178,9 +177,10 @@ public abstract class AbstractSubjectCanonicalizationAction extends AbstractProf
         
         for (Pair<Pattern,String> p : transforms) {            
             final Matcher m = p.getFirst().matcher(s);
-            log.debug("applying replacement expression '{}' against input '{}'", p.getFirst().pattern(), s);
+            log.debug("{} applying replacement expression '{}' against input '{}'", getLogPrefix(),
+                    p.getFirst().pattern(), s);
             s = m.replaceAll(p.getSecond());
-            log.debug("result of replacement is '{}'", s);
+            log.debug("{} result of replacement is '{}'", getLogPrefix(), s);
         }
         
         return s;
