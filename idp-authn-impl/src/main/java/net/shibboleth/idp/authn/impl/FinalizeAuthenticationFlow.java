@@ -94,16 +94,14 @@ public class FinalizeAuthenticationFlow extends AbstractAuthenticationAction {
         
         log.debug("{} result of subject canonicalization: '{}'", getLogPrefix(), scContext.getPrincipalName());
         
-        authenticationResult.setCanonicalPrincipalName(scContext.getPrincipalName());
-        
         if (principalFromSession != null) {
-            if (!principalFromSession.equals(authenticationResult.getCanonicalPrincipalName())) {
+            if (!principalFromSession.equals(scContext.getPrincipalName())) {
                 log.warn("{} detected identity switch from '{}' to '{}'", getLogPrefix(), principalFromSession,
-                        authenticationResult.getCanonicalPrincipalName());
+                        scContext.getPrincipalName());
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.IDENTITY_SWITCH);
             }
         } else {
-            authenticationContext.setCanonicalPrincipalName(authenticationResult.getCanonicalPrincipalName());
+            authenticationContext.setCanonicalPrincipalName(scContext.getPrincipalName());
         }
     }
 
