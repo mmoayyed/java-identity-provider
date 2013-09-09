@@ -85,7 +85,7 @@ public class FinalizeAuthenticationFlowTest extends InitializeAuthenticationCont
         action.execute(prc);
         
         ActionTestingSupport.assertProceedEvent(prc);
-        Assert.assertEquals(result.getCanonicalPrincipalName(), "foo");
+        Assert.assertEquals(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getPrincipalName(), "foo");
         Assert.assertEquals(authCtx.getCanonicalPrincipalName(), "foo");
     }
     
@@ -105,7 +105,7 @@ public class FinalizeAuthenticationFlowTest extends InitializeAuthenticationCont
         action.execute(prc);
         
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.IDENTITY_SWITCH);
-        Assert.assertEquals(result.getCanonicalPrincipalName(), "foo");
+        Assert.assertEquals(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getPrincipalName(), "foo");
         Assert.assertEquals(authCtx.getCanonicalPrincipalName(), "bar");
     }
 }
