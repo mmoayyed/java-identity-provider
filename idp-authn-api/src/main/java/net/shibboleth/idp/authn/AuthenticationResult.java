@@ -48,9 +48,6 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     /** The Subject established by the authentication result. */
     @Nonnull private final Subject subject;
     
-    /** The canonical principal name derived from the subject. */
-    @Nullable private String canonicalPrincipalName;
-
     /** The identifier of the flow used to produce this result. */
     @Nonnull @NotEmpty private final String authenticationFlowId;
 
@@ -101,24 +98,6 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     @Nonnull @NonnullElements @Unmodifiable public <T extends Principal> Set<T> getSupportedPrincipals(
             @Nonnull final Class<T> c) {
         return subject.getPrincipals(c);
-    }
-    
-    /**
-     * Get the canonical principal name derived from the subject, if any.
-     * 
-     * @return  the canonical principal name derived from the subject
-     */
-    @Nullable public String getCanonicalPrincipalName() {
-        return canonicalPrincipalName;
-    }
-    
-    /**
-     * Set the canonical principal name derived from the subject, if any.
-     * 
-     * @param principalName the principal name to set
-     */
-    public void setCanonicalPrincipalName(@Nullable final String principalName) {
-        canonicalPrincipalName = StringSupport.trimOrNull(principalName);
     }
     
     /**
@@ -201,6 +180,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
      * @return a principal name for logging/debugging
      */
     @Nullable private String getSubjectName() {
+        
         for (Principal p : getSubject().getPrincipals()) {
             return p.getName();
         }
