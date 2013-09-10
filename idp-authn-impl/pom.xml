@@ -52,6 +52,14 @@
         </dependency>
 
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-authn-api</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
             <groupId>com.unboundid</groupId>
             <artifactId>unboundid-ldapsdk</artifactId>
             <scope>test</scope>

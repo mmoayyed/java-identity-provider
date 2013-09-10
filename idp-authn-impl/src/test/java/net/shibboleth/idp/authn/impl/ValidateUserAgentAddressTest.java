@@ -22,6 +22,7 @@ import java.security.Principal;
 import java.util.Arrays;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.TestPrincipal;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
