@@ -13,15 +13,17 @@
     
     <bean id="ExtractUsernamePasswordFromBasicAuth" class="net.shibboleth.idp.authn.impl.ExtractUsernamePasswordFromBasicAuth" scope="prototype" />
         
+    <bean id="JAASConfig" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg type="java.lang.String" value="conf/jaas.config" />
+    </bean>
+
+    <util:property-path id="JAASConfigURI" path="JAASConfig.URI" />
+        
     <bean id="ValidateUsernamePasswordAgainstJAAS" class="net.shibboleth.idp.authn.impl.ValidateUsernamePasswordAgainstJAAS" scope="prototype"
             p:loginConfigName="ShibUserPassAuth" p:loginConfigType="JavaLoginConfig">
         <property name="loginConfigParameters">
             <bean class="java.security.URIParameter">
-                <constructor-arg>
-                    <bean class="java.net.URI">
-                        <constructor-arg value="file://$IDP_HOME/conf/jaas.config" />
-                    </bean>
-                </constructor-arg>
+                <constructor-arg ref="JAASConfigURI" />
             </bean>
         </property>
     </bean>
