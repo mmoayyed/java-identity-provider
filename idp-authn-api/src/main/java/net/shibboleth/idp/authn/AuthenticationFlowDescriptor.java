@@ -141,7 +141,7 @@ public class AuthenticationFlowDescriptor implements IdentifiableComponent, Prin
      * 
      * @param flowLifetime the lifetime for the flow, must be 0 or greater
      */
-    public void setLifetime(@Duration long flowLifetime) {
+    public void setLifetime(@Duration final long flowLifetime) {
         lifetime = Constraint.isGreaterThanOrEqual(0, flowLifetime, "Lifetime must be greater than or equal to 0");
     }
 
@@ -161,7 +161,7 @@ public class AuthenticationFlowDescriptor implements IdentifiableComponent, Prin
      * 
      * @param timeout the flow inactivity timeout, must be 0 or greater
      */
-    public void setInactivityTimeout(@Duration long timeout) {
+    public void setInactivityTimeout(@Duration final long timeout) {
         inactivityTimeout = Constraint.isGreaterThanOrEqual(0, timeout,
                 "Inactivity timeout must be greater than or equal to 0");
     }
@@ -189,7 +189,8 @@ public class AuthenticationFlowDescriptor implements IdentifiableComponent, Prin
     }
     
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @Unmodifiable public <T extends Principal> Set<T> getSupportedPrincipals(Class<T> c) {
+    @Nonnull @NonnullElements @Unmodifiable public <T extends Principal> Set<T> getSupportedPrincipals(
+            @Nonnull final Class<T> c) {
         return supportedPrincipals.getPrincipals(c);
     }
 

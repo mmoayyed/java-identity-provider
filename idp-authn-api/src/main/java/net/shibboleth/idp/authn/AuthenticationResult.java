@@ -47,12 +47,12 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
 
     /** The Subject established by the authentication result. */
     @Nonnull private final Subject subject;
-    
+
     /** The identifier of the flow used to produce this result. */
     @Nonnull @NotEmpty private final String authenticationFlowId;
-
+    
     /** The time, in milliseconds since the epoch, that the authentication completed. */
-    @Positive private final long authenticationInstant;
+    @Positive private long authenticationInstant;
 
     /** The last time, in milliseconds since the epoch, this result was used to bypass authentication. */
     @Positive private long lastActivityInstant;
@@ -112,10 +112,19 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     /**
      * Get the time, in milliseconds since the epoch, that the authentication completed.
      * 
-     * @return time, in milliseconds since the epoch, that the authentication completed, never less than 0
+     * @return time, in milliseconds since the epoch, that the authentication completed, never non-positive
      */
     @Positive public long getAuthenticationInstant() {
         return authenticationInstant;
+    }
+
+    /**
+     * Set the the time, in milliseconds since the epoch, that the authentication completed.
+     * 
+     * @param instant time, in milliseconds since the epoch, that the authentication completed, never non-positive
+     */
+    public void setAuthenticationInstant(@Positive final long instant) {
+        authenticationInstant = Constraint.isGreaterThan(0, instant, "Authentication instant must be greater than 0");
     }
     
     /**
@@ -180,6 +189,11 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
      * @return a principal name for logging/debugging
      */
     @Nullable private String getSubjectName() {
+        
+        Set<UsernamePrincipal> usernames = getSubject().getPrincipals(UsernamePrincipal.class);
+        if (!usernames.isEmpty()) {
+            return usernames.iterator().next().getName();
+        }
         
         for (Principal p : getSubject().getPrincipals()) {
             return p.getName();

@@ -1,0 +1,165 @@
+/*
+ * Licensed to the University Corporation for Advanced Internet Development, 
+ * Inc. (UCAID) under one or more contributor license agreements.  See the 
+ * NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The UCAID licenses this file to You under the Apache 
+ * License, Version 2.0 (the "License"); you may not use this file except in 
+ * compliance with the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package net.shibboleth.idp.authn;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.security.auth.Subject;
+
+import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.UsernamePrincipal;
+
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+/** {@link BaseAuthenticationResultSerializer} unit test. */
+public class BaseAuthenticationResultSerializerTest {
+
+    private static final String DATAPATH = "/data/net/shibboleth/idp/authn/";
+    
+    private static final long INSTANT = 1378827849463L;
+    
+    private static final long ACTIVITY = 1378827556778L;
+    
+    private BaseAuthenticationResultSerializer serializer;
+    
+    @BeforeMethod public void setUp() {
+        serializer = new BaseAuthenticationResultSerializer();
+    }
+
+    @Test public void testInvalid() throws Exception {
+        try {
+            serializer.deserialize(fileToString(DATAPATH + "invalid.json"), null, null, null);
+            Assert.fail();
+        } catch (IOException e) {
+            
+        }
+
+        try {
+            serializer.deserialize(fileToString(DATAPATH + "noFlowId.json"), null, null, null);
+            Assert.fail();
+        } catch (IOException e) {
+            
+        }
+
+        try {
+            serializer.deserialize(fileToString(DATAPATH + "noInstant.json"), null, null, null);
+            Assert.fail();
+        } catch (IOException e) {
+            
+        }
+
+        try {
+            serializer.deserialize(fileToString(DATAPATH + "noActivity.json"), null, null, null);
+            Assert.fail();
+        } catch (IOException e) {
+            
+        }
+    }
+    
+    @Test public void testSimple() throws Exception {
+        AuthenticationResult result = createResult("test", new Subject());
+        result.getSubject().getPrincipals().add(new UsernamePrincipal("bob"));
+        
+        String s = serializer.serialize(result);
+        String s2 = fileToString(DATAPATH + "simpleAuthenticationResult.json");
+        Assert.assertEquals(s, s2);
+        
+        AuthenticationResult result2 = serializer.deserialize(s2, null, null, null);
+        
+        Assert.assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
+        Assert.assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
+        Assert.assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
+        Assert.assertEquals(result.getSubject(), result2.getSubject());
+    }
+
+    @Test public void testComplex() throws Exception {
+        AuthenticationResult result = createResult("test", new Subject());
+        result.getSubject().getPrincipals().add(new UsernamePrincipal("bob"));
+        result.getSubject().getPrincipals().add(new TestPrincipal("foo"));
+        result.getSubject().getPrincipals().add(new TestPrincipal("bar"));
+        
+        String s = serializer.serialize(result);
+        String s2 = fileToString(DATAPATH + "complexAuthenticationResult.json");
+        Assert.assertEquals(s, s2);
+        
+        AuthenticationResult result2 = serializer.deserialize(s2, null, null, null);
+        
+        Assert.assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
+        Assert.assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
+        Assert.assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
+        Assert.assertEquals(result.getSubject(), result2.getSubject());
+    }
+
+    @Test public void testSymbolic() throws Exception {
+        serializer.setSymbolics(Collections.singletonMap(TestPrincipal.class.getName(), 1));
+        
+        AuthenticationResult result = createResult("test", new Subject());
+        result.getSubject().getPrincipals().add(new UsernamePrincipal("bob"));
+        result.getSubject().getPrincipals().add(new TestPrincipal("foo"));
+        result.getSubject().getPrincipals().add(new TestPrincipal("bar"));
+        
+        String s = serializer.serialize(result);
+        String s2 = fileToString(DATAPATH + "symbolicAuthenticationResult.json");
+        Assert.assertEquals(s, s2);
+        
+        AuthenticationResult result2 = serializer.deserialize(s2, null, null, null);
+        
+        Assert.assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
+        Assert.assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
+        Assert.assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
+        Assert.assertEquals(result.getSubject(), result2.getSubject());
+    }
+    
+    private AuthenticationResult createResult(String flowId, Subject subject) {
+        AuthenticationResult result = new AuthenticationResult(flowId, subject);
+        result.setAuthenticationInstant(INSTANT);
+        result.setLastActivityInstant(ACTIVITY);
+        return result;
+    }
+    
+    private String fileToString(String pathname) throws URISyntaxException, IOException {
+        try (FileInputStream stream = new FileInputStream(
+                new File(BaseAuthenticationResultSerializerTest.class.getResource(pathname).toURI()))) {
+            int avail = stream.available();
+            byte[] data = new byte[avail];
+            int numRead = 0;
+            int pos = 0;
+            do {
+              if (pos + avail > data.length) {
+                byte[] newData = new byte[pos + avail];
+                System.arraycopy(data, 0, newData, 0, pos);
+                data = newData;
+              }
+              numRead = stream.read(data, pos, avail);
+              if (numRead >= 0) {
+                pos += numRead;
+              }
+              avail = stream.available();
+            } while (avail > 0 && numRead >= 0);
+            return new String(data, 0, pos, "UTF-8");
+        }
+    }
+}
