@@ -41,15 +41,14 @@ public final class KeyAuthoritySupport {
     /** Default value for Shibboleth KeyAuthority verify depth. */
     public static final int KEY_AUTHORITY_VERIFY_DEPTH_DEFAULT = 1;
     
-    /** Constructor. Private to prevent instantiation. *
-     */
+    /** Constructor. Private to prevent instantiation. */
     private KeyAuthoritySupport() { }
     
     /**
      * Extracts PKIX validation information from the Shibboleth KeyAuthority metadata extension element.
      * 
-     * @param keyAuthority the Shibboleth KeyAuthority element from which to resolve information
-     * @return an instance of resolved validation information
+     * @param keyAuthority the Shibboleth KeyAuthority element from which to extract information
+     * @return an instance of extracted PKIX validation information
      * @throws SecurityException thrown if the key, certificate, or CRL information is represented in an unsupported
      *             format
      */
