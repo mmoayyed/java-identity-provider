@@ -22,13 +22,16 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.security.SecurityException;
 import org.opensaml.security.x509.PKIXValidationInformation;
-import org.opensaml.security.x509.impl.BasicPKIXValidationInformation;
 import org.opensaml.xmlsec.keyinfo.KeyInfoSupport;
 import org.opensaml.xmlsec.signature.KeyInfo;
 
@@ -80,7 +83,7 @@ public final class KeyAuthoritySupport {
             return null;
         }
 
-        return new BasicPKIXValidationInformation(certs, crls, depth);
+        return new KeyAuthorityPKIXValidationInformation(certs, crls, depth);
     }
     
     /**
@@ -113,6 +116,51 @@ public final class KeyAuthoritySupport {
             throw new SecurityException("Error extracting CRL's from KeyAuthority KeyInfo", e);
         }
 
+    }
+    
+    /**
+     * Basic implementation of {@link PKIXValidationInformation}.
+     */
+    public static class KeyAuthorityPKIXValidationInformation implements PKIXValidationInformation {
+
+        /** Certs used as the trust anchors. */
+        private final Collection<X509Certificate> trustAnchors;
+
+        /** CRLs used during validation. */
+        private final Collection<X509CRL> trustedCRLs;
+
+        /** Max verification depth during PKIX validation. */
+        private final Integer verificationDepth;
+
+        /**
+         * Constructor.
+         * 
+         * @param anchors certs used as trust anchors during validation
+         * @param crls CRLs used during validation
+         * @param depth max verification path depth
+         */
+        public KeyAuthorityPKIXValidationInformation(@Nullable final Collection<X509Certificate> anchors,
+                @Nullable final Collection<X509CRL> crls, @Nonnull final Integer depth) {
+
+            verificationDepth = Constraint.isNotNull(depth, "Verification depth cannot be null");
+            trustAnchors = anchors;
+            trustedCRLs = crls;
+        }
+
+        /** {@inheritDoc} */
+        @Nullable public Collection<X509CRL> getCRLs() {
+            return trustedCRLs;
+        }
+
+        /** {@inheritDoc} */
+        @Nullable public Collection<X509Certificate> getCertificates() {
+            return trustAnchors;
+        }
+
+        /** {@inheritDoc} */
+        @Nonnull public Integer getVerificationDepth() {
+            return verificationDepth;
+        }
     }
 
 }
