@@ -55,6 +55,10 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
 
+// Checkstyle: AbstractClassName OFF
+// My preferred name would be "BasicAuthenticationResultSerializer", but that causes confusion with
+// the term "Basic Authentication" in HTTP.
+
 /**
  * Handles serialization of results that carry only custom {@link Principal} objects of a simple
  * nature that can be reconstructed via a String-argument constructor.

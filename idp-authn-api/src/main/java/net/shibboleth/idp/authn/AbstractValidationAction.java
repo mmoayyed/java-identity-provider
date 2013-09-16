@@ -40,9 +40,11 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
@@ -309,40 +311,42 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         
         ActionSupport.buildEvent(profileRequestContext, eventId);
 
-        for (String m : unknownUsernameErrors) {
-            if (e.getMessage().contains(m)) {
-                errorCtx.setUnknownUsername(true);
-                return;
-            }
+        MessageChecker checker = new MessageChecker(e);
+        
+        if (Iterables.any(unknownUsernameErrors, checker)) {
+            errorCtx.setUnknownUsername(true);
+        } else if (Iterables.any(invalidPasswordErrors, checker)) {
+            errorCtx.setInvalidPassword(true);
+        } else if (Iterables.any(expiredPasswordErrors, checker)) {
+            errorCtx.setExpiredPassword(true);
+        } else if (Iterables.any(accountDisabledErrors, checker)) {
+            errorCtx.setAccountDisabled(true);
+        } else if (Iterables.any(accountLockedErrors, checker)) {
+            errorCtx.setAccountLocked(true);
         }
+    }
+    
+    /**
+     * A predicate that examines an Exception to see if its error message contains
+     * a particular String.
+     */
+    private class MessageChecker implements Predicate<String> {
 
-        for (String m : invalidPasswordErrors) {
-            if (e.getMessage().contains(m)) {
-                errorCtx.setInvalidPassword(true);
-                return;
-            }
-        }
-
-        for (String m : expiredPasswordErrors) {
-            if (e.getMessage().contains(m)) {
-                errorCtx.setExpiredPassword(true);
-                return;
-            }
-        }
-
-
-        for (String m : accountDisabledErrors) {
-            if (e.getMessage().contains(m)) {
-                errorCtx.setAccountDisabled(true);
-                return;
-            }
+        /** Exception to operate on. */
+        private Exception e;
+        
+        /**
+         * Constructor.
+         *
+         * @param ex exception to operate on
+         */
+        public MessageChecker(@Nonnull final Exception ex) {
+            e = ex;
         }
         
-        for (String m : accountLockedErrors) {
-            if (e.getMessage().contains(m)) {
-                errorCtx.setAccountLocked(true);
-                return;
-            }
+        /** {@inheritDoc} */
+        public boolean apply(String input) {
+            return e.getMessage().contains(input);
         }
     }
     

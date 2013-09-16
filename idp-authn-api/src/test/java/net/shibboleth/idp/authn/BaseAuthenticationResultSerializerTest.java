@@ -22,8 +22,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.security.auth.Subject;
 
