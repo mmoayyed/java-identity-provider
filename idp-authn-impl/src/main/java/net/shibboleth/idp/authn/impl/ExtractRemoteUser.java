@@ -114,6 +114,8 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
         }
     }
     
+    // Checkstyle: CyclomaticComplexity OFF
+    
     /** {@inheritDoc} */
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
@@ -159,4 +161,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
         log.debug("{} no user identity found in request", getLogPrefix());
         ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
     }
+
+    // Checkstyle: CyclomaticComplexity ON
+    
 }
