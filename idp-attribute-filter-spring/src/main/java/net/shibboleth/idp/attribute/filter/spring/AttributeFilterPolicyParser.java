@@ -72,7 +72,7 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
     }
 
     /** {@inheritDoc} */
-    // TODO Add checkstyle supression
+ // Checkstyle: CyclomaticComplexity OFF
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
@@ -124,4 +124,5 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
 
         builder.addConstructorArgValue(attributeRules);
     }
+    // Checkstyle: CyclomaticComplexity ON
 }

@@ -71,8 +71,8 @@ public class AttributeRuleParser extends BaseFilterParser {
         return AttributeRule.class;
     }
 
-    // TODO checkstyle supression.
     /** {@inheritDoc} */
+    // Checkstyle: CyclomaticComplexity OFF
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
@@ -133,4 +133,5 @@ public class AttributeRuleParser extends BaseFilterParser {
 
         }
     }
+    // Checkstyle: CyclomaticComplexity ON
 }
