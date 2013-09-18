@@ -22,27 +22,29 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
+import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.joda.time.DateTime;
-import org.opensaml.messaging.context.BaseContext;
 
 import com.google.common.base.Objects;
 
 /** Describes a session with a service associated with an {@link IdPSession}. */
 @ThreadSafe
-public final class ServiceSession extends BaseContext {
+public final class ServiceSession implements IdentifiableComponent {
 
     /** The unique identifier of the service. */
-    private final String serviceId;
+    @Nonnull @NotEmpty private final String serviceId;
 
     /** The time, in milliseconds since the epoch, when this session was created. */
-    private final long creationInstant;
+    @Duration @Positive private long creationInstant;
 
     /** The last activity instant, in milliseconds since the epoch, for the session. */
-    private long lastActivityInstant;
+    @Duration @Positive private long lastActivityInstant;
 
     /** The authentication event associated with this service. */
     private AuthenticationResult authenticationEvent;
@@ -54,23 +56,23 @@ public final class ServiceSession extends BaseContext {
      * @param event authentication event used to authenticate the principal to this service
      */
     public ServiceSession(@Nonnull @NotEmpty final String id, @Nonnull final AuthenticationResult event) {
-        serviceId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Service ID can not be null nor empty");
+        serviceId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Service ID cannot be null nor empty");
         creationInstant = System.currentTimeMillis();
         lastActivityInstant = creationInstant;
         authenticationEvent = Constraint.isNotNull(event, "Authentication event can not be null");
     }
 
     /**
-     * Gets the unique identifier of the service.
+     * Get the unique identifier of the service.
      * 
      * @return unique identifier of the service
      */
-    @Nonnull @NotEmpty public String getServiceId() {
+    @Nonnull @NotEmpty public String getId() {
         return serviceId;
     }
 
     /**
-     * Gets the time, in milliseconds since the epoch, when this session was created.
+     * Get the time, in milliseconds since the epoch, when this session was created.
      * 
      * @return time, in milliseconds since the epoch, when this session was created, never less than 0
      */
@@ -79,7 +81,16 @@ public final class ServiceSession extends BaseContext {
     }
 
     /**
-     * Gets the last activity instant, in milliseconds since the epoch, for the session.
+     * Set the time, in milliseconds since the epoch, when this session was created.
+     * 
+     * @param time time, in milliseconds since the epoch, when this session was created
+     */
+    public void setCreationInstant(@Duration @Positive final long time) {
+        creationInstant = Constraint.isGreaterThan(0, time, "Creation instant must be greater than 0");
+    }
+    
+    /**
+     * Get the last activity instant, in milliseconds since the epoch, for the session.
      * 
      * @return last activity instant, in milliseconds since the epoch, for the session, never less than 0
      */
@@ -92,7 +103,7 @@ public final class ServiceSession extends BaseContext {
      * 
      * @param instant last activity instant, in milliseconds since the epoch, for the session, must be greater than 0
      */
-    public void setLastActivityInstant(final long instant) {
+    public void setLastActivityInstant(@Duration @Positive final long instant) {
         lastActivityInstant = Constraint.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
     }
 
@@ -137,7 +148,7 @@ public final class ServiceSession extends BaseContext {
         }
 
         if (obj instanceof ServiceSession) {
-            return Objects.equal(serviceId, ((ServiceSession) obj).getServiceId());
+            return Objects.equal(serviceId, ((ServiceSession) obj).getId());
         }
 
         return false;
@@ -145,7 +156,7 @@ public final class ServiceSession extends BaseContext {
 
     /** {@inheritDoc} */
     public String toString() {
-        return Objects.toStringHelper(this).add("serviceId", serviceId)
+        return Objects.toStringHelper(this).add("Id", serviceId)
                 .add("creationInstant", new DateTime(creationInstant)).add("lastActivityInstant", lastActivityInstant)
                 .add("authenticationEvent", authenticationEvent).toString();
     }

@@ -39,7 +39,7 @@ public class ServiceSessionTest {
         Assert.assertEquals(session.getAuthenticationEvent(), event);
         Assert.assertTrue(session.getCreationInstant() > start);
         Assert.assertEquals(session.getLastActivityInstant(), session.getCreationInstant());
-        Assert.assertEquals(session.getServiceId(), "test");
+        Assert.assertEquals(session.getId(), "test");
 
         try {
             new ServiceSession(null, event);

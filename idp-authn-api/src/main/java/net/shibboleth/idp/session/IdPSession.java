@@ -203,7 +203,7 @@ public final class IdPSession implements IdentifiableComponent {
     public void addServiceSession(@Nonnull final ServiceSession session) {
         Constraint.isNotNull(session, "Service session can not be null");
 
-        final String serviceId = session.getServiceId();
+        final String serviceId = session.getId();
         try {
             authnServiceStateLock.lock();
             Constraint.isFalse(serviceSessions.containsKey(serviceId), "A session for service " + serviceId
@@ -232,7 +232,7 @@ public final class IdPSession implements IdentifiableComponent {
     public boolean removeServiceSession(@Nonnull final ServiceSession session) {
         Constraint.isNotNull(session, "Service session can not be null");
 
-        return serviceSessions.remove(session.getServiceId(), session);
+        return serviceSessions.remove(session.getId(), session);
     }
 
     /**
@@ -251,7 +251,7 @@ public final class IdPSession implements IdentifiableComponent {
             for (ServiceSession session : serviceSessions.values()) {
                 if (session.getAuthenticationEvent().equals(event)) {
                     throw new IllegalStateException("Authentication event " + event.getAuthenticationFlowId()
-                            + " is associated with the session for service " + session.getServiceId()
+                            + " is associated with the session for service " + session.getId()
                             + " and so can not be removed");
                 }
             }
