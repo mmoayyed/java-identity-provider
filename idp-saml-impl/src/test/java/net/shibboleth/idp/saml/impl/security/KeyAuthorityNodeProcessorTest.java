@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.impl.xmlobject;
+package net.shibboleth.idp.saml.impl.security;
 
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.shibboleth.idp.saml.impl.security.KeyAuthorityNodeProcessor;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
@@ -49,7 +50,7 @@ public class KeyAuthorityNodeProcessorTest extends XMLObjectBaseTestCase {
     @BeforeMethod
     protected void setUp() throws Exception {
         URL mdURL = KeyAuthorityNodeProcessorTest.class
-                .getResource("/net/shibboleth/idp/saml/impl/xmlobject/KeyAuthority-NodeProcessor-metadata.xml");
+                .getResource("/net/shibboleth/idp/saml/impl/security/KeyAuthority-NodeProcessor-metadata.xml");
         mdFile = new File(mdURL.toURI());
 
         processors = new ArrayList<>();

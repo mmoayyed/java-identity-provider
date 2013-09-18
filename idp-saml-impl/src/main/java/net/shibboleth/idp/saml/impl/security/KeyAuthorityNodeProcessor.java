@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.impl.xmlobject;
+package net.shibboleth.idp.saml.impl.security;
 
 import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.saml.security.KeyAuthoritySupport;
 import net.shibboleth.idp.saml.xmlobject.KeyAuthority;
-import net.shibboleth.idp.saml.xmlobject.KeyAuthoritySupport;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.metadata.resolver.filter.FilterException;

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.xmlobject;
+package net.shibboleth.idp.saml.security;
 
 import java.security.cert.CRLException;
 import java.security.cert.CertificateException;
@@ -28,6 +28,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.saml.xmlobject.KeyAuthority;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.security.SecurityException;
