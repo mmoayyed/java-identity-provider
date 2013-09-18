@@ -32,32 +32,32 @@ public class IdPSessionTest {
         long start = System.currentTimeMillis();
         Thread.sleep(50);
 
-        IdPSession session = new IdPSession("test", new byte[] {0, 0, 0});
+        IdPSession session = new IdPSession("test", "foo");
         Assert.assertNotNull(session.getAuthenticationResults());
         Assert.assertTrue(session.getAuthenticationResults().isEmpty());
         Assert.assertTrue(session.getCreationInstant() > start);
         Assert.assertEquals(session.getId(), "test");
+        Assert.assertEquals(session.getPrincipalName(), "foo");
         Assert.assertEquals(session.getLastActivityInstant(), session.getCreationInstant());
-        Assert.assertTrue(session.getSecret().length == 3);
         Assert.assertNotNull(session.getServiceSessions());
         Assert.assertTrue(session.getServiceSessions().isEmpty());
 
         try {
-            new IdPSession(null, new byte[] {0, 0, 0});
+            new IdPSession(null, null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new IdPSession("", new byte[] {0, 0, 0});
+            new IdPSession("", "");
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new IdPSession("  ", new byte[] {0, 0, 0});
+            new IdPSession("  ", "  ");
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
@@ -73,7 +73,7 @@ public class IdPSessionTest {
 
     /** Tests mutating the last activity instant. */
     @Test public void testLastActivityInstant() throws Exception {
-        IdPSession session = new IdPSession("test", new byte[] {0, 0, 0});
+        IdPSession session = new IdPSession("test", "foo");
 
         long now = System.currentTimeMillis();
         // this is here to allow the event's last activity time to deviate from the time 'now'
@@ -88,47 +88,31 @@ public class IdPSessionTest {
 
     /** Tests adding service sessions. */
     @Test public void testAddServiceSessions() {
-        AuthenticationResult event1 = new AuthenticationResult("foo", new UsernamePrincipal("john"));
-        AuthenticationResult event2 = new AuthenticationResult("bar", new UsernamePrincipal("john"));
+        ServiceSession svcSession1 = new ServiceSession("svc1", "test");
+        ServiceSession svcSession2 = new ServiceSession("svc2", "test");
+        ServiceSession svcSession3 = new ServiceSession("svc3", "test");
 
-        ServiceSession svcSession1 = new ServiceSession("svc1", event1);
-        ServiceSession svcSession2 = new ServiceSession("svc2", event2);
-        ServiceSession svcSession3 = new ServiceSession("svc3", event1);
-
-        IdPSession session = new IdPSession("test", new byte[] {0, 0, 0});
+        IdPSession session = new IdPSession("test", "foo");
         session.addServiceSession(svcSession1);
         Assert.assertEquals(session.getServiceSessions().size(), 1);
         Assert.assertTrue(session.getServiceSessions().contains(svcSession1));
-        Assert.assertEquals(session.getServiceSession("svc1").get(), svcSession1);
-        Assert.assertEquals(session.getAuthenticationResults().size(), 1);
-        Assert.assertTrue(session.getAuthenticationResults().contains(event1));
-        Assert.assertEquals(session.getAuthenticationResult("foo"), event1);
+        Assert.assertEquals(session.getServiceSession("svc1"), svcSession1);
 
         session.addServiceSession(svcSession2);
         Assert.assertEquals(session.getServiceSessions().size(), 2);
         Assert.assertTrue(session.getServiceSessions().contains(svcSession1));
-        Assert.assertEquals(session.getServiceSession("svc1").get(), svcSession1);
+        Assert.assertEquals(session.getServiceSession("svc1"), svcSession1);
         Assert.assertTrue(session.getServiceSessions().contains(svcSession2));
-        Assert.assertEquals(session.getServiceSession("svc2").get(), svcSession2);
-        Assert.assertEquals(session.getAuthenticationResults().size(), 2);
-        Assert.assertTrue(session.getAuthenticationResults().contains(event1));
-        Assert.assertEquals(session.getAuthenticationResult("foo"), event1);
-        Assert.assertTrue(session.getAuthenticationResults().contains(event2));
-        Assert.assertEquals(session.getAuthenticationResult("bar"), event2);
+        Assert.assertEquals(session.getServiceSession("svc2"), svcSession2);
 
         session.addServiceSession(svcSession3);
         Assert.assertEquals(session.getServiceSessions().size(), 3);
         Assert.assertTrue(session.getServiceSessions().contains(svcSession1));
-        Assert.assertEquals(session.getServiceSession("svc1").get(), svcSession1);
+        Assert.assertEquals(session.getServiceSession("svc1"), svcSession1);
         Assert.assertTrue(session.getServiceSessions().contains(svcSession2));
-        Assert.assertEquals(session.getServiceSession("svc2").get(), svcSession2);
+        Assert.assertEquals(session.getServiceSession("svc2"), svcSession2);
         Assert.assertTrue(session.getServiceSessions().contains(svcSession3));
-        Assert.assertEquals(session.getServiceSession("svc3").get(), svcSession3);
-        Assert.assertEquals(session.getAuthenticationResults().size(), 2);
-        Assert.assertTrue(session.getAuthenticationResults().contains(event1));
-        Assert.assertEquals(session.getAuthenticationResult("foo"), event1);
-        Assert.assertTrue(session.getAuthenticationResults().contains(event2));
-        Assert.assertEquals(session.getAuthenticationResult("bar"), event2);
+        Assert.assertEquals(session.getServiceSession("svc3"), svcSession3);
 
         try {
             session.addServiceSession(null);
@@ -136,46 +120,25 @@ public class IdPSessionTest {
         } catch (ConstraintViolationException e) {
             Assert.assertEquals(session.getServiceSessions().size(), 3);
             Assert.assertTrue(session.getServiceSessions().contains(svcSession1));
-            Assert.assertEquals(session.getServiceSession("svc1").get(), svcSession1);
+            Assert.assertEquals(session.getServiceSession("svc1"), svcSession1);
             Assert.assertTrue(session.getServiceSessions().contains(svcSession2));
-            Assert.assertEquals(session.getServiceSession("svc2").get(), svcSession2);
+            Assert.assertEquals(session.getServiceSession("svc2"), svcSession2);
             Assert.assertTrue(session.getServiceSessions().contains(svcSession3));
-            Assert.assertEquals(session.getServiceSession("svc3").get(), svcSession3);
-            Assert.assertEquals(session.getAuthenticationResults().size(), 2);
-            Assert.assertTrue(session.getAuthenticationResults().contains(event1));
-            Assert.assertEquals(session.getAuthenticationResult("foo"), event1);
-            Assert.assertTrue(session.getAuthenticationResults().contains(event2));
-            Assert.assertEquals(session.getAuthenticationResult("bar"), event2);
+            Assert.assertEquals(session.getServiceSession("svc3"), svcSession3);
         }
 
-        try {
-            session.addServiceSession(svcSession1);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-            Assert.assertEquals(session.getServiceSessions().size(), 3);
-            Assert.assertTrue(session.getServiceSessions().contains(svcSession1));
-            Assert.assertEquals(session.getServiceSession("svc1").get(), svcSession1);
-            Assert.assertTrue(session.getServiceSessions().contains(svcSession2));
-            Assert.assertEquals(session.getServiceSession("svc2").get(), svcSession2);
-            Assert.assertTrue(session.getServiceSessions().contains(svcSession3));
-            Assert.assertEquals(session.getServiceSession("svc3").get(), svcSession3);
-            Assert.assertEquals(session.getAuthenticationResults().size(), 2);
-            Assert.assertTrue(session.getAuthenticationResults().contains(event1));
-            Assert.assertEquals(session.getAuthenticationResult("foo"), event1);
-            Assert.assertTrue(session.getAuthenticationResults().contains(event2));
-            Assert.assertEquals(session.getAuthenticationResult("bar"), event2);
-        }
-
+        session.addServiceSession(svcSession1);
+        Assert.assertEquals(session.getServiceSessions().size(), 3);
+        Assert.assertTrue(session.getServiceSessions().contains(svcSession1));
+        Assert.assertEquals(session.getServiceSession("svc1"), svcSession1);
     }
 
     /** Tests removing service sessions. */
     @Test public void testRemoveServiceSession() {
-        AuthenticationResult event1 = new AuthenticationResult("foo", new UsernamePrincipal("john"));
+        ServiceSession svcSession1 = new ServiceSession("svc1", "test");
+        ServiceSession svcSession2 = new ServiceSession("svc2", "test");
 
-        ServiceSession svcSession1 = new ServiceSession("svc1", event1);
-        ServiceSession svcSession2 = new ServiceSession("svc2", event1);
-
-        IdPSession session = new IdPSession("test", new byte[] {0, 0, 0});
+        IdPSession session = new IdPSession("test", "foo");
         session.addServiceSession(svcSession1);
         session.addServiceSession(svcSession2);
 
@@ -183,13 +146,13 @@ public class IdPSessionTest {
         Assert.assertEquals(session.getServiceSessions().size(), 1);
         Assert.assertFalse(session.getServiceSessions().contains(svcSession1));
         Assert.assertTrue(session.getServiceSessions().contains(svcSession2));
-        Assert.assertEquals(session.getServiceSession("svc2").get(), svcSession2);
+        Assert.assertEquals(session.getServiceSession("svc2"), svcSession2);
 
         Assert.assertFalse(session.removeServiceSession(svcSession1));
         Assert.assertEquals(session.getServiceSessions().size(), 1);
         Assert.assertFalse(session.getServiceSessions().contains(svcSession1));
         Assert.assertTrue(session.getServiceSessions().contains(svcSession2));
-        Assert.assertEquals(session.getServiceSession("svc2").get(), svcSession2);
+        Assert.assertEquals(session.getServiceSession("svc2"), svcSession2);
 
         try {
             session.removeServiceSession(null);
@@ -198,7 +161,7 @@ public class IdPSessionTest {
             Assert.assertEquals(session.getServiceSessions().size(), 1);
             Assert.assertFalse(session.getServiceSessions().contains(svcSession1));
             Assert.assertTrue(session.getServiceSessions().contains(svcSession2));
-            Assert.assertEquals(session.getServiceSession("svc2").get(), svcSession2);
+            Assert.assertEquals(session.getServiceSession("svc2"), svcSession2);
         }
     }
 
@@ -206,41 +169,24 @@ public class IdPSessionTest {
     @Test public void testRemoveAuthenticationEvent() {
         AuthenticationResult event1 = new AuthenticationResult("foo", new UsernamePrincipal("john"));
         AuthenticationResult event2 = new AuthenticationResult("bar", new UsernamePrincipal("john"));
+        AuthenticationResult event3 = new AuthenticationResult("baz", new UsernamePrincipal("john"));
 
-        ServiceSession svcSession1 = new ServiceSession("svc1", event1);
-        ServiceSession svcSession2 = new ServiceSession("svc2", event2);
-        ServiceSession svcSession3 = new ServiceSession("svc3", event1);
+        IdPSession session = new IdPSession("test", "foo");
+        session.addAuthenticationResult(event1);
+        session.addAuthenticationResult(event2);
+        session.addAuthenticationResult(event3);
 
-        IdPSession session = new IdPSession("test", new byte[] {0, 0, 0});
-        session.addServiceSession(svcSession1);
-        session.addServiceSession(svcSession2);
-        session.addServiceSession(svcSession3);
-
-        session.removeServiceSession(svcSession2);
+        session.removeAuthenticationEvent(event2);
         Assert.assertEquals(session.getAuthenticationResults().size(), 2);
         Assert.assertTrue(session.getAuthenticationResults().contains(event1));
         Assert.assertEquals(session.getAuthenticationResult("foo"), event1);
-        Assert.assertTrue(session.getAuthenticationResults().contains(event2));
-        Assert.assertEquals(session.getAuthenticationResult("bar"), event2);
+        Assert.assertTrue(session.getAuthenticationResults().contains(event3));
+        Assert.assertEquals(session.getAuthenticationResult("baz"), event3);
 
-        session.removeAuthenticationEvent(event2);
+        session.removeAuthenticationEvent(event3);
         Assert.assertEquals(session.getAuthenticationResults().size(), 1);
         Assert.assertTrue(session.getAuthenticationResults().contains(event1));
         Assert.assertEquals(session.getAuthenticationResult("foo"), event1);
-
-        session.removeAuthenticationEvent(event2);
-        Assert.assertEquals(session.getAuthenticationResults().size(), 1);
-        Assert.assertTrue(session.getAuthenticationResults().contains(event1));
-        Assert.assertEquals(session.getAuthenticationResult("foo"), event1);
-
-        try {
-            session.removeAuthenticationEvent(event1);
-            Assert.fail();
-        } catch (IllegalStateException e) {
-            Assert.assertEquals(session.getAuthenticationResults().size(), 1);
-            Assert.assertTrue(session.getAuthenticationResults().contains(event1));
-            Assert.assertEquals(session.getAuthenticationResult("foo"), event1);
-        }
 
         try {
             session.removeAuthenticationEvent(null);

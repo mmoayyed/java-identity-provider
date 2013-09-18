@@ -17,18 +17,16 @@
 
 package net.shibboleth.idp.session;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
@@ -39,13 +37,14 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * An identity provider session.
+ * An identity provider session belonging to a particular subject and client device.
  */
 @ThreadSafe
 public final class IdPSession implements IdentifiableComponent {
@@ -53,64 +52,63 @@ public final class IdPSession implements IdentifiableComponent {
     /** Name of {@link org.slf4j.MDC} attribute that holds the current session ID: <code>idp.session.id</code>. */
     public static final String MDC_ATTRIBUTE = "idp.session.id";
 
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(IdPSession.class);
+    
     /** Unique ID of this session. */
-    private final String id;
-
-    /** Secret associated with this session. */
-    private final byte[] secret;
+    @Nonnull @NotEmpty private final String id;
+    
+    /** A canonical name for the subject of the session. */
+    @Nonnull @NotEmpty private final String principalName;
 
     /** Time, in milliseconds since the epoch, when this session was created. */
-    private final long creationInstant;
+    @Duration private long creationInstant;
 
     /** Last activity instant, in milliseconds since the epoch, for this session. */
-    private long lastActivityInstant;
+    @Duration private long lastActivityInstant;
 
+    /** An IPv4 address to which the session is bound. */
+    @Nullable private String ipV4Address;
+    
+    /** An IPv6 address to which the session is bound. */
+    @Nullable private String ipV6Address;
+        
     /** Tracks authentication results that have occurred during this session. */
-    private final ConcurrentMap<String, AuthenticationResult> authenticationResults;
+    @Nonnull @NonnullElements private final ConcurrentMap<String, AuthenticationResult> authenticationResults;
 
     /** Tracks services which have been issued authentication tokens during this session. */
-    private final ConcurrentMap<String, ServiceSession> serviceSessions;
-
-    /**
-     * Lock used to serialize requests that operate on {@link #authenticationResults} and {@link #serviceSessions}
-     * in the same call.
-     */
-    private final Lock authnServiceStateLock;
+    @Nonnull @NonnullElements private final ConcurrentMap<String, ServiceSession> serviceSessions;
 
     /**
      * Constructor.
      * 
      * @param sessionId identifier for this session
-     * @param sessionSecret secrete for this session
+     * @param canonicalName canonical name of subject
      */
-    public IdPSession(@Nonnull @NotEmpty final String sessionId, @Nonnull final byte[] sessionSecret) {
-        id = Constraint.isNotNull(StringSupport.trimOrNull(sessionId), "Session ID can not be null or empty");
-
-        Constraint.isNotNull(sessionSecret, "Session secret cannot be null");
-        secret = new byte[sessionSecret.length];
-        System.arraycopy(sessionSecret, 0, secret, 0, sessionSecret.length);
-
+    public IdPSession(@Nonnull @NotEmpty final String sessionId, @Nonnull @NotEmpty final String canonicalName) {
+        id = Constraint.isNotNull(StringSupport.trimOrNull(sessionId), "Session ID cannot be null or empty");
+        principalName = Constraint.isNotNull(StringSupport.trimOrNull(canonicalName),
+                "Principal name cannot be null or empty.");
+        
         creationInstant = System.currentTimeMillis();
         lastActivityInstant = creationInstant;
 
         authenticationResults = new ConcurrentHashMap<String, AuthenticationResult>(5);
         serviceSessions = new ConcurrentHashMap<String, ServiceSession>(10);
-        
-        authnServiceStateLock = new ReentrantLock();
     }
 
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String getId() {
         return id;
     }
-
+    
     /**
-     * Get a secret associated with the session. This is useful for things like encrypting session cookies.
+     * Get the canonical principal name for the session.
      * 
-     * @return secret associated with the session
+     * @return the principal name
      */
-    @Nonnull public byte[] getSecret() {
-        return secret;
+    @Nonnull @NotEmpty public String getPrincipalName() {
+        return principalName;
     }
 
     /**
@@ -122,6 +120,15 @@ public final class IdPSession implements IdentifiableComponent {
         return creationInstant;
     }
 
+    /**
+     * Set the time, in milliseconds since the epoch, when this session was created.
+     * 
+     * @param instant last activity instant, in milliseconds since the epoch, for the session, must be greater than 0
+     */
+    public void setCreationInstant(@Duration @Positive final long instant) {
+        creationInstant = Constraint.isGreaterThan(0, instant, "Creation instant must be greater than 0");
+    }
+    
     /**
      * Get the last activity instant, in milliseconds since the epoch, for the session.
      * 
@@ -136,7 +143,7 @@ public final class IdPSession implements IdentifiableComponent {
      * 
      * @param instant last activity instant, in milliseconds since the epoch, for the session, must be greater than 0
      */
-    public void setLastActivityInstant(@Positive final long instant) {
+    public void setLastActivityInstant(@Duration @Positive final long instant) {
         lastActivityInstant = Constraint.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
     }
 
@@ -148,26 +155,90 @@ public final class IdPSession implements IdentifiableComponent {
     }
 
     /**
-     * Get the unmodifiable set of authentication results that have occurred during this session.
+     * Get the IPv4 address to which this session is bound.
      * 
-     * @return unmodifiable set of authentication results
+     * @return bound IPv4 address, or null
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<AuthenticationResult> getAuthenticationResults() {
-        return new HashSet(authenticationResults.values());
+    @Nullable public String getIPV4Address() {
+        return ipV4Address;
     }
 
     /**
-     * Get the authentication event given its workflow ID.
+     * Set the IPv4 address to which this session is bound.
      * 
-     * @param flowId the ID of the authentication workflow
-     * 
-     * @return the authentication event
+     * @param address the address to set, or null
      */
-    @Nullable public AuthenticationResult getAuthenticationResult(@Nonnull @NotEmpty final String flowId) {
-        return authenticationResults.get(
-                Constraint.isNotNull(StringSupport.trimOrNull(flowId), "Flow ID cannot be null or empty"));
+    public void setIPV4Address(@Nullable final String address) {
+        ipV4Address = StringSupport.trimOrNull(address);
     }
 
+    /**
+     * Get the IPv6 address to which this session is bound.
+     * 
+     * @return bound IPv6 address, or null
+     */
+    @Nullable public String getIPV6Address() {
+        return ipV6Address;
+    }
+
+    /**
+     * Set the IPv6 address to which this session is bound.
+     * 
+     * @param address the address to set, or null
+     */
+    public void setIPV6Address(@Nullable final String address) {
+        ipV6Address = StringSupport.trimOrNull(address);
+    }
+    
+    /**
+     * Get the unmodifiable set of {@link AuthenticationResult}s associated with this session.
+     * 
+     * @return unmodifiable set of results
+     */
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<AuthenticationResult> getAuthenticationResults() {
+        return ImmutableSet.copyOf(authenticationResults.values());
+    }
+
+    /**
+     * Get an associated {@link AuthenticationResult} given its flow ID.
+     * 
+     * @param flowId the ID of the {@link AuthenticationResult}
+     * 
+     * @return the authentication result, or null
+     */
+    @Nullable public AuthenticationResult getAuthenticationResult(@Nonnull @NotEmpty final String flowId) {
+        return authenticationResults.get(StringSupport.trimOrNull(flowId));
+    }
+
+    /**
+     * Add a new {@link AuthenticationResult} to this {@link IdPSession}, replacing any
+     * existing result of the same flow ID.
+     * 
+     * @param result the result to add
+     */
+    public void addAuthenticationResult(@Nonnull final AuthenticationResult result) {
+        Constraint.isNotNull(result, "AuthenticationResult cannot be null");
+
+        AuthenticationResult prev = authenticationResults.put(result.getAuthenticationFlowId(), result);
+        if (prev != null) {
+            log.debug("IdPSession {}: replaced old AuthenticationResult for flow ID {}", id,
+                    prev.getAuthenticationFlowId());
+        }
+    }
+
+    /**
+     * Disassociate an {@link AuthenticationResult} from this IdP session.
+     * 
+     * @param result the result to disassociate
+     * 
+     * @return true iff the given result had been associated with this IdP session and now is not
+     */
+    public boolean removeAuthenticationEvent(@Nonnull final AuthenticationResult result) {
+        Constraint.isNotNull(result, "Authentication event can not be null");
+
+        return authenticationResults.remove(result.getAuthenticationFlowId(), result);
+    }
+    
     /**
      * Gets the unmodifiable collection of service sessions associated with this session.
      * 
@@ -184,82 +255,36 @@ public final class IdPSession implements IdentifiableComponent {
      * 
      * @return the session service or null if no session exists for that service, may be null
      */
-    @Nonnull public Optional<ServiceSession> getServiceSession(@Nullable String serviceId) {
-        final String trimmedId = StringSupport.trimOrNull(serviceId);
-
-        if (trimmedId == null) {
-            return Optional.absent();
-        }
-
-        return Optional.fromNullable(serviceSessions.get(trimmedId));
+    @Nullable public ServiceSession getServiceSession(@Nonnull @NotEmpty final String serviceId) {
+        return serviceSessions.get(StringSupport.trimOrNull(serviceId));
     }
 
     /**
-     * Adds a new service session to this IdP session. The {@link AuthenticationResult} associated with the
-     * {@link ServiceSession} is associated with this {@link IdPSession} if it has not been so already.
+     * Add a new service session to this IdP session, replacing any existing session for the same
+     * service.
      * 
-     * @param session the service session
+     * @param serviceSession the service session
      */
-    public void addServiceSession(@Nonnull final ServiceSession session) {
-        Constraint.isNotNull(session, "Service session can not be null");
+    public void addServiceSession(@Nonnull final ServiceSession serviceSession) {
+        Constraint.isNotNull(serviceSession, "Service session cannot be null");
 
-        final String serviceId = session.getId();
-        try {
-            authnServiceStateLock.lock();
-            Constraint.isFalse(serviceSessions.containsKey(serviceId), "A session for service " + serviceId
-                    + " already exists");
-
-            final AuthenticationResult authnEvent = session.getAuthenticationEvent();
-            if (!authenticationResults.containsKey(authnEvent.getAuthenticationFlowId())) {
-                authenticationResults.put(authnEvent.getAuthenticationFlowId(), authnEvent);
-            }
-            
-            //TODO(lajoie) don't we need to update the authn event if it already exists?
-
-            serviceSessions.put(serviceId, session);
-        } finally {
-            authnServiceStateLock.unlock();
+        ServiceSession prev = serviceSessions.put(serviceSession.getId(), serviceSession);
+        if (prev != null) {
+            log.debug("IdPSession {}: replaced old ServiceSession for service {}", id, prev.getId());
         }
     }
 
     /**
-     * Disassociates the given service session from this IdP session.
+     * Disassociate the given service session from this IdP session.
      * 
      * @param session the service session
      * 
-     * @return true if the given session had been associated with this IdP session and now is not
+     * @return true iff the given session had been associated with this IdP session and now is not
      */
     public boolean removeServiceSession(@Nonnull final ServiceSession session) {
-        Constraint.isNotNull(session, "Service session can not be null");
+        Constraint.isNotNull(session, "Service session cannot be null");
 
         return serviceSessions.remove(session.getId(), session);
-    }
-
-    /**
-     * Disassociated a given authentication event from this IdP session. This is only possible if all
-     * {@link ServiceSession}s that were associated with the authentication event have already disassociated from this
-     * IdP session. Otherwise an {@link IllegalStateException} is thrown.
-     * 
-     * @param event the event to disassociate
-     */
-    public void removeAuthenticationEvent(@Nonnull final AuthenticationResult event) {
-        Constraint.isNotNull(event, "Authentication event can not be null");
-
-        try {
-            authnServiceStateLock.lock();
-
-            for (ServiceSession session : serviceSessions.values()) {
-                if (session.getAuthenticationEvent().equals(event)) {
-                    throw new IllegalStateException("Authentication event " + event.getAuthenticationFlowId()
-                            + " is associated with the session for service " + session.getId()
-                            + " and so can not be removed");
-                }
-            }
-
-            authenticationResults.remove(event.getAuthenticationFlowId(), event);
-        } finally {
-            authnServiceStateLock.unlock();
-        }
     }
 
     /** {@inheritDoc} */
@@ -286,7 +311,9 @@ public final class IdPSession implements IdentifiableComponent {
 
     /** {@inheritDoc} */
     public String toString() {
-        return Objects.toStringHelper(this).add("sessionId", id).add("creatingInstant", new DateTime(creationInstant))
+        return Objects.toStringHelper(this).add("sessionId", id).add("principalName", principalName)
+                .add("IPv4", ipV4Address).add("IPv6", ipV6Address)
+                .add("creationInstant", new DateTime(creationInstant))
                 .add("lastActivityInstant", new DateTime(lastActivityInstant))
                 .add("authenticationResults", getAuthenticationResults()).add("serviceSessions", getServiceSessions())
                 .toString();

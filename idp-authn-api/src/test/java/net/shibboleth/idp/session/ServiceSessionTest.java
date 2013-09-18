@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.session;
 
-import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
@@ -33,30 +31,28 @@ public class ServiceSessionTest {
         // this is here to allow the event's creation time to deviate from the 'start' time
         Thread.sleep(50);
 
-        AuthenticationResult event = new AuthenticationResult("test", new UsernamePrincipal("bob"));
-
-        ServiceSession session = new ServiceSession("test", event);
-        Assert.assertEquals(session.getAuthenticationEvent(), event);
+        ServiceSession session = new ServiceSession("test", "test");
+        Assert.assertEquals(session.getAuthenticationFlowId(), "test");
         Assert.assertTrue(session.getCreationInstant() > start);
         Assert.assertEquals(session.getLastActivityInstant(), session.getCreationInstant());
         Assert.assertEquals(session.getId(), "test");
 
         try {
-            new ServiceSession(null, event);
+            new ServiceSession(null, "test");
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new ServiceSession("", event);
+            new ServiceSession("", "test");
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new ServiceSession("  ", event);
+            new ServiceSession("  ", "test");
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
@@ -72,8 +68,7 @@ public class ServiceSessionTest {
 
     /** Tests mutating the last activity instant. */
     @Test public void testLastActivityInstant() throws Exception {
-        ServiceSession session =
-                new ServiceSession("test", new AuthenticationResult("test", new UsernamePrincipal("bob")));
+        ServiceSession session = new ServiceSession("test", "test");
 
         long now = System.currentTimeMillis();
         // this is here to allow the event's last activity time to deviate from the 'now' time
@@ -86,19 +81,4 @@ public class ServiceSessionTest {
         Assert.assertEquals(session.getLastActivityInstant(), now);
     }
 
-    /** Tests setting the authentication event. */
-    @Test public void testAuthenticationEvent() {
-        AuthenticationResult event = new AuthenticationResult("test", new UsernamePrincipal("bob"));
-
-        ServiceSession session = new ServiceSession("test", event);
-        session.setAuthenticationEvent(event);
-        Assert.assertEquals(session.getAuthenticationEvent(), event);
-
-        try {
-            session.setAuthenticationEvent(null);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
-    }
 }

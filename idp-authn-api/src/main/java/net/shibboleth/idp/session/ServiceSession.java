@@ -21,7 +21,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
@@ -40,26 +39,27 @@ public final class ServiceSession implements IdentifiableComponent {
     /** The unique identifier of the service. */
     @Nonnull @NotEmpty private final String serviceId;
 
+    /** Identifies authentication flow used to authenticate to this service. */
+    @Nonnull @NotEmpty private final String authenticationFlowId;
+    
     /** The time, in milliseconds since the epoch, when this session was created. */
     @Duration @Positive private long creationInstant;
 
     /** The last activity instant, in milliseconds since the epoch, for the session. */
     @Duration @Positive private long lastActivityInstant;
 
-    /** The authentication event associated with this service. */
-    private AuthenticationResult authenticationEvent;
-
     /**
      * Constructor. Initializes creation and last activity instant to the current time.
      * 
      * @param id the identifier of the service associated with this session
-     * @param event authentication event used to authenticate the principal to this service
+     * @param flowId authentication flow used to authenticate the principal to this service
      */
-    public ServiceSession(@Nonnull @NotEmpty final String id, @Nonnull final AuthenticationResult event) {
+    public ServiceSession(@Nonnull @NotEmpty final String id, @Nonnull @NotEmpty final String flowId) {
         serviceId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Service ID cannot be null nor empty");
+        authenticationFlowId = Constraint.isNotNull(
+                StringSupport.trimOrNull(flowId), "Authentication flow ID cannot be null or empty");
         creationInstant = System.currentTimeMillis();
         lastActivityInstant = creationInstant;
-        authenticationEvent = Constraint.isNotNull(event, "Authentication event can not be null");
     }
 
     /**
@@ -115,21 +115,12 @@ public final class ServiceSession implements IdentifiableComponent {
     }
 
     /**
-     * Gets the authentication event currently associated with this session.
+     * Gets the authentication flow ID associated with this service session.
      * 
-     * @return authentication event currently associated with this session
+     * @return authentication flow ID associated with this service session
      */
-    @Nonnull public AuthenticationResult getAuthenticationEvent() {
-        return authenticationEvent;
-    }
-
-    /**
-     * Set the authentication event currently associated with this session.
-     * 
-     * @param event authentication event currently associated with this session
-     */
-    public void setAuthenticationEvent(@Nonnull final AuthenticationResult event) {
-        authenticationEvent = Constraint.isNotNull(event, "Authentication event can not be null");
+    @Nonnull @NotEmpty public String getAuthenticationFlowId() {
+        return authenticationFlowId;
     }
 
     /** {@inheritDoc} */
@@ -158,6 +149,7 @@ public final class ServiceSession implements IdentifiableComponent {
     public String toString() {
         return Objects.toStringHelper(this).add("Id", serviceId)
                 .add("creationInstant", new DateTime(creationInstant)).add("lastActivityInstant", lastActivityInstant)
-                .add("authenticationEvent", authenticationEvent).toString();
+                .add("authenticationFlowId", authenticationFlowId).toString();
     }
+    
 }
