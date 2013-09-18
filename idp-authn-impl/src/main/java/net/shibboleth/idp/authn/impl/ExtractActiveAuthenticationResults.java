@@ -27,8 +27,8 @@ import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.SessionContext;
 import net.shibboleth.idp.session.IdPSession;
+import net.shibboleth.idp.session.context.SessionContext;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;

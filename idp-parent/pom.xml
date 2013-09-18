@@ -35,6 +35,7 @@
         <!-- <module>../idp-tou-api</module> -->
         <module>../idp-profile-api</module>
         <module>../idp-saml-api</module>
+        <module>../idp-session-api</module>
 
         <module>../idp-authn-impl</module>
         <module>../idp-attribute-impl</module>
@@ -45,6 +46,7 @@
         <!-- <module>../idp-tou-impl</module> -->
         <module>../idp-profile-impl</module>
         <module>../idp-saml-impl</module>
+        <module>../idp-session-impl</module>
 
         <module>../idp-attribute-resolver-spring</module>
         <module>../idp-attribute-filter-spring</module>

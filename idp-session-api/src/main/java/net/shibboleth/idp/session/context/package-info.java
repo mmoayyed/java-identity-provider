@@ -15,42 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn.context;
-
-
-import javax.annotation.Nullable;
-
-import net.shibboleth.idp.session.IdPSession;
-
-import org.opensaml.messaging.context.BaseContext;
-
-/** A {@link BaseContext} that holds an {@link IdPSession}. */
-public class SessionContext extends BaseContext {
-
-    /** IdP session wrapped by this adapter. */
-    private IdPSession session;
-
-    /** Constructor. */
-    public SessionContext() {
-        super();
-    }
-
-    /**
-     * Get the IdP session.
-     * 
-     * @return the IdP session
-     */
-    @Nullable public IdPSession getIdPSession() {
-        return session;
-    }
-
-    /**
-     * Set the IdP session.
-     * 
-     * @param theSession the IdP session
-     */
-    public void setIdPSession(@Nullable final IdPSession theSession) {
-        session = theSession;
-    }
-    
-}
+/**
+ * Context classes for managing session-related state.
+ */
+package net.shibboleth.idp.session.context;
