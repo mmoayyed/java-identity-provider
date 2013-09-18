@@ -31,8 +31,9 @@ class TestContextContainer extends InOutOperationContext {
             }
         });
         
-        final IdPSession idpSession = new IdPSession("sessionId", new byte[2]);
-        final ServiceSession serviceSession = new ServiceSession("serviceSession", event);
+        final IdPSession idpSession = new IdPSession("sessionId", principalName);
+        idpSession.addAuthenticationResult(event);
+        final ServiceSession serviceSession = new ServiceSession("serviceSession", authnMethod);
         idpSession.addServiceSession(serviceSession);
     }
 
