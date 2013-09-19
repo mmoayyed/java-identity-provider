@@ -81,6 +81,7 @@ public abstract class AbstractSAMLAttributeValueMapper extends AbstractInitializ
      * @param object The object to inspect.
      * @return Its contents suitably decoded. Returns null if we could not decode.
      */
+    // Checkstyle: CyclomaticComplexity OFF
     @Nullable protected String getStringValue(@Nonnull final XMLObject object) {
         String retVal = null;
 
@@ -101,26 +102,7 @@ public abstract class AbstractSAMLAttributeValueMapper extends AbstractInitializ
             retVal = ((XSInteger) object).getValue().toString();
 
         
-        } else {
-        
-            retVal = decodeComplex(object);
-        }
-    
-        if (null == retVal) {
-            log.info("{} value of type {} could not be converted", getLogPrefix(), object.getClass().toString());
-        }
-        return retVal;
-    }
-
-    /**
-     * Helper function for decodeValue.  Only here because checkstyle needs it. (TODO)
-     * @param object the object to look at
-     * @return a string, if conversion possible, null otherwise
-     */
-    @Nullable private String decodeComplex(@Nonnull XMLObject object) {
-        String retVal = null;
-        
-        if (object instanceof XSDateTime) {
+        } else if (object instanceof XSDateTime) {
 
             final DateTime dt = ((XSDateTime) object).getValue();
             if (dt != null) {
@@ -142,8 +124,13 @@ public abstract class AbstractSAMLAttributeValueMapper extends AbstractInitializ
                 retVal = null;
             }
         }
+    
+        if (null == retVal) {
+            log.info("{} value of type {} could not be converted", getLogPrefix(), object.getClass().toString());
+        }
         return retVal;
     }
+    // Checkstyle: CyclomaticComplexity ON
 
     /**
      * Return a string which is to be prepended to all log messages. This is set by the enclosing AttributeMapper.
