@@ -39,11 +39,22 @@
                   </property>
                   <property name="connectionConfig">
                     <bean class="org.ldaptive.ConnectionConfig"
-                          p:ldapUrl="ldap://localhost:10389">
+                          p:ldapUrl="ldap://localhost:10389"
+                          p:useStartTLS="true">
                       <property name="connectionInitializer">
                         <bean class="org.ldaptive.BindConnectionInitializer"
                               p:bindDn="cn=Directory Manager"
                               p:bindCredential="password"/>
+                      </property>
+                      <property name="sslConfig">
+                        <bean class="org.ldaptive.ssl.SslConfig">
+                          <property name="credentialConfig">
+                            <bean class="org.ldaptive.ssl.X509CredentialConfig"
+                                  p:trustCertificates="file:src/test/resources/net/shibboleth/idp/attribute/resolver/spring/dc/ldap/server.crt"
+                                  p:authenticationCertificate="file:src/test/resources/net/shibboleth/idp/attribute/resolver/spring/dc/ldap/client.crt"
+                                  p:authenticationKey="file:src/test/resources/net/shibboleth/idp/attribute/resolver/spring/dc/ldap/client.pkcs8"/>
+                          </property>
+                        </bean>
                       </property>
                     </bean>
                   </property>

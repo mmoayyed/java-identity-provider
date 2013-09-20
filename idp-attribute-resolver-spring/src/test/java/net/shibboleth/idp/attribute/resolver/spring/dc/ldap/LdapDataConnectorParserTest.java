@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc.ldap;
 
+import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,6 +42,8 @@ import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.SearchValidator;
 import org.ldaptive.provider.ProviderConfig;
+import org.ldaptive.ssl.CredentialConfig;
+import org.ldaptive.ssl.SslConfig;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
@@ -54,6 +57,9 @@ import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
+import com.unboundid.util.ssl.KeyStoreKeyManager;
+import com.unboundid.util.ssl.SSLUtil;
+import com.unboundid.util.ssl.TrustStoreTrustManager;
 
 /** Test for {@link LdapDataConnectorParser}. */
 public class LdapDataConnectorParserTest {
@@ -65,11 +71,19 @@ public class LdapDataConnectorParserTest {
      * Creates an UnboundID in-memory directory server. Leverages LDIF found in test resources.
      * 
      * @throws LDAPException if the in-memory directory server cannot be created
+     * @throws GeneralSecurityException if the startTLS keystore or truststore cannot be loaded
      */
-    @BeforeTest public void setupDirectoryServer() throws LDAPException {
+    @BeforeTest public void setupDirectoryServer() throws LDAPException, GeneralSecurityException {
 
         InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig("dc=shibboleth,dc=net");
-        config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", 10389));
+        SSLUtil sslUtil =
+                new SSLUtil(new KeyStoreKeyManager(
+                        "src/test/resources/net/shibboleth/idp/attribute/resolver/spring/dc/ldap/server.keystore",
+                        "changeit".toCharArray()), new TrustStoreTrustManager(
+                        "src/test/resources/net/shibboleth/idp/attribute/resolver/spring/dc/ldap/client.keystore",
+                        "changeit".toCharArray(), "JKS", false));
+        config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", null, 10389,
+                sslUtil.createSSLSocketFactory()));
         config.addAdditionalBindCredentials("cn=Directory Manager", "password");
         directoryServer = new InMemoryDirectoryServer(config);
         directoryServer.importFromLDIF(true,
@@ -119,7 +133,7 @@ public class LdapDataConnectorParserTest {
         XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
 
         configReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/velocity.xml");
-        
+
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
@@ -160,10 +174,15 @@ public class LdapDataConnectorParserTest {
         AssertJUnit.assertNotNull(connConfig);
         AssertJUnit.assertEquals("ldap://localhost:10389", connConfig.getLdapUrl());
         AssertJUnit.assertEquals(false, connConfig.getUseSSL());
-        AssertJUnit.assertEquals(false, connConfig.getUseStartTLS());
+        AssertJUnit.assertEquals(true, connConfig.getUseStartTLS());
         BindConnectionInitializer connInitializer = (BindConnectionInitializer) connConfig.getConnectionInitializer();
         AssertJUnit.assertEquals("cn=Directory Manager", connInitializer.getBindDn());
         AssertJUnit.assertEquals("password", connInitializer.getBindCredential().getString());
+
+        SslConfig sslConfig = connPool.getConnectionFactory().getConnectionConfig().getSslConfig();
+        AssertJUnit.assertNotNull(sslConfig);
+        CredentialConfig credentialConfig = sslConfig.getCredentialConfig();
+        AssertJUnit.assertNotNull(credentialConfig);
 
         final Map<String, Object> providerProps = new HashMap<String, Object>();
         providerProps.put("name1", "value1");

@@ -20,6 +20,8 @@ package net.shibboleth.idp.attribute.resolver.spring.dc.ldap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -53,6 +55,10 @@ import org.ldaptive.pool.SoftLimitConnectionPool;
 import org.ldaptive.provider.ConnectionStrategy;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.SaslConfig;
+import org.ldaptive.ssl.CredentialConfig;
+import org.ldaptive.ssl.CredentialConfigFactory;
+import org.ldaptive.ssl.SslConfig;
+import org.opensaml.security.x509.X509Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -161,7 +167,7 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
         if (!props.isEmpty()) {
             connectionFactory.getProvider().getProviderConfig().setProperties(props);
         }
-        
+
         final BeanDefinitionBuilder templateBuilder = v2Parser.createTemplateBuilder();
         builder.addPropertyValue("executableSearchBuilder", templateBuilder.getBeanDefinition());
 
@@ -206,7 +212,6 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
          * @return connection config
          */
         @Nonnull public ConnectionConfig createConnectionConfig() {
-            // TODO need the 2.0 security schema to set trust and authentication credential
             final String url = AttributeSupport.getAttributeValue(configElement, new QName("ldapURL"));
             final Boolean useStartTLS =
                     AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(configElement, new QName(
@@ -222,6 +227,9 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
             if (useStartTLS != null && useStartTLS.booleanValue()) {
                 connectionConfig.setUseStartTLS(true);
             }
+            final SslConfig sslConfig = new SslConfig();
+            sslConfig.setCredentialConfig(createCredentialConfig());
+            connectionConfig.setSslConfig(sslConfig);
             final BindConnectionInitializer connectionInitializer = new BindConnectionInitializer();
             if (principal != null) {
                 connectionInitializer.setBindDn(principal);
@@ -242,13 +250,42 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
             }
             return connectionConfig;
         }
-        
+
+        /**
+         * Uses {@link X509CredentialSupport} to read StartTLS trust and authentication credentials.
+         *
+         * @return credential config
+         */
+        @Nonnull protected CredentialConfig createCredentialConfig() {
+            X509Certificate[] trustCerts = null;
+            final X509Credential trustCredential =
+                    X509CredentialSupport.parseX509Credential(ElementSupport.getFirstChildElement(configElement,
+                            new QName(DataConnectorNamespaceHandler.NAMESPACE, "StartTLSTrustCredential")));
+            if (trustCredential != null) {
+                trustCerts =
+                        trustCredential.getEntityCertificateChain().toArray(
+                                new X509Certificate[trustCredential.getEntityCertificateChain().size()]);
+            }
+
+            X509Certificate authCert = null;
+            PrivateKey authKey = null;
+            final X509Credential authCredential =
+                    X509CredentialSupport.parseX509Credential(ElementSupport.getFirstChildElement(configElement,
+                            new QName(DataConnectorNamespaceHandler.NAMESPACE, "StartTLSAuthenticationCredential")));
+            if (authCredential != null) {
+                authCert = authCredential.getEntityCertificate();
+                authKey = authCredential.getPrivateKey();
+            }
+
+            return CredentialConfigFactory.createX509CredentialConfig(trustCerts, authCert, authKey);
+        }
+
         /**
          * Construct the definition of the template driven search builder.
          * 
          * @return the bean definition for the template search builder.
          */
-        public  BeanDefinitionBuilder createTemplateBuilder() {
+        @Nonnull public BeanDefinitionBuilder createTemplateBuilder() {
             BeanDefinitionBuilder templateBuilder =
                     BeanDefinitionBuilder.genericBeanDefinition(TemplatedExecutableSearchFilterBuilder.class);
 
@@ -273,7 +310,6 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
             templateBuilder.setInitMethodName("initialize");
             return templateBuilder;
         }
-
 
         /**
          * Creates a new search executor from a v2 XML configuration.
