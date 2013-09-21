@@ -17,10 +17,14 @@
 
 package net.shibboleth.idp.saml.attribute.encoding;
 
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
+import net.shibboleth.idp.attribute.mapper.AttributeMapper;
 
 import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -33,6 +37,12 @@ public class AbstractSaml2NameIDEncoderTest {
         
         AbstractSaml2NameIDEncoder encoder = new AbstractSaml2NameIDEncoder() {
             public NameID encode(Attribute attribute) throws AttributeEncodingException {
+                return null;
+            }
+
+            @Nullable public
+                    AttributeMapper<RequestedAttribute, net.shibboleth.idp.attribute.mapper.RequestedAttribute>
+                    getMapper(String name) {
                 return null;
             }
         };

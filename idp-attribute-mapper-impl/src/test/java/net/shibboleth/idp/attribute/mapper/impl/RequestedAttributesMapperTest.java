@@ -21,13 +21,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
-import net.shibboleth.idp.attribute.mapper.AbstractSAMLAttributeMapper;
 import net.shibboleth.idp.attribute.mapper.AbstractSAMLAttributeValueMapper;
+import net.shibboleth.idp.attribute.mapper.AttributeMapper;
 import net.shibboleth.idp.attribute.mapper.RequestedAttribute;
-import net.shibboleth.idp.attribute.mapper.impl.RequestedAttributeMapper;
-import net.shibboleth.idp.attribute.mapper.impl.RequestedAttributesMapper;
-import net.shibboleth.idp.attribute.mapper.impl.ScopedStringAttributeValueMapper;
-import net.shibboleth.idp.attribute.mapper.impl.StringAttributeValueMapper;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
@@ -41,7 +37,7 @@ import com.google.common.collect.Multimap;
  */
 public class RequestedAttributesMapperTest extends MappingTests {
     
-    private AbstractSAMLAttributeMapper<org.opensaml.saml.saml2.metadata.RequestedAttribute, RequestedAttribute> buildMapper(String name, String samlFormat, AbstractSAMLAttributeValueMapper mapper) {
+    private AttributeMapper<org.opensaml.saml.saml2.metadata.RequestedAttribute, RequestedAttribute> buildMapper(String name, String samlFormat, AbstractSAMLAttributeValueMapper mapper) {
         
         RequestedAttributeMapper result = new RequestedAttributeMapper();
         result.setId(name);

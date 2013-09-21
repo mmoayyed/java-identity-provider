@@ -24,7 +24,6 @@ import net.shibboleth.idp.attribute.mapper.RequestedAttribute;
  * A class that maps SAML2 {@link org.opensaml.saml.saml2.metadata.RequestedAttribute} into an IdP
  * {@link RequestedAttribute}.
  * 
- * TODO make this general on all types which extend SAML attributes.
  */
 public class RequestedAttributeMapper extends
         AbstractSAMLAttributeMapper<org.opensaml.saml.saml2.metadata.RequestedAttribute, RequestedAttribute> {

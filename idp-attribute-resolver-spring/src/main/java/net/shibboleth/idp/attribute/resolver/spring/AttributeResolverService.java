@@ -60,6 +60,15 @@ public class AttributeResolverService extends AbstractSpringService {
             throws ResolutionException {
         attributeResolver.resolveAttributes(resolutionContext);
     }
+    
+    
+    /** Return the configured resolver.  
+     * TODO - do we want to return this, or to return the AttributeMapper.
+     * @return the resolver.
+     */
+    public AttributeResolver getAttributeResolver(){
+        return attributeResolver;
+    }
 
     // TODO probably wrong
     /** {@inheritDoc} */

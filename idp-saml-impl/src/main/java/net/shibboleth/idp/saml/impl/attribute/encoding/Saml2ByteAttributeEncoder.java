@@ -17,10 +17,16 @@
 
 package net.shibboleth.idp.saml.impl.attribute.encoding;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
+import net.shibboleth.idp.attribute.mapper.RequestedAttribute;
+import net.shibboleth.idp.attribute.mapper.impl.ByteAttributeValueMapper;
+import net.shibboleth.idp.attribute.mapper.impl.RequestedAttributeMapper;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml2AttributeEncoder;
+import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperFactory;
 import net.shibboleth.idp.saml.attribute.encoding.SamlEncoderSupport;
 
 import org.opensaml.core.xml.XMLObject;
@@ -29,7 +35,8 @@ import org.opensaml.core.xml.XMLObject;
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces SAML 2 attributes from
  * {@link net.shibboleth.idp.attribute.Attribute} that contains <code>byte[]</code> values.
  */
-public class Saml2ByteAttributeEncoder extends AbstractSaml2AttributeEncoder<ByteAttributeValue> {
+public class Saml2ByteAttributeEncoder extends AbstractSaml2AttributeEncoder<ByteAttributeValue> implements
+        AttributeMapperFactory<org.opensaml.saml.saml2.metadata.RequestedAttribute, RequestedAttribute> {
 
     /** {@inheritDoc} */
     protected boolean canEncodeValue(net.shibboleth.idp.attribute.Attribute attribute, AttributeValue value) {
@@ -41,5 +48,18 @@ public class Saml2ByteAttributeEncoder extends AbstractSaml2AttributeEncoder<Byt
             throws AttributeEncodingException {
         return SamlEncoderSupport.encodeByteArrayValue(attribute,
                 org.opensaml.saml.saml2.core.AttributeValue.DEFAULT_ELEMENT_NAME, value.getValue());
+    }
+
+    /** {@inheritDoc} */
+    @Nonnull public RequestedAttributeMapper getRequestedMapper() {
+        final RequestedAttributeMapper val;
+
+        val = new RequestedAttributeMapper();
+        val.setAttributeFormat(getNamespace());
+        val.setId(getFriendlyName());
+        val.setSAMLName(getName());
+        val.setValueMapper(new ByteAttributeValueMapper());
+
+        return val;
     }
 }

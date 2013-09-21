@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.mapper;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;
@@ -55,7 +57,7 @@ public abstract class AbstractSAMLAttributesMapper
     private final Logger log = LoggerFactory.getLogger(AbstractSAMLAttributesMapper.class);
 
     /** The mappers we can apply. */
-    private List<AbstractSAMLAttributeMapper<InType, OutType>> mappers = Collections.EMPTY_LIST;
+    private Collection<AttributeMapper<InType, OutType>> mappers = Collections.EMPTY_LIST;
 
     /** The String used to prefix log message. */
     private String logPrefix;
@@ -65,7 +67,7 @@ public abstract class AbstractSAMLAttributesMapper
      * 
      * @return Returns the mappers.
      */
-    @Nonnull public List<AbstractSAMLAttributeMapper<InType, OutType>> getMappers() {
+    @Nonnull public Collection<AttributeMapper<InType, OutType>> getMappers() {
         return mappers;
     }
 
@@ -74,7 +76,7 @@ public abstract class AbstractSAMLAttributesMapper
      * 
      * @param theMappers The mappers to set.
      */
-    public void setMappers(@Nonnull List<AbstractSAMLAttributeMapper<InType, OutType>> theMappers) {
+    public void setMappers(@Nonnull Collection<AttributeMapper<InType, OutType>> theMappers) {
         mappers = Constraint.isNotNull(theMappers, "mappers list must be non null");
     }
 
@@ -95,7 +97,7 @@ public abstract class AbstractSAMLAttributesMapper
         Multimap<String, OutType> result = ArrayListMultimap.create();
 
         for (InType prototype : prototypes) {
-            for (AbstractSAMLAttributeMapper<InType, OutType> mapper : mappers) {
+            for (AttributeMapper<InType, OutType> mapper : mappers) {
 
                 Map<String, OutType> mappedAttributes = mapper.mapAttribute(prototype);
 
@@ -114,8 +116,8 @@ public abstract class AbstractSAMLAttributesMapper
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         logPrefix = null;
-        for (AbstractSAMLAttributeMapper mapper : mappers) {
-            mapper.initialize();
+        for (AttributeMapper mapper : mappers) {
+            ComponentSupport.initialize(mapper);
         }
     }
 

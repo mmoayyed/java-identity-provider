@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.Attribute;
@@ -28,6 +29,7 @@ import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.mapper.AttributeMapper;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
@@ -35,6 +37,7 @@ import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.impl.XSStringBuilder;
+import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -150,6 +153,13 @@ public class AbstractSaml2AttributeEncoderTest extends OpenSAMLInitBaseTestCase 
             XSString result = theBuilder.buildObject(theQName);
             result.setValue((String) value.getValue());
             return result;
+        }
+
+        /** {@inheritDoc} */
+        @Nullable public AttributeMapper<RequestedAttribute, net.shibboleth.idp.attribute.mapper.RequestedAttribute>
+                getMapper(String name) {
+            // TODO Auto-generated method stub
+            return null;
         }
         
     }

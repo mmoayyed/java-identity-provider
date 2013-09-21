@@ -23,6 +23,18 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-saml-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-attribute-resolver-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->
