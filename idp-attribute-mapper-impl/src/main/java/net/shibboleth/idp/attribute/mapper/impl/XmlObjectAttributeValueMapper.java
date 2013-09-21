@@ -32,6 +32,8 @@ import org.opensaml.core.xml.XMLObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Objects;
+
 /**
  * Decoder for {@link XMLObject} into {@link XMLObjectAttributeValue}.
  */
@@ -46,7 +48,7 @@ public class XmlObjectAttributeValueMapper extends AbstractSAMLAttributeValueMap
     /** Do we include the attribute value, or just its first child?
      * @return Returns the includeAttributeValue.
      */
-    public boolean setIncludeAttributeValue() {
+    public boolean isIncludeAttributeValue() {
         return includeAttributeValue;
     }
 
@@ -86,4 +88,25 @@ public class XmlObjectAttributeValueMapper extends AbstractSAMLAttributeValueMap
         return "XMLObject";
     }
 
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj == this) {
+            return true;
+        }
+        
+        if (obj instanceof XmlObjectAttributeValueMapper) {
+            XmlObjectAttributeValueMapper other = (XmlObjectAttributeValueMapper) obj;
+            return isIncludeAttributeValue() == other.isIncludeAttributeValue(); 
+        }
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return Objects.hashCode(getClass(), isIncludeAttributeValue());
+    }
 }
