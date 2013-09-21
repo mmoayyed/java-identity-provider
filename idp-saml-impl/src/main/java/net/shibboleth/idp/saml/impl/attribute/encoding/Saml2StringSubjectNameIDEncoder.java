@@ -38,7 +38,7 @@ import com.google.common.base.Objects;
 
 /**
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces the SAML 1 NameIdentifier used for the Subject
- * from the first non-null {@link NameIdentifier} value of an {@link net.shibboleth.idp.attribute.Attribute}.
+ * from the first non-null {@link NameID} value of an {@link net.shibboleth.idp.attribute.Attribute}.
  */
 public class Saml2StringSubjectNameIDEncoder extends AbstractSaml2NameIDEncoder {
 
@@ -138,7 +138,7 @@ public class Saml2StringSubjectNameIDEncoder extends AbstractSaml2NameIDEncoder 
         }
         throw new AttributeEncodingException("Attribute '" + attributeId + "' did not contain any encodable values");
     }
-
+    
     /** {@inheritDoc} */
     public boolean equals(Object obj) {
 
