@@ -41,6 +41,7 @@ import org.opensaml.core.xml.XMLObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
@@ -174,21 +175,21 @@ public abstract class AbstractSAMLAttributeMapper<InType extends org.opensaml.sa
     }
 
     /**
-     * Determines if the attribute matches the provided parameterisation.
+     * Compare whether the name and format given "match" ours. Used in checking both against input attributes and as
+     * part of equality checking. For the sake of comparison null is considered to be the same as
+     * {@link org.opensaml.saml.saml2.core.Attribute.UNSPECIFIED}
      * 
-     * @param attribute the attribute to consider
-     * @return whether it matches.
+     * @param otherSAMLName the name to compare against
+     * @param otherSAMLFormat the format to compare against
+     * @return whether there is a match.
      */
-    protected boolean attributeMatches(@Nonnull InType attribute) {
-        final String name = attribute.getName();
-
-        if (!name.equals(theSAMLName)) {
-            log.debug("{} SAML attribute name {} does not match {}", getLogPrefix(), name, getId());
+    protected boolean matches(final String otherSAMLName, final String otherSAMLFormat) {
+        if (!otherSAMLName.equals(theSAMLName)) {
+            log.debug("{} SAML attribute name {} does not match {}", getLogPrefix(), otherSAMLName, getId());
             return false;
         }
 
-        // Ignore format if it's "unspecified".
-        String format = attribute.getNameFormat();
+        String format = otherSAMLFormat;
         if (org.opensaml.saml.saml2.core.Attribute.UNSPECIFIED.equals(format)) {
             format = null;
         }
@@ -199,6 +200,17 @@ public abstract class AbstractSAMLAttributeMapper<InType extends org.opensaml.sa
             return false;
         }
         return true;
+
+    }
+
+    /**
+     * Determines if the attribute matches the provided parameterisation.
+     * 
+     * @param attribute the attribute to consider
+     * @return whether it matches.
+     */
+    protected boolean attributeMatches(@Nonnull InType attribute) {
+        return matches(attribute.getName(), attribute.getNameFormat());
     }
 
     /**
@@ -271,12 +283,45 @@ public abstract class AbstractSAMLAttributeMapper<InType extends org.opensaml.sa
     }
 
     /**
+     * {@inheritDoc}. The identity is not part of equality of hash
+     */
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj == this) {
+            return true;
+        }
+
+        if (obj instanceof AbstractSAMLAttributeMapper) {
+            AbstractSAMLAttributeMapper other = (AbstractSAMLAttributeMapper) obj;
+
+            return matches(other.getSAMLName(), other.getAttributeFormat())
+                    && Objects.equal(getAttributeIds(), other.getAttributeIds());
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}. The identity is not part of equality of hash
+     */
+    public int hashCode() {
+        String myFormat = getAttributeFormat();
+        if (null == myFormat) {
+            myFormat = org.opensaml.saml.saml2.core.Attribute.UNSPECIFIED;
+        }
+        return Objects.hashCode(myFormat, theSAMLName, attributeIds);
+    }
+
+    /**
      * Function to summon up the output type based on an ID and an object of the input type. Typically the input type
-     * will be inspected for extra paramterisation.
+     * will be inspected for extra parameterisation.
      * 
      * @param input the input value to inspect.
      * @param id the identifier of the new attribute.
      * @return an output, suitable set up with per object information.
      */
     protected abstract OutType newAttribute(@Nonnull InType input, @Nonnull @NotEmpty String id);
+
 }

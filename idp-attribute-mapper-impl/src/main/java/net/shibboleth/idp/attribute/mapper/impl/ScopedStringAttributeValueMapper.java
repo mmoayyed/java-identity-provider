@@ -30,6 +30,8 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.core.xml.XMLObject;
 
+import com.google.common.base.Objects;
+
 /**
  * Mapping to extract a {@link net.shibboleth.idp.attribute.ScopedStringAttributeValue} from an AttributeValue.
  */
@@ -82,4 +84,27 @@ public class ScopedStringAttributeValueMapper extends AbstractSAMLAttributeValue
     @Nonnull protected String getAttributeTypeName() {
         return "Scoped";
     }
+    
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj == this) {
+            return true;
+        }
+        
+        if (obj instanceof ScopedStringAttributeValueMapper) {
+            ScopedStringAttributeValueMapper other = (ScopedStringAttributeValueMapper) obj;
+            return java.util.Objects.equals(getDelimiter(), other.getDelimiter());
+        }
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return Objects.hashCode(getAttributeTypeName(), getDelimiter());
+    }
+
 }
