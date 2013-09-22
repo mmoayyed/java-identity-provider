@@ -1,11 +1,5 @@
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
-import java.security.Principal;
-
-import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.idp.session.IdPSession;
-import net.shibboleth.idp.session.ServiceSession;
-
 import org.joda.time.DateTime;
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.opensaml.messaging.context.InOutOperationContext;
@@ -23,18 +17,7 @@ class TestContextContainer extends InOutOperationContext {
         inbound = new MyMessageContext();
         
         final BasicMessageMetadataContext basic = new BasicMessageMetadataContext();
-        basic.setMessageIssuer(relyingParty);
-        
-        AuthenticationResult event = new AuthenticationResult(authnMethod, new Principal() {   
-            public String getName() {
-                return principalName;
-            }
-        });
-        
-        final IdPSession idpSession = new IdPSession("sessionId", principalName);
-        idpSession.addAuthenticationResult(event);
-        final ServiceSession serviceSession = new ServiceSession("serviceSession", authnMethod);
-        idpSession.addServiceSession(serviceSession);
+        basic.setMessageIssuer(relyingParty);        
     }
 
     public TestContextContainer() {
