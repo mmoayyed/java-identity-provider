@@ -15,6 +15,6 @@
  * limitations under the License.
  */
 
-/** APIs related to the constructions and management of sessions. */
+/** APIs related to the construction and management of sessions. */
 
 package net.shibboleth.idp.session;

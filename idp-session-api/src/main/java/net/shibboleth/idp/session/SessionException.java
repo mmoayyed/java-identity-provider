@@ -15,42 +15,46 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.session.context;
-
+package net.shibboleth.idp.session;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.session.BaseIdPSession;
+/** Exception indicating a problem authenticating a user. */
+public class SessionException extends Exception {
 
-import org.opensaml.messaging.context.BaseContext;
-
-/** A {@link BaseContext} that holds an {@link BaseIdPSession}. */
-public class SessionContext extends BaseContext {
-
-    /** IdP session wrapped by this adapter. */
-    private BaseIdPSession session;
+    /** Serial version UID. */
+    private static final long serialVersionUID = 7386570841274850785L;
 
     /** Constructor. */
-    public SessionContext() {
+    public SessionException() {
         super();
     }
 
     /**
-     * Get the IdP session.
+     * Constructor.
      * 
-     * @return the IdP session
+     * @param message exception message
      */
-    @Nullable public BaseIdPSession getIdPSession() {
-        return session;
+    public SessionException(@Nullable final String message) {
+        super(message);
     }
 
     /**
-     * Set the IdP session.
+     * Constructor.
      * 
-     * @param theSession the IdP session
+     * @param wrappedException exception to be wrapped by this one
      */
-    public void setIdPSession(@Nullable final BaseIdPSession theSession) {
-        session = theSession;
+    public SessionException(@Nullable final Exception wrappedException) {
+        super(wrappedException);
     }
-    
+
+    /**
+     * Constructor.
+     * 
+     * @param message exception message
+     * @param wrappedException exception to be wrapped by this one
+     */
+    public SessionException(@Nullable final String message, @Nullable final Exception wrappedException) {
+        super(message, wrappedException);
+    }
 }

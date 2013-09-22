@@ -24,7 +24,7 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** {@link IdPSession} unit test. */
+/** {@link BaseIdPSession} unit test. */
 public class IdPSessionTest {
 
     /** Tests that everything is properly initialized during object construction. */
@@ -32,7 +32,7 @@ public class IdPSessionTest {
         long start = System.currentTimeMillis();
         Thread.sleep(50);
 
-        IdPSession session = new IdPSession("test", "foo");
+        BaseIdPSession session = new DummyIdPSession("test", "foo");
         Assert.assertNotNull(session.getAuthenticationResults());
         Assert.assertTrue(session.getAuthenticationResults().isEmpty());
         Assert.assertTrue(session.getCreationInstant() > start);
@@ -43,28 +43,28 @@ public class IdPSessionTest {
         Assert.assertTrue(session.getServiceSessions().isEmpty());
 
         try {
-            new IdPSession(null, null);
+            new DummyIdPSession(null, null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new IdPSession("", "");
+            new DummyIdPSession("", "");
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new IdPSession("  ", "  ");
+            new DummyIdPSession("  ", "  ");
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new IdPSession("test", null);
+            new DummyIdPSession("test", null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
@@ -73,7 +73,7 @@ public class IdPSessionTest {
 
     /** Tests mutating the last activity instant. */
     @Test public void testLastActivityInstant() throws Exception {
-        IdPSession session = new IdPSession("test", "foo");
+        BaseIdPSession session = new DummyIdPSession("test", "foo");
 
         long now = System.currentTimeMillis();
         // this is here to allow the event's last activity time to deviate from the time 'now'
@@ -88,11 +88,14 @@ public class IdPSessionTest {
 
     /** Tests adding service sessions. */
     @Test public void testAddServiceSessions() {
-        ServiceSession svcSession1 = new ServiceSession("svc1", "test");
-        ServiceSession svcSession2 = new ServiceSession("svc2", "test");
-        ServiceSession svcSession3 = new ServiceSession("svc3", "test");
+        long now = System.currentTimeMillis();
+        long exp = now + 60000L;
+        
+        BasicServiceSession svcSession1 = new BasicServiceSession("svc1", "test", now, exp);
+        BasicServiceSession svcSession2 = new BasicServiceSession("svc2", "test", now, exp);
+        BasicServiceSession svcSession3 = new BasicServiceSession("svc3", "test", now, exp);
 
-        IdPSession session = new IdPSession("test", "foo");
+        BaseIdPSession session = new DummyIdPSession("test", "foo");
         session.addServiceSession(svcSession1);
         Assert.assertEquals(session.getServiceSessions().size(), 1);
         Assert.assertTrue(session.getServiceSessions().contains(svcSession1));
@@ -135,10 +138,13 @@ public class IdPSessionTest {
 
     /** Tests removing service sessions. */
     @Test public void testRemoveServiceSession() {
-        ServiceSession svcSession1 = new ServiceSession("svc1", "test");
-        ServiceSession svcSession2 = new ServiceSession("svc2", "test");
+        long now = System.currentTimeMillis();
+        long exp = now + 60000L;
 
-        IdPSession session = new IdPSession("test", "foo");
+        BasicServiceSession svcSession1 = new BasicServiceSession("svc1", "test", now, exp);
+        BasicServiceSession svcSession2 = new BasicServiceSession("svc2", "test", now, exp);
+
+        BaseIdPSession session = new DummyIdPSession("test", "foo");
         session.addServiceSession(svcSession1);
         session.addServiceSession(svcSession2);
 
@@ -165,36 +171,57 @@ public class IdPSessionTest {
         }
     }
 
-    /** Tests remove authentication events. */
-    @Test public void testRemoveAuthenticationEvent() {
+    /** Tests remove authentication results. */
+    @Test public void testRemoveAuthenticationResult() {
         AuthenticationResult event1 = new AuthenticationResult("foo", new UsernamePrincipal("john"));
         AuthenticationResult event2 = new AuthenticationResult("bar", new UsernamePrincipal("john"));
         AuthenticationResult event3 = new AuthenticationResult("baz", new UsernamePrincipal("john"));
 
-        IdPSession session = new IdPSession("test", "foo");
+        BaseIdPSession session = new DummyIdPSession("test", "foo");
         session.addAuthenticationResult(event1);
         session.addAuthenticationResult(event2);
         session.addAuthenticationResult(event3);
 
-        session.removeAuthenticationEvent(event2);
+        session.removeAuthenticationResult(event2);
         Assert.assertEquals(session.getAuthenticationResults().size(), 2);
         Assert.assertTrue(session.getAuthenticationResults().contains(event1));
         Assert.assertEquals(session.getAuthenticationResult("foo"), event1);
         Assert.assertTrue(session.getAuthenticationResults().contains(event3));
         Assert.assertEquals(session.getAuthenticationResult("baz"), event3);
 
-        session.removeAuthenticationEvent(event3);
+        session.removeAuthenticationResult(event3);
         Assert.assertEquals(session.getAuthenticationResults().size(), 1);
         Assert.assertTrue(session.getAuthenticationResults().contains(event1));
         Assert.assertEquals(session.getAuthenticationResult("foo"), event1);
 
         try {
-            session.removeAuthenticationEvent(null);
+            session.removeAuthenticationResult(null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
             Assert.assertEquals(session.getAuthenticationResults().size(), 1);
             Assert.assertTrue(session.getAuthenticationResults().contains(event1));
             Assert.assertEquals(session.getAuthenticationResult("foo"), event1);
+        }
+    }
+
+    /**
+     * Dummy concrete class for testing purposes.
+     */
+    private class DummyIdPSession extends BaseIdPSession {
+
+        /**
+         * Constructor.
+         *
+         * @param sessionId
+         * @param canonicalName
+         */
+        public DummyIdPSession(String sessionId, String canonicalName) {
+            super(sessionId, canonicalName);
+        }
+
+        /** {@inheritDoc} */
+        protected boolean doTimeoutCheck() {
+            return true;
         }
     }
 }

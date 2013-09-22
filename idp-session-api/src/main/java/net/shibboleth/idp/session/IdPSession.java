@@ -18,8 +18,6 @@
 package net.shibboleth.idp.session;
 
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,171 +31,71 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * An identity provider session belonging to a particular subject and client device.
  */
 @ThreadSafe
-public final class IdPSession implements IdentifiableComponent {
+public interface IdPSession extends IdentifiableComponent {
 
     /** Name of {@link org.slf4j.MDC} attribute that holds the current session ID: <code>idp.session.id</code>. */
     public static final String MDC_ATTRIBUTE = "idp.session.id";
 
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(IdPSession.class);
-    
-    /** Unique ID of this session. */
-    @Nonnull @NotEmpty private final String id;
-    
-    /** A canonical name for the subject of the session. */
-    @Nonnull @NotEmpty private final String principalName;
-
-    /** Time, in milliseconds since the epoch, when this session was created. */
-    @Duration private long creationInstant;
-
-    /** Last activity instant, in milliseconds since the epoch, for this session. */
-    @Duration private long lastActivityInstant;
-
-    /** An IPv4 address to which the session is bound. */
-    @Nullable private String ipV4Address;
-    
-    /** An IPv6 address to which the session is bound. */
-    @Nullable private String ipV6Address;
-        
-    /** Tracks authentication results that have occurred during this session. */
-    @Nonnull @NonnullElements private final ConcurrentMap<String, AuthenticationResult> authenticationResults;
-
-    /** Tracks services which have been issued authentication tokens during this session. */
-    @Nonnull @NonnullElements private final ConcurrentMap<String, ServiceSession> serviceSessions;
-
-    /**
-     * Constructor.
-     * 
-     * @param sessionId identifier for this session
-     * @param canonicalName canonical name of subject
-     */
-    public IdPSession(@Nonnull @NotEmpty final String sessionId, @Nonnull @NotEmpty final String canonicalName) {
-        id = Constraint.isNotNull(StringSupport.trimOrNull(sessionId), "Session ID cannot be null or empty");
-        principalName = Constraint.isNotNull(StringSupport.trimOrNull(canonicalName),
-                "Principal name cannot be null or empty.");
-        
-        creationInstant = System.currentTimeMillis();
-        lastActivityInstant = creationInstant;
-
-        authenticationResults = new ConcurrentHashMap<String, AuthenticationResult>(5);
-        serviceSessions = new ConcurrentHashMap<String, ServiceSession>(10);
-    }
-
-    /** {@inheritDoc} */
-    @Nonnull @NotEmpty public String getId() {
-        return id;
-    }
-    
     /**
      * Get the canonical principal name for the session.
      * 
      * @return the principal name
      */
-    @Nonnull @NotEmpty public String getPrincipalName() {
-        return principalName;
-    }
+    @Nonnull @NotEmpty public String getPrincipalName();
 
     /**
      * Get the time, in milliseconds since the epoch, when this session was created.
      * 
      * @return time this session was created, never less than 0
      */
-    public long getCreationInstant() {
-        return creationInstant;
-    }
-
-    /**
-     * Set the time, in milliseconds since the epoch, when this session was created.
-     * 
-     * @param instant last activity instant, in milliseconds since the epoch, for the session, must be greater than 0
-     */
-    public void setCreationInstant(@Duration @Positive final long instant) {
-        creationInstant = Constraint.isGreaterThan(0, instant, "Creation instant must be greater than 0");
-    }
+    @Positive public long getCreationInstant();
     
     /**
      * Get the last activity instant, in milliseconds since the epoch, for the session.
      * 
      * @return last activity instant, in milliseconds since the epoch, for the session, never less than 0
      */
-    public long getLastActivityInstant() {
-        return lastActivityInstant;
-    }
+    @Positive public long getLastActivityInstant();
 
     /**
      * Set the last activity instant, in milliseconds since the epoch, for the session.
      * 
      * @param instant last activity instant, in milliseconds since the epoch, for the session, must be greater than 0
+     * 
+     * @throws SessionException if an error occurs updating the session
      */
-    public void setLastActivityInstant(@Duration @Positive final long instant) {
-        lastActivityInstant = Constraint.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
-    }
+    public void setLastActivityInstant(@Duration @Positive final long instant) throws SessionException;
 
     /**
      * Set the last activity instant, in milliseconds since the epoch, for the session to the current time.
-     */
-    public void setLastActivityInstantToNow() {
-        lastActivityInstant = System.currentTimeMillis();
-    }
-
-    /**
-     * Get the IPv4 address to which this session is bound.
      * 
-     * @return bound IPv4 address, or null
+     * @throws SessionException if an error occurs updating the session
      */
-    @Nullable public String getIPV4Address() {
-        return ipV4Address;
-    }
-
+    public void setLastActivityInstantToNow() throws SessionException;
+    
     /**
-     * Set the IPv4 address to which this session is bound.
+     * Test the session's validity based on the supplied client address and the applicable
+     * lifetime and timeout limitations.
      * 
-     * @param address the address to set, or null
-     */
-    public void setIPV4Address(@Nullable final String address) {
-        ipV4Address = StringSupport.trimOrNull(address);
-    }
-
-    /**
-     * Get the IPv6 address to which this session is bound.
+     * @param address client address for validation
      * 
-     * @return bound IPv6 address, or null
+     * @return true iff the session is valid for the specified client
+     * @throws SessionException if an error occurs validating the session
      */
-    @Nullable public String getIPV6Address() {
-        return ipV6Address;
-    }
-
-    /**
-     * Set the IPv6 address to which this session is bound.
-     * 
-     * @param address the address to set, or null
-     */
-    public void setIPV6Address(@Nullable final String address) {
-        ipV6Address = StringSupport.trimOrNull(address);
-    }
+    public boolean validate(@Nonnull @NotEmpty final String address) throws SessionException;
     
     /**
      * Get the unmodifiable set of {@link AuthenticationResult}s associated with this session.
      * 
      * @return unmodifiable set of results
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<AuthenticationResult> getAuthenticationResults() {
-        return ImmutableSet.copyOf(authenticationResults.values());
-    }
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<AuthenticationResult> getAuthenticationResults();
 
     /**
      * Get an associated {@link AuthenticationResult} given its flow ID.
@@ -206,47 +104,34 @@ public final class IdPSession implements IdentifiableComponent {
      * 
      * @return the authentication result, or null
      */
-    @Nullable public AuthenticationResult getAuthenticationResult(@Nonnull @NotEmpty final String flowId) {
-        return authenticationResults.get(StringSupport.trimOrNull(flowId));
-    }
+    @Nullable public AuthenticationResult getAuthenticationResult(@Nonnull @NotEmpty final String flowId);
 
     /**
-     * Add a new {@link AuthenticationResult} to this {@link IdPSession}, replacing any
+     * Add a new {@link AuthenticationResult} to this {@link BaseIdPSession}, replacing any
      * existing result of the same flow ID.
      * 
      * @param result the result to add
+     * 
+     * @throws SessionException if an error occurs updating the session
      */
-    public void addAuthenticationResult(@Nonnull final AuthenticationResult result) {
-        Constraint.isNotNull(result, "AuthenticationResult cannot be null");
-
-        AuthenticationResult prev = authenticationResults.put(result.getAuthenticationFlowId(), result);
-        if (prev != null) {
-            log.debug("IdPSession {}: replaced old AuthenticationResult for flow ID {}", id,
-                    prev.getAuthenticationFlowId());
-        }
-    }
-
+    public void addAuthenticationResult(@Nonnull final AuthenticationResult result) throws SessionException;
+    
     /**
      * Disassociate an {@link AuthenticationResult} from this IdP session.
      * 
      * @param result the result to disassociate
      * 
      * @return true iff the given result had been associated with this IdP session and now is not
+     * @throws SessionException if an error occurs accessing the session
      */
-    public boolean removeAuthenticationEvent(@Nonnull final AuthenticationResult result) {
-        Constraint.isNotNull(result, "Authentication event can not be null");
-
-        return authenticationResults.remove(result.getAuthenticationFlowId(), result);
-    }
+    public boolean removeAuthenticationResult(@Nonnull final AuthenticationResult result) throws SessionException;
     
     /**
      * Gets the unmodifiable collection of service sessions associated with this session.
      * 
      * @return unmodifiable collection of service sessions associated with this session
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<ServiceSession> getServiceSessions() {
-        return ImmutableSet.copyOf(serviceSessions.values());
-    }
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<ServiceSession> getServiceSessions();
 
     /**
      * Get the ServiceSession for a given service.
@@ -255,67 +140,25 @@ public final class IdPSession implements IdentifiableComponent {
      * 
      * @return the session service or null if no session exists for that service, may be null
      */
-    @Nullable public ServiceSession getServiceSession(@Nonnull @NotEmpty final String serviceId) {
-        return serviceSessions.get(StringSupport.trimOrNull(serviceId));
-    }
-
+    @Nullable public ServiceSession getServiceSession(@Nonnull @NotEmpty final String serviceId);
+    
     /**
      * Add a new service session to this IdP session, replacing any existing session for the same
      * service.
      * 
      * @param serviceSession the service session
+     * @throws SessionException if an error occurs accessing the session
      */
-    public void addServiceSession(@Nonnull final ServiceSession serviceSession) {
-        Constraint.isNotNull(serviceSession, "Service session cannot be null");
-
-        ServiceSession prev = serviceSessions.put(serviceSession.getId(), serviceSession);
-        if (prev != null) {
-            log.debug("IdPSession {}: replaced old ServiceSession for service {}", id, prev.getId());
-        }
-    }
-
+    public void addServiceSession(@Nonnull final ServiceSession serviceSession) throws SessionException;
+    
     /**
      * Disassociate the given service session from this IdP session.
      * 
      * @param session the service session
      * 
      * @return true iff the given session had been associated with this IdP session and now is not
+     * @throws SessionException if an error occurs accessing the session
      */
-    public boolean removeServiceSession(@Nonnull final ServiceSession session) {
-        Constraint.isNotNull(session, "Service session cannot be null");
-
-        return serviceSessions.remove(session.getId(), session);
-    }
-
-    /** {@inheritDoc} */
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-
-        if (this == obj) {
-            return true;
-        }
-
-        if (obj instanceof IdPSession) {
-            return Objects.equal(getId(), ((IdPSession) obj).getId());
-        }
-
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    public int hashCode() {
-        return id.hashCode();
-    }
-
-    /** {@inheritDoc} */
-    public String toString() {
-        return Objects.toStringHelper(this).add("sessionId", id).add("principalName", principalName)
-                .add("IPv4", ipV4Address).add("IPv6", ipV6Address)
-                .add("creationInstant", new DateTime(creationInstant))
-                .add("lastActivityInstant", new DateTime(lastActivityInstant))
-                .add("authenticationResults", getAuthenticationResults()).add("serviceSessions", getServiceSessions())
-                .toString();
-    }
+    public boolean removeServiceSession(@Nonnull final ServiceSession session) throws SessionException;
+    
 }

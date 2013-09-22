@@ -22,8 +22,8 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** {@link ServiceSession} unit test. */
-public class ServiceSessionTest {
+/** {@link BasicServiceSession} unit test. */
+public class BasicServiceSessionTest {
 
     /** Tests that everything is properly initialized during object construction. */
     @Test public void testInstantiation() throws Exception {
@@ -31,54 +31,40 @@ public class ServiceSessionTest {
         // this is here to allow the event's creation time to deviate from the 'start' time
         Thread.sleep(50);
 
-        ServiceSession session = new ServiceSession("test", "test");
+        BasicServiceSession session = new BasicServiceSession("test", "test", System.currentTimeMillis(),
+                System.currentTimeMillis() + 60000L);
+        Assert.assertEquals(session.getId(), "test");
         Assert.assertEquals(session.getAuthenticationFlowId(), "test");
         Assert.assertTrue(session.getCreationInstant() > start);
-        Assert.assertEquals(session.getLastActivityInstant(), session.getCreationInstant());
-        Assert.assertEquals(session.getId(), "test");
+        Assert.assertTrue(session.getExpirationInstant() > session.getCreationInstant());
 
         try {
-            new ServiceSession(null, "test");
+            new BasicServiceSession(null, "test", 0, 0);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new ServiceSession("", "test");
+            new BasicServiceSession("", "test", 0, 0);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new ServiceSession("  ", "test");
+            new BasicServiceSession("  ", "test", 0, 0);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new ServiceSession("foo", null);
+            new BasicServiceSession("foo", null, 0, 0);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
-    }
-
-    /** Tests mutating the last activity instant. */
-    @Test public void testLastActivityInstant() throws Exception {
-        ServiceSession session = new ServiceSession("test", "test");
-
-        long now = System.currentTimeMillis();
-        // this is here to allow the event's last activity time to deviate from the 'now' time
-        Thread.sleep(50);
-
-        session.setLastActivityInstantToNow();
-        Assert.assertTrue(session.getLastActivityInstant() > now);
-
-        session.setLastActivityInstant(now);
-        Assert.assertEquals(session.getLastActivityInstant(), now);
     }
 
 }
