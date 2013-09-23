@@ -86,6 +86,18 @@ public class IdPSessionTest {
         Assert.assertEquals(session.getLastActivityInstant(), now);
     }
 
+    /** Tests mutating the last activity instant. */
+    @Test public void testAddressValidation() throws Exception {
+        BaseIdPSession session = new DummyIdPSession("test", "foo");
+
+        Assert.assertTrue(session.validate("127.0.0.1"));
+        Assert.assertTrue(session.validate("127.0.0.1"));
+        Assert.assertFalse(session.validate("127.0.0.2"));
+        Assert.assertTrue(session.validate("::1"));
+        Assert.assertTrue(session.validate("::1"));
+        Assert.assertFalse(session.validate("fe80::5a55:caff:fef2:65a3"));
+    }
+    
     /** Tests adding service sessions. */
     @Test public void testAddServiceSessions() {
         long now = System.currentTimeMillis();
