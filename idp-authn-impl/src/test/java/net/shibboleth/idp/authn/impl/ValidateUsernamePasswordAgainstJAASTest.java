@@ -49,6 +49,8 @@ import com.unboundid.ldap.sdk.LDAPException;
 /** {@link ValidateUsernamePasswordAgainstJAAS} unit test. */
 public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthenticationContextTest {
 
+    private static final String DATA_PATH = "src/test/resources/data/net/shibboleth/idp/authn/impl/";
+    
     private ValidateUsernamePasswordAgainstJAAS action;
 
     private InMemoryDirectoryServer directoryServer;
@@ -64,7 +66,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
         config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", 10389));
         config.addAdditionalBindCredentials("cn=Directory Manager", "password");
         directoryServer = new InMemoryDirectoryServer(config);
-        directoryServer.importFromLDIF(true, "src/test/resources/net/shibboleth/idp/authn/impl/loginLDAPTest.ldif");
+        directoryServer.importFromLDIF(true, DATA_PATH + "loginLDAPTest.ldif");
         directoryServer.startListening();
     }
 
@@ -138,7 +140,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
         action.setLoginConfigType("JavaLoginConfig");
         System.out.println(getCurrentDir());
         action.setLoginConfigParameters(new URIParameter(UriSupport.fileURIFromAbsolutePath(getCurrentDir()
-                + "/src/test/resources/net/shibboleth/idp/authn/impl/jaas.config")));
+                + '/' + DATA_PATH + "jaas.config")));
         action.initialize();
 
         doExtract(prc);
@@ -162,7 +164,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
         action.setLoginConfigType("JavaLoginConfig");
         System.out.println(getCurrentDir());
         action.setLoginConfigParameters(new URIParameter(UriSupport.fileURIFromAbsolutePath(getCurrentDir()
-                + "/src/test/resources/net/shibboleth/idp/authn/impl/jaas.config")));
+                + '/' + DATA_PATH + "jaas.config")));
         action.initialize();
 
         doExtract(prc);
@@ -187,7 +189,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
         action.setLoginConfigType("JavaLoginConfig");
         System.out.println(getCurrentDir());
         action.setLoginConfigParameters(new URIParameter(UriSupport.fileURIFromAbsolutePath(getCurrentDir()
-                + "/src/test/resources/net/shibboleth/idp/authn/impl/jaas.config")));
+                + '/' + DATA_PATH + "jaas.config")));
         action.initialize();
 
         doExtract(prc);
