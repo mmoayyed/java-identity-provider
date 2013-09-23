@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
-import junit.framework.Assert;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
@@ -26,6 +25,7 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
