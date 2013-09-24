@@ -138,9 +138,9 @@ public class BaseAuthenticationResultSerializer implements StorageSerializer<Aut
     }
 
     /** {@inheritDoc} */
-    @Nonnull public AuthenticationResult deserialize(@Nonnull @NotEmpty final String value,
-            @Nullable final String context, @Nullable final String key, @Nullable final Long expiration)
-            throws IOException {
+    @Nonnull public AuthenticationResult deserialize(final int version, @Nonnull @NotEmpty final String context,
+            @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value, @Nullable final Long expiration)
+                    throws IOException {
 
         try {
             JsonReader reader = Json.createReader(new StringReader(value));

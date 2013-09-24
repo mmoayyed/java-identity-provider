@@ -43,15 +43,32 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Abstract base for implementations of {@link IdPSession}, handles basic
- * management of the instance data without addressing persistence.
+ * Abstract base for implementations of {@link IdPSession}, handles basic management of the
+ * instance data without addressing persistence.
+ * 
+ * <p>Data that can change post-construction can be modified using doSet/doAdd/doRemove methods
+ * that maintain the object state. Abstract methods defined here or left unimplemented from the
+ * interface should be implemented to call these methods and perform any additional work required
+ * to maintain the coherence of the underlying store, if any.</p>
+ * 
+ * <p>The {@link #checkAddress(String)} method is implemented by calling into other abstract and defined
+ * methods to check session state and update address information as required.</p> 
  */
 @ThreadSafe
 public abstract class BaseIdPSession implements IdPSession {
 
-    /** Name of {@link org.slf4j.MDC} attribute that holds the current session ID: <code>idp.session.id</code>. */
-    public static final String MDC_ATTRIBUTE = "idp.session.id";
-
+    /** Address syntaxes supported for address binding. */
+    public enum AddressFamily {
+        /** IP version 4 (dotted decimal). */
+        IPV4,
+        
+        /** IP version 6 (colon-sep hex). */
+        IPV6,
+        
+        /** Unknown. */
+        UNKNOWN
+    }
+    
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(BaseIdPSession.class);
     
@@ -62,12 +79,12 @@ public abstract class BaseIdPSession implements IdPSession {
     @Nonnull @NotEmpty private final String principalName;
 
     /** Time, in milliseconds since the epoch, when this session was created. */
-    @Duration private long creationInstant;
+    @Duration private final long creationInstant;
 
     /** Last activity instant, in milliseconds since the epoch, for this session. */
     @Duration private long lastActivityInstant;
 
-    /** An IPv4 address to which the session is bound. */
+    /** Addresses to which the session is bound. */
     @Nullable private String ipV4Address;
     
     /** An IPv6 address to which the session is bound. */
@@ -84,14 +101,16 @@ public abstract class BaseIdPSession implements IdPSession {
      * 
      * @param sessionId identifier for this session
      * @param canonicalName canonical name of subject
+     * @param creationTime creation time of session in milliseconds
      */
-    public BaseIdPSession(@Nonnull @NotEmpty final String sessionId, @Nonnull @NotEmpty final String canonicalName) {
+    public BaseIdPSession(@Nonnull @NotEmpty final String sessionId, @Nonnull @NotEmpty final String canonicalName,
+            @Positive final long creationTime) {
         id = Constraint.isNotNull(StringSupport.trimOrNull(sessionId), "Session ID cannot be null or empty");
         principalName = Constraint.isNotNull(StringSupport.trimOrNull(canonicalName),
                 "Principal name cannot be null or empty.");
         
-        creationInstant = System.currentTimeMillis();
-        lastActivityInstant = creationInstant;
+        creationInstant = Constraint.isGreaterThan(0, creationTime, "Creation time must be greater than 0");
+        lastActivityInstant = creationTime;
 
         authenticationResults = new ConcurrentHashMap(5);
         serviceSessions = new ConcurrentHashMap(10);
@@ -112,15 +131,6 @@ public abstract class BaseIdPSession implements IdPSession {
         return creationInstant;
     }
 
-    /**
-     * Set the time, in milliseconds since the epoch, when this session was created.
-     * 
-     * @param instant last activity instant, in milliseconds since the epoch, for the session, must be greater than 0
-     */
-    public void setCreationInstant(@Duration @Positive final long instant) {
-        creationInstant = Constraint.isGreaterThan(0, instant, "Creation instant must be greater than 0");
-    }
-
     /** {@inheritDoc} */
     public long getLastActivityInstant() {
         return lastActivityInstant;
@@ -130,62 +140,73 @@ public abstract class BaseIdPSession implements IdPSession {
      * Set the last activity instant, in milliseconds since the epoch, for the session.
      * 
      * @param instant last activity instant, in milliseconds since the epoch, for the session, must be greater than 0
+     * @throws SessionException if an error occurs updating the session
      */
-    public void setLastActivityInstant(@Duration @Positive final long instant) {
+    public void setLastActivityInstant(@Duration @Positive final long instant) throws SessionException {
+        doSetLastActivityInstant(instant);
+    }
+    
+    /**
+     * Set the last activity instant, in milliseconds since the epoch, for the session.
+     * 
+     * <p>This manipulates only the internal state of the object. The {@link #setLastActivityInstant(long)}
+     * method must be overridden to support other persistence requirements.</p>
+     * 
+     * @param instant last activity instant, in milliseconds since the epoch, for the session, must be greater than 0
+     */
+    public void doSetLastActivityInstant(@Duration @Positive final long instant) {
         lastActivityInstant = Constraint.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
     }
 
     /**
-     * Set the last activity instant, in milliseconds since the epoch, for the session to the current time.
+     * Get an address to which this session is bound.
+     * 
+     * @param family the address family to inquire
+     * 
+     * @return bound address or null
      */
-    public void setLastActivityInstantToNow() {
-        lastActivityInstant = System.currentTimeMillis();
+    @Nullable public String getAddress(@Nonnull final AddressFamily family) {
+        switch (family) {
+            case IPV4:
+                return ipV4Address;
+            case IPV6:
+                return ipV6Address;
+            default:
+                return null;
+        }
     }
 
     /**
-     * Get the IPv4 address to which this session is bound.
+     * Associate an address with this session.
      * 
-     * @return bound IPv4 address, or null
+     * @param address the address to associate
+     * @throws SessionException if an error occurs binding the address to the session
      */
-    @Nullable public String getIPV4Address() {
-        return ipV4Address;
+    public void bindToAddress(@Nonnull @NotEmpty final String address) throws SessionException {
+        doBindToAddress(address);
     }
 
     /**
-     * Set the IPv4 address to which this session is bound.
+     * Associate an address with this session.
      * 
-     * @param address the address to set, or null
-     */
-    public void setIPV4Address(@Nullable final String address) {
-        ipV4Address = StringSupport.trimOrNull(address);
-    }
-
-    /**
-     * Get the IPv6 address to which this session is bound.
+     * <p>This manipulates only the internal state of the object. The {@link #bindToAddress(String)}
+     * method must be overridden to support other persistence requirements.</p>
      * 
-     * @return bound IPv6 address, or null
+     * @param address the address to associate
      */
-    @Nullable public String getIPV6Address() {
-        return ipV6Address;
-    }
-
-    /**
-     * Set the IPv6 address to which this session is bound.
-     * 
-     * @param address the address to set, or null
-     */
-    public void setIPV6Address(@Nullable final String address) {
-        ipV6Address = StringSupport.trimOrNull(address);
-    }
-    
-    /** {@inheritDoc} */
-    public boolean validate(@Nonnull @NotEmpty final String address) throws SessionException {
-        if (!doTimeoutCheck()) {
-            return false;
-        } else if (isV6Address(address)) {
-            return validateV6(address);
-        } else {
-            return validateV4(address);
+    public void doBindToAddress(@Nonnull @NotEmpty final String address) {
+        String trimmed = Constraint.isNotNull(StringSupport.trimOrNull(address), "Address cannot be null or empty");
+        switch (getAddressFamily(address)) {
+            case IPV6:
+                ipV6Address = StringSupport.trimOrNull(trimmed);
+                break;
+                
+            case IPV4:
+                ipV4Address = StringSupport.trimOrNull(trimmed);
+                break;
+                
+            default:
+                log.warn("Unsupported address form {}", address);
         }
     }
 
@@ -199,15 +220,29 @@ public abstract class BaseIdPSession implements IdPSession {
         return authenticationResults.get(StringSupport.trimOrNull(flowId));
     }
 
+    /** {@inheritDoc} */
+    public void addAuthenticationResult(@Nonnull final AuthenticationResult result) throws SessionException {
+        doAddAuthenticationResult(result);
+    }
+
+    /** {@inheritDoc} */
+    public boolean removeAuthenticationResult(@Nonnull final AuthenticationResult result) throws SessionException {
+        return doRemoveAuthenticationResult(result);
+    }
+
     /**
-     * Add a new {@link AuthenticationResult} to this {@link BaseIdPSession}, replacing any
+     * Add a new {@link AuthenticationResult} to this IdP session, replacing any
      * existing result of the same flow ID.
+     * 
+     * <p>This manipulates only the internal state of the object. The
+     * {@link #addAuthenticationResult(AuthenticationResult)} method must be implemented to support
+     * other persistence requirements.</p>
      * 
      * @param result the result to add
      */
-    public void addAuthenticationResult(@Nonnull final AuthenticationResult result) {
+    public void doAddAuthenticationResult(@Nonnull final AuthenticationResult result) {
         Constraint.isNotNull(result, "AuthenticationResult cannot be null");
-
+    
         AuthenticationResult prev = authenticationResults.put(result.getAuthenticationFlowId(), result);
         if (prev != null) {
             log.debug("IdPSession {}: replaced old AuthenticationResult for flow ID {}", id,
@@ -218,13 +253,17 @@ public abstract class BaseIdPSession implements IdPSession {
     /**
      * Disassociate an {@link AuthenticationResult} from this IdP session.
      * 
+     * <p>This manipulates only the internal state of the object. The
+     * {@link #removeAuthenticationResult(AuthenticationResult)} method must be implemented to support
+     * other persistence requirements.</p>
+     * 
      * @param result the result to disassociate
      * 
      * @return true iff the given result had been associated with this IdP session and now is not
      */
-    public boolean removeAuthenticationResult(@Nonnull final AuthenticationResult result) {
+    public boolean doRemoveAuthenticationResult(@Nonnull final AuthenticationResult result) {
         Constraint.isNotNull(result, "Authentication event can not be null");
-
+    
         return authenticationResults.remove(result.getAuthenticationFlowId(), result);
     }
 
@@ -238,15 +277,28 @@ public abstract class BaseIdPSession implements IdPSession {
         return serviceSessions.get(StringSupport.trimOrNull(serviceId));
     }
 
+    /** {@inheritDoc} */
+    public void addServiceSession(@Nonnull final ServiceSession serviceSession) throws SessionException {
+        doAddServiceSession(serviceSession);
+    }
+
+    /** {@inheritDoc} */
+    public boolean removeServiceSession(@Nonnull final ServiceSession serviceSession) throws SessionException {
+        return doRemoveServiceSession(serviceSession);
+    }
+
     /**
      * Add a new service session to this IdP session, replacing any existing session for the same
      * service.
      * 
+     * <p>This manipulates only the internal state of the object. The {@link #addServiceSession(ServiceSession)}
+     * method must be implemented to support other persistence requirements.</p>
+     * 
      * @param serviceSession the service session
      */
-    public void addServiceSession(@Nonnull final ServiceSession serviceSession) {
+    public void doAddServiceSession(@Nonnull final ServiceSession serviceSession) {
         Constraint.isNotNull(serviceSession, "Service session cannot be null");
-
+    
         ServiceSession prev = serviceSessions.put(serviceSession.getId(), serviceSession);
         if (prev != null) {
             log.debug("IdPSession {}: replaced old ServiceSession for service {}", id, prev.getId());
@@ -256,14 +308,40 @@ public abstract class BaseIdPSession implements IdPSession {
     /**
      * Disassociate the given service session from this IdP session.
      * 
+     * <p>This manipulates only the internal state of the object. The {@link #removeServiceSession(ServiceSession)}
+     * method must be implemented to support other persistence requirements.</p>
+     * 
      * @param session the service session
      * 
      * @return true iff the given session had been associated with this IdP session and now is not
      */
-    public boolean removeServiceSession(@Nonnull final ServiceSession session) {
+    public boolean doRemoveServiceSession(@Nonnull final ServiceSession session) {
         Constraint.isNotNull(session, "Service session cannot be null");
-
+    
         return serviceSessions.remove(session.getId(), session);
+    }
+
+    /** {@inheritDoc} */
+    public boolean checkAddress(@Nonnull @NotEmpty final String address) throws SessionException {
+        AddressFamily family = getAddressFamily(address);
+        String bound = getAddress(family);
+        if (bound != null) {
+            if (!bound.equals(address)) {
+                log.warn("Client address is {} but session {} already bound to {}", address, id, bound);
+                return false;
+            }
+        } else {
+            log.info("Session {} not yet locked to a {} address, locking it to {}", id, family, address);
+            bindToAddress(address);
+        }
+        
+        return true;
+    }
+    
+    /** {@inheritDoc} */
+    public boolean checkTimeout() throws SessionException {
+        setLastActivityInstant(System.currentTimeMillis());
+        return true;
     }
 
     /** {@inheritDoc} */
@@ -271,15 +349,15 @@ public abstract class BaseIdPSession implements IdPSession {
         if (obj == null) {
             return false;
         }
-
+    
         if (this == obj) {
             return true;
         }
-
+    
         if (obj instanceof BaseIdPSession) {
             return Objects.equal(getId(), ((BaseIdPSession) obj).getId());
         }
-
+    
         return false;
     }
 
@@ -299,65 +377,19 @@ public abstract class BaseIdPSession implements IdPSession {
     }
 
     /**
-     * Returns true iff the address is an IPv6 address.
+     * Returns the address family for an input address.
      * 
      * @param address   the string to check
-     * @return true iff the input is an IPv6 address
+     * @return the address family
      */
-    protected boolean isV6Address(@Nonnull @NotEmpty final String address) {
-        return address.contains(":");
+    @Nonnull private static AddressFamily getAddressFamily(@Nonnull @NotEmpty final String address) {
+        if (address.contains(":")) {
+            return AddressFamily.IPV6;
+        } else if (address.contains(".")) {
+            return AddressFamily.IPV4;
+        } else {
+            return AddressFamily.UNKNOWN;
+        }
     }
     
-    /**
-     * Test the session's validity based on the supplied IPv6 client address, and binds the
-     * address to the session if no IPv6 binding exists.
-     * 
-     * @param address client address for validation
-     * 
-     * @return true iff the session is valid for the specified client
-     * @throws SessionException if an error occurs validating the session
-     */
-    protected boolean validateV6(@Nonnull @NotEmpty final String address) throws SessionException {
-        if (ipV6Address != null) {
-            if (!ipV6Address.equals(address)) {
-                log.warn("Client address is {} but session {} already bound to {}", address, id, ipV6Address);
-                return false;
-            }
-        } else {
-            log.info("Session {} not yet locked to a V6 address, locking it to {}", id, address);
-            setIPV6Address(address);
-        }
-        
-        return true;
-    }
-
-    /**
-     * Test the session's validity based on the supplied IPv4 client address, and binds the
-     * address to the session if no IPv4 binding exists.
-     * 
-     * @param address client address for validation
-     * 
-     * @return true iff the session is valid for the specified client
-     * @throws SessionException if an error occurs validating the session
-     */
-    protected boolean validateV4(@Nonnull @NotEmpty final String address) throws SessionException {
-        if (ipV4Address != null) {
-            if (!ipV4Address.equals(address)) {
-                log.warn("Client address is {} but session {} already bound to {}", address, id, ipV4Address);
-                return false;
-            }
-        } else {
-            log.info("Session {} not yet locked to a V4 address, locking it to {}", id, address);
-            setIPV4Address(address);
-        }
-        
-        return true;
-    }
-
-    /**
-     * Implementations must override this method to enforce appropriate timeout checks on the session.
-     * 
-     * @return true iff the session remains valid
-     */
-    protected abstract boolean doTimeoutCheck();
 }

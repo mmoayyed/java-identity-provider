@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
@@ -62,33 +61,25 @@ public interface IdPSession extends IdentifiableComponent {
      * @return last activity instant, in milliseconds since the epoch, for the session, never less than 0
      */
     @Positive public long getLastActivityInstant();
-
-    /**
-     * Set the last activity instant, in milliseconds since the epoch, for the session.
-     * 
-     * @param instant last activity instant, in milliseconds since the epoch, for the session, must be greater than 0
-     * 
-     * @throws SessionException if an error occurs updating the session
-     */
-    public void setLastActivityInstant(@Duration @Positive final long instant) throws SessionException;
-
-    /**
-     * Set the last activity instant, in milliseconds since the epoch, for the session to the current time.
-     * 
-     * @throws SessionException if an error occurs updating the session
-     */
-    public void setLastActivityInstantToNow() throws SessionException;
     
     /**
-     * Test the session's validity based on the supplied client address and the applicable
-     * lifetime and timeout limitations.
+     * Test the session's validity based on the supplied client address, possibly binding it
+     * to the session if appropriate.
      * 
      * @param address client address for validation
      * 
-     * @return true iff the session is valid for the specified client
-     * @throws SessionException if an error occurs validating the session
+     * @return true iff the session is valid for the specified client address
+     * @throws SessionException if an error occurs binding the address to the session
      */
-    public boolean validate(@Nonnull @NotEmpty final String address) throws SessionException;
+    public boolean checkAddress(@Nonnull @NotEmpty final String address) throws SessionException;
+    
+    /**
+     * Test the session's validity based on inactivity, while updating the last activity time.
+     * 
+     * @return true iff the session is still valid
+     * @throws SessionException if an error occurs updating the activity time
+     */
+    public boolean checkTimeout() throws SessionException;
     
     /**
      * Get the unmodifiable set of {@link AuthenticationResult}s associated with this session.
@@ -154,11 +145,11 @@ public interface IdPSession extends IdentifiableComponent {
     /**
      * Disassociate the given service session from this IdP session.
      * 
-     * @param session the service session
+     * @param serviceSession the service session
      * 
      * @return true iff the given session had been associated with this IdP session and now is not
      * @throws SessionException if an error occurs accessing the session
      */
-    public boolean removeServiceSession(@Nonnull final ServiceSession session) throws SessionException;
+    public boolean removeServiceSession(@Nonnull final ServiceSession serviceSession) throws SessionException;
     
 }

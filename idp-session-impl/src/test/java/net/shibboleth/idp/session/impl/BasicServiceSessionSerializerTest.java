@@ -36,6 +36,10 @@ public class BasicServiceSessionSerializerTest {
     
     private static final long INSTANT = 1378827849463L;
     
+    private static final String CONTEXT = "context";
+    
+    private static final String KEY = "key";
+    
     private BasicServiceSessionSerializer serializer;
     
     @BeforeMethod public void setUp() {
@@ -44,28 +48,28 @@ public class BasicServiceSessionSerializerTest {
 
     @Test public void testInvalid() throws Exception {
         try {
-            serializer.deserialize(fileToString(DATAPATH + "invalid.json"), null, null, null);
+            serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "invalid.json"), INSTANT);
             Assert.fail();
         } catch (IOException e) {
             
         }
 
         try {
-            serializer.deserialize(fileToString(DATAPATH + "noServiceId.json"), null, null, null);
+            serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "noServiceId.json"), INSTANT);
             Assert.fail();
         } catch (IOException e) {
             
         }
         
         try {
-            serializer.deserialize(fileToString(DATAPATH + "noFlowId.json"), null, null, null);
+            serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "noFlowId.json"), INSTANT);
             Assert.fail();
         } catch (IOException e) {
             
         }
 
         try {
-            serializer.deserialize(fileToString(DATAPATH + "noInstant.json"), null, null, null);
+            serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "noInstant.json"), INSTANT);
             Assert.fail();
         } catch (IOException e) {
             
@@ -73,7 +77,7 @@ public class BasicServiceSessionSerializerTest {
 
         try {
             // Tests expiration being null.
-            serializer.deserialize(fileToString(DATAPATH + "basicServiceSession.json"), null, null, null);
+            serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "basicServiceSession.json"), null);
             Assert.fail();
         } catch (IOException e) {
             
@@ -89,7 +93,7 @@ public class BasicServiceSessionSerializerTest {
         String s2 = fileToString(DATAPATH + "basicServiceSession.json");
         Assert.assertEquals(s, s2);
         
-        ServiceSession session2 = serializer.deserialize(s2, null, null, exp);
+        ServiceSession session2 = serializer.deserialize(1, CONTEXT, KEY, s2, exp);
 
         Assert.assertEquals(session.getId(), session2.getId());
         Assert.assertEquals(session.getAuthenticationFlowId(), session2.getAuthenticationFlowId());

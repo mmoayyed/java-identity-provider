@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.session;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
@@ -25,6 +27,7 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.Resolver;
 
 /** A resolver that is capable of finding {@link IdPSession} objects that meet certain criteria. */
+@ThreadSafe
 public interface SessionResolver extends IdentifiableComponent, InitializableComponent, DestructableComponent,
         ValidatableComponent, Resolver<IdPSession, CriteriaSet> {
 

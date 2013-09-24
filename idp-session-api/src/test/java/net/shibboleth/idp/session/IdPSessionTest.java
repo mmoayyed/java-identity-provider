@@ -34,13 +34,13 @@ public class IdPSessionTest {
 
         BaseIdPSession session = new DummyIdPSession("test", "foo");
         Assert.assertNotNull(session.getAuthenticationResults());
-        Assert.assertTrue(session.getAuthenticationResults().isEmpty());
+        Assert.assertFalse(session.getAuthenticationResults().iterator().hasNext());
         Assert.assertTrue(session.getCreationInstant() > start);
         Assert.assertEquals(session.getId(), "test");
         Assert.assertEquals(session.getPrincipalName(), "foo");
         Assert.assertEquals(session.getLastActivityInstant(), session.getCreationInstant());
         Assert.assertNotNull(session.getServiceSessions());
-        Assert.assertTrue(session.getServiceSessions().isEmpty());
+        Assert.assertFalse(session.getServiceSessions().iterator().hasNext());
 
         try {
             new DummyIdPSession(null, null);
@@ -79,7 +79,7 @@ public class IdPSessionTest {
         // this is here to allow the event's last activity time to deviate from the time 'now'
         Thread.sleep(50);
 
-        session.setLastActivityInstantToNow();
+        session.setLastActivityInstant(System.currentTimeMillis());
         Assert.assertTrue(session.getLastActivityInstant() > now);
 
         session.setLastActivityInstant(now);
@@ -90,16 +90,17 @@ public class IdPSessionTest {
     @Test public void testAddressValidation() throws Exception {
         BaseIdPSession session = new DummyIdPSession("test", "foo");
 
-        Assert.assertTrue(session.validate("127.0.0.1"));
-        Assert.assertTrue(session.validate("127.0.0.1"));
-        Assert.assertFalse(session.validate("127.0.0.2"));
-        Assert.assertTrue(session.validate("::1"));
-        Assert.assertTrue(session.validate("::1"));
-        Assert.assertFalse(session.validate("fe80::5a55:caff:fef2:65a3"));
+        Assert.assertTrue(session.checkAddress("127.0.0.1"));
+        Assert.assertTrue(session.checkAddress("127.0.0.1"));
+        Assert.assertFalse(session.checkAddress("127.0.0.2"));
+        Assert.assertTrue(session.checkAddress("::1"));
+        Assert.assertTrue(session.checkAddress("::1"));
+        Assert.assertFalse(session.checkAddress("fe80::5a55:caff:fef2:65a3"));
     }
     
-    /** Tests adding service sessions. */
-    @Test public void testAddServiceSessions() {
+    /** Tests adding service sessions. 
+     * @throws SessionException */
+    @Test public void testAddServiceSessions() throws SessionException {
         long now = System.currentTimeMillis();
         long exp = now + 60000L;
         
@@ -148,8 +149,9 @@ public class IdPSessionTest {
         Assert.assertEquals(session.getServiceSession("svc1"), svcSession1);
     }
 
-    /** Tests removing service sessions. */
-    @Test public void testRemoveServiceSession() {
+    /** Tests removing service sessions. 
+     * @throws SessionException */
+    @Test public void testRemoveServiceSession() throws SessionException {
         long now = System.currentTimeMillis();
         long exp = now + 60000L;
 
@@ -183,8 +185,9 @@ public class IdPSessionTest {
         }
     }
 
-    /** Tests remove authentication results. */
-    @Test public void testRemoveAuthenticationResult() {
+    /** Tests remove authentication results. 
+     * @throws SessionException */
+    @Test public void testRemoveAuthenticationResult() throws SessionException {
         AuthenticationResult event1 = new AuthenticationResult("foo", new UsernamePrincipal("john"));
         AuthenticationResult event2 = new AuthenticationResult("bar", new UsernamePrincipal("john"));
         AuthenticationResult event3 = new AuthenticationResult("baz", new UsernamePrincipal("john"));
@@ -228,12 +231,7 @@ public class IdPSessionTest {
          * @param canonicalName
          */
         public DummyIdPSession(String sessionId, String canonicalName) {
-            super(sessionId, canonicalName);
-        }
-
-        /** {@inheritDoc} */
-        protected boolean doTimeoutCheck() {
-            return true;
+            super(sessionId, canonicalName, System.currentTimeMillis());
         }
     }
 }

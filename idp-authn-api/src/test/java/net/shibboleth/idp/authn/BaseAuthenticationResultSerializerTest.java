@@ -37,6 +37,10 @@ public class BaseAuthenticationResultSerializerTest {
 
     private static final String DATAPATH = "/data/net/shibboleth/idp/authn/";
     
+    private static final String CONTEXT = "_context";
+    
+    private static final String KEY = "_key";
+    
     private static final long INSTANT = 1378827849463L;
     
     private static final long ACTIVITY = 1378827556778L;
@@ -49,28 +53,28 @@ public class BaseAuthenticationResultSerializerTest {
 
     @Test public void testInvalid() throws Exception {
         try {
-            serializer.deserialize(fileToString(DATAPATH + "invalid.json"), null, null, null);
+            serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "invalid.json"), null);
             Assert.fail();
         } catch (IOException e) {
             
         }
 
         try {
-            serializer.deserialize(fileToString(DATAPATH + "noFlowId.json"), null, null, null);
+            serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "noFlowId.json"), null);
             Assert.fail();
         } catch (IOException e) {
             
         }
 
         try {
-            serializer.deserialize(fileToString(DATAPATH + "noInstant.json"), null, null, null);
+            serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "noInstant.json"), null);
             Assert.fail();
         } catch (IOException e) {
             
         }
 
         try {
-            serializer.deserialize(fileToString(DATAPATH + "noActivity.json"), null, null, null);
+            serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "noActivity.json"), null);
             Assert.fail();
         } catch (IOException e) {
             
@@ -85,7 +89,7 @@ public class BaseAuthenticationResultSerializerTest {
         String s2 = fileToString(DATAPATH + "simpleAuthenticationResult.json");
         Assert.assertEquals(s, s2);
         
-        AuthenticationResult result2 = serializer.deserialize(s2, null, null, null);
+        AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, null);
         
         Assert.assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
         Assert.assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
@@ -103,7 +107,7 @@ public class BaseAuthenticationResultSerializerTest {
         String s2 = fileToString(DATAPATH + "complexAuthenticationResult.json");
         Assert.assertEquals(s, s2);
         
-        AuthenticationResult result2 = serializer.deserialize(s2, null, null, null);
+        AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, null);
         
         Assert.assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
         Assert.assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
@@ -123,7 +127,7 @@ public class BaseAuthenticationResultSerializerTest {
         String s2 = fileToString(DATAPATH + "symbolicAuthenticationResult.json");
         Assert.assertEquals(s, s2);
         
-        AuthenticationResult result2 = serializer.deserialize(s2, null, null, null);
+        AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, null);
         
         Assert.assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
         Assert.assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());

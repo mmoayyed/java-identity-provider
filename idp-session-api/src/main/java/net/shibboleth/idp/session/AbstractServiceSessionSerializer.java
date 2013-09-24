@@ -83,9 +83,9 @@ public abstract class AbstractServiceSessionSerializer implements StorageSeriali
     }
 
     /** {@inheritDoc} */
-    @Nonnull public ServiceSession deserialize(@Nonnull @NotEmpty final String value,
-            @Nullable final String context, @Nullable final String key, @Nullable final Long expiration)
-            throws IOException {
+    @Nonnull public ServiceSession deserialize(final int version, @Nonnull @NotEmpty final String context,
+            @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value, @Nullable final Long expiration)
+                    throws IOException {
         
         if (expiration == null) {
             throw new IOException("ServiceSession objects must have an expiration");
