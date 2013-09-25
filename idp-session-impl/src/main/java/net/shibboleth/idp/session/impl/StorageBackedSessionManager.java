@@ -18,19 +18,26 @@
 package net.shibboleth.idp.session.impl;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.storage.ClientStorageService;
+import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageService;
+import org.opensaml.storage.VersionMismatchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableList;
 
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.session.SessionResolver;
+import net.shibboleth.idp.session.criterion.ServiceSessionCriterion;
+import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -81,6 +88,9 @@ import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrate
 public class StorageBackedSessionManager extends AbstractDestructableIdentifiableInitializableComponent implements
         SessionManager, SessionResolver {
 
+    /** Storage key of master session records. */
+    @Nonnull private static final String SESSION_MASTER_KEY = "_session";
+    
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(StorageBackedSessionManager.class);
     
@@ -92,6 +102,12 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     
     /** Indicates that storage service failures should be masked as much as possible. */
     private boolean maskStorageFailure;
+
+    /** Indicates whether to store and track ServiceSessions. */
+    private boolean trackServiceSessions;
+
+    /** Indicates whether to secondary-index ServiceSessions. */
+    private boolean secondaryServiceIndex;
     
     /** The back-end for managing data. */
     @NonnullAfterInit private StorageService storageService;
@@ -166,7 +182,53 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
      * @param flag flag to set
      */
     public void setMaskStorageFailure(boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         maskStorageFailure = flag;
+    }
+    
+    /**
+     * Get whether to track ServiceSessions.
+     * 
+     * @return true iff ServiceSessions should be persisted
+     */
+    public boolean isTrackServiceSessions() {
+        return trackServiceSessions;
+    }
+
+    /**
+     * Set whether to track ServiceSessions.
+     * 
+     * <p>This feature requires a StorageService that is not client-side because of space limitations.</p> 
+     * 
+     * @param flag flag to set
+     */
+    public void setTrackServiceSessions(boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        trackServiceSessions = flag;
+    }
+
+    /**
+     * Get whether to create a secondary index for ServiceSession lookup.
+     * 
+     * @return true iff a secondary index for ServiceSession lookup should be maintained
+     */
+    public boolean isSecondaryServiceIndex() {
+        return secondaryServiceIndex;
+    }
+
+    /**
+     * Set whether to create a secondary index for ServiceSession lookup.
+     * 
+     * <p>This feature requires a StorageService that is not client-side.</p> 
+     * 
+     * @param flag flag to set
+     */
+    public void setSecondaryServiceIndex(boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        secondaryServiceIndex = flag;
     }
     
     /**
@@ -199,21 +261,29 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         } else if (idGenerator == null) {
             throw new ComponentInitializationException(
                     "Initialization of StorageBackedSessionManager requires non-null IdentifierGenerationStrategy");
+        } else if ((trackServiceSessions || secondaryServiceIndex) && storageService instanceof ClientStorageService) {
+            throw new ComponentInitializationException(
+                    "Tracking ServiceSessions requires a server-side StorageService");
         }
-        
-        serializer.setCompactForm(storageService instanceof ClientStorageService);
     }
 
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        
         storageService.validate();
     }
 
     /** {@inheritDoc} */
     @Nonnull public IdPSession createSession(@Nonnull @NotEmpty final String principalName,
             @Nullable final String bindToAddress) throws SessionException {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         String sessionId = idGenerator.generateIdentifier(false);
+        if (sessionId.length() > storageService.getCapabilities().getContextSize()) {
+            throw new SessionException("Session IDs are too large for StorageService, check configuration");
+        }
+        
         StorageBackedIdPSession newSession = new StorageBackedIdPSession(this, sessionId, principalName,
                 System.currentTimeMillis());
         if (bindToAddress != null) {
@@ -221,7 +291,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         }
         
         try {
-            if (!storageService.create(sessionId, "_session", newSession, serializer,
+            if (!storageService.create(sessionId, SESSION_MASTER_KEY, newSession, serializer,
                     newSession.getCreationInstant() + sessionTimeout + sessionSlop)) {
                 throw new SessionException("A duplicate session ID was generated, unable to create session");
             }
@@ -238,6 +308,11 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
 
     /** {@inheritDoc} */
     public void destroySession(@Nonnull @NotEmpty final String sessionId) throws SessionException {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        
+        // Note that this can leave entries in the secondary ServiceSession records, but those
+        // will eventually expire outright, or can be cleaned up if the index is searched.
+        
         try {
             storageService.deleteContext(sessionId);
             log.info("Destroyed session {}", sessionId);
@@ -250,14 +325,128 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     /** {@inheritDoc} */
     @Nonnull @NonnullElements public Iterable<IdPSession> resolve(@Nullable final CriteriaSet criteria)
             throws ResolverException {
-        // TODO Auto-generated method stub
-        return null;
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        
+        // We support either session ID lookup, or secondary lookup by service ID and key, if
+        // a secondary index is being maintained.
+        
+        if (criteria != null) {
+            SessionIdCriterion sessionIdCriterion = criteria.get(SessionIdCriterion.class);
+            if (sessionIdCriterion != null) {
+                return ImmutableList.of(lookupBySessionId(sessionIdCriterion.getSessionId()));
+            }
+            
+            ServiceSessionCriterion serviceCriterion = criteria.get(ServiceSessionCriterion.class);
+            if (serviceCriterion != null) {
+                if (!secondaryServiceIndex) {
+                    throw new ResolverException("Secondary service index is disabled");
+                }
+                
+                return lookupByServiceSession(serviceCriterion);
+            }
+        }
+        
+        throw new ResolverException("No supported criterion supplied");
     }
 
     /** {@inheritDoc} */
     @Nullable public IdPSession resolveSingle(@Nullable final CriteriaSet criteria) throws ResolverException {
-        // TODO Auto-generated method stub
+        Iterator<IdPSession> i = resolve(criteria).iterator();
+        if (i != null && i.hasNext()) {
+            return i.next();
+        }
+        
         return null;
+    }
+
+    /**
+     * Performs a lookup and deserializes a record based on session ID.
+     * 
+     * @param sessionId the session to lookup
+     * 
+     * @return the IdPSession object, or null
+     * @throws ResolverException if an error occurs during lookup
+     */
+    @Nullable private IdPSession lookupBySessionId(@Nonnull @NotEmpty final String sessionId) throws ResolverException {
+        try {
+            StorageRecord<StorageBackedIdPSession> sessionRecord = storageService.read(sessionId, SESSION_MASTER_KEY);
+            return sessionRecord.getValue(serializer, sessionId, SESSION_MASTER_KEY);
+        } catch (IOException e) {
+            log.error("Exception while querying for session " + sessionId, e);
+            if (!maskStorageFailure) {
+                throw new ResolverException("Exception while querying for session", e);
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Performs a lookup and deserializes records potentially matching a ServiceSession.
+     * 
+     * @param criterion the ServiceSessionCriterion to apply
+     * 
+     * @return collection of zero or more sessions
+     * @throws ResolverException if an error occurs during lookup
+     */
+    @Nonnull @NonnullElements private Iterable<IdPSession> lookupByServiceSession(
+            @Nonnull final ServiceSessionCriterion criterion) throws ResolverException {
+        
+        int contextSize = storageService.getCapabilities().getContextSize();
+        int keySize = storageService.getCapabilities().getKeySize();
+        
+        String serviceId = criterion.getServiceId();
+        String serviceKey = criterion.getServiceSessionKey();
+        log.debug("Performing secondary lookup on service ID {} and key {}", serviceId, serviceKey);
+
+        // Truncate context and key if needed.
+        if (serviceId.length() > contextSize) {
+            serviceId = serviceId.substring(0, contextSize);
+        }
+        if (serviceKey.length() > keySize) {
+            serviceKey = serviceKey.substring(0, keySize);
+        }
+
+        StorageRecord sessionList = null;
+        
+        try {
+            sessionList = storageService.read(serviceId, serviceKey);
+        } catch (IOException e) {
+            log.error("Exception while querying based service ID " + serviceId + " and key " + serviceKey, e);
+            if (!maskStorageFailure) {
+                throw new ResolverException("Exception while querying based on ServiceSession", e);
+            }
+        }
+
+        if (sessionList == null) {
+            log.debug("Secondary lookup found nothing");
+            return ImmutableList.of();
+        }
+
+        ImmutableList.Builder builder = ImmutableList.<IdPSession>builder();
+        
+        StringBuilder writeBackSessionList = new StringBuilder(sessionList.getValue().length());
+        
+        for (String sessionId : sessionList.getValue().split(",")) {
+            IdPSession session = lookupBySessionId(sessionId);
+            if (session != null) {
+                // Session was found, so add it to the return set and to the updated index record.
+                builder.add(session);
+                writeBackSessionList.append(sessionId);
+                writeBackSessionList.append(',');
+            }
+        }
+        
+        try {
+            storageService.updateWithVersion(sessionList.getVersion(), serviceId, serviceKey,
+                    writeBackSessionList.toString(), sessionList.getExpiration());
+        } catch (IOException e) {
+            log.warn("Ignoring exception while updating secondary index", e);
+        } catch (VersionMismatchException e) {
+            log.debug("Ignoring version mismatch while updating secondary index");
+        }
+        
+        return builder.build();
     }
 
 }

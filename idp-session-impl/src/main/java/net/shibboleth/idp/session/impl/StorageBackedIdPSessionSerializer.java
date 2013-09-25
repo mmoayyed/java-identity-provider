@@ -71,9 +71,6 @@ public class StorageBackedIdPSessionSerializer implements StorageSerializer<Stor
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(StorageBackedIdPSessionSerializer.class);
     
-    /** Flag controlling storage of "optional" data not suited to client-side storage. */
-    private boolean compactForm; 
-
     /** Back-reference to parent instance. */
     @Nonnull private final StorageBackedSessionManager sessionManager;
     
@@ -90,15 +87,6 @@ public class StorageBackedIdPSessionSerializer implements StorageSerializer<Stor
             @Nullable final StorageBackedIdPSession target) {
         sessionManager = Constraint.isNotNull(manager, "SessionManager cannot be null");
         targetObject = target;
-    }
-
-    /**
-     * Set flag controlling storage of optional data.
-     * 
-     * @param flag  flag to set
-     */
-    public void setCompactForm(boolean flag) {
-        compactForm = flag;
     }
     
     /** {@inheritDoc} */
@@ -128,7 +116,7 @@ public class StorageBackedIdPSessionSerializer implements StorageSerializer<Stor
                 gen.writeEnd();
             }
             
-            if (!compactForm) {
+            if (sessionManager.isTrackServiceSessions()) {
                 Set<ServiceSession> services = instance.getServiceSessions();
                 if (!services.isEmpty()) {
                     gen.writeStartArray(SERVICE_ID_ARRAY_FIELD);

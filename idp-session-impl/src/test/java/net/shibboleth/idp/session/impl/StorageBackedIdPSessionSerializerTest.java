@@ -47,6 +47,7 @@ public class StorageBackedIdPSessionSerializerTest {
     
     @BeforeMethod public void setUp() {
         manager = new StorageBackedSessionManager();
+        manager.setTrackServiceSessions(true);
         serializer = new StorageBackedIdPSessionSerializer(manager, null);
     }
 
