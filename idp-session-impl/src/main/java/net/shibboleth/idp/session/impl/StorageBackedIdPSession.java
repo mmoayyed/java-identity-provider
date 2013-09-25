@@ -71,31 +71,31 @@ public class StorageBackedIdPSession extends BaseIdPSession {
     /** {@inheritDoc} */
     public void setLastActivityInstant(long instant) throws SessionException {
         // TODO Auto-generated method stub
-        
+        super.setLastActivityInstant(instant);
     }
 
     /** {@inheritDoc} */
     public void addAuthenticationResult(AuthenticationResult result) throws SessionException {
         // TODO Auto-generated method stub
-        
+        super.addAuthenticationResult(result);
     }
 
     /** {@inheritDoc} */
     public boolean removeAuthenticationResult(AuthenticationResult result) throws SessionException {
         // TODO Auto-generated method stub
-        return false;
+        return super.removeAuthenticationResult(result);
     }
 
     /** {@inheritDoc} */
     public void addServiceSession(ServiceSession serviceSession) throws SessionException {
         // TODO Auto-generated method stub
-        
+        super.addServiceSession(serviceSession);
     }
 
     /** {@inheritDoc} */
-    public boolean removeServiceSession(ServiceSession session) throws SessionException {
+    public boolean removeServiceSession(ServiceSession serviceSession) throws SessionException {
         // TODO Auto-generated method stub
-        return false;
+        return super.removeServiceSession(serviceSession);
     }
     
     /** {@inheritDoc} */
