@@ -51,9 +51,32 @@ import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrate
  * a {@link StorageService} for persistence and lifecycle management of data.
  * 
  * <p>The storage layout here is to store most data in a context named for the session ID.
- * Within that context, the master {@link IdPSession} record lives under a key called "_session".
- * Each {@link AuthenticationResult} is stored in a record keyed by the flow ID.
- * </p>
+ * Within that context, the master {@link IdPSession} record lives under a key called "_session",
+ * with an expiration based on the session timeout value plus a configurable amount of "slop" to
+ * prevent premature disappearance in case of logout.</p>
+ * 
+ * <p>Each {@link AuthenticationResult} is stored in a record keyed by the flow ID. The expiration
+ * is set based on the underlying flow's timeout plus the "slop" value.</p>
+ * 
+ * <p>Each {@link ServiceSession} is stored in a record keyed by the service ID. The expiration
+ * is set based on the ServiceSession's own expiration plus the "slop" value.</p>
+ * 
+ * <p>For cross-referencing, lists of flow and service IDs are tracked within the master "_session"
+ * record, so adding either requires an update to the master record plus the creation of a new one.
+ * Post-creation, there are no updates to the AuthenticationResult or ServiceSession records, but
+ * the expiration of the result records can be updated to reflect activity updates.</p>
+ * 
+ * <p>When a ServiceSession is added, it may expose an optional secondary "key". If set, this is a
+ * signal to add a secondary lookup of the ServiceSession. This is a record containing a list of
+ * relevant IdPSession IDs stored under a context/key pair consisting of the Service ID and the
+ * exposed secondary key from the object. The expiration of this record is set based on the larger
+ * of the current list expiration, if any, and the expiration of the ServiceSession plus the configured
+ * slop value. In other words, the lifetime of the index record is pushed out as far as needed to
+ * avoid premature expiration while any of the ServiceSessions producing it remain around.</p>
+ * 
+ * <p>The primary purpose of the secondary list is SAML logout, and is an optional feature that can be
+ * disabled. In the case of a SAML 2 session, the secondary key is some form of the NameID issued
+ * to the service.</p>
  */
 public class StorageBackedSessionManager extends AbstractDestructableIdentifiableInitializableComponent implements
         SessionManager, SessionResolver {
