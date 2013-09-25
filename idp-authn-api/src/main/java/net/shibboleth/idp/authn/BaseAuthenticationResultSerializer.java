@@ -42,6 +42,8 @@ import javax.json.JsonValue;
 import javax.json.stream.JsonGenerator;
 import javax.security.auth.Subject;
 
+import net.shibboleth.utilities.java.support.annotation.Duration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -62,6 +64,9 @@ import com.google.common.collect.ImmutableBiMap;
 /**
  * Handles serialization of results that carry only custom {@link Principal} objects of a simple
  * nature that can be reconstructed via a String-argument constructor.
+ * 
+ * <p>The expiration of the resulting record <strong>MUST</strong> be set to the last activity
+ * instant of the object plus an optional offset value supplied to the constructor.</p>
  */
 public class BaseAuthenticationResultSerializer implements StorageSerializer<AuthenticationResult> {
 
@@ -70,9 +75,6 @@ public class BaseAuthenticationResultSerializer implements StorageSerializer<Aut
 
     /** Field name of authentication instant. */
     private static final String AUTHN_INSTANT_FIELD = "ts";
-
-    /** Field name of last activity time. */
-    private static final String LAST_ACTIVITY_FIELD = "act";
 
     /** Field name of principal array. */
     private static final String PRINCIPAL_ARRAY_FIELD = "princ";
@@ -88,17 +90,25 @@ public class BaseAuthenticationResultSerializer implements StorageSerializer<Aut
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(BaseAuthenticationResultSerializer.class);
-        
+    
+    /** Milliseconds to substract from record expiration to establish last activity value. */
+    @Duration @NonNegative private final long expirationOffset;
+    
     /** Shrinkage of long constants into symbolic numbers. */
     @Nonnull private BiMap<String,Integer> symbolics;
     
     /** A cache of Principal types that support string-based construction. */
     @Nonnull private final Set<Class<? extends Principal>> compatiblePrincipalTypes;
     
-    /** Constructor. */
-    public BaseAuthenticationResultSerializer() {
+    /**
+     * Constructor.
+     *
+     * @param offset milliseconds to substract from record expiration to establish last activity value
+     */
+    public BaseAuthenticationResultSerializer(@Duration @NonNegative final long offset) {
         symbolics = ImmutableBiMap.of();
         compatiblePrincipalTypes = Collections.synchronizedSet(new HashSet<Class<? extends Principal>>());
+        expirationOffset = Constraint.isGreaterThanOrEqual(0, offset, "Offset must be greater than or equal to zero");
     }
 
     /**
@@ -119,7 +129,6 @@ public class BaseAuthenticationResultSerializer implements StorageSerializer<Aut
             gen.writeStartObject()
                 .write(FLOW_ID_FIELD, instance.getAuthenticationFlowId())
                 .write(AUTHN_INSTANT_FIELD, instance.getAuthenticationInstant())
-                .write(LAST_ACTIVITY_FIELD, instance.getLastActivityInstant())
                 .writeStartArray(PRINCIPAL_ARRAY_FIELD);
             
             for (Principal p : instance.getSubject().getPrincipals()) {
@@ -141,7 +150,7 @@ public class BaseAuthenticationResultSerializer implements StorageSerializer<Aut
     @Nonnull public AuthenticationResult deserialize(final int version, @Nonnull @NotEmpty final String context,
             @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value, @Nullable final Long expiration)
                     throws IOException {
-
+        
         try {
             JsonReader reader = Json.createReader(new StringReader(value));
             JsonStructure st = reader.read();
@@ -152,12 +161,11 @@ public class BaseAuthenticationResultSerializer implements StorageSerializer<Aut
             
             String flowId = obj.getString(FLOW_ID_FIELD);
             long authnInstant = obj.getJsonNumber(AUTHN_INSTANT_FIELD).longValueExact();
-            long activityTime = obj.getJsonNumber(LAST_ACTIVITY_FIELD).longValueExact();
             JsonArray principals = obj.getJsonArray(PRINCIPAL_ARRAY_FIELD);
 
             AuthenticationResult result = new AuthenticationResult(flowId, new Subject());
             result.setAuthenticationInstant(authnInstant);
-            result.setLastActivityInstant(activityTime);
+            result.setLastActivityInstant((expiration != null ? expiration : authnInstant) - expirationOffset);
             
             for (JsonValue p : principals) {
                 if (p instanceof JsonObject) {
