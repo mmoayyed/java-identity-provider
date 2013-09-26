@@ -29,7 +29,7 @@ import net.shibboleth.idp.profile.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import net.shibboleth.idp.session.BaseIdPSession;
+import net.shibboleth.idp.session.AbstractIdPSession;
 import net.shibboleth.idp.session.BasicServiceSession;
 
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
@@ -90,7 +90,7 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
     /**
      * Updates the session associated with the authenticated user. The following steps are performed:
      * <ul>
-     * <li>creating the {@link BaseIdPSession} if the user does not yet have one</li>
+     * <li>creating the {@link AbstractIdPSession} if the user does not yet have one</li>
      * <li>creating a {@link BasicServiceSession} to associate the user with the service for which authentication was
      * performed</li>
      * <li>updating the last activity time of the IdP session</li>

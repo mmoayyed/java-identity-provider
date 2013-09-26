@@ -35,7 +35,7 @@ import javax.json.JsonStructure;
 import javax.json.stream.JsonGenerator;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.idp.session.BaseIdPSession;
+import net.shibboleth.idp.session.AbstractIdPSession;
 import net.shibboleth.idp.session.ServiceSession;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -44,8 +44,11 @@ import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
+
 /**
- * Base class for {@link ServiceSession} serializers that handles data common to all such objects.
+ * A serializer for instances of {@link StorageBackedIdPSession} designed in conjunction with the
+ * {@link StorageService}-backed {@link SessionManager} implementation.
  */
 @ThreadSafe
 public class StorageBackedIdPSessionSerializer implements StorageSerializer<StorageBackedIdPSession> {
@@ -99,12 +102,12 @@ public class StorageBackedIdPSessionSerializer implements StorageSerializer<Stor
                 .write(CREATION_INSTANT_FIELD, instance.getCreationInstant())
                 .write(PRINCIPAL_NAME_FIELD, instance.getPrincipalName());
             
-            if (instance.getAddress(BaseIdPSession.AddressFamily.IPV4) != null) {
-                gen.write(IPV4_ADDRESS_FIELD, instance.getAddress(BaseIdPSession.AddressFamily.IPV4));
+            if (instance.getAddress(AbstractIdPSession.AddressFamily.IPV4) != null) {
+                gen.write(IPV4_ADDRESS_FIELD, instance.getAddress(AbstractIdPSession.AddressFamily.IPV4));
             }
 
-            if (instance.getAddress(BaseIdPSession.AddressFamily.IPV6) != null) {
-                gen.write(IPV6_ADDRESS_FIELD, instance.getAddress(BaseIdPSession.AddressFamily.IPV6));
+            if (instance.getAddress(AbstractIdPSession.AddressFamily.IPV6) != null) {
+                gen.write(IPV6_ADDRESS_FIELD, instance.getAddress(AbstractIdPSession.AddressFamily.IPV6));
             }
             
             Set<AuthenticationResult> results = instance.getAuthenticationResults();
@@ -176,7 +179,9 @@ public class StorageBackedIdPSessionSerializer implements StorageSerializer<Stor
                 JsonArray flowIds = obj.getJsonArray(FLOW_ID_ARRAY_FIELD);
                 if (flowIds != null) {
                     for (JsonString flowId : flowIds.getValuesAs(JsonString.class)) {
-                        targetObject.getAuthenticationFlowIds().add(flowId.getString());
+                        // An absent mapping is used to signify the existence of a result not yet loaded.
+                        targetObject.getAuthenticationResultMap().put(flowId.getString(),
+                                Optional.<AuthenticationResult>absent());
                     }
                 }
             }
@@ -185,7 +190,8 @@ public class StorageBackedIdPSessionSerializer implements StorageSerializer<Stor
                 JsonArray svcIds = obj.getJsonArray(SERVICE_ID_ARRAY_FIELD);
                 if (svcIds != null) {
                     for (JsonString svcId : svcIds.getValuesAs(JsonString.class)) {
-                        targetObject.getServiceIds().add(svcId.getString());
+                        // An absent mapping is used to signify the existence of a session not yet loaded.
+                        targetObject.getServiceSessionMap().put(svcId.getString(), Optional.<ServiceSession>absent());
                     }
                 }
             }

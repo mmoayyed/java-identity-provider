@@ -98,7 +98,7 @@ public interface IdPSession extends IdentifiableComponent {
     @Nullable public AuthenticationResult getAuthenticationResult(@Nonnull @NotEmpty final String flowId);
 
     /**
-     * Add a new {@link AuthenticationResult} to this {@link BaseIdPSession}, replacing any
+     * Add a new {@link AuthenticationResult} to this IdP session, replacing any
      * existing result of the same flow ID.
      * 
      * @param result the result to add

@@ -17,36 +17,47 @@
 
 package net.shibboleth.idp.session.impl;
 
-import java.util.HashSet;
+import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import org.opensaml.storage.StorageRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Optional;
+
+import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.idp.session.BaseIdPSession;
+import net.shibboleth.idp.session.AbstractIdPSession;
 import net.shibboleth.idp.session.ServiceSession;
 import net.shibboleth.idp.session.SessionException;
+import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Implementation of {@link IdPSession} for use with {@link StorageBackedSessionManager}.
  */
-public class StorageBackedIdPSession extends BaseIdPSession {
+public class StorageBackedIdPSession extends AbstractIdPSession {
+    
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(StorageBackedIdPSession.class);
     
     /** Back-reference to parent instance. */
     @Nonnull private final StorageBackedSessionManager sessionManager;
     
     /** Storage version used to synchronize changes. */
     private int version;
-    
-    /** Collection of flow IDs representing current session state. */
-    @Nonnull @NonnullElements private Set<String> flowIds;
-
-    /** Collection of service IDs representing current session state. */
-    @Nonnull @NonnullElements private Set<String> serviceIds;
     
     /**
      * Constructor.
@@ -64,36 +75,88 @@ public class StorageBackedIdPSession extends BaseIdPSession {
         sessionManager = Constraint.isNotNull(manager, "SessionManager cannot be null");
         
         version = 1;
-        flowIds = new HashSet(5);
-        serviceIds = new HashSet(10);
     }
     
     /** {@inheritDoc} */
-    public void setLastActivityInstant(long instant) throws SessionException {
+    public void setLastActivityInstant(@Duration @Positive final long instant) throws SessionException {
         // TODO Auto-generated method stub
         super.setLastActivityInstant(instant);
     }
 
     /** {@inheritDoc} */
-    public void addAuthenticationResult(AuthenticationResult result) throws SessionException {
+    public void bindToAddress(@Nonnull @NotEmpty final String address) throws SessionException {
+        // TODO Auto-generated method stub
+        super.bindToAddress(address);
+    }
+
+    /** {@inheritDoc} */
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<AuthenticationResult> getAuthenticationResults() {
+        
+        // Check for any sparse/null values in the map, which need to be loaded before returning a complete set.
+        for (Map.Entry<String, Optional<AuthenticationResult>> entry : getAuthenticationResultMap().entrySet()) {
+            if (!entry.getValue().isPresent()) {
+                AuthenticationResult result = loadAuthenticationResultFromStorage(entry.getKey());
+                entry.setValue(Optional.of(result));
+            }
+        }
+        
+        return super.getAuthenticationResults();
+    }
+
+    /** {@inheritDoc} */
+    @Nullable public AuthenticationResult getAuthenticationResult(@Nonnull @NotEmpty final String flowId) {
+        // Check existing map.
+        AuthenticationResult result = super.getAuthenticationResult(flowId);
+        if (result != null) {
+            return result;
+        }
+        
+        // See if such an ID is purported to exist.
+        final String trimmed = StringSupport.trimOrNull(flowId);
+        if (!getAuthenticationResultMap().containsKey(trimmed)) {
+            return null;
+        }
+        
+        // Load and add to map.
+        result = loadAuthenticationResultFromStorage(trimmed);
+        if (result != null) {
+            doAddAuthenticationResult(result);
+        }
+        return result;
+    }
+    
+    /** {@inheritDoc} */
+    public void addAuthenticationResult(@Nonnull final AuthenticationResult result) throws SessionException {
         // TODO Auto-generated method stub
         super.addAuthenticationResult(result);
     }
 
     /** {@inheritDoc} */
-    public boolean removeAuthenticationResult(AuthenticationResult result) throws SessionException {
+    public boolean removeAuthenticationResult(@Nonnull final AuthenticationResult result) throws SessionException {
         // TODO Auto-generated method stub
         return super.removeAuthenticationResult(result);
     }
 
     /** {@inheritDoc} */
-    public void addServiceSession(ServiceSession serviceSession) throws SessionException {
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<ServiceSession> getServiceSessions() {
+        // TODO Auto-generated method stub
+        return super.getServiceSessions();
+    }
+
+    /** {@inheritDoc} */
+    @Nullable public ServiceSession getServiceSession(@Nonnull @NotEmpty final String serviceId) {
+        // TODO Auto-generated method stub
+        return super.getServiceSession(serviceId);
+    }
+    
+    /** {@inheritDoc} */
+    public void addServiceSession(@Nonnull final ServiceSession serviceSession) throws SessionException {
         // TODO Auto-generated method stub
         super.addServiceSession(serviceSession);
     }
 
     /** {@inheritDoc} */
-    public boolean removeServiceSession(ServiceSession serviceSession) throws SessionException {
+    public boolean removeServiceSession(@Nonnull final ServiceSession serviceSession) throws SessionException {
         // TODO Auto-generated method stub
         return super.removeServiceSession(serviceSession);
     }
@@ -124,23 +187,45 @@ public class StorageBackedIdPSession extends BaseIdPSession {
     protected void setVersion(final int ver) {
         version = ver;
     }
-    
-    /**
-     * Get the set of authentication flow IDs associated with the session.
-     * 
-     * @return live set of flow IDs
-     */
-    @Nonnull @NonnullElements @Live protected Set<String> getAuthenticationFlowIds() {
-        return flowIds;
+
+    /** {@inheritDoc} */
+    @Nonnull @NonnullElements @Live public Map<String, Optional<AuthenticationResult>> getAuthenticationResultMap() {
+        return super.getAuthenticationResultMap();
     }
 
+    /** {@inheritDoc} */
+    @Nonnull @NonnullElements @Live public Map<String, Optional<ServiceSession>> getServiceSessionMap() {
+        return super.getServiceSessionMap();
+    }
+    
     /**
-     * Get the set of service IDs associated with the session.
+     * Loads an {@link AuthenticationResult} record from storage and deserializes it using the object
+     * attached to the corresponding {@link AuthenticationFlowDescriptor}.
      * 
-     * @return live set of service IDs
+     * @param flowId ID of result/flow to load
+     * @return the stored result, or null
      */
-    @Nonnull @NonnullElements @Live protected Set<String> getServiceIds() {
-        return serviceIds;
+    @Nullable private AuthenticationResult loadAuthenticationResultFromStorage(@Nonnull @NotEmpty final String flowId) {
+        log.debug("Loading AuthenticationResult for flow {} in session {}", flowId, getId());
+        
+        AuthenticationFlowDescriptor flow = sessionManager.getAuthenticationFlowDescriptor(flowId);
+        if (flow == null) {
+            log.warn("No flow descriptor installed for ID {}, unable to load result from storage", flowId);
+            return null;
+        } else if (flow.getResultSerializer() == null) {
+            log.warn("No serializer installed for flow ID {}, unable to load result from storage", flowId);
+            return null;
+        }
+        
+        try {
+            final StorageRecord<AuthenticationResult> record =
+                    sessionManager.getStorageService().read(getId(), flowId);
+            return record.getValue(flow.getResultSerializer(), getId(), flowId);
+        } catch (IOException e) {
+            log.error("Exception loading AuthenticationResult for flow " + flowId + " from storage", e);
+        }
+        
+        return null;
     }
 
 }

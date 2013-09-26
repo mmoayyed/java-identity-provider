@@ -32,8 +32,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-/** {@link BaseAuthenticationResultSerializer} unit test. */
-public class BaseAuthenticationResultSerializerTest {
+/** {@link DefaultAuthenticationResultSerializer} unit test. */
+public class DefaultAuthenticationResultSerializerTest {
 
     private static final String DATAPATH = "/data/net/shibboleth/idp/authn/";
     
@@ -45,10 +45,10 @@ public class BaseAuthenticationResultSerializerTest {
     
     private static final long ACTIVITY = 1378827556778L;
     
-    private BaseAuthenticationResultSerializer serializer;
+    private DefaultAuthenticationResultSerializer serializer;
     
     @BeforeMethod public void setUp() {
-        serializer = new BaseAuthenticationResultSerializer(0);
+        serializer = new DefaultAuthenticationResultSerializer(0);
     }
 
     @Test public void testInvalid() throws Exception {

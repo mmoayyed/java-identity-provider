@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.session;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -27,6 +28,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.utilities.java.support.annotation.Duration;
+import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
@@ -40,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -55,7 +58,7 @@ import com.google.common.collect.ImmutableSet;
  * methods to check session state and update address information as required.</p> 
  */
 @ThreadSafe
-public abstract class BaseIdPSession implements IdPSession {
+public abstract class AbstractIdPSession implements IdPSession {
 
     /** Address syntaxes supported for address binding. */
     public enum AddressFamily {
@@ -70,7 +73,7 @@ public abstract class BaseIdPSession implements IdPSession {
     }
     
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(BaseIdPSession.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractIdPSession.class);
     
     /** Unique ID of this session. */
     @Nonnull @NotEmpty private final String id;
@@ -91,10 +94,10 @@ public abstract class BaseIdPSession implements IdPSession {
     @Nullable private String ipV6Address;
         
     /** Tracks authentication results that have occurred during this session. */
-    @Nonnull @NonnullElements private final ConcurrentMap<String, AuthenticationResult> authenticationResults;
+    @Nonnull private final ConcurrentMap<String, Optional<AuthenticationResult>> authenticationResults;
 
     /** Tracks services which have been issued authentication tokens during this session. */
-    @Nonnull @NonnullElements private final ConcurrentMap<String, ServiceSession> serviceSessions;
+    @Nonnull private final ConcurrentMap<String, Optional<ServiceSession>> serviceSessions;
 
     /**
      * Constructor.
@@ -103,7 +106,7 @@ public abstract class BaseIdPSession implements IdPSession {
      * @param canonicalName canonical name of subject
      * @param creationTime creation time of session in milliseconds
      */
-    public BaseIdPSession(@Nonnull @NotEmpty final String sessionId, @Nonnull @NotEmpty final String canonicalName,
+    public AbstractIdPSession(@Nonnull @NotEmpty final String sessionId, @Nonnull @NotEmpty final String canonicalName,
             @Positive final long creationTime) {
         id = Constraint.isNotNull(StringSupport.trimOrNull(sessionId), "Session ID cannot be null or empty");
         principalName = Constraint.isNotNull(StringSupport.trimOrNull(canonicalName),
@@ -212,12 +215,12 @@ public abstract class BaseIdPSession implements IdPSession {
 
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<AuthenticationResult> getAuthenticationResults() {
-        return ImmutableSet.copyOf(authenticationResults.values());
+        return ImmutableSet.copyOf(Optional.presentInstances(authenticationResults.values()));
     }
 
     /** {@inheritDoc} */
     @Nullable public AuthenticationResult getAuthenticationResult(@Nonnull @NotEmpty final String flowId) {
-        return authenticationResults.get(StringSupport.trimOrNull(flowId));
+        return authenticationResults.get(StringSupport.trimOrNull(flowId)).orNull();
     }
 
     /** {@inheritDoc} */
@@ -243,10 +246,11 @@ public abstract class BaseIdPSession implements IdPSession {
     public void doAddAuthenticationResult(@Nonnull final AuthenticationResult result) {
         Constraint.isNotNull(result, "AuthenticationResult cannot be null");
     
-        AuthenticationResult prev = authenticationResults.put(result.getAuthenticationFlowId(), result);
-        if (prev != null) {
+        Optional<AuthenticationResult> prev =
+                authenticationResults.put(result.getAuthenticationFlowId(), Optional.of(result));
+        if (prev != null && prev.isPresent()) {
             log.debug("IdPSession {}: replaced old AuthenticationResult for flow ID {}", id,
-                    prev.getAuthenticationFlowId());
+                    prev.get().getAuthenticationFlowId());
         }
     }
 
@@ -264,17 +268,17 @@ public abstract class BaseIdPSession implements IdPSession {
     public boolean doRemoveAuthenticationResult(@Nonnull final AuthenticationResult result) {
         Constraint.isNotNull(result, "Authentication event can not be null");
     
-        return authenticationResults.remove(result.getAuthenticationFlowId(), result);
+        return authenticationResults.remove(result.getAuthenticationFlowId(), Optional.of(result));
     }
 
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<ServiceSession> getServiceSessions() {
-        return ImmutableSet.copyOf(serviceSessions.values());
+        return ImmutableSet.copyOf(Optional.presentInstances(serviceSessions.values()));
     }
 
     /** {@inheritDoc} */
     @Nullable public ServiceSession getServiceSession(@Nonnull @NotEmpty final String serviceId) {
-        return serviceSessions.get(StringSupport.trimOrNull(serviceId));
+        return serviceSessions.get(StringSupport.trimOrNull(serviceId)).orNull();
     }
 
     /** {@inheritDoc} */
@@ -299,9 +303,9 @@ public abstract class BaseIdPSession implements IdPSession {
     public void doAddServiceSession(@Nonnull final ServiceSession serviceSession) {
         Constraint.isNotNull(serviceSession, "Service session cannot be null");
     
-        ServiceSession prev = serviceSessions.put(serviceSession.getId(), serviceSession);
-        if (prev != null) {
-            log.debug("IdPSession {}: replaced old ServiceSession for service {}", id, prev.getId());
+        Optional<ServiceSession> prev = serviceSessions.put(serviceSession.getId(), Optional.of(serviceSession));
+        if (prev != null && prev.isPresent()) {
+            log.debug("IdPSession {}: replaced old ServiceSession for service {}", id, prev.get().getId());
         }
     }
 
@@ -318,7 +322,7 @@ public abstract class BaseIdPSession implements IdPSession {
     public boolean doRemoveServiceSession(@Nonnull final ServiceSession session) {
         Constraint.isNotNull(session, "Service session cannot be null");
     
-        return serviceSessions.remove(session.getId(), session);
+        return serviceSessions.remove(session.getId(), Optional.of(session));
     }
 
     /** {@inheritDoc} */
@@ -354,8 +358,8 @@ public abstract class BaseIdPSession implements IdPSession {
             return true;
         }
     
-        if (obj instanceof BaseIdPSession) {
-            return Objects.equal(getId(), ((BaseIdPSession) obj).getId());
+        if (obj instanceof AbstractIdPSession) {
+            return Objects.equal(getId(), ((AbstractIdPSession) obj).getId());
         }
     
         return false;
@@ -375,7 +379,25 @@ public abstract class BaseIdPSession implements IdPSession {
                 .add("authenticationResults", getAuthenticationResults()).add("serviceSessions", getServiceSessions())
                 .toString();
     }
+    
+    /**
+     * Accessor for the underlying {@link AuthenticationResult} map maintained with the IdP session.
+     * 
+     * @return direct access to the result map
+     */
+    @Nonnull @NonnullElements @Live protected Map<String, Optional<AuthenticationResult>> getAuthenticationResultMap() {
+        return authenticationResults;
+    }
 
+    /**
+     * Accessor for the underlying {@link ServiceSession} map maintained with the IdP session.
+     * 
+     * @return direct access to the service session map
+     */
+    @Nonnull @NonnullElements @Live protected Map<String, Optional<ServiceSession>> getServiceSessionMap() {
+        return serviceSessions;
+    }
+    
     /**
      * Returns the address family for an input address.
      * 

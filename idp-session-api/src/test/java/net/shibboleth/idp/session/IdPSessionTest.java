@@ -24,7 +24,7 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** {@link BaseIdPSession} unit test. */
+/** {@link AbstractIdPSession} unit test. */
 public class IdPSessionTest {
 
     /** Tests that everything is properly initialized during object construction. */
@@ -32,7 +32,7 @@ public class IdPSessionTest {
         long start = System.currentTimeMillis();
         Thread.sleep(50);
 
-        BaseIdPSession session = new DummyIdPSession("test", "foo");
+        AbstractIdPSession session = new DummyIdPSession("test", "foo");
         Assert.assertNotNull(session.getAuthenticationResults());
         Assert.assertFalse(session.getAuthenticationResults().iterator().hasNext());
         Assert.assertTrue(session.getCreationInstant() > start);
@@ -73,7 +73,7 @@ public class IdPSessionTest {
 
     /** Tests mutating the last activity instant. */
     @Test public void testLastActivityInstant() throws Exception {
-        BaseIdPSession session = new DummyIdPSession("test", "foo");
+        AbstractIdPSession session = new DummyIdPSession("test", "foo");
 
         long now = System.currentTimeMillis();
         // this is here to allow the event's last activity time to deviate from the time 'now'
@@ -88,7 +88,7 @@ public class IdPSessionTest {
 
     /** Tests mutating the last activity instant. */
     @Test public void testAddressValidation() throws Exception {
-        BaseIdPSession session = new DummyIdPSession("test", "foo");
+        AbstractIdPSession session = new DummyIdPSession("test", "foo");
 
         Assert.assertTrue(session.checkAddress("127.0.0.1"));
         Assert.assertTrue(session.checkAddress("127.0.0.1"));
@@ -108,7 +108,7 @@ public class IdPSessionTest {
         BasicServiceSession svcSession2 = new BasicServiceSession("svc2", "test", now, exp);
         BasicServiceSession svcSession3 = new BasicServiceSession("svc3", "test", now, exp);
 
-        BaseIdPSession session = new DummyIdPSession("test", "foo");
+        AbstractIdPSession session = new DummyIdPSession("test", "foo");
         session.addServiceSession(svcSession1);
         Assert.assertEquals(session.getServiceSessions().size(), 1);
         Assert.assertTrue(session.getServiceSessions().contains(svcSession1));
@@ -158,7 +158,7 @@ public class IdPSessionTest {
         BasicServiceSession svcSession1 = new BasicServiceSession("svc1", "test", now, exp);
         BasicServiceSession svcSession2 = new BasicServiceSession("svc2", "test", now, exp);
 
-        BaseIdPSession session = new DummyIdPSession("test", "foo");
+        AbstractIdPSession session = new DummyIdPSession("test", "foo");
         session.addServiceSession(svcSession1);
         session.addServiceSession(svcSession2);
 
@@ -192,7 +192,7 @@ public class IdPSessionTest {
         AuthenticationResult event2 = new AuthenticationResult("bar", new UsernamePrincipal("john"));
         AuthenticationResult event3 = new AuthenticationResult("baz", new UsernamePrincipal("john"));
 
-        BaseIdPSession session = new DummyIdPSession("test", "foo");
+        AbstractIdPSession session = new DummyIdPSession("test", "foo");
         session.addAuthenticationResult(event1);
         session.addAuthenticationResult(event2);
         session.addAuthenticationResult(event3);
@@ -222,7 +222,7 @@ public class IdPSessionTest {
     /**
      * Dummy concrete class for testing purposes.
      */
-    private class DummyIdPSession extends BaseIdPSession {
+    private class DummyIdPSession extends AbstractIdPSession {
 
         /**
          * Constructor.

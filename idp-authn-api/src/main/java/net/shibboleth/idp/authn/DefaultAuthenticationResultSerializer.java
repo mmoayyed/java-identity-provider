@@ -57,10 +57,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
 
-// Checkstyle: AbstractClassName OFF
-// My preferred name would be "BasicAuthenticationResultSerializer", but that causes confusion with
-// the term "Basic Authentication" in HTTP.
-
 /**
  * Handles serialization of results that carry only custom {@link Principal} objects of a simple
  * nature that can be reconstructed via a String-argument constructor.
@@ -68,7 +64,7 @@ import com.google.common.collect.ImmutableBiMap;
  * <p>The expiration of the resulting record <strong>MUST</strong> be set to the last activity
  * instant of the object plus an optional offset value supplied to the constructor.</p>
  */
-public class BaseAuthenticationResultSerializer implements StorageSerializer<AuthenticationResult> {
+public class DefaultAuthenticationResultSerializer implements StorageSerializer<AuthenticationResult> {
 
     /** Field name of Flow ID. */
     private static final String FLOW_ID_FIELD = "id";
@@ -89,7 +85,7 @@ public class BaseAuthenticationResultSerializer implements StorageSerializer<Aut
     private static final String USERNAME_FIELD = "U";
     
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(BaseAuthenticationResultSerializer.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(DefaultAuthenticationResultSerializer.class);
     
     /** Milliseconds to substract from record expiration to establish last activity value. */
     @Duration @NonNegative private final long expirationOffset;
@@ -105,7 +101,7 @@ public class BaseAuthenticationResultSerializer implements StorageSerializer<Aut
      *
      * @param offset milliseconds to substract from record expiration to establish last activity value
      */
-    public BaseAuthenticationResultSerializer(@Duration @NonNegative final long offset) {
+    public DefaultAuthenticationResultSerializer(@Duration @NonNegative final long offset) {
         symbolics = ImmutableBiMap.of();
         compatiblePrincipalTypes = Collections.synchronizedSet(new HashSet<Class<? extends Principal>>());
         expirationOffset = Constraint.isGreaterThanOrEqual(0, offset, "Offset must be greater than or equal to zero");

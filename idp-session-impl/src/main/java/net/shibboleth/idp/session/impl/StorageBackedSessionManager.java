@@ -18,7 +18,9 @@
 package net.shibboleth.idp.session.impl;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,8 +32,11 @@ import org.opensaml.storage.VersionMismatchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
+import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionManager;
@@ -118,6 +123,9 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     /** Serializer for sessions. */
     @Nonnull private final StorageBackedIdPSessionSerializer serializer;
     
+    /** Flows that could potentially be used to authenticate the user. */
+    @Nonnull @NonnullElements private final Map<String, AuthenticationFlowDescriptor> flowDescriptorMap;
+    
     /**
      * Constructor.
      *
@@ -125,6 +133,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     public StorageBackedSessionManager() {
         sessionTimeout = 60 * 60 * 1000;
         serializer = new StorageBackedIdPSessionSerializer(this, null);
+        flowDescriptorMap = new HashMap();
     }
     
     /**
@@ -230,6 +239,15 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         
         secondaryServiceIndex = flag;
     }
+
+    /**
+     * Get the StorageService back-end to use.
+     * 
+     * @return the back-end to use
+     */
+    @Nonnull public StorageService getStorageService() {
+       return storageService;
+    }
     
     /**
      * Set the StorageService back-end to use.
@@ -251,6 +269,34 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         idGenerator = Constraint.isNotNull(newIDGenerator, "IdentifierGenerationStrategy cannot be null");
+    }
+
+    /**
+     * Get a matching {@link AuthenticatonFlowDescriptor}.
+     * 
+     * @param flowId the ID of the flow to return
+     * 
+     * @return the matching flow descriptor, or null
+     */
+    @Nullable public AuthenticationFlowDescriptor getAuthenticationFlowDescriptor(
+            @Nonnull @NotEmpty final String flowId) {
+        return flowDescriptorMap.get(flowId);
+    }
+    
+    /**
+     * Set the {@link AuthenticationFlowDescriptor} collection active in the system.
+     * 
+     * @param flows the flows available for possible use
+     */
+    public void setAuthenticationFlowDescriptors(
+            @Nonnull @NonnullElements final Iterable<AuthenticationFlowDescriptor> flows) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        Constraint.isNotNull(flows, "Flow collection cannot be null");
+        
+        flowDescriptorMap.clear();
+        for (AuthenticationFlowDescriptor desc : Iterables.filter(flows, Predicates.notNull())) {
+            flowDescriptorMap.put(desc.getId(), desc);
+        }
     }
     
     /** {@inheritDoc} */
