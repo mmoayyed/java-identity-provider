@@ -25,6 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.joda.time.DateTime;
 import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;
@@ -81,8 +82,20 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
     
     /** {@inheritDoc} */
     public void setLastActivityInstant(@Duration @Positive final long instant) throws SessionException {
-        // TODO Auto-generated method stub
-        super.setLastActivityInstant(instant);
+        
+        long exp = instant + sessionManager.getSessionTimeout() + sessionManager.getSessionSlop();
+        log.debug("Updating expiration of master record for session {} to {}", getId(), new DateTime(exp));
+        
+        try {
+            sessionManager.getStorageService().updateExpiration(
+                    getId(), StorageBackedSessionManager.SESSION_MASTER_KEY, exp);
+            super.setLastActivityInstant(instant);
+        } catch (IOException e) {
+            log.error("Exception updating expiration of master record for session " + getId(), e);
+            if (!sessionManager.isMaskStorageFailure()) {
+                throw new SessionException("Exception updating expiration of session record", e);
+            }
+        }
     }
 
     /** {@inheritDoc} */

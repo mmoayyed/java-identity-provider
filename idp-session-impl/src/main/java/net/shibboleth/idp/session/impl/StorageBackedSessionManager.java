@@ -95,7 +95,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         SessionManager, SessionResolver {
 
     /** Storage key of master session records. */
-    @Nonnull private static final String SESSION_MASTER_KEY = "_session";
+    @Nonnull public static final String SESSION_MASTER_KEY = "_session";
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(StorageBackedSessionManager.class);
