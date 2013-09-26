@@ -24,7 +24,9 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.opensaml.storage.StorageRecord;
+import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,14 +141,47 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
 
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<ServiceSession> getServiceSessions() {
-        // TODO Auto-generated method stub
+        
+        if (sessionManager.isTrackServiceSessions()) {
+            // Check for any sparse/null values in the map, which need to be loaded before returning a complete set.
+            for (Map.Entry<String, Optional<ServiceSession>> entry : getServiceSessionMap().entrySet()) {
+                if (!entry.getValue().isPresent()) {
+                    ServiceSession result = loadServiceSessionFromStorage(entry.getKey());
+                    entry.setValue(Optional.of(result));
+                }
+            }
+        } else {
+            log.warn("Request for ServiceSessions will return nothing, ServiceManager is not tracking them");
+        }
+        
         return super.getServiceSessions();
     }
 
     /** {@inheritDoc} */
     @Nullable public ServiceSession getServiceSession(@Nonnull @NotEmpty final String serviceId) {
-        // TODO Auto-generated method stub
-        return super.getServiceSession(serviceId);
+        if (sessionManager.isTrackServiceSessions()) {
+            // Check existing map.
+            ServiceSession result = super.getServiceSession(serviceId);
+            if (result != null) {
+                return result;
+            }
+            
+            // See if such an ID is purported to exist.
+            final String trimmed = StringSupport.trimOrNull(serviceId);
+            if (!getServiceSessionMap().containsKey(trimmed)) {
+                return null;
+            }
+            
+            // Load and add to map.
+            result = loadServiceSessionFromStorage(trimmed);
+            if (result != null) {
+                doAddServiceSession(result);
+            }
+            return result;
+        } else {
+            log.warn("Request for ServiceSession will return nothing, ServiceManager is not tracking them");
+            return null;
+        }
     }
     
     /** {@inheritDoc} */
@@ -228,4 +263,51 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
         return null;
     }
 
+    /**
+     * Loads a {@link ServiceSession} record from storage and deserializes it using the object
+     * registered in the attached {@link ServiceSessionSerializerRegistry}.
+     * 
+     * @param serviceId ID of service for session to load
+     * @return the stored session, or null
+     */
+    @Nullable private ServiceSession loadServiceSessionFromStorage(@Nonnull @NotEmpty final String serviceId) {
+        log.debug("Loading ServiceSession for service {} in session {}", serviceId, getId());
+
+        final String key;
+        if (serviceId.length() > sessionManager.getStorageService().getCapabilities().getKeySize()) {
+            key = DigestUtils.sha256Hex(serviceId);
+        } else {
+            key = serviceId;
+        }
+        
+        try {
+            final StorageRecord<ServiceSession> record = sessionManager.getStorageService().read(getId(), key);
+            
+            // Parse out the class type.
+            int pos = record.getValue().indexOf(':');
+            if (pos == -1) {
+                throw new IOException("No class type found prefixed to record");
+            }
+            
+            final String sessionClassName = record.getValue().substring(0,  pos);
+            
+            // Look up the serializer instance for that class type.
+            StorageSerializer<? extends ServiceSession> serviceSessionSerializer =
+                    sessionManager.getServiceSessionSerializerRegistry().lookup(
+                            Class.forName(sessionClassName).asSubclass(ServiceSession.class));
+            if (serviceSessionSerializer == null) {
+                throw new ClassNotFoundException("No serializer registered for ServiceSession type "
+                        + sessionClassName);
+            }
+            
+            // Deserializer starting past the colon delimiter.
+            return serviceSessionSerializer.deserialize(
+                    record.getVersion(), getId(), key, record.getValue().substring(pos + 1), record.getExpiration());
+            
+        } catch (IOException | ClassNotFoundException e) {
+            log.error("Exception loading ServiceSession for service " + serviceId + " from storage", e);
+        }
+        
+        return null;
+    }
 }

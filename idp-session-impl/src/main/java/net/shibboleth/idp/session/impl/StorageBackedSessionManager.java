@@ -38,6 +38,7 @@ import com.google.common.collect.Iterables;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.session.IdPSession;
+import net.shibboleth.idp.session.ServiceSessionSerializerRegistry;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.session.SessionResolver;
@@ -125,6 +126,9 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     
     /** Flows that could potentially be used to authenticate the user. */
     @Nonnull @NonnullElements private final Map<String, AuthenticationFlowDescriptor> flowDescriptorMap;
+    
+    /** Mappings between a ServiceSession type and a serializer implementation. */
+    @Nullable private ServiceSessionSerializerRegistry serviceSessionSerializerRegistry;
     
     /**
      * Constructor.
@@ -299,6 +303,26 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         }
     }
     
+    /**
+     * Get the attached {@link ServiceSessionSerializerRegistry}.
+     * 
+     * @return a registry of ServiceSession class to serializer mappings
+     */
+    @Nullable public ServiceSessionSerializerRegistry getServiceSessionSerializerRegistry() {
+        return serviceSessionSerializerRegistry;
+    }
+    
+    /**
+     * Set the {@link ServiceSessionSerializerRegistry} to use.
+     * 
+     * @param registry  a registry of ServiceSession class to serializer mappings
+     */
+    public void setServiceSessionSerializerRegistry(@Nullable final ServiceSessionSerializerRegistry registry) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        serviceSessionSerializerRegistry = registry;
+    }
+    
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         if (storageService == null) {
@@ -310,6 +334,9 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         } else if ((trackServiceSessions || secondaryServiceIndex) && storageService instanceof ClientStorageService) {
             throw new ComponentInitializationException(
                     "Tracking ServiceSessions requires a server-side StorageService");
+        } else if (trackServiceSessions && serviceSessionSerializerRegistry == null) {
+            throw new ComponentInitializationException(
+                    "Tracking ServiceSessions requires a ServiceSessionSerializerRegistry");
         }
     }
 
