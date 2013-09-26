@@ -137,7 +137,7 @@ public class DefaultAuthenticationResultSerializerTest {
     
     private String fileToString(String pathname) throws URISyntaxException, IOException {
         try (FileInputStream stream = new FileInputStream(
-                new File(BaseAuthenticationResultSerializerTest.class.getResource(pathname).toURI()))) {
+                new File(DefaultAuthenticationResultSerializerTest.class.getResource(pathname).toURI()))) {
             int avail = stream.available();
             byte[] data = new byte[avail];
             int numRead = 0;
