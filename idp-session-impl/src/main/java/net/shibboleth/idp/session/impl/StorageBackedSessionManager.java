@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 
 import org.opensaml.storage.ClientStorageService;
 import org.opensaml.storage.StorageRecord;
+import org.opensaml.storage.StorageSerializer;
 import org.opensaml.storage.StorageService;
 import org.opensaml.storage.VersionMismatchException;
 import org.slf4j.Logger;
@@ -273,6 +274,15 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         idGenerator = Constraint.isNotNull(newIDGenerator, "IdentifierGenerationStrategy cannot be null");
+    }
+    
+    /**
+     * Get the serializer for the {@link IdPSession} objects managed by this implementation.
+     * 
+     * @return  the serializer to use when writing back session objects
+     */
+    @Nonnull public StorageSerializer<StorageBackedIdPSession> getStorageSerializer() {
+        return serializer;
     }
 
     /**

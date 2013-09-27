@@ -328,6 +328,10 @@ public abstract class AbstractIdPSession implements IdPSession {
     /** {@inheritDoc} */
     public boolean checkAddress(@Nonnull @NotEmpty final String address) throws SessionException {
         AddressFamily family = getAddressFamily(address);
+        if (family == AddressFamily.UNKNOWN) {
+            log.warn("Address {} is of unknown type", address);
+            return false;
+        }
         String bound = getAddress(family);
         if (bound != null) {
             if (!bound.equals(address)) {
@@ -404,7 +408,7 @@ public abstract class AbstractIdPSession implements IdPSession {
      * @param address   the string to check
      * @return the address family
      */
-    @Nonnull private static AddressFamily getAddressFamily(@Nonnull @NotEmpty final String address) {
+    @Nonnull protected static AddressFamily getAddressFamily(@Nonnull @NotEmpty final String address) {
         if (address.contains(":")) {
             return AddressFamily.IPV6;
         } else if (address.contains(".")) {

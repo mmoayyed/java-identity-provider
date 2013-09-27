@@ -86,7 +86,7 @@ public class StorageBackedIdPSessionSerializerTest {
         long exp = INSTANT + (60 * 60 * 1000);
         
         StorageBackedIdPSession session = new StorageBackedIdPSession(manager, "test", "foo", INSTANT);
-        session.bindToAddress("127.0.0.1");
+        session.doBindToAddress("127.0.0.1");
         
         String s = serializer.serialize(session);
         String s2 = fileToString(DATAPATH + "basicIdPSession.json");
@@ -104,7 +104,7 @@ public class StorageBackedIdPSessionSerializerTest {
         long exp = INSTANT + (60 * 60 * 1000);
         
         StorageBackedIdPSession session = new StorageBackedIdPSession(manager, "test", "foo", INSTANT);
-        session.bindToAddress("127.0.0.1");
+        session.doBindToAddress("127.0.0.1");
         session.addAuthenticationResult(new AuthenticationResult("a", new UsernamePrincipal("jdoe")));
         session.addAuthenticationResult(new AuthenticationResult("b", new UsernamePrincipal("jdoe")));
         session.addAuthenticationResult(new AuthenticationResult("c", new UsernamePrincipal("jdoe")));

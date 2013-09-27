@@ -18,6 +18,7 @@
 package net.shibboleth.idp.session.impl;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,6 +29,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.joda.time.DateTime;
 import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageSerializer;
+import org.opensaml.storage.VersionMismatchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,19 +102,65 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
 
     /** {@inheritDoc} */
     public void bindToAddress(@Nonnull @NotEmpty final String address) throws SessionException {
-        // TODO Auto-generated method stub
+        // Update ourselves and then attempt to write back.
         super.bindToAddress(address);
+        try {
+            int attempts = 10;
+            boolean success = writeToStorage();
+            while (!success && attempts-- > 0) {
+                // The record may have changed underneath, so we need to re-check the address.
+                String nowBound = getAddress(getAddressFamily(address));
+                if (nowBound != null) {
+                    // The same address type is now set, so recheck. No need to update storage regardless.
+                    if (nowBound.equals(address)) {
+                        return;
+                    } else {
+                        log.warn("Client address is {} but session {} already bound to {}", address, getId(), nowBound);
+                        throw new SessionException("A different address of the same type was bound to the session");
+                    }
+                } else {
+                    // We're still clear, so update ourselves again and try to write back.
+                    super.bindToAddress(address);
+                    success = writeToStorage();
+                }
+            }
+            log.error("Exhausted retry attempts updating record for session {}", getId());
+        } catch (IOException e) {
+            log.error("Exception updating address binding of master record for session " + getId(), e);
+            if (!sessionManager.isMaskStorageFailure()) {
+                throw new SessionException("Exception updating address binding of session record", e);
+            }
+        }
     }
 
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<AuthenticationResult> getAuthenticationResults() {
         
+        boolean dirty = false;
+
         // Check for any sparse/null values in the map, which need to be loaded before returning a complete set.
-        for (Map.Entry<String, Optional<AuthenticationResult>> entry : getAuthenticationResultMap().entrySet()) {
+        Iterator<Map.Entry<String, Optional<AuthenticationResult>>> entries =
+                getAuthenticationResultMap().entrySet().iterator();
+        while (entries.hasNext()) {
+            Map.Entry<String, Optional<AuthenticationResult>> entry = entries.next();
             if (!entry.getValue().isPresent()) {
-                AuthenticationResult result = loadAuthenticationResultFromStorage(entry.getKey());
-                entry.setValue(Optional.of(result));
+                try {
+                    AuthenticationResult result = loadAuthenticationResultFromStorage(entry.getKey());
+                    if (result != null) {
+                        entry.setValue(Optional.of(result));
+                    } else {
+                        // A null here means the reference to the record should be removed.
+                        entries.remove();
+                        dirty = true;
+                    }
+                } catch (IOException e) {
+                    // An exception implies the record *might* still be accessible later.
+                }
             }
+        }
+        
+        if (dirty) {
+            // TODO: update record
         }
         
         return super.getAuthenticationResults();
@@ -133,10 +181,19 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
         }
         
         // Load and add to map.
-        result = loadAuthenticationResultFromStorage(trimmed);
-        if (result != null) {
-            doAddAuthenticationResult(result);
+        try {
+            result = loadAuthenticationResultFromStorage(trimmed);
+            if (result != null) {
+                doAddAuthenticationResult(result);
+            } else {
+                // A null here means the reference to the record should be removed.
+                getAuthenticationResultMap().remove(trimmed);
+                // TODO: update the record
+            }
+        } catch (IOException e) {
+            // An exception implies the record *might* still be accessible later.
         }
+        
         return result;
     }
     
@@ -155,13 +212,32 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<ServiceSession> getServiceSessions() {
         
+        boolean dirty = false;
+        
         if (sessionManager.isTrackServiceSessions()) {
             // Check for any sparse/null values in the map, which need to be loaded before returning a complete set.
-            for (Map.Entry<String, Optional<ServiceSession>> entry : getServiceSessionMap().entrySet()) {
+            Iterator<Map.Entry<String, Optional<ServiceSession>>> entries =
+                    getServiceSessionMap().entrySet().iterator();
+            while (entries.hasNext()) {
+                Map.Entry<String, Optional<ServiceSession>> entry = entries.next();
                 if (!entry.getValue().isPresent()) {
-                    ServiceSession result = loadServiceSessionFromStorage(entry.getKey());
-                    entry.setValue(Optional.of(result));
+                    try {
+                        ServiceSession result = loadServiceSessionFromStorage(entry.getKey());
+                        if (result != null) {
+                            entry.setValue(Optional.of(result));
+                        } else {
+                            // A null here means the reference to the record should be removed.
+                            entries.remove();
+                            dirty = true;
+                        }
+                    } catch (IOException e) {
+                        // An exception implies the record *might* still be accessible later.
+                    }
                 }
+            }
+            
+            if (dirty) {
+                // TODO: update record
             }
         } else {
             log.warn("Request for ServiceSessions will return nothing, ServiceManager is not tracking them");
@@ -186,9 +262,17 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             }
             
             // Load and add to map.
-            result = loadServiceSessionFromStorage(trimmed);
-            if (result != null) {
-                doAddServiceSession(result);
+            try {
+                result = loadServiceSessionFromStorage(trimmed);
+                if (result != null) {
+                    doAddServiceSession(result);
+                } else {
+                    // A null here means the reference to the record should be removed.
+                    getServiceSessionMap().remove(trimmed);
+                    // TODO: update the record
+                }
+            } catch (IOException e) {
+                // An exception implies the record *might* still be accessible later.
             }
             return result;
         } else {
@@ -251,9 +335,12 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
      * attached to the corresponding {@link AuthenticationFlowDescriptor}.
      * 
      * @param flowId ID of result/flow to load
-     * @return the stored result, or null
+     * 
+     * @return the stored result, or null if the record is missing or unusable
+     * @throws IOException if a possibly transitory storage-related error occurs
      */
-    @Nullable private AuthenticationResult loadAuthenticationResultFromStorage(@Nonnull @NotEmpty final String flowId) {
+    @Nullable private AuthenticationResult loadAuthenticationResultFromStorage(@Nonnull @NotEmpty final String flowId)
+            throws IOException {
         log.debug("Loading AuthenticationResult for flow {} in session {}", flowId, getId());
         
         AuthenticationFlowDescriptor flow = sessionManager.getAuthenticationFlowDescriptor(flowId);
@@ -268,12 +355,15 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
         try {
             final StorageRecord<AuthenticationResult> record =
                     sessionManager.getStorageService().read(getId(), flowId);
-            return record.getValue(flow.getResultSerializer(), getId(), flowId);
+            if (record != null) {
+                return record.getValue(flow.getResultSerializer(), getId(), flowId);
+            } else {
+                return null;
+            }
         } catch (IOException e) {
             log.error("Exception loading AuthenticationResult for flow " + flowId + " from storage", e);
+            throw e;
         }
-        
-        return null;
     }
 
     /**
@@ -281,9 +371,12 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
      * registered in the attached {@link ServiceSessionSerializerRegistry}.
      * 
      * @param serviceId ID of service for session to load
-     * @return the stored session, or null
+     * 
+     * @return the stored session, or null if the record is missing or unusable
+     * @throws IOException if a possibly transitory storage-related error occurs
      */
-    @Nullable private ServiceSession loadServiceSessionFromStorage(@Nonnull @NotEmpty final String serviceId) {
+    @Nullable private ServiceSession loadServiceSessionFromStorage(@Nonnull @NotEmpty final String serviceId)
+            throws IOException {
         log.debug("Loading ServiceSession for service {} in session {}", serviceId, getId());
 
         final String key;
@@ -295,6 +388,9 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
         
         try {
             final StorageRecord<ServiceSession> record = sessionManager.getStorageService().read(getId(), key);
+            if (record == null) {
+                return null;
+            }
             
             // Parse out the class type.
             int pos = record.getValue().indexOf(':');
@@ -309,18 +405,51 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                     sessionManager.getServiceSessionSerializerRegistry().lookup(
                             Class.forName(sessionClassName).asSubclass(ServiceSession.class));
             if (serviceSessionSerializer == null) {
-                throw new ClassNotFoundException("No serializer registered for ServiceSession type "
-                        + sessionClassName);
+                throw new IOException("No serializer registered for ServiceSession type " + sessionClassName);
             }
             
             // Deserializer starting past the colon delimiter.
             return serviceSessionSerializer.deserialize(
                     record.getVersion(), getId(), key, record.getValue().substring(pos + 1), record.getExpiration());
             
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             log.error("Exception loading ServiceSession for service " + serviceId + " from storage", e);
+            throw e;
+        } catch (ClassNotFoundException e) {
+            log.error("Exception loading ServiceSession for service " + serviceId + " from storage", e);
+            throw new IOException(e);
         }
-        
-        return null;
+    }
+    
+    /**
+     * Update the master session record based on the current contents of this object.
+     * 
+     * @return true iff the update succeeds, false iff a version mismatch resulted in overwrite of this object
+     * @throws IOException if an error occurs trying to perform an update
+     */
+    private boolean writeToStorage() throws IOException {
+        try {
+            Integer ver = sessionManager.getStorageService().updateWithVersion(version, getId(),
+                    StorageBackedSessionManager.SESSION_MASTER_KEY, this, sessionManager.getStorageSerializer(),
+                    getLastActivityInstant() + sessionManager.getSessionTimeout() + sessionManager.getSessionSlop());
+            if (ver == null) {
+                log.error("Record for session {} has disappeared from backing store", getId());
+                throw new IOException("Unable to update session, record disappeared");
+            }
+            version = ver;
+            return true;
+        } catch (VersionMismatchException e) {
+            // The record has changed underneath. We need to deserialize the session back into the
+            // same object by passing ourselves as the target object to a new serializer instance.
+            StorageRecord<StorageBackedIdPSession> record =
+                    sessionManager.getStorageService().read(getId(), StorageBackedSessionManager.SESSION_MASTER_KEY);
+            if (record == null) {
+                log.error("Record for session {} has disappeared from backing store", getId());
+                throw new IOException("Unable to update session, record disappeared");
+            }
+            record.getValue(new StorageBackedIdPSessionSerializer(sessionManager, this),
+                    getId(), StorageBackedSessionManager.SESSION_MASTER_KEY);
+            return false;
+        }
     }
 }
