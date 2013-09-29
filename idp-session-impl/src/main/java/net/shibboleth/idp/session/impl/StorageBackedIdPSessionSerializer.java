@@ -78,7 +78,7 @@ public class StorageBackedIdPSessionSerializer implements StorageSerializer<Stor
     @Nonnull private final StorageBackedSessionManager sessionManager;
     
     /** Object instance to overwrite with deserialization method. */
-    @Nullable private StorageBackedIdPSession targetObject;
+    @Nullable private final StorageBackedIdPSession targetObject;
     
     /**
      * Constructor.
@@ -158,45 +158,49 @@ public class StorageBackedIdPSessionSerializer implements StorageSerializer<Stor
             final JsonObject obj = (JsonObject) st;
             
             // Create new object if necessary.
-            if (targetObject == null) {
+            StorageBackedIdPSession objectToPopulate = targetObject;
+            if (objectToPopulate == null) {
                 final long creation = obj.getJsonNumber(CREATION_INSTANT_FIELD).longValueExact();
                 final String principalName = obj.getString(PRINCIPAL_NAME_FIELD);
-                targetObject = new StorageBackedIdPSession(sessionManager, context, principalName, creation);
+                objectToPopulate = new StorageBackedIdPSession(sessionManager, context, principalName, creation);
             }
             
             // Populate fields in-place, bypassing any storage interactions.
-            targetObject.setVersion(version);
-            targetObject.doSetLastActivityInstant(
+            objectToPopulate.setVersion(version);
+            objectToPopulate.doSetLastActivityInstant(
                     expiration - sessionManager.getSessionTimeout() - sessionManager.getSessionSlop());
             if (obj.containsKey(IPV4_ADDRESS_FIELD)) {
-                targetObject.doBindToAddress(obj.getString(IPV4_ADDRESS_FIELD));
+                objectToPopulate.doBindToAddress(obj.getString(IPV4_ADDRESS_FIELD));
             }
             if (obj.containsKey(IPV6_ADDRESS_FIELD)) {
-                targetObject.doBindToAddress(obj.getString(IPV6_ADDRESS_FIELD));
+                objectToPopulate.doBindToAddress(obj.getString(IPV6_ADDRESS_FIELD));
             }
             
+            objectToPopulate.getAuthenticationResultMap().clear();
             if (obj.containsKey(FLOW_ID_ARRAY_FIELD)) {
                 JsonArray flowIds = obj.getJsonArray(FLOW_ID_ARRAY_FIELD);
                 if (flowIds != null) {
                     for (JsonString flowId : flowIds.getValuesAs(JsonString.class)) {
                         // An absent mapping is used to signify the existence of a result not yet loaded.
-                        targetObject.getAuthenticationResultMap().put(flowId.getString(),
+                        objectToPopulate.getAuthenticationResultMap().put(flowId.getString(),
                                 Optional.<AuthenticationResult>absent());
                     }
                 }
             }
 
+            objectToPopulate.getServiceSessionMap().clear();
             if (obj.containsKey(SERVICE_ID_ARRAY_FIELD)) {
                 JsonArray svcIds = obj.getJsonArray(SERVICE_ID_ARRAY_FIELD);
                 if (svcIds != null) {
                     for (JsonString svcId : svcIds.getValuesAs(JsonString.class)) {
                         // An absent mapping is used to signify the existence of a session not yet loaded.
-                        targetObject.getServiceSessionMap().put(svcId.getString(), Optional.<ServiceSession>absent());
+                        objectToPopulate.getServiceSessionMap().put(
+                                svcId.getString(), Optional.<ServiceSession>absent());
                     }
                 }
             }
             
-            return targetObject;
+            return objectToPopulate;
             
         } catch (NullPointerException | ClassCastException | ArithmeticException | JsonException e) {
             log.error("Exception while parsing IdPSession", e);
