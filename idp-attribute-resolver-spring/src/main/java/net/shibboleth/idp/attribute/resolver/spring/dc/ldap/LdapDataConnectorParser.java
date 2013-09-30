@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring.dc.ldap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 
@@ -42,7 +43,9 @@ import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchFilter;
+import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
+import org.ldaptive.cache.Cache;
 import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.handler.CaseChangeEntryHandler.CaseChange;
 import org.ldaptive.handler.MergeAttributeEntryHandler;
@@ -135,10 +138,6 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
 
         final V2Parser v2Parser = new V2Parser(config);
 
-        // TODO deprecated, should throw exception?
-        // final String poolInitialSize = config.getAttribute("poolInitialSize");
-        // final String poolMaxIdleSize = config.getAttribute("poolMaxIdleSize");
-
         final Boolean noResultAnError =
                 AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(config, new QName(
                         "noResultIsError")));
@@ -180,7 +179,6 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
             builder.addPropertyValue("connectionFactory", connectionFactory);
         }
 
-        // TODO add support for cacheResults and ResultCache
         final SearchExecutor searchExecutor = v2Parser.createSearchExecutor();
 
         builder.addPropertyValue("searchExecutor", searchExecutor);
@@ -253,7 +251,7 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
 
         /**
          * Uses {@link X509CredentialSupport} to read StartTLS trust and authentication credentials.
-         *
+         * 
          * @return credential config
          */
         @Nonnull protected CredentialConfig createCredentialConfig() {
@@ -372,7 +370,40 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
                 filter = filterElement.getTextContent().trim();
                 searchExecutor.setSearchFilter(new SearchFilter(filter));
             }
+
+            final Cache<SearchRequest> cache = createCache();
+            if (cache != null) {
+                searchExecutor.setSearchCache(cache);
+            }
             return searchExecutor;
+        }
+
+        /**
+         * Creates a new cache from a v2 XML configuration.
+         * 
+         * @return cache
+         */
+        @Nullable protected Cache<SearchRequest> createCache() {
+            final Element cacheElement =
+                    ElementSupport.getFirstChildElement(configElement, new QName(
+                            DataConnectorNamespaceHandler.NAMESPACE, "ResultCache"));
+            if (cacheElement == null) {
+                final Boolean cacheResults =
+                        AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(configElement,
+                                new QName("cacheResults")));
+                if (cacheResults != null && cacheResults.booleanValue()) {
+                    return new GuavaCache(500, 4 * 60 * 60);
+                } else {
+                    return null;
+                }
+            }
+
+            final Long timeToLive =
+                    AttributeSupport.getDurationAttributeValueAsLong(AttributeSupport.getAttribute(cacheElement,
+                            new QName("elementTimeToLive")));
+            final String maximumSize =
+                    AttributeSupport.getAttributeValue(cacheElement, new QName("maximumCachedElements"));
+            return new GuavaCache(Long.parseLong(maximumSize), TimeUnit.MILLISECONDS.toSeconds(timeToLive));
         }
 
         /**
@@ -457,15 +488,27 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
                             new QName("validateTimerPeriod")));
 
             final PoolConfig poolConfig = new PoolConfig();
-            if (minPoolSize != null) {
+            if (minPoolSize == null) {
+                final String poolInitialSize =
+                        AttributeSupport.getAttributeValue(configElement, new QName("poolInitialSize"));
+                if (poolInitialSize != null) {
+                    poolConfig.setMinPoolSize(Integer.parseInt(poolInitialSize));
+                } else {
+                    poolConfig.setMinPoolSize(0);
+                }
+            } else {
                 poolConfig.setMinPoolSize(Integer.parseInt(minPoolSize));
-            } else {
-                poolConfig.setMinPoolSize(0);
             }
-            if (maxPoolSize != null) {
-                poolConfig.setMaxPoolSize(Integer.parseInt(maxPoolSize));
+            if (maxPoolSize == null) {
+                final String poolMaxIdleSize =
+                        AttributeSupport.getAttributeValue(configElement, new QName("poolMaxIdleSize"));
+                if (poolMaxIdleSize != null) {
+                    poolConfig.setMaxPoolSize(Integer.parseInt(poolMaxIdleSize));
+                } else {
+                    poolConfig.setMaxPoolSize(3);
+                }
             } else {
-                poolConfig.setMaxPoolSize(3);
+                poolConfig.setMaxPoolSize(Integer.parseInt(maxPoolSize));
             }
             if (validatePeriodically != null && validatePeriodically.booleanValue()) {
                 poolConfig.setValidatePeriodically(true);

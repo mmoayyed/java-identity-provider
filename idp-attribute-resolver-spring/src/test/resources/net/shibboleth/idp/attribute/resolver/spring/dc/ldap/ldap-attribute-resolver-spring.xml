@@ -84,6 +84,12 @@
             <bean class="org.ldaptive.SearchFilter"
                   p:filter="(uid=${recipientContext.principal})"/>
           </property>
+          <property name="searchCache">
+            <bean class="net.shibboleth.idp.attribute.resolver.spring.dc.ldap.GuavaCache">
+                <constructor-arg value="25"/>
+                <constructor-arg value="10"/>
+            </bean>
+          </property>
         </bean>
         <bean class="net.shibboleth.idp.attribute.resolver.impl.dc.ldap.TemplatedExecutableSearchFilterBuilder"
               p:templateText="(uid=${recipientContext.principal})"
