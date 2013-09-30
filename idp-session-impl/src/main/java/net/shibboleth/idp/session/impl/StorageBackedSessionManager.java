@@ -39,6 +39,7 @@ import com.google.common.collect.Iterables;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.session.IdPSession;
+import net.shibboleth.idp.session.ServiceSession;
 import net.shibboleth.idp.session.ServiceSessionSerializerRegistry;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionManager;
@@ -532,4 +533,77 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         return builder.build();
     }
 
+    /**
+     * Insert or update a secondary index record from a ServiceSession to a parent IdPSession.
+     * 
+     * @param idpSession the parent session
+     * @param serviceSession the ServiceSession to index
+     * @param attempts number of times to retry operation in the event of a synchronization issue
+     * 
+     * @throws SessionException if a fatal error occurs
+     */
+    protected void indexByServiceSession(@Nonnull final IdPSession idpSession,
+            @Nonnull final ServiceSession serviceSession, final int attempts) throws SessionException {
+        if (attempts <= 0) {
+            log.error("Exceeded retry attempts while adding to secondary index");
+            if (!maskStorageFailure) {
+                throw new SessionException("Exceeded retry attempts while adding to secondary index");
+            }
+        } else if (secondaryServiceIndex) {
+            String serviceId = serviceSession.getId();
+            String serviceKey = serviceSession.getServiceSessionKey();
+            if (serviceKey == null) {
+                return;
+            }
+            log.debug("Maintaining secondary index for service ID {} and key {}", serviceId, serviceKey);
+
+            int contextSize = storageService.getCapabilities().getContextSize();
+            int keySize = storageService.getCapabilities().getKeySize();
+            
+            // Truncate context and key if needed.
+            if (serviceId.length() > contextSize) {
+                serviceId = serviceId.substring(0, contextSize);
+            }
+            if (serviceKey.length() > keySize) {
+                serviceKey = serviceKey.substring(0, keySize);
+            }
+
+            StorageRecord sessionList = null;
+            
+            try {
+                sessionList = storageService.read(serviceId, serviceKey);
+            } catch (IOException e) {
+                log.error("Exception while querying based service ID " + serviceId + " and key " + serviceKey, e);
+                if (!maskStorageFailure) {
+                    throw new SessionException("Exception while querying based on ServiceSession", e);
+                }
+            }
+
+            try {
+                if (sessionList != null && !sessionList.getValue().contains(idpSession.getId() + ',')) {
+                    // Need to update record.
+                    String updated = sessionList.getValue() + idpSession.getId() + ',';
+                    if (storageService.updateWithVersion(sessionList.getVersion(), serviceId, serviceKey, updated,
+                            Math.max(sessionList.getExpiration(),
+                                    serviceSession.getExpirationInstant() + sessionSlop)) == null) {
+                        log.info("Secondary index record disappeared, retrying as insert");
+                        indexByServiceSession(idpSession, serviceSession, attempts - 1);
+                    }
+                } else if (!storageService.create(serviceId, serviceKey, idpSession.getId() + ',',
+                            serviceSession.getExpirationInstant() + sessionSlop)) {
+                    log.info("Secondary index record appeared, retrying as update");
+                    indexByServiceSession(idpSession, serviceSession, attempts - 1);
+                }
+            } catch (IOException e) {
+                log.error("Exception maintaining secondary index for service ID " + serviceId + " and key "
+                        + serviceKey, e);
+                if (!maskStorageFailure) {
+                    throw new SessionException("Exception maintaining seconday index", e);
+                }
+            } catch (VersionMismatchException e) {
+                log.info("Secondary index record was updated between read/update, retrying");
+                indexByServiceSession(idpSession, serviceSession, attempts - 1);
+            }
+        }
+    }
 }

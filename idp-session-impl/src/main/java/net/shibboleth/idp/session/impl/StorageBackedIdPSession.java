@@ -303,8 +303,6 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                     // Checkstyle: EmptyBlock ON
                 }
             }
-        } else {
-            log.warn("Request for ServiceSessions will return nothing, ServiceManager is not tracking them");
         }
         
         return super.getServiceSessions();
@@ -341,7 +339,6 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             // Checkstyle: EmptyBlock ON
             return result;
         } else {
-            log.warn("Request for ServiceSession will return nothing, ServiceManager is not tracking them");
             return null;
         }
     }
@@ -349,36 +346,41 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
     /** {@inheritDoc} */
     @Nullable public ServiceSession addServiceSession(@Nonnull final ServiceSession serviceSession)
             throws SessionException {
-        try {
-            // Store the record.
-            if (!saveServiceSessionToStorage(serviceSession) && !sessionManager.isMaskStorageFailure()) {
-                throw new SessionException("Unable to save ServiceSession to storage");
-            }
-            ServiceSession prev = super.addServiceSession(serviceSession);
-            if (prev == null) {
-                // If no previous record, the add operation changed the master record, requiring an update.
-                int attempts = 10;
-                boolean success = writeToStorage();
-                while (!success && attempts-- > 0) {
-                    // The record may have changed underneath, see if we need to reapply the add.
-                    if (!getServiceSessionMap().containsKey(serviceSession.getId())) {
-                        super.addServiceSession(serviceSession);
-                        success = writeToStorage();
-                    } else {
-                        success = true;
+        if (sessionManager.isTrackServiceSessions()) {
+            try {
+                // Store the record.
+                if (!saveServiceSessionToStorage(serviceSession) && !sessionManager.isMaskStorageFailure()) {
+                    throw new SessionException("Unable to save ServiceSession to storage");
+                }
+                ServiceSession prev = super.addServiceSession(serviceSession);
+                if (prev == null) {
+                    // If no previous record, the add operation changed the master record, requiring an update.
+                    int attempts = 10;
+                    boolean success = writeToStorage();
+                    while (!success && attempts-- > 0) {
+                        // The record may have changed underneath, see if we need to reapply the add.
+                        if (!getServiceSessionMap().containsKey(serviceSession.getId())) {
+                            super.addServiceSession(serviceSession);
+                            success = writeToStorage();
+                        } else {
+                            success = true;
+                        }
+                    }
+                    if (!success) {
+                        log.error("Exhausted retry attempts updating record for session {}", getId());
                     }
                 }
-                if (!success) {
-                    log.error("Exhausted retry attempts updating record for session {}", getId());
+                sessionManager.indexByServiceSession(this, serviceSession, 10);
+                return prev;
+            } catch (IOException e) {
+                log.error("Exception saving ServiceSession record for session " + getId()
+                        + " and service " + serviceSession.getId(), e);
+                if (!sessionManager.isMaskStorageFailure()) {
+                    throw new SessionException("Exception saving ServiceSession record to storage", e);
                 }
+                return null;
             }
-            return prev;
-        } catch (IOException e) {
-            log.error("Exception saving ServiceSession record for session " + getId()
-                    + " and service " + serviceSession.getId(), e);
-            if (!sessionManager.isMaskStorageFailure()) {
-                throw new SessionException("Exception saving ServiceSession record to storage", e);
-            }
+        } else {
             return null;
         }
     }
@@ -613,7 +615,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
         log.debug("Saving ServiceSession for service {} in session {}", session.getId(), getId());
 
         // Look up the serializer instance for that class type.
-        StorageSerializer<? extends ServiceSession> serviceSessionSerializer =
+        StorageSerializer serviceSessionSerializer =
                 sessionManager.getServiceSessionSerializerRegistry().lookup(session.getClass());
         if (serviceSessionSerializer == null) {
             throw new IOException("No serializer registered for ServiceSession type " + session.getClass().getName());
@@ -621,16 +623,20 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
 
         final String key = getServiceSessionStorageKey(session.getId());
         
+        // Prefix the class name to the serialized data.
+        StringBuilder builder = new StringBuilder(session.getClass().getName());
+        builder.append(':').append(serviceSessionSerializer.serialize(session));
+        
         try {
             // Create / update loop until we succeed or exhaust attempts.
             int attempts = 10;
             boolean success = false;
             do {
-                success = sessionManager.getStorageService().create(getId(), key, session, serviceSessionSerializer,
+                success = sessionManager.getStorageService().create(getId(), key, builder.toString(),
                         session.getExpirationInstant() + sessionManager.getSessionSlop());
                 if (!success) {
                     // The record already exists, so we need to overwrite via an update.
-                    success = sessionManager.getStorageService().update(getId(), key, session, serviceSessionSerializer,
+                    success = sessionManager.getStorageService().update(getId(), key, builder.toString(),
                             session.getExpirationInstant() + sessionManager.getSessionSlop()) != null;
                 }
             } while (!success && attempts-- > 0);
