@@ -124,7 +124,9 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                     success = writeToStorage();
                 }
             }
-            log.error("Exhausted retry attempts updating record for session {}", getId());
+            if (!success) {
+                log.error("Exhausted retry attempts updating record for session {}", getId());
+            }
         } catch (IOException e) {
             log.error("Exception updating address binding of master record for session " + getId(), e);
             if (!sessionManager.isMaskStorageFailure()) {
@@ -136,8 +138,6 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<AuthenticationResult> getAuthenticationResults() {
         
-        boolean dirty = false;
-
         // Check for any sparse/null values in the map, which need to be loaded before returning a complete set.
         Iterator<Map.Entry<String, Optional<AuthenticationResult>>> entries =
                 getAuthenticationResultMap().entrySet().iterator();
@@ -151,16 +151,13 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                     } else {
                         // A null here means the reference to the record should be removed.
                         entries.remove();
-                        dirty = true;
                     }
+                // Checkstyle: EmptyBlock OFF - exception's logged in load function
                 } catch (IOException e) {
                     // An exception implies the record *might* still be accessible later.
                 }
+                // Checkstyle: EmptyBlock ON
             }
-        }
-        
-        if (dirty) {
-            // TODO: update record
         }
         
         return super.getAuthenticationResults();
@@ -188,31 +185,101 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             } else {
                 // A null here means the reference to the record should be removed.
                 getAuthenticationResultMap().remove(trimmed);
-                // TODO: update the record
             }
+        // Checkstyle: EmptyBlock OFF - exception's logged in load function
         } catch (IOException e) {
             // An exception implies the record *might* still be accessible later.
         }
+        // Chckstyle: EmptyBlock ON
         
         return result;
     }
     
     /** {@inheritDoc} */
-    public void addAuthenticationResult(@Nonnull final AuthenticationResult result) throws SessionException {
-        // TODO Auto-generated method stub
-        super.addAuthenticationResult(result);
+    @Nullable public AuthenticationResult addAuthenticationResult(@Nonnull final AuthenticationResult result)
+            throws SessionException {
+        
+        try {
+            // Store the record.
+            if (!saveAuthenticationResultToStorage(result) && !sessionManager.isMaskStorageFailure()) {
+                throw new SessionException("Unable to save AuthenticationResult to storage");
+            }
+            AuthenticationResult prev = super.addAuthenticationResult(result);
+            if (prev == null) {
+                // If no previous record, the add operation changed the master record, requiring an update.
+                int attempts = 10;
+                boolean success = writeToStorage();
+                while (!success && attempts-- > 0) {
+                    // The record may have changed underneath, see if we need to reapply the add.
+                    if (!getAuthenticationResultMap().containsKey(result.getAuthenticationFlowId())) {
+                        super.addAuthenticationResult(result);
+                        success = writeToStorage();
+                    } else {
+                        success = true;
+                    }
+                }
+                if (!success) {
+                    log.error("Exhausted retry attempts updating record for session {}", getId());
+                }
+            }
+            return prev;
+        } catch (IOException e) {
+            log.error("Exception saving AuthenticationResult record for session " + getId()
+                    + " and flow " + result.getAuthenticationFlowId(), e);
+            if (!sessionManager.isMaskStorageFailure()) {
+                throw new SessionException("Exception saving AuthenticationResult record to storage", e);
+            }
+            return null;
+        }
     }
 
     /** {@inheritDoc} */
     public boolean removeAuthenticationResult(@Nonnull final AuthenticationResult result) throws SessionException {
-        // TODO Auto-generated method stub
-        return super.removeAuthenticationResult(result);
+        if (super.removeAuthenticationResult(result)) {
+            try {
+                // Remove the separate record.
+                sessionManager.getStorageService().delete(getId(), result.getAuthenticationFlowId());
+            } catch (IOException e) {
+                log.error("Exception removing AuthenticationResult record for session " + getId()
+                        + " and flow " + result.getAuthenticationFlowId(), e);
+                if (!sessionManager.isMaskStorageFailure()) {
+                    throw new SessionException("Exception removing AuthenticationResult record from storage", e);
+                }
+            }
+            
+            // Try and update the master record with the updated flow list.
+            try {
+                int attempts = 10;
+                boolean success = writeToStorage();
+                while (!success && attempts-- > 0) {
+                    // The record may have changed underneath, so we need to reapply the removal.
+                    // If that succeeds, then we need to reattempt the update. If not, the result
+                    // wasn't present in the updated map, but it was originally, so we return true.
+                    if (super.removeAuthenticationResult(result)) {
+                        success = writeToStorage();
+                    } else {
+                        return true;
+                    }
+                }
+                if (!success) {
+                    log.error("Exhausted retry attempts updating record for session {}", getId());
+                }
+            } catch (IOException e) {
+                log.error("Exception updating record for session " + getId(), e);
+                if (!sessionManager.isMaskStorageFailure()) {
+                    throw new SessionException(
+                            "Exception updating session record after AuthenticationResult removal", e);
+                }
+            }
+            // If we reach here and a problem occurred, we must be masking storage problems.
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<ServiceSession> getServiceSessions() {
-        
-        boolean dirty = false;
         
         if (sessionManager.isTrackServiceSessions()) {
             // Check for any sparse/null values in the map, which need to be loaded before returning a complete set.
@@ -228,16 +295,13 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                         } else {
                             // A null here means the reference to the record should be removed.
                             entries.remove();
-                            dirty = true;
                         }
+                    // Checkstyle: EmptyBlock OFF - exception's logged in load function
                     } catch (IOException e) {
                         // An exception implies the record *might* still be accessible later.
                     }
+                    // Checkstyle: EmptyBlock ON
                 }
-            }
-            
-            if (dirty) {
-                // TODO: update record
             }
         } else {
             log.warn("Request for ServiceSessions will return nothing, ServiceManager is not tracking them");
@@ -269,11 +333,12 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                 } else {
                     // A null here means the reference to the record should be removed.
                     getServiceSessionMap().remove(trimmed);
-                    // TODO: update the record
                 }
+            // Checkstyle: EmptyBlock OFF - exception's logged in load function
             } catch (IOException e) {
                 // An exception implies the record *might* still be accessible later.
             }
+            // Checkstyle: EmptyBlock ON
             return result;
         } else {
             log.warn("Request for ServiceSession will return nothing, ServiceManager is not tracking them");
@@ -282,15 +347,85 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
     }
     
     /** {@inheritDoc} */
-    public void addServiceSession(@Nonnull final ServiceSession serviceSession) throws SessionException {
-        // TODO Auto-generated method stub
-        super.addServiceSession(serviceSession);
+    @Nullable public ServiceSession addServiceSession(@Nonnull final ServiceSession serviceSession)
+            throws SessionException {
+        try {
+            // Store the record.
+            if (!saveServiceSessionToStorage(serviceSession) && !sessionManager.isMaskStorageFailure()) {
+                throw new SessionException("Unable to save ServiceSession to storage");
+            }
+            ServiceSession prev = super.addServiceSession(serviceSession);
+            if (prev == null) {
+                // If no previous record, the add operation changed the master record, requiring an update.
+                int attempts = 10;
+                boolean success = writeToStorage();
+                while (!success && attempts-- > 0) {
+                    // The record may have changed underneath, see if we need to reapply the add.
+                    if (!getServiceSessionMap().containsKey(serviceSession.getId())) {
+                        super.addServiceSession(serviceSession);
+                        success = writeToStorage();
+                    } else {
+                        success = true;
+                    }
+                }
+                if (!success) {
+                    log.error("Exhausted retry attempts updating record for session {}", getId());
+                }
+            }
+            return prev;
+        } catch (IOException e) {
+            log.error("Exception saving ServiceSession record for session " + getId()
+                    + " and service " + serviceSession.getId(), e);
+            if (!sessionManager.isMaskStorageFailure()) {
+                throw new SessionException("Exception saving ServiceSession record to storage", e);
+            }
+            return null;
+        }
     }
 
     /** {@inheritDoc} */
     public boolean removeServiceSession(@Nonnull final ServiceSession serviceSession) throws SessionException {
-        // TODO Auto-generated method stub
-        return super.removeServiceSession(serviceSession);
+        if (super.removeServiceSession(serviceSession)) {
+            try {
+                // Remove the separate record.
+                sessionManager.getStorageService().delete(getId(), getServiceSessionStorageKey(serviceSession.getId()));
+            } catch (IOException e) {
+                log.error("Exception removing ServiceSession record for session " + getId()
+                        + " and service " + serviceSession.getId(), e);
+                if (!sessionManager.isMaskStorageFailure()) {
+                    throw new SessionException("Exception removing ServiceSession record from storage", e);
+                }
+            }
+            
+            // Try and update the master record with the updated service session list.
+            try {
+                int attempts = 10;
+                boolean success = writeToStorage();
+                while (!success && attempts-- > 0) {
+                    // The record may have changed underneath, so we need to reapply the removal.
+                    // If that succeeds, then we need to reattempt the update. If not, the result
+                    // wasn't present in the updated map, but it was originally, so we return true.
+                    if (super.removeServiceSession(serviceSession)) {
+                        success = writeToStorage();
+                    } else {
+                        return true;
+                    }
+                }
+                if (!success) {
+                    log.error("Exhausted retry attempts updating record for session {}", getId());
+                }
+            } catch (IOException e) {
+                log.error("Exception updating record for session " + getId(), e);
+                if (!sessionManager.isMaskStorageFailure()) {
+                    throw new SessionException(
+                            "Exception updating session record after ServiceSession removal", e);
+                }
+            }
+            // If we reach here and a problem occurred, we must be masking storage problems.
+            return true;
+        } else {
+            return false;
+        }
     }
     
     /** {@inheritDoc} */
@@ -367,6 +502,56 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
     }
 
     /**
+     * Saves an {@link AuthenticationResult} record to storage, serializing it using the object
+     * attached to the corresponding {@link AuthenticationFlowDescriptor}.
+     * 
+     * @param result the object to store
+     * 
+     * @return true iff the record was successfully saved
+     * @throws IOException if a possibly transitory storage-related error occurs
+     */
+    private boolean saveAuthenticationResultToStorage(@Nonnull final AuthenticationResult result) throws IOException {
+        String flowId = result.getAuthenticationFlowId();
+        log.debug("Saving AuthenticationResult for flow {} in session {}", flowId, getId());
+        
+        AuthenticationFlowDescriptor flow = sessionManager.getAuthenticationFlowDescriptor(flowId);
+        if (flow == null) {
+            log.warn("No flow descriptor installed for ID {}, unable to save result to storage", flowId);
+            return false;
+        } else if (flow.getResultSerializer() == null) {
+            log.warn("No serializer installed for flow ID {}, unable to save result to storage", flowId);
+            return false;
+        }
+        
+        try {
+            // Create / update loop until we succeed or exhaust attempts.
+            int attempts = 10;
+            boolean success = false;
+            do {
+                success = sessionManager.getStorageService().create(getId(), flowId, result, flow.getResultSerializer(),
+                        result.getLastActivityInstant() + flow.getInactivityTimeout()
+                            + sessionManager.getSessionSlop());
+                if (!success) {
+                    // The record already exists, so we need to overwrite via an update.
+                    success = sessionManager.getStorageService().update(getId(), flowId, result,
+                            flow.getResultSerializer(), result.getLastActivityInstant() + flow.getInactivityTimeout()
+                                + sessionManager.getSessionSlop()) != null;
+                }
+            } while (!success && attempts-- > 0);
+            
+            if (!success) {
+                log.error("Exhausted retry attempts storing AuthenticationResult for flow {} in session {}",
+                        flowId, getId());
+            }
+            
+            return success;
+        } catch (IOException e) {
+            log.error("Exception saving AuthenticationResult for flow " + flowId + " to storage", e);
+            throw e;
+        }
+    }
+    
+    /**
      * Loads a {@link ServiceSession} record from storage and deserializes it using the object
      * registered in the attached {@link ServiceSessionSerializerRegistry}.
      * 
@@ -379,12 +564,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             throws IOException {
         log.debug("Loading ServiceSession for service {} in session {}", serviceId, getId());
 
-        final String key;
-        if (serviceId.length() > sessionManager.getStorageService().getCapabilities().getKeySize()) {
-            key = DigestUtils.sha256Hex(serviceId);
-        } else {
-            key = serviceId;
-        }
+        final String key = getServiceSessionStorageKey(serviceId);
         
         try {
             final StorageRecord<ServiceSession> record = sessionManager.getStorageService().read(getId(), key);
@@ -418,6 +598,67 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
         } catch (ClassNotFoundException e) {
             log.error("Exception loading ServiceSession for service " + serviceId + " from storage", e);
             throw new IOException(e);
+        }
+    }
+
+    /**
+     * Saves a {@link ServiceSession} record to storage.
+     * 
+     * @param session the object to store
+     * 
+     * @return true iff the record was successfully saved
+     * @throws IOException if a possibly transitory storage-related error occurs
+     */
+    private boolean saveServiceSessionToStorage(@Nonnull final ServiceSession session) throws IOException {
+        log.debug("Saving ServiceSession for service {} in session {}", session.getId(), getId());
+
+        // Look up the serializer instance for that class type.
+        StorageSerializer<? extends ServiceSession> serviceSessionSerializer =
+                sessionManager.getServiceSessionSerializerRegistry().lookup(session.getClass());
+        if (serviceSessionSerializer == null) {
+            throw new IOException("No serializer registered for ServiceSession type " + session.getClass().getName());
+        }
+
+        final String key = getServiceSessionStorageKey(session.getId());
+        
+        try {
+            // Create / update loop until we succeed or exhaust attempts.
+            int attempts = 10;
+            boolean success = false;
+            do {
+                success = sessionManager.getStorageService().create(getId(), key, session, serviceSessionSerializer,
+                        session.getExpirationInstant() + sessionManager.getSessionSlop());
+                if (!success) {
+                    // The record already exists, so we need to overwrite via an update.
+                    success = sessionManager.getStorageService().update(getId(), key, session, serviceSessionSerializer,
+                            session.getExpirationInstant() + sessionManager.getSessionSlop()) != null;
+                }
+            } while (!success && attempts-- > 0);
+            
+            if (!success) {
+                log.error("Exhausted retry attempts storing SessionService for service {} in session {}",
+                        session.getId(), getId());
+            }
+            
+            return success;
+        } catch (IOException e) {
+            log.error("Exception saving ServiceSession for service " + session.getId() + " to storage", e);
+            throw e;
+        }
+    }
+    
+    /**
+     * Convert a service identifier into a suitable key for the underlying storage service.
+     * 
+     * @param serviceId the service identifier
+     * 
+     * @return  an appropriately sized storage key
+     */
+    @Nonnull @NotEmpty private String getServiceSessionStorageKey(@Nonnull @NotEmpty final String serviceId) {
+        if (serviceId.length() > sessionManager.getStorageService().getCapabilities().getKeySize()) {
+            return DigestUtils.sha256Hex(serviceId);
+        } else {
+            return serviceId;
         }
     }
     

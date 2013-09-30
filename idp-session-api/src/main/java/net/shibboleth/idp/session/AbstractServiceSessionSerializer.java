@@ -31,7 +31,10 @@ import javax.json.JsonReader;
 import javax.json.JsonStructure;
 import javax.json.stream.JsonGenerator;
 
+import net.shibboleth.utilities.java.support.annotation.Duration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;
@@ -54,10 +57,17 @@ public abstract class AbstractServiceSessionSerializer implements StorageSeriali
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractServiceSessionSerializer.class);
-    
-    /** Constructor. */
-    protected AbstractServiceSessionSerializer() {
 
+    /** Milliseconds to substract from record expiration to establish session expiration value. */
+    @Duration @NonNegative private final long expirationOffset;
+    
+    /**
+     * Constructor.
+     * 
+     * @param offset milliseconds to substract from record expiration to establish session expiration value
+     */
+    protected AbstractServiceSessionSerializer(@Duration @NonNegative final long offset) {
+        expirationOffset = Constraint.isGreaterThanOrEqual(0, offset, "Offset must be greater than or equal to zero");
     }
 
     /** {@inheritDoc} */
@@ -103,7 +113,7 @@ public abstract class AbstractServiceSessionSerializer implements StorageSeriali
             long creation = obj.getJsonNumber(CREATION_INSTANT_FIELD).longValueExact();
             String flowId = obj.getString(FLOW_ID_FIELD);
 
-            return doDeserialize(obj, serviceId, flowId, creation, expiration);
+            return doDeserialize(obj, serviceId, flowId, creation, expiration - expirationOffset);
             
         } catch (NullPointerException | ClassCastException | ArithmeticException | JsonException e) {
             log.error("Exception while parsing ServiceSession", e);

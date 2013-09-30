@@ -105,11 +105,11 @@ public class StorageBackedIdPSessionSerializerTest {
         
         StorageBackedIdPSession session = new StorageBackedIdPSession(manager, "test", "foo", INSTANT);
         session.doBindToAddress("127.0.0.1");
-        session.addAuthenticationResult(new AuthenticationResult("a", new UsernamePrincipal("jdoe")));
-        session.addAuthenticationResult(new AuthenticationResult("b", new UsernamePrincipal("jdoe")));
-        session.addAuthenticationResult(new AuthenticationResult("c", new UsernamePrincipal("jdoe")));
-        session.addServiceSession(new BasicServiceSession("bar", "a", INSTANT, exp));
-        session.addServiceSession(new BasicServiceSession("baz", "c", INSTANT, exp));
+        session.doAddAuthenticationResult(new AuthenticationResult("a", new UsernamePrincipal("jdoe")));
+        session.doAddAuthenticationResult(new AuthenticationResult("b", new UsernamePrincipal("jdoe")));
+        session.doAddAuthenticationResult(new AuthenticationResult("c", new UsernamePrincipal("jdoe")));
+        session.doAddServiceSession(new BasicServiceSession("bar", "a", INSTANT, exp));
+        session.doAddServiceSession(new BasicServiceSession("baz", "c", INSTANT, exp));
         
         String s = serializer.serialize(session);
         String s2 = fileToString(DATAPATH + "complexIdPSession.json");

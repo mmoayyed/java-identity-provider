@@ -26,6 +26,8 @@ import javax.json.JsonObject;
 import net.shibboleth.idp.session.AbstractServiceSessionSerializer;
 import net.shibboleth.idp.session.BasicServiceSession;
 import net.shibboleth.idp.session.ServiceSession;
+import net.shibboleth.utilities.java.support.annotation.Duration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /**
@@ -34,9 +36,13 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 @ThreadSafe
 public class BasicServiceSessionSerializer extends AbstractServiceSessionSerializer {
     
-    /** Constructor. */
-    public BasicServiceSessionSerializer() {
-        super();
+    /**
+     * Constructor.
+     * 
+     * @param offset milliseconds to substract from record expiration to establish session expiration value
+     */
+    public BasicServiceSessionSerializer(@Duration @NonNegative final long offset) {
+        super(offset);
     }
 
     /** {@inheritDoc} */

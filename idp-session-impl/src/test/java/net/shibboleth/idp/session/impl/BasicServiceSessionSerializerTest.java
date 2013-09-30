@@ -43,7 +43,7 @@ public class BasicServiceSessionSerializerTest {
     private BasicServiceSessionSerializer serializer;
     
     @BeforeMethod public void setUp() {
-        serializer = new BasicServiceSessionSerializer();
+        serializer = new BasicServiceSessionSerializer(0);
     }
 
     @Test public void testInvalid() throws Exception {

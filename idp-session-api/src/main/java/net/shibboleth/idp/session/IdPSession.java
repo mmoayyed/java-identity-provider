@@ -103,9 +103,11 @@ public interface IdPSession extends IdentifiableComponent {
      * 
      * @param result the result to add
      * 
+     * @return a previously existing result replaced by the new one, if any
      * @throws SessionException if an error occurs updating the session
      */
-    public void addAuthenticationResult(@Nonnull final AuthenticationResult result) throws SessionException;
+    @Nullable public AuthenticationResult addAuthenticationResult(@Nonnull final AuthenticationResult result)
+            throws SessionException;
     
     /**
      * Disassociate an {@link AuthenticationResult} from this IdP session.
@@ -138,9 +140,12 @@ public interface IdPSession extends IdentifiableComponent {
      * service.
      * 
      * @param serviceSession the service session
+     * 
+     * @return a previously existing ServiceSession replaced by the new one, if any
      * @throws SessionException if an error occurs accessing the session
      */
-    public void addServiceSession(@Nonnull final ServiceSession serviceSession) throws SessionException;
+    @Nullable public ServiceSession addServiceSession(@Nonnull final ServiceSession serviceSession)
+            throws SessionException;
     
     /**
      * Disassociate the given service session from this IdP session.

@@ -224,8 +224,9 @@ public abstract class AbstractIdPSession implements IdPSession {
     }
 
     /** {@inheritDoc} */
-    public void addAuthenticationResult(@Nonnull final AuthenticationResult result) throws SessionException {
-        doAddAuthenticationResult(result);
+    @Nullable public AuthenticationResult addAuthenticationResult(@Nonnull final AuthenticationResult result)
+            throws SessionException {
+        return doAddAuthenticationResult(result);
     }
 
     /** {@inheritDoc} */
@@ -242,8 +243,10 @@ public abstract class AbstractIdPSession implements IdPSession {
      * other persistence requirements.</p>
      * 
      * @param result the result to add
+     * 
+     * @return a previously existing result replaced by the new one, if any
      */
-    public void doAddAuthenticationResult(@Nonnull final AuthenticationResult result) {
+    @Nullable public AuthenticationResult doAddAuthenticationResult(@Nonnull final AuthenticationResult result) {
         Constraint.isNotNull(result, "AuthenticationResult cannot be null");
     
         Optional<AuthenticationResult> prev =
@@ -251,7 +254,9 @@ public abstract class AbstractIdPSession implements IdPSession {
         if (prev != null && prev.isPresent()) {
             log.debug("IdPSession {}: replaced old AuthenticationResult for flow ID {}", id,
                     prev.get().getAuthenticationFlowId());
+            return prev.get();
         }
+        return null;
     }
 
     /**
@@ -268,7 +273,12 @@ public abstract class AbstractIdPSession implements IdPSession {
     public boolean doRemoveAuthenticationResult(@Nonnull final AuthenticationResult result) {
         Constraint.isNotNull(result, "Authentication event can not be null");
     
-        return authenticationResults.remove(result.getAuthenticationFlowId(), Optional.of(result));
+        // Record may be actually present, or not yet loaded.
+        if (authenticationResults.remove(result.getAuthenticationFlowId(), Optional.of(result))) {
+            return true;
+        } else {
+            return authenticationResults.remove(result.getAuthenticationFlowId(), Optional.absent());
+        }
     }
 
     /** {@inheritDoc} */
@@ -282,8 +292,9 @@ public abstract class AbstractIdPSession implements IdPSession {
     }
 
     /** {@inheritDoc} */
-    public void addServiceSession(@Nonnull final ServiceSession serviceSession) throws SessionException {
-        doAddServiceSession(serviceSession);
+    @Nullable public ServiceSession addServiceSession(@Nonnull final ServiceSession serviceSession)
+            throws SessionException {
+        return doAddServiceSession(serviceSession);
     }
 
     /** {@inheritDoc} */
@@ -299,14 +310,18 @@ public abstract class AbstractIdPSession implements IdPSession {
      * method must be implemented to support other persistence requirements.</p>
      * 
      * @param serviceSession the service session
+     * 
+     * @return a previously existing ServiceSession replaced by the new one, if any
      */
-    public void doAddServiceSession(@Nonnull final ServiceSession serviceSession) {
+    @Nullable public ServiceSession doAddServiceSession(@Nonnull final ServiceSession serviceSession) {
         Constraint.isNotNull(serviceSession, "Service session cannot be null");
     
         Optional<ServiceSession> prev = serviceSessions.put(serviceSession.getId(), Optional.of(serviceSession));
         if (prev != null && prev.isPresent()) {
             log.debug("IdPSession {}: replaced old ServiceSession for service {}", id, prev.get().getId());
+            return prev.get();
         }
+        return null;
     }
 
     /**
@@ -322,7 +337,12 @@ public abstract class AbstractIdPSession implements IdPSession {
     public boolean doRemoveServiceSession(@Nonnull final ServiceSession session) {
         Constraint.isNotNull(session, "Service session cannot be null");
     
-        return serviceSessions.remove(session.getId(), Optional.of(session));
+        // Record may be actually present, or not yet loaded.
+        if (serviceSessions.remove(session.getId(), Optional.of(session))) {
+            return true;
+        } else {
+            return serviceSessions.remove(session.getId(), Optional.absent());
+        }
     }
 
     /** {@inheritDoc} */
