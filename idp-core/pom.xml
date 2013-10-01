@@ -48,12 +48,6 @@
           <artifactId>spring-context</artifactId>
         </dependency>
 
-        <dependency>
-          <groupId>ch.qos.logback</groupId>
-          <artifactId>logback-core</artifactId>
-          <version>1.0.11</version>
-        </dependency>
-
         <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->

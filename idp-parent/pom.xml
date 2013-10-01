@@ -83,6 +83,10 @@
     <dependencies>
         <!-- Compile Dependencies -->
         <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+        </dependency>
+        <dependency>
             <!-- needed for logback SMTP appender -->
             <groupId>org.codehaus.janino</groupId>
             <artifactId>janino</artifactId>
@@ -94,6 +98,12 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <!-- TODO : move to java-parent -->
+            <version>1.0.11</version>
         </dependency>
         <dependency>
             <!-- needed for logback SMTP appender -->
