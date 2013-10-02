@@ -417,7 +417,12 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         if (criteria != null) {
             SessionIdCriterion sessionIdCriterion = criteria.get(SessionIdCriterion.class);
             if (sessionIdCriterion != null) {
-                return ImmutableList.of(lookupBySessionId(sessionIdCriterion.getSessionId()));
+                IdPSession session = lookupBySessionId(sessionIdCriterion.getSessionId());
+                if (session != null) {
+                    return ImmutableList.of(session);
+                } else {
+                    return ImmutableList.of();
+                }
             }
             
             ServiceSessionCriterion serviceCriterion = criteria.get(ServiceSessionCriterion.class);
@@ -452,9 +457,15 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
      * @throws ResolverException if an error occurs during lookup
      */
     @Nullable private IdPSession lookupBySessionId(@Nonnull @NotEmpty final String sessionId) throws ResolverException {
+        log.debug("Performing primary lookup on session ID {}", sessionId);
+        
         try {
             StorageRecord<StorageBackedIdPSession> sessionRecord = storageService.read(sessionId, SESSION_MASTER_KEY);
-            return sessionRecord.getValue(serializer, sessionId, SESSION_MASTER_KEY);
+            if (sessionRecord != null) {
+                return sessionRecord.getValue(serializer, sessionId, SESSION_MASTER_KEY);
+            } else {
+                log.debug("Primary lookup failed for session ID {}", sessionId);
+            }
         } catch (IOException e) {
             log.error("Exception while querying for session " + sessionId, e);
             if (!maskStorageFailure) {
@@ -503,7 +514,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         }
 
         if (sessionList == null) {
-            log.debug("Secondary lookup found nothing");
+            log.debug("Secondary lookup failed on service ID {} and key {}", serviceId, serviceKey);
             return ImmutableList.of();
         }
 
