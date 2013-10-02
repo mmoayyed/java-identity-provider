@@ -360,7 +360,12 @@ public abstract class AbstractIdPSession implements IdPSession {
             }
         } else {
             log.info("Session {} not yet locked to a {} address, locking it to {}", id, family, address);
-            bindToAddress(address);
+            try {
+                bindToAddress(address);
+            } catch (SessionException e) {
+                log.error("Unable to bind session {} to address {}", id, address);
+                return false;
+            }
         }
         
         return true;
