@@ -18,10 +18,12 @@
 package net.shibboleth.idp.session.impl;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.DefaultAuthenticationResultSerializer;
+import net.shibboleth.idp.authn.TestPrincipal;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.session.BasicServiceSession;
 import net.shibboleth.idp.session.IdPSession;
@@ -50,6 +52,8 @@ public class StorageBackedSessionManagerTest {
     
     private static StorageBackedSessionManager manager;
 
+    private static Collection<AuthenticationFlowDescriptor> flowDescriptors;
+    
     private static ServiceSessionSerializerRegistry serializerRegistry;
     
     @BeforeClass public static void setUp() throws ComponentInitializationException {
@@ -65,12 +69,13 @@ public class StorageBackedSessionManagerTest {
         foo.setLifetime(60 * 1000);
         foo.setInactivityTimeout(60 * 1000);
         AuthenticationFlowDescriptor bar = new AuthenticationFlowDescriptor("AuthenticationFlow/Bar");
-        foo.setResultSerializer(resultSerializer);
-        foo.setLifetime(60 * 1000);
-        foo.setInactivityTimeout(60 * 1000);
+        bar.setResultSerializer(resultSerializer);
+        bar.setLifetime(60 * 1000);
+        bar.setInactivityTimeout(60 * 1000);
+        flowDescriptors = Arrays.asList(foo, bar);
         
         manager = new StorageBackedSessionManager();
-        manager.setAuthenticationFlowDescriptors(Arrays.asList(foo, bar));
+        manager.setAuthenticationFlowDescriptors(flowDescriptors);
         manager.setTrackServiceSessions(true);
         manager.setSecondaryServiceIndex(true);
         manager.setStorageService(storageService);
@@ -87,15 +92,19 @@ public class StorageBackedSessionManagerTest {
 
     @Test(threadPoolSize = 10, invocationCount = 10,  timeOut = 10000)
     public void testSimpleSession() throws ResolverException, SessionException, InterruptedException {
+        
+        // Test a failed lookup.
         Assert.assertNull(manager.resolveSingle(new CriteriaSet(new SessionIdCriterion("test"))));
         
+        // Username should be required.
         try {
             manager.createSession(null, null);
-            Assert.fail();
+            Assert.fail("A null username should not have worked");
         } catch (ConstraintViolationException e) {
             
         }
         
+        // Test basic session content.
         IdPSession session = manager.createSession("joe", null);
         Assert.assertTrue(session.getCreationInstant() <= System.currentTimeMillis());
         Assert.assertEquals(session.getCreationInstant(), session.getLastActivityInstant());
@@ -105,9 +114,11 @@ public class StorageBackedSessionManagerTest {
         
         Thread.sleep(1000);
         
+        // checkTimeout should update the last activity time.
         session.checkTimeout();
         Assert.assertNotEquals(session.getCreationInstant(), session.getLastActivityInstant());
 
+        // Do a lookup and compare the results.
         long creation = session.getCreationInstant();
         long lastActivity = session.getLastActivityInstant();
         String sessionId = session.getId();
@@ -117,7 +128,81 @@ public class StorageBackedSessionManagerTest {
         Assert.assertEquals(session.getCreationInstant(), creation);
         Assert.assertEquals(session.getLastActivityInstant(), lastActivity);
         
+        // Test a destroy and a failed lookup.
         manager.destroySession(sessionId);
         Assert.assertNull(manager.resolveSingle(new CriteriaSet(new SessionIdCriterion(sessionId))));
+    }
+    
+    @Test
+    public void testAddress() throws SessionException, ResolverException {
+        
+        // Interleave checks of addresses of the two types.
+        IdPSession session = manager.createSession("joe", "192.168.1.1");
+        Assert.assertTrue(session.checkAddress("192.168.1.1"));
+        Assert.assertFalse(session.checkAddress("192.168.1.2"));
+        Assert.assertTrue(session.checkAddress("fe80::ca2a:14ff:fe2a:3e04"));
+        Assert.assertTrue(session.checkAddress("fe80::ca2a:14ff:fe2a:3e04"));
+        Assert.assertFalse(session.checkAddress("fe80::ca2a:14ff:fe2a:3e05"));
+        Assert.assertTrue(session.checkAddress("192.168.1.1"));
+        
+        // Try a bad address type.
+        Assert.assertFalse(session.checkAddress("1,1,1,1"));
+        
+        // Interleave manipulation of a session between two copies to check for resync.
+        IdPSession one = manager.createSession("joe", null);
+        IdPSession two = manager.resolveSingle(new CriteriaSet(new SessionIdCriterion(one.getId())));
+        
+        Assert.assertTrue(one.checkAddress("192.168.1.1"));
+        Assert.assertFalse(two.checkAddress("192.168.1.2"));
+        Assert.assertTrue(two.checkAddress("fe80::ca2a:14ff:fe2a:3e04"));
+        Assert.assertFalse(one.checkAddress("fe80::ca2a:14ff:fe2a:3e05"));
+    }
+
+    @Test(threadPoolSize = 10, invocationCount = 10,  timeOut = 10000)
+    public void testAuthenticationResults() throws ResolverException, SessionException, InterruptedException {
+        
+        IdPSession session = manager.createSession("joe", null);
+        Assert.assertTrue(session.getAuthenticationResults().isEmpty());
+
+        // Add some results.
+        AuthenticationResult foo = new AuthenticationResult("AuthenticationFlow/Foo", new UsernamePrincipal("joe"));
+        foo.getSubject().getPrincipals().add(new TestPrincipal("test1"));
+        AuthenticationResult bar = new AuthenticationResult("AuthenticationFlow/Bar", new UsernamePrincipal("joe"));
+        bar.getSubject().getPrincipals().add(new TestPrincipal("test2"));
+        AuthenticationResult baz = new AuthenticationResult("AuthenticationFlow/Baz", new UsernamePrincipal("joe"));
+
+        Assert.assertNull(session.addAuthenticationResult(foo));
+        Assert.assertNull(session.addAuthenticationResult(bar));
+        try {
+            session.addAuthenticationResult(baz);
+            Assert.fail("An unserializable AuthenticationResult should not have worked");
+        } catch (SessionException e) {
+            
+        }
+        
+        // Test various methods and removals.
+        Assert.assertEquals(session.getAuthenticationResults().size(), 2);
+        
+        Assert.assertFalse(session.removeAuthenticationResult(baz));
+        Assert.assertTrue(session.removeAuthenticationResult(bar));
+        
+        Assert.assertEquals(session.getAuthenticationResults().size(), 1);
+        
+        // Test access and compare to original.
+        Assert.assertNull(session.getAuthenticationResult("AuthenticationFlow/Bar"));
+        AuthenticationResult foo2 = session.getAuthenticationResult("AuthenticationFlow/Foo");
+        Assert.assertNotNull(foo2);
+        Assert.assertEquals(foo.getAuthenticationInstant(), foo2.getAuthenticationInstant());
+        Assert.assertEquals(foo.getLastActivityInstant(), foo2.getLastActivityInstant());
+        Assert.assertEquals(foo.getSubject(), foo2.getSubject());
+        
+        // Load from storage and re-test.
+        IdPSession session2 = manager.resolveSingle(new CriteriaSet(new SessionIdCriterion(session.getId())));
+        Assert.assertNull(session2.getAuthenticationResult("AuthenticationFlow/Bar"));
+        foo2 = session2.getAuthenticationResult("AuthenticationFlow/Foo");
+        Assert.assertNotNull(foo2);
+        Assert.assertEquals(foo.getAuthenticationInstant(), foo2.getAuthenticationInstant());
+        //Assert.assertEquals(foo.getLastActivityInstant(), foo2.getLastActivityInstant());
+        Assert.assertEquals(foo.getSubject(), foo2.getSubject());
     }
 }
