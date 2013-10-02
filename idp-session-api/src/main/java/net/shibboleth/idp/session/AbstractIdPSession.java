@@ -220,7 +220,8 @@ public abstract class AbstractIdPSession implements IdPSession {
 
     /** {@inheritDoc} */
     @Nullable public AuthenticationResult getAuthenticationResult(@Nonnull @NotEmpty final String flowId) {
-        return authenticationResults.get(StringSupport.trimOrNull(flowId)).orNull();
+        Optional<AuthenticationResult> mapped = authenticationResults.get(StringSupport.trimOrNull(flowId));
+        return (mapped != null) ? mapped.orNull() : null;
     }
 
     /** {@inheritDoc} */
@@ -288,7 +289,8 @@ public abstract class AbstractIdPSession implements IdPSession {
 
     /** {@inheritDoc} */
     @Nullable public ServiceSession getServiceSession(@Nonnull @NotEmpty final String serviceId) {
-        return serviceSessions.get(StringSupport.trimOrNull(serviceId)).orNull();
+        Optional<ServiceSession> mapped = serviceSessions.get(StringSupport.trimOrNull(serviceId));
+        return (mapped != null) ? mapped.orNull() : null;
     }
 
     /** {@inheritDoc} */
