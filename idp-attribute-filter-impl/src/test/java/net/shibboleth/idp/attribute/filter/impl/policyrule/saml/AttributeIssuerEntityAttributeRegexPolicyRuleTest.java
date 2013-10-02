@@ -19,10 +19,10 @@ package net.shibboleth.idp.attribute.filter.impl.policyrule.saml;
 
 import java.util.regex.Pattern;
 
-import junit.framework.Assert;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
