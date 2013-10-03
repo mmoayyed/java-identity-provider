@@ -32,7 +32,7 @@ public class AttributeRequesterEntityAttributeRegexRuleParser extends AbstractEn
             "AttributeRequesterEntityAttributeRegexMatch");
 
     /** {@inheritDoc} */
-    @Nonnull protected Class getNativeBeanClass() {
+    @Nonnull protected Class<?> getNativeBeanClass() {
 
         return AttributeIssuerEntityAttributeRegexPolicyRule.class;
     }

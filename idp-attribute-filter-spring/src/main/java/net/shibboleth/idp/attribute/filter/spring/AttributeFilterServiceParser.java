@@ -31,7 +31,7 @@ public class AttributeFilterServiceParser extends AbstractServiceParser {
             "ShibbolethAttributeFilteringEngine");
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
+    protected Class<?> getBeanClass(Element element) {
         return AttributeFilterService.class;
     }
 }

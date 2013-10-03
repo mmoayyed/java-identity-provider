@@ -27,7 +27,7 @@ import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import org.w3c.dom.Element;
 
 /**
- * Bean definition parser for {@link AnyMatchFunctor} objects.
+ * Bean definition parser for {@link PolicyRequirementRule#MATCHES_ALL} objects.
  */
 public class AnyParser extends BaseFilterParser {
 
@@ -35,7 +35,7 @@ public class AnyParser extends BaseFilterParser {
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "ANY");
 
     /** {@inheritDoc} */
-    @Nonnull protected Class getBeanClass(@Nonnull final Element element) {
+    @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {
         if (isPolicyRule(element)) {
             return PolicyRequirementRule.MATCHES_ALL.getClass();
         }

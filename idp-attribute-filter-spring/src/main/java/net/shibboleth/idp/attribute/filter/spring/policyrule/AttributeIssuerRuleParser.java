@@ -34,7 +34,7 @@ public class AttributeIssuerRuleParser extends AbstractStringPolicyRuleParser {
 
 
     /** {@inheritDoc} */
-    @Nonnull protected Class getNativeBeanClass() {
+    @Nonnull protected Class<?> getNativeBeanClass() {
         return AttributeIssuerPolicyRule.class;
     }
 

@@ -29,6 +29,7 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanMetadataElement;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
@@ -67,7 +68,7 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
     private Logger log = LoggerFactory.getLogger(AttributeFilterPolicyParser.class);
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element arg0) {
+    protected Class<?> getBeanClass(Element arg0) {
         return AttributeFilterPolicy.class;
     }
 
@@ -108,7 +109,7 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
         }
 
         // Get the attribute rules, both inline or referenced.
-        final ManagedList attributeRules = new ManagedList();
+        final ManagedList<BeanMetadataElement> attributeRules = new ManagedList<>();
         final List<Element> rules = ElementSupport.getChildElements(config, ATTRIBUTE_RULE);
         if (rules != null && rules.size() > 0) {
             attributeRules.addAll(SpringSupport.parseCustomElements(rules, parserContext));

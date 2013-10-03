@@ -32,7 +32,7 @@ public class AttributeRequesterInEntityGroupRuleParser extends AbstractEntityGro
             "AttributeRequesterInEntityGroup");
 
     /** {@inheritDoc} */
-    @Nonnull protected Class getNativeBeanClass() {
+    @Nonnull protected Class<?> getNativeBeanClass() {
         return AttributeRequesterInEntityGroupPolicyRule.class;
     }
 }

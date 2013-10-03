@@ -67,7 +67,7 @@ public class AttributeRuleParser extends BaseFilterParser {
     private final Logger log = LoggerFactory.getLogger(AttributeRuleParser.class);
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element arg0) {
+    protected Class<?> getBeanClass(Element arg0) {
         return AttributeRule.class;
     }
 

@@ -34,7 +34,7 @@ import org.w3c.dom.Element;
 
 /**
  * Bean definition parser for {@link OrMatcher} or {@link OrPolicyRule} objects.<br/>
- * These both take as a constructor a list of {@link net.shibboleth.idp.attribute.filter.Matcher} or {@Link
+ * These both take as a constructor a list of {@link net.shibboleth.idp.attribute.filter.Matcher} or {@link
  * net.shibboleth.idp.attribute.filter.PolicyRequirementRule} so the parsing code is common.
  */
 public class OrMatcherParser extends BaseFilterParser {
@@ -43,7 +43,7 @@ public class OrMatcherParser extends BaseFilterParser {
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "OR");
 
     /** {@inheritDoc} */
-    @Nonnull protected Class getBeanClass(@Nonnull final Element element) {
+    @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {
         if (isPolicyRule(element)) {
             return OrPolicyRule.class;
         }

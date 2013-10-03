@@ -65,7 +65,7 @@ public class AttributeFilterService extends AbstractSpringService {
      * This method instantiates and initializes the wrapped {@link AttributeFilter} with engine ID the same as the
      * service ID and {@link AttributeFilterPolicy}s from the service specific Spring application context.
      */
-    protected void doPreStart(HashMap context) throws ServiceException {
+    protected void doPreStart(@SuppressWarnings("rawtypes") HashMap context) throws ServiceException {
         super.doPreStart(context);
 
         GenericApplicationContext appCtx = (GenericApplicationContext) context.get(APP_CTX_CTX_KEY);

@@ -34,7 +34,7 @@ import org.w3c.dom.Element;
 
 /**
  * Bean definition parser for {@link AndMatcher} or {@link AndPolicyRule} objects.<br/>
- * These both take as a constructor a list of {@link net.shibboleth.idp.attribute.filter.Matcher} or {@Link
+ * These both take as a constructor a list of {@link net.shibboleth.idp.attribute.filter.Matcher} or {@link
  * net.shibboleth.idp.attribute.filter.PolicyRequirementRule} so the parsing code is common.
  */
 public class AndMatcherParser extends BaseFilterParser {
@@ -43,7 +43,7 @@ public class AndMatcherParser extends BaseFilterParser {
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "AND");
 
     /** {@inheritDoc} */
-    @Nonnull protected Class getBeanClass(@Nonnull final Element element) {
+    @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {
         if (isPolicyRule(element)) {
             return AndPolicyRule.class;
         }

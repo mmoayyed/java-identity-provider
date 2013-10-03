@@ -63,7 +63,7 @@ public class AttributeFilterServiceTest {
 
     @BeforeClass protected void setUp() throws Exception {
 
-        attributesToBeFiltered = new HashMap<String, Attribute>();
+        attributesToBeFiltered = new HashMap<>();
 
         Attribute firstName = new Attribute("firstName");
         firstName.getValues().add(new StringAttributeValue("john"));

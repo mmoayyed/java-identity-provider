@@ -71,7 +71,7 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
                 List<org.opensaml.saml.saml2.core.Attribute>>() {
                     @Nullable public List<org.opensaml.saml.saml2.core.Attribute> apply(
                             @Nullable AttributeResolutionContext input) {
-                        return (List) obj.getAttributes();
+                        return (List<org.opensaml.saml.saml2.core.Attribute>) obj.getAttributes();
                     }
                 });
 
@@ -96,7 +96,7 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
         Collection<Type> beans = context.getBeansOfType(claz).values();
         Assert.assertEquals(beans.size(), 1);
 
-        return (Type) beans.iterator().next();
+        return beans.iterator().next();
     }
 
     protected PolicyRequirementRule getPolicyRule(String fileName) throws ComponentInitializationException {

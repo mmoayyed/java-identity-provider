@@ -118,7 +118,7 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
      * {@inheritDoc}
      * 
      * Calculate the qualified id once, and set both the id property as well as a qualified id metadata attribute used
-     * by the {@link #resolveId()} method.<br/>
+     * by the {@link #resolveId(Element, AbstractBeanDefinition, ParserContext)} method.<br/>
      * If we auto-generate a name then we issue a warning so users can (1) correct this, but also so they can make sense
      * of the logging in the filters which uses the id extensively.
      */

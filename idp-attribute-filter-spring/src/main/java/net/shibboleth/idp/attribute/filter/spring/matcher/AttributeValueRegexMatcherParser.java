@@ -33,7 +33,7 @@ public class AttributeValueRegexMatcherParser extends AbstractRegexMatcherParser
             "AttributeValueRegex");
 
     /** {@inheritDoc} */
-    @Nonnull protected Class getNativeBeanClass() {
+    @Nonnull protected Class<?> getNativeBeanClass() {
         return AttributeValueRegexpMatcher.class;
     }
 }

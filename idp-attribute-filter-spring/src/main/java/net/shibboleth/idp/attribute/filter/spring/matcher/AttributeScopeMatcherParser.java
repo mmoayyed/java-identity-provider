@@ -33,7 +33,7 @@ public class AttributeScopeMatcherParser extends AbstractStringMatcherParser {
             "AttributeScopeString");
 
     /** {@inheritDoc} */
-    @Nonnull protected Class getNativeBeanClass() {
+    @Nonnull protected Class<?> getNativeBeanClass() {
         return AttributeScopeStringMatcher.class;
     }
 }

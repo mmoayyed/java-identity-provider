@@ -24,7 +24,7 @@ import net.shibboleth.idp.attribute.filter.impl.matcher.AttributeValueStringMatc
 import net.shibboleth.idp.attribute.filter.spring.basic.AttributeFilterBasicNamespaceHandler;
 
 /**
- * Bean definition parser for {@link AttributeValueStringMatchFunctor}s.
+ * Bean definition parser for {@link AttributeValueStringMatcher}s.
  */
 public class AttributeValueStringMatcherParser extends AbstractStringMatcherParser {
 
@@ -33,7 +33,7 @@ public class AttributeValueStringMatcherParser extends AbstractStringMatcherPars
             "AttributeValueString");
 
     /** {@inheritDoc} */
-    @Nonnull protected Class getNativeBeanClass() {
+    @Nonnull protected Class<?> getNativeBeanClass() {
         return AttributeValueStringMatcher.class;
     }
 }

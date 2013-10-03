@@ -34,7 +34,7 @@ public class AuthenticationMethodRuleParser extends AbstractStringPolicyRulePars
 
 
     /** {@inheritDoc} */
-    @Nonnull protected Class getNativeBeanClass() {
+    @Nonnull protected Class<?>getNativeBeanClass() {
         return AuthenticationMethodPolicyRule.class;
     }
 

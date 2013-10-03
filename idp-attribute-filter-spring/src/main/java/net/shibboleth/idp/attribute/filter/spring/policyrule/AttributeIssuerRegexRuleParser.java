@@ -33,7 +33,7 @@ public class AttributeIssuerRegexRuleParser extends AbstractRegexPolicyRuleParse
             "AttributeIssuerRegex");
 
     /** {@inheritDoc} */
-    @Nonnull protected Class getNativeBeanClass() {
+    @Nonnull protected Class<?> getNativeBeanClass() {
         return AttributeIssuerRegexpPolicyRule.class;
     }
 }

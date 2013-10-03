@@ -54,7 +54,7 @@ public abstract class BasePolicyRuleParser extends BaseFilterParser {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Class getBeanClass(@Nonnull final Element element) {
+    @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {
         if (isPolicyRule(element)) {
             return getNativeBeanClass();
         } else {
@@ -91,7 +91,7 @@ public abstract class BasePolicyRuleParser extends BaseFilterParser {
      * 
      * @return the class.
      */
-    @Nonnull protected abstract Class getNativeBeanClass();
+    @Nonnull protected abstract Class<?> getNativeBeanClass();
 
     /**
      * Parser the native bean class. This is either called direct or then injected into the nesting class.

@@ -61,7 +61,7 @@ public class ScriptedMatcherParser extends BaseFilterParser {
     private String logPrefix;
 
     /** {@inheritDoc} */
-    @Nonnull protected Class getBeanClass(@Nonnull final Element element) {
+    @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {
         if (isPolicyRule(element)) {
             return ScriptedPolicyRule.class;
         }
