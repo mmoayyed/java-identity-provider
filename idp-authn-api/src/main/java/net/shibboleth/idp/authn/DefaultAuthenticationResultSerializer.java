@@ -42,8 +42,6 @@ import javax.json.JsonValue;
 import javax.json.stream.JsonGenerator;
 import javax.security.auth.Subject;
 
-import net.shibboleth.utilities.java.support.annotation.Duration;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -87,24 +85,16 @@ public class DefaultAuthenticationResultSerializer implements StorageSerializer<
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(DefaultAuthenticationResultSerializer.class);
     
-    /** Milliseconds to substract from record expiration to establish last activity value. */
-    @Duration @NonNegative private final long expirationOffset;
-    
     /** Shrinkage of long constants into symbolic numbers. */
     @Nonnull private BiMap<String,Integer> symbolics;
     
     /** A cache of Principal types that support string-based construction. */
     @Nonnull private final Set<Class<? extends Principal>> compatiblePrincipalTypes;
     
-    /**
-     * Constructor.
-     *
-     * @param offset milliseconds to substract from record expiration to establish last activity value
-     */
-    public DefaultAuthenticationResultSerializer(@Duration @NonNegative final long offset) {
+    /** Constructor. */
+    public DefaultAuthenticationResultSerializer() {
         symbolics = ImmutableBiMap.of();
         compatiblePrincipalTypes = Collections.synchronizedSet(new HashSet<Class<? extends Principal>>());
-        expirationOffset = Constraint.isGreaterThanOrEqual(0, offset, "Offset must be greater than or equal to zero");
     }
 
     /**
@@ -161,7 +151,7 @@ public class DefaultAuthenticationResultSerializer implements StorageSerializer<
 
             AuthenticationResult result = new AuthenticationResult(flowId, new Subject());
             result.setAuthenticationInstant(authnInstant);
-            result.setLastActivityInstant((expiration != null ? expiration : authnInstant) - expirationOffset);
+            result.setLastActivityInstant(expiration != null ? expiration : authnInstant);
             
             for (JsonValue p : principals) {
                 if (p instanceof JsonObject) {

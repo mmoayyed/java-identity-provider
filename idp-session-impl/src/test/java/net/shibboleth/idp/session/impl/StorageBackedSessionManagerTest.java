@@ -22,7 +22,6 @@ import java.util.Collection;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.idp.authn.DefaultAuthenticationResultSerializer;
 import net.shibboleth.idp.authn.TestPrincipal;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.session.BasicServiceSession;
@@ -36,7 +35,6 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy;
 
-import org.opensaml.storage.StorageSerializer;
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -63,13 +61,10 @@ public class StorageBackedSessionManagerTest {
         serializerRegistry = new ServiceSessionSerializerRegistry();
         serializerRegistry.register(BasicServiceSession.class, new BasicServiceSessionSerializer(sessionSlop));
         
-        StorageSerializer<AuthenticationResult> resultSerializer = new DefaultAuthenticationResultSerializer(sessionSlop);
         AuthenticationFlowDescriptor foo = new AuthenticationFlowDescriptor("AuthenticationFlow/Foo");
-        foo.setResultSerializer(resultSerializer);
         foo.setLifetime(60 * 1000);
         foo.setInactivityTimeout(60 * 1000);
         AuthenticationFlowDescriptor bar = new AuthenticationFlowDescriptor("AuthenticationFlow/Bar");
-        bar.setResultSerializer(resultSerializer);
         bar.setLifetime(60 * 1000);
         bar.setInactivityTimeout(60 * 1000);
         flowDescriptors = Arrays.asList(foo, bar);
@@ -202,7 +197,7 @@ public class StorageBackedSessionManagerTest {
         foo2 = session2.getAuthenticationResult("AuthenticationFlow/Foo");
         Assert.assertNotNull(foo2);
         Assert.assertEquals(foo.getAuthenticationInstant(), foo2.getAuthenticationInstant());
-        //Assert.assertEquals(foo.getLastActivityInstant(), foo2.getLastActivityInstant());
+        Assert.assertEquals(foo.getLastActivityInstant(), foo2.getLastActivityInstant());
         Assert.assertEquals(foo.getSubject(), foo2.getSubject());
     }
 }

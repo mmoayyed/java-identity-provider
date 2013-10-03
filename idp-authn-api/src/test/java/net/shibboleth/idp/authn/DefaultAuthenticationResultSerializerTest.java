@@ -48,7 +48,7 @@ public class DefaultAuthenticationResultSerializerTest {
     private DefaultAuthenticationResultSerializer serializer;
     
     @BeforeMethod public void setUp() {
-        serializer = new DefaultAuthenticationResultSerializer(0);
+        serializer = new DefaultAuthenticationResultSerializer();
     }
 
     @Test public void testInvalid() throws Exception {

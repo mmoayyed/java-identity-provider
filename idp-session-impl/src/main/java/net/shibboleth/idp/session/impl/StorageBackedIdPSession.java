@@ -484,16 +484,13 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
         if (flow == null) {
             log.warn("No flow descriptor installed for ID {}, unable to load result from storage", flowId);
             return null;
-        } else if (flow.getResultSerializer() == null) {
-            log.warn("No serializer installed for flow ID {}, unable to load result from storage", flowId);
-            return null;
         }
         
         try {
             final StorageRecord<AuthenticationResult> record =
                     sessionManager.getStorageService().read(getId(), flowId);
             if (record != null) {
-                return record.getValue(flow.getResultSerializer(), getId(), flowId);
+                return record.getValue(flow, getId(), flowId);
             } else {
                 return null;
             }
@@ -520,9 +517,6 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
         if (flow == null) {
             log.warn("No flow descriptor installed for ID {}, unable to save result to storage", flowId);
             return false;
-        } else if (flow.getResultSerializer() == null) {
-            log.warn("No serializer installed for flow ID {}, unable to save result to storage", flowId);
-            return false;
         }
         
         try {
@@ -530,14 +524,12 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             int attempts = 10;
             boolean success = false;
             do {
-                success = sessionManager.getStorageService().create(getId(), flowId, result, flow.getResultSerializer(),
-                        result.getLastActivityInstant() + flow.getInactivityTimeout()
-                            + sessionManager.getSessionSlop());
+                success = sessionManager.getStorageService().create(getId(), flowId, result, flow,
+                        result.getLastActivityInstant() + flow.getInactivityTimeout());
                 if (!success) {
                     // The record already exists, so we need to overwrite via an update.
-                    success = sessionManager.getStorageService().update(getId(), flowId, result,
-                            flow.getResultSerializer(), result.getLastActivityInstant() + flow.getInactivityTimeout()
-                                + sessionManager.getSessionSlop()) != null;
+                    success = sessionManager.getStorageService().update(getId(), flowId, result, flow,
+                            result.getLastActivityInstant() + flow.getInactivityTimeout()) != null;
                 }
             } while (!success && attempts-- > 0);
             

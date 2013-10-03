@@ -71,7 +71,7 @@ import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrate
  * prevent premature disappearance in case of logout.</p>
  * 
  * <p>Each {@link AuthenticationResult} is stored in a record keyed by the flow ID. The expiration
- * is set based on the underlying flow's timeout plus the "slop" value.</p>
+ * is set based on the underlying flow's timeout.</p>
  * 
  * <p>Each {@link ServiceSession} is stored in a record keyed by the service ID. The expiration
  * is set based on the ServiceSession's own expiration plus the "slop" value.</p>

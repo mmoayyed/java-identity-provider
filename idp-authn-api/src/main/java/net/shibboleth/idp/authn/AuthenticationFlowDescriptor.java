@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Set;
@@ -32,6 +33,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 
 import net.shibboleth.utilities.java.support.annotation.Duration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
@@ -47,10 +49,14 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  * directly exposed as properties of the flow, and others can be found by examining the list
  * of extended {@link Principal}s that the flow exposes.</p>
  */
-public class AuthenticationFlowDescriptor implements IdentifiableComponent, PrincipalSupportingComponent {
+public class AuthenticationFlowDescriptor implements IdentifiableComponent, PrincipalSupportingComponent,
+        StorageSerializer<AuthenticationResult> {
 
+    /** Default serializer for result objects. */
+    private static final StorageSerializer<AuthenticationResult> DEFAULT_SERIALIZER;
+    
     /** The unique identifier of the authentication flow. */
-    private final String flowId;
+    @Nonnull @NotEmpty private final String flowId;
 
     /** Whether this flow supports passive authentication. */
     private boolean supportsPassive;
@@ -59,10 +65,10 @@ public class AuthenticationFlowDescriptor implements IdentifiableComponent, Prin
     private boolean supportsForced;
 
     /** Maximum amount of time in milliseconds, since first usage, a flow should be considered active. */
-    @Duration private long lifetime;
+    @Duration @NonNegative private long lifetime;
     
     /** Maximum amount of time in milliseconds, since last usage, a flow should be considered active. */
-    @Duration private long inactivityTimeout;
+    @Duration @NonNegative private long inactivityTimeout;
     
     /**
      * Supported principals, indexed by type, that the flow can produce.
@@ -131,7 +137,7 @@ public class AuthenticationFlowDescriptor implements IdentifiableComponent, Prin
      * 
      * @return maximum amount of time in milliseconds a flow should be considered active, never less than 0
      */
-    public long getLifetime() {
+    @NonNegative public long getLifetime() {
         return lifetime;
     }
 
@@ -141,7 +147,7 @@ public class AuthenticationFlowDescriptor implements IdentifiableComponent, Prin
      * 
      * @param flowLifetime the lifetime for the flow, must be 0 or greater
      */
-    public void setLifetime(@Duration final long flowLifetime) {
+    public void setLifetime(@Duration @NonNegative final long flowLifetime) {
         lifetime = Constraint.isGreaterThanOrEqual(0, flowLifetime, "Lifetime must be greater than or equal to 0");
     }
 
@@ -151,7 +157,7 @@ public class AuthenticationFlowDescriptor implements IdentifiableComponent, Prin
      * 
      * @return the duration.
      */
-    public long getInactivityTimeout() {
+    @NonNegative public long getInactivityTimeout() {
         return inactivityTimeout;
     }
 
@@ -161,7 +167,7 @@ public class AuthenticationFlowDescriptor implements IdentifiableComponent, Prin
      * 
      * @param timeout the flow inactivity timeout, must be 0 or greater
      */
-    public void setInactivityTimeout(@Duration final long timeout) {
+    public void setInactivityTimeout(@Duration @NonNegative final long timeout) {
         inactivityTimeout = Constraint.isGreaterThanOrEqual(0, timeout,
                 "Inactivity timeout must be greater than or equal to 0");
     }
@@ -217,25 +223,40 @@ public class AuthenticationFlowDescriptor implements IdentifiableComponent, Prin
         supportedPrincipals.getPrincipals().clear();
         supportedPrincipals.getPrincipals().addAll(Collections2.filter(principals, Predicates.notNull()));
     }
-   
-    /**
-     * Get the custom serializer for results produced by this flow.
-     * 
-     * @return the custom serializer, or null
-     */
-    @Nullable public StorageSerializer<AuthenticationResult> getResultSerializer() {
-        return resultSerializer;
-    }
 
     /**
-     * Set the custom serializer for results produced by this flow.
+     * Set a custom serializer for results produced by this flow.
      * 
-     * @param serializer the custom serializer, or null
+     * @param serializer the custom serializer
      */
-    public void setResultSerializer(@Nullable final StorageSerializer<AuthenticationResult> serializer) {
-        resultSerializer = serializer;
+    public void setResultSerializer(@Nonnull final StorageSerializer<AuthenticationResult> serializer) {
+        resultSerializer = Constraint.isNotNull(serializer, "StorageSerializer cannot be null");
     }
-        
+
+
+    /** {@inheritDoc} */
+    @Nonnull @NotEmpty public String serialize(@Nonnull final AuthenticationResult instance) throws IOException {
+        if (resultSerializer != null) {
+            return resultSerializer.serialize(instance);
+        } else {
+            return DEFAULT_SERIALIZER.serialize(instance);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Nonnull public AuthenticationResult deserialize(int version, @Nonnull @NotEmpty final String context,
+            @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value, @Nonnull final Long expiration)
+            throws IOException {
+        // Back the expiration off by the inactivity timeout to recover the last activity time.
+        if (resultSerializer != null) {
+            return resultSerializer.deserialize(version, context, key, value,
+                    (expiration != null) ? expiration - inactivityTimeout : null);
+        } else {
+            return DEFAULT_SERIALIZER.deserialize(version, context, key, value,
+                    (expiration != null) ? expiration - inactivityTimeout : null);
+        }
+    }
+
     /** {@inheritDoc} */
     public int hashCode() {
         return flowId.hashCode();
@@ -263,5 +284,9 @@ public class AuthenticationFlowDescriptor implements IdentifiableComponent, Prin
         return Objects.toStringHelper(this).add("flowId", flowId).add("supportsPassive", supportsPassive)
                 .add("supportsForcedAuthentication", supportsForced).add("lifetime", lifetime)
                 .add("inactivityTimeout", inactivityTimeout).toString();
+    }
+
+    static {
+        DEFAULT_SERIALIZER = new DefaultAuthenticationResultSerializer();
     }
 }
