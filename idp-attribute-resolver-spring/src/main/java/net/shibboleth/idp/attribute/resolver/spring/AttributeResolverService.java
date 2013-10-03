@@ -72,7 +72,7 @@ public class AttributeResolverService extends AbstractSpringService {
 
     // TODO probably wrong
     /** {@inheritDoc} */
-    protected void doPreStart(HashMap context) throws ServiceException {
+    protected void doPreStart(@SuppressWarnings("rawtypes") HashMap context) throws ServiceException {
 
         // TODO do we have to init resources here ?
         log.debug("getServiceConfigurations() '{}'", getServiceConfigurations());

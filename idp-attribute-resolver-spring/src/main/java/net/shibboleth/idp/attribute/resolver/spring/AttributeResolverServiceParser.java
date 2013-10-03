@@ -32,6 +32,7 @@ public class AttributeResolverServiceParser extends AbstractServiceParser {
             "ShibbolethAttributeResolver");
 
     /** {@inheritDoc} */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected Class getBeanClass(Element element) {
         return AttributeResolverService.class;
     }
