@@ -16,12 +16,9 @@
     be used, regardless any other files loaded by the Spring container.
     -->
     
-    <bean id="DefaultAuthenticationResultSerializer" class="net.shibboleth.idp.authn.DefaultAuthenticationResultSerializer" />
-
     <util:list id="AvailableAuthenticationFlows">
         
         <bean c:id="AuthenticationFlow/IPAddress" class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
-                p:resultSerializer-ref="DefaultAuthenticationResultSerializer"
                 p:passiveAuthenticationSupported="true"
                 p:forcedAuthenticationSupported="false"
                 p:lifetime="PT60S" p:inactivityTimeout="0">
@@ -34,7 +31,6 @@
         </bean>
         
         <bean c:id="AuthenticationFlow/RemoteUser" class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
-                p:resultSerializer-ref="DefaultAuthenticationResultSerializer"
                 p:passiveAuthenticationSupported="false"
                 p:forcedAuthenticationSupported="true"
                 p:lifetime="PT60M" p:inactivityTimeout="PT30M">
@@ -49,7 +45,6 @@
         </bean>
 
         <bean c:id="AuthenticationFlow/JAASForm" class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
-                p:resultSerializer-ref="DefaultAuthenticationResultSerializer"
                 p:passiveAuthenticationSupported="false"
                 p:forcedAuthenticationSupported="true"
                 p:lifetime="PT60M" p:inactivityTimeout="PT30M">
@@ -64,7 +59,6 @@
         </bean>
 
         <bean c:id="AuthenticationFlow/JAASBasic" class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
-                p:resultSerializer-ref="DefaultAuthenticationResultSerializer"
                 p:passiveAuthenticationSupported="true"
                 p:forcedAuthenticationSupported="false"
                 p:lifetime="PT60M" p:inactivityTimeout="PT30M">
