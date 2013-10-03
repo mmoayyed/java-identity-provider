@@ -26,6 +26,7 @@ import net.shibboleth.idp.authn.TestPrincipal;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.session.BasicServiceSession;
 import net.shibboleth.idp.session.IdPSession;
+import net.shibboleth.idp.session.ServiceSession;
 import net.shibboleth.idp.session.ServiceSessionSerializerRegistry;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
@@ -200,4 +201,44 @@ public class StorageBackedSessionManagerTest {
         Assert.assertEquals(foo.getLastActivityInstant(), foo2.getLastActivityInstant());
         Assert.assertEquals(foo.getSubject(), foo2.getSubject());
     }
+    
+    @Test(threadPoolSize = 10, invocationCount = 10,  timeOut = 10000)
+    public void testServiceSessions() throws ResolverException, SessionException, InterruptedException {
+        
+        IdPSession session = manager.createSession("joe", null);
+        Assert.assertTrue(session.getServiceSessions().isEmpty());
+
+        // Add some sessions.
+        ServiceSession foo = new BasicServiceSession("https://sp.example.org/shibboleth", "AuthenticationFlow/Foo",
+                System.currentTimeMillis(), System.currentTimeMillis() + 60 * 60 * 1000);
+        ServiceSession bar = new BasicServiceSession("https://sp2.example.org/shibboleth", "AuthenticationFlow/Bar",
+                System.currentTimeMillis(), System.currentTimeMillis() + 60 * 60 * 1000);
+
+        Assert.assertNull(session.addServiceSession(foo));
+        Assert.assertNull(session.addServiceSession(bar));
+        
+        // Test various methods and removals.
+        Assert.assertEquals(session.getServiceSessions().size(), 2);
+        
+        Assert.assertTrue(session.removeServiceSession(bar));
+        Assert.assertFalse(session.removeServiceSession(bar));
+        
+        Assert.assertEquals(session.getServiceSessions().size(), 1);
+        
+        // Test access and compare to original.
+        Assert.assertNull(session.getServiceSession("https://sp2.example.org/shibboleth"));
+        ServiceSession foo2 = session.getServiceSession("https://sp.example.org/shibboleth");
+        Assert.assertNotNull(foo2);
+        Assert.assertEquals(foo.getCreationInstant(), foo2.getCreationInstant());
+        Assert.assertEquals(foo.getExpirationInstant(), foo2.getExpirationInstant());
+        
+        // Load from storage and re-test.
+        IdPSession session2 = manager.resolveSingle(new CriteriaSet(new SessionIdCriterion(session.getId())));
+        Assert.assertNull(session.getServiceSession("https://sp2.example.org/shibboleth"));
+        foo2 = session2.getServiceSession("https://sp.example.org/shibboleth");
+        Assert.assertNotNull(foo2);
+        Assert.assertEquals(foo.getCreationInstant(), foo2.getCreationInstant());
+        Assert.assertEquals(foo.getExpirationInstant(), foo2.getExpirationInstant());
+    }
+    
 }
