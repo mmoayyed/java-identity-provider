@@ -200,6 +200,11 @@ public class StorageBackedSessionManagerTest {
         Assert.assertEquals(foo.getAuthenticationInstant(), foo2.getAuthenticationInstant());
         Assert.assertEquals(foo.getLastActivityInstant(), foo2.getLastActivityInstant());
         Assert.assertEquals(foo.getSubject(), foo2.getSubject());
+        
+        // Test removal while multiple objects are active.
+        session2 = manager.resolveSingle(new CriteriaSet(new SessionIdCriterion(session.getId())));
+        Assert.assertTrue(session.removeAuthenticationResult(foo));
+        Assert.assertNull(session2.getAuthenticationResult("AuthenticationFlow/Foo"));
     }
     
     @Test(threadPoolSize = 10, invocationCount = 10,  timeOut = 10000)
@@ -239,6 +244,11 @@ public class StorageBackedSessionManagerTest {
         Assert.assertNotNull(foo2);
         Assert.assertEquals(foo.getCreationInstant(), foo2.getCreationInstant());
         Assert.assertEquals(foo.getExpirationInstant(), foo2.getExpirationInstant());
+
+        // Test removal while multiple objects are active.
+        session2 = manager.resolveSingle(new CriteriaSet(new SessionIdCriterion(session.getId())));
+        Assert.assertTrue(session.removeServiceSession(foo));
+        Assert.assertNull(session2.getServiceSession("https://sp.example.org/shibboleth"));
     }
     
 }

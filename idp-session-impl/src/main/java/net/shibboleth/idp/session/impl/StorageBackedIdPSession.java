@@ -487,11 +487,11 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
         }
         
         try {
-            final StorageRecord<AuthenticationResult> record =
-                    sessionManager.getStorageService().read(getId(), flowId);
+            final StorageRecord<AuthenticationResult> record = sessionManager.getStorageService().read(getId(), flowId);
             if (record != null) {
                 return record.getValue(flow, getId(), flowId);
             } else {
+                log.debug("No AuthenticationResult for flow {} in session {}", flowId, getId());
                 return null;
             }
         } catch (IOException e) {
@@ -563,6 +563,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
         try {
             final StorageRecord<ServiceSession> record = sessionManager.getStorageService().read(getId(), key);
             if (record == null) {
+                log.debug("No ServiceSession found for service {} in session {}", serviceId, getId());
                 return null;
             }
             
