@@ -34,18 +34,54 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>idp-metadata-api</artifactId>
+            <artifactId>idp-attribute-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-api</artifactId>
             <version>${opensaml.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-core</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-profile-api</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-security-api</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-xmlsec-api</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${spring-webflow.groupId}</groupId>
+            <artifactId>spring-webflow</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+
         
         <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->
+        <dependency>
+            <groupId>${xerces.groupId}</groupId>
+            <artifactId>xml-apis</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
         <!-- Test Dependencies -->
         <dependency>

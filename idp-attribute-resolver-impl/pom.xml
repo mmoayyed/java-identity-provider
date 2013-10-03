@@ -22,7 +22,6 @@
             <artifactId>idp-attribute-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-attribute-resolver-api</artifactId>
@@ -34,58 +33,47 @@
             <artifactId>opensaml-core</artifactId>
             <version>${opensaml.version}</version>
         </dependency>
-
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-api</artifactId>
             <version>${opensaml.version}</version>
         </dependency>
-        
-        <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ldaptive</groupId>
-            <artifactId>ldaptive</artifactId>
-        </dependency>
-                
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-api</artifactId>
             <version>${opensaml.version}</version>
         </dependency>
-        
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-storage-api</artifactId>
             <version>${opensaml.version}</version>
         </dependency>
-        
+
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ldaptive</groupId>
+            <artifactId>ldaptive</artifactId>
+        </dependency>
+                
         <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->
+        <dependency>
+            <groupId>${xerces.groupId}</groupId>
+            <artifactId>xml-apis</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
         <!-- Test Dependencies -->
         
@@ -104,7 +92,6 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <!-- We need this even if mvn dependency:analyze says we don't - this
                  provides the implementations of the SAML interfaces and by definition
@@ -114,7 +101,6 @@
             <version>${opensaml.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-storage-impl</artifactId>
@@ -127,7 +113,6 @@
             <artifactId>hsqldb</artifactId>
             <scope>test</scope>
         </dependency>
-        
         <dependency>
             <groupId>com.unboundid</groupId>
             <artifactId>unboundid-ldapsdk</artifactId>

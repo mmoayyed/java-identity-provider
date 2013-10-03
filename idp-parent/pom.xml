@@ -87,6 +87,10 @@
             <artifactId>jsr305</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
             <!-- needed for logback SMTP appender -->
             <groupId>org.codehaus.janino</groupId>
             <artifactId>janino</artifactId>

@@ -24,6 +24,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>idp-attribute-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>idp-attribute-filter-api</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -33,9 +38,22 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+          <groupId>${spring.groupId}</groupId>
+          <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>${spring.groupId}</groupId>
+          <artifactId>spring-context</artifactId>
+        </dependency>
         <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->
+        <dependency>
+            <groupId>${xerces.groupId}</groupId>
+            <artifactId>xml-apis</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
         <!-- Test Dependencies -->
         <dependency>
@@ -45,25 +63,21 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-attribute-resolver-api</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-attribute-resolver-impl</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-attribute-filter-impl</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>idp-attribute-mapper-impl</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
@@ -76,10 +90,15 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-impl</artifactId>
+            <version>${opensaml.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-saml-api</artifactId>
             <version>${opensaml.version}</version>
             <scope>test</scope>
         </dependency>

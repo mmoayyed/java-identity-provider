@@ -24,34 +24,62 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>idp-attribute-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>idp-attribute-resolver-api</artifactId>
             <version>${project.version}</version>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-attribute-resolver-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.mchange</groupId>
-            <artifactId>c3p0</artifactId>
-            <version>0.9.2.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>idp-saml-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>        
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-saml-impl</artifactId>
             <version>${project.version}</version>
         </dependency>        
 
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-saml-api</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-security-api</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mchange</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>0.9.2.1</version> <!-- TODO Move version to parent? -->
+        </dependency>
+         <dependency>
+            <groupId>org.ldaptive</groupId>
+            <artifactId>ldaptive</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>${spring.groupId}</groupId>
+          <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>${spring.groupId}</groupId>
+          <artifactId>spring-context</artifactId>
+        </dependency>
+                
         <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->
+        <dependency>
+            <groupId>${xerces.groupId}</groupId>
+            <artifactId>xml-apis</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
         <!-- Test Dependencies -->
         <dependency>
@@ -61,23 +89,16 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-attribute-mapper-api</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>        
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-attribute-mapper-impl</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.unboundid</groupId>
-            <artifactId>unboundid-ldapsdk</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -88,21 +109,29 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-impl</artifactId>
             <version>${opensaml.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
+       <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-storage-impl</artifactId>
             <version>${opensaml.version}</version>
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.unboundid</groupId>
+            <artifactId>unboundid-ldapsdk</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- Managed Dependencies -->
     </dependencies>
 

@@ -28,16 +28,40 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-saml-api</artifactId>
-            <version>${opensaml.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-profile-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-core</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-profile-api</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-soap-api</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
+                
+        <dependency>
+            <groupId>net.shibboleth.ext</groupId>
+            <artifactId>spring-extensions</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>${spring-webflow.groupId}</groupId>
+            <artifactId>spring-webflow</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.velocity</groupId>
+          <artifactId>velocity</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.owasp.esapi</groupId>
             <artifactId>esapi</artifactId>
@@ -69,8 +93,7 @@
             <artifactId>unboundid-ldapsdk</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
+        <dependency>  <!-- Needed, even tho maven thinks not -->
             <groupId>org.ldaptive</groupId>
             <artifactId>ldaptive</artifactId>
             <scope>test</scope>
