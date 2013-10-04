@@ -81,7 +81,7 @@ public abstract class AbstractServiceSessionSerializer implements StorageSeriali
                 .write(CREATION_INSTANT_FIELD, instance.getCreationInstant())
                 .write(FLOW_ID_FIELD, instance.getAuthenticationFlowId());
             
-            doSerializeAdditional(gen);
+            doSerializeAdditional(instance, gen);
             
             gen.writeEnd().close();
             
@@ -126,9 +126,11 @@ public abstract class AbstractServiceSessionSerializer implements StorageSeriali
      * 
      * <p>The serialization "context" is the continuation of a JSON struct.</p>
      * 
+     * @param instance object to serialize
      * @param generator JSON generator to write to
      */
-    protected void doSerializeAdditional(@Nonnull final JsonGenerator generator) {
+    protected void doSerializeAdditional(@Nonnull final ServiceSession instance,
+            @Nonnull final JsonGenerator generator) {
         
     }
     
