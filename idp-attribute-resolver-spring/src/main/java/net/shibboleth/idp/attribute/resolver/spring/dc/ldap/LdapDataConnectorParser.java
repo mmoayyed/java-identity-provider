@@ -20,7 +20,6 @@ package net.shibboleth.idp.attribute.resolver.spring.dc.ldap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 
@@ -28,9 +27,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.LdapDataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.TemplatedExecutableSearchFilterBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.BaseDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.CacheConfigParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.DataConnectorNamespaceHandler;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -43,9 +44,7 @@ import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchFilter;
-import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
-import org.ldaptive.cache.Cache;
 import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.handler.CaseChangeEntryHandler.CaseChange;
 import org.ldaptive.handler.MergeAttributeEntryHandler;
@@ -68,6 +67,8 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import com.google.common.cache.Cache;
 
 /** Bean definition Parser for a {@link LdapDataConnector}. */
 public class LdapDataConnectorParser extends BaseDataConnectorParser {
@@ -138,10 +139,6 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
 
         final V2Parser v2Parser = new V2Parser(config);
 
-        final Boolean noResultAnError =
-                AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(config, new QName(
-                        "noResultIsError")));
-
         final ConnectionConfig connectionConfig = v2Parser.createConnectionConfig();
         final DefaultConnectionFactory connectionFactory = new DefaultConnectionFactory(connectionConfig);
         final String connectionStrategy = AttributeSupport.getAttributeValue(config, new QName("connectionStrategy"));
@@ -180,9 +177,14 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
         }
 
         final SearchExecutor searchExecutor = v2Parser.createSearchExecutor();
-
         builder.addPropertyValue("searchExecutor", searchExecutor);
-        if (noResultAnError != null && noResultAnError.booleanValue()) {
+
+        final Cache<String, Map<String, Attribute>> cache = v2Parser.createCache();
+        if (cache != null) {
+            builder.addPropertyValue("resultsCache", cache);
+        }
+
+        if (v2Parser.isNoResultAnError()) {
             builder.addPropertyValue("noResultAnError", true);
         }
         builder.setInitMethodName("initialize");
@@ -202,6 +204,18 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
         public V2Parser(@Nonnull final Element config) {
             Constraint.isNotNull(config, "LDAPDirectory element cannot be null");
             configElement = config;
+        }
+
+        /**
+         * Returns whether the noResultIsError attribute exists and is true.
+         * 
+         * @return whether the noResultIsError attribute exists and is true
+         */
+        public boolean isNoResultAnError() {
+            final Boolean noResultAnError =
+                    AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(configElement, new QName(
+                            "noResultIsError")));
+            return noResultAnError != null ? noResultAnError.booleanValue() : false;
         }
 
         /**
@@ -371,39 +385,7 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
                 searchExecutor.setSearchFilter(new SearchFilter(filter));
             }
 
-            final Cache<SearchRequest> cache = createCache();
-            if (cache != null) {
-                searchExecutor.setSearchCache(cache);
-            }
             return searchExecutor;
-        }
-
-        /**
-         * Creates a new cache from a v2 XML configuration.
-         * 
-         * @return cache
-         */
-        @Nullable protected Cache<SearchRequest> createCache() {
-            final Element cacheElement =
-                    ElementSupport.getFirstChildElement(configElement, new QName(
-                            DataConnectorNamespaceHandler.NAMESPACE, "ResultCache"));
-            if (cacheElement == null) {
-                final Boolean cacheResults =
-                        AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(configElement,
-                                new QName("cacheResults")));
-                if (cacheResults != null && cacheResults.booleanValue()) {
-                    return new GuavaCache(500, 4 * 60 * 60);
-                } else {
-                    return null;
-                }
-            }
-
-            final Long timeToLive =
-                    AttributeSupport.getDurationAttributeValueAsLong(AttributeSupport.getAttribute(cacheElement,
-                            new QName("elementTimeToLive")));
-            final String maximumSize =
-                    AttributeSupport.getAttributeValue(cacheElement, new QName("maximumCachedElements"));
-            return new GuavaCache(Long.parseLong(maximumSize), TimeUnit.MILLISECONDS.toSeconds(timeToLive));
         }
 
         /**
@@ -519,6 +501,16 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
                 poolConfig.setValidatePeriod(1800);
             }
             return poolConfig;
+        }
+
+        /**
+         * Create the results cache. See {@link CacheConfigParser}.
+         * 
+         * @return results cache
+         */
+        @Nullable public Cache createCache() {
+            final CacheConfigParser parser = new CacheConfigParser(configElement);
+            return parser.createCache();
         }
     }
 }

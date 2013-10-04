@@ -125,7 +125,7 @@ public class RdbmsDataConnectorParserTest {
         MappingStrategy mappingStrategy = dataConnector.getMappingStrategy();
         AssertJUnit.assertNotNull(mappingStrategy);
 
-        Cache<String, Map<String, Attribute>> resultCache = dataConnector.getResultCache();
-        AssertJUnit.assertNull(resultCache);
+        Cache<String, Map<String, Attribute>> resultCache = dataConnector.getResultsCache();
+        AssertJUnit.assertNotNull(resultCache);
     }
 }

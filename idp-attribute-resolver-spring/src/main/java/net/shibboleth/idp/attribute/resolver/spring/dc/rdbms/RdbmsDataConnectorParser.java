@@ -17,15 +17,21 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc.rdbms;
 
+import java.util.Map;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.impl.dc.rdbms.RdbmsDataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.dc.rdbms.TemplatedExecutableStatementBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.BaseDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.CacheConfigParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.DataConnectorNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.dc.ManagedConnectionParser;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -36,6 +42,8 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import com.google.common.cache.Cache;
 
 /** Bean definition Parser for a {@link RdbmsDataConnector}. */
 public class RdbmsDataConnectorParser extends BaseDataConnectorParser {
@@ -103,58 +111,105 @@ public class RdbmsDataConnectorParser extends BaseDataConnectorParser {
     protected void doParseV2(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
 
-        final ManagedConnectionParser parser = new ManagedConnectionParser(config);
+        final V2Parser v2Parser = new V2Parser(config);
 
-        final Boolean noResultAnError =
-                AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(config, new QName(
-                        "noResultIsError")));
+        builder.addPropertyValue("DataSource", v2Parser.createDataSource());
 
-        final DataSource datasource = parser.createDataSource();
-        builder.addPropertyValue("DataSource", datasource);
-
-        final BeanDefinitionBuilder templateBuilder = constuctTemplateBuilder(config);
+        final BeanDefinitionBuilder templateBuilder = v2Parser.createTemplateBuilder();
         builder.addPropertyValue("executableSearchBuilder", templateBuilder.getBeanDefinition());
 
-        // TODO add support for cacheResults and ResultCache
-        if (noResultAnError != null && noResultAnError.booleanValue()) {
+        final Cache<String, Map<String, Attribute>> cache = v2Parser.createCache();
+        if (cache != null) {
+            builder.addPropertyValue("resultsCache", cache);
+        }
+
+        if (v2Parser.isNoResultAnError()) {
             builder.addPropertyValue("noResultAnError", true);
         }
         builder.setInitMethodName("initialize");
     }
 
-    /**
-     * Construct the definition of the template driven search builder.
-     * 
-     * @param config the configuration.
-     * @return the bean definition for the template search builder.
-     */
-    private BeanDefinitionBuilder constuctTemplateBuilder(Element config) {
-        BeanDefinitionBuilder templateBuilder =
-                BeanDefinitionBuilder.genericBeanDefinition(TemplatedExecutableStatementBuilder.class);
+    /** Utility class for parsing v2 schema configuration. */
+    protected class V2Parser {
 
-        String velocityEngineRef = StringSupport.trimOrNull(config.getAttribute("templateEngine"));
-        if (null == velocityEngineRef) {
-            velocityEngineRef = "shibboleth.VelocityEngine";
+        /** Base XML element. */
+        private final Element configElement;
+
+        /**
+         * Creates a new V2Parser with the supplied RelationalDatabase element.
+         * 
+         * @param config RelationalDatabase element
+         */
+        public V2Parser(@Nonnull final Element config) {
+            Constraint.isNotNull(config, "RelationalDatabase element cannot be null");
+            configElement = config;
         }
-        templateBuilder.addPropertyReference("velocityEngine", velocityEngineRef);
 
-        templateBuilder.addPropertyValue("v2Compatibility", true);
-
-        Long queryTimeout =
-                AttributeSupport.getDurationAttributeValueAsLong(AttributeSupport.getAttribute(config, new QName(
-                        "queryTimeout")));
-        if (queryTimeout == null) {
-            queryTimeout = Long.valueOf(5000);
+        /**
+         * Returns whether the noResultIsError attribute exists and is true.
+         *
+         * @return whether the noResultIsError attribute exists and is true
+         */
+        public boolean isNoResultAnError() {
+            final Boolean noResultAnError =
+                    AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(configElement, new QName(
+                            "noResultIsError")));
+            return noResultAnError != null ? noResultAnError.booleanValue() : false;
         }
-        templateBuilder.addPropertyValue("queryTimeout", queryTimeout.intValue());
 
-        final Element queryTemplate =
-                ElementSupport.getFirstChildElement(config, new QName(DataConnectorNamespaceHandler.NAMESPACE,
-                        "QueryTemplate"));
-        final String queryText = queryTemplate.getTextContent();
-        templateBuilder.addPropertyValue("templateText", queryText);
+        /**
+         * Create the data source. See {@link ManagedConnectionParser}.
+         *
+         * @return data source
+         */
+        @Nonnull public DataSource createDataSource() {
+            final ManagedConnectionParser parser = new ManagedConnectionParser(configElement);
+            return parser.createDataSource();
+        }
 
-        templateBuilder.setInitMethodName("initialize");
-        return templateBuilder;
+        /**
+         * Create the definition of the template driven search builder.
+         * 
+         * @return the bean definition for the template search builder.
+         */
+        @Nonnull public BeanDefinitionBuilder createTemplateBuilder() {
+            BeanDefinitionBuilder templateBuilder =
+                    BeanDefinitionBuilder.genericBeanDefinition(TemplatedExecutableStatementBuilder.class);
+
+            String velocityEngineRef = StringSupport.trimOrNull(configElement.getAttribute("templateEngine"));
+            if (null == velocityEngineRef) {
+                velocityEngineRef = "shibboleth.VelocityEngine";
+            }
+            templateBuilder.addPropertyReference("velocityEngine", velocityEngineRef);
+
+            templateBuilder.addPropertyValue("v2Compatibility", true);
+
+            Long queryTimeout =
+                    AttributeSupport.getDurationAttributeValueAsLong(AttributeSupport.getAttribute(configElement,
+                            new QName("queryTimeout")));
+            if (queryTimeout == null) {
+                queryTimeout = Long.valueOf(5000);
+            }
+            templateBuilder.addPropertyValue("queryTimeout", queryTimeout.intValue());
+
+            final Element queryTemplate =
+                    ElementSupport.getFirstChildElement(configElement, new QName(
+                            DataConnectorNamespaceHandler.NAMESPACE, "QueryTemplate"));
+            final String queryText = queryTemplate.getTextContent();
+            templateBuilder.addPropertyValue("templateText", queryText);
+
+            templateBuilder.setInitMethodName("initialize");
+            return templateBuilder;
+        }
+
+        /**
+         * Create the results cache. See {@link CacheConfigParser}.
+         *
+         * @return results cache
+         */
+        @Nullable public Cache createCache() {
+            final CacheConfigParser parser = new CacheConfigParser(configElement);
+            return parser.createCache();
+        }
     }
 }
