@@ -151,7 +151,7 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
      * 
      * @return cache used to cache search results
      */
-    @Nonnull public Cache<String, Map<String, Attribute>> getResultCache() {
+    @Nonnull public Cache<String, Map<String, Attribute>> getResultsCache() {
         return resultsCache;
     }
 
