@@ -535,7 +535,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         try {
             String writeBackValue = writeBackSessionList.toString();
             if (writeBackValue.length() == 0) {
-                storageService.delete(serviceId, serviceKey);
+                storageService.deleteWithVersion(sessionList.getVersion(), serviceId, serviceKey);
             } else if (!writeBackValue.equals(sessionList.getValue())) {
                 storageService.updateWithVersion(sessionList.getVersion(), serviceId, serviceKey,
                         writeBackValue, sessionList.getExpiration());
