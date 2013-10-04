@@ -533,8 +533,13 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         }
         
         try {
-            storageService.updateWithVersion(sessionList.getVersion(), serviceId, serviceKey,
-                    writeBackSessionList.toString(), sessionList.getExpiration());
+            String writeBackValue = writeBackSessionList.toString();
+            if (writeBackValue.length() == 0) {
+                storageService.delete(serviceId, serviceKey);
+            } else if (!writeBackValue.equals(sessionList.getValue())) {
+                storageService.updateWithVersion(sessionList.getVersion(), serviceId, serviceKey,
+                        writeBackValue, sessionList.getExpiration());
+            }
         } catch (IOException e) {
             log.warn("Ignoring exception while updating secondary index", e);
         } catch (VersionMismatchException e) {

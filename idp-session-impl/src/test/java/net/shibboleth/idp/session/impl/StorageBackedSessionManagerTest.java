@@ -17,8 +17,13 @@
 
 package net.shibboleth.idp.session.impl;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+
+import javax.json.JsonObject;
+import javax.json.stream.JsonGenerator;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
@@ -29,6 +34,7 @@ import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.ServiceSession;
 import net.shibboleth.idp.session.ServiceSessionSerializerRegistry;
 import net.shibboleth.idp.session.SessionException;
+import net.shibboleth.idp.session.criterion.ServiceSessionCriterion;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
@@ -41,6 +47,8 @@ import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
 
 /** {@link StorageBackedSessionManager} unit test. */
 public class StorageBackedSessionManagerTest {
@@ -61,6 +69,7 @@ public class StorageBackedSessionManagerTest {
 
         serializerRegistry = new ServiceSessionSerializerRegistry();
         serializerRegistry.register(BasicServiceSession.class, new BasicServiceSessionSerializer(sessionSlop));
+        serializerRegistry.register(ExtendedServiceSession.class, new ExtendedServiceSessionSerializer(sessionSlop));
         
         AuthenticationFlowDescriptor foo = new AuthenticationFlowDescriptor("AuthenticationFlow/Foo");
         foo.setLifetime(60 * 1000);
@@ -129,7 +138,7 @@ public class StorageBackedSessionManagerTest {
         Assert.assertNull(manager.resolveSingle(new CriteriaSet(new SessionIdCriterion(sessionId))));
     }
     
-    @Test
+    @Test(threadPoolSize = 10, invocationCount = 10,  timeOut = 10000)
     public void testAddress() throws SessionException, ResolverException {
         
         // Interleave checks of addresses of the two types.
@@ -152,6 +161,8 @@ public class StorageBackedSessionManagerTest {
         Assert.assertFalse(two.checkAddress("192.168.1.2"));
         Assert.assertTrue(two.checkAddress("fe80::ca2a:14ff:fe2a:3e04"));
         Assert.assertFalse(one.checkAddress("fe80::ca2a:14ff:fe2a:3e05"));
+        
+        manager.destroySession(session.getId());
     }
 
     @Test(threadPoolSize = 10, invocationCount = 10,  timeOut = 10000)
@@ -205,6 +216,8 @@ public class StorageBackedSessionManagerTest {
         session2 = manager.resolveSingle(new CriteriaSet(new SessionIdCriterion(session.getId())));
         Assert.assertTrue(session.removeAuthenticationResult(foo));
         Assert.assertNull(session2.getAuthenticationResult("AuthenticationFlow/Foo"));
+        
+        manager.destroySession(session.getId());
     }
     
     @Test(threadPoolSize = 10, invocationCount = 10,  timeOut = 10000)
@@ -249,6 +262,83 @@ public class StorageBackedSessionManagerTest {
         session2 = manager.resolveSingle(new CriteriaSet(new SessionIdCriterion(session.getId())));
         Assert.assertTrue(session.removeServiceSession(foo));
         Assert.assertNull(session2.getServiceSession("https://sp.example.org/shibboleth"));
+        
+        manager.destroySession(session.getId());
     }
     
+    @Test
+    public void testSecondaryLookup() throws ResolverException, SessionException, InterruptedException {
+        
+        IdPSession session = manager.createSession("joe", null);
+        IdPSession session2 = manager.createSession("joe2", null);
+
+        // Add some sessions.
+        ServiceSession foo = new ExtendedServiceSession("https://sp.example.org/shibboleth", "AuthenticationFlow/Foo",
+                System.currentTimeMillis(), System.currentTimeMillis() + 60 * 60 * 1000);
+        ServiceSession bar = new ExtendedServiceSession("https://sp2.example.org/shibboleth", "AuthenticationFlow/Bar",
+                System.currentTimeMillis(), System.currentTimeMillis() + 60 * 60 * 1000);
+
+        Assert.assertNull(session.addServiceSession(foo));
+        Assert.assertNull(session.addServiceSession(bar));
+
+        Assert.assertNull(session2.addServiceSession(foo));
+        Assert.assertNull(session2.addServiceSession(bar));
+        
+        // Do a lookup.
+        Assert.assertFalse(manager.resolve(new CriteriaSet(
+                new ServiceSessionCriterion("https://sp.example.org/shibboleth", "None"))).iterator().hasNext());
+        
+        List<IdPSession> sessions = Lists.newArrayList(manager.resolve(
+                new CriteriaSet(new ServiceSessionCriterion("https://sp.example.org/shibboleth",
+                        ExtendedServiceSession.SESSION_KEY))));
+        Assert.assertEquals(sessions.size(), 2);
+        
+        manager.destroySession(session.getId());
+        
+        sessions = Lists.newArrayList(manager.resolve(
+                new CriteriaSet(new ServiceSessionCriterion("https://sp2.example.org/shibboleth",
+                        ExtendedServiceSession.SESSION_KEY))));
+        Assert.assertEquals(sessions.size(), 1);
+        
+        manager.destroySession(session2.getId());
+        sessions = Lists.newArrayList(manager.resolve(
+                new CriteriaSet(new ServiceSessionCriterion("https://sp2.example.org/shibboleth",
+                        ExtendedServiceSession.SESSION_KEY))));
+        Assert.assertEquals(sessions.size(), 0);
+    }
+
+    private static class ExtendedServiceSession extends BasicServiceSession {
+
+        public static final String SESSION_KEY = "PerSessionNameWouldGoHere";
+        
+        public ExtendedServiceSession(String id, String flowId, long creation, long expiration) {
+            super(id, flowId, creation, expiration);
+        }
+
+        /** {@inheritDoc} */
+        public String getServiceSessionKey() {
+            return SESSION_KEY;
+        }
+    }
+
+    private static class ExtendedServiceSessionSerializer extends BasicServiceSessionSerializer {
+
+        public ExtendedServiceSessionSerializer(long offset) {
+            super(offset);
+        }
+        
+        /** {@inheritDoc} */
+        protected ServiceSession doDeserialize(JsonObject obj, String id, String flowId, long creation, long expiration)
+                throws IOException {
+            // Check if field got serialized.
+            obj.getString("sk");
+            return new ExtendedServiceSession(id, flowId, creation, expiration);
+        }
+
+        /** {@inheritDoc} */
+        protected void doSerializeAdditional(ServiceSession instance, JsonGenerator generator) {
+            generator.write("sk", ExtendedServiceSession.SESSION_KEY);
+        }
+
+    }
 }
