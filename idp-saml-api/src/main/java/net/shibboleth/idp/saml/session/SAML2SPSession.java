@@ -29,6 +29,7 @@ import org.w3c.dom.Element;
 import com.google.common.base.Objects;
 
 import net.shibboleth.idp.session.BasicSPSession;
+import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -59,8 +60,8 @@ public class SAML2SPSession extends BasicSPSession {
      */
     // Checkstyle: ParameterNumber OFF
     public SAML2SPSession(@Nonnull @NotEmpty final String id, @Nonnull @NotEmpty final String flowId,
-            @Positive final long creation, @Positive final long expiration, @Nonnull final NameID assertedNameID,
-            @Nonnull @NotEmpty final String assertedIndex) {
+            @Duration @Positive final long creation, @Duration @Positive final long expiration,
+            @Nonnull final NameID assertedNameID, @Nonnull @NotEmpty final String assertedIndex) {
         super(id, flowId, creation, expiration);
         
         nameID = Constraint.isNotNull(assertedNameID, "NameID cannot be null");
