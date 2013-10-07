@@ -65,6 +65,20 @@ public class BasicSPSessionTest {
         } catch (ConstraintViolationException e) {
 
         }
+
+        try {
+            new BasicSPSession("foo", "test", 0, 0);
+            Assert.fail();
+        } catch (ConstraintViolationException e) {
+
+        }
+
+        try {
+            new BasicSPSession("foo", "test", start, 0);
+            Assert.fail();
+        } catch (ConstraintViolationException e) {
+
+        }
     }
 
 }
