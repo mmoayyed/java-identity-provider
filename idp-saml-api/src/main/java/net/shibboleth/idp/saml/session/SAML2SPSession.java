@@ -20,11 +20,9 @@ package net.shibboleth.idp.saml.session;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.saml2.core.NameID;
-import org.w3c.dom.Element;
 
 import com.google.common.base.Objects;
 
@@ -118,11 +116,9 @@ public class SAML2SPSession extends BasicSPSession {
 
     /** {@inheritDoc} */
     public String toString() {
-        Marshaller marshaller = Constraint.isNotNull(
-                XMLObjectSupport.getMarshaller(nameID), "Marshaller for NameID was null");
         try {
-            Element node = marshaller.marshall(nameID);
-            return Objects.toStringHelper(this).add("NameID", SerializeSupport.nodeToString(node))
+            return Objects.toStringHelper(this)
+                    .add("NameID", SerializeSupport.nodeToString(XMLObjectSupport.marshall(nameID)))
                     .add("SessionIndex", sessionIndex).toString();
         } catch (MarshallingException e) {
             throw new IllegalArgumentException("Error marshalling NameID", e);
