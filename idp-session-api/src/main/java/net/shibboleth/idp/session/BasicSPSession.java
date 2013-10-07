@@ -56,8 +56,8 @@ public class BasicSPSession implements SPSession {
      * @param creation creation time of session, in milliseconds since the epoch
      * @param expiration expiration time of session, in milliseconds since the epoch
      */
-    public BasicSPSession(@Nonnull @NotEmpty final String id,
-            @Nonnull @NotEmpty final String flowId, final long creation, final long expiration) {
+    public BasicSPSession(@Nonnull @NotEmpty final String id, @Nonnull @NotEmpty final String flowId,
+            @Positive final long creation, @Positive final long expiration) {
         serviceId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Service ID cannot be null nor empty");
         authenticationFlowId = Constraint.isNotNull(
                 StringSupport.trimOrNull(flowId), "Authentication flow ID cannot be null or empty");
@@ -71,12 +71,12 @@ public class BasicSPSession implements SPSession {
     }
     
     /** {@inheritDoc} */
-    public long getCreationInstant() {
+    @Positive public long getCreationInstant() {
         return creationInstant;
     }
 
     /** {@inheritDoc} */ 
-    public long getExpirationInstant() {
+    @Positive  public long getExpirationInstant() {
         return expirationInstant;
     }
     
