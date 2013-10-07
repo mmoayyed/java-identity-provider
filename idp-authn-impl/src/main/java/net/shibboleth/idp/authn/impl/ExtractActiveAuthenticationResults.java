@@ -27,7 +27,7 @@ import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.session.AbstractIdPSession;
+import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.context.SessionContext;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -50,7 +50,7 @@ public class ExtractActiveAuthenticationResults extends AbstractAuthenticationAc
     private final Logger log = LoggerFactory.getLogger(ExtractActiveAuthenticationResults.class);
 
     /** Session to copy results from. */
-    private AbstractIdPSession session;
+    private IdPSession session;
     
     /** {@inheritDoc} */
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
