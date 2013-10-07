@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -43,10 +44,10 @@ public class BasicSPSession implements SPSession {
     @Nonnull @NotEmpty private final String authenticationFlowId;
     
     /** The time, in milliseconds since the epoch, when this session was created. */
-    @Positive private final long creationInstant;
+    @Duration @Positive private final long creationInstant;
 
     /** The time, in milliseconds since the epoch, when this session expires. */
-    @Positive private final long expirationInstant;
+    @Duration @Positive private final long expirationInstant;
     
     /**
      * Constructor.
@@ -57,7 +58,7 @@ public class BasicSPSession implements SPSession {
      * @param expiration expiration time of session, in milliseconds since the epoch
      */
     public BasicSPSession(@Nonnull @NotEmpty final String id, @Nonnull @NotEmpty final String flowId,
-            @Positive final long creation, @Positive final long expiration) {
+            @Duration @Positive final long creation, @Duration @Positive final long expiration) {
         serviceId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Service ID cannot be null nor empty");
         authenticationFlowId = Constraint.isNotNull(
                 StringSupport.trimOrNull(flowId), "Authentication flow ID cannot be null or empty");

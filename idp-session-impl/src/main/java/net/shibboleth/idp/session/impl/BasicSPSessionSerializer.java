@@ -29,6 +29,7 @@ import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 
 /**
  * A serializer for {@link BasicSPSession} objects.
@@ -48,7 +49,7 @@ public class BasicSPSessionSerializer extends AbstractSPSessionSerializer {
     /** {@inheritDoc} */
     @Nonnull protected SPSession doDeserialize(@Nonnull final JsonObject obj,
             @Nonnull @NotEmpty final String id, @Nonnull @NotEmpty final String flowId,
-            final long creation, final long expiration) throws IOException {
+            @Duration @Positive final long creation, @Duration @Positive final long expiration) throws IOException {
         
         return new BasicSPSession(id, flowId, creation, expiration);
     }
