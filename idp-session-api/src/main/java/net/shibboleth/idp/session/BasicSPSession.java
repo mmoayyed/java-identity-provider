@@ -31,10 +31,10 @@ import org.joda.time.DateTime;
 import com.google.common.base.Objects;
 
 /**
- * Implementation support for a concrete {@link ServiceSession} implementation.
+ * Implementation support for a concrete {@link SPSession} implementation.
  */
 @ThreadSafe
-public class BasicServiceSession implements ServiceSession {
+public class BasicSPSession implements SPSession {
     
     /** The unique identifier of the service. */
     @Nonnull @NotEmpty private final String serviceId;
@@ -56,7 +56,7 @@ public class BasicServiceSession implements ServiceSession {
      * @param creation creation time of session, in milliseconds since the epoch
      * @param expiration expiration time of session, in milliseconds since the epoch
      */
-    public BasicServiceSession(@Nonnull @NotEmpty final String id,
+    public BasicSPSession(@Nonnull @NotEmpty final String id,
             @Nonnull @NotEmpty final String flowId, final long creation, final long expiration) {
         serviceId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Service ID cannot be null nor empty");
         authenticationFlowId = Constraint.isNotNull(
@@ -86,7 +86,7 @@ public class BasicServiceSession implements ServiceSession {
     }
 
     /** {@inheritDoc} */
-    public String getServiceSessionKey() {
+    public String getSPSessionKey() {
         // A basic session doesn't have a secondary lookup key.
         return null;
     }
@@ -106,8 +106,8 @@ public class BasicServiceSession implements ServiceSession {
             return true;
         }
 
-        if (obj instanceof BasicServiceSession) {
-            return Objects.equal(serviceId, ((BasicServiceSession) obj).getId());
+        if (obj instanceof BasicSPSession) {
+            return Objects.equal(serviceId, ((BasicSPSession) obj).getId());
         }
 
         return false;

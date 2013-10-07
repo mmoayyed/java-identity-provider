@@ -23,34 +23,34 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.json.JsonObject;
 
-import net.shibboleth.idp.session.AbstractServiceSessionSerializer;
-import net.shibboleth.idp.session.BasicServiceSession;
-import net.shibboleth.idp.session.ServiceSession;
+import net.shibboleth.idp.session.AbstractSPSessionSerializer;
+import net.shibboleth.idp.session.BasicSPSession;
+import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /**
- * A serializer for {@link BasicServiceSession} objects.
+ * A serializer for {@link BasicSPSession} objects.
  */
 @ThreadSafe
-public class BasicServiceSessionSerializer extends AbstractServiceSessionSerializer {
+public class BasicSPSessionSerializer extends AbstractSPSessionSerializer {
     
     /**
      * Constructor.
      * 
      * @param offset milliseconds to substract from record expiration to establish session expiration value
      */
-    public BasicServiceSessionSerializer(@Duration @NonNegative final long offset) {
+    public BasicSPSessionSerializer(@Duration @NonNegative final long offset) {
         super(offset);
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected ServiceSession doDeserialize(@Nonnull final JsonObject obj,
+    @Nonnull protected SPSession doDeserialize(@Nonnull final JsonObject obj,
             @Nonnull @NotEmpty final String id, @Nonnull @NotEmpty final String flowId,
             final long creation, final long expiration) throws IOException {
         
-        return new BasicServiceSession(id, flowId, creation, expiration);
+        return new BasicSPSession(id, flowId, creation, expiration);
     }
     
 }

@@ -39,12 +39,12 @@ import com.google.common.collect.Iterables;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.session.IdPSession;
-import net.shibboleth.idp.session.ServiceSession;
-import net.shibboleth.idp.session.ServiceSessionSerializerRegistry;
+import net.shibboleth.idp.session.SPSession;
+import net.shibboleth.idp.session.SPSessionSerializerRegistry;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.session.SessionResolver;
-import net.shibboleth.idp.session.criterion.ServiceSessionCriterion;
+import net.shibboleth.idp.session.criterion.SPSessionCriterion;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
@@ -73,21 +73,21 @@ import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrate
  * <p>Each {@link AuthenticationResult} is stored in a record keyed by the flow ID. The expiration
  * is set based on the underlying flow's timeout.</p>
  * 
- * <p>Each {@link ServiceSession} is stored in a record keyed by the service ID. The expiration
- * is set based on the ServiceSession's own expiration plus the "slop" value.</p>
+ * <p>Each {@link SPSession} is stored in a record keyed by the service ID. The expiration
+ * is set based on the SPSession's own expiration plus the "slop" value.</p>
  * 
  * <p>For cross-referencing, lists of flow and service IDs are tracked within the master "_session"
  * record, so adding either requires an update to the master record plus the creation of a new one.
- * Post-creation, there are no updates to the AuthenticationResult or ServiceSession records, but
+ * Post-creation, there are no updates to the AuthenticationResult or SPSession records, but
  * the expiration of the result records can be updated to reflect activity updates.</p>
  * 
- * <p>When a ServiceSession is added, it may expose an optional secondary "key". If set, this is a
- * signal to add a secondary lookup of the ServiceSession. This is a record containing a list of
+ * <p>When a SPSession is added, it may expose an optional secondary "key". If set, this is a
+ * signal to add a secondary lookup of the SPSession. This is a record containing a list of
  * relevant IdPSession IDs stored under a context/key pair consisting of the Service ID and the
  * exposed secondary key from the object. The expiration of this record is set based on the larger
- * of the current list expiration, if any, and the expiration of the ServiceSession plus the configured
+ * of the current list expiration, if any, and the expiration of the SPSession plus the configured
  * slop value. In other words, the lifetime of the index record is pushed out as far as needed to
- * avoid premature expiration while any of the ServiceSessions producing it remain around.</p>
+ * avoid premature expiration while any of the SPSessions producing it remain around.</p>
  * 
  * <p>The primary purpose of the secondary list is SAML logout, and is an optional feature that can be
  * disabled. In the case of a SAML 2 session, the secondary key is some form of the NameID issued
@@ -111,10 +111,10 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     /** Indicates that storage service failures should be masked as much as possible. */
     private boolean maskStorageFailure;
 
-    /** Indicates whether to store and track ServiceSessions. */
-    private boolean trackServiceSessions;
+    /** Indicates whether to store and track SPSessions. */
+    private boolean trackSPSessions;
 
-    /** Indicates whether to secondary-index ServiceSessions. */
+    /** Indicates whether to secondary-index SPSessions. */
     private boolean secondaryServiceIndex;
     
     /** The back-end for managing data. */
@@ -129,8 +129,8 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     /** Flows that could potentially be used to authenticate the user. */
     @Nonnull @NonnullElements private final Map<String, AuthenticationFlowDescriptor> flowDescriptorMap;
     
-    /** Mappings between a ServiceSession type and a serializer implementation. */
-    @Nullable private ServiceSessionSerializerRegistry serviceSessionSerializerRegistry;
+    /** Mappings between a SPSession type and a serializer implementation. */
+    @Nullable private SPSessionSerializerRegistry spSessionSerializerRegistry;
     
     /**
      * Constructor.
@@ -203,38 +203,38 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     }
     
     /**
-     * Get whether to track ServiceSessions.
+     * Get whether to track SPSessions.
      * 
-     * @return true iff ServiceSessions should be persisted
+     * @return true iff SPSessions should be persisted
      */
-    public boolean isTrackServiceSessions() {
-        return trackServiceSessions;
+    public boolean isTrackSPSessions() {
+        return trackSPSessions;
     }
 
     /**
-     * Set whether to track ServiceSessions.
+     * Set whether to track SPSessions.
      * 
      * <p>This feature requires a StorageService that is not client-side because of space limitations.</p> 
      * 
      * @param flag flag to set
      */
-    public void setTrackServiceSessions(boolean flag) {
+    public void setTrackSPSessions(boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        trackServiceSessions = flag;
+        trackSPSessions = flag;
     }
 
     /**
-     * Get whether to create a secondary index for ServiceSession lookup.
+     * Get whether to create a secondary index for SPSession lookup.
      * 
-     * @return true iff a secondary index for ServiceSession lookup should be maintained
+     * @return true iff a secondary index for SPSession lookup should be maintained
      */
     public boolean isSecondaryServiceIndex() {
         return secondaryServiceIndex;
     }
 
     /**
-     * Set whether to create a secondary index for ServiceSession lookup.
+     * Set whether to create a secondary index for SPSession lookup.
      * 
      * <p>This feature requires a StorageService that is not client-side.</p> 
      * 
@@ -315,23 +315,23 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     }
     
     /**
-     * Get the attached {@link ServiceSessionSerializerRegistry}.
+     * Get the attached {@link spSessionSerializerRegistry}.
      * 
-     * @return a registry of ServiceSession class to serializer mappings
+     * @return a registry of SPSession class to serializer mappings
      */
-    @Nullable public ServiceSessionSerializerRegistry getServiceSessionSerializerRegistry() {
-        return serviceSessionSerializerRegistry;
+    @Nullable public SPSessionSerializerRegistry getSPSessionSerializerRegistry() {
+        return spSessionSerializerRegistry;
     }
     
     /**
-     * Set the {@link ServiceSessionSerializerRegistry} to use.
+     * Set the {@link spSessionSerializerRegistry} to use.
      * 
-     * @param registry  a registry of ServiceSession class to serializer mappings
+     * @param registry  a registry of SPSession class to serializer mappings
      */
-    public void setServiceSessionSerializerRegistry(@Nullable final ServiceSessionSerializerRegistry registry) {
+    public void setSPSessionSerializerRegistry(@Nullable final SPSessionSerializerRegistry registry) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        serviceSessionSerializerRegistry = registry;
+        spSessionSerializerRegistry = registry;
     }
     
     /** {@inheritDoc} */
@@ -342,12 +342,12 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         } else if (idGenerator == null) {
             throw new ComponentInitializationException(
                     "Initialization of StorageBackedSessionManager requires non-null IdentifierGenerationStrategy");
-        } else if ((trackServiceSessions || secondaryServiceIndex) && storageService instanceof ClientStorageService) {
+        } else if ((trackSPSessions || secondaryServiceIndex) && storageService instanceof ClientStorageService) {
             throw new ComponentInitializationException(
-                    "Tracking ServiceSessions requires a server-side StorageService");
-        } else if (trackServiceSessions && serviceSessionSerializerRegistry == null) {
+                    "Tracking SPSessions requires a server-side StorageService");
+        } else if (trackSPSessions && spSessionSerializerRegistry == null) {
             throw new ComponentInitializationException(
-                    "Tracking ServiceSessions requires a ServiceSessionSerializerRegistry");
+                    "Tracking SPSessions requires a spSessionSerializerRegistry");
         }
     }
 
@@ -394,7 +394,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     public void destroySession(@Nonnull @NotEmpty final String sessionId) throws SessionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
-        // Note that this can leave entries in the secondary ServiceSession records, but those
+        // Note that this can leave entries in the secondary SPSession records, but those
         // will eventually expire outright, or can be cleaned up if the index is searched.
         
         try {
@@ -425,13 +425,13 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
                 }
             }
             
-            ServiceSessionCriterion serviceCriterion = criteria.get(ServiceSessionCriterion.class);
+            SPSessionCriterion serviceCriterion = criteria.get(SPSessionCriterion.class);
             if (serviceCriterion != null) {
                 if (!secondaryServiceIndex) {
                     throw new ResolverException("Secondary service index is disabled");
                 }
                 
-                return lookupByServiceSession(serviceCriterion);
+                return lookupBySPSession(serviceCriterion);
             }
         }
         
@@ -477,21 +477,21 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     }
     
     /**
-     * Performs a lookup and deserializes records potentially matching a ServiceSession.
+     * Performs a lookup and deserializes records potentially matching a SPSession.
      * 
-     * @param criterion the ServiceSessionCriterion to apply
+     * @param criterion the SPSessionCriterion to apply
      * 
      * @return collection of zero or more sessions
      * @throws ResolverException if an error occurs during lookup
      */
-    @Nonnull @NonnullElements private Iterable<IdPSession> lookupByServiceSession(
-            @Nonnull final ServiceSessionCriterion criterion) throws ResolverException {
+    @Nonnull @NonnullElements private Iterable<IdPSession> lookupBySPSession(
+            @Nonnull final SPSessionCriterion criterion) throws ResolverException {
         
         int contextSize = storageService.getCapabilities().getContextSize();
         int keySize = storageService.getCapabilities().getKeySize();
         
         String serviceId = criterion.getServiceId();
-        String serviceKey = criterion.getServiceSessionKey();
+        String serviceKey = criterion.getSPSessionKey();
         log.debug("Performing secondary lookup on service ID {} and key {}", serviceId, serviceKey);
 
         // Truncate context and key if needed.
@@ -509,7 +509,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         } catch (IOException e) {
             log.error("Exception while querying based service ID " + serviceId + " and key " + serviceKey, e);
             if (!maskStorageFailure) {
-                throw new ResolverException("Exception while querying based on ServiceSession", e);
+                throw new ResolverException("Exception while querying based on SPSession", e);
             }
         }
 
@@ -550,24 +550,24 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     }
 
     /**
-     * Insert or update a secondary index record from a ServiceSession to a parent IdPSession.
+     * Insert or update a secondary index record from a SPSession to a parent IdPSession.
      * 
      * @param idpSession the parent session
-     * @param serviceSession the ServiceSession to index
+     * @param spSession the SPSession to index
      * @param attempts number of times to retry operation in the event of a synchronization issue
      * 
      * @throws SessionException if a fatal error occurs
      */
-    protected void indexByServiceSession(@Nonnull final IdPSession idpSession,
-            @Nonnull final ServiceSession serviceSession, final int attempts) throws SessionException {
+    protected void indexBySPSession(@Nonnull final IdPSession idpSession,
+            @Nonnull final SPSession spSession, final int attempts) throws SessionException {
         if (attempts <= 0) {
             log.error("Exceeded retry attempts while adding to secondary index");
             if (!maskStorageFailure) {
                 throw new SessionException("Exceeded retry attempts while adding to secondary index");
             }
         } else if (secondaryServiceIndex) {
-            String serviceId = serviceSession.getId();
-            String serviceKey = serviceSession.getServiceSessionKey();
+            String serviceId = spSession.getId();
+            String serviceKey = spSession.getSPSessionKey();
             if (serviceKey == null) {
                 return;
             }
@@ -591,7 +591,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
             } catch (IOException e) {
                 log.error("Exception while querying based service ID " + serviceId + " and key " + serviceKey, e);
                 if (!maskStorageFailure) {
-                    throw new SessionException("Exception while querying based on ServiceSession", e);
+                    throw new SessionException("Exception while querying based on SPSession", e);
                 }
             }
 
@@ -601,14 +601,14 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
                     String updated = sessionList.getValue() + idpSession.getId() + ',';
                     if (storageService.updateWithVersion(sessionList.getVersion(), serviceId, serviceKey, updated,
                             Math.max(sessionList.getExpiration(),
-                                    serviceSession.getExpirationInstant() + sessionSlop)) == null) {
+                                    spSession.getExpirationInstant() + sessionSlop)) == null) {
                         log.info("Secondary index record disappeared, retrying as insert");
-                        indexByServiceSession(idpSession, serviceSession, attempts - 1);
+                        indexBySPSession(idpSession, spSession, attempts - 1);
                     }
                 } else if (!storageService.create(serviceId, serviceKey, idpSession.getId() + ',',
-                            serviceSession.getExpirationInstant() + sessionSlop)) {
+                            spSession.getExpirationInstant() + sessionSlop)) {
                     log.info("Secondary index record appeared, retrying as update");
-                    indexByServiceSession(idpSession, serviceSession, attempts - 1);
+                    indexBySPSession(idpSession, spSession, attempts - 1);
                 }
             } catch (IOException e) {
                 log.error("Exception maintaining secondary index for service ID " + serviceId + " and key "
@@ -618,7 +618,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
                 }
             } catch (VersionMismatchException e) {
                 log.info("Secondary index record was updated between read/update, retrying");
-                indexByServiceSession(idpSession, serviceSession, attempts - 1);
+                indexBySPSession(idpSession, spSession, attempts - 1);
             }
         }
     }

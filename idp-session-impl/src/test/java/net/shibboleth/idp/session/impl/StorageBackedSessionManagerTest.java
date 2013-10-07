@@ -29,12 +29,12 @@ import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.TestPrincipal;
 import net.shibboleth.idp.authn.UsernamePrincipal;
-import net.shibboleth.idp.session.BasicServiceSession;
+import net.shibboleth.idp.session.BasicSPSession;
 import net.shibboleth.idp.session.IdPSession;
-import net.shibboleth.idp.session.ServiceSession;
-import net.shibboleth.idp.session.ServiceSessionSerializerRegistry;
+import net.shibboleth.idp.session.SPSession;
+import net.shibboleth.idp.session.SPSessionSerializerRegistry;
 import net.shibboleth.idp.session.SessionException;
-import net.shibboleth.idp.session.criterion.ServiceSessionCriterion;
+import net.shibboleth.idp.session.criterion.SPSessionCriterion;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
@@ -61,15 +61,15 @@ public class StorageBackedSessionManagerTest {
 
     private static Collection<AuthenticationFlowDescriptor> flowDescriptors;
     
-    private static ServiceSessionSerializerRegistry serializerRegistry;
+    private static SPSessionSerializerRegistry serializerRegistry;
     
     @BeforeClass public static void setUp() throws ComponentInitializationException {
         storageService = new MemoryStorageService();
         storageService.initialize();
 
-        serializerRegistry = new ServiceSessionSerializerRegistry();
-        serializerRegistry.register(BasicServiceSession.class, new BasicServiceSessionSerializer(sessionSlop));
-        serializerRegistry.register(ExtendedServiceSession.class, new ExtendedServiceSessionSerializer(sessionSlop));
+        serializerRegistry = new SPSessionSerializerRegistry();
+        serializerRegistry.register(BasicSPSession.class, new BasicSPSessionSerializer(sessionSlop));
+        serializerRegistry.register(ExtendedSPSession.class, new ExtendedSPSessionSerializer(sessionSlop));
         
         AuthenticationFlowDescriptor foo = new AuthenticationFlowDescriptor("AuthenticationFlow/Foo");
         foo.setLifetime(60 * 1000);
@@ -81,12 +81,12 @@ public class StorageBackedSessionManagerTest {
         
         manager = new StorageBackedSessionManager();
         manager.setAuthenticationFlowDescriptors(flowDescriptors);
-        manager.setTrackServiceSessions(true);
+        manager.setTrackSPSessions(true);
         manager.setSecondaryServiceIndex(true);
         manager.setStorageService(storageService);
         manager.setSessionSlop(sessionSlop);
         manager.setIDGenerator(new SecureRandomIdentifierGenerationStrategy());
-        manager.setServiceSessionSerializerRegistry(serializerRegistry);
+        manager.setSPSessionSerializerRegistry(serializerRegistry);
         manager.initialize();
     }
     
@@ -115,7 +115,7 @@ public class StorageBackedSessionManagerTest {
         Assert.assertEquals(session.getCreationInstant(), session.getLastActivityInstant());
         Assert.assertEquals(session.getPrincipalName(), "joe");
         Assert.assertTrue(session.getAuthenticationResults().isEmpty());
-        Assert.assertTrue(session.getServiceSessions().isEmpty());
+        Assert.assertTrue(session.getSPSessions().isEmpty());
         
         Thread.sleep(1000);
         
@@ -221,47 +221,47 @@ public class StorageBackedSessionManagerTest {
     }
     
     @Test(threadPoolSize = 10, invocationCount = 10,  timeOut = 10000)
-    public void testServiceSessions() throws ResolverException, SessionException, InterruptedException {
+    public void testSPSessions() throws ResolverException, SessionException, InterruptedException {
         
         IdPSession session = manager.createSession("joe", null);
-        Assert.assertTrue(session.getServiceSessions().isEmpty());
+        Assert.assertTrue(session.getSPSessions().isEmpty());
 
         // Add some sessions.
-        ServiceSession foo = new BasicServiceSession("https://sp.example.org/shibboleth", "AuthenticationFlow/Foo",
+        SPSession foo = new BasicSPSession("https://sp.example.org/shibboleth", "AuthenticationFlow/Foo",
                 System.currentTimeMillis(), System.currentTimeMillis() + 60 * 60 * 1000);
-        ServiceSession bar = new BasicServiceSession("https://sp2.example.org/shibboleth", "AuthenticationFlow/Bar",
+        SPSession bar = new BasicSPSession("https://sp2.example.org/shibboleth", "AuthenticationFlow/Bar",
                 System.currentTimeMillis(), System.currentTimeMillis() + 60 * 60 * 1000);
 
-        Assert.assertNull(session.addServiceSession(foo));
-        Assert.assertNull(session.addServiceSession(bar));
+        Assert.assertNull(session.addSPSession(foo));
+        Assert.assertNull(session.addSPSession(bar));
         
         // Test various methods and removals.
-        Assert.assertEquals(session.getServiceSessions().size(), 2);
+        Assert.assertEquals(session.getSPSessions().size(), 2);
         
-        Assert.assertTrue(session.removeServiceSession(bar));
-        Assert.assertFalse(session.removeServiceSession(bar));
+        Assert.assertTrue(session.removeSPSession(bar));
+        Assert.assertFalse(session.removeSPSession(bar));
         
-        Assert.assertEquals(session.getServiceSessions().size(), 1);
+        Assert.assertEquals(session.getSPSessions().size(), 1);
         
         // Test access and compare to original.
-        Assert.assertNull(session.getServiceSession("https://sp2.example.org/shibboleth"));
-        ServiceSession foo2 = session.getServiceSession("https://sp.example.org/shibboleth");
+        Assert.assertNull(session.getSPSession("https://sp2.example.org/shibboleth"));
+        SPSession foo2 = session.getSPSession("https://sp.example.org/shibboleth");
         Assert.assertNotNull(foo2);
         Assert.assertEquals(foo.getCreationInstant(), foo2.getCreationInstant());
         Assert.assertEquals(foo.getExpirationInstant(), foo2.getExpirationInstant());
         
         // Load from storage and re-test.
         IdPSession session2 = manager.resolveSingle(new CriteriaSet(new SessionIdCriterion(session.getId())));
-        Assert.assertNull(session.getServiceSession("https://sp2.example.org/shibboleth"));
-        foo2 = session2.getServiceSession("https://sp.example.org/shibboleth");
+        Assert.assertNull(session.getSPSession("https://sp2.example.org/shibboleth"));
+        foo2 = session2.getSPSession("https://sp.example.org/shibboleth");
         Assert.assertNotNull(foo2);
         Assert.assertEquals(foo.getCreationInstant(), foo2.getCreationInstant());
         Assert.assertEquals(foo.getExpirationInstant(), foo2.getExpirationInstant());
 
         // Test removal while multiple objects are active.
         session2 = manager.resolveSingle(new CriteriaSet(new SessionIdCriterion(session.getId())));
-        Assert.assertTrue(session.removeServiceSession(foo));
-        Assert.assertNull(session2.getServiceSession("https://sp.example.org/shibboleth"));
+        Assert.assertTrue(session.removeSPSession(foo));
+        Assert.assertNull(session2.getSPSession("https://sp.example.org/shibboleth"));
         
         manager.destroySession(session.getId());
     }
@@ -273,71 +273,71 @@ public class StorageBackedSessionManagerTest {
         IdPSession session2 = manager.createSession("joe2", null);
 
         // Add some sessions.
-        ServiceSession foo = new ExtendedServiceSession("https://sp.example.org/shibboleth", "AuthenticationFlow/Foo",
+        SPSession foo = new ExtendedSPSession("https://sp.example.org/shibboleth", "AuthenticationFlow/Foo",
                 System.currentTimeMillis(), System.currentTimeMillis() + 60 * 60 * 1000);
-        ServiceSession bar = new ExtendedServiceSession("https://sp2.example.org/shibboleth", "AuthenticationFlow/Bar",
+        SPSession bar = new ExtendedSPSession("https://sp2.example.org/shibboleth", "AuthenticationFlow/Bar",
                 System.currentTimeMillis(), System.currentTimeMillis() + 60 * 60 * 1000);
 
-        Assert.assertNull(session.addServiceSession(foo));
-        Assert.assertNull(session.addServiceSession(bar));
+        Assert.assertNull(session.addSPSession(foo));
+        Assert.assertNull(session.addSPSession(bar));
 
-        Assert.assertNull(session2.addServiceSession(foo));
-        Assert.assertNull(session2.addServiceSession(bar));
+        Assert.assertNull(session2.addSPSession(foo));
+        Assert.assertNull(session2.addSPSession(bar));
         
         // Do a lookup.
         Assert.assertFalse(manager.resolve(new CriteriaSet(
-                new ServiceSessionCriterion("https://sp.example.org/shibboleth", "None"))).iterator().hasNext());
+                new SPSessionCriterion("https://sp.example.org/shibboleth", "None"))).iterator().hasNext());
         
         List<IdPSession> sessions = Lists.newArrayList(manager.resolve(
-                new CriteriaSet(new ServiceSessionCriterion("https://sp.example.org/shibboleth",
-                        ExtendedServiceSession.SESSION_KEY))));
+                new CriteriaSet(new SPSessionCriterion("https://sp.example.org/shibboleth",
+                        ExtendedSPSession.SESSION_KEY))));
         Assert.assertEquals(sessions.size(), 2);
         
         manager.destroySession(session.getId());
         
         sessions = Lists.newArrayList(manager.resolve(
-                new CriteriaSet(new ServiceSessionCriterion("https://sp2.example.org/shibboleth",
-                        ExtendedServiceSession.SESSION_KEY))));
+                new CriteriaSet(new SPSessionCriterion("https://sp2.example.org/shibboleth",
+                        ExtendedSPSession.SESSION_KEY))));
         Assert.assertEquals(sessions.size(), 1);
         
         manager.destroySession(session2.getId());
         sessions = Lists.newArrayList(manager.resolve(
-                new CriteriaSet(new ServiceSessionCriterion("https://sp2.example.org/shibboleth",
-                        ExtendedServiceSession.SESSION_KEY))));
+                new CriteriaSet(new SPSessionCriterion("https://sp2.example.org/shibboleth",
+                        ExtendedSPSession.SESSION_KEY))));
         Assert.assertEquals(sessions.size(), 0);
     }
 
-    private static class ExtendedServiceSession extends BasicServiceSession {
+    private static class ExtendedSPSession extends BasicSPSession {
 
         public static final String SESSION_KEY = "PerSessionNameWouldGoHere";
         
-        public ExtendedServiceSession(String id, String flowId, long creation, long expiration) {
+        public ExtendedSPSession(String id, String flowId, long creation, long expiration) {
             super(id, flowId, creation, expiration);
         }
 
         /** {@inheritDoc} */
-        public String getServiceSessionKey() {
+        public String getSPSessionKey() {
             return SESSION_KEY;
         }
     }
 
-    private static class ExtendedServiceSessionSerializer extends BasicServiceSessionSerializer {
+    private static class ExtendedSPSessionSerializer extends BasicSPSessionSerializer {
 
-        public ExtendedServiceSessionSerializer(long offset) {
+        public ExtendedSPSessionSerializer(long offset) {
             super(offset);
         }
         
         /** {@inheritDoc} */
-        protected ServiceSession doDeserialize(JsonObject obj, String id, String flowId, long creation, long expiration)
+        protected SPSession doDeserialize(JsonObject obj, String id, String flowId, long creation, long expiration)
                 throws IOException {
             // Check if field got serialized.
             obj.getString("sk");
-            return new ExtendedServiceSession(id, flowId, creation, expiration);
+            return new ExtendedSPSession(id, flowId, creation, expiration);
         }
 
         /** {@inheritDoc} */
-        protected void doSerializeAdditional(ServiceSession instance, JsonGenerator generator) {
-            generator.write("sk", ExtendedServiceSession.SESSION_KEY);
+        protected void doSerializeAdditional(SPSession instance, JsonGenerator generator) {
+            generator.write("sk", ExtendedSPSession.SESSION_KEY);
         }
 
     }

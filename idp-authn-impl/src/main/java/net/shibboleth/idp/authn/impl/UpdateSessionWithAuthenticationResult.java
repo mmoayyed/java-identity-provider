@@ -30,7 +30,7 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.session.AbstractIdPSession;
-import net.shibboleth.idp.session.BasicServiceSession;
+import net.shibboleth.idp.session.BasicSPSession;
 
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.opensaml.messaging.context.MessageContext;
@@ -91,7 +91,7 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
      * Updates the session associated with the authenticated user. The following steps are performed:
      * <ul>
      * <li>creating the {@link AbstractIdPSession} if the user does not yet have one</li>
-     * <li>creating a {@link BasicServiceSession} to associate the user with the service for which authentication was
+     * <li>creating a {@link BasicSPSession} to associate the user with the service for which authentication was
      * performed</li>
      * <li>updating the last activity time of the IdP session</li>
      * </ul>
@@ -113,8 +113,8 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
             // TODO(lajoie) create session
         }
 
-        ServiceSession serviceSession = new ServiceSession(serviceId, authenticationContext.buildAuthenticationEvent());
-        idpSession.addServiceSession(serviceSession);
+        SPSession SPSession = new SPSession(serviceId, authenticationContext.buildAuthenticationEvent());
+        idpSession.addSPSession(SPSession);
 
         idpSession.setLastActivityInstantToNow();
         */

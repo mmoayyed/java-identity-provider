@@ -41,10 +41,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base class for {@link ServiceSession} serializers that handles data common to all such objects.
+ * Base class for {@link SPSession} serializers that handles data common to all such objects.
  */
 @ThreadSafe
-public abstract class AbstractServiceSessionSerializer implements StorageSerializer<ServiceSession> {
+public abstract class AbstractSPSessionSerializer implements StorageSerializer<SPSession> {
 
     /** Field name of service ID. */
     private static final String SERVICE_ID_FIELD = "id";
@@ -56,7 +56,7 @@ public abstract class AbstractServiceSessionSerializer implements StorageSeriali
     private static final String FLOW_ID_FIELD = "flow";
     
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractServiceSessionSerializer.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractSPSessionSerializer.class);
 
     /** Milliseconds to substract from record expiration to establish session expiration value. */
     @Duration @NonNegative private final long expirationOffset;
@@ -66,12 +66,12 @@ public abstract class AbstractServiceSessionSerializer implements StorageSeriali
      * 
      * @param offset milliseconds to substract from record expiration to establish session expiration value
      */
-    protected AbstractServiceSessionSerializer(@Duration @NonNegative final long offset) {
+    protected AbstractSPSessionSerializer(@Duration @NonNegative final long offset) {
         expirationOffset = Constraint.isGreaterThanOrEqual(0, offset, "Offset must be greater than or equal to zero");
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NotEmpty public String serialize(@Nonnull final ServiceSession instance) throws IOException {
+    @Nonnull @NotEmpty public String serialize(@Nonnull final SPSession instance) throws IOException {
         
         try {
             final StringWriter sink = new StringWriter(128);
@@ -87,25 +87,25 @@ public abstract class AbstractServiceSessionSerializer implements StorageSeriali
             
             return sink.toString();
         } catch (JsonException e) {
-            log.error("Exception while serializing ServiceSession", e);
-            throw new IOException("Exception while serializing ServiceSession", e);
+            log.error("Exception while serializing SPSession", e);
+            throw new IOException("Exception while serializing SPSession", e);
         }
     }
 
     /** {@inheritDoc} */
-    @Nonnull public ServiceSession deserialize(final int version, @Nonnull @NotEmpty final String context,
+    @Nonnull public SPSession deserialize(final int version, @Nonnull @NotEmpty final String context,
             @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value, @Nullable final Long expiration)
                     throws IOException {
         
         if (expiration == null) {
-            throw new IOException("ServiceSession objects must have an expiration");
+            throw new IOException("SPSession objects must have an expiration");
         }
 
         try {
             JsonReader reader = Json.createReader(new StringReader(value));
             JsonStructure st = reader.read();
             if (!(st instanceof JsonObject)) {
-                throw new IOException("Found invalid data structure while parsing ServiceSession");
+                throw new IOException("Found invalid data structure while parsing SPSession");
             }
             JsonObject obj = (JsonObject) st;
             
@@ -116,8 +116,8 @@ public abstract class AbstractServiceSessionSerializer implements StorageSeriali
             return doDeserialize(obj, serviceId, flowId, creation, expiration - expirationOffset);
             
         } catch (NullPointerException | ClassCastException | ArithmeticException | JsonException e) {
-            log.error("Exception while parsing ServiceSession", e);
-            throw new IOException("Found invalid data structure while parsing ServiceSession", e);
+            log.error("Exception while parsing SPSession", e);
+            throw new IOException("Found invalid data structure while parsing SPSession", e);
         }
     }
 
@@ -129,7 +129,7 @@ public abstract class AbstractServiceSessionSerializer implements StorageSeriali
      * @param instance object to serialize
      * @param generator JSON generator to write to
      */
-    protected void doSerializeAdditional(@Nonnull final ServiceSession instance,
+    protected void doSerializeAdditional(@Nonnull final SPSession instance,
             @Nonnull final JsonGenerator generator) {
         
     }
@@ -150,7 +150,7 @@ public abstract class AbstractServiceSessionSerializer implements StorageSeriali
      * @return the newly constructed object
      * @throws IOException if an error occurs during deserialization
      */
-    @Nonnull protected abstract ServiceSession doDeserialize(@Nonnull final JsonObject obj,
+    @Nonnull protected abstract SPSession doDeserialize(@Nonnull final JsonObject obj,
             @Nonnull @NotEmpty final String id, @Nonnull @NotEmpty final String flowId,
             final long creation, final long expiration) throws IOException;
     

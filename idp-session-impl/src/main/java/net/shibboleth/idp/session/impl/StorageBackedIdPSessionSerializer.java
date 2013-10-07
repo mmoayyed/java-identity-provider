@@ -36,7 +36,7 @@ import javax.json.stream.JsonGenerator;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.session.AbstractIdPSession;
-import net.shibboleth.idp.session.ServiceSession;
+import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -119,11 +119,11 @@ public class StorageBackedIdPSessionSerializer implements StorageSerializer<Stor
                 gen.writeEnd();
             }
             
-            if (sessionManager.isTrackServiceSessions()) {
-                Set<ServiceSession> services = instance.getServiceSessions();
+            if (sessionManager.isTrackSPSessions()) {
+                Set<SPSession> services = instance.getSPSessions();
                 if (!services.isEmpty()) {
                     gen.writeStartArray(SERVICE_ID_ARRAY_FIELD);
-                    for (ServiceSession service : services) {
+                    for (SPSession service : services) {
                         gen.write(service.getId());
                     }
                     gen.writeEnd();
@@ -188,14 +188,14 @@ public class StorageBackedIdPSessionSerializer implements StorageSerializer<Stor
                 }
             }
 
-            objectToPopulate.getServiceSessionMap().clear();
+            objectToPopulate.getSPSessionMap().clear();
             if (obj.containsKey(SERVICE_ID_ARRAY_FIELD)) {
                 JsonArray svcIds = obj.getJsonArray(SERVICE_ID_ARRAY_FIELD);
                 if (svcIds != null) {
                     for (JsonString svcId : svcIds.getValuesAs(JsonString.class)) {
                         // An absent mapping is used to signify the existence of a session not yet loaded.
-                        objectToPopulate.getServiceSessionMap().put(
-                                svcId.getString(), Optional.<ServiceSession>absent());
+                        objectToPopulate.getSPSessionMap().put(
+                                svcId.getString(), Optional.<SPSession>absent());
                     }
                 }
             }

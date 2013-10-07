@@ -22,15 +22,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import net.shibboleth.idp.session.BasicServiceSession;
-import net.shibboleth.idp.session.ServiceSession;
+import net.shibboleth.idp.session.BasicSPSession;
+import net.shibboleth.idp.session.SPSession;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-/** {@link BasicServiceSessionSerializer} unit test. */
-public class BasicServiceSessionSerializerTest {
+/** {@link BasicSPSessionSerializer} unit test. */
+public class BasicSPSessionSerializerTest {
 
     private static final String DATAPATH = "/data/net/shibboleth/idp/session/impl/";
     
@@ -40,10 +40,10 @@ public class BasicServiceSessionSerializerTest {
     
     private static final String KEY = "key";
     
-    private BasicServiceSessionSerializer serializer;
+    private BasicSPSessionSerializer serializer;
     
     @BeforeMethod public void setUp() {
-        serializer = new BasicServiceSessionSerializer(0);
+        serializer = new BasicSPSessionSerializer(0);
     }
 
     @Test public void testInvalid() throws Exception {
@@ -77,7 +77,7 @@ public class BasicServiceSessionSerializerTest {
 
         try {
             // Tests expiration being null.
-            serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "basicServiceSession.json"), null);
+            serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "basicSPSession.json"), null);
             Assert.fail();
         } catch (IOException e) {
             
@@ -87,13 +87,13 @@ public class BasicServiceSessionSerializerTest {
     @Test public void testBasic() throws Exception {
         long exp = INSTANT + 60000L;
         
-        BasicServiceSession session = new BasicServiceSession("test", "foo", INSTANT, exp);
+        BasicSPSession session = new BasicSPSession("test", "foo", INSTANT, exp);
         
         String s = serializer.serialize(session);
-        String s2 = fileToString(DATAPATH + "basicServiceSession.json");
+        String s2 = fileToString(DATAPATH + "basicSPSession.json");
         Assert.assertEquals(s, s2);
         
-        ServiceSession session2 = serializer.deserialize(1, CONTEXT, KEY, s2, exp);
+        SPSession session2 = serializer.deserialize(1, CONTEXT, KEY, s2, exp);
 
         Assert.assertEquals(session.getId(), session2.getId());
         Assert.assertEquals(session.getAuthenticationFlowId(), session2.getAuthenticationFlowId());
@@ -103,7 +103,7 @@ public class BasicServiceSessionSerializerTest {
     
     private String fileToString(String pathname) throws URISyntaxException, IOException {
         try (FileInputStream stream = new FileInputStream(
-                new File(BasicServiceSessionSerializerTest.class.getResource(pathname).toURI()))) {
+                new File(BasicSPSessionSerializerTest.class.getResource(pathname).toURI()))) {
             int avail = stream.available();
             byte[] data = new byte[avail];
             int numRead = 0;

@@ -31,19 +31,19 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * A registry of mappings between a {@link ServiceSession} class and a corresponding {@link StorageSerializer}
+ * A registry of mappings between a {@link SPSession} class and a corresponding {@link StorageSerializer}
  * for that type.
  */
-public final class ServiceSessionSerializerRegistry {
+public final class SPSessionSerializerRegistry {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ServiceSessionSerializerRegistry.class);
+    private final Logger log = LoggerFactory.getLogger(SPSessionSerializerRegistry.class);
     
     /** Storage for the registry mappings. */
-    private Map<Class<? extends ServiceSession>, StorageSerializer<? extends ServiceSession>> registry;
+    private Map<Class<? extends SPSession>, StorageSerializer<? extends SPSession>> registry;
 
     /** Constructor. */
-    public ServiceSessionSerializerRegistry() {
+    public SPSessionSerializerRegistry() {
         registry = new ConcurrentHashMap();
     }
     
@@ -52,57 +52,57 @@ public final class ServiceSessionSerializerRegistry {
      * 
      * @param fromMap  map to populate registry with
      */
-    public ServiceSessionSerializerRegistry(@Nonnull @NonnullElements
-            Map<Class<? extends ServiceSession>, StorageSerializer<? extends ServiceSession>> fromMap) {
+    public SPSessionSerializerRegistry(@Nonnull @NonnullElements
+            Map<Class<? extends SPSession>, StorageSerializer<? extends SPSession>> fromMap) {
         registry = new ConcurrentHashMap(Constraint.isNotNull(fromMap, "Source map cannot be null"));
     }
     
     /**
-     * Get a registered {@link StorageSerializer} for a given {@link ServiceSession} type, if any.
+     * Get a registered {@link StorageSerializer} for a given {@link SPSession} type, if any.
      * 
-     * @param type a type of ServiceSession
+     * @param type a type of SPSession
      * @return a corresponding StorageSerializer, or null
      */
-    @Nullable public StorageSerializer<? extends ServiceSession> lookup(
-            @Nonnull final Class<? extends ServiceSession> type) {
-        Constraint.isNotNull(type, "ServiceSession type cannot be null");
+    @Nullable public StorageSerializer<? extends SPSession> lookup(
+            @Nonnull final Class<? extends SPSession> type) {
+        Constraint.isNotNull(type, "SPSession type cannot be null");
         
-        StorageSerializer<? extends ServiceSession> serializer = registry.get(type);
+        StorageSerializer<? extends SPSession> serializer = registry.get(type);
         if (serializer != null) {
-            log.debug("Registry located StorageSerializer of type '{}' for ServiceSession type '{}'",
+            log.debug("Registry located StorageSerializer of type '{}' for SPSession type '{}'",
                     serializer.getClass().getName(), type);
             return serializer;
         } else {
-            log.debug("Registry failed to locate StorageSerializer for ServiceSession type '{}'", type);
+            log.debug("Registry failed to locate StorageSerializer for SPSession type '{}'", type);
             return null;
         }
     }
     
     /**
-     * Register a {@link StorageSerializer} for a given {@link ServiceSession} type.
+     * Register a {@link StorageSerializer} for a given {@link SPSession} type.
      * 
-     * @param type a type of ServiceSession
+     * @param type a type of SPSession
      * @param serializer the StorageSerializer to register
      */
-    public void register(@Nonnull final Class<? extends ServiceSession> type,
-            @Nonnull StorageSerializer<? extends ServiceSession> serializer) {
-        Constraint.isNotNull(type, "ServiceSession type cannot be null");
+    public void register(@Nonnull final Class<? extends SPSession> type,
+            @Nonnull StorageSerializer<? extends SPSession> serializer) {
+        Constraint.isNotNull(type, "SPSession type cannot be null");
         Constraint.isNotNull(serializer, "StorageSerializer cannot be null");
         
-        log.debug("Registering StorageSerializer of type '{}' for ServiceSession type '{}'",
+        log.debug("Registering StorageSerializer of type '{}' for SPSession type '{}'",
                 serializer.getClass().getName(), type);
         registry.put(type, serializer);
     }
     
     /**
-     * Deregister a {@link StorageSerializer} for a given {@link ServiceSession} type.
+     * Deregister a {@link StorageSerializer} for a given {@link SPSession} type.
      * 
-     * @param type a type of ServiceSession
+     * @param type a type of SPSession
      */
-    public void deregister(@Nonnull final Class<? extends ServiceSession> type) {
-        Constraint.isNotNull(type, "ServiceSession type cannot be null");
+    public void deregister(@Nonnull final Class<? extends SPSession> type) {
+        Constraint.isNotNull(type, "SPSession type cannot be null");
         
-        log.debug("Deregistering StorageSerializer for ServiceSession type '{}'", type);
+        log.debug("Deregistering StorageSerializer for SPSession type '{}'", type);
         registry.remove(type);
     }
 }

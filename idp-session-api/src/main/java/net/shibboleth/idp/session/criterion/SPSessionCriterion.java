@@ -27,7 +27,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.resolver.Criterion;
 
 /** {@link Criterion} representing a service ID and an implementation-specific service session key. */
-public final class ServiceSessionCriterion implements Criterion {
+public final class SPSessionCriterion implements Criterion {
 
     /** The service ID. */
     @Nonnull @NotEmpty private final String id;
@@ -39,13 +39,13 @@ public final class ServiceSessionCriterion implements Criterion {
      * Constructor.
      * 
      * @param serviceId the service ID
-     * @param serviceSessionKey the custom key associated with the service session
+     * @param spSessionKey the custom key associated with the SP session
      */
-    public ServiceSessionCriterion(@Nonnull @NotEmpty final String serviceId,
-            @Nonnull @NotEmpty final String serviceSessionKey) {
+    public SPSessionCriterion(@Nonnull @NotEmpty final String serviceId,
+            @Nonnull @NotEmpty final String spSessionKey) {
         id = Constraint.isNotNull(StringSupport.trimOrNull(serviceId), "Service ID cannot be null or empty");
-        key = Constraint.isNotNull(StringSupport.trimOrNull(serviceSessionKey),
-                "Service session key cannot be null or empty");
+        key = Constraint.isNotNull(StringSupport.trimOrNull(spSessionKey),
+                "SPSession key cannot be null or empty");
     }
 
     /**
@@ -62,14 +62,14 @@ public final class ServiceSessionCriterion implements Criterion {
      * 
      * @return the service session key
      */
-    @Nonnull @NotEmpty public String getServiceSessionKey() {
+    @Nonnull @NotEmpty public String getSPSessionKey() {
         return key;
     }
     
     /** {@inheritDoc} */
     public String toString() {
         return Objects.toStringHelper(this).add("serviceId", id)
-                .add("serviceSessionKey", key)
+                .add("SPSessionKey", key)
                 .toString();
     }
 
@@ -88,9 +88,9 @@ public final class ServiceSessionCriterion implements Criterion {
             return false;
         }
 
-        if (obj instanceof ServiceSessionCriterion) {
-            return id.equals(((ServiceSessionCriterion) obj).id)
-                    && key.equals(((ServiceSessionCriterion) obj).key);
+        if (obj instanceof SPSessionCriterion) {
+            return id.equals(((SPSessionCriterion) obj).id)
+                    && key.equals(((SPSessionCriterion) obj).key);
         }
 
         return false;

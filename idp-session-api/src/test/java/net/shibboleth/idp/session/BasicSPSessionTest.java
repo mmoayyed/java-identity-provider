@@ -22,8 +22,8 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** {@link BasicServiceSession} unit test. */
-public class BasicServiceSessionTest {
+/** {@link BasicSPSession} unit test. */
+public class BasicSPSessionTest {
 
     /** Tests that everything is properly initialized during object construction. */
     @Test public void testInstantiation() throws Exception {
@@ -31,7 +31,7 @@ public class BasicServiceSessionTest {
         // this is here to allow the event's creation time to deviate from the 'start' time
         Thread.sleep(50);
 
-        BasicServiceSession session = new BasicServiceSession("test", "test", System.currentTimeMillis(),
+        BasicSPSession session = new BasicSPSession("test", "test", System.currentTimeMillis(),
                 System.currentTimeMillis() + 60000L);
         Assert.assertEquals(session.getId(), "test");
         Assert.assertEquals(session.getAuthenticationFlowId(), "test");
@@ -39,28 +39,28 @@ public class BasicServiceSessionTest {
         Assert.assertTrue(session.getExpirationInstant() > session.getCreationInstant());
 
         try {
-            new BasicServiceSession(null, "test", 0, 0);
+            new BasicSPSession(null, "test", 0, 0);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new BasicServiceSession("", "test", 0, 0);
+            new BasicSPSession("", "test", 0, 0);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new BasicServiceSession("  ", "test", 0, 0);
+            new BasicSPSession("  ", "test", 0, 0);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new BasicServiceSession("foo", null, 0, 0);
+            new BasicSPSession("foo", null, 0, 0);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 

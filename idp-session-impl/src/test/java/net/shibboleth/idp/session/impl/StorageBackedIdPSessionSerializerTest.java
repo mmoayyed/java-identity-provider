@@ -24,7 +24,7 @@ import java.net.URISyntaxException;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.UsernamePrincipal;
-import net.shibboleth.idp.session.BasicServiceSession;
+import net.shibboleth.idp.session.BasicSPSession;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -47,7 +47,7 @@ public class StorageBackedIdPSessionSerializerTest {
     
     @BeforeMethod public void setUp() {
         manager = new StorageBackedSessionManager();
-        manager.setTrackServiceSessions(true);
+        manager.setTrackSPSessions(true);
         serializer = new StorageBackedIdPSessionSerializer(manager, null);
     }
 
@@ -108,8 +108,8 @@ public class StorageBackedIdPSessionSerializerTest {
         session.doAddAuthenticationResult(new AuthenticationResult("a", new UsernamePrincipal("jdoe")));
         session.doAddAuthenticationResult(new AuthenticationResult("b", new UsernamePrincipal("jdoe")));
         session.doAddAuthenticationResult(new AuthenticationResult("c", new UsernamePrincipal("jdoe")));
-        session.doAddServiceSession(new BasicServiceSession("bar", "a", INSTANT, exp));
-        session.doAddServiceSession(new BasicServiceSession("baz", "c", INSTANT, exp));
+        session.doAddSPSession(new BasicSPSession("bar", "a", INSTANT, exp));
+        session.doAddSPSession(new BasicSPSession("baz", "c", INSTANT, exp));
         
         String s = serializer.serialize(session);
         String s2 = fileToString(DATAPATH + "complexIdPSession.json");

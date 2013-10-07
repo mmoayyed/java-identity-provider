@@ -24,7 +24,7 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** {@link AbstractIdPSession} unit test. */
+/** {@link IdPSession} unit test. */
 public class IdPSessionTest {
 
     /** Tests that everything is properly initialized during object construction. */
@@ -39,8 +39,8 @@ public class IdPSessionTest {
         Assert.assertEquals(session.getId(), "test");
         Assert.assertEquals(session.getPrincipalName(), "foo");
         Assert.assertEquals(session.getLastActivityInstant(), session.getCreationInstant());
-        Assert.assertNotNull(session.getServiceSessions());
-        Assert.assertFalse(session.getServiceSessions().iterator().hasNext());
+        Assert.assertNotNull(session.getSPSessions());
+        Assert.assertFalse(session.getSPSessions().iterator().hasNext());
 
         try {
             new DummyIdPSession(null, null);
@@ -100,88 +100,88 @@ public class IdPSessionTest {
     
     /** Tests adding service sessions. 
      * @throws SessionException */
-    @Test public void testAddServiceSessions() throws SessionException {
+    @Test public void testAddSPSessions() throws SessionException {
         long now = System.currentTimeMillis();
         long exp = now + 60000L;
         
-        BasicServiceSession svcSession1 = new BasicServiceSession("svc1", "test", now, exp);
-        BasicServiceSession svcSession2 = new BasicServiceSession("svc2", "test", now, exp);
-        BasicServiceSession svcSession3 = new BasicServiceSession("svc3", "test", now, exp);
+        BasicSPSession svcSession1 = new BasicSPSession("svc1", "test", now, exp);
+        BasicSPSession svcSession2 = new BasicSPSession("svc2", "test", now, exp);
+        BasicSPSession svcSession3 = new BasicSPSession("svc3", "test", now, exp);
 
         AbstractIdPSession session = new DummyIdPSession("test", "foo");
-        session.addServiceSession(svcSession1);
-        Assert.assertEquals(session.getServiceSessions().size(), 1);
-        Assert.assertTrue(session.getServiceSessions().contains(svcSession1));
-        Assert.assertEquals(session.getServiceSession("svc1"), svcSession1);
+        session.addSPSession(svcSession1);
+        Assert.assertEquals(session.getSPSessions().size(), 1);
+        Assert.assertTrue(session.getSPSessions().contains(svcSession1));
+        Assert.assertEquals(session.getSPSession("svc1"), svcSession1);
 
-        session.addServiceSession(svcSession2);
-        Assert.assertEquals(session.getServiceSessions().size(), 2);
-        Assert.assertTrue(session.getServiceSessions().contains(svcSession1));
-        Assert.assertEquals(session.getServiceSession("svc1"), svcSession1);
-        Assert.assertTrue(session.getServiceSessions().contains(svcSession2));
-        Assert.assertEquals(session.getServiceSession("svc2"), svcSession2);
+        session.addSPSession(svcSession2);
+        Assert.assertEquals(session.getSPSessions().size(), 2);
+        Assert.assertTrue(session.getSPSessions().contains(svcSession1));
+        Assert.assertEquals(session.getSPSession("svc1"), svcSession1);
+        Assert.assertTrue(session.getSPSessions().contains(svcSession2));
+        Assert.assertEquals(session.getSPSession("svc2"), svcSession2);
 
-        session.addServiceSession(svcSession3);
-        Assert.assertEquals(session.getServiceSessions().size(), 3);
-        Assert.assertTrue(session.getServiceSessions().contains(svcSession1));
-        Assert.assertEquals(session.getServiceSession("svc1"), svcSession1);
-        Assert.assertTrue(session.getServiceSessions().contains(svcSession2));
-        Assert.assertEquals(session.getServiceSession("svc2"), svcSession2);
-        Assert.assertTrue(session.getServiceSessions().contains(svcSession3));
-        Assert.assertEquals(session.getServiceSession("svc3"), svcSession3);
+        session.addSPSession(svcSession3);
+        Assert.assertEquals(session.getSPSessions().size(), 3);
+        Assert.assertTrue(session.getSPSessions().contains(svcSession1));
+        Assert.assertEquals(session.getSPSession("svc1"), svcSession1);
+        Assert.assertTrue(session.getSPSessions().contains(svcSession2));
+        Assert.assertEquals(session.getSPSession("svc2"), svcSession2);
+        Assert.assertTrue(session.getSPSessions().contains(svcSession3));
+        Assert.assertEquals(session.getSPSession("svc3"), svcSession3);
 
         try {
-            session.addServiceSession(null);
+            session.addSPSession(null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
-            Assert.assertEquals(session.getServiceSessions().size(), 3);
-            Assert.assertTrue(session.getServiceSessions().contains(svcSession1));
-            Assert.assertEquals(session.getServiceSession("svc1"), svcSession1);
-            Assert.assertTrue(session.getServiceSessions().contains(svcSession2));
-            Assert.assertEquals(session.getServiceSession("svc2"), svcSession2);
-            Assert.assertTrue(session.getServiceSessions().contains(svcSession3));
-            Assert.assertEquals(session.getServiceSession("svc3"), svcSession3);
+            Assert.assertEquals(session.getSPSessions().size(), 3);
+            Assert.assertTrue(session.getSPSessions().contains(svcSession1));
+            Assert.assertEquals(session.getSPSession("svc1"), svcSession1);
+            Assert.assertTrue(session.getSPSessions().contains(svcSession2));
+            Assert.assertEquals(session.getSPSession("svc2"), svcSession2);
+            Assert.assertTrue(session.getSPSessions().contains(svcSession3));
+            Assert.assertEquals(session.getSPSession("svc3"), svcSession3);
         }
 
-        session.addServiceSession(svcSession1);
-        Assert.assertEquals(session.getServiceSessions().size(), 3);
-        Assert.assertTrue(session.getServiceSessions().contains(svcSession1));
-        Assert.assertEquals(session.getServiceSession("svc1"), svcSession1);
+        session.addSPSession(svcSession1);
+        Assert.assertEquals(session.getSPSessions().size(), 3);
+        Assert.assertTrue(session.getSPSessions().contains(svcSession1));
+        Assert.assertEquals(session.getSPSession("svc1"), svcSession1);
     }
 
     /** Tests removing service sessions. 
      * @throws SessionException */
-    @Test public void testRemoveServiceSession() throws SessionException {
+    @Test public void testRemoveSPSession() throws SessionException {
         long now = System.currentTimeMillis();
         long exp = now + 60000L;
 
-        BasicServiceSession svcSession1 = new BasicServiceSession("svc1", "test", now, exp);
-        BasicServiceSession svcSession2 = new BasicServiceSession("svc2", "test", now, exp);
+        BasicSPSession svcSession1 = new BasicSPSession("svc1", "test", now, exp);
+        BasicSPSession svcSession2 = new BasicSPSession("svc2", "test", now, exp);
 
         AbstractIdPSession session = new DummyIdPSession("test", "foo");
-        session.addServiceSession(svcSession1);
-        session.addServiceSession(svcSession2);
+        session.addSPSession(svcSession1);
+        session.addSPSession(svcSession2);
 
-        Assert.assertTrue(session.removeServiceSession(svcSession1));
-        Assert.assertEquals(session.getServiceSessions().size(), 1);
-        Assert.assertFalse(session.getServiceSessions().contains(svcSession1));
-        Assert.assertTrue(session.getServiceSessions().contains(svcSession2));
-        Assert.assertEquals(session.getServiceSession("svc2"), svcSession2);
+        Assert.assertTrue(session.removeSPSession(svcSession1));
+        Assert.assertEquals(session.getSPSessions().size(), 1);
+        Assert.assertFalse(session.getSPSessions().contains(svcSession1));
+        Assert.assertTrue(session.getSPSessions().contains(svcSession2));
+        Assert.assertEquals(session.getSPSession("svc2"), svcSession2);
 
-        Assert.assertFalse(session.removeServiceSession(svcSession1));
-        Assert.assertEquals(session.getServiceSessions().size(), 1);
-        Assert.assertFalse(session.getServiceSessions().contains(svcSession1));
-        Assert.assertTrue(session.getServiceSessions().contains(svcSession2));
-        Assert.assertEquals(session.getServiceSession("svc2"), svcSession2);
+        Assert.assertFalse(session.removeSPSession(svcSession1));
+        Assert.assertEquals(session.getSPSessions().size(), 1);
+        Assert.assertFalse(session.getSPSessions().contains(svcSession1));
+        Assert.assertTrue(session.getSPSessions().contains(svcSession2));
+        Assert.assertEquals(session.getSPSession("svc2"), svcSession2);
 
         try {
-            session.removeServiceSession(null);
+            session.removeSPSession(null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
-            Assert.assertEquals(session.getServiceSessions().size(), 1);
-            Assert.assertFalse(session.getServiceSessions().contains(svcSession1));
-            Assert.assertTrue(session.getServiceSessions().contains(svcSession2));
-            Assert.assertEquals(session.getServiceSession("svc2"), svcSession2);
+            Assert.assertEquals(session.getSPSessions().size(), 1);
+            Assert.assertFalse(session.getSPSessions().contains(svcSession1));
+            Assert.assertTrue(session.getSPSessions().contains(svcSession2));
+            Assert.assertEquals(session.getSPSession("svc2"), svcSession2);
         }
     }
 

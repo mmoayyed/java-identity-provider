@@ -32,7 +32,7 @@ import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
  * particular protocols used to establish sessions.
  */
 @ThreadSafe
-public interface ServiceSession extends IdentifiableComponent {
+public interface SPSession extends IdentifiableComponent {
 
     /**
      * Get the time, in milliseconds since the epoch, when this session was created.
@@ -65,5 +65,5 @@ public interface ServiceSession extends IdentifiableComponent {
      * 
      * @return a unique key identifying this subject's session with the service, or null
      */
-    @Nullable public String getServiceSessionKey();
+    @Nullable public String getSPSessionKey();
 }

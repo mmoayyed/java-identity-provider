@@ -20,15 +20,15 @@ package net.shibboleth.idp.session.context;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.session.AbstractIdPSession;
+import net.shibboleth.idp.session.IdPSession;
 
 import org.opensaml.messaging.context.BaseContext;
 
-/** A {@link BaseContext} that holds an {@link AbstractIdPSession}. */
+/** A {@link BaseContext} that holds an {@link IdPSession}. */
 public class SessionContext extends BaseContext {
 
     /** IdP session wrapped by this adapter. */
-    private AbstractIdPSession session;
+    private IdPSession session;
 
     /** Constructor. */
     public SessionContext() {
@@ -40,7 +40,7 @@ public class SessionContext extends BaseContext {
      * 
      * @return the IdP session
      */
-    @Nullable public AbstractIdPSession getIdPSession() {
+    @Nullable public IdPSession getIdPSession() {
         return session;
     }
 
@@ -49,7 +49,7 @@ public class SessionContext extends BaseContext {
      * 
      * @param theSession the IdP session
      */
-    public void setIdPSession(@Nullable final AbstractIdPSession theSession) {
+    public void setIdPSession(@Nullable final IdPSession theSession) {
         session = theSession;
     }
     

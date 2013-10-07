@@ -124,37 +124,37 @@ public interface IdPSession extends IdentifiableComponent {
      * 
      * @return unmodifiable collection of service sessions associated with this session
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<ServiceSession> getServiceSessions();
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<SPSession> getSPSessions();
 
     /**
-     * Get the ServiceSession for a given service.
+     * Get the SPSession for a given service.
      * 
      * @param serviceId ID of the service
      * 
      * @return the session service or null if no session exists for that service, may be null
      */
-    @Nullable public ServiceSession getServiceSession(@Nonnull @NotEmpty final String serviceId);
+    @Nullable public SPSession getSPSession(@Nonnull @NotEmpty final String serviceId);
     
     /**
-     * Add a new service session to this IdP session, replacing any existing session for the same
+     * Add a new SP session to this IdP session, replacing any existing session for the same
      * service.
      * 
-     * @param serviceSession the service session
+     * @param spSession the SP session
      * 
-     * @return a previously existing ServiceSession replaced by the new one, if any
+     * @return a previously existing SPSession replaced by the new one, if any
      * @throws SessionException if an error occurs accessing the session
      */
-    @Nullable public ServiceSession addServiceSession(@Nonnull final ServiceSession serviceSession)
+    @Nullable public SPSession addSPSession(@Nonnull final SPSession spSession)
             throws SessionException;
     
     /**
-     * Disassociate the given service session from this IdP session.
+     * Disassociate the given SP session from this IdP session.
      * 
-     * @param serviceSession the service session
+     * @param spSession the SP session
      * 
-     * @return true iff the given session had been associated with this IdP session and now is not
-     * @throws SessionException if an error occurs accessing the session
+     * @return true iff the given SP session had been associated with this IdP session and now is not
+     * @throws SessionException if an error occurs accessing the SP session
      */
-    public boolean removeServiceSession(@Nonnull final ServiceSession serviceSession) throws SessionException;
+    public boolean removeSPSession(@Nonnull final SPSession spSession) throws SessionException;
     
 }

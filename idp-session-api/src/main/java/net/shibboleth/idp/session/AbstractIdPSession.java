@@ -97,7 +97,7 @@ public abstract class AbstractIdPSession implements IdPSession {
     @Nonnull private final ConcurrentMap<String, Optional<AuthenticationResult>> authenticationResults;
 
     /** Tracks services which have been issued authentication tokens during this session. */
-    @Nonnull private final ConcurrentMap<String, Optional<ServiceSession>> serviceSessions;
+    @Nonnull private final ConcurrentMap<String, Optional<SPSession>> spSessions;
 
     /**
      * Constructor.
@@ -116,7 +116,7 @@ public abstract class AbstractIdPSession implements IdPSession {
         lastActivityInstant = creationTime;
 
         authenticationResults = new ConcurrentHashMap(5);
-        serviceSessions = new ConcurrentHashMap(10);
+        spSessions = new ConcurrentHashMap(10);
     }
 
     /** {@inheritDoc} */
@@ -283,67 +283,67 @@ public abstract class AbstractIdPSession implements IdPSession {
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<ServiceSession> getServiceSessions() {
-        return ImmutableSet.copyOf(Optional.presentInstances(serviceSessions.values()));
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<SPSession> getSPSessions() {
+        return ImmutableSet.copyOf(Optional.presentInstances(spSessions.values()));
     }
 
     /** {@inheritDoc} */
-    @Nullable public ServiceSession getServiceSession(@Nonnull @NotEmpty final String serviceId) {
-        Optional<ServiceSession> mapped = serviceSessions.get(StringSupport.trimOrNull(serviceId));
+    @Nullable public SPSession getSPSession(@Nonnull @NotEmpty final String serviceId) {
+        Optional<SPSession> mapped = spSessions.get(StringSupport.trimOrNull(serviceId));
         return (mapped != null) ? mapped.orNull() : null;
     }
 
     /** {@inheritDoc} */
-    @Nullable public ServiceSession addServiceSession(@Nonnull final ServiceSession serviceSession)
+    @Nullable public SPSession addSPSession(@Nonnull final SPSession spSession)
             throws SessionException {
-        return doAddServiceSession(serviceSession);
+        return doAddSPSession(spSession);
     }
 
     /** {@inheritDoc} */
-    public boolean removeServiceSession(@Nonnull final ServiceSession serviceSession) throws SessionException {
-        return doRemoveServiceSession(serviceSession);
+    public boolean removeSPSession(@Nonnull final SPSession spSession) throws SessionException {
+        return doRemoveSPSession(spSession);
     }
 
     /**
-     * Add a new service session to this IdP session, replacing any existing session for the same
+     * Add a new SP session to this IdP session, replacing any existing session for the same
      * service.
      * 
-     * <p>This manipulates only the internal state of the object. The {@link #addServiceSession(ServiceSession)}
+     * <p>This manipulates only the internal state of the object. The {@link #addSPSession(SPSession)}
      * method must be implemented to support other persistence requirements.</p>
      * 
-     * @param serviceSession the service session
+     * @param spSession the SP session
      * 
-     * @return a previously existing ServiceSession replaced by the new one, if any
+     * @return a previously existing SPSession replaced by the new one, if any
      */
-    @Nullable public ServiceSession doAddServiceSession(@Nonnull final ServiceSession serviceSession) {
-        Constraint.isNotNull(serviceSession, "Service session cannot be null");
+    @Nullable public SPSession doAddSPSession(@Nonnull final SPSession spSession) {
+        Constraint.isNotNull(spSession, "SPSession cannot be null");
     
-        Optional<ServiceSession> prev = serviceSessions.put(serviceSession.getId(), Optional.of(serviceSession));
+        Optional<SPSession> prev = spSessions.put(spSession.getId(), Optional.of(spSession));
         if (prev != null && prev.isPresent()) {
-            log.debug("IdPSession {}: replaced old ServiceSession for service {}", id, prev.get().getId());
+            log.debug("IdPSession {}: replaced old SPSession for service {}", id, prev.get().getId());
             return prev.get();
         }
         return null;
     }
 
     /**
-     * Disassociate the given service session from this IdP session.
+     * Disassociate the given SP session from this IdP session.
      * 
-     * <p>This manipulates only the internal state of the object. The {@link #removeServiceSession(ServiceSession)}
+     * <p>This manipulates only the internal state of the object. The {@link #removeSPSession(SPSession)}
      * method must be implemented to support other persistence requirements.</p>
      * 
-     * @param session the service session
+     * @param spSession the SP session
      * 
-     * @return true iff the given session had been associated with this IdP session and now is not
+     * @return true iff the given SP session had been associated with this IdP session and now is not
      */
-    public boolean doRemoveServiceSession(@Nonnull final ServiceSession session) {
-        Constraint.isNotNull(session, "Service session cannot be null");
+    public boolean doRemoveSPSession(@Nonnull final SPSession spSession) {
+        Constraint.isNotNull(spSession, "SPSession cannot be null");
     
         // Record may be actually present, or not yet loaded.
-        if (serviceSessions.remove(session.getId(), Optional.of(session))) {
+        if (spSessions.remove(spSession.getId(), Optional.of(spSession))) {
             return true;
         } else {
-            return serviceSessions.remove(session.getId(), Optional.absent());
+            return spSessions.remove(spSession.getId(), Optional.absent());
         }
     }
 
@@ -407,7 +407,7 @@ public abstract class AbstractIdPSession implements IdPSession {
                 .add("IPv4", ipV4Address).add("IPv6", ipV6Address)
                 .add("creationInstant", new DateTime(creationInstant))
                 .add("lastActivityInstant", new DateTime(lastActivityInstant))
-                .add("authenticationResults", getAuthenticationResults()).add("serviceSessions", getServiceSessions())
+                .add("authenticationResults", getAuthenticationResults()).add("spSessions", getSPSessions())
                 .toString();
     }
     
@@ -421,12 +421,12 @@ public abstract class AbstractIdPSession implements IdPSession {
     }
 
     /**
-     * Accessor for the underlying {@link ServiceSession} map maintained with the IdP session.
+     * Accessor for the underlying {@link SPSession} map maintained with the IdP session.
      * 
      * @return direct access to the service session map
      */
-    @Nonnull @NonnullElements @Live protected Map<String, Optional<ServiceSession>> getServiceSessionMap() {
-        return serviceSessions;
+    @Nonnull @NonnullElements @Live protected Map<String, Optional<SPSession>> getSPSessionMap() {
+        return spSessions;
     }
     
     /**
