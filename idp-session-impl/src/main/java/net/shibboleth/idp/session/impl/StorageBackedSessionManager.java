@@ -26,7 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.storage.ClientStorageService;
+import org.opensaml.storage.RequestScopedStorageService;
 import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageSerializer;
 import org.opensaml.storage.StorageService;
@@ -99,7 +99,10 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         SessionManager, SessionResolver {
 
     /** Storage key of master session records. */
-    @Nonnull public static final String SESSION_MASTER_KEY = "_session";
+    @Nonnull @NotEmpty public static final String SESSION_MASTER_KEY = "_session";
+
+    /** Default cookie name for session tracking. */
+    @Nonnull @NotEmpty private static final String DEFAULT_COOKIE_NAME = "shib_idp_session";
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(StorageBackedSessionManager.class);
@@ -121,6 +124,15 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     
     /** Indicates whether sessions are bound to client addresses. */
     private boolean consistentAddress;
+
+    /** Name of cookie used to track sessions. */
+    @Nonnull @NotEmpty private String cookieName;
+    
+    /** Path of cookie used to track sessions. */
+    @Nullable private String cookiePath;
+
+    /** Domain of cookie used to track sessions. */
+    @Nullable private String cookieDomain;
     
     /** The back-end for managing data. */
     @NonnullAfterInit private StorageService storageService;
@@ -146,6 +158,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         serializer = new StorageBackedIdPSessionSerializer(this, null);
         flowDescriptorMap = new HashMap();
         consistentAddress = true;
+        cookieName = DEFAULT_COOKIE_NAME;
     }
     
     /**
@@ -273,6 +286,41 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     }
 
     /**
+     * Set the cookie name to use for session tracking.
+     * 
+     * @param name cookie name to use
+     */
+    public void setCookieName(@Nonnull @NotEmpty final String name) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        cookieName = Constraint.isNotNull(StringSupport.trimOrNull(name), "Cookie name cannot be null or empty");
+    }
+
+    /**
+     * Set the cookie path to use for session tracking.
+     * 
+     * <p>Defaults to the servlet context path.</p>
+     * 
+     * @param path cookie path to use, or null for the default
+     */
+    public void setCookiePath(@Nullable final String path) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        cookiePath = StringSupport.trimOrNull(path);
+    }
+
+    /**
+     * Set the cookie domain to use for session tracking.
+     * 
+     * @param domain the cookie domain to use, or null for the default
+     */
+    public void setCookieDomain(@Nullable final String domain) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        cookieDomain = StringSupport.trimOrNull(domain);
+    }
+
+    /**
      * Get the StorageService back-end to use.
      * 
      * @return the back-end to use
@@ -368,7 +416,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         } else if (idGenerator == null) {
             throw new ComponentInitializationException(
                     "Initialization of StorageBackedSessionManager requires non-null IdentifierGenerationStrategy");
-        } else if ((trackSPSessions || secondaryServiceIndex) && storageService instanceof ClientStorageService) {
+        } else if ((trackSPSessions || secondaryServiceIndex) && storageService instanceof RequestScopedStorageService) {
             throw new ComponentInitializationException(
                     "Tracking SPSessions requires a server-side StorageService");
         } else if (trackSPSessions && spSessionSerializerRegistry == null) {
