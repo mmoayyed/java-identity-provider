@@ -46,6 +46,7 @@ import net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGene
 import org.opensaml.profile.RequestContextBuilder;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.impl.MemoryStorageService;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -106,7 +107,7 @@ public class StorageBackedSessionManagerTest {
 
         // Profile context should be required.
         try {
-            manager.createSession(null, null, null);
+            manager.createSession(null, null);
             Assert.fail("A null ProfileRequestContext should not have worked");
         } catch (ConstraintViolationException e) {
             
@@ -116,14 +117,14 @@ public class StorageBackedSessionManagerTest {
         
         // Username should be required.
         try {
-            manager.createSession(prc, null, null);
+            manager.createSession(prc, null);
             Assert.fail("A null username should not have worked");
         } catch (ConstraintViolationException e) {
             
         }
         
         // Test basic session content.
-        IdPSession session = manager.createSession(prc, "joe", null);
+        IdPSession session = manager.createSession(prc, "joe");
         Assert.assertTrue(session.getCreationInstant() <= System.currentTimeMillis());
         Assert.assertEquals(session.getCreationInstant(), session.getLastActivityInstant());
         Assert.assertEquals(session.getPrincipalName(), "joe");
@@ -155,9 +156,10 @@ public class StorageBackedSessionManagerTest {
     public void testAddress() throws SessionException, ResolverException {
         
         ProfileRequestContext prc = buildProfileRequestContext();
+        ((MockHttpServletRequest) prc.getHttpRequest()).setRemoteAddr("192.168.1.1");
         
         // Interleave checks of addresses of the two types.
-        IdPSession session = manager.createSession(prc, "joe", "192.168.1.1");
+        IdPSession session = manager.createSession(prc, "joe");
         Assert.assertTrue(session.checkAddress("192.168.1.1"));
         Assert.assertFalse(session.checkAddress("192.168.1.2"));
         Assert.assertTrue(session.checkAddress("fe80::ca2a:14ff:fe2a:3e04"));
@@ -169,7 +171,7 @@ public class StorageBackedSessionManagerTest {
         Assert.assertFalse(session.checkAddress("1,1,1,1"));
         
         // Interleave manipulation of a session between two copies to check for resync.
-        IdPSession one = manager.createSession(prc, "joe", null);
+        IdPSession one = manager.createSession(prc, "joe");
         IdPSession two = manager.resolveSingle(new CriteriaSet(new SessionIdCriterion(one.getId())));
         
         Assert.assertTrue(one.checkAddress("192.168.1.1"));
@@ -185,7 +187,7 @@ public class StorageBackedSessionManagerTest {
         
         ProfileRequestContext prc = buildProfileRequestContext();
         
-        IdPSession session = manager.createSession(prc, "joe", null);
+        IdPSession session = manager.createSession(prc, "joe");
         Assert.assertTrue(session.getAuthenticationResults().isEmpty());
 
         // Add some results.
@@ -242,7 +244,7 @@ public class StorageBackedSessionManagerTest {
         
         ProfileRequestContext prc = buildProfileRequestContext();
         
-        IdPSession session = manager.createSession(prc, "joe", null);
+        IdPSession session = manager.createSession(prc, "joe");
         Assert.assertTrue(session.getSPSessions().isEmpty());
 
         // Add some sessions.
@@ -290,8 +292,8 @@ public class StorageBackedSessionManagerTest {
         
         ProfileRequestContext prc = buildProfileRequestContext();
         
-        IdPSession session = manager.createSession(prc, "joe", null);
-        IdPSession session2 = manager.createSession(prc, "joe2", null);
+        IdPSession session = manager.createSession(prc, "joe");
+        IdPSession session2 = manager.createSession(prc, "joe2");
 
         // Add some sessions.
         SPSession foo = new ExtendedSPSession("https://sp.example.org/shibboleth", "AuthenticationFlow/Foo",

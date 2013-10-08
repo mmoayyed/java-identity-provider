@@ -99,9 +99,18 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             }
         }
     }
+    
+    /** {@inheritDoc} */
+    public boolean checkAddress(@Nonnull @NotEmpty final String address) throws SessionException {
+        return sessionManager.isConsistentAddress() ? super.checkAddress(address) : true;
+    }
 
     /** {@inheritDoc} */
     public void bindToAddress(@Nonnull @NotEmpty final String address) throws SessionException {
+        if (!sessionManager.isConsistentAddress()) {
+            return;
+        }
+        
         // Update ourselves and then attempt to write back.
         super.bindToAddress(address);
         try {

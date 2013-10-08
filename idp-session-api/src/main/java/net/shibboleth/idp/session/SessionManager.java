@@ -18,7 +18,6 @@
 package net.shibboleth.idp.session;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -44,13 +43,12 @@ public interface SessionManager extends
      * 
      * @param profileRequestContext profile request context
      * @param principalName canonical name of the subject of the session
-     * @param bindToAddress an initial client address to bind the session to
      * 
      * @return  the newly created session
      * @throws SessionException if the session cannot be created
      */
     @Nonnull public IdPSession createSession(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull @NotEmpty final String principalName, @Nullable final String bindToAddress)
+            @Nonnull @NotEmpty final String principalName)
                     throws SessionException;
     
     /**

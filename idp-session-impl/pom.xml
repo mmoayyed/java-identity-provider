@@ -58,6 +58,12 @@
 
         <!-- Test Dependencies -->
         <dependency>
+            <groupId>${spring.groupId}</groupId>
+            <version>${spring.version}</version>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-storage-impl</artifactId>
             <version>${opensaml.version}</version>

@@ -58,6 +58,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
@@ -118,6 +119,9 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     /** Indicates whether to secondary-index SPSessions. */
     private boolean secondaryServiceIndex;
     
+    /** Indicates whether sessions are bound to client addresses. */
+    private boolean consistentAddress;
+    
     /** The back-end for managing data. */
     @NonnullAfterInit private StorageService storageService;
 
@@ -141,6 +145,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         sessionTimeout = 60 * 60 * 1000;
         serializer = new StorageBackedIdPSessionSerializer(this, null);
         flowDescriptorMap = new HashMap();
+        consistentAddress = true;
     }
     
     /**
@@ -197,7 +202,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
      * 
      * @param flag flag to set
      */
-    public void setMaskStorageFailure(boolean flag) {
+    public void setMaskStorageFailure(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         maskStorageFailure = flag;
@@ -219,7 +224,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
      * 
      * @param flag flag to set
      */
-    public void setTrackSPSessions(boolean flag) {
+    public void setTrackSPSessions(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         trackSPSessions = flag;
@@ -241,10 +246,30 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
      * 
      * @param flag flag to set
      */
-    public void setSecondaryServiceIndex(boolean flag) {
+    public void setSecondaryServiceIndex(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         secondaryServiceIndex = flag;
+    }
+    
+    /**
+     * Get whether sessions are bound to client addresses.
+     * 
+     * @return true iff sessions should be bound to client addresses 
+     */
+    public boolean isConsistentAddress() {
+        return consistentAddress;
+    }
+    
+    /**
+     * Set whether sessions are bound to client addresses.
+     * 
+     * @param flag flag to set
+     */
+    public void setConsistentAddress(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        consistentAddress = flag;
     }
 
     /**
@@ -361,11 +386,21 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
 
     /** {@inheritDoc} */
     @Nonnull public IdPSession createSession(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull @NotEmpty final String principalName, @Nullable final String bindToAddress)
-                    throws SessionException {
+            @Nonnull @NotEmpty final String principalName) throws SessionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         Constraint.isNotNull(profileRequestContext, "ProfileRequestContext cannot be null");
 
+        String remoteAddr = null;
+        if (consistentAddress) {
+            if (profileRequestContext.getHttpRequest() == null) {
+                throw new SessionException("No HttpServletRequest available, can't bind to client address");
+            }
+            remoteAddr = StringSupport.trimOrNull(profileRequestContext.getHttpRequest().getRemoteAddr());
+            if (remoteAddr == null) {
+                throw new SessionException("No client address to bind");
+            }
+        }
+        
         String sessionId = idGenerator.generateIdentifier(false);
         if (sessionId.length() > storageService.getCapabilities().getContextSize()) {
             throw new SessionException("Session IDs are too large for StorageService, check configuration");
@@ -373,9 +408,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         
         StorageBackedIdPSession newSession = new StorageBackedIdPSession(this, sessionId, principalName,
                 System.currentTimeMillis());
-        if (bindToAddress != null) {
-            newSession.doBindToAddress(bindToAddress);
-        }
+        newSession.doBindToAddress(remoteAddr);
         
         try {
             if (!storageService.create(sessionId, SESSION_MASTER_KEY, newSession, serializer,
