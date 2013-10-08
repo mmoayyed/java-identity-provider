@@ -21,6 +21,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
@@ -37,24 +39,30 @@ public interface SessionManager extends
     /**
      * Create and return a new {@link IdPSession} object for a subject.
      * 
-     * <p>The new session object should be appropriately persisted by the time it's returned.</p>
+     * <p>The new session object will be appropriately persisted and/or bound to the
+     * {@link ProfileRequestContext} by the time it's returned.</p>
      * 
+     * @param profileRequestContext profile request context
      * @param principalName canonical name of the subject of the session
      * @param bindToAddress an initial client address to bind the session to
      * 
      * @return  the newly created session
      * @throws SessionException if the session cannot be created
      */
-    @Nonnull public IdPSession createSession(@Nonnull @NotEmpty final String principalName,
-            @Nullable final String bindToAddress) throws SessionException;
+    @Nonnull public IdPSession createSession(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull @NotEmpty final String principalName, @Nullable final String bindToAddress)
+                    throws SessionException;
     
     /**
-     * Invalidates or otherwise removes a session from persistent storage.
+     * Invalidates or otherwise removes a session from persistent storage and/or unbinds it
+     * from a {@link ProfileRequestContext}.
      * 
+     * @param profileRequestContext profile request context
      * @param sessionId the unique ID of the session to destroy
      * 
      * @throws SessionException if the session cannot be destroyed
      */
-    public void destroySession(@Nonnull @NotEmpty final String sessionId) throws SessionException;
+    public void destroySession(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull @NotEmpty final String sessionId) throws SessionException;
 
 }

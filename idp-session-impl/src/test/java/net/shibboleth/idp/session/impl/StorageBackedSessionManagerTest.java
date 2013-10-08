@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.json.JsonObject;
 import javax.json.stream.JsonGenerator;
 
@@ -42,6 +43,8 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy;
 
+import org.opensaml.profile.RequestContextBuilder;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -100,17 +103,27 @@ public class StorageBackedSessionManagerTest {
         
         // Test a failed lookup.
         Assert.assertNull(manager.resolveSingle(new CriteriaSet(new SessionIdCriterion("test"))));
+
+        // Profile context should be required.
+        try {
+            manager.createSession(null, null, null);
+            Assert.fail("A null ProfileRequestContext should not have worked");
+        } catch (ConstraintViolationException e) {
+            
+        }
+
+        ProfileRequestContext prc = buildProfileRequestContext();
         
         // Username should be required.
         try {
-            manager.createSession(null, null);
+            manager.createSession(prc, null, null);
             Assert.fail("A null username should not have worked");
         } catch (ConstraintViolationException e) {
             
         }
         
         // Test basic session content.
-        IdPSession session = manager.createSession("joe", null);
+        IdPSession session = manager.createSession(prc, "joe", null);
         Assert.assertTrue(session.getCreationInstant() <= System.currentTimeMillis());
         Assert.assertEquals(session.getCreationInstant(), session.getLastActivityInstant());
         Assert.assertEquals(session.getPrincipalName(), "joe");
@@ -134,15 +147,17 @@ public class StorageBackedSessionManagerTest {
         Assert.assertEquals(session.getLastActivityInstant(), lastActivity);
         
         // Test a destroy and a failed lookup.
-        manager.destroySession(sessionId);
+        manager.destroySession(prc, sessionId);
         Assert.assertNull(manager.resolveSingle(new CriteriaSet(new SessionIdCriterion(sessionId))));
     }
     
     @Test(threadPoolSize = 10, invocationCount = 10,  timeOut = 10000)
     public void testAddress() throws SessionException, ResolverException {
         
+        ProfileRequestContext prc = buildProfileRequestContext();
+        
         // Interleave checks of addresses of the two types.
-        IdPSession session = manager.createSession("joe", "192.168.1.1");
+        IdPSession session = manager.createSession(prc, "joe", "192.168.1.1");
         Assert.assertTrue(session.checkAddress("192.168.1.1"));
         Assert.assertFalse(session.checkAddress("192.168.1.2"));
         Assert.assertTrue(session.checkAddress("fe80::ca2a:14ff:fe2a:3e04"));
@@ -154,7 +169,7 @@ public class StorageBackedSessionManagerTest {
         Assert.assertFalse(session.checkAddress("1,1,1,1"));
         
         // Interleave manipulation of a session between two copies to check for resync.
-        IdPSession one = manager.createSession("joe", null);
+        IdPSession one = manager.createSession(prc, "joe", null);
         IdPSession two = manager.resolveSingle(new CriteriaSet(new SessionIdCriterion(one.getId())));
         
         Assert.assertTrue(one.checkAddress("192.168.1.1"));
@@ -162,13 +177,15 @@ public class StorageBackedSessionManagerTest {
         Assert.assertTrue(two.checkAddress("fe80::ca2a:14ff:fe2a:3e04"));
         Assert.assertFalse(one.checkAddress("fe80::ca2a:14ff:fe2a:3e05"));
         
-        manager.destroySession(session.getId());
+        manager.destroySession(prc, session.getId());
     }
 
     @Test(threadPoolSize = 10, invocationCount = 10,  timeOut = 10000)
     public void testAuthenticationResults() throws ResolverException, SessionException, InterruptedException {
         
-        IdPSession session = manager.createSession("joe", null);
+        ProfileRequestContext prc = buildProfileRequestContext();
+        
+        IdPSession session = manager.createSession(prc, "joe", null);
         Assert.assertTrue(session.getAuthenticationResults().isEmpty());
 
         // Add some results.
@@ -217,13 +234,15 @@ public class StorageBackedSessionManagerTest {
         Assert.assertTrue(session.removeAuthenticationResult(foo));
         Assert.assertNull(session2.getAuthenticationResult("AuthenticationFlow/Foo"));
         
-        manager.destroySession(session.getId());
+        manager.destroySession(prc, session.getId());
     }
     
     @Test(threadPoolSize = 10, invocationCount = 10,  timeOut = 10000)
     public void testSPSessions() throws ResolverException, SessionException, InterruptedException {
         
-        IdPSession session = manager.createSession("joe", null);
+        ProfileRequestContext prc = buildProfileRequestContext();
+        
+        IdPSession session = manager.createSession(prc, "joe", null);
         Assert.assertTrue(session.getSPSessions().isEmpty());
 
         // Add some sessions.
@@ -263,14 +282,16 @@ public class StorageBackedSessionManagerTest {
         Assert.assertTrue(session.removeSPSession(foo));
         Assert.assertNull(session2.getSPSession("https://sp.example.org/shibboleth"));
         
-        manager.destroySession(session.getId());
+        manager.destroySession(prc, session.getId());
     }
     
     @Test
     public void testSecondaryLookup() throws ResolverException, SessionException, InterruptedException {
         
-        IdPSession session = manager.createSession("joe", null);
-        IdPSession session2 = manager.createSession("joe2", null);
+        ProfileRequestContext prc = buildProfileRequestContext();
+        
+        IdPSession session = manager.createSession(prc, "joe", null);
+        IdPSession session2 = manager.createSession(prc, "joe2", null);
 
         // Add some sessions.
         SPSession foo = new ExtendedSPSession("https://sp.example.org/shibboleth", "AuthenticationFlow/Foo",
@@ -293,18 +314,24 @@ public class StorageBackedSessionManagerTest {
                         ExtendedSPSession.SESSION_KEY))));
         Assert.assertEquals(sessions.size(), 2);
         
-        manager.destroySession(session.getId());
+        manager.destroySession(prc, session.getId());
         
         sessions = Lists.newArrayList(manager.resolve(
                 new CriteriaSet(new SPSessionCriterion("https://sp2.example.org/shibboleth",
                         ExtendedSPSession.SESSION_KEY))));
         Assert.assertEquals(sessions.size(), 1);
         
-        manager.destroySession(session2.getId());
+        manager.destroySession(prc, session2.getId());
         sessions = Lists.newArrayList(manager.resolve(
                 new CriteriaSet(new SPSessionCriterion("https://sp2.example.org/shibboleth",
                         ExtendedSPSession.SESSION_KEY))));
         Assert.assertEquals(sessions.size(), 0);
+    }
+    
+    @Nonnull private ProfileRequestContext buildProfileRequestContext() {
+        RequestContextBuilder builder = new RequestContextBuilder();
+        
+        return builder.buildProfileRequestContext();
     }
 
     private static class ExtendedSPSession extends BasicSPSession {

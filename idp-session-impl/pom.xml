@@ -64,6 +64,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-profile-api</artifactId>
+            <version>${opensaml.version}</version>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-authn-api</artifactId>
             <version>${project.version}</version>

@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.ClientStorageService;
 import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageSerializer;
@@ -359,9 +360,11 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     }
 
     /** {@inheritDoc} */
-    @Nonnull public IdPSession createSession(@Nonnull @NotEmpty final String principalName,
-            @Nullable final String bindToAddress) throws SessionException {
+    @Nonnull public IdPSession createSession(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull @NotEmpty final String principalName, @Nullable final String bindToAddress)
+                    throws SessionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        Constraint.isNotNull(profileRequestContext, "ProfileRequestContext cannot be null");
 
         String sessionId = idGenerator.generateIdentifier(false);
         if (sessionId.length() > storageService.getCapabilities().getContextSize()) {
@@ -391,8 +394,10 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     }
 
     /** {@inheritDoc} */
-    public void destroySession(@Nonnull @NotEmpty final String sessionId) throws SessionException {
+    public void destroySession(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull @NotEmpty final String sessionId) throws SessionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        Constraint.isNotNull(profileRequestContext, "ProfileRequestContext cannot be null");
         
         // Note that this can leave entries in the secondary SPSession records, but those
         // will eventually expire outright, or can be cleaned up if the index is searched.
