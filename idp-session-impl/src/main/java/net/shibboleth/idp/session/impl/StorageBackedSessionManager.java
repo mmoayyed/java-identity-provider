@@ -24,8 +24,9 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.RequestScopedStorageService;
 import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageSerializer;
@@ -58,6 +59,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.net.CookieManager;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
@@ -102,10 +104,16 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     @Nonnull @NotEmpty public static final String SESSION_MASTER_KEY = "_session";
 
     /** Default cookie name for session tracking. */
-    @Nonnull @NotEmpty private static final String DEFAULT_COOKIE_NAME = "shib_idp_session";
+    @Nonnull @NotEmpty protected static final String DEFAULT_COOKIE_NAME = "shib_idp_session";
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(StorageBackedSessionManager.class);
+    
+    /** Servlet request to read from. */
+    @Nullable private HttpServletRequest httpRequest;
+
+    /** Servlet response to write to. */
+    @Nullable private HttpServletResponse httpResponse;
     
     /** Inactivity timeout for sessions in milliseconds. */
     @Duration @Positive private long sessionTimeout;
@@ -125,14 +133,11 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     /** Indicates whether sessions are bound to client addresses. */
     private boolean consistentAddress;
 
+    /** Manages creation of cookies. */
+    @NonnullAfterInit private CookieManager cookieManager;
+    
     /** Name of cookie used to track sessions. */
     @Nonnull @NotEmpty private String cookieName;
-    
-    /** Path of cookie used to track sessions. */
-    @Nullable private String cookiePath;
-
-    /** Domain of cookie used to track sessions. */
-    @Nullable private String cookieDomain;
     
     /** The back-end for managing data. */
     @NonnullAfterInit private StorageService storageService;
@@ -159,6 +164,46 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         flowDescriptorMap = new HashMap();
         consistentAddress = true;
         cookieName = DEFAULT_COOKIE_NAME;
+    }
+
+    /**
+     * Get the servlet request to read from.
+     * 
+     * @return servlet request, or null
+     */
+    @Nullable HttpServletRequest getHttpServletRequest() {
+        return httpRequest;
+    }
+    
+    /**
+     * Set the servlet request to read from.
+     * 
+     * @param request servlet request
+     */
+    public void setHttpServletRequest(@Nullable final HttpServletRequest request) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        httpRequest = request;
+    }
+
+    /**
+     * Get the servlet response to write to.
+     * 
+     * @return servlet response, or null
+     */
+    @Nullable HttpServletResponse getHttpServletResponse() {
+        return httpResponse;
+    }
+    
+    /**
+     * Set the servlet response to write to.
+     * 
+     * @param response servlet response
+     */
+    public void setHttpServletResponse(@Nullable final HttpServletResponse response) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        httpResponse = response;
     }
     
     /**
@@ -297,31 +342,18 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     }
 
     /**
-     * Set the cookie path to use for session tracking.
+     * Set the {@link CookieManager} to use.
      * 
-     * <p>Defaults to the servlet context path.</p>
-     * 
-     * @param path cookie path to use, or null for the default
+     * @param manager the CookieManager to use.
      */
-    public void setCookiePath(@Nullable final String path) {
+    public void setCookieManager(@Nonnull final CookieManager manager) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        cookiePath = StringSupport.trimOrNull(path);
+        cookieManager = Constraint.isNotNull(manager, "CookieManager cannot be null");
     }
-
+    
     /**
-     * Set the cookie domain to use for session tracking.
-     * 
-     * @param domain the cookie domain to use, or null for the default
-     */
-    public void setCookieDomain(@Nullable final String domain) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        cookieDomain = StringSupport.trimOrNull(domain);
-    }
-
-    /**
-     * Get the StorageService back-end to use.
+     * Get the {@link StorageService} back-end to use.
      * 
      * @return the back-end to use
      */
@@ -330,7 +362,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     }
     
     /**
-     * Set the StorageService back-end to use.
+     * Set the {@link StorageService} back-end to use.
      * 
      * @param storage the back-end to use
      */
@@ -416,7 +448,11 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         } else if (idGenerator == null) {
             throw new ComponentInitializationException(
                     "Initialization of StorageBackedSessionManager requires non-null IdentifierGenerationStrategy");
-        } else if ((trackSPSessions || secondaryServiceIndex) && storageService instanceof RequestScopedStorageService) {
+        } else if (cookieManager == null) {
+            throw new ComponentInitializationException(
+                    "Initialization of StorageBackedSessionManager requires non-null CookieManager");
+        } else if ((trackSPSessions || secondaryServiceIndex)
+                && storageService instanceof RequestScopedStorageService) {
             throw new ComponentInitializationException(
                     "Tracking SPSessions requires a server-side StorageService");
         } else if (trackSPSessions && spSessionSerializerRegistry == null) {
@@ -433,17 +469,15 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     }
 
     /** {@inheritDoc} */
-    @Nonnull public IdPSession createSession(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull @NotEmpty final String principalName) throws SessionException {
+    @Nonnull public IdPSession createSession(@Nonnull @NotEmpty final String principalName) throws SessionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        Constraint.isNotNull(profileRequestContext, "ProfileRequestContext cannot be null");
 
         String remoteAddr = null;
         if (consistentAddress) {
-            if (profileRequestContext.getHttpRequest() == null) {
+            if (httpRequest == null) {
                 throw new SessionException("No HttpServletRequest available, can't bind to client address");
             }
-            remoteAddr = StringSupport.trimOrNull(profileRequestContext.getHttpRequest().getRemoteAddr());
+            remoteAddr = StringSupport.trimOrNull(httpRequest.getRemoteAddr());
             if (remoteAddr == null) {
                 throw new SessionException("No client address to bind");
             }
@@ -471,17 +505,18 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         }
         
         log.info("Created new session {} for principal {}", sessionId, principalName);
+        cookieManager.addCookie(cookieName, sessionId);
         return newSession;
     }
-
+    
     /** {@inheritDoc} */
-    public void destroySession(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull @NotEmpty final String sessionId) throws SessionException {
+    public void destroySession(@Nonnull @NotEmpty final String sessionId) throws SessionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        Constraint.isNotNull(profileRequestContext, "ProfileRequestContext cannot be null");
         
         // Note that this can leave entries in the secondary SPSession records, but those
         // will eventually expire outright, or can be cleaned up if the index is searched.
+        
+        cookieManager.unsetCookie(cookieName);
         
         try {
             storageService.deleteContext(sessionId);
@@ -532,6 +567,80 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         }
         
         return null;
+    }
+
+    /**
+     * Insert or update a secondary index record from a SPSession to a parent IdPSession.
+     * 
+     * @param idpSession the parent session
+     * @param spSession the SPSession to index
+     * @param attempts number of times to retry operation in the event of a synchronization issue
+     * 
+     * @throws SessionException if a fatal error occurs
+     */
+    protected void indexBySPSession(@Nonnull final IdPSession idpSession,
+            @Nonnull final SPSession spSession, final int attempts) throws SessionException {
+        if (attempts <= 0) {
+            log.error("Exceeded retry attempts while adding to secondary index");
+            if (!maskStorageFailure) {
+                throw new SessionException("Exceeded retry attempts while adding to secondary index");
+            }
+        } else if (secondaryServiceIndex) {
+            String serviceId = spSession.getId();
+            String serviceKey = spSession.getSPSessionKey();
+            if (serviceKey == null) {
+                return;
+            }
+            log.debug("Maintaining secondary index for service ID {} and key {}", serviceId, serviceKey);
+    
+            int contextSize = storageService.getCapabilities().getContextSize();
+            int keySize = storageService.getCapabilities().getKeySize();
+            
+            // Truncate context and key if needed.
+            if (serviceId.length() > contextSize) {
+                serviceId = serviceId.substring(0, contextSize);
+            }
+            if (serviceKey.length() > keySize) {
+                serviceKey = serviceKey.substring(0, keySize);
+            }
+    
+            StorageRecord sessionList = null;
+            
+            try {
+                sessionList = storageService.read(serviceId, serviceKey);
+            } catch (IOException e) {
+                log.error("Exception while querying based service ID " + serviceId + " and key " + serviceKey, e);
+                if (!maskStorageFailure) {
+                    throw new SessionException("Exception while querying based on SPSession", e);
+                }
+            }
+    
+            try {
+                if (sessionList != null && !sessionList.getValue().contains(idpSession.getId() + ',')) {
+                    // Need to update record.
+                    String updated = sessionList.getValue() + idpSession.getId() + ',';
+                    if (storageService.updateWithVersion(sessionList.getVersion(), serviceId, serviceKey, updated,
+                            Math.max(sessionList.getExpiration(),
+                                    spSession.getExpirationInstant() + sessionSlop)) == null) {
+                        log.info("Secondary index record disappeared, retrying as insert");
+                        indexBySPSession(idpSession, spSession, attempts - 1);
+                    }
+                } else if (!storageService.create(serviceId, serviceKey, idpSession.getId() + ',',
+                            spSession.getExpirationInstant() + sessionSlop)) {
+                    log.info("Secondary index record appeared, retrying as update");
+                    indexBySPSession(idpSession, spSession, attempts - 1);
+                }
+            } catch (IOException e) {
+                log.error("Exception maintaining secondary index for service ID " + serviceId + " and key "
+                        + serviceKey, e);
+                if (!maskStorageFailure) {
+                    throw new SessionException("Exception maintaining seconday index", e);
+                }
+            } catch (VersionMismatchException e) {
+                log.info("Secondary index record was updated between read/update, retrying");
+                indexBySPSession(idpSession, spSession, attempts - 1);
+            }
+        }
     }
 
     /**
@@ -633,79 +742,5 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         }
         
         return builder.build();
-    }
-
-    /**
-     * Insert or update a secondary index record from a SPSession to a parent IdPSession.
-     * 
-     * @param idpSession the parent session
-     * @param spSession the SPSession to index
-     * @param attempts number of times to retry operation in the event of a synchronization issue
-     * 
-     * @throws SessionException if a fatal error occurs
-     */
-    protected void indexBySPSession(@Nonnull final IdPSession idpSession,
-            @Nonnull final SPSession spSession, final int attempts) throws SessionException {
-        if (attempts <= 0) {
-            log.error("Exceeded retry attempts while adding to secondary index");
-            if (!maskStorageFailure) {
-                throw new SessionException("Exceeded retry attempts while adding to secondary index");
-            }
-        } else if (secondaryServiceIndex) {
-            String serviceId = spSession.getId();
-            String serviceKey = spSession.getSPSessionKey();
-            if (serviceKey == null) {
-                return;
-            }
-            log.debug("Maintaining secondary index for service ID {} and key {}", serviceId, serviceKey);
-
-            int contextSize = storageService.getCapabilities().getContextSize();
-            int keySize = storageService.getCapabilities().getKeySize();
-            
-            // Truncate context and key if needed.
-            if (serviceId.length() > contextSize) {
-                serviceId = serviceId.substring(0, contextSize);
-            }
-            if (serviceKey.length() > keySize) {
-                serviceKey = serviceKey.substring(0, keySize);
-            }
-
-            StorageRecord sessionList = null;
-            
-            try {
-                sessionList = storageService.read(serviceId, serviceKey);
-            } catch (IOException e) {
-                log.error("Exception while querying based service ID " + serviceId + " and key " + serviceKey, e);
-                if (!maskStorageFailure) {
-                    throw new SessionException("Exception while querying based on SPSession", e);
-                }
-            }
-
-            try {
-                if (sessionList != null && !sessionList.getValue().contains(idpSession.getId() + ',')) {
-                    // Need to update record.
-                    String updated = sessionList.getValue() + idpSession.getId() + ',';
-                    if (storageService.updateWithVersion(sessionList.getVersion(), serviceId, serviceKey, updated,
-                            Math.max(sessionList.getExpiration(),
-                                    spSession.getExpirationInstant() + sessionSlop)) == null) {
-                        log.info("Secondary index record disappeared, retrying as insert");
-                        indexBySPSession(idpSession, spSession, attempts - 1);
-                    }
-                } else if (!storageService.create(serviceId, serviceKey, idpSession.getId() + ',',
-                            spSession.getExpirationInstant() + sessionSlop)) {
-                    log.info("Secondary index record appeared, retrying as update");
-                    indexBySPSession(idpSession, spSession, attempts - 1);
-                }
-            } catch (IOException e) {
-                log.error("Exception maintaining secondary index for service ID " + serviceId + " and key "
-                        + serviceKey, e);
-                if (!maskStorageFailure) {
-                    throw new SessionException("Exception maintaining seconday index", e);
-                }
-            } catch (VersionMismatchException e) {
-                log.info("Secondary index record was updated between read/update, retrying");
-                indexBySPSession(idpSession, spSession, attempts - 1);
-            }
-        }
     }
 }
