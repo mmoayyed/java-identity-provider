@@ -40,7 +40,7 @@ public class BasicSPSessionSerializer extends AbstractSPSessionSerializer {
     /**
      * Constructor.
      * 
-     * @param offset milliseconds to substract from record expiration to establish session expiration value
+     * @param offset milliseconds to subtract from record expiration to establish session expiration value
      */
     public BasicSPSessionSerializer(@Duration @NonNegative final long offset) {
         super(offset);
