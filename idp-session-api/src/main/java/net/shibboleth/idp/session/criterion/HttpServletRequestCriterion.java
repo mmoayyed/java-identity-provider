@@ -17,55 +17,12 @@
 
 package net.shibboleth.idp.session.criterion;
 
-import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
-
-import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.Criterion;
 
-/** {@link Criterion} representing a session bound to an {@link HttpServletRequest}. */
+/**
+ * {@link Criterion} representing a session bound to an {@link HttpServletRequest},
+ * which is implicitly the "current" request known to the resolver.
+ */
 public final class HttpServletRequestCriterion implements Criterion {
 
-    /** The session ID. */
-    @Nonnull private final HttpServletRequest request;
-
-    /**
-     * Constructor.
-     * 
-     * @param httpRequest the servlet request
-     */
-    public HttpServletRequestCriterion(@Nonnull final HttpServletRequest httpRequest) {
-        request = Constraint.isNotNull(httpRequest, "HttpServletRequest cannot be null");
-    }
-
-    /**
-     * Get the servlet request.
-     * 
-     * @return the request
-     */
-    @Nonnull public HttpServletRequest getHttpServletRequest() {
-        return request;
-    }
-
-    /** {@inheritDoc} */
-    public int hashCode() {
-        return request.hashCode();
-    }
-
-    /** {@inheritDoc} */
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (obj == null) {
-            return false;
-        }
-
-        if (obj instanceof HttpServletRequestCriterion) {
-            return request.equals(((HttpServletRequestCriterion) obj).request);
-        }
-
-        return false;
-    }
 }
