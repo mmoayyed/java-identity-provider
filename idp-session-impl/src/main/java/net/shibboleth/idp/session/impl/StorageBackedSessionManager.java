@@ -18,12 +18,14 @@
 package net.shibboleth.idp.session.impl;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -46,6 +48,7 @@ import net.shibboleth.idp.session.SPSessionSerializerRegistry;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.session.SessionResolver;
+import net.shibboleth.idp.session.criterion.HttpServletRequestCriterion;
 import net.shibboleth.idp.session.criterion.SPSessionCriterion;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.utilities.java.support.annotation.Duration;
@@ -536,6 +539,26 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         // a secondary index is being maintained.
         
         if (criteria != null) {
+            HttpServletRequestCriterion requestCriterion = criteria.get(HttpServletRequestCriterion.class);
+            if (requestCriterion != null) {
+                if (httpRequest != null) {
+                    Cookie[] cookies = httpRequest.getCookies();
+                    if (cookies != null) {
+                        for (Cookie cookie : cookies) {
+                            if (cookieName.equals(cookie.getName())) {
+                                IdPSession session = lookupByCookie(cookie);
+                                if (session != null) {
+                                    return ImmutableList.of(session);
+                                }
+                            }
+                        }
+                    }
+                    return ImmutableList.of();
+                } else {
+                    throw new ResolverException("HttpServletRequest is null");
+                }
+            }
+            
             SessionIdCriterion sessionIdCriterion = criteria.get(SessionIdCriterion.class);
             if (sessionIdCriterion != null) {
                 IdPSession session = lookupBySessionId(sessionIdCriterion.getSessionId());
@@ -641,6 +664,21 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
                 indexBySPSession(idpSession, spSession, attempts - 1);
             }
         }
+    }
+    
+    /**
+     * Performs a lookup and deserializes a record based on the session identified by a cookie.
+     * 
+     * @param cookie the cookie to recover the session or session ID from
+     * @return  the IdPSession object, or null
+     * @throws ResolverException if an error occurs during lookup
+     */
+    @Nullable private IdPSession lookupByCookie(@Nonnull final Cookie cookie) throws ResolverException {
+        log.debug("Performing primary lookup on session identified by cookie");
+        
+        // TODO: handle client-side storage case
+        
+        return lookupBySessionId(cookie.getValue());
     }
 
     /**
