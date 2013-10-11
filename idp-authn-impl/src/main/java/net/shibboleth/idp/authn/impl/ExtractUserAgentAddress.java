@@ -40,7 +40,7 @@ import com.google.common.net.InetAddresses;
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
- * @post If ProfileRequestContext.getHttpRequest() != null, the content of getRemoteAddr() will be
+ * @post If getHttpServletRequest() != null, the content of getRemoteAddr() will be
  * attached via a {@link UserAgentContext}, provided it is a valid IP address.
  */
 public class ExtractUserAgentAddress extends AbstractExtractionAction {
@@ -52,9 +52,9 @@ public class ExtractUserAgentAddress extends AbstractExtractionAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
-        final HttpServletRequest request = profileRequestContext.getHttpRequest();
+        final HttpServletRequest request = getHttpServletRequest();
         if (request == null) {
-            log.debug("{} profile request context does not contain an HttpServletRequest", getLogPrefix());
+            log.debug("{} profile action does not contain an HttpServletRequest", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return;
         }

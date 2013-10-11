@@ -38,28 +38,18 @@ public class ExtractUserAgentAddressTest extends InitializeAuthenticationContext
         super.setUp();
         
         action = new ExtractUserAgentAddress();
+        action.setHttpServletRequest(new MockHttpServletRequest());
         action.initialize();
     }
     
-    @Test public void testNoServlet() throws Exception {
-        action.execute(prc);
-        
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
-    }
-
     @Test public void testMissingAddress() throws ProfileException {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRemoteAddr(null);
-        prc.setHttpRequest(request);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr(null);
         
         action.execute(prc);
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testValidAddress() throws ProfileException {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        prc.setHttpRequest(request);
-        
         action.execute(prc);
         ActionTestingSupport.assertProceedEvent(prc);
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
@@ -69,9 +59,7 @@ public class ExtractUserAgentAddressTest extends InitializeAuthenticationContext
     }
 
     @Test public void testInvalidAddress() throws ProfileException {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRemoteAddr("zorkmids");
-        prc.setHttpRequest(request);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr("zorkmids");
         
         action.execute(prc);
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);

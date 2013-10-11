@@ -41,6 +41,7 @@ public class ExtractRemoteUserTest extends InitializeAuthenticationContextTest {
         super.setUp();
         
         action = new ExtractRemoteUser();
+        action.setHttpServletRequest(new MockHttpServletRequest());
     }
 
     @Test public void testNoConfig() {
@@ -61,8 +62,6 @@ public class ExtractRemoteUserTest extends InitializeAuthenticationContextTest {
     }
 
     @Test public void testMissingIdentity() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        prc.setHttpRequest(request);
         action.initialize();
         
         action.execute(prc);
@@ -70,9 +69,7 @@ public class ExtractRemoteUserTest extends InitializeAuthenticationContextTest {
     }
 
     @Test public void testRemoteUser() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRemoteUser("foo");
-        prc.setHttpRequest(request);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser("foo");
         action.initialize();
         
         action.execute(prc);
@@ -84,9 +81,7 @@ public class ExtractRemoteUserTest extends InitializeAuthenticationContextTest {
     }
 
     @Test public void testAttribute() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setAttribute("Username", "foo");
-        prc.setHttpRequest(request);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).setAttribute("Username", "foo");
         action.setCheckAttributes(Arrays.asList("Username"));
         action.initialize();
         
@@ -99,9 +94,7 @@ public class ExtractRemoteUserTest extends InitializeAuthenticationContextTest {
     }
 
     @Test public void testHeader() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("X-Username", "foo");
-        prc.setHttpRequest(request);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader("X-Username", "foo");
         action.setCheckAttributes(Arrays.asList("Username"));
         action.setCheckHeaders(Arrays.asList("X-Username"));
         action.initialize();
@@ -115,9 +108,7 @@ public class ExtractRemoteUserTest extends InitializeAuthenticationContextTest {
     }
 
     @Test public void testTransforms() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRemoteUser("Foo@osu.edu");
-        prc.setHttpRequest(request);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser("Foo@osu.edu");
         action.setTransforms(Arrays.asList(new Pair<>("^(.+)@osu\\.edu$", "$1")));
         action.setLowercase(true);
         action.initialize();

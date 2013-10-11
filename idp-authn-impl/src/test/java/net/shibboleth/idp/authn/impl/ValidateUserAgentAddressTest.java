@@ -50,6 +50,7 @@ public class ValidateUserAgentAddressTest extends InitializeAuthenticationContex
         action.setPrincipalName("foo");
         action.setDesignatedRanges(Arrays.asList(IPRange.parseCIDRBlock("192.168.1.0/24")));
         action.setSupportedPrincipals(Arrays.asList(new TestPrincipal("UserAgentAuthentication")));
+        action.setHttpServletRequest(new MockHttpServletRequest());
         action.initialize();
     }
     
@@ -75,9 +76,7 @@ public class ValidateUserAgentAddressTest extends InitializeAuthenticationContex
     }
 
     @Test public void testMissingAddress2() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRemoteAddr(null);
-        prc.setHttpRequest(request);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr(null);
 
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
@@ -89,9 +88,6 @@ public class ValidateUserAgentAddressTest extends InitializeAuthenticationContex
     }
 
     @Test public void testUnauthorized() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        prc.setHttpRequest(request);
-
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
@@ -102,9 +98,7 @@ public class ValidateUserAgentAddressTest extends InitializeAuthenticationContex
     }
 
     @Test public void testIncompatible() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRemoteAddr("192.168.1.1");
-        prc.setHttpRequest(request);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr("192.168.1.1");
 
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
@@ -122,9 +116,7 @@ public class ValidateUserAgentAddressTest extends InitializeAuthenticationContex
     }
 
     @Test public void testCompatible() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRemoteAddr("192.168.1.1");
-        prc.setHttpRequest(request);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr("192.168.1.1");
 
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
@@ -146,6 +138,7 @@ public class ValidateUserAgentAddressTest extends InitializeAuthenticationContex
     
     private void doExtract(ProfileRequestContext prc) throws Exception {
         ExtractUserAgentAddress extract = new ExtractUserAgentAddress();
+        extract.setHttpServletRequest(action.getHttpServletRequest());
         extract.initialize();
         extract.execute(prc);
     }

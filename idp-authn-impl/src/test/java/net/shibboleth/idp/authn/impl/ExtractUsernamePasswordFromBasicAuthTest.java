@@ -39,6 +39,7 @@ public class ExtractUsernamePasswordFromBasicAuthTest extends InitializeAuthenti
         super.setUp();
         
         action = new ExtractUsernamePasswordFromBasicAuth();
+        action.setHttpServletRequest(new MockHttpServletRequest());
         action.initialize();
     }
     
@@ -49,44 +50,33 @@ public class ExtractUsernamePasswordFromBasicAuthTest extends InitializeAuthenti
     }
 
     @Test public void testMissingIdentity() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        prc.setHttpRequest(request);
-        
         action.execute(prc);
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testMissingIdentity2() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader(HttpHeaders.AUTHORIZATION, "foo");
-        prc.setHttpRequest(request);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(HttpHeaders.AUTHORIZATION, "foo");
         
         action.execute(prc);
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testInvalid() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader(HttpHeaders.AUTHORIZATION, "Basic foo:bar");
-        prc.setHttpRequest(request);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(HttpHeaders.AUTHORIZATION, "Basic foo:bar");
         
         action.execute(prc);
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
     }
 
     @Test public void testInvalid2() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader(HttpHeaders.AUTHORIZATION, "Basic Zm9vOg==");
-        prc.setHttpRequest(request);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(HttpHeaders.AUTHORIZATION, "Basic Zm9vOg==");
         
         action.execute(prc);
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
     }
     
     @Test public void testValid() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader(HttpHeaders.AUTHORIZATION, "Basic Zm9vOmJhcg==");
-        prc.setHttpRequest(request);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(HttpHeaders.AUTHORIZATION, "Basic Zm9vOmJhcg==");
         
         action.execute(prc);
         ActionTestingSupport.assertProceedEvent(prc);

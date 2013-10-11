@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
- * @post If ProfileRequestContext.getHttpRequest() != null, a pair of form or query parameters is
+ * @post If getHttpServletRequest() != null, a pair of form or query parameters is
  * extracted to populate a {@link UsernamePasswordContext}.
  */
 public class ExtractUsernamePasswordFromFormRequest extends AbstractExtractionAction {
@@ -108,9 +108,9 @@ public class ExtractUsernamePasswordFromFormRequest extends AbstractExtractionAc
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
-        final HttpServletRequest request = profileRequestContext.getHttpRequest();
+        final HttpServletRequest request = getHttpServletRequest();
         if (request == null) {
-            log.debug("{} profile request context does not contain an HttpServletRequest", getLogPrefix());
+            log.debug("{} profile action does not contain an HttpServletRequest", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return;
         }

@@ -18,8 +18,6 @@
 package net.shibboleth.idp.profile.impl;
 
 import javax.annotation.concurrent.ThreadSafe;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
@@ -45,14 +43,7 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
         
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
-        final HttpServletRequest httpRequest =
-                (HttpServletRequest) getHttpRequestLookupStrategy().apply(springRequestContext);
-        final HttpServletResponse httpResponse =
-                (HttpServletResponse) getHttpResponseLookupStrategy().apply(springRequestContext);
-
         ProfileRequestContext profileRequestContext = new ProfileRequestContext();
-        profileRequestContext.setHttpRequest(httpRequest);
-        profileRequestContext.setHttpResponse(httpResponse);
         springRequestContext.getConversationScope().put(ProfileRequestContext.BINDING_KEY, profileRequestContext);
 
         return ActionSupport.buildProceedEvent(this);

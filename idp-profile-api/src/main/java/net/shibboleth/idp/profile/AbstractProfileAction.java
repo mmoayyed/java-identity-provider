@@ -19,12 +19,8 @@ package net.shibboleth.idp.profile;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.profile.context.SpringRequestContext;
-import net.shibboleth.idp.profile.navigate.WebflowRequestContextHttpServletRequestLookup;
-import net.shibboleth.idp.profile.navigate.WebflowRequestContextHttpServletResponseLookup;
 import net.shibboleth.idp.profile.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -68,12 +64,6 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractProfileAction.class);
 
-    /** Strategy used to lookup the {@link HttpServletRequest} from a given WebFlow {@link RequestContext}. */
-    private Function<RequestContext, HttpServletRequest> httpRequestLookupStrategy;
-
-    /** Strategy used to lookup the {@link HttpServletResponse} from a given WebFlow {@link RequestContext}. */
-    private Function<RequestContext, HttpServletResponse> httpResponseLookupStrategy;
-
     /** Strategy used to lookup the {@link ProfileRequestContext} from a given WebFlow {@link RequestContext}. */
     private Function<RequestContext, ProfileRequestContext> profileContextLookupStrategy;
 
@@ -90,55 +80,7 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
 
         setId(getClass().getName());
 
-        httpRequestLookupStrategy = new WebflowRequestContextHttpServletRequestLookup();
-        httpResponseLookupStrategy = new WebflowRequestContextHttpServletResponseLookup();
         profileContextLookupStrategy = new WebflowRequestContextProfileRequestContextLookup();
-    }
-
-    /**
-     * Gets the strategy used to lookup the {@link HttpServletRequest} from a given WebFlow {@link RequestContext}.
-     * 
-     * @return strategy used to lookup the {@link HttpServletRequest} from a given WebFlow {@link RequestContext}
-     */
-    @Nonnull public Function<RequestContext, HttpServletRequest> getHttpRequestLookupStrategy() {
-        return httpRequestLookupStrategy;
-    }
-
-    /**
-     * Sets the strategy used to lookup the {@link HttpServletRequest} from a given WebFlow {@link RequestContext}.
-     * 
-     * @param strategy strategy used to lookup the {@link HttpServletRequest} from a given WebFlow
-     *            {@link RequestContext}
-     */
-    public synchronized void setHttpRequestLookupStrategy(
-            @Nonnull final Function<RequestContext, HttpServletRequest> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        httpRequestLookupStrategy =
-                Constraint.isNotNull(strategy, "HttpServletRequest lookup strategy cannot be null");
-    }
-
-    /**
-     * Gets the strategy used to lookup the {@link HttpServletResponse} from a given WebFlow {@link RequestContext}.
-     * 
-     * @return strategy used to lookup the {@link HttpServletResponse} from a given WebFlow {@link RequestContext}
-     */
-    @Nonnull public Function<RequestContext, HttpServletResponse> getHttpResponseLookupStrategy() {
-        return httpResponseLookupStrategy;
-    }
-
-    /**
-     * Sets the strategy used to lookup the {@link HttpServletResponse} from a given WebFlow {@link RequestContext}.
-     * 
-     * @param strategy strategy used to lookup the {@link HttpServletResponse} from a given WebFlow
-     *            {@link RequestContext}
-     */
-    public synchronized void setHttpResponseLookupStrategy(
-            @Nonnull final Function<RequestContext, HttpServletResponse> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        this.httpResponseLookupStrategy =
-                Constraint.isNotNull(strategy, "HttpServletResponse lookup strategy cannot be null");
     }
 
     /**
@@ -167,9 +109,6 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
     /** {@inheritDoc} */
     @Nonnull public Event execute(@Nonnull final RequestContext springRequestContext) throws ProfileException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
-        final HttpServletRequest httpRequest = httpRequestLookupStrategy.apply(springRequestContext);
-        final HttpServletResponse httpResponse = httpResponseLookupStrategy.apply(springRequestContext);
 
         final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext =
                 profileContextLookupStrategy.apply(springRequestContext);
@@ -177,9 +116,6 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
             log.error("Action {}: IdP profile request context is not available", getId());
             return ActionSupport.buildEvent(this, EventIds.INVALID_PROFILE_CTX);
         }
-
-        profileRequestContext.setHttpRequest(httpRequest);
-        profileRequestContext.setHttpResponse(httpResponse);
 
         return doExecute(springRequestContext, profileRequestContext);
     }

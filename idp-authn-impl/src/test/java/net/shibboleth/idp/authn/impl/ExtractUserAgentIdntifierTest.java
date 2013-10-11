@@ -38,6 +38,7 @@ public class ExtractUserAgentIdntifierTest extends InitializeAuthenticationConte
         super.setUp();
         
         action = new ExtractUserAgentIdentifier();
+        action.setHttpServletRequest(new MockHttpServletRequest());
         action.initialize();
     }
     
@@ -48,17 +49,12 @@ public class ExtractUserAgentIdntifierTest extends InitializeAuthenticationConte
     }
 
     @Test public void testMissingHeader() throws ProfileException {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        prc.setHttpRequest(request);
-        
         action.execute(prc);
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testValidHeader() throws ProfileException {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("User-Agent", "foo bar baz");
-        prc.setHttpRequest(request);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader("User-Agent", "foo bar baz");
         
         action.execute(prc);
         ActionTestingSupport.assertProceedEvent(prc);

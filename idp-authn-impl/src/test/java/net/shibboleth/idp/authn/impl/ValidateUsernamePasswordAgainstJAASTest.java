@@ -83,6 +83,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
         action = new ValidateUsernamePasswordAgainstJAAS();
         action.setUnknownUsernameErrors(ImmutableList.of("DN_RESOLUTION_FAILURE"));
         action.setInvalidPasswordErrors(ImmutableList.of("INVALID_CREDENTIALS"));
+        action.setHttpServletRequest(new MockHttpServletRequest());
     }
 
     @Test public void testMissingFlow() throws Exception {
@@ -111,10 +112,8 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
     }
 
     @Test public void testBadConfig() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("username", "foo");
-        request.addParameter("password", "bar");
-        prc.setHttpRequest(request);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
@@ -130,10 +129,8 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
     }
 
     @Test public void testBadUsername() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("username", "foo");
-        request.addParameter("password", "bar");
-        prc.setHttpRequest(request);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
@@ -154,10 +151,8 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
     }
 
     @Test public void testBadPassword() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("username", "PETER_THE_PRINCIPAL");
-        request.addParameter("password", "bar");
-        prc.setHttpRequest(request);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
@@ -178,10 +173,8 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
     }
 
     @Test public void testAuthorized() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("username", "PETER_THE_PRINCIPAL");
-        request.addParameter("password", "changeit");
-        prc.setHttpRequest(request);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
 
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
@@ -203,6 +196,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
 
     private void doExtract(ProfileRequestContext prc) throws Exception {
         ExtractUsernamePasswordFromFormRequest extract = new ExtractUsernamePasswordFromFormRequest();
+        extract.setHttpServletRequest(action.getHttpServletRequest());
         extract.initialize();
         extract.execute(prc);
     }

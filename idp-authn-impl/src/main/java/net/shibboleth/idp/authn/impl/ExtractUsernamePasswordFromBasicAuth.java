@@ -52,7 +52,7 @@ import com.google.common.net.HttpHeaders;
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
  * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
- * @post If ProfileRequestContext.getHttpRequest() != null, the content of the {@link HttpHeaders#AUTHORIZATION}
+ * @post If getHttpServletRequest() != null, the content of the {@link HttpHeaders#AUTHORIZATION}
  * header is parsed and any correctly-encoded information will be attached via a {@link UsernamePasswordContext}.
  */
 public class ExtractUsernamePasswordFromBasicAuth extends AbstractExtractionAction {
@@ -64,9 +64,9 @@ public class ExtractUsernamePasswordFromBasicAuth extends AbstractExtractionActi
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
-        final HttpServletRequest request = profileRequestContext.getHttpRequest();
+        final HttpServletRequest request = getHttpServletRequest();
         if (request == null) {
-            log.debug("{} profile request context does not contain an HttpServletRequest", getLogPrefix());
+            log.debug("{} profile action does not contain an HttpServletRequest", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return;
         }

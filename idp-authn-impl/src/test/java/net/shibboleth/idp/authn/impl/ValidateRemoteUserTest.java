@@ -46,6 +46,7 @@ public class ValidateRemoteUserTest extends InitializeAuthenticationContextTest 
         action.setWhitelistedUsernames(Arrays.asList("bar", "baz"));
         action.setBlacklistedUsernames(Arrays.asList("foo"));
         action.setMatchExpression(Pattern.compile("^ba(r|z|n)$"));
+        action.setHttpServletRequest(new MockHttpServletRequest());
         action.initialize();
     }
 
@@ -61,9 +62,6 @@ public class ValidateRemoteUserTest extends InitializeAuthenticationContextTest 
     }
 
     @Test public void testMissingUser2() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        prc.setHttpRequest(request);
-
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
@@ -74,9 +72,7 @@ public class ValidateRemoteUserTest extends InitializeAuthenticationContextTest 
     }
 
     @Test public void testUnauthorized() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRemoteUser("bam");
-        prc.setHttpRequest(request);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser("bam");
 
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
@@ -88,10 +84,8 @@ public class ValidateRemoteUserTest extends InitializeAuthenticationContextTest 
     }
 
     @Test public void testAuthorized() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRemoteUser("baz");
-        prc.setHttpRequest(request);
-
+        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser("baz");
+        
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
@@ -105,9 +99,7 @@ public class ValidateRemoteUserTest extends InitializeAuthenticationContextTest 
     }
 
     @Test public void testBlacklist() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRemoteUser("foo");
-        prc.setHttpRequest(request);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser("foo");
 
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
@@ -119,9 +111,7 @@ public class ValidateRemoteUserTest extends InitializeAuthenticationContextTest 
     }
     
     @Test public void testPattern() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRemoteUser("ban");
-        prc.setHttpRequest(request);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser("ban");
 
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
@@ -137,6 +127,7 @@ public class ValidateRemoteUserTest extends InitializeAuthenticationContextTest 
     
     private void doExtract(ProfileRequestContext prc) throws Exception {
         ExtractRemoteUser extract = new ExtractRemoteUser();
+        extract.setHttpServletRequest(action.getHttpServletRequest());
         extract.initialize();
         extract.execute(prc);
     }

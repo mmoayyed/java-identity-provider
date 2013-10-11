@@ -18,31 +18,11 @@
 package net.shibboleth.idp.profile;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link ProfileRequestContext}. */
 public class ProfileRequestContextTest {
-
-    @Test public void testHttpRequest() {
-        ProfileRequestContext context = new ProfileRequestContext();
-        Assert.assertNull(context.getHttpRequest());
-
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        context.setHttpRequest(request);
-        Assert.assertSame(context.getHttpRequest(), request);
-    }
-
-    @Test public void testHttpResponse() {
-        ProfileRequestContext context = new ProfileRequestContext();
-        Assert.assertNull(context.getHttpResponse());
-
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        context.setHttpResponse(response);
-        Assert.assertSame(context.getHttpResponse(), response);
-    }
 
     @Test public void testIsPassive() {
         ProfileRequestContext context = new ProfileRequestContext();

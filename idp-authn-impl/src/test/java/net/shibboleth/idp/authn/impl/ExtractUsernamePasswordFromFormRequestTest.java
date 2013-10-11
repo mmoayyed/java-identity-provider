@@ -39,6 +39,7 @@ public class ExtractUsernamePasswordFromFormRequestTest extends InitializeAuthen
         action = new ExtractUsernamePasswordFromFormRequest();
         action.setUsernameFieldName("j_username");
         action.setPasswordFieldName("j_password");
+        action.setHttpServletRequest(new MockHttpServletRequest());
         action.initialize();
     }
     
@@ -49,27 +50,21 @@ public class ExtractUsernamePasswordFromFormRequestTest extends InitializeAuthen
     }
 
     @Test public void testMissingIdentity() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        prc.setHttpRequest(request);
-        
         action.execute(prc);
+        
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testMissingIdentity2() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("j_username", "foo");
-        prc.setHttpRequest(request);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("j_username", "foo");
         
         action.execute(prc);
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testValid() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("j_username", "foo");
-        request.addParameter("j_password", "bar");
-        prc.setHttpRequest(request);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("j_username", "foo");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("j_password", "bar");
         
         action.execute(prc);
         ActionTestingSupport.assertProceedEvent(prc);
