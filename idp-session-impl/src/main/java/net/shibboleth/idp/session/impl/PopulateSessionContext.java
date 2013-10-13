@@ -54,6 +54,14 @@ public class PopulateSessionContext extends AbstractProfileAction {
     /** Session resolver. */
     @NonnullAfterInit private SessionResolver sessionResolver;
 
+    /** Flag to turn action on or off. */
+    private boolean enabled;
+    
+    /** Constructor. */
+    public PopulateSessionContext() {
+        enabled = true;
+    }
+    
     /**
      * Set the {@link SessionResolver} to use.
      * 
@@ -65,13 +73,27 @@ public class PopulateSessionContext extends AbstractProfileAction {
         sessionResolver = Constraint.isNotNull(resolver, "SessionResolver cannot be null");
     }
     
+    /**
+     * Set whether the action should run or not.
+     * 
+     * @param flag flag to set
+     */
+    public void setEnabled(final boolean flag) {
+        enabled = flag;
+    }
+    
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         
-        if (sessionResolver == null) {
+        if (enabled && sessionResolver == null) {
             throw new ComponentInitializationException("SessionResolver cannot be null");
         }
+    }
+    
+    /** {@inheritDoc} */
+    protected boolean doPreExecute(ProfileRequestContext profileRequestContext) throws ProfileException {
+        return enabled;
     }
 
     /** {@inheritDoc} */
