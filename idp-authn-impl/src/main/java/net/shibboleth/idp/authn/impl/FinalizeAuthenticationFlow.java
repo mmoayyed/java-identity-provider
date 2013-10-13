@@ -50,7 +50,6 @@ import com.google.common.base.Strings;
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link AuthnEventIds#IDENTITY_SWITCH}
- * {@link AuthenticationContext#getCanonicalPrincipalName()}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
  * @post If AuthenticationContext.getAuthenticationResult() != null,
  * then the steps above are performed.
