@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.2.xsd
+                           http://www.springframework.org/schema/context classpath:/org/springframework/beans/factory/xml/spring-context-3.2.xsd
+                           http://www.springframework.org/schema/util classpath:/org/springframework/beans/factory/xml/spring-util-3.2.xsd">
+
+    <context:property-placeholder systemPropertiesMode="2" location="classpath:conf/idp.properties" />
+    
+    <!-- HandlerMappings: Prefer first the WebFlow one, then the standard Spring MVC default ones.
+         Have to enumerate them all explicitly b/c we're overriding the built-in defaults. -->
+    
+    <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping" p:order="0" p:flowRegistry-ref="shibboleth.FlowRegistry" />
+
+    <bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" p:order="1" />
+
+    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" p:order="2" />
+
+
+    <!-- HandlerAdapters: These aren't ordered. Add the WebFlow one, then the standard Spring MVC default ones. 
+         Have to enumerate them all explicitly b/c we're overriding the built-in defaults. -->
+    
+    <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerAdapter" p:flowExecutor-ref="shibboleth.FlowExecutor" />
+    
+    <bean class="org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter" />
+    
+    <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
+    
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
+    
+    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+       <property name="exceptionMappings">
+          <props>
+             <prop key="org.springframework.webflow.execution.repository.FlowExecutionRestorationFailureException">
+                FlowExecutionRestorationFailureException
+             </prop>
+          </props>
+       </property>
+       <!-- 
+       <property name="defaultErrorView" value="error"/>
+        -->
+    </bean>    
+    
+    <!-- ViewResolvers -->
+    
+    <bean id="shibboleth.VelocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+        <property name="velocityProperties">
+            <props>
+                <prop key="runtime.log.logsystem.class">net.shibboleth.utilities.java.support.velocity.Slf4JLogChute</prop>
+                <prop key="input.encoding">UTF-8</prop>
+                <prop key="output.encoding">UTF-8</prop>
+                <prop key="resource.loader">file</prop>
+                <prop key="file.resource.loader.class">org.apache.velocity.runtime.resource.loader.FileResourceLoader</prop>
+                <prop key="file.resource.loader.path">${idp.home}/views</prop>
+                <prop key="file.resource.loader.cache">false</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="shibboleth.VelocityViewResolver" class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+        <property name="cache" value="true"/>
+        <property name="prefix" value=""/>
+        <property name="suffix" value=".vm"/>
+    </bean>
+
+    <bean id="shibboleth.InternalViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+</beans>

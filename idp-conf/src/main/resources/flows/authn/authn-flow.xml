@@ -15,7 +15,10 @@
         <transition on="proceed" to="ExtractActiveAuthenticationResults" />
     </action-state>
     
-    <!-- TODO: session extraction goes here -->
+    <action state id="PopulateSessionContext">
+        <evaluate expression="PopulateSessionContext" />
+        <transition on="proceed" to="ExtractActiveAuthenticationResults" />
+    </action>
     
     <action-state id="ExtractActiveAuthenticationResults">
         <evaluate expression="ExtractActiveAuthenticationResults" />

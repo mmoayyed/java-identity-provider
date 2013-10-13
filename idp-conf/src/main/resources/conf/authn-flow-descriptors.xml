@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.2.xsd
+                           http://www.springframework.org/schema/context classpath:/org/springframework/beans/factory/xml/spring-context-3.2.xsd
                            http://www.springframework.org/schema/util classpath:/org/springframework/beans/factory/xml/spring-util-3.2.xsd">
 
+    <context:property-placeholder systemPropertiesMode="2" location="classpath:conf/idp.properties" />
+
     <!--
-    This file provisions the Authentication subflow with information about the configured login mechanisms
-    available for use. The actual beans and subflows that make up those mechanisms are in their own files,
-    but this pulls them together with deployer-supplied metadata to describe them to the system.
+    This file provisions the IdP with information about the configured login mechanisms available for use.
+    The actual beans and subflows that make up those mechanisms are in their own files, but this pulls them
+    together with deployer-supplied metadata to describe them to the system.
     
     You can turn on and off individual mechanisms by adding and remove them here. Nothing left out will
     be used, regardless any other files loaded by the Spring container.
     -->
     
-    <util:list id="AvailableAuthenticationFlows">
+    <util:list id="shibboleth.AvailableAuthenticationFlows">
         
         <bean c:id="AuthenticationFlow/IPAddress" class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
                 p:passiveAuthenticationSupported="true"
@@ -33,7 +37,7 @@
         <bean c:id="AuthenticationFlow/RemoteUser" class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
                 p:passiveAuthenticationSupported="false"
                 p:forcedAuthenticationSupported="true"
-                p:lifetime="PT60M" p:inactivityTimeout="PT30M">
+                p:lifetime="${idp.authn.defaultLifetime}" p:inactivityTimeout="${idp.authn.defaultTimeout}">
             <property name="supportedPrincipals">
                 <list>
                     <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
@@ -47,7 +51,7 @@
         <bean c:id="AuthenticationFlow/JAASForm" class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
                 p:passiveAuthenticationSupported="false"
                 p:forcedAuthenticationSupported="true"
-                p:lifetime="PT60M" p:inactivityTimeout="PT30M">
+                p:lifetime="${idp.authn.defaultLifetime}" p:inactivityTimeout="${idp.authn.defaultTimeout}">
             <property name="supportedPrincipals">
                 <list>
                     <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
@@ -61,7 +65,7 @@
         <bean c:id="AuthenticationFlow/JAASBasic" class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
                 p:passiveAuthenticationSupported="true"
                 p:forcedAuthenticationSupported="false"
-                p:lifetime="PT60M" p:inactivityTimeout="PT30M">
+                p:lifetime="${idp.authn.defaultLifetime}" p:inactivityTimeout="${idp.authn.defaultTimeout}">
             <property name="supportedPrincipals">
                 <list>
                     <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"

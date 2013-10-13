@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.2.xsd
+                           http://www.springframework.org/schema/context classpath:/org/springframework/beans/factory/xml/spring-context-3.2.xsd
+                           http://www.springframework.org/schema/util classpath:/org/springframework/beans/factory/xml/spring-util-3.2.xsd"
+
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <context:property-placeholder systemPropertiesMode="2" location="classpath:conf/idp.properties" />
+
+    <bean id="shibboleth.SessionManager" class="net.shibboleth.idp.session.impl.StorageBackedSessionManager"
+            p:httpServletRequest-ref="shibboleth.HttpServletRequest" p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+            p:authenticationFlowDescriptors-ref="shibboleth.AvailableAuthenticationFlows"
+            p:cookieManager-ref="shibboleth.CookieManager"
+            p:storageService-ref="shibboleth.StorageService"
+            p:consistentAddress="${idp.session.consistentAddress}"
+            p:sessionTimeout="${idp.session.timeout}"
+            p:sessionSlop="${idp.session.slop}"
+            p:maskStorageFailure="${idp.session.maskStorageFailure}"
+            p:trackSPSessions="${idp.session.trackSPSessions}"
+            p:secondaryServiceIndex="${idp.sessions.secondaryServiceIndex}">
+        <property name="IDGenerator">
+            <bean class="net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy"
+                c:identitifierSize="${idp.session.idSize}" />
+        </property>
+    </bean>
+
+</beans>
