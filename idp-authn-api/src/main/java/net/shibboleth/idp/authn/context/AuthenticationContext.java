@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.authn.context;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -120,7 +119,7 @@ public final class AuthenticationContext extends BaseContext {
      * @return this authentication context
      */
     @Nonnull public AuthenticationContext setActiveResults(
-            @Nonnull @NonnullElements final Collection<AuthenticationResult> results) {
+            @Nonnull @NonnullElements final Iterable<AuthenticationResult> results) {
         Constraint.isNotNull(results, "AuthenticationResult collection cannot be null");
 
         activeResults.clear();
