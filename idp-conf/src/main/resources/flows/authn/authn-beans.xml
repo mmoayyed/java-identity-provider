@@ -40,6 +40,7 @@
     
     <bean id="FinalizeAuthentication" class="net.shibboleth.idp.authn.impl.FinalizeAuthentication" scope="prototype" />
     
-    <bean id="UpdateSessionWithAuthenticationResult" class="net.shibboleth.idp.session.impl.UpdateSessionWithAuthenticationResult" scope="prototype" />
+    <bean id="UpdateSessionWithAuthenticationResult" class="net.shibboleth.idp.session.impl.UpdateSessionWithAuthenticationResult" scope="prototype"
+        p:enabled="${idp.session.enabled}" />
     
 </beans>
