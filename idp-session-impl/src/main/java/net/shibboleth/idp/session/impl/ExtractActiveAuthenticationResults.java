@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn.impl;
+package net.shibboleth.idp.session.impl;
 
 import java.util.ArrayList;
 import java.util.List;
