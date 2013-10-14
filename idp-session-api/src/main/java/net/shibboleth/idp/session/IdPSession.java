@@ -108,6 +108,17 @@ public interface IdPSession extends IdentifiableComponent {
      */
     @Nullable public AuthenticationResult addAuthenticationResult(@Nonnull final AuthenticationResult result)
             throws SessionException;
+
+    /**
+     * Update the recorded activity timestamp for an {@link AuthenticationResult} associated with this
+     * session.
+     * 
+     * @param result the result to update
+     * 
+     * @throws SessionException if an error occurs updating the session
+     */
+    public void updateAuthenticationResultActivity(@Nonnull final AuthenticationResult result)
+            throws SessionException;
     
     /**
      * Disassociate an {@link AuthenticationResult} from this IdP session.

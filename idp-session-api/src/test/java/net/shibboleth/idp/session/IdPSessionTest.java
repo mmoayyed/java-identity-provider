@@ -233,5 +233,10 @@ public class IdPSessionTest {
         public DummyIdPSession(String sessionId, String canonicalName) {
             super(sessionId, canonicalName, System.currentTimeMillis());
         }
+
+        /** {@inheritDoc} */
+        public void updateAuthenticationResultActivity(AuthenticationResult result) throws SessionException {
+
+        }
     }
 }

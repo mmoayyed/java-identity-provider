@@ -243,6 +243,29 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
     }
 
     /** {@inheritDoc} */
+    public void updateAuthenticationResultActivity(@Nonnull final AuthenticationResult result) throws SessionException {
+        String flowId = result.getAuthenticationFlowId();
+        AuthenticationFlowDescriptor flow = sessionManager.getAuthenticationFlowDescriptor(flowId);
+        if (flow != null) {
+            try {
+                if (sessionManager.getStorageService().updateExpiration(getId(), result.getAuthenticationFlowId(),
+                        result.getLastActivityInstant() + flow.getInactivityTimeout()) == null) {
+                    log.warn("Skipping update, AuthenticationResult for flow {} in session {} not found in storage",
+                            flowId, getId());
+                }
+            } catch (IOException e) {
+                log.error("Exception updating AuthenticationResult expiration for session " + getId()
+                        + " and flow " + flowId, e);
+                if (!sessionManager.isMaskStorageFailure()) {
+                    throw new SessionException("Exception updating AuthenticationResult expiration in storage", e);
+                }
+            }
+        } else {
+            log.warn("No flow descriptor installed for ID {}, unable to update result in storage", flowId);
+        }
+    }
+
+    /** {@inheritDoc} */
     public boolean removeAuthenticationResult(@Nonnull final AuthenticationResult result) throws SessionException {
         if (super.removeAuthenticationResult(result)) {
             try {
