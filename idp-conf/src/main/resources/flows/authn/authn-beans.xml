@@ -40,6 +40,6 @@
     
     <bean id="FinalizeAuthentication" class="net.shibboleth.idp.authn.impl.FinalizeAuthentication" scope="prototype" />
     
-    <!-- TODO: action to copy result back to session. -->
+    <bean id="UpdateSessionWithAuthenticationResult" class="net.shibboleth.idp.session.impl.UpdateSessionWithAuthenticationResult" scope="prototype" />
     
 </beans>

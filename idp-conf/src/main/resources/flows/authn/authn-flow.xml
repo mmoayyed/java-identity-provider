@@ -74,6 +74,16 @@
     <!-- Wraps up the subflow by producing a SubjectContext. -->
     <action-state id="FinalizeAuthentication">
         <evaluate expression="FinalizeAuthentication" />
+        
+        <transition on="proceed" to="UpdateSessionWithAuthenticationResult" />
+    </action-state>
+    
+    <!-- Finally, create/update the client session. -->
+    <action-state id="UpdateSessionWithAuthenticationResult">
+        <evaluate expression="UpdateSessionWithAuthenticationResult" />
+        
+        <!-- By default, ignore any session layer errors at this stage. -->
+        <transition on="InputOutputError" to="proceed" />
     </action-state>
 
     <!-- Successful completion of subflow. -->
