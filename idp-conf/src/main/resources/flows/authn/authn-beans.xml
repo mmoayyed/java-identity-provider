@@ -38,9 +38,13 @@
     
     <bean id="FinalizeAuthenticationFlow" class="net.shibboleth.idp.authn.impl.FinalizeAuthenticationFlow" scope="prototype" />
     
+    <bean id="InvalidateSession" class="net.shibboleth.idp.session.impl.InvalidateSession" scope="prototype"
+        p:sessionManager-ref="shibboleth.SessionManager" />
+    
     <bean id="FinalizeAuthentication" class="net.shibboleth.idp.authn.impl.FinalizeAuthentication" scope="prototype" />
     
     <bean id="UpdateSessionWithAuthenticationResult" class="net.shibboleth.idp.session.impl.UpdateSessionWithAuthenticationResult" scope="prototype"
-        p:enabled="${idp.session.enabled}" />
+        p:enabled="${idp.session.enabled}"
+        p:sessionManager-ref="shibboleth.SessionManager" />
     
 </beans>

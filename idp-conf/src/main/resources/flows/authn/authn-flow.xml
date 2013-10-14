@@ -15,10 +15,10 @@
         <transition on="proceed" to="ExtractActiveAuthenticationResults" />
     </action-state>
     
-    <action state id="PopulateSessionContext">
+    <action-state id="PopulateSessionContext">
         <evaluate expression="PopulateSessionContext" />
         <transition on="proceed" to="ExtractActiveAuthenticationResults" />
-    </action>
+    </action-state>
     
     <action-state id="ExtractActiveAuthenticationResults">
         <evaluate expression="ExtractActiveAuthenticationResults" />
@@ -65,10 +65,20 @@
     <!-- This wraps up a fresh login by checking on the result of subject c14n. -->
     <action-state id="FinalizeAuthenticationFlow">
         <evaluate expression="FinalizeAuthenticationFlow" />
-        
+
         <transition on="proceed" to="FinalizeAuthentication" />
         
-        <!-- TODO: support appropriate behavior for IdentitySwitch here, maybe as a subflow -->
+        <!-- This can be routed to something more complex if desired. -->
+        <transition on="IdentitySwitch" to="InvalidateSession" />
+    </action-state>
+    
+    <!-- Handles an identity switch by dumping the old session. -->
+    <action-state id="InvalidateSession">
+        <evaluate expression="InvalidateSession" />
+        
+        <!-- Loop back up to finalize flow, guaranteed not to trigger a switch. -->
+        <transition on="proceed" to="FinalizeAuthenticationFlow" />
+        <transition on="InputOutputError" to="FinalizeAuthenticationFlow" />
     </action-state>
 
     <!-- Wraps up the subflow by producing a SubjectContext. -->
