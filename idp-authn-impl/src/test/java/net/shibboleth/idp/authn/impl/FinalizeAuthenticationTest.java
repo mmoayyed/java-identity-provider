@@ -23,6 +23,7 @@ import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 
 import org.opensaml.profile.ProfileException;
@@ -51,8 +52,7 @@ public class FinalizeAuthenticationTest extends InitializeAuthenticationContextT
     }
 
     @Test public void testNothingActive() throws ProfileException {
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
-        authCtx.setCanonicalPrincipalName("foo");
+        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("foo");
         
         action.execute(prc);
         
@@ -65,9 +65,9 @@ public class FinalizeAuthenticationTest extends InitializeAuthenticationContextT
     @Test public void testOneActive() throws ProfileException {
         AuthenticationResult active = new AuthenticationResult("test2", new Subject());
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
-        authCtx.setCanonicalPrincipalName("foo");
         authCtx.setActiveResults(Arrays.asList(active));
         authCtx.setAuthenticationResult(active);
+        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("foo");
         
         action.execute(prc);
         
@@ -82,9 +82,9 @@ public class FinalizeAuthenticationTest extends InitializeAuthenticationContextT
         AuthenticationResult active1 = new AuthenticationResult("test1", new Subject());
         AuthenticationResult active2 = new AuthenticationResult("test2", new Subject());
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
-        authCtx.setCanonicalPrincipalName("foo");
         authCtx.setActiveResults(Arrays.asList(active1));
         authCtx.setAuthenticationResult(active2);
+        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("foo");
         
         action.execute(prc);
         

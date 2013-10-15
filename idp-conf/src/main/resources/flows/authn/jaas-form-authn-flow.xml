@@ -44,7 +44,6 @@
     <end-state id="proceed" />
 
     <!-- Error events to reflect back from this subflow. -->    
-    <end-state id="IdentitySwitch" />
     <end-state id="InputOutputError" />
     <end-state id="InvalidCredentials" />
     <end-state id="InvalidProfileContext" />

@@ -12,7 +12,7 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <context:property-placeholder systemPropertiesMode="2" location="classpath:conf/idp.properties" />
+    <context:property-placeholder system-properties-mode="OVERRIDE" location="classpath:conf/idp.properties" />
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
@@ -36,9 +36,7 @@
     <bean id="SelectAuthenticationFlow" class="net.shibboleth.idp.authn.impl.SelectAuthenticationFlow" scope="prototype"
         p:favorSSO="${idp.authn.favorSSO}" />
     
-    <bean id="FinalizeAuthenticationFlow" class="net.shibboleth.idp.authn.impl.FinalizeAuthenticationFlow" scope="prototype" />
-    
-    <bean id="InvalidateSession" class="net.shibboleth.idp.session.impl.InvalidateSession" scope="prototype"
+    <bean id="InvalidateSessionOnIdentitySwitch" class="net.shibboleth.idp.session.impl.InvalidateSessionOnIdentitySwitch" scope="prototype"
         p:sessionManager-ref="shibboleth.SessionManager" />
     
     <bean id="FinalizeAuthentication" class="net.shibboleth.idp.authn.impl.FinalizeAuthentication" scope="prototype" />

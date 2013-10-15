@@ -35,9 +35,6 @@ public final class AuthnEventIds {
     /** ID of event returned if there given credentials are invalid. */
     public static final String INVALID_CREDENTIALS = "InvalidCredentials";
     
-    /** ID of event returned if the authentication result does not match the identity in an existing session. */
-    public static final String IDENTITY_SWITCH = "IdentitySwitch";
-    
     /** ID of event returned if a Subject cannot be canonicalized. */
     public static final String SUBJECT_C14N_ERROR = "SubjectCanonicalizationError";
     

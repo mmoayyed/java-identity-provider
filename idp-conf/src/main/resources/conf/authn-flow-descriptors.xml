@@ -9,7 +9,7 @@
                            http://www.springframework.org/schema/context classpath:/org/springframework/context/config/spring-context-3.2.xsd
                            http://www.springframework.org/schema/util classpath:/org/springframework/beans/factory/xml/spring-util-3.2.xsd">
 
-    <context:property-placeholder systemPropertiesMode="2" location="classpath:conf/idp.properties" />
+    <context:property-placeholder system-properties-mode="OVERRIDE" location="classpath:conf/idp.properties" />
 
     <!--
     This file provisions the IdP with information about the configured login mechanisms available for use.

@@ -55,7 +55,7 @@ public class SimpleSubjectCanonicalizationTest extends InitializeAuthenticationC
 
     @Test public void testNoPrincipal() throws ProfileException {
         Subject subject = new Subject();
-        prc.addSubcontext(new SubjectCanonicalizationContext(subject));
+        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
         
         action.execute(prc);
         
@@ -67,7 +67,7 @@ public class SimpleSubjectCanonicalizationTest extends InitializeAuthenticationC
         Subject subject = new Subject();
         subject.getPrincipals().add(new UsernamePrincipal("foo"));
         subject.getPrincipals().add(new UsernamePrincipal("bar"));
-        prc.addSubcontext(new SubjectCanonicalizationContext(subject));
+        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
         
         action.execute(prc);
         
@@ -78,7 +78,7 @@ public class SimpleSubjectCanonicalizationTest extends InitializeAuthenticationC
     @Test public void testSuccess() throws ProfileException {
         Subject subject = new Subject();
         subject.getPrincipals().add(new UsernamePrincipal("foo"));
-        prc.addSubcontext(new SubjectCanonicalizationContext(subject));
+        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
         
         action.execute(prc);
         
@@ -90,7 +90,7 @@ public class SimpleSubjectCanonicalizationTest extends InitializeAuthenticationC
     @Test public void testTransform() throws ProfileException {
         Subject subject = new Subject();
         subject.getPrincipals().add(new UsernamePrincipal("foo@osu.edu"));
-        prc.addSubcontext(new SubjectCanonicalizationContext(subject));
+        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
         
         action.execute(prc);
         

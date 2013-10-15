@@ -23,6 +23,7 @@ import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.context.SessionContext;
@@ -77,7 +78,7 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
 
     @Test public void testNoFlow() throws ProfileException, SessionException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ac.setCanonicalPrincipalName("joe");
+        prc.getSubcontext(SubjectContext.class, true).setPrincipalName("joe");
         ac.setAttemptedFlow(flowDescriptor);
         ac.setAuthenticationResult(new AuthenticationResult("test2", new UsernamePrincipal("joe")));
         
@@ -93,7 +94,7 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
     
     @Test public void testNewSession() throws ProfileException, SessionException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ac.setCanonicalPrincipalName("joe");
+        prc.getSubcontext(SubjectContext.class, true).setPrincipalName("joe");
         ac.setAttemptedFlow(flowDescriptor);
         ac.setAuthenticationResult(new AuthenticationResult("test1", new UsernamePrincipal("joe")));
         
@@ -109,7 +110,6 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
 
     @Test public void testAddToSession() throws ProfileException, SessionException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ac.setCanonicalPrincipalName("joe");
         ac.setAttemptedFlow(flowDescriptor);
         ac.setAuthenticationResult(new AuthenticationResult("test1", new UsernamePrincipal("joe")));
         
@@ -124,7 +124,6 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
 
     @Test public void testUpdateSessionNoResult() throws ProfileException, SessionException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ac.setCanonicalPrincipalName("joe");
         ac.setAuthenticationResult(new AuthenticationResult("test1", new UsernamePrincipal("joe")));
         
         SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, true);
@@ -138,7 +137,6 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
     
     @Test public void testUpdateSession() throws ProfileException, SessionException, ResolverException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ac.setCanonicalPrincipalName("joe");
         ac.setAuthenticationResult(new AuthenticationResult("test1", new UsernamePrincipal("joe")));
         
         SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, true);

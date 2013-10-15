@@ -34,32 +34,30 @@ import org.opensaml.messaging.context.BaseContext;
 public class SubjectCanonicalizationContext extends BaseContext {
 
     /** Subject to canonicalize. */
-    @Nonnull private final Subject subject;
+    @Nonnull private Subject subject;
     
     /** Canonical principal name of subject. */
     @Nullable private String principalName;
     
     /** Exception raised by a failed canonicalization. */
     @Nullable private Exception canonicalizationError;
-    
-    /**
-     * Constructor.
-     * 
-     * @param newSubject subject to canonicalize
-     */
-    public SubjectCanonicalizationContext(@Nonnull final Subject newSubject) {
-        super();
-        
-        subject = Constraint.isNotNull(newSubject, "Subject cannot be null");
-    }
 
     /**
-     * Get the Subject to canonicalize.
+     * Get the {@link Subject} to canonicalize.
      * 
      * @return Subject to canonicalize
      */
-    @Nonnull public Subject getSubject() {
+    @Nullable public Subject getSubject() {
         return subject;
+    }
+    
+    /**
+     * Set the {@link Subject} to canonicalize.
+     * 
+     * @param newSubject Subject to canonicalize
+     */
+    public void setSubject(@Nullable final Subject newSubject) {
+        subject = newSubject;
     }
     
     /**

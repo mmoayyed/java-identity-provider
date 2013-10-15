@@ -273,7 +273,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         AuthenticationResult result = new AuthenticationResult(authenticationContext.getAttemptedFlow().getId(),
                 populateSubject(authenticatedSubject));
         authenticationContext.setAuthenticationResult(result);
-        profileRequestContext.addSubcontext(new SubjectCanonicalizationContext(result.getSubject()), true);
+        profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(result.getSubject());
     }
 
     /**

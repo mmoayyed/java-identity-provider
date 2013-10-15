@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionManager;
@@ -38,8 +39,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
-
 /**
  * An authentication action that establishes a record of the {@link AuthenticationResult} in an
  * {@link IdPSession} for the client, either by updating an existing session or creating a new
@@ -50,7 +49,8 @@ import com.google.common.base.Strings;
  * 
  * <p>An existing session is identified via a {@link SessionContext} attached to the
  * {@link ProfileRequestContext}. If a new session is created, it will be placed into a
- * {@link SessionContext}, creating it if necessary.</p>
+ * {@link SessionContext}, creating it if necessary, with the principal name coming
+ * from a {@link SubjectContext}.</p>
  * 
  * <p>An error interacting with the session layer will result in an {@link EventIds#IO_ERROR}
  * event.</p>
@@ -60,7 +60,7 @@ import com.google.common.base.Strings;
  * @event {@link EventIds#IO_ERROR}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
  * @post If AuthenticationContext.getAuthenticationResult() != null and
- * AuthenticationContext.getCanonicalPrincipalName() != null then the steps above are performed,
+ * SubjectContext.getPrincipalName() != null then the steps above are performed,
  * and ProfileRequestContext.getSubcontext(SessionContext.class, false).getIdPSession() != null
  */
 public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticationAction {
@@ -73,6 +73,9 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
 
     /** Existing or newly created SessionContext. */
     @Nullable private SessionContext sessionCtx;
+
+    /** Existing SubjectContext. */
+    @Nullable private SubjectContext subjectCtx;
     
     /** Flag to turn action on or off. */
     private boolean enabled;
@@ -115,11 +118,12 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
-        if (enabled && !Strings.isNullOrEmpty(authenticationContext.getCanonicalPrincipalName())
-                && authenticationContext.getAuthenticationResult() != null) {
-            
+        if (enabled && authenticationContext.getAuthenticationResult() != null) {
+            subjectCtx = profileRequestContext.getSubcontext(SubjectContext.class, false);
             sessionCtx = profileRequestContext.getSubcontext(SessionContext.class, true);
-            return true;
+            
+            // We can only do work if a session exists or a non-empty SubjectContext exists.
+            return sessionCtx.getIdPSession() != null || (subjectCtx != null && subjectCtx.getPrincipalName() != null);
         }
         
         return false;
@@ -141,8 +145,7 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
             try {
                 createIdPSession(authenticationContext);
             } catch (SessionException e) {
-                log.error(getLogPrefix() + " Error creating session for "
-                        + authenticationContext.getCanonicalPrincipalName(), e);
+                log.error(getLogPrefix() + " Error creating session for " + subjectCtx.getPrincipalName(), e);
                 ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
             }
         }
@@ -162,8 +165,13 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
             @Nonnull final IdPSession session) throws SessionException {
         
         if (authenticationContext.getAttemptedFlow() != null) {
+            log.info("{} Adding new AuthenticationResult for flow {} to existing session {}", getLogPrefix(),
+                    authenticationContext.getAuthenticationResult().getAuthenticationFlowId(), session.getId());
             session.addAuthenticationResult(authenticationContext.getAuthenticationResult());
         } else {
+            log.info("{} Updating activity time on reused AuthenticationResult for flow {} in existing session {}",
+                    getLogPrefix(), authenticationContext.getAuthenticationResult().getAuthenticationFlowId(),
+                    session.getId());
             session.updateAuthenticationResultActivity(authenticationContext.getAuthenticationResult());
         }
     }
@@ -176,8 +184,10 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
      */
     private void createIdPSession(@Nonnull final AuthenticationContext authenticationContext)
             throws SessionException {
+
+        log.info("{} Creating new session for principal {}", getLogPrefix(), subjectCtx.getPrincipalName());
         
-        sessionCtx.setIdPSession(sessionManager.createSession(authenticationContext.getCanonicalPrincipalName()));
+        sessionCtx.setIdPSession(sessionManager.createSession(subjectCtx.getPrincipalName()));
         sessionCtx.getIdPSession().addAuthenticationResult(authenticationContext.getAuthenticationResult());
     }
 }

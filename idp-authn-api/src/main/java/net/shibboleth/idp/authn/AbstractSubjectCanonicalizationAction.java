@@ -179,7 +179,8 @@ public abstract class AbstractSubjectCanonicalizationAction extends AbstractProf
     }
 
     /**
-     * Performs this c14n action's pre-execute step. Default implementation just returns true.
+     * Performs this c14n action's pre-execute step. Default implementation just returns true iff a subject
+     * is set.
      * 
      * @param profileRequestContext the current IdP profile request context
      * @param c14nContext the current subject canonicalization context
@@ -190,7 +191,7 @@ public abstract class AbstractSubjectCanonicalizationAction extends AbstractProf
      */
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
-        return true;
+        return c14nContext.getSubject() != null;
     }
     
     /**

@@ -26,6 +26,7 @@ import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.session.context.SessionContext;
@@ -41,7 +42,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An authentication action that destroys a pre-existing session and clears {@link AuthenticationContext}
+ * An authentication action that checks for a mismatch between an existing session's identity and
+ * the result of a newly canonicalized subject (from a {@link SubjectCanonicalizationContext}).
+ * 
+ * <p>On a mismatch, it destroys a pre-existing session and clears {@link AuthenticationContext}
  * and {@link SessionContext} state such that no trace of its impact on the contexts remains.
  * 
  * <p>An error interacting with the session layer will result in an {@link EventIds#IO_ERROR}
@@ -50,22 +54,22 @@ import org.slf4j.LoggerFactory;
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link EventIds#IO_ERROR}
- * @pre <pre>ProfileRequestContext.getSubcontext(SessionContext.class, false).getIdPSession() != null</pre>
- * @post <pre>ProfileRequestContext.getSubcontext(SessionContext.class, false).getIdPSession() == null</pre>
- * @post <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false).getCanonicalPrincipalName()
- *  == null</pre>
- * @post <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false).getActiveResults().isEmpty()</pre>
+ * @post If an identity switch is detected, SessionContext.getIdPSession() == null
+ *  && AuthenticationContext.getActiveResults().isEmpty()
  */
-public class InvalidateSession extends AbstractAuthenticationAction {
+public class InvalidateSessionOnIdentitySwitch extends AbstractAuthenticationAction {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(InvalidateSession.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(InvalidateSessionOnIdentitySwitch.class);
 
     /** SessionManager. */
     @NonnullAfterInit private SessionManager sessionManager;
 
     /** SessionContext to operate on. */
     @Nullable private SessionContext sessionCtx;
+    
+    /** A newly established principal name to check. */
+    @Nullable private String newPrincipalName;
     
     /**
      * Set the {@link SessionManager} to use.
@@ -93,11 +97,18 @@ public class InvalidateSession extends AbstractAuthenticationAction {
 
         sessionCtx = profileRequestContext.getSubcontext(SessionContext.class, false);
         if (sessionCtx == null || sessionCtx.getIdPSession() == null) {
-            log.warn("{} No IdPSession found in SessionContext", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            log.debug("{} No previous session found, nothing to do", getLogPrefix());
             return false;
         }
         
+        SubjectCanonicalizationContext c14n =
+                profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, false);
+        if (c14n == null || c14n.getPrincipalName() == null) {
+            log.debug("{} Reusing identity from session, nothing to do", getLogPrefix());
+            return false;
+        }
+
+        newPrincipalName = c14n.getPrincipalName();
         return true;
     }
     
@@ -105,8 +116,14 @@ public class InvalidateSession extends AbstractAuthenticationAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
-        log.info("{} Identity switch detected, destroying original session {} for principal {}",
-                getLogPrefix(), sessionCtx.getIdPSession().getId(), sessionCtx.getIdPSession().getPrincipalName());
+        if (sessionCtx.getIdPSession().getPrincipalName().equals(newPrincipalName)) {
+            log.debug("{} Identities from session and new authentication result match, nothing to do");
+            return;
+        }
+        
+        log.info("{} Identity switch to {} detected, destroying original session {} for principal {}",
+                getLogPrefix(), newPrincipalName, sessionCtx.getIdPSession().getId(),
+                sessionCtx.getIdPSession().getPrincipalName());
         
         try {
             sessionManager.destroySession(sessionCtx.getIdPSession().getId());
@@ -117,9 +134,7 @@ public class InvalidateSession extends AbstractAuthenticationAction {
         
         // Establish context state as if the original session didn't exist.
         sessionCtx.setIdPSession(null);
-        authenticationContext
-            .setCanonicalPrincipalName(null)
-            .setActiveResults(Collections.<AuthenticationResult>emptyList());
+        authenticationContext.setActiveResults(Collections.<AuthenticationResult>emptyList());
     }
 
 }

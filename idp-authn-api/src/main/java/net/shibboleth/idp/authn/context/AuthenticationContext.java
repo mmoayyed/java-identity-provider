@@ -59,9 +59,6 @@ public final class AuthenticationContext extends BaseContext {
     
     /** A non-normative hint some protocols support to indicate who the subject might be. */
     @Nullable private String hintedName;
-
-    /** The canonical principal name associated with the active session. */
-    @Nullable private String canonicalPrincipalName;
     
     /** Flows that could potentially be used to authenticate the user. */
     @Nonnull @NonnullElements private final Map<String, AuthenticationFlowDescriptor> potentialFlows;
@@ -220,27 +217,6 @@ public final class AuthenticationContext extends BaseContext {
         hintedName = StringSupport.trimOrNull(hint);
         return this;
     }
-    
-    /**
-     * Get the canonical principal name associated with the active session, if any.
-     * 
-     * @return  the canonical principal name associated with the active session
-     */
-    @Nullable public String getCanonicalPrincipalName() {
-        return canonicalPrincipalName;
-    }
-    
-    /**
-     * Set the canonical principal name associated with the active session, if any.
-     * 
-     * @param principalName the principal name to set
-     * 
-     * @return this authentication context
-     */
-    @Nonnull public AuthenticationContext setCanonicalPrincipalName(@Nullable final String principalName) {
-        canonicalPrincipalName = StringSupport.trimOrNull(principalName);
-        return this;
-    }
 
     /**
      * Get the authentication flow that was attempted in order to authenticate the user.
@@ -312,7 +288,6 @@ public final class AuthenticationContext extends BaseContext {
     public String toString() {
         return Objects.toStringHelper(this).add("initiationInstant", new DateTime(initiationInstant))
                 .add("isPassive", isPassive).add("forceAuthn", forceAuthn).add("hintedName", hintedName)
-                .add("canonicalPrincipalName", canonicalPrincipalName)
                 .add("potentialFlows", potentialFlows.keySet())
                 .add("activeResults", activeResults.keySet())
                 .add("attemptedFlow", attemptedFlow)

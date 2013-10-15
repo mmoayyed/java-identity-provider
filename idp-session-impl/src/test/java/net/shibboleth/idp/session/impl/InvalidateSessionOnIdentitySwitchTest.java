@@ -22,6 +22,7 @@ import java.util.Collections;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -29,7 +30,6 @@ import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseConte
 
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionTestingSupport;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -37,8 +37,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-/** {@link InvalidateSession} unit test. */
-public class InvalidateSessionTest extends SessionManagerBaseTestCase {
+/** {@link InvalidateSessionOnIdentitySwitch} unit test. */
+public class InvalidateSessionOnIdentitySwitchTest extends SessionManagerBaseTestCase {
     
     private ProfileRequestContext prc;
     
@@ -46,36 +46,63 @@ public class InvalidateSessionTest extends SessionManagerBaseTestCase {
     
     private SessionContext sc;
     
-    private InvalidateSession action;
+    private SubjectCanonicalizationContext c14n;
+    
+    private InvalidateSessionOnIdentitySwitch action;
     
     @BeforeMethod public void setUpAction() throws ComponentInitializationException {
         prc = new ProfileRequestContext();
         ac = prc.getSubcontext(AuthenticationContext.class, true);
         sc = prc.getSubcontext(SessionContext.class, true);
+        c14n = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
 
-        action = new InvalidateSession();
+        action = new InvalidateSessionOnIdentitySwitch();
         action.setSessionManager(sessionManager);
         action.initialize();
     }
 
     @Test public void testNoSession() throws ProfileException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
+        c14n.setPrincipalName("joe");
         action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, EventIds.INVALID_PROFILE_CTX);
+        ActionTestingSupport.assertProceedEvent(prc);
     }
     
-    @Test public void testSuccess() throws ProfileException, SessionException {
+    @Test public void testSesssion() throws ProfileException, SessionException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         
         sc.setIdPSession(sessionManager.createSession("joe"));
-        ac.setCanonicalPrincipalName("joe");
         ac.setActiveResults(Collections.singletonList(new AuthenticationResult("test1", new UsernamePrincipal("joe"))));
         
         action.execute(prc);
         ActionTestingSupport.assertProceedEvent(prc);
-        Assert.assertNull(sc.getIdPSession());
-        Assert.assertTrue(ac.getActiveResults().isEmpty());
-        Assert.assertNull(ac.getCanonicalPrincipalName());
+        Assert.assertNotNull(sc.getIdPSession());
+        Assert.assertEquals(ac.getActiveResults().size(), 1);
     }
 
+    @Test public void testMatch() throws ProfileException, SessionException {
+        HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
+        
+        sc.setIdPSession(sessionManager.createSession("joe"));
+        ac.setActiveResults(Collections.singletonList(new AuthenticationResult("test1", new UsernamePrincipal("joe"))));
+        c14n.setPrincipalName("joe");
+        
+        action.execute(prc);
+        ActionTestingSupport.assertProceedEvent(prc);
+        Assert.assertNotNull(sc.getIdPSession());
+        Assert.assertEquals(ac.getActiveResults().size(), 1);
+    }
+
+    @Test public void testMismatch() throws ProfileException, SessionException {
+        HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
+        
+        sc.setIdPSession(sessionManager.createSession("joe"));
+        ac.setActiveResults(Collections.singletonList(new AuthenticationResult("test1", new UsernamePrincipal("joe"))));
+        c14n.setPrincipalName("joe2");
+        
+        action.execute(prc);
+        ActionTestingSupport.assertProceedEvent(prc);
+        Assert.assertNull(sc.getIdPSession());
+        Assert.assertEquals(ac.getActiveResults().size(), 0);
+    }
 }
