@@ -11,7 +11,7 @@
         <relativePath>../idp-parent</relativePath>
     </parent>
 
-    <name>idp-session-impl</name>
+    <name>Shibboleth IdP :: Session Implementation</name>
     <artifactId>idp-session-impl</artifactId>
     <packaging>jar</packaging>
 

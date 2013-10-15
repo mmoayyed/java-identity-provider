@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @post As above, and the session will be bound to the client's address if the underlying
- *  {@link SessionManager} is configured to do so.
+ *  {@link SessionResolver} is configured to do so.
  */
 public class PopulateSessionContext extends AbstractProfileAction {
     
