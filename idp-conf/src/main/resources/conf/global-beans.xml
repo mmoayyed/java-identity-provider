@@ -6,7 +6,7 @@
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.2.xsd
-                           http://www.springframework.org/schema/context classpath:/org/springframework/beans/factory/xml/spring-context-3.2.xsd
+                           http://www.springframework.org/schema/context classpath:/org/springframework/context/config/spring-context-3.2.xsd
                            http://www.springframework.org/schema/util classpath:/org/springframework/beans/factory/xml/spring-util-3.2.xsd"
 
        default-init-method="initialize"
@@ -14,13 +14,18 @@
 
     <context:property-placeholder systemPropertiesMode="2" location="classpath:conf/idp.properties" />
 
-    <bean id="shibboleth.ConversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+    <!-- This bean MUST be called "conversionService" to work properly. -->
+    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
         <property name="converters">
             <list>
                 <bean class="net.shibboleth.ext.spring.config.DurationToLongConverter"/>
             </list>
         </property>
     </bean>
+
+    <import resource="authn-comparison.xml" />
+    <import resource="authn-flow-descriptors.xml" />
+    <import resource="session-manager.xml" />
     
     <bean id="shibboleth.LogbackLogging" class="net.shibboleth.idp.log.LogbackLoggingService" init-method="start" destroy-method="stop">
         <property name="id" value="shibboleth.LogbackLogging" />
@@ -70,7 +75,7 @@
                     <key>
                         <value>http://apache.org/xml/properties/security-manager</value>
                     </key>
-                    <bean id="shibboleth.XercesSecurityManager" class=${idp.xml.securityManager}/>
+                    <bean id="shibboleth.XercesSecurityManager" class="${idp.xml.securityManager}" />
                 </entry>
             </map>
         </property>
@@ -103,5 +108,8 @@
         p:httpServletRequest-ref="shibboleth.HttpServletRequest" p:httpServletResponse-ref="shibboleth.HttpServletResponse" />
         
     <bean id="shibboleth.StorageService" class="${idp.storage.StorageService}" p:cleanupInterval="${idp.storage.cleanupInterval}" />
+
+    <bean id="shibboleth.ReplayCache" class="org.opensaml.storage.ReplayCache" depends-on="shibboleth.LogbackLogging"
+        p:storage-ref="shibboleth.StorageService" p:strict="true" />
 
 </beans>

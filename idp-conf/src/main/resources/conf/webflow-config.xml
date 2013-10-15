@@ -3,12 +3,12 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.2.xsd
-                           http://www.springframework.org/schema/context classpath:/org/springframework/beans/factory/xml/spring-context-3.2.xsd
+                           http://www.springframework.org/schema/context classpath:/org/springframework/context/config/spring-context-3.2.xsd
                            http://www.springframework.org/schema/webflow-config classpath:/org/springframework/webflow/config/spring-webflow-config-2.3.xsd">
     
     <context:property-placeholder systemPropertiesMode="2" location="classpath:conf/idp.properties" />
     
-    <webflow:flow-registry id="shibboleth.FlowRegistry" base-path="${idp.home}/flows" flow-builder-services="flowBuilderServices">
+    <webflow:flow-registry id="flowRegistry" base-path="${idp.home}/flows" flow-builder-services="flowBuilderServices">
     
         <webflow:flow-location id="Authentication" path="/authn/authn-flow.xml" />
         
@@ -22,11 +22,11 @@
         <webflow:flow-location id="SubjectC14N/Simple" path="/authn/simple-subject-c14n-flow.xml" />
     </webflow:flow-registry>
 
-    <webflow:flow-executor id="shibboleth.FlowExecutor">
+    <webflow:flow-executor id="flowExecutor">
         <webflow:flow-execution-repository max-execution-snapshots="0"/>
     </webflow:flow-executor>
     
-    <webflow:flow-builder-services id="shibboleth.FlowBuilderServices" view-factory-creator="mvcViewFactoryCreator" />
+    <webflow:flow-builder-services id="flowBuilderServices" view-factory-creator="mvcViewFactoryCreator" />
     
     <bean id="mvcViewFactoryCreator" class="org.springframework.webflow.mvc.builder.MvcViewFactoryCreator">
         <property name="viewResolvers">

@@ -6,7 +6,7 @@
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.2.xsd
-                           http://www.springframework.org/schema/context classpath:/org/springframework/beans/factory/xml/spring-context-3.2.xsd
+                           http://www.springframework.org/schema/context classpath:/org/springframework/context/config/spring-context-3.2.xsd
                            http://www.springframework.org/schema/util classpath:/org/springframework/beans/factory/xml/spring-util-3.2.xsd"
 
        default-init-method="initialize"
@@ -24,10 +24,10 @@
             p:sessionSlop="${idp.session.slop}"
             p:maskStorageFailure="${idp.session.maskStorageFailure}"
             p:trackSPSessions="${idp.session.trackSPSessions}"
-            p:secondaryServiceIndex="${idp.sessions.secondaryServiceIndex}">
+            p:secondaryServiceIndex="${idp.session.secondaryServiceIndex}">
         <property name="IDGenerator">
             <bean class="net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy"
-                c:identitifierSize="${idp.session.idSize}" />
+                c:identifierSize="${idp.session.idSize}" />
         </property>
     </bean>
 
