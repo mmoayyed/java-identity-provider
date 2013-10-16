@@ -168,7 +168,8 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
             return;
         }
         
-        log.debug("{} authenticated user agent", getLogPrefix());
+        log.debug("{} authenticated user agent with address {} as {}",
+                getLogPrefix(), uaContext.getAddress(), getPrincipalName());
         buildAuthenticationResult(profileRequestContext, authenticationContext);
     }
 
