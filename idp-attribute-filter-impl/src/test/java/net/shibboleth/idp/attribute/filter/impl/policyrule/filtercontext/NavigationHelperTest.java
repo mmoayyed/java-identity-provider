@@ -19,7 +19,7 @@ package net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.NavigationHelper;
+import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.NavigationSupport;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
@@ -29,25 +29,25 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Tests for the {@link NavigationHelper}.
+ * Tests for the {@link NavigationSupport}.
  */
 public class NavigationHelperTest {
 
     @Test public void testNavigation() {
-        Assert.assertNull(NavigationHelper.locateResolverContext(new AttributeFilterContext()));
-        Assert.assertNull(NavigationHelper.locateResolverContext((new BaseContext() {}).getSubcontext(
+        Assert.assertNull(NavigationSupport.locateResolverContext(new AttributeFilterContext()));
+        Assert.assertNull(NavigationSupport.locateResolverContext((new BaseContext() {}).getSubcontext(
                 AttributeFilterContext.class, true)));
 
         AttributeResolutionContext filterContext =
-                NavigationHelper.locateResolverContext(DataSources.unPopulatedFilterContext());
-        Assert.assertNull(NavigationHelper.locateRecipientContext(filterContext));
+                NavigationSupport.locateResolverContext(DataSources.unPopulatedFilterContext());
+        Assert.assertNull(NavigationSupport.locateRecipientContext(filterContext));
 
         AttributeFilterContext context =
                 DataSources.populatedFilterContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
 
-        filterContext = NavigationHelper.locateResolverContext(context);
-        AttributeRecipientContext recipient = NavigationHelper.locateRecipientContext(filterContext);
+        filterContext = NavigationSupport.locateResolverContext(context);
+        AttributeRecipientContext recipient = NavigationSupport.locateRecipientContext(filterContext);
 
         Assert.assertEquals(recipient.getAttributeIssuerID(), TestSources.IDP_ENTITY_ID);
         Assert.assertEquals(recipient.getAttributeRecipientID(), TestSources.SP_ENTITY_ID);

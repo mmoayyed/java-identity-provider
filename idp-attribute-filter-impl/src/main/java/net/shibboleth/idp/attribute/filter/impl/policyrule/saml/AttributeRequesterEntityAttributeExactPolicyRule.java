@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.filter.impl.policyrule.saml;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.NavigationHelper;
+import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.NavigationSupport;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 
@@ -39,14 +39,14 @@ public class AttributeRequesterEntityAttributeExactPolicyRule extends AbstractEn
 
     /** {@inheritDoc} */
     @Nullable protected EntityDescriptor getEntityMetadata(final AttributeFilterContext filterContext) {
-        final AttributeResolutionContext resolver = NavigationHelper.locateResolverContext(filterContext);
+        final AttributeResolutionContext resolver = NavigationSupport.locateResolverContext(filterContext);
         if (null == resolver) {
             log.warn("{} Could not locate resolver context", getLogPrefix());
             return null;
         }
         
         final AttributeRecipientContext recipient =
-                NavigationHelper.locateRecipientContext(resolver);
+                NavigationSupport.locateRecipientContext(resolver);
 
         if (null == recipient) {
             log.warn("{} Could not locate recipient context", getLogPrefix());

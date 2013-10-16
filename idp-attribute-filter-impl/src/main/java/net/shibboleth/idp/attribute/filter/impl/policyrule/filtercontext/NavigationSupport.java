@@ -31,10 +31,10 @@ import org.opensaml.messaging.context.BaseContext;
  * The "filterContext" filters require access to the {@link AttributeRecipientContext} and this class provides the
  * methods to do it.
  */
-public final class NavigationHelper {
+public final class NavigationSupport {
 
     /** (hidden) Constructor. */
-    private NavigationHelper() {
+    private NavigationSupport() {
     }
 
     /**

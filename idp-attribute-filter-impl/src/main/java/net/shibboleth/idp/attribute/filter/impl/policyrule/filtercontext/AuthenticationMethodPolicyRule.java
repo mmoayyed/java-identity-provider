@@ -47,14 +47,14 @@ public class AuthenticationMethodPolicyRule extends AbstractStringPolicyRule {
     public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        final AttributeResolutionContext resolver = NavigationHelper.locateResolverContext(filterContext);
+        final AttributeResolutionContext resolver = NavigationSupport.locateResolverContext(filterContext);
         if (null == resolver) {
             log.warn("{} Could not locate resolver context", getLogPrefix());
             return Tristate.FAIL;
         }
         
         final AttributeRecipientContext recipient =
-                NavigationHelper.locateRecipientContext(resolver);
+                NavigationSupport.locateRecipientContext(resolver);
         if (null == recipient) {
             log.warn("{} Could not locate recipient context", getLogPrefix());
             return Tristate.FAIL;
