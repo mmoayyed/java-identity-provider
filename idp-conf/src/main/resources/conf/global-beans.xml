@@ -19,6 +19,7 @@
         <property name="converters">
             <list>
                 <bean class="net.shibboleth.ext.spring.config.DurationToLongConverter"/>
+                <bean class="net.shibboleth.ext.spring.config.StringToIPRangeConverter"/>
             </list>
         </property>
     </bean>

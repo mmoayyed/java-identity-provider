@@ -21,7 +21,7 @@
             p:principalName="jdoe">
         <property name="designatedRanges">
             <list>
-                <bean class="net.shibboleth.utilities.java.support.net.IPRange" factory-method="parseCIDRBlock" c:cidrBlock="127.0.0.1/32" />
+                <value>127.0.0.1/32</value>
             </list>
         </property>
     </bean>
