@@ -12,9 +12,12 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
+    <bean id="shibboleth.SessionIDGenerator" class="net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy"
+        c:identifierSize="${idp.session.idSize}" />
+
     <bean id="shibboleth.SessionManager" class="net.shibboleth.idp.session.impl.StorageBackedSessionManager"
             p:httpServletRequest-ref="shibboleth.HttpServletRequest" p:httpServletResponse-ref="shibboleth.HttpServletResponse"
-            p:authenticationFlowDescriptors-ref="shibboleth.AvailableAuthenticationFlows"
+            p:authenticationFlowDescriptors="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'AuthenticationFlow/(${idp.authn.flows})']}"
             p:cookieManager-ref="shibboleth.CookieManager"
             p:storageService-ref="shibboleth.StorageService"
             p:consistentAddress="${idp.session.consistentAddress}"
@@ -22,11 +25,7 @@
             p:sessionSlop="${idp.session.slop}"
             p:maskStorageFailure="${idp.session.maskStorageFailure}"
             p:trackSPSessions="${idp.session.trackSPSessions}"
-            p:secondaryServiceIndex="${idp.session.secondaryServiceIndex}">
-        <property name="IDGenerator">
-            <bean class="net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy"
-                c:identifierSize="${idp.session.idSize}" />
-        </property>
-    </bean>
+            p:secondaryServiceIndex="${idp.session.secondaryServiceIndex}"
+            p:IDGenerator-ref="shibboleth.SessionIDGenerator" />
 
 </beans>
