@@ -12,8 +12,6 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <context:property-placeholder system-properties-mode="OVERRIDE" location="classpath:conf/idp.properties" />
-
     <bean id="shibboleth.SessionManager" class="net.shibboleth.idp.session.impl.StorageBackedSessionManager"
             p:httpServletRequest-ref="shibboleth.HttpServletRequest" p:httpServletResponse-ref="shibboleth.HttpServletResponse"
             p:authenticationFlowDescriptors-ref="shibboleth.AvailableAuthenticationFlows"
