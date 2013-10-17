@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -91,7 +92,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
      * 
      * @param attributes    list of request attributes to check
      */
-    void setCheckAttributes(@Nonnull @NonnullElements final List<String> attributes) {
+    void setCheckAttributes(@Nonnull @NonnullElements final Collection<String> attributes) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         checkAttributes = Lists.newArrayList(Collections2.filter(attributes, Predicates.notNull()));
@@ -102,7 +103,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
      * 
      * @param headers list of request headers to check
      */
-    void setCheckHeaders(@Nonnull @NonnullElements final List<String> headers) {
+    void setCheckHeaders(@Nonnull @NonnullElements final Collection<String> headers) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         checkHeaders = Lists.newArrayList(Collections2.filter(headers, Predicates.notNull()));
