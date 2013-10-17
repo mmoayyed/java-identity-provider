@@ -18,8 +18,11 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -36,22 +39,16 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.IPRange;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import com.google.common.base.Strings;
+import com.google.common.collect.Collections2;
 
 /**
  * An action that ensures that a user-agent address found within a {@link UserAgentContext}
@@ -71,68 +68,36 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateUserAgentAddress.class);
 
-    /** The ID of the subject to treat as authenticated by this action. */
-    @NonnullAfterInit @NotEmpty private String principalName;
-
-    /** List of designated IP ranges. */
-    @Nonnull @NonnullElements private Collection<IPRange> designatedRanges;
+    /** Map of IP ranges to principal names. */
+    @Nonnull @NonnullElements private Map<String,Collection<IPRange>> mappings;
 
     /** User Agent context containing address to evaluate. */
     @Nullable private UserAgentContext uaContext;
     
+    /** The principal name established by the action, if any. */
+    @Nullable private String principalName;
+    
     /** Constructor. */
     public ValidateUserAgentAddress() {
-        designatedRanges = Collections.emptyList();
+        mappings = Collections.emptyMap();
     }
     
     /**
-     * Get the name of the subject to use.
+     * Set the IP range(s) to authenticate as particular principals.
      * 
-     * @return the name of the subject to use
+     * @param newMappings the IP range(s) to authenticate as particular principals
      */
-    @NonnullAfterInit @NotEmpty public String getPrincipalName() {
-        return principalName;
-    }
-    
-    /**
-     * Set the name to use to identify a successfully evaluated address, by means of a simple username,
-     * by attaching a {@link UsernamePrincipal}.
-     * 
-     * @param name  the principal name to use
-     */
-    public void setPrincipalName(@Nonnull @NotEmpty final String name) {
+    public void setMappings(@Nonnull @NonnullElements Map<String,Collection<IPRange>> newMappings) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        principalName = Constraint.isNotNull(StringSupport.trimOrNull(name), "Principal name cannot be null or empty");
-    }
-    
-    /**
-     * Get the IP range(s) to authenticate.
-     * 
-     * @return  the IP range(s) to authenticate
-     */
-    @Nonnull @NonnullElements @Unmodifiable public Collection<IPRange> getDesignatedRanges() {
-        return designatedRanges;
-    }
-    
-    /**
-     * Set the IP range(s) to authenticate.
-     * 
-     * @param ranges the IP range(s) to authenticate
-     */
-    public void setDesignatedRanges(@Nonnull @NonnullElements Collection<IPRange> ranges) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        designatedRanges = Lists.newArrayList(Iterables.filter(ranges, Predicates.notNull()));
-    }
-    
-    /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
-        if (principalName == null) {
-            throw new ComponentInitializationException("Principal name cannot be null"); 
+        mappings = new HashMap(newMappings.size());
+        for (Map.Entry<String,Collection<IPRange>> e : newMappings.entrySet()) {
+            if (!Strings.isNullOrEmpty(e.getKey())) {
+                mappings.put(e.getKey(), new ArrayList(Collections2.filter(e.getValue(), Predicates.notNull())));
+            }
         }
     }
-
+    
     /** {@inheritDoc} */
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
@@ -162,28 +127,33 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
-        if (!isAuthenticated(uaContext.getAddress())) {
-            log.debug("{} user agent with address {} was not authenticated", getLogPrefix(), uaContext.getAddress());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_CREDENTIALS);
-            return;
+        for (Map.Entry<String,Collection<IPRange>> e : mappings.entrySet()) {
+            if (isAuthenticated(uaContext.getAddress(), e.getValue())) {
+                principalName = e.getKey();
+                log.debug("{} authenticated user agent with address {} as {}",
+                        getLogPrefix(), uaContext.getAddress(), principalName);
+                buildAuthenticationResult(profileRequestContext, authenticationContext);
+                return;
+            }
         }
-        
-        log.debug("{} authenticated user agent with address {} as {}",
-                getLogPrefix(), uaContext.getAddress(), getPrincipalName());
-        buildAuthenticationResult(profileRequestContext, authenticationContext);
+            
+        log.debug("{} user agent with address {} was not authenticated", getLogPrefix(), uaContext.getAddress());
+        ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_CREDENTIALS);
     }
 
     /**
-     * Checks whether the given IP address meets this stage's IP range requirements.
+     * Checks whether the given IP address meets a set of IP range requirements.
      * 
      * @param address the IP address to check
+     * @param ranges the ranges to check
      * 
      * @return true if the given IP address meets this stage's IP range requirements, false otherwise
      */
-    private boolean isAuthenticated(@Nonnull final InetAddress address) {
+    private boolean isAuthenticated(@Nonnull final InetAddress address,
+            @Nonnull @NonnullElements final Collection<IPRange> ranges) {
         byte[] resolvedAddress = address.getAddress();
 
-        for (IPRange range : designatedRanges) {
+        for (IPRange range : ranges) {
             if (range.contains(resolvedAddress)) {
                 return true;
             }
@@ -194,7 +164,7 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
 
     /** {@inheritDoc} */
     @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) throws AuthenticationException {
-        subject.getPrincipals().add(new UsernamePrincipal(getPrincipalName()));
+        subject.getPrincipals().add(new UsernamePrincipal(principalName));
         return subject;
     }
 

@@ -17,19 +17,17 @@
     <bean id="ExtractUserAgentAddress" class="net.shibboleth.idp.authn.impl.ExtractUserAgentAddress" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
         
-    <bean id="ValidateUserAgentAddress" class="net.shibboleth.idp.authn.impl.ValidateUserAgentAddress" scope="prototype"
-            p:principalName="jdoe">
-        <property name="designatedRanges">
-            <list>
-                <value>127.0.0.1/32</value>
-            </list>
+    <bean id="ValidateUserAgentAddress" class="net.shibboleth.idp.authn.impl.ValidateUserAgentAddress" scope="prototype">
+        <property name="mappings">
+            <map>
+                <entry key="jdoe">
+                    <list>
+                        <value>127.0.0.1/32</value>
+                        <value>::1/128</value>
+                    </list>
+                </entry>
+            </map>
         </property>
     </bean>
-
-    <!--
-    You can add additional ValidateUserAgentAddress bean definitions if you want to map
-    different ranges to different users. Just give the bean(s) different ids and wire them
-    in sequence into the ipaddress-authn-flow.xml file.
-    -->
 
 </beans>

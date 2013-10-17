@@ -20,13 +20,14 @@ package net.shibboleth.idp.authn.impl;
 
 import java.security.Principal;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.TestPrincipal;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.net.IPRange;
 
 import org.opensaml.profile.ProfileException;
@@ -47,21 +48,11 @@ public class ValidateUserAgentAddressTest extends InitializeAuthenticationContex
         super.setUp();
         
         action = new ValidateUserAgentAddress();
-        action.setPrincipalName("foo");
-        action.setDesignatedRanges(Arrays.asList(IPRange.parseCIDRBlock("192.168.1.0/24")));
+        action.setMappings(Collections.<String,Collection<IPRange>>singletonMap(
+                "foo", Arrays.asList(IPRange.parseCIDRBlock("192.168.1.0/24"))));
         action.setSupportedPrincipals(Arrays.asList(new TestPrincipal("UserAgentAuthentication")));
         action.setHttpServletRequest(new MockHttpServletRequest());
         action.initialize();
-    }
-    
-    @Test public void testInvalidConfig() {
-        final ValidateUserAgentAddress action = new ValidateUserAgentAddress();
-        try {
-            action.initialize();
-            Assert.fail();
-        } catch (ComponentInitializationException e) {
-
-        }
     }
 
     @Test public void testMissingFlow() throws ProfileException {
