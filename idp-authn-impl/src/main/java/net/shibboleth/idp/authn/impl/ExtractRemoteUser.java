@@ -29,6 +29,8 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernameContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
@@ -39,6 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 /**
@@ -88,7 +91,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
      * 
      * @param attributes    list of request attributes to check
      */
-    void setCheckAttributes(List<String> attributes) {
+    void setCheckAttributes(@Nonnull @NonnullElements final List<String> attributes) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         checkAttributes = Lists.newArrayList(Collections2.filter(attributes, Predicates.notNull()));
@@ -99,7 +102,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
      * 
      * @param headers list of request headers to check
      */
-    void setCheckHeaders(List<String> headers) {
+    void setCheckHeaders(@Nonnull @NonnullElements final List<String> headers) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         checkHeaders = Lists.newArrayList(Collections2.filter(headers, Predicates.notNull()));
