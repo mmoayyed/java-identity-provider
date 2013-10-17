@@ -18,6 +18,7 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -33,7 +34,6 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernameContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.opensaml.profile.action.ActionSupport;
@@ -69,13 +69,21 @@ public class ValidateRemoteUser extends AbstractValidationAction {
     @Nullable private UsernameContext usernameContext;
     
     /** A whitelist of usernames to accept. */
-    @Nonnull @NonnullElements @Unmodifiable private Set<String> whitelistedUsernames;
+    @Nonnull @NonnullElements private Set<String> whitelistedUsernames;
 
     /** A blacklist of usernames to deny. */
-    @Nonnull @NonnullElements @Unmodifiable private Set<String> blacklistedUsernames;
+    @Nonnull @NonnullElements private Set<String> blacklistedUsernames;
 
     /** A regular expression to apply for acceptance testing. */
     @Nullable private Pattern matchExpression;
+    
+    /** Constructor. */
+    public ValidateRemoteUser() {
+        super();
+        
+        whitelistedUsernames = Collections.emptySet();
+        blacklistedUsernames = Collections.emptySet();
+    }
     
     /**
      * Set the whitelisted usernames.
