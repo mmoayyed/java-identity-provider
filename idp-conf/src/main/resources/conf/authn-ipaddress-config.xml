@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.2.xsd
+                           http://www.springframework.org/schema/context classpath:/org/springframework/context/config/spring-context-3.2.xsd
+                           http://www.springframework.org/schema/util classpath:/org/springframework/beans/factory/xml/spring-util-3.2.xsd">
+
+    <!--
+    You can configure the address range(s) and principal name(s) for IP-based login here.
+    Do not change the name of the bean.
+    -->
+
+    <util:map id="shibboleth.Authn.IPAddress.Mappings">
+        <entry key="jdoe">
+            <list>
+                <value>127.0.0.1/32</value>
+                <value>::1/128</value>
+            </list>
+        </entry>
+    </util:map>
+
+</beans>
