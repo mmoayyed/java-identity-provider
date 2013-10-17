@@ -166,7 +166,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
      */
     private boolean isAuthenticated(@Nonnull @NotEmpty final String username) {
         
-        if (!whitelistedUsernames.contains(username)) {
+        if (!whitelistedUsernames.isEmpty() && !whitelistedUsernames.contains(username)) {
             // Not in whitelist. Only accept if a regexp applies.
             if (matchExpression == null) {
                 return false;
@@ -174,7 +174,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
                 return matchExpression.matcher(username).matches();
             }
         } else {
-            // In whitelist. Check blacklist, and if necessary a regexp.
+            // In whitelist (or none). Check blacklist, and if necessary a regexp.
             return !blacklistedUsernames.contains(username)
                     && (matchExpression == null || matchExpression.matcher(username).matches());
         }
