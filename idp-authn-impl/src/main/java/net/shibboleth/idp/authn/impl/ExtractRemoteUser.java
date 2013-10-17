@@ -19,7 +19,6 @@ package net.shibboleth.idp.authn.impl;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
@@ -30,8 +29,6 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernameContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
@@ -42,7 +39,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 /**
@@ -64,13 +60,15 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
     private boolean checkRemoteUser;
     
     /** List of request attributes to check for an identity. */
-    @Nonnull @NonnullElements private List<String> checkAttributes;
+    @Nonnull @NonnullElements private Collection<String> checkAttributes;
 
     /** List of request headers to check for an identity. */
-    @Nonnull @NonnullElements private List<String> checkHeaders;
+    @Nonnull @NonnullElements private Collection<String> checkHeaders;
     
     /** Constructor. */
-    ExtractRemoteUser() {
+    public ExtractRemoteUser() {
+        super();
+        
         checkRemoteUser = true;
         checkAttributes = Collections.emptyList();
         checkHeaders = Collections.emptyList();
@@ -81,7 +79,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
      * 
      * @param flag value to set  
      */
-    void setCheckRemoteUser(boolean flag) {
+    public void setCheckRemoteUser(boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         checkRemoteUser = flag;
@@ -92,7 +90,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
      * 
      * @param attributes    list of request attributes to check
      */
-    void setCheckAttributes(@Nonnull @NonnullElements final Collection<String> attributes) {
+    public void setCheckAttributes(@Nonnull @NonnullElements final Collection<String> attributes) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         checkAttributes = Lists.newArrayList(Collections2.filter(attributes, Predicates.notNull()));
@@ -103,7 +101,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
      * 
      * @param headers list of request headers to check
      */
-    void setCheckHeaders(@Nonnull @NonnullElements final Collection<String> headers) {
+    public void setCheckHeaders(@Nonnull @NonnullElements final Collection<String> headers) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         checkHeaders = Lists.newArrayList(Collections2.filter(headers, Predicates.notNull()));
