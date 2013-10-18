@@ -20,6 +20,6 @@
         p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
         
     <bean id="ValidateUserAgentAddress" class="net.shibboleth.idp.authn.impl.ValidateUserAgentAddress" scope="prototype"
-        p:mappings-ref="shibboleth.Authn.IPAddress.Mappings" />
+        p:mappings-ref="shibboleth.authn.IPAddress.Mappings" />
 
 </beans>

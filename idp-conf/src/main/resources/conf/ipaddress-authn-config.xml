@@ -14,7 +14,7 @@
     Do not change the name of the bean.
     -->
 
-    <util:map id="shibboleth.Authn.IPAddress.Mappings">
+    <util:map id="shibboleth.authn.IPAddress.Mappings">
         <entry key="jdoe">
             <list>
                 <value>127.0.0.1/32</value>

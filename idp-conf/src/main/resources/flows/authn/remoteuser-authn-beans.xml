@@ -11,27 +11,20 @@
                            
        default-init-method="initialize"
        default-destroy-method="destroy">
+    
+    <import resource="../../conf/remoteuser-authn-config.xml" />
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     
     <bean id="ExtractRemoteUser" class="net.shibboleth.idp.authn.impl.ExtractRemoteUser" scope="prototype"
-            p:httpServletRequest-ref="shibboleth.HttpServletRequest" p:checkRemoteUser="true">
+            p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+            p:checkRemoteUser-ref="shibboleth.authn.RemoteUser.checkRemoteUser"
+            p:checkHeaders-ref="shibboleth.authn.RemoteUser.checkHeaders"
+            p:checkAttributes-ref="shibboleth.authn.RemoteUser.checkAttributes" />
         
-        <!-- Also supports extraction from a header or server attribute. -->
-        <!--
-        <property name="checkHeaders">
-            <list>
-                <value>HeaderToCheck</value>
-            </list>
-        </property>
-        <property name="checkAttributes">
-            <list>
-                <value>AttributeToCheck</value>
-            </list>
-        </property>
-        -->
-    </bean>
-        
-    <bean id="ValidateRemoteUser" class="net.shibboleth.idp.authn.impl.ValidateRemoteUser" scope="prototype"/>
+    <bean id="ValidateRemoteUser" class="net.shibboleth.idp.authn.impl.ValidateRemoteUser" scope="prototype"
+        p:matchExpression="#{getObject('shibboleth.authn.RemoteUser.matchExpression')}"
+        p:whitelistedUsernames-ref="shibboleth.authn.RemoteUser.whitelistedUsernames"
+        p:blacklistedUsernames-ref="shibboleth.authn.RemoteUser.blacklistedUsernames" />
 
 </beans>
