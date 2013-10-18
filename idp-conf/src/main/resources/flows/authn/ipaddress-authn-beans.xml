@@ -12,7 +12,7 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <import resource="../../conf/authn-ipaddress-config.xml" />
+    <import resource="../../conf/ipaddress-authn-config.xml" />
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     
