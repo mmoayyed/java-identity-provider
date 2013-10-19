@@ -21,7 +21,7 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
@@ -74,7 +74,7 @@ public class PolicyFromMatcherId extends BaseBridgingClass implements PolicyRequ
         
         log.info("{} Applying matcher supplied as policy to all values of attribute {}", getLogPrefix(), attributeId);
 
-        final Attribute attribute = context.getPrefilteredAttributes().get(attributeId);
+        final IdPAttribute attribute = context.getPrefilteredAttributes().get(attributeId);
         
         if (null == attribute) {
             log.debug("{} No attribute found with Id of {}", getLogPrefix(), attributeId);

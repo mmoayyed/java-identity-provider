@@ -26,7 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
@@ -128,7 +128,7 @@ public class AttributeFilter extends AbstractDestructableIdentifiableInitializab
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
-        Map<String, Attribute> prefilteredAttributes = filterContext.getPrefilteredAttributes();
+        Map<String, IdPAttribute> prefilteredAttributes = filterContext.getPrefilteredAttributes();
 
         log.debug("{} beginning process of filtering the following {} attributes: {}", new Object[] {getLogPrefix(),
                 prefilteredAttributes.size(), prefilteredAttributes.keySet(),});
@@ -138,7 +138,7 @@ public class AttributeFilter extends AbstractDestructableIdentifiableInitializab
             policy.apply(filterContext);
         }
 
-        Attribute filteredAttribute;
+        IdPAttribute filteredAttribute;
         for (String attributeId : filterContext.getPrefilteredAttributes().keySet()) {
             final Collection filteredAttributeValues = getFilteredValues(attributeId, filterContext);
             if (null != filteredAttributeValues && !filteredAttributeValues.isEmpty()) {

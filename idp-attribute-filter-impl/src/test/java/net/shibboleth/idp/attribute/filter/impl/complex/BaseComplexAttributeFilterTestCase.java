@@ -22,7 +22,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -31,6 +31,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
+import org.opensaml.saml.saml2.core.Attribute;
 
 import com.google.common.base.Function;
 
@@ -50,20 +51,18 @@ public class BaseComplexAttributeFilterTestCase extends XMLObjectBaseTestCase {
      * @throws ComponentInitializationException
      * @throws ResolutionException
      */
-    protected Map<String, Attribute> getAttributes(String xmlFileName) throws ComponentInitializationException,
+    protected Map<String, IdPAttribute> getAttributes(String xmlFileName) throws ComponentInitializationException,
             ResolutionException {
 
         final EntityAttributes obj = (EntityAttributes) unmarshallElement(PATH + xmlFileName);
 
         SAMLAttributeDataConnector connector = new SAMLAttributeDataConnector();
         connector.setId(xmlFileName);
-        connector.setAttributesStrategy(new Function<AttributeResolutionContext, 
-                List<org.opensaml.saml.saml2.core.Attribute>>() {
-                    @Nullable public List<org.opensaml.saml.saml2.core.Attribute> apply(
-                            @Nullable AttributeResolutionContext input) {
-                        return (List) obj.getAttributes();
-                    }
-                });
+        connector.setAttributesStrategy(new Function<AttributeResolutionContext, List<Attribute>>() {
+            @Nullable public List<Attribute> apply(@Nullable AttributeResolutionContext input) {
+                return (List) obj.getAttributes();
+            }
+        });
 
         connector.initialize();
 

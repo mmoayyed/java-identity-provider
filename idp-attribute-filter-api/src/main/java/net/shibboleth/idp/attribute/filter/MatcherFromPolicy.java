@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
@@ -59,7 +59,7 @@ public class MatcherFromPolicy extends BaseBridgingClass implements Matcher, Ide
     }
 
     /** {@inheritDoc} */
-    @Nullable public Set<AttributeValue> getMatchingValues(@Nonnull Attribute attribute,
+    @Nullable public Set<AttributeValue> getMatchingValues(@Nonnull IdPAttribute attribute,
             @Nonnull AttributeFilterContext filterContext) {
 
         final Tristate result= rule.matches(filterContext);

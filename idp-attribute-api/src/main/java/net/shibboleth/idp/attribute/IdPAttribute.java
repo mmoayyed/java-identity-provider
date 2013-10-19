@@ -48,11 +48,11 @@ import com.google.common.collect.ImmutableSet;
  * Each attribute represents one piece of information about a user and has associated encoders used to turn that
  * information in to protocol-specific formats.
  * 
- * Instances of {@link Attribute} are compared using their IDs. That is, two attributes are considered the same if they
- * have the same ID, regardless of whether their display names, descriptions, values, or encoders are the same.
+ * Instances of {@link IdPAttribute} are compared using their IDs. That is, two attributes are considered the same if
+ * they have the same ID, regardless of whether their display names, descriptions, values, or encoders are the same.
  */
 @NotThreadSafe
-public class Attribute implements Comparable<Attribute>, Cloneable {
+public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
 
     /** ID of this attribute. */
     private final String id;
@@ -74,7 +74,7 @@ public class Attribute implements Comparable<Attribute>, Cloneable {
      * 
      * @param attributeId unique identifier of the attribute
      */
-    public Attribute(@Nonnull @NotEmpty final String attributeId) {
+    public IdPAttribute(@Nonnull @NotEmpty final String attributeId) {
         id = Constraint.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID may not be null");
 
         displayNames = Collections.emptyMap();
@@ -157,7 +157,7 @@ public class Attribute implements Comparable<Attribute>, Cloneable {
     /**
      * Gets the unordered, but guarded, collection of values of the attribute.
      * 
-     * @return values of the attribute.  
+     * @return values of the attribute.
      */
     @Nonnull @NonnullElements public Set<AttributeValue> getValues() {
         return values;
@@ -196,7 +196,7 @@ public class Attribute implements Comparable<Attribute>, Cloneable {
     }
 
     /** {@inheritDoc} */
-    public int compareTo(final Attribute other) {
+    public int compareTo(final IdPAttribute other) {
         return getId().compareTo(other.getId());
     }
 
@@ -206,8 +206,8 @@ public class Attribute implements Comparable<Attribute>, Cloneable {
      * 
      * {@inheritDoc}
      */
-    @Nonnull public Attribute clone() throws CloneNotSupportedException {
-        Attribute clone = (Attribute) super.clone();
+    @Nonnull public IdPAttribute clone() throws CloneNotSupportedException {
+        IdPAttribute clone = (IdPAttribute) super.clone();
         clone.setDisplayDescriptions(getDisplayDescriptions());
         clone.setDisplayNames(getDisplayNames());
         clone.setEncoders(getEncoders());
@@ -231,11 +231,11 @@ public class Attribute implements Comparable<Attribute>, Cloneable {
             return false;
         }
 
-        if (!(obj instanceof Attribute)) {
+        if (!(obj instanceof IdPAttribute)) {
             return false;
         }
 
-        Attribute other = (Attribute) obj;
+        IdPAttribute other = (IdPAttribute) obj;
         return Objects.equal(id, other.getId());
     }
 

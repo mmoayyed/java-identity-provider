@@ -23,7 +23,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filter.AttributeRule;
 import net.shibboleth.idp.attribute.filter.Matcher;
@@ -36,6 +36,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
+import org.opensaml.saml.saml2.core.Attribute;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
 
@@ -47,10 +48,11 @@ import com.google.common.base.Function;
 public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
 
     private static final String ATTRIBUTE_PATH = "/net/shibboleth/idp/attribute/filter/attribute/";
+
     private static final String MATCHER_PATH = "/net/shibboleth/idp/attribute/filter/matcher/";
+
     private static final String POLICY_RULE_PATH = "/net/shibboleth/idp/attribute/filter/policyrule/";
 
-    
     /**
      * Helper function to return attributes pulled from a file (on the classpath). The file is expected to contain a
      * single <mdattr:EntityAttributes/> statement.
@@ -60,20 +62,18 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
      * @throws ComponentInitializationException
      * @throws ResolutionException
      */
-    protected Map<String, Attribute> getAttributes(String xmlFileName) throws ComponentInitializationException,
+    protected Map<String, IdPAttribute> getAttributes(String xmlFileName) throws ComponentInitializationException,
             ResolutionException {
-        
+
         final EntityAttributes obj = (EntityAttributes) unmarshallElement(ATTRIBUTE_PATH + xmlFileName);
 
         SAMLAttributeDataConnector connector = new SAMLAttributeDataConnector();
         connector.setId(xmlFileName);
-        connector.setAttributesStrategy(new Function<AttributeResolutionContext, 
-                List<org.opensaml.saml.saml2.core.Attribute>>() {
-                    @Nullable public List<org.opensaml.saml.saml2.core.Attribute> apply(
-                            @Nullable AttributeResolutionContext input) {
-                        return (List<org.opensaml.saml.saml2.core.Attribute>) obj.getAttributes();
-                    }
-                });
+        connector.setAttributesStrategy(new Function<AttributeResolutionContext, List<Attribute>>() {
+            @Nullable public List<Attribute> apply(@Nullable AttributeResolutionContext input) {
+                return (List<Attribute>) obj.getAttributes();
+            }
+        });
 
         connector.initialize();
 
@@ -83,7 +83,9 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
     protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context) {
         return getBean(fileName, claz, context, false);
     }
-    protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context, boolean supressValidation) {
+
+    protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context,
+            boolean supressValidation) {
 
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
@@ -102,13 +104,15 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
     protected PolicyRequirementRule getPolicyRule(String fileName) throws ComponentInitializationException {
         return getPolicyRule(fileName, false);
     }
-    
-    protected PolicyRequirementRule getPolicyRule(String fileName, boolean supressValidation) throws ComponentInitializationException {
+
+    protected PolicyRequirementRule getPolicyRule(String fileName, boolean supressValidation)
+            throws ComponentInitializationException {
 
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: Policy Rule");
 
-        final AttributeFilterPolicy policy = getBean(POLICY_RULE_PATH + fileName, AttributeFilterPolicy.class, context, supressValidation);
+        final AttributeFilterPolicy policy =
+                getBean(POLICY_RULE_PATH + fileName, AttributeFilterPolicy.class, context, supressValidation);
         policy.initialize();
         return policy.getPolicyRequirementRule();
     }

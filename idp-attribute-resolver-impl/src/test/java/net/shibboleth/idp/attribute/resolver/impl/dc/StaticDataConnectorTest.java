@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
@@ -44,7 +44,7 @@ import com.google.common.collect.Lists;
 public class StaticDataConnectorTest {
 
     @Test public void resolve() throws ComponentInitializationException, ResolutionException {
-        Attribute attribute = new Attribute("attribute");
+        IdPAttribute attribute = new IdPAttribute("attribute");
         attribute.setValues(Lists.newArrayList((AttributeValue) new StringAttributeValue("one"), new StringAttributeValue("two")));
 
         StaticDataConnector connector = new StaticDataConnector();
@@ -61,7 +61,7 @@ public class StaticDataConnectorTest {
             //OK
         }
         
-        List<Attribute> input = new ArrayList<Attribute>();
+        List<IdPAttribute> input = new ArrayList<IdPAttribute>();
         connector.setValues(input);
         Assert.assertNotNull(connector.getAttributes());
 
@@ -71,7 +71,7 @@ public class StaticDataConnectorTest {
 
         input.add(attribute);
         input.add(null);
-        input.add(new Attribute("thingy"));
+        input.add(new IdPAttribute("thingy"));
         
         connector.setValues(input);
         connector.initialize();
@@ -79,7 +79,7 @@ public class StaticDataConnectorTest {
         Assert.assertEquals(connector.getAttributes().size(), 2);
 
         AttributeResolutionContext context = new AttributeResolutionContext();
-        Map<String, Attribute> result = connector.doResolve(context);
+        Map<String, IdPAttribute> result = connector.doResolve(context);
 
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.containsKey("attribute"));
@@ -92,7 +92,7 @@ public class StaticDataConnectorTest {
         StaticDataConnector connector = new StaticDataConnector();
         connector.setId("Static");
 
-        List<Attribute> input = new ArrayList<Attribute>();
+        List<IdPAttribute> input = new ArrayList<IdPAttribute>();
         input.add(null);
         connector.setValues(input);
         
@@ -103,13 +103,13 @@ public class StaticDataConnectorTest {
             //OK
         }
 
-        input.add(new Attribute("thingy"));
+        input.add(new IdPAttribute("thingy"));
         
         connector.setValues(input);
         connector.initialize();
 
         try {
-            connector.setValues(Collections.singletonList(new Attribute("whatever")));
+            connector.setValues(Collections.singletonList(new IdPAttribute("whatever")));
             Assert.fail();
         } catch (UnmodifiableComponentException ex) {
             // OK

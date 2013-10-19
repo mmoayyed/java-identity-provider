@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.filter.spring.policy;
 import java.util.Map;
 import java.util.Set;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.Matcher;
@@ -48,7 +48,7 @@ import org.testng.annotations.Test;
  */
 public class AttributeRequesterRuleParserTest extends BaseAttributeFilterParserTest {
 
-    private Map<String, Attribute> epaUid;
+    private Map<String, IdPAttribute> epaUid;
 
     @BeforeClass public void setupAttributes() throws ComponentInitializationException, ResolutionException {
 

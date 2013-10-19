@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -67,7 +67,7 @@ public class PrincipalNameAttributeDefinitionTest {
         defn.setId("id");
         defn.initialize();
         
-        Attribute result = defn.doAttributeDefinitionResolve(TestSources.createResolutionContext("principal", "issuer", "recipient"));
+        IdPAttribute result = defn.doAttributeDefinitionResolve(TestSources.createResolutionContext("principal", "issuer", "recipient"));
         
         Assert.assertEquals(result.getValues().size(), 1);
         

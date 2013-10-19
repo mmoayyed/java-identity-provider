@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.filter.impl.complex;
 import java.util.Collections;
 import java.util.Map;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
@@ -93,14 +93,14 @@ public class UntargettedAttributeValueFilterTest extends BaseComplexAttributeFil
         AttributeFilterContext context = new AttributeFilterContext();
         context.setPrefilteredAttributes(getAttributes("epa-uidwithjsmith.xml").values());
         engine.filterAttributes(context);
-        Map<String, Attribute> attributes = context.getFilteredAttributes();
+        Map<String, IdPAttribute> attributes = context.getFilteredAttributes();
         Assert.assertNull(attributes.get("eduPersonAffiliation"));
 
         context = new AttributeFilterContext();
         context.setPrefilteredAttributes(getAttributes("uid-epawithjsmith.xml").values());
         engine.filterAttributes(context);
         attributes = context.getFilteredAttributes();
-        Attribute attribute = attributes.get("eduPersonAffiliation");
+        IdPAttribute attribute = attributes.get("eduPersonAffiliation");
         Assert.assertEquals(attribute.getValues().size(), 1);
 
         context = new AttributeFilterContext();
@@ -145,8 +145,8 @@ public class UntargettedAttributeValueFilterTest extends BaseComplexAttributeFil
         AttributeFilterContext context = new AttributeFilterContext();
         context.setPrefilteredAttributes(getAttributes("epa-uidwithjsmith.xml").values());
         engine.filterAttributes(context);
-        Map<String, Attribute> attributes = context.getFilteredAttributes();
-        Attribute attribute = attributes.get("eduPersonAffiliation");
+        Map<String, IdPAttribute> attributes = context.getFilteredAttributes();
+        IdPAttribute attribute = attributes.get("eduPersonAffiliation");
         Assert.assertEquals(attribute.getValues().size(), 3);
 
         context = new AttributeFilterContext();

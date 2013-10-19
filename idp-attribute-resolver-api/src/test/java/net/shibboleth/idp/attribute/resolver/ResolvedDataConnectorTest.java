@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
  */
 public class ResolvedDataConnectorTest {
 
-    private Map<String, Attribute> resolvedData = Collections.EMPTY_MAP;
+    private Map<String, IdPAttribute> resolvedData = Collections.EMPTY_MAP;
 
     @Test public void init() {
         MockStaticDataConnector dc = new MockStaticDataConnector();
@@ -65,7 +65,7 @@ public class ResolvedDataConnectorTest {
 
     @Test public void equalsHashToString() throws ComponentInitializationException {
         MockStaticDataConnector dc = new MockStaticDataConnector();
-        dc.setValues(Arrays.asList(new Attribute("attr")));
+        dc.setValues(Arrays.asList(new IdPAttribute("attr")));
         dc.setId("Defn");
         dc.initialize();
         ResolvedDataConnector resolvedDataConnector = new ResolvedDataConnector(dc, resolvedData);
@@ -76,7 +76,7 @@ public class ResolvedDataConnectorTest {
 
         MockStaticDataConnector otherDef = new MockStaticDataConnector();
         otherDef.setId("OtherDefn");
-        otherDef.setValues(Arrays.asList(new Attribute("otherAttr")));
+        otherDef.setValues(Arrays.asList(new IdPAttribute("otherAttr")));
         otherDef.initialize();
         otherDc = new ResolvedDataConnector(otherDef, resolvedData);
 
@@ -94,7 +94,7 @@ public class ResolvedDataConnectorTest {
     @Test public void noops() throws ComponentInitializationException, ComponentValidationException,
             ResolutionException {
         MockStaticDataConnector dc = new MockStaticDataConnector();
-        dc.setValues(Arrays.asList(new Attribute("attr")));
+        dc.setValues(Arrays.asList(new IdPAttribute("attr")));
         dc.setId("Defn");
         ResolverPluginDependency dep = new ResolverPluginDependency("doo");
         dep.setDependencyAttributeId("foo");

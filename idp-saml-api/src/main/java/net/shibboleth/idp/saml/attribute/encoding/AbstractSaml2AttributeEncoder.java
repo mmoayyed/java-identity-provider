@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -96,7 +97,7 @@ public abstract class AbstractSaml2AttributeEncoder<EncodedType extends Attribut
 
 
     /** {@inheritDoc} */
-    @Nonnull protected Attribute buildAttribute(final net.shibboleth.idp.attribute.Attribute attribute,
+    @Nonnull protected Attribute buildAttribute(final IdPAttribute attribute,
             final List<XMLObject> attributeValues) throws AttributeEncodingException {
 
         final Attribute samlAttribute = attributeBuilder.buildObject();

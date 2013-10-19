@@ -22,7 +22,7 @@ import java.util.Collections;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
@@ -44,7 +44,7 @@ public class PrincipalAuthenticationMethodAttributeDefinition extends BaseAttrib
     private final Logger log = LoggerFactory.getLogger(PrincipalAuthenticationMethodAttributeDefinition.class);
 
     /** {@inheritDoc} */
-    @Nullable protected Attribute doAttributeDefinitionResolve(
+    @Nullable protected IdPAttribute doAttributeDefinitionResolve(
             @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
         
         final AttributeRecipientContext attributeRecipientContext =
@@ -62,7 +62,7 @@ public class PrincipalAuthenticationMethodAttributeDefinition extends BaseAttrib
             return null;
         }
 
-        final Attribute attribute = new Attribute(getId());
+        final IdPAttribute attribute = new IdPAttribute(getId());
         attribute.setValues(Collections.singleton((AttributeValue) new StringAttributeValue(method)));
         return attribute;
     }

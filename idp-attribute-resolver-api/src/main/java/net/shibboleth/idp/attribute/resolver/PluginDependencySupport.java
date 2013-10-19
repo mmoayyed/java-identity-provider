@@ -26,7 +26,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -64,7 +64,7 @@ public final class PluginDependencySupport {
         final Set<AttributeValue> values = new HashSet<AttributeValue>();
 
         for (ResolverPluginDependency dependency : dependencies) {
-            final Attribute resolvedAttribute;
+            final IdPAttribute resolvedAttribute;
             Constraint.isNotNull(dependency, "Resolver dependency can not be null");
 
             ResolvedAttributeDefinition attributeDefinition =
@@ -146,9 +146,9 @@ public final class PluginDependencySupport {
      * @param sources the source attributes
      * @param target current set attribute values
      */
-    @Nonnull private static void addAttributeValues(@Nonnull final Map<String, Attribute> sources,
+    @Nonnull private static void addAttributeValues(@Nonnull final Map<String, IdPAttribute> sources,
             @Nullable final Map<String, Set<AttributeValue>> target) {
-        for (Attribute source : sources.values()) {
+        for (IdPAttribute source : sources.values()) {
             if (source == null) {
                 continue;
             }
@@ -163,7 +163,7 @@ public final class PluginDependencySupport {
      * @param source the source attribute
      * @param target current set attribute values
      */
-    @Nonnull private static void addAttributeValues(@Nullable final Attribute source,
+    @Nonnull private static void addAttributeValues(@Nullable final IdPAttribute source,
             @Nullable final Map<String, Set<AttributeValue>> target) {
         if (source == null) {
             return;
@@ -183,7 +183,7 @@ public final class PluginDependencySupport {
      * @param source the source attribute
      * @param target current set attribute values
      */
-    @Nonnull private static void addAttributeValues(@Nullable final Attribute source,
+    @Nonnull private static void addAttributeValues(@Nullable final IdPAttribute source,
             @Nonnull final Set<AttributeValue> target) {
         if (source != null) {
             target.addAll(source.getValues());

@@ -26,7 +26,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -44,7 +44,7 @@ public class StringResultMappingStrategy implements ResultMappingStrategy {
     private final Logger log = LoggerFactory.getLogger(StringResultMappingStrategy.class);
 
     /** {@inheritDoc} */
-    @Nullable public Map<String, Attribute> map(@Nonnull final ResultSet results)
+    @Nullable public Map<String, IdPAttribute> map(@Nonnull final ResultSet results)
             throws ResolutionException {
         Constraint.isNotNull(results, "Result set can not be null");
 
@@ -55,11 +55,11 @@ public class StringResultMappingStrategy implements ResultMappingStrategy {
             }
             final ResultSetMetaData resultMetadata = results.getMetaData();
 
-            final Map<String, Attribute> attributes = new HashMap<String, Attribute>();
+            final Map<String, IdPAttribute> attributes = new HashMap<String, IdPAttribute>();
 
-            Attribute attribute;
+            IdPAttribute attribute;
             for (int i = 1; i <= resultMetadata.getColumnCount(); i++) {
-                attribute = new Attribute(resultMetadata.getColumnName(i));
+                attribute = new IdPAttribute(resultMetadata.getColumnName(i));
                 attribute.getValues().add(new StringAttributeValue(results.getString(i)));
                 attributes.put(attribute.getId(), attribute);
             }

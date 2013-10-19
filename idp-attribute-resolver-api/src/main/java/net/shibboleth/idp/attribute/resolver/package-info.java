@@ -17,7 +17,7 @@
 
 /**
  * A system which is capable of retrieving a collection of 
- * {@link net.shibboleth.idp.attribute.Attribute}s from a variety of locations, transform them, 
+ * {@link net.shibboleth.idp.attribute.IdPAttribute}s from a variety of locations, transform them, 
  * and associate a set of protocol-specific encoders to them.
  */
 

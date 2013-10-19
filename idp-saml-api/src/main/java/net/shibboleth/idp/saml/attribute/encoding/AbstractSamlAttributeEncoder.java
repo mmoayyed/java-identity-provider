@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -116,8 +117,7 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
     }
 
     /** {@inheritDoc} */
-    @Nonnull public AttributeType encode(@Nonnull final net.shibboleth.idp.attribute.Attribute attribute)
-            throws AttributeEncodingException {
+    @Nonnull public AttributeType encode(@Nonnull final IdPAttribute attribute) throws AttributeEncodingException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         Constraint.isNotNull(attribute, "attribute passed in to encode must not be null");
         final String attributeId = attribute.getId();
@@ -197,8 +197,8 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
      * 
      * @return true if the encoder can encoder this value, false if not
      */
-    protected abstract boolean canEncodeValue(@Nonnull final net.shibboleth.idp.attribute.Attribute attribute,
-            @Nonnull final AttributeValue value);
+    protected abstract boolean
+            canEncodeValue(@Nonnull final IdPAttribute attribute, @Nonnull final AttributeValue value);
 
     /**
      * Encodes an attribute value in to a SAML attribute value element.
@@ -210,7 +210,7 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
      * 
      * @throws AttributeEncodingException thrown if there is a problem encoding the attribute value
      */
-    @Nullable protected abstract XMLObject encodeValue(@Nonnull final net.shibboleth.idp.attribute.Attribute attribute,
+    @Nullable protected abstract XMLObject encodeValue(@Nonnull final IdPAttribute attribute,
             @Nonnull final EncodedType value) throws AttributeEncodingException;
 
     /**
@@ -223,7 +223,6 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
      * 
      * @throws AttributeEncodingException thrown if there is a problem constructing the SAML attribute
      */
-    @Nonnull protected abstract AttributeType buildAttribute(
-            @Nonnull final net.shibboleth.idp.attribute.Attribute attribute,
+    @Nonnull protected abstract AttributeType buildAttribute(@Nonnull final IdPAttribute attribute,
             @Nonnull @NonnullElements final List<XMLObject> attributeValues) throws AttributeEncodingException;
 }

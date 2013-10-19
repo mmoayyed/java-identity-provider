@@ -21,7 +21,7 @@ import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
@@ -108,7 +108,7 @@ public class LdapDataConnectorParserTest {
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Map<String, Attribute> attrs = dataConnector.doResolve(context);
+        Map<String, IdPAttribute> attrs = dataConnector.doResolve(context);
         Assert.assertNotNull(attrs);
     }
 
@@ -122,7 +122,7 @@ public class LdapDataConnectorParserTest {
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Map<String, Attribute> attrs = dataConnector.doResolve(context);
+        Map<String, IdPAttribute> attrs = dataConnector.doResolve(context);
         Assert.assertNotNull(attrs);
     }
 
@@ -205,7 +205,7 @@ public class LdapDataConnectorParserTest {
         MappingStrategy mappingStrategy = dataConnector.getMappingStrategy();
         AssertJUnit.assertNotNull(mappingStrategy);
 
-        Cache<String, Map<String, Attribute>> resultCache = dataConnector.getResultsCache();
+        Cache<String, Map<String, IdPAttribute>> resultCache = dataConnector.getResultsCache();
         AssertJUnit.assertNotNull(resultCache);
     }
 }

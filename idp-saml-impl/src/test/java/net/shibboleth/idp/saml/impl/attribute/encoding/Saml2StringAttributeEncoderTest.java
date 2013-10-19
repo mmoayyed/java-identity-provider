@@ -23,6 +23,7 @@ import java.util.List;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -63,9 +64,7 @@ public class Saml2StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void empty() throws Exception {
-        final net.shibboleth.idp.attribute.Attribute inputAttribute;
-
-        inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
+        final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
 
         encoder.encode(inputAttribute);
     }
@@ -80,8 +79,7 @@ public class Saml2StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
                             }
                         });
 
-        final net.shibboleth.idp.attribute.Attribute inputAttribute;
-        inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
+        final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
         encoder.encode(inputAttribute);
@@ -92,8 +90,7 @@ public class Saml2StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
                 Lists.newArrayList(Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         new StringAttributeValue(STRING_1)));
 
-        final net.shibboleth.idp.attribute.Attribute inputAttribute;
-        inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
+        final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
         final Attribute outputAttribute = encoder.encode(inputAttribute);
@@ -121,8 +118,7 @@ public class Saml2StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
                 Lists.newArrayList(Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         new StringAttributeValue(STRING_1), new StringAttributeValue(STRING_2)));
 
-        final net.shibboleth.idp.attribute.Attribute inputAttribute;
-        inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
+        final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
         final Attribute outputAttribute = encoder.encode(inputAttribute);

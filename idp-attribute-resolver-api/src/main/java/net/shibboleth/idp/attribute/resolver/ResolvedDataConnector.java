@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -46,7 +46,7 @@ public final class ResolvedDataConnector extends BaseDataConnector {
     private final BaseDataConnector resolvedConnector;
 
     /** The attributes produced by the resolved data connector. */
-    private final Map<String, Attribute> resolvedAttributes;
+    private final Map<String, IdPAttribute> resolvedAttributes;
 
     /**
      * Constructor.
@@ -55,7 +55,7 @@ public final class ResolvedDataConnector extends BaseDataConnector {
      * @param attributes attributes produced by the resolved data connector
      */
     public ResolvedDataConnector(@Nonnull BaseDataConnector connector,
-            @Nullable Map<String, Attribute> attributes) {
+            @Nullable Map<String, IdPAttribute> attributes) {
         resolvedConnector = Constraint.isNotNull(connector, "Resolved data connector can not be null");
         resolvedAttributes = attributes;
         Constraint.isTrue(connector.isInitialized(), "Provided connector should be initialized");
@@ -63,7 +63,7 @@ public final class ResolvedDataConnector extends BaseDataConnector {
         }
 
     /** {@inheritDoc} */
-    @Nullable protected Map<String, Attribute> doDataConnectorResolve(
+    @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(
             AttributeResolutionContext resolutionContext) throws ResolutionException {
         return resolvedAttributes;
     }
@@ -123,7 +123,7 @@ public final class ResolvedDataConnector extends BaseDataConnector {
      * 
      * @return the resolved attributes
      */
-    @Nullable public Map<String, Attribute> getResolvedAttributes() {
+    @Nullable public Map<String, IdPAttribute> getResolvedAttributes() {
         return resolvedAttributes;
     }
 

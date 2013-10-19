@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
@@ -46,6 +46,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
@@ -56,8 +57,8 @@ import com.google.common.base.Function;
 
 /**
  * Builds an {@link AttributeStatement} and adds it to the {@link Response} set as the message of the
- * {@link ProfileRequestContext#getOutboundMessageContext()}. The {@link Attribute} set to be encoded is drawn from the
- * {@link AttributeContext} located on the {@link RelyingPartyContext} looked up via the
+ * {@link ProfileRequestContext#getOutboundMessageContext()}. The {@link IdPAttribute} set to be encoded is drawn from
+ * the {@link AttributeContext} located on the {@link RelyingPartyContext} looked up via the
  * {@link #relyingPartyContextLookupStrategy}.
  */
 @Events({
@@ -212,17 +213,16 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
      * 
      * @throws AttributeEncodingException thrown if there is a problem encoding an attribute
      */
-    private AttributeStatement buildAttributeStatement(Collection<Attribute> attributes)
+    private AttributeStatement buildAttributeStatement(Collection<IdPAttribute> attributes)
             throws AttributeEncodingException {
         if (attributes == null || attributes.isEmpty()) {
             log.debug("Action {}: No attributes available to be encoded, nothing left to do", getId());
             return null;
         }
 
-        ArrayList<org.opensaml.saml.saml2.core.Attribute> encodedAttributes =
-                new ArrayList<org.opensaml.saml.saml2.core.Attribute>(attributes.size());
-        org.opensaml.saml.saml2.core.Attribute encodedAttribute = null;
-        for (Attribute attribute : attributes) {
+        ArrayList<Attribute> encodedAttributes = new ArrayList<Attribute>(attributes.size());
+        Attribute encodedAttribute = null;
+        for (IdPAttribute attribute : attributes) {
             encodedAttribute = encodeAttribute(attribute);
             if (encodedAttribute != null) {
                 encodedAttributes.add(encodedAttribute);
@@ -244,8 +244,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
     }
 
     /**
-     * Encodes a {@link Attribute} into a {@link org.opensaml.saml.saml2.core.Attribute} if a proper encoder is
-     * available.
+     * Encodes a {@link IdPAttribute} into a {@link Attribute} if a proper encoder is available.
      * 
      * @param attribute the attribute to be encoded, may be null
      * 
@@ -253,8 +252,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
      * 
      * @throws AttributeEncodingException thrown if there is a problem encoding an attribute
      */
-    private org.opensaml.saml.saml2.core.Attribute encodeAttribute(Attribute attribute)
-            throws AttributeEncodingException {
+    private Attribute encodeAttribute(IdPAttribute attribute) throws AttributeEncodingException {
         if (attribute == null) {
             return null;
         }
@@ -272,7 +270,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
                     && encoder instanceof AbstractSaml2AttributeEncoder) {
                 log.debug("Action {}: Encoding attribute {} as a SAML 2 Attribute", getId(), attribute.getId());
                 try {
-                    return (org.opensaml.saml.saml2.core.Attribute) encoder.encode(attribute);
+                    return (Attribute) encoder.encode(attribute);
                 } catch (AttributeEncodingException e) {
                     if (ignoringUnencodableAttributes) {
                         log.debug("Action {}: Unable to encode attribute '{}' as SAML 2 attribute because: {}",

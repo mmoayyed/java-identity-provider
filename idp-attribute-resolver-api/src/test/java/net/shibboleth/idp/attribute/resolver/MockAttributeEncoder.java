@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.utilities.java.support.component.CountingDestructableInitializableValidatableComponent;
@@ -35,7 +35,7 @@ public class MockAttributeEncoder extends CountingDestructableInitializableValid
      * Constructor.
      * 
      * @param protocol protocol value returned by {@link #getProtocol()}
-     * @param value value returned by {@link #encode(Attribute)}
+     * @param value value returned by {@link #encode(IdPAttribute)}
      */
     public MockAttributeEncoder(String protocol, String value) {
         staticProtocol = protocol;
@@ -48,7 +48,7 @@ public class MockAttributeEncoder extends CountingDestructableInitializableValid
     }
 
     /** {@inheritDoc} */
-    public String encode(Attribute attribute) throws AttributeEncodingException {
+    public String encode(IdPAttribute attribute) throws AttributeEncodingException {
         return staticValue;
     }
 }

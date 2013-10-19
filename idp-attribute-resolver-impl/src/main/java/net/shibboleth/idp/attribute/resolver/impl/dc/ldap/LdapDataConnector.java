@@ -22,7 +22,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.impl.dc.AbstractSearchDataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.dc.ValidationException;
@@ -134,7 +134,7 @@ public class LdapDataConnector extends AbstractSearchDataConnector<ExecutableSea
      * 
      * @throws ResolutionException thrown if there is a problem retrieving data from the LDAP
      */
-    @Nullable protected Map<String, Attribute> retrieveAttributes(final ExecutableSearchFilter filter)
+    @Nullable protected Map<String, IdPAttribute> retrieveAttributes(final ExecutableSearchFilter filter)
             throws ResolutionException {
 
         if (filter == null) {

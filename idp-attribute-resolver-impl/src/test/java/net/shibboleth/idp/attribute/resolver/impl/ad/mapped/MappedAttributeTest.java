@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.resolver.impl.ad.mapped;
 import java.util.Collections;
 import java.util.Set;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -104,7 +104,7 @@ public class MappedAttributeTest {
         definition.setValueMaps(Collections.singleton(substringValueMapping("foo", false, "foo")));
         definition.initialize();
 
-        Attribute result = definition.resolve(resolutionContext);
+        IdPAttribute result = definition.resolve(resolutionContext);
         Assert.assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
         Assert.assertTrue(result.getValues().isEmpty());
     }
@@ -128,14 +128,14 @@ public class MappedAttributeTest {
         Assert.assertEquals(definition.getDefaultValue(), "default");
         definition.initialize();
 
-        Attribute result = definition.resolve(resolutionContext);
+        IdPAttribute result = definition.resolve(resolutionContext);
         Assert.assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
         Assert.assertFalse(result.getValues().isEmpty());
         Assert.assertTrue(result.getValues().contains(new StringAttributeValue("default")));
     }
 
     @Test public void invalidValueType() throws ComponentInitializationException {
-        Attribute attr = new Attribute(ResolverTestSupport.EPA_ATTRIB_ID);
+        IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
         attr.setValues(Collections.singleton((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3})));
 
         AttributeResolutionContext resolutionContext =
@@ -173,7 +173,7 @@ public class MappedAttributeTest {
         Assert.assertEquals(definition.getValueMaps().size(), 1);
         definition.initialize();
 
-        Attribute result = definition.resolve(resolutionContext);
+        IdPAttribute result = definition.resolve(resolutionContext);
         Assert.assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
         Assert.assertFalse(result.getValues().isEmpty());
         Assert.assertEquals(result.getValues().size(), 1);
@@ -198,7 +198,7 @@ public class MappedAttributeTest {
         Assert.assertFalse(definition.isPassThru());
         definition.initialize();
 
-        Attribute result = definition.resolve(resolutionContext);
+        IdPAttribute result = definition.resolve(resolutionContext);
         Assert.assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
         Assert.assertFalse(result.getValues().isEmpty());
         Assert.assertEquals(result.getValues().size(), 1);
@@ -223,7 +223,7 @@ public class MappedAttributeTest {
         definition.setPassThru(true);
         definition.initialize();
 
-        Attribute result = definition.resolve(resolutionContext);
+        IdPAttribute result = definition.resolve(resolutionContext);
         Assert.assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
         Assert.assertFalse(result.getValues().isEmpty());
         Assert.assertEquals(result.getValues().size(), ResolverTestSupport.EPA3_VALUES.length);

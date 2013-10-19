@@ -26,7 +26,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -52,15 +52,15 @@ public final class StaticResolver extends AbstractProfileAction {
 
         final AttributeContext attributeCtx = profileRequestContext.getSubcontext(AttributeContext.class, true);
 
-        Attribute attribute1 = new Attribute("attribute1");
+        IdPAttribute attribute1 = new IdPAttribute("attribute1");
         attribute1.setValues(ImmutableList.<AttributeValue> of(new StringAttributeValue("one"),
                 new StringAttributeValue("two")));
 
-        Attribute attribute2 = new Attribute("attribute2");
+        IdPAttribute attribute2 = new IdPAttribute("attribute2");
         attribute2.setValues(ImmutableList.<AttributeValue> of(new StringAttributeValue("a"),
                 new StringAttributeValue("b")));
         
-        attributeCtx.setAttributes(ImmutableList.<Attribute> of(attribute1, attribute2));
+        attributeCtx.setAttributes(ImmutableList.<IdPAttribute> of(attribute1, attribute2));
     }
 
 }

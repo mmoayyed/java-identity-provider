@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -166,7 +166,7 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
      * @param filterContext current filter context
      * 
      */
-    public void apply(@Nonnull final Attribute attribute, @Nonnull final AttributeFilterContext filterContext) {
+    public void apply(@Nonnull final IdPAttribute attribute, @Nonnull final AttributeFilterContext filterContext) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 

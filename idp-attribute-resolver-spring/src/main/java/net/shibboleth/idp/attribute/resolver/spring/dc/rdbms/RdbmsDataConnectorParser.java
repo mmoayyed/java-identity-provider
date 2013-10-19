@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.impl.dc.rdbms.RdbmsDataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.dc.rdbms.TemplatedExecutableStatementBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.BaseDataConnectorParser;
@@ -118,7 +118,7 @@ public class RdbmsDataConnectorParser extends BaseDataConnectorParser {
         final BeanDefinitionBuilder templateBuilder = v2Parser.createTemplateBuilder();
         builder.addPropertyValue("executableSearchBuilder", templateBuilder.getBeanDefinition());
 
-        final Cache<String, Map<String, Attribute>> cache = v2Parser.createCache();
+        final Cache<String, Map<String, IdPAttribute>> cache = v2Parser.createCache();
         if (cache != null) {
             builder.addPropertyValue("resultsCache", cache);
         }

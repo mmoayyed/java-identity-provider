@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.filter;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
@@ -59,15 +59,15 @@ public class AttributeFilterContextTest {
     @Test public void testPrefilteredAttributes() {
         AttributeFilterContext context = new AttributeFilterContext();
 
-        Attribute attribute1 = new Attribute("attribute1");
+        IdPAttribute attribute1 = new IdPAttribute("attribute1");
         context.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
         Assert.assertEquals(context.getPrefilteredAttributes().size(), 1);
         Assert.assertTrue(context.getPrefilteredAttributes().containsKey("attribute1"));
         Assert.assertEquals(context.getPrefilteredAttributes().get("attribute1"), attribute1);
 
-        Attribute attribute2 = new Attribute("attribute2");
-        Attribute attribute3 = new Attribute("attribute3");
-        List<Attribute> attributes = Lists.newArrayList(attribute2, attribute3);
+        IdPAttribute attribute2 = new IdPAttribute("attribute2");
+        IdPAttribute attribute3 = new IdPAttribute("attribute3");
+        List<IdPAttribute> attributes = Lists.newArrayList(attribute2, attribute3);
         context.setPrefilteredAttributes(attributes);
         Assert.assertEquals(context.getPrefilteredAttributes().size(), 2);
         Assert.assertFalse(context.getPrefilteredAttributes().containsKey("attribute1"));
@@ -94,7 +94,7 @@ public class AttributeFilterContextTest {
         Assert.assertEquals(context.getPrefilteredAttributes().get("attribute3"), attribute3);
 
         try {
-            context.getPrefilteredAttributes().put(null, new Attribute("foo"));
+            context.getPrefilteredAttributes().put(null, new IdPAttribute("foo"));
             Assert.fail("null attribute id not allowed");
         } catch (NullPointerException e) {
         }
@@ -121,15 +121,15 @@ public class AttributeFilterContextTest {
     @Test public void testFilteredAttributes() {
         AttributeFilterContext context = new AttributeFilterContext();
 
-        Attribute attribute1 = new Attribute("attribute1");
+        IdPAttribute attribute1 = new IdPAttribute("attribute1");
         context.getFilteredAttributes().put(attribute1.getId(), attribute1);
         Assert.assertEquals(context.getFilteredAttributes().size(), 1);
         Assert.assertTrue(context.getFilteredAttributes().containsKey("attribute1"));
         Assert.assertEquals(context.getFilteredAttributes().get("attribute1"), attribute1);
 
-        Attribute attribute2 = new Attribute("attribute2");
-        Attribute attribute3 = new Attribute("attribute3");
-        List<Attribute> attributes = Lists.newArrayList(attribute2, attribute3);
+        IdPAttribute attribute2 = new IdPAttribute("attribute2");
+        IdPAttribute attribute3 = new IdPAttribute("attribute3");
+        List<IdPAttribute> attributes = Lists.newArrayList(attribute2, attribute3);
         context.setFilteredAttributes(attributes);
         Assert.assertEquals(context.getFilteredAttributes().size(), 2);
         Assert.assertFalse(context.getFilteredAttributes().containsKey("attribute1"));
@@ -156,7 +156,7 @@ public class AttributeFilterContextTest {
         Assert.assertEquals(context.getFilteredAttributes().get("attribute3"), attribute3);
 
         try {
-            context.getFilteredAttributes().put(null, new Attribute("foo"));
+            context.getFilteredAttributes().put(null, new IdPAttribute("foo"));
             Assert.fail("null attribute id not allowed");
         } catch (NullPointerException e) {
         }
@@ -183,7 +183,7 @@ public class AttributeFilterContextTest {
     @Test public void testPermittedAttributeValues() {
         AttributeFilterContext context = new AttributeFilterContext();
 
-        Attribute attribute1 = new Attribute("one");
+        IdPAttribute attribute1 = new IdPAttribute("one");
         attribute1.getValues().add(aStringAttributeValue);
         attribute1.getValues().add(bStringAttributeValue);
         context.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
@@ -233,7 +233,7 @@ public class AttributeFilterContextTest {
     @Test public void testDeniedAttributeValues() {
         AttributeFilterContext context = new AttributeFilterContext();
 
-        Attribute attribute1 = new Attribute("one");
+        IdPAttribute attribute1 = new IdPAttribute("one");
         attribute1.getValues().add(aStringAttributeValue);
         attribute1.getValues().add(bStringAttributeValue);
         context.getPrefilteredAttributes().put(attribute1.getId(), attribute1);

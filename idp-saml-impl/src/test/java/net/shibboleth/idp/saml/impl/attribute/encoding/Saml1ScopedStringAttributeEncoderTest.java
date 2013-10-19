@@ -23,6 +23,7 @@ import java.util.List;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.saml.xmlobject.ScopedValue;
@@ -75,9 +76,9 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
     }
 
     @Test(expectedExceptions={AttributeEncodingException.class,})   public void empty() throws AttributeEncodingException, ComponentInitializationException {
-        final net.shibboleth.idp.attribute.Attribute inputAttribute;
+        final IdPAttribute inputAttribute;
 
-        inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
+        inputAttribute = new IdPAttribute(ATTR_NAME);
 
         Saml1ScopedStringAttributeEncoder encoder = makeEncoder();
         encoder.initialize();
@@ -96,8 +97,8 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
                             }
                         });
 
-        final net.shibboleth.idp.attribute.Attribute inputAttribute;
-        inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
+        final IdPAttribute inputAttribute;
+        inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
         try {
             encoder.encode(inputAttribute);
@@ -127,8 +128,8 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
                 Lists.newArrayList(Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         value1));
 
-        final net.shibboleth.idp.attribute.Attribute inputAttribute;
-        inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
+        final IdPAttribute inputAttribute;
+        inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
         encoder.initialize();
@@ -161,8 +162,8 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
                 Lists.newArrayList(Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         value1, value2));
 
-        final net.shibboleth.idp.attribute.Attribute inputAttribute;
-        inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
+        final IdPAttribute inputAttribute;
+        inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
         final Attribute outputAttribute = encoder.encode(inputAttribute);
@@ -225,8 +226,8 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
                 Lists.newArrayList(Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         value1));
 
-        final net.shibboleth.idp.attribute.Attribute inputAttribute;
-        inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
+        final IdPAttribute inputAttribute;
+        inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
         final Attribute outputAttribute = encoder.encode(inputAttribute);
@@ -259,8 +260,8 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
                 Lists.newArrayList(Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         value1, value2));
 
-        final net.shibboleth.idp.attribute.Attribute inputAttribute;
-        inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
+        final IdPAttribute inputAttribute;
+        inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
         final Attribute outputAttribute = encoder.encode(inputAttribute);

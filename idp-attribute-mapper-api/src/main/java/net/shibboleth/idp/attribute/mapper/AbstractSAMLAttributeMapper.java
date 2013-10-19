@@ -25,8 +25,8 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -38,6 +38,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.core.xml.XMLObject;
+import org.opensaml.saml.saml2.core.Attribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,13 +48,12 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 
 /**
- * Basis of all classes which map SAML2 {@link org.opensaml.saml.saml2.core.Attribute} into an IdP {@link Attribute}.
+ * Basis of all classes which map SAML2 {@link Attribute} into an IdP {@link IdPAttribute}.
  * 
  * @param <InType> the input (SAML2 attribute) type
  * @param <OutType> the output (IdP Attribute) type
  */
-public abstract class AbstractSAMLAttributeMapper<InType extends org.opensaml.saml.saml2.core.Attribute, 
-                                                  OutType extends Attribute>
+public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutType extends IdPAttribute>
         extends AbstractIdentifiableInitializableComponent implements AttributeMapper<InType, OutType> {
 
     /** log. */
@@ -177,7 +177,7 @@ public abstract class AbstractSAMLAttributeMapper<InType extends org.opensaml.sa
     /**
      * Compare whether the name and format given "match" ours. Used in checking both against input attributes and as
      * part of equality checking. For the sake of comparison null is considered to be the same as
-     * {@link org.opensaml.saml.saml2.core.Attribute.UNSPECIFIED}
+     * {@link IdPAttribute.UNSPECIFIED}
      * 
      * @param otherSAMLName the name to compare against
      * @param otherSAMLFormat the format to compare against
@@ -190,12 +190,12 @@ public abstract class AbstractSAMLAttributeMapper<InType extends org.opensaml.sa
         }
 
         String format = otherSAMLFormat;
-        if (org.opensaml.saml.saml2.core.Attribute.UNSPECIFIED.equals(format)) {
+        if (Attribute.UNSPECIFIED.equals(format)) {
             format = null;
         }
 
         if (getAttributeFormat() != null && format != null && !getAttributeFormat().equals(format)
-                && !org.opensaml.saml.saml2.core.Attribute.UNSPECIFIED.equals(getAttributeFormat())) {
+                && !Attribute.UNSPECIFIED.equals(getAttributeFormat())) {
             log.debug("{} SAML name format {} does not match {}", getLogPrefix(), format, getAttributeFormat());
             return false;
         }
@@ -309,7 +309,7 @@ public abstract class AbstractSAMLAttributeMapper<InType extends org.opensaml.sa
     public int hashCode() {
         String myFormat = getAttributeFormat();
         if (null == myFormat) {
-            myFormat = org.opensaml.saml.saml2.core.Attribute.UNSPECIFIED;
+            myFormat = Attribute.UNSPECIFIED;
         }
         return Objects.hashCode(myFormat, theSAMLName, attributeIds);
     }

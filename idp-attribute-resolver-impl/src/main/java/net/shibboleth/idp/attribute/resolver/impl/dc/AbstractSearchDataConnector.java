@@ -22,7 +22,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -53,14 +53,14 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
     /** Validator for validating this data connector. */
     private Validator connectorValidator;
 
-    /** Strategy for mapping search results to a collection of {@link Attribute}s. */
+    /** Strategy for mapping search results to a collection of {@link IdPAttribute}s. */
     private MappingStrategy mappingStrategy;
 
     /** Whether an empty result set is an error. */
     private boolean noResultAnError;
 
     /** Query result cache. */
-    private Cache<String, Map<String, Attribute>> resultsCache;
+    private Cache<String, Map<String, IdPAttribute>> resultsCache;
 
     /**
      * Gets the builder used to create executable searches.
@@ -105,18 +105,18 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
     }
 
     /**
-     * Gets the strategy for mapping from search results to a collection of {@link Attribute}s.
+     * Gets the strategy for mapping from search results to a collection of {@link IdPAttribute}s.
      * 
-     * @return strategy for mapping from search results to a collection of {@link Attribute}s
+     * @return strategy for mapping from search results to a collection of {@link IdPAttribute}s
      */
     public MappingStrategy getMappingStrategy() {
         return mappingStrategy;
     }
 
     /**
-     * Sets the strategy for mapping from search results to a collection of {@link Attribute}s.
+     * Sets the strategy for mapping from search results to a collection of {@link IdPAttribute}s.
      * 
-     * @param strategy strategy for mapping from search results to a collection of {@link Attribute}s
+     * @param strategy strategy for mapping from search results to a collection of {@link IdPAttribute}s
      */
     public void setMappingStrategy(@Nonnull final MappingStrategy strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -151,7 +151,7 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
      * 
      * @return cache used to cache search results
      */
-    @Nonnull public Cache<String, Map<String, Attribute>> getResultsCache() {
+    @Nonnull public Cache<String, Map<String, IdPAttribute>> getResultsCache() {
         return resultsCache;
     }
 
@@ -160,7 +160,7 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
      * 
      * @param cache cache used to cache search results
      */
-    public void setResultsCache(@Nonnull final Cache<String, Map<String, Attribute>> cache) {
+    public void setResultsCache(@Nonnull final Cache<String, Map<String, IdPAttribute>> cache) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -177,15 +177,15 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
      * 
      * @throws ResolutionException thrown if there is a problem retrieving data from the data source
      */
-    protected abstract Map<String, Attribute> retrieveAttributes(final T executable)
+    protected abstract Map<String, IdPAttribute> retrieveAttributes(final T executable)
             throws ResolutionException;
 
     /** {@inheritDoc} */
-    @Nullable protected Map<String, Attribute> doDataConnectorResolve(
+    @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         final T executable = searchBuilder.build(resolutionContext);
-        Map<String, Attribute> resolvedAttributes = null;
+        Map<String, IdPAttribute> resolvedAttributes = null;
         if (resultsCache != null) {
             final String cacheKey = executable.getResultCacheKey();
             resolvedAttributes = resultsCache.getIfPresent(cacheKey);

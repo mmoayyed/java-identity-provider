@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.mapper.RequestedAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -52,7 +52,7 @@ import com.google.common.collect.Multimap;
 public final class AttributeFilterContext extends BaseContext {
 
     /** Attributes which are to be filtered. */
-    private Map<String, Attribute> prefilteredAttributes;
+    private Map<String, IdPAttribute> prefilteredAttributes;
 
     /** Values, for a given attribute, that are permitted to be released. */
     private Map<String, Set<AttributeValue>> permittedValues;
@@ -64,17 +64,18 @@ public final class AttributeFilterContext extends BaseContext {
     private Multimap<String, RequestedAttribute> requestedAttributes;
 
     /** Attributes which have been filtered. */
-    private Map<String, Attribute> filteredAttributes;
+    private Map<String, IdPAttribute> filteredAttributes;
 
     /** Constructor. */
     public AttributeFilterContext() {
         prefilteredAttributes =
-                MapConstraints.constrainedMap(new HashMap<String, Attribute>(), MapConstraints.notNull());
+                MapConstraints.constrainedMap(new HashMap<String, IdPAttribute>(), MapConstraints.notNull());
         permittedValues =
                 MapConstraints.constrainedMap(new HashMap<String, Set<AttributeValue>>(), MapConstraints.notNull());
         deniedValues =
                 MapConstraints.constrainedMap(new HashMap<String, Set<AttributeValue>>(), MapConstraints.notNull());
-        filteredAttributes = MapConstraints.constrainedMap(new HashMap<String, Attribute>(), MapConstraints.notNull());
+        filteredAttributes =
+                MapConstraints.constrainedMap(new HashMap<String, IdPAttribute>(), MapConstraints.notNull());
     }
 
     /**
@@ -82,7 +83,7 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @return attributes to be filtered
      */
-    @Nonnull @NonnullElements public Map<String, Attribute> getPrefilteredAttributes() {
+    @Nonnull @NonnullElements public Map<String, IdPAttribute> getPrefilteredAttributes() {
         return prefilteredAttributes;
     }
 
@@ -91,15 +92,15 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @param attributes attributes which are to be filtered
      */
-    public void setPrefilteredAttributes(@Nullable @NullableElements final Collection<Attribute> attributes) {
-        Collection<Attribute> checkedAttributes = new ArrayList<Attribute>();
+    public void setPrefilteredAttributes(@Nullable @NullableElements final Collection<IdPAttribute> attributes) {
+        Collection<IdPAttribute> checkedAttributes = new ArrayList<IdPAttribute>();
         CollectionSupport.addIf(checkedAttributes, attributes, Predicates.notNull());
 
         prefilteredAttributes =
-                MapConstraints.constrainedMap(new HashMap<String, Attribute>(checkedAttributes.size()),
+                MapConstraints.constrainedMap(new HashMap<String, IdPAttribute>(checkedAttributes.size()),
                         MapConstraints.notNull());
 
-        for (Attribute attribute : checkedAttributes) {
+        for (IdPAttribute attribute : checkedAttributes) {
             prefilteredAttributes.put(attribute.getId(), attribute);
         }
     }
@@ -117,7 +118,7 @@ public final class AttributeFilterContext extends BaseContext {
      * Adds a collection of attribute values that are permitted to be released. Attempting to add values for an
      * attribute that is not a member of {@link #getPrefilteredAttributes()} will result in an
      * {@link IllegalArgumentException}. Attempting to add an attribute value that is not a member of
-     * {@link Attribute#getValues()} will result in an {@link IllegalArgumentException}.
+     * {@link IdPAttribute#getValues()} will result in an {@link IllegalArgumentException}.
      * 
      * @param attributeId ID of the attribute whose values are permitted to be released
      * @param attributeValues values for the attribute that are permitted to be released
@@ -166,7 +167,7 @@ public final class AttributeFilterContext extends BaseContext {
      * Adds a collection of attribute values that are not permitted to be released. Attempting to add values for an
      * attribute that is not a member of {@link #getPrefilteredAttributes()} will result in an
      * {@link IllegalArgumentException}. Attempting to add an attribute value that is not a member of
-     * {@link Attribute#getValues()} will result in an {@link IllegalArgumentException}.
+     * {@link IdPAttribute#getValues()} will result in an {@link IllegalArgumentException}.
      * 
      * @param attributeId ID of the attribute whose values are not permitted to be released
      * @param attributeValues values for the attribute that are not permitted to be released
@@ -207,7 +208,7 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @return attributes left after the filtering process has run
      */
-    @Nonnull @NonnullElements public Map<String, Attribute> getFilteredAttributes() {
+    @Nonnull @NonnullElements public Map<String, IdPAttribute> getFilteredAttributes() {
         return filteredAttributes;
     }
 
@@ -216,15 +217,15 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @param attributes attributes that have been filtered
      */
-    public void setFilteredAttributes(@Nullable @NullableElements final Collection<Attribute> attributes) {
-        Collection<Attribute> checkedAttributes = new ArrayList<Attribute>();
+    public void setFilteredAttributes(@Nullable @NullableElements final Collection<IdPAttribute> attributes) {
+        Collection<IdPAttribute> checkedAttributes = new ArrayList<IdPAttribute>();
         CollectionSupport.addIf(checkedAttributes, attributes, Predicates.notNull());
 
         filteredAttributes =
-                MapConstraints.constrainedMap(new HashMap<String, Attribute>(checkedAttributes.size()),
+                MapConstraints.constrainedMap(new HashMap<String, IdPAttribute>(checkedAttributes.size()),
                         MapConstraints.notNull());
 
-        for (Attribute attribute : checkedAttributes) {
+        for (IdPAttribute attribute : checkedAttributes) {
             filteredAttributes.put(attribute.getId(), attribute);
         }
     }
@@ -233,7 +234,7 @@ public final class AttributeFilterContext extends BaseContext {
      * Get the attributes requested in the ACS.<br/>
      * Note that a null requested attribute means that the attribute existed, but that no values could be converted.
      * This is distinct from the attribute existing and having no values (an non null requested attribute, but an empty
-     * {@link Attribute#getValues()})
+     * {@link IdPAttribute#getValues()})
      * 
      * @return Returns the requestedAttributes.
      */

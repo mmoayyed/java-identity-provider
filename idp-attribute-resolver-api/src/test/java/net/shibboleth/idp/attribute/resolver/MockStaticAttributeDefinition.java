@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
@@ -40,14 +40,14 @@ public class MockStaticAttributeDefinition extends BaseAttributeDefinition {
     private final Logger log = LoggerFactory.getLogger(MockStaticAttributeDefinition.class);
 
     /** Static value returned by this definition. */
-    private Attribute value;
+    private IdPAttribute value;
 
     /**
      * Set the attribute value we are returning.
      * 
      * @param newAttribute what to set.
      */
-    public synchronized void setValue(@Nullable Attribute newAttribute) {
+    public synchronized void setValue(@Nullable IdPAttribute newAttribute) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         
@@ -61,12 +61,12 @@ public class MockStaticAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return the attribute.
      */
-    @Nonnull public Attribute getValue() {
+    @Nonnull public IdPAttribute getValue() {
         return value;
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Attribute doAttributeDefinitionResolve(
+    @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
             final AttributeResolutionContext resolutionContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);

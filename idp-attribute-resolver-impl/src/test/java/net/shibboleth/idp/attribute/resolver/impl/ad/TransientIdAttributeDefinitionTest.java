@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.Set;
 
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -68,7 +68,7 @@ public class TransientIdAttributeDefinitionTest {
 
         defn.initialize();
 
-        final Attribute result =
+        final IdPAttribute result =
                 defn.doAttributeDefinitionResolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
                         TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
 
@@ -153,7 +153,7 @@ public class TransientIdAttributeDefinitionTest {
         defn.setIdStore(store);
         defn.initialize();
 
-        Attribute result =
+        IdPAttribute result =
                 defn.doAttributeDefinitionResolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
                         TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
 

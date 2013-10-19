@@ -23,7 +23,7 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -33,6 +33,7 @@ import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.impl.XSStringBuilder;
+import org.opensaml.saml.saml1.core.Attribute;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -71,15 +72,15 @@ public class AbstractSaml1AttributeEncoderTest extends OpenSAMLInitBaseTestCase 
         Assert.assertEquals(encoder.getProtocol(), "urn:oasis:names:tc:SAML:1.1:protocol");
 
                 
-        Attribute attr = new Attribute(ATTRIBUTE_ID);
+        IdPAttribute attr = new IdPAttribute(ATTRIBUTE_ID);
         attr.setValues(Lists.newArrayList((AttributeValue) new StringAttributeValue(ATTRIBUTE_VALUE_1),
                 new StringAttributeValue(ATTRIBUTE_VALUE_2)));
         
         XMLObject obj = encoder.encode(attr);
         
-        Assert.assertTrue(obj instanceof org.opensaml.saml.saml1.core.Attribute);
+        Assert.assertTrue(obj instanceof Attribute);
         
-        List<XMLObject> result = ((org.opensaml.saml.saml1.core.Attribute) obj).getAttributeValues();
+        List<XMLObject> result = ((Attribute) obj).getAttributeValues();
         
         Assert.assertEquals(result.size(), 2);
         Set<String> resultSet = new HashSet<String>(2); 

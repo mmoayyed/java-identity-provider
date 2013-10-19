@@ -19,7 +19,7 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Arrays;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -71,8 +71,8 @@ public class ResolverTestSupport {
         return resolutionContext;
     }
 
-    public static Attribute buildAttribute(String attributeId, String... values) {
-        Attribute attribute = new Attribute(attributeId);
+    public static IdPAttribute buildAttribute(String attributeId, String... values) {
+        IdPAttribute attribute = new IdPAttribute(attributeId);
         for (String value : values) {
             attribute.getValues().add(new StringAttributeValue(value));
         }
@@ -81,7 +81,7 @@ public class ResolverTestSupport {
     }
 
     public static MockStaticAttributeDefinition buildAttributeDefinition(String attributeId, String... values) {
-        Attribute attribute = buildAttribute(attributeId, values);
+        IdPAttribute attribute = buildAttribute(attributeId, values);
 
         try {
             MockStaticAttributeDefinition definition = new MockStaticAttributeDefinition();
@@ -96,7 +96,7 @@ public class ResolverTestSupport {
         }
     }
 
-    public static MockStaticDataConnector buildDataConnector(String connectorId, Attribute... attributes) {
+    public static MockStaticDataConnector buildDataConnector(String connectorId, IdPAttribute... attributes) {
 
         try {
             MockStaticDataConnector connector = new MockStaticDataConnector();

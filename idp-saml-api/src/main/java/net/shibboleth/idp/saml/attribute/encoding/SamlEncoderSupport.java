@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.saml.xmlobject.ScopedValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -58,7 +58,7 @@ public final class SamlEncoderSupport {
      * 
      * @return the attribute value element or null if the given value was null or empty
      */
-    @Nullable public static XMLObject encodeStringValue(@Nonnull final Attribute attribute,
+    @Nullable public static XMLObject encodeStringValue(@Nonnull final IdPAttribute attribute,
             @Nonnull final QName attributeValueElementName, @Nullable final String value) {
 
         Constraint.isNotNull(attribute, "Attribute can not be null");
@@ -87,7 +87,7 @@ public final class SamlEncoderSupport {
      * 
      * @return the attribute value element or null if the given value was null or empty
      */
-    @Nullable public static XMLObject encodeByteArrayValue(@Nonnull final Attribute attribute,
+    @Nullable public static XMLObject encodeByteArrayValue(@Nonnull final IdPAttribute attribute,
             @Nonnull final QName attributeValueElementName, @Nullable final byte[] value) {
         if (value == null || value.length == 0) {
             LOG.debug("Skipping empty value for attribute {}", attribute.getId());
@@ -114,7 +114,7 @@ public final class SamlEncoderSupport {
      * 
      * @return the attribute value element or null if the given value was null or empty
      */
-    @Nullable public static XMLObject encodeXmlObjectValue(@Nonnull final Attribute attribute,
+    @Nullable public static XMLObject encodeXmlObjectValue(@Nonnull final IdPAttribute attribute,
             @Nonnull final QName attributeValueElementName, @Nullable final XMLObject value) {
         if (value == null) {
             LOG.debug("Skipping empty value for attribute {}", attribute.getId());
@@ -141,7 +141,7 @@ public final class SamlEncoderSupport {
      * @param scopeAttributeName the name that the attribute will be given
      * @return a {@link ShibbolethScopedValue}
      */
-    public static XMLObject encodeScopedStringValueAttribute(@Nonnull final Attribute attribute,
+    public static XMLObject encodeScopedStringValueAttribute(@Nonnull final IdPAttribute attribute,
             @Nonnull final QName attributeValueElementName, @Nullable final ScopedStringAttributeValue value,
             @Nonnull @NotEmpty final String scopeAttributeName) {
 
@@ -176,7 +176,7 @@ public final class SamlEncoderSupport {
      * @param scopeDelimiter the delimiter to put between the value and the scope
      * @return a {@link ShibbolethScopedValue}
      */
-    public static XMLObject encodeScopedStringValueInline(@Nonnull final Attribute attribute,
+    public static XMLObject encodeScopedStringValueInline(@Nonnull final IdPAttribute attribute,
             @Nonnull final QName attributeValueElementName, @Nullable final ScopedStringAttributeValue value,
             @Nonnull String scopeDelimiter) {
 

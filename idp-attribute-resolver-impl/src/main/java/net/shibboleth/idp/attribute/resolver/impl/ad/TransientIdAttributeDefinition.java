@@ -24,7 +24,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
@@ -191,7 +191,7 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Attribute doAttributeDefinitionResolve(@Nonnull AttributeResolutionContext resolutionContext)
+    @Nonnull protected IdPAttribute doAttributeDefinitionResolve(@Nonnull AttributeResolutionContext resolutionContext)
             throws ResolutionException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -208,7 +208,7 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
 
         final String principalName = getPrincipal(attributeRecipientContext);
 
-        final Attribute result = new Attribute(getId());
+        final IdPAttribute result = new IdPAttribute(getId());
 
         StringBuilder principalTokenIdBuilder = new StringBuilder();
         principalTokenIdBuilder.append(attributeRecipientID).append("!").append(principalName);

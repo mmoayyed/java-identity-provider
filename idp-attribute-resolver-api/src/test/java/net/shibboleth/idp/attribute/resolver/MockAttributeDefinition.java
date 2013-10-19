@@ -19,7 +19,7 @@ package net.shibboleth.idp.attribute.resolver;
 
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
@@ -41,7 +41,7 @@ public class MockAttributeDefinition extends BaseAttributeDefinition implements 
     private int validateCount;
 
     /** Static value returned by this definition. */
-    private Attribute staticValue;
+    private IdPAttribute staticValue;
 
     /** Exception thrown by {@link #doAttributeResolution(AttributeResolutionContext))}. */
     private ResolutionException resolutionException;
@@ -52,7 +52,7 @@ public class MockAttributeDefinition extends BaseAttributeDefinition implements 
      * @param id unique ID of this attribute definition
      * @param value static value returned by this definition
      */
-    public MockAttributeDefinition(final String id, final Attribute value) {
+    public MockAttributeDefinition(final String id, final IdPAttribute value) {
         setId(id);
         invalid = false;
         staticValue = value;
@@ -80,7 +80,7 @@ public class MockAttributeDefinition extends BaseAttributeDefinition implements 
     }
 
     /** {@inheritDoc} */
-    protected Attribute doAttributeDefinitionResolve(final AttributeResolutionContext resolutionContext)
+    protected IdPAttribute doAttributeDefinitionResolve(final AttributeResolutionContext resolutionContext)
             throws ResolutionException {
         if (resolutionException != null) {
             throw resolutionException;

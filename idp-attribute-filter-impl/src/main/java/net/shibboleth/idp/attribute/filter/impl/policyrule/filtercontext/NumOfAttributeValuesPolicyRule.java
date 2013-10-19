@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.impl.policyrule.AbstractPolicyRule;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -68,7 +68,7 @@ public class NumOfAttributeValuesPolicyRule extends AbstractPolicyRule {
     @Nonnull public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
-        final Attribute attribute = filterContext.getPrefilteredAttributes().get(attributeId);
+        final IdPAttribute attribute = filterContext.getPrefilteredAttributes().get(attributeId);
         
         if (null == attribute) {
             log.warn("{} Attribute {} not found", getLogPrefix(), attributeId);

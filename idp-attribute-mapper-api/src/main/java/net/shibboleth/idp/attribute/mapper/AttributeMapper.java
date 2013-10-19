@@ -21,18 +21,18 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 
 /**
- * This attribute defines the mechanism to go from something into an (IdP) {@link Attribute}. <br/>
+ * This attribute defines the mechanism to go from something into an (IdP) {@link IdPAttribute}. <br/>
  * Implementations of this interface will be paired with implementations of {@link AttributesMapper}.
  * 
  * @param <InType> the type which is to be inspected and mapped
  * @param <OutType> some sort of representation of an IdP attribute
  */
-public interface AttributeMapper<InType, OutType extends Attribute> extends IdentifiableComponent{
+public interface AttributeMapper<InType, OutType extends IdPAttribute> extends IdentifiableComponent{
 
     /**
      * Map the input attribute to the required output type. Be careful about handling attributes types, if the input 

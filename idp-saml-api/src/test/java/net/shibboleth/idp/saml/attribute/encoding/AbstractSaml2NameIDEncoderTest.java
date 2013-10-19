@@ -19,7 +19,7 @@ package net.shibboleth.idp.saml.attribute.encoding;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.mapper.AttributeMapper;
 
@@ -36,7 +36,7 @@ public class AbstractSaml2NameIDEncoderTest {
     @Test public void protocol() {
         
         AbstractSaml2NameIDEncoder encoder = new AbstractSaml2NameIDEncoder() {
-            public NameID encode(Attribute attribute) throws AttributeEncodingException {
+            public NameID encode(IdPAttribute attribute) throws AttributeEncodingException {
                 return null;
             }
 

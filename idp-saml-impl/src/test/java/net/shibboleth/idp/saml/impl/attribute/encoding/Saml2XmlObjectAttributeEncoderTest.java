@@ -23,6 +23,7 @@ import java.util.List;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
@@ -79,9 +80,9 @@ public class Saml2XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
      * @return an XML object
      */
     private XMLObjectAttributeValue ObjectFor(final String value) {
-        final net.shibboleth.idp.attribute.Attribute inputAttribute;
+        final IdPAttribute inputAttribute;
 
-        inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
+        inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.getValues().add(new StringAttributeValue(value));
         try {
             return new XMLObjectAttributeValue(strEncoder.encode(inputAttribute));
@@ -115,8 +116,7 @@ public class Saml2XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
     }
 
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void empty() throws Exception {
-        final net.shibboleth.idp.attribute.Attribute inputAttribute;
-        inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
+        final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
 
         encoder.encode(inputAttribute);
     }
@@ -131,8 +131,7 @@ public class Saml2XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
                             }
                         });
 
-        final net.shibboleth.idp.attribute.Attribute inputAttribute;
-        inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
+        final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
         encoder.encode(inputAttribute);
@@ -142,8 +141,7 @@ public class Saml2XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
         final Collection<AttributeValue> values =
                 Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}), ObjectFor(STRING_1));
 
-        final net.shibboleth.idp.attribute.Attribute inputAttribute;
-        inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
+        final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
         final Attribute outputAttribute = encoder.encode(inputAttribute);
@@ -164,8 +162,7 @@ public class Saml2XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
         final Collection<AttributeValue> values =
                 Lists.newArrayList((AttributeValue) ObjectFor(STRING_1), ObjectFor(STRING_2));
 
-        final net.shibboleth.idp.attribute.Attribute inputAttribute;
-        inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
+        final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
         final Attribute outputAttribute = encoder.encode(inputAttribute);

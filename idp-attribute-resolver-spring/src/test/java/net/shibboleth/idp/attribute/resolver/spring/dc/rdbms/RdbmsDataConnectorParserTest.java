@@ -22,7 +22,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.impl.DatabaseTestingSupport;
 import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder;
@@ -125,7 +125,7 @@ public class RdbmsDataConnectorParserTest {
         MappingStrategy mappingStrategy = dataConnector.getMappingStrategy();
         AssertJUnit.assertNotNull(mappingStrategy);
 
-        Cache<String, Map<String, Attribute>> resultCache = dataConnector.getResultsCache();
+        Cache<String, Map<String, IdPAttribute>> resultCache = dataConnector.getResultsCache();
         AssertJUnit.assertNotNull(resultCache);
     }
 }

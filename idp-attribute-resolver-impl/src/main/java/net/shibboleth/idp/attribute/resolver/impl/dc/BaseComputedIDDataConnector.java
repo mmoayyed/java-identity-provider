@@ -26,7 +26,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
@@ -223,13 +223,13 @@ public abstract class BaseComputedIDDataConnector extends BaseDataConnector {
      * @param value the value to encode or null if that failed
      * @return null or the attribute.
      */
-    @Nullable protected Map<String, Attribute> encodeAsAttribute(@Nullable String value) {
+    @Nullable protected Map<String, IdPAttribute> encodeAsAttribute(@Nullable String value) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         if (null == value) {
             // The message will have been logged above
             return null;
         }
-        Attribute attribute = new Attribute(getGeneratedAttributeId());
+        IdPAttribute attribute = new IdPAttribute(getGeneratedAttributeId());
         attribute.setValues(Collections.singleton((AttributeValue) new StringAttributeValue(value)));
         return Collections.singletonMap(getGeneratedAttributeId(), attribute);
     }

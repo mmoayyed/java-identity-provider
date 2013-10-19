@@ -22,7 +22,7 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
@@ -119,13 +119,13 @@ public class AttributeResolverServiceTest extends OpenSAMLInitBaseTestCase {
         // try to resolve some attributes
         final AttributeResolutionContext resolutionContext = TestSources.createResolutionContext("PETER_THE_PRINCIPAL", "issuer", "recipient");
         attributeResolverService.resolveAttributes(resolutionContext);
-        Map<String, Attribute> resolvedAttributes = resolutionContext.getResolvedAttributes();
+        Map<String, IdPAttribute> resolvedAttributes = resolutionContext.getResolvedAttributes();
         log.debug("resolved attributes '{}'", resolvedAttributes);
 
         Assert.assertEquals(resolvedAttributes.size(), 12);
 
         // Static
-        Attribute attribute = resolvedAttributes.get("eduPersonAffiliation");
+        IdPAttribute attribute = resolvedAttributes.get("eduPersonAffiliation");
         Assert.assertNotNull(attribute);
         Set<AttributeValue> values = attribute.getValues();
         Assert.assertEquals(values.size(), 1);

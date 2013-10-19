@@ -26,7 +26,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 import com.google.common.base.Objects;
 
-/** An optionally localized String value of an {@link Attribute}. */
+/** An optionally localized String value of an {@link IdPAttribute}. */
 public class LocalizedStringAttributeValue extends StringAttributeValue {
 
     /** The locale of the attribute value. */

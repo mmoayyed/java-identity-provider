@@ -24,7 +24,7 @@ import java.util.Set;
 
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -139,7 +139,7 @@ public class TemplateAttributeTest {
         
         attr.initialize();
         Assert.assertNotNull(attr.getTemplate());
-        final Attribute val = attr.resolve(new AttributeResolutionContext());
+        final IdPAttribute val = attr.resolve(new AttributeResolutionContext());
         final Collection<?> results = val.getValues();
 
         Assert.assertEquals(results.size(), 0, "Templated value count");
@@ -212,7 +212,7 @@ public class TemplateAttributeTest {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Attribute a = context.getResolvedAttributes().get(name);
+        IdPAttribute a = context.getResolvedAttributes().get(name);
         final Collection results = a.getValues();
         Assert.assertEquals(results.size(), 1, "Templated value count");
         Assert.assertTrue(results.contains(SIMPLE_VALUE_RESULT), "Single value context is correct");
@@ -256,7 +256,7 @@ public class TemplateAttributeTest {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        final Attribute a = context.getResolvedAttributes().get(name);
+        final IdPAttribute a = context.getResolvedAttributes().get(name);
         final Collection results = a.getValues();
         Assert.assertEquals(results.size(), 2, "Templated value count");
         String s =
@@ -318,7 +318,7 @@ public class TemplateAttributeTest {
         
         templateDef.initialize();
 
-        Attribute attr = new Attribute(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
+        IdPAttribute attr = new IdPAttribute(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
         attr.setValues(Collections.singleton((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3})));
         StaticAttributeDefinition simple = new StaticAttributeDefinition();
         simple.setId(TestSources.STATIC_ATTRIBUTE_NAME);

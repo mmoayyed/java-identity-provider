@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
@@ -40,8 +40,8 @@ import com.google.common.collect.Multimap;
  */
 public class AttributeInMetadataPolicyRuleTest {
 
-    private Attribute makeAttribute(String id, List<AttributeValue> values) {
-        Attribute attr = new Attribute(id);
+    private IdPAttribute makeAttribute(String id, List<AttributeValue> values) {
+        IdPAttribute attr = new IdPAttribute(id);
         attr.setValues(values);
         return attr;
     }
@@ -91,7 +91,7 @@ public class AttributeInMetadataPolicyRuleTest {
     
     @Test public void noRequested() throws ComponentInitializationException {
 
-        final Attribute attr =
+        final IdPAttribute attr =
                 makeAttribute("attr", Lists.newArrayList((AttributeValue) DataSources.STRING_VALUE,
                         DataSources.NON_MATCH_STRING_VALUE));
 
@@ -108,7 +108,7 @@ public class AttributeInMetadataPolicyRuleTest {
     
     @Test public void wrongRequested() throws ComponentInitializationException {
 
-        final Attribute attr =
+        final IdPAttribute attr =
                 makeAttribute("attr", Lists.newArrayList((AttributeValue) DataSources.STRING_VALUE,
                         DataSources.NON_MATCH_STRING_VALUE));
         
@@ -125,7 +125,7 @@ public class AttributeInMetadataPolicyRuleTest {
     
     @Test public void isRequiredOnly() throws ComponentInitializationException {
 
-        final Attribute attr =
+        final IdPAttribute attr =
                 makeAttribute("attr", Lists.newArrayList((AttributeValue) DataSources.STRING_VALUE,
                         DataSources.NON_MATCH_STRING_VALUE));
         
@@ -146,7 +146,7 @@ public class AttributeInMetadataPolicyRuleTest {
     
     @Test public void values() throws ComponentInitializationException {
     
-        final Attribute attr =
+        final IdPAttribute attr =
                 makeAttribute("attr", Lists.newArrayList((AttributeValue) DataSources.STRING_VALUE,
                         DataSources.NON_MATCH_STRING_VALUE));
         
@@ -163,7 +163,7 @@ public class AttributeInMetadataPolicyRuleTest {
     
     @Test public void valuesButNoConvert() throws ComponentInitializationException {
         
-        final Attribute attr =
+        final IdPAttribute attr =
                 makeAttribute("attr", Lists.newArrayList((AttributeValue) DataSources.STRING_VALUE,
                         DataSources.NON_MATCH_STRING_VALUE));
         
@@ -175,7 +175,7 @@ public class AttributeInMetadataPolicyRuleTest {
 
     @Test public void multiValues() throws ComponentInitializationException {
         
-        final Attribute attr =
+        final IdPAttribute attr =
                 makeAttribute("attr", Lists.newArrayList((AttributeValue) DataSources.STRING_VALUE,
                         DataSources.NON_MATCH_STRING_VALUE));
         

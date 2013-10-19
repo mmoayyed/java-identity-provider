@@ -24,7 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
@@ -173,11 +173,11 @@ public class BaseAttributeDefinitionTest {
     public void resolve() throws Exception {
         AttributeResolutionContext context = new AttributeResolutionContext();
 
-        MockAttributeDefinition definition = new MockAttributeDefinition("foo", (Attribute) null);
+        MockAttributeDefinition definition = new MockAttributeDefinition("foo", (IdPAttribute) null);
         definition.initialize();
         Assert.assertNull(definition.resolve(context));
 
-        Attribute attribute = new Attribute("foo");
+        IdPAttribute attribute = new IdPAttribute("foo");
         definition = new MockAttributeDefinition("foo", attribute);
         definition.initialize();
         Assert.assertEquals(definition.resolve(context), attribute);
@@ -212,7 +212,7 @@ public class BaseAttributeDefinitionTest {
     
     @Test public void initDestroyValidate() throws ComponentInitializationException, ComponentValidationException {
         MockAttributeEncoder encoder = new MockAttributeEncoder("foo", "baz");
-        MockBaseAttributeDefinition definition = new MockBaseAttributeDefinition("foo", (Attribute) null);
+        MockBaseAttributeDefinition definition = new MockBaseAttributeDefinition("foo", (IdPAttribute) null);
         
         Set<AttributeEncoder<?>> encoders = new HashSet<AttributeEncoder<?>>(1);
         encoders.add(encoder);
@@ -247,7 +247,7 @@ public class BaseAttributeDefinitionTest {
     private static final class MockBaseAttributeDefinition extends BaseAttributeDefinition {
 
         /** Static attribute value returned from resolution. */
-        private Attribute staticAttribute;
+        private IdPAttribute staticAttribute;
 
         /**
          * Constructor.
@@ -255,13 +255,13 @@ public class BaseAttributeDefinitionTest {
          * @param id id of the attribute definition, never null or empty
          * @param attribute value returned from the resolution of this attribute, may be null
          */
-        public MockBaseAttributeDefinition(String id, Attribute attribute) {
+        public MockBaseAttributeDefinition(String id, IdPAttribute attribute) {
             setId(id);
             staticAttribute = attribute;
         }
 
         /** {@inheritDoc} */
-        protected Attribute doAttributeDefinitionResolve(AttributeResolutionContext resolutionContext)
+        protected IdPAttribute doAttributeDefinitionResolve(AttributeResolutionContext resolutionContext)
                 throws ResolutionException {
             return staticAttribute;
         }

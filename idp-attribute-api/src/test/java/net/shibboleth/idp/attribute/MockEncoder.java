@@ -39,7 +39,7 @@ public class MockEncoder<ValueType> implements AttributeEncoder<ValueType> {
      * Constructor.
      * 
      * @param protocol static value to bereturned from {@link #getProtocol()}
-     * @param encodedAttributeValue static value to be returned from {@link #encode(Attribute)}
+     * @param encodedAttributeValue static value to be returned from {@link #encode(IdPAttribute)}
      */
     public MockEncoder(String protocol, ValueType encodedAttributeValue) {
         proto = protocol;
@@ -52,7 +52,7 @@ public class MockEncoder<ValueType> implements AttributeEncoder<ValueType> {
     }
 
     /** {@inheritDoc} */
-    public ValueType encode(Attribute attribute) throws AttributeEncodingException {
+    public ValueType encode(IdPAttribute attribute) throws AttributeEncodingException {
         return encodedValue;
     }
 }

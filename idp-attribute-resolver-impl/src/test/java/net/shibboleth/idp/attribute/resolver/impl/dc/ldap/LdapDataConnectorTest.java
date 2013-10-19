@@ -38,7 +38,7 @@ import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -208,7 +208,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Map<String, Attribute> attrs = connector.doResolve(context);
+        Map<String, IdPAttribute> attrs = connector.doResolve(context);
         Assert.assertNotNull(attrs);
         // check total attributes: uid, cn, sn, mail
         Assert.assertTrue(attrs.size() == 4);
@@ -261,7 +261,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         try {
-            Map<String, Attribute> res = connector.doResolve(context);
+            Map<String, IdPAttribute> res = connector.doResolve(context);
             Assert.assertNotNull(res);
         } catch (ResolutionException e) {
             Assert.fail("Resolution exception occurred", e);
@@ -283,7 +283,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         Assert.assertTrue(cache.size() == 0);
-        Map<String, Attribute> optional = connector.doResolve(context);
+        Map<String, IdPAttribute> optional = connector.doResolve(context);
         Assert.assertTrue(cache.size() == 1);
         Assert.assertEquals(cache.iterator().next(), optional);
     }

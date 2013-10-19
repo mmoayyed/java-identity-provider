@@ -20,8 +20,8 @@ package net.shibboleth.idp.attribute;
 import javax.annotation.Nonnull;
 
 /**
- * Interface for values of an {@link Attribute}. This interface provides an explicit method for getting the value of an
- * attribute as opposed to any other data that may be associated with the value.
+ * Interface for values of an {@link IdPAttribute}. This interface provides an explicit method for getting the value of
+ * an attribute as opposed to any other data that may be associated with the value.
  * <p>
  * Implementations of this interface <strong>MUST</strong> implement an appropriate {@link Object#equals(Object)} and
  * {@link Object#hashCode()} method. They should also implement {@link Object#toString()} such that useful

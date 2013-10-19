@@ -19,7 +19,7 @@ package net.shibboleth.idp.attribute.logic;
 
 import java.util.Arrays;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
@@ -40,8 +40,8 @@ public class LookupAttributeFromAttributeContextFunctionTest {
 
     @Test public void lookupAttributeFromAttributeContextFunction() {
 
-        final Attribute attrOne = new Attribute(NAME_ONE);
-        final Attribute attrTwo = new Attribute(NAME_TWO);
+        final IdPAttribute attrOne = new IdPAttribute(NAME_ONE);
+        final IdPAttribute attrTwo = new IdPAttribute(NAME_TWO);
 
         final AttributeContext attributeChildContext = new AttributeContext();
         attributeChildContext.setAttributes(Arrays.asList(attrOne, attrTwo));
@@ -69,7 +69,7 @@ public class LookupAttributeFromAttributeContextFunctionTest {
             // OK
         }
 
-        Function<BaseContext, Attribute> func = AttributeLogicSupport.lookupAttributeFromAttributeContext(NAME_ONE);
+        Function<BaseContext, IdPAttribute> func = AttributeLogicSupport.lookupAttributeFromAttributeContext(NAME_ONE);
         try {
             func.apply(null);
             Assert.fail();

@@ -21,7 +21,7 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
@@ -59,7 +59,7 @@ public class PolicyFromMatcher extends BaseBridgingClass implements PolicyRequir
         
         log.info("{} Applying matcher supplied as policy to all values of all attributes", getLogPrefix());
 
-        for (Attribute attribute : context.getPrefilteredAttributes().values()) {
+        for (IdPAttribute attribute : context.getPrefilteredAttributes().values()) {
             Set<AttributeValue> result = matcher.getMatchingValues(attribute, context);
             if (null == result) {
                 log.warn("{} Matcher returned null, returning FAIL", getLogPrefix());

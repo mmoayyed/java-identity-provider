@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.impl.matcher;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.Matcher;
@@ -36,7 +36,7 @@ public abstract class AbstractMatcherPolicyRuleTest {
     protected StringAttributeValue value3;
 
     /** Attribute whose values are being matched. */
-    protected Attribute attribute;
+    protected IdPAttribute attribute;
 
     /** Current filter context. */
     protected AttributeFilterContext filterContext;
@@ -49,7 +49,7 @@ public abstract class AbstractMatcherPolicyRuleTest {
         value2 = new StringAttributeValue("value2");
         value3 = new StringAttributeValue("value3");
 
-        attribute = new Attribute("foo");
+        attribute = new IdPAttribute("foo");
         attribute.getValues().add(value1);
         attribute.getValues().add(value2);
         attribute.getValues().add(value3);

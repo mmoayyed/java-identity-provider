@@ -23,9 +23,9 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /**
- * Attribute encoders convert {@link Attribute}s into protocol specific representations. Implementations must take in to
- * account that an {@link Attribute} may contain values of multiple types. An encoder implementation encountering a
- * value type it does not understand may either decide to ignore it or throw an {@link AttributeEncodingException}.
+ * Attribute encoders convert {@link IdPAttribute}s into protocol specific representations. Implementations must take in
+ * to account that an {@link IdPAttribute} may contain values of multiple types. An encoder implementation encountering
+ * a value type it does not understand may either decide to ignore it or throw an {@link AttributeEncodingException}.
  * <p>
  * Encoders <strong>MUST</strong> be thread-safe and stateless and <strong>MUST</strong> implement appropriate
  * {@link Object#equals(Object)} and {@link Object#hashCode()} methods.
@@ -54,5 +54,5 @@ public interface AttributeEncoder<EncodedType> {
      * 
      * @throws AttributeEncodingException if unable to successfully encode attribute
      */
-    @Nonnull public EncodedType encode(@Nonnull final Attribute attribute) throws AttributeEncodingException;
+    @Nonnull public EncodedType encode(@Nonnull final IdPAttribute attribute) throws AttributeEncodingException;
 }

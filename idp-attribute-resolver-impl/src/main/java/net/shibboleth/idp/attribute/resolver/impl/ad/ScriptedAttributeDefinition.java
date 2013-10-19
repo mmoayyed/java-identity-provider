@@ -28,7 +28,7 @@ import javax.script.ScriptContext;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -52,17 +52,17 @@ import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfi
  * The evaluated script has access to the following information:
  * <ul>
  * <li>A script attribute whose name is the ID of this attribute definition and whose value is a newly constructed
- * {@link Attribute}.</li>
+ * {@link IdPAttribute}.</li>
  * <li>A script attribute whose name is <code>context</code> and whose value is the current
  * {@link AttributeResolutionContext}</li>
  * <li>A script attribute for every attribute produced by the dependencies of this attribute definition. The name of the
- * script attribute is the ID of the {@link Attribute} and its value is the {@link Set} of {@link AttributeValue} for
+ * script attribute is the ID of the {@link IdPAttribute} and its value is the {@link Set} of {@link AttributeValue} for
  * the attribute.</li>
  * </ul>
  * </p>
  * <p>
- * The evaluated script should populated the values of the newly constructed {@link Attribute} mentioned above. No other
- * information from the script will be taken in to account.
+ * The evaluated script should populated the values of the newly constructed {@link IdPAttribute} mentioned above. No
+ * other information from the script will be taken in to account.
  * </p>
  */
 @ThreadSafe
@@ -96,7 +96,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Nullable protected Attribute doAttributeDefinitionResolve(
+    @Nullable protected IdPAttribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
@@ -157,7 +157,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
             log.debug("{} to-be-populated attribute is a dependency.  Not created", getLogPrefix());
         } else {
             log.debug("{} adding to-be-populated attribute to script context", getLogPrefix());
-            final Attribute newAttribute = new Attribute(getId());
+            final IdPAttribute newAttribute = new IdPAttribute(getId());
             scriptContext.setAttribute(getId(), new ScriptedAttribute(newAttribute, getLogPrefix()),
                     ScriptContext.ENGINE_SCOPE);
         }
@@ -172,7 +172,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
         for (Entry<String, Set<AttributeValue>> dependencyAttribute : dependencyAttributes.entrySet()) {
             log.debug("{} adding dependant attribute '{}' with the following values to the script context: {}",
                     new Object[] {getLogPrefix(), dependencyAttribute.getKey(), dependencyAttribute.getValue(),});
-            final Attribute pseudoAttribute = new Attribute(dependencyAttribute.getKey());
+            final IdPAttribute pseudoAttribute = new IdPAttribute(dependencyAttribute.getKey());
             pseudoAttribute.setValues(dependencyAttribute.getValue());
 
             scriptContext.setAttribute(dependencyAttribute.getKey(), new ScriptedAttribute(pseudoAttribute,

@@ -17,12 +17,12 @@
 
 package net.shibboleth.idp.attribute.mapper;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 
 /**
  * IdP Representation of the SAML2 RequestedAttribute.
  */
-public class RequestedAttribute extends Attribute {
+public class RequestedAttribute extends IdPAttribute {
 
     /** Is this attribute required. */
     private boolean isRequired;

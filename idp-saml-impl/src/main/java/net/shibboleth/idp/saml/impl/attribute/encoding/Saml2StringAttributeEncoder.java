@@ -19,7 +19,7 @@ package net.shibboleth.idp.saml.impl.attribute.encoding;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -34,18 +34,19 @@ import org.opensaml.core.xml.XMLObject;
 
 /**
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces SAML 2 attributes from
- * {@link net.shibboleth.idp.attribute.Attribute} that contains <code>String</code> values.
+ * {@link IdPAttribute} that contains <code>String</code> values.
  */
 public class Saml2StringAttributeEncoder extends AbstractSaml2AttributeEncoder<StringAttributeValue> implements
         AttributeMapperFactory<org.opensaml.saml.saml2.metadata.RequestedAttribute, RequestedAttribute> {
 
     /** {@inheritDoc} */
-    protected boolean canEncodeValue(net.shibboleth.idp.attribute.Attribute attribute, AttributeValue value) {
+    protected boolean canEncodeValue(IdPAttribute attribute, AttributeValue value) {
         return value instanceof StringAttributeValue;
     }
 
     /** {@inheritDoc} */
-    protected XMLObject encodeValue(Attribute attribute, StringAttributeValue value) throws AttributeEncodingException {
+    protected XMLObject encodeValue(IdPAttribute attribute, StringAttributeValue value)
+            throws AttributeEncodingException {
         return SamlEncoderSupport.encodeStringValue(attribute,
                 org.opensaml.saml.saml2.core.AttributeValue.DEFAULT_ELEMENT_NAME, value.getValue());
     }

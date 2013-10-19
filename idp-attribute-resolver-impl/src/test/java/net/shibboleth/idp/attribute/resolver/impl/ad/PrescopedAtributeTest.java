@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
@@ -131,7 +131,7 @@ public class PrescopedAtributeTest {
     }
 
     @Test public void invalidValueType() throws ComponentInitializationException {
-        Attribute attr = new Attribute(ResolverTestSupport.EPA_ATTRIB_ID);
+        IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
         attr.setValues(Collections.singleton((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3})));
 
         AttributeResolutionContext resolutionContext =

@@ -24,7 +24,7 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
@@ -38,6 +38,7 @@ import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.impl.XSStringBuilder;
 import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.saml1.core.Attribute;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -96,7 +97,7 @@ public class AbstractSamlAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         encoder.setName(MY_NAME);
         
         try {
-            encoder.encode(new Attribute(ATTRIBUTE_ID));
+            encoder.encode(new IdPAttribute(ATTRIBUTE_ID));
             Assert.fail();
         } catch (UninitializedComponentException ex) {
             // OK
@@ -124,7 +125,7 @@ public class AbstractSamlAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         encoder.setNamespace(MY_NAMESPACE);
         encoder.setName(MY_NAME);
         encoder.initialize();
-        Attribute attr = new Attribute(ATTRIBUTE_ID);
+        IdPAttribute attr = new IdPAttribute(ATTRIBUTE_ID);
         
         try {
             encoder.encode(attr);
@@ -152,7 +153,7 @@ public class AbstractSamlAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         values.add(new StringAttributeValue(ATTRIBUTE_VALUE_2));
         attr.setValues(values);
         
-        List<XMLObject> result = ((org.opensaml.saml.saml1.core.Attribute) encoder.encode(attr)).getAttributeValues();
+        List<XMLObject> result = ((Attribute) encoder.encode(attr)).getAttributeValues();
         
         Assert.assertEquals(result.size(), 2);
         Set<String> resultSet = new HashSet<String>(2); 
@@ -195,16 +196,16 @@ public class AbstractSamlAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
                 return "Random Stuff";
             }
 
-            protected boolean canEncodeValue(Attribute attribute, AttributeValue value) {
+            protected boolean canEncodeValue(IdPAttribute attribute, AttributeValue value) {
                 return false;
             }
 
-            protected XMLObject encodeValue(Attribute attribute, AttributeValue value)
+            protected XMLObject encodeValue(IdPAttribute attribute, AttributeValue value)
                     throws AttributeEncodingException {
                 return null;
             }
 
-            protected SAMLObject buildAttribute(Attribute attribute, List<XMLObject> attributeValues)
+            protected SAMLObject buildAttribute(IdPAttribute attribute, List<XMLObject> attributeValues)
                     throws AttributeEncodingException {
                 return null;
             }};
@@ -225,12 +226,12 @@ public class AbstractSamlAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         }
 
         /** {@inheritDoc} */
-        protected boolean canEncodeValue(Attribute attribute, AttributeValue value) {
+        protected boolean canEncodeValue(IdPAttribute attribute, AttributeValue value) {
             return ! (value instanceof ByteAttributeValue);
         }
 
         /** {@inheritDoc} */
-        protected XMLObject encodeValue(Attribute attribute, AttributeValue value) throws AttributeEncodingException {
+        protected XMLObject encodeValue(IdPAttribute attribute, AttributeValue value) throws AttributeEncodingException {
             if (!(value instanceof StringAttributeValue)) {
                 return null;
             }

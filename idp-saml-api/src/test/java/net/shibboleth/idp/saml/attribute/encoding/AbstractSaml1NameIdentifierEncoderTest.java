@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.saml.attribute.encoding;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 
 import org.opensaml.saml.saml1.core.NameIdentifier;
@@ -32,7 +32,7 @@ public class AbstractSaml1NameIdentifierEncoderTest {
     @Test public void abstractSaml1NameIdentifierEncoder() {
         
         AbstractSaml1NameIdentifierEncoder encoder = new AbstractSaml1NameIdentifierEncoder() {
-            public NameIdentifier encode(Attribute attribute) throws AttributeEncodingException {
+            public NameIdentifier encode(IdPAttribute attribute) throws AttributeEncodingException {
                 return null;
             }
         };

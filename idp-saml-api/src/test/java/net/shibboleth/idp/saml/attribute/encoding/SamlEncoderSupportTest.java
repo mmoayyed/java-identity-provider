@@ -21,7 +21,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.saml.xmlobject.ScopedValue;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
@@ -60,7 +60,7 @@ public class SamlEncoderSupportTest  extends OpenSAMLInitBaseTestCase {
     private final static String STRING_SCOPE = "TestScope";
     private final static String SCOPE_ATTRIBUTE_NAME = "Scpe"; //sic
     private final static String DELIMITER = "@";
-    private final static Attribute ATTR = new Attribute("attr");
+    private final static IdPAttribute ATTR = new IdPAttribute("attr");
     private final static byte[] BYTE_ARRAY_VALUE = {1, 2, 3, 4, 5};
     private final static ScopedStringAttributeValue SCOPEDVAL = new ScopedStringAttributeValue(STRING_VALUE, STRING_SCOPE);
     

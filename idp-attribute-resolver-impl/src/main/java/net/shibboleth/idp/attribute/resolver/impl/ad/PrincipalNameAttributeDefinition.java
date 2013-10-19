@@ -21,7 +21,7 @@ import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
@@ -36,7 +36,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 public class PrincipalNameAttributeDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
-    @Nonnull protected Attribute doAttributeDefinitionResolve(@Nonnull AttributeResolutionContext resolutionContext)
+    @Nonnull protected IdPAttribute doAttributeDefinitionResolve(@Nonnull AttributeResolutionContext resolutionContext)
             throws ResolutionException {
         final AttributeRecipientContext attributeRecipientContext =
                 resolutionContext.getSubcontext(AttributeRecipientContext.class);
@@ -50,7 +50,7 @@ public class PrincipalNameAttributeDefinition extends BaseAttributeDefinition {
             throw new ResolutionException(getLogPrefix() + " provided prinicipal name was empty");
         }
 
-        final Attribute attribute = new Attribute(getId());
+        final IdPAttribute attribute = new IdPAttribute(getId());
         attribute.setValues(Collections.singleton((AttributeValue) new StringAttributeValue(principalName)));
         return attribute;
     }

@@ -19,7 +19,7 @@ package net.shibboleth.idp.saml.impl.attribute.encoding;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces SAML 1 attributes from
- * {@link net.shibboleth.idp.attribute.Attribute} that contains scope string values.
+ * {@link net.shibboleth.idp.attribute.IdPAttribute} that contains scope string values.
  */
 public class Saml1ScopedStringAttributeEncoder extends AbstractSaml1AttributeEncoder<ScopedStringAttributeValue> {
 
@@ -142,13 +142,13 @@ public class Saml1ScopedStringAttributeEncoder extends AbstractSaml1AttributeEnc
     }
 
     /** {@inheritDoc} */
-    protected boolean canEncodeValue(Attribute attribute, AttributeValue value) {
+    protected boolean canEncodeValue(IdPAttribute attribute, AttributeValue value) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         return value instanceof ScopedStringAttributeValue;
     }
 
     /** {@inheritDoc} */
-    @Nullable protected XMLObject encodeValue(Attribute attribute, ScopedStringAttributeValue value)
+    @Nullable protected XMLObject encodeValue(IdPAttribute attribute, ScopedStringAttributeValue value)
             throws AttributeEncodingException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         if ("attribute".equals(getScopeType())) {

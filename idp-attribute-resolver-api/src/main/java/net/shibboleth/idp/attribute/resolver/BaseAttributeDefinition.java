@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -50,7 +50,7 @@ import com.google.common.collect.ImmutableSet;
 
 /** Base class for attribute definition resolver plugins. */
 @ThreadSafe
-public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribute> {
+public abstract class BaseAttributeDefinition extends BaseResolverPlugin<IdPAttribute> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(BaseAttributeDefinition.class);
@@ -247,10 +247,10 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * null was not returned, this method will attach the registered display names, descriptions,
      * and encoders to the resultant attribute.
      */
-    @Nullable protected Attribute doResolve(@Nonnull final AttributeResolutionContext resolutionContext)
+    @Nullable protected IdPAttribute doResolve(@Nonnull final AttributeResolutionContext resolutionContext)
             throws ResolutionException {
 
-        final Attribute resolvedAttribute = doAttributeDefinitionResolve(resolutionContext);
+        final IdPAttribute resolvedAttribute = doAttributeDefinitionResolve(resolutionContext);
 
         if (null == resolvedAttribute) {
             log.debug("{} no attribute was produced during resolution", getLogPrefix());
@@ -290,7 +290,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * 
      * @throws ResolutionException thrown if there is a problem resolving and creating the attribute
      */
-    @Nullable protected abstract Attribute doAttributeDefinitionResolve(
+    @Nullable protected abstract IdPAttribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException;
     
     /**

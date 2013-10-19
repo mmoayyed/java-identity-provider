@@ -16,7 +16,7 @@
  */
 
 /** 
- * Base classes for encoding {@link net.shibboleth.idp.attribute.Attribute} objects into SAML message components. 
+ * Base classes for encoding {@link net.shibboleth.idp.attribute.IdPAttribute} objects into SAML message components. 
  */
 
 package net.shibboleth.idp.saml.attribute.encoding;

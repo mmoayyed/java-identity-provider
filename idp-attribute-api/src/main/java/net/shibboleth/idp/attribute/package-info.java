@@ -16,7 +16,7 @@
  */
 
 /**
- * {@link Attribute}s are protocol-agnostic units of information about some thing, usually a user.  Attributes and
+ * {@link IdPAttribute}s are protocol-agnostic units of information about some thing, usually a user.  Attributes and
  * their values are encoded in to protocol-specific formats by means of {@link AttributeEncoder}s.
  */
 

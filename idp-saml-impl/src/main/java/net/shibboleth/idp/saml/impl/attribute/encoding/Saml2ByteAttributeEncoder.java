@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.mapper.RequestedAttribute;
 import net.shibboleth.idp.attribute.mapper.impl.ByteAttributeValueMapper;
 import net.shibboleth.idp.attribute.mapper.impl.RequestedAttributeMapper;
@@ -33,18 +34,18 @@ import org.opensaml.core.xml.XMLObject;
 
 /**
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces SAML 2 attributes from
- * {@link net.shibboleth.idp.attribute.Attribute} that contains <code>byte[]</code> values.
+ * {@link IdPAttribute} that contains <code>byte[]</code> values.
  */
 public class Saml2ByteAttributeEncoder extends AbstractSaml2AttributeEncoder<ByteAttributeValue> implements
         AttributeMapperFactory<org.opensaml.saml.saml2.metadata.RequestedAttribute, RequestedAttribute> {
 
     /** {@inheritDoc} */
-    protected boolean canEncodeValue(net.shibboleth.idp.attribute.Attribute attribute, AttributeValue value) {
+    protected boolean canEncodeValue(IdPAttribute attribute, AttributeValue value) {
         return value instanceof ByteAttributeValue;
     }
 
     /** {@inheritDoc} */
-    protected XMLObject encodeValue(net.shibboleth.idp.attribute.Attribute attribute, ByteAttributeValue value)
+    protected XMLObject encodeValue(IdPAttribute attribute, ByteAttributeValue value)
             throws AttributeEncodingException {
         return SamlEncoderSupport.encodeByteArrayValue(attribute,
                 org.opensaml.saml.saml2.core.AttributeValue.DEFAULT_ELEMENT_NAME, value.getValue());

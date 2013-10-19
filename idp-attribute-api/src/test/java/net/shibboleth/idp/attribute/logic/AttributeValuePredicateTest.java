@@ -19,7 +19,7 @@ package net.shibboleth.idp.attribute.logic;
 
 import java.util.Arrays;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
@@ -38,14 +38,14 @@ public class AttributeValuePredicateTest {
     private static final String VALUE_TWO = "two";
 
     @Test public void attributeValuePredicate() throws CloneNotSupportedException {
-        final Attribute oneVal = new Attribute("oneVal");
+        final IdPAttribute oneVal = new IdPAttribute("oneVal");
         oneVal.setValues(Arrays.asList((AttributeValue) new StringAttributeValue(VALUE_ONE)));
 
-        final Attribute twoVals = new Attribute("twoVals");
+        final IdPAttribute twoVals = new IdPAttribute("twoVals");
         twoVals.setValues(Arrays.asList((AttributeValue) new StringAttributeValue(VALUE_ONE), new StringAttributeValue(
                 VALUE_TWO)));
 
-        final Attribute threeVals = twoVals.clone();
+        final IdPAttribute threeVals = twoVals.clone();
         threeVals.getValues().add(new StringAttributeValue("three"));
 
         final Predicate matchOne =

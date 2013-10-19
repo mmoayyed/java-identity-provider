@@ -22,7 +22,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml1NameIdentifierEncoder;
@@ -38,7 +38,7 @@ import com.google.common.base.Objects;
 
 /**
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces the SAML 1 NameIdentifier used for the Subject
- * from the first non-null {@link NameIdentifier} value of an {@link net.shibboleth.idp.attribute.Attribute}.
+ * from the first non-null {@link NameIdentifier} value of an {@link net.shibboleth.idp.attribute.IdPAttribute}.
  */
 public class Saml1StringSubjectNameIdentifierEncoder extends AbstractSaml1NameIdentifierEncoder {
 
@@ -98,7 +98,7 @@ public class Saml1StringSubjectNameIdentifierEncoder extends AbstractSaml1NameId
     }
 
     /** {@inheritDoc} */
-    @Nonnull public NameIdentifier encode(Attribute attribute) throws AttributeEncodingException {
+    @Nonnull public NameIdentifier encode(IdPAttribute attribute) throws AttributeEncodingException {
         final String attributeId = attribute.getId();
 
         final Collection<AttributeValue> attributeValues = attribute.getValues();

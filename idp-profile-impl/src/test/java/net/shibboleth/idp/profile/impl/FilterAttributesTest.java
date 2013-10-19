@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -98,15 +98,15 @@ public class FilterAttributesTest {
 
     /** Test that the action filters attributes and proceeds properly while auto-creating a filter context. */
     @Test public void testFilterAttributesAutoCreateFilterContext() throws Exception {
-        Attribute attribute1 = new Attribute("attribute1");
+        IdPAttribute attribute1 = new IdPAttribute("attribute1");
         attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
                 new StringAttributeValue("two")));
 
-        Attribute attribute2 = new Attribute("attribute2");
+        IdPAttribute attribute2 = new IdPAttribute("attribute2");
         attribute2.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("a"),
                 new StringAttributeValue("b")));
 
-        List<Attribute> attributes = Arrays.asList(attribute1, attribute2);
+        List<IdPAttribute> attributes = Arrays.asList(attribute1, attribute2);
 
         MockMatcher attribute1Matcher = new MockMatcher();
         attribute1Matcher.setMatchingAttribute("attribute1");
@@ -147,7 +147,7 @@ public class FilterAttributesTest {
                 profileCtx.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
         Assert.assertNotNull(resultAttributeCtx);
 
-        Map<String, Attribute> resultAttributes = resultAttributeCtx.getAttributes();
+        Map<String, IdPAttribute> resultAttributes = resultAttributeCtx.getAttributes();
         Assert.assertEquals(resultAttributes.size(), 1);
 
         Set<AttributeValue> resultAttributeValue = resultAttributes.get("attribute1").getValues();
@@ -158,15 +158,15 @@ public class FilterAttributesTest {
 
     /** Test that the action filters attributes and proceeds properly with an existing filter context. */
     @Test public void testFilterAttributesExistingFilterContext() throws Exception {
-        Attribute attribute1 = new Attribute("attribute1");
+        IdPAttribute attribute1 = new IdPAttribute("attribute1");
         attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
                 new StringAttributeValue("two")));
 
-        Attribute attribute2 = new Attribute("attribute2");
+        IdPAttribute attribute2 = new IdPAttribute("attribute2");
         attribute2.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("a"),
                 new StringAttributeValue("b")));
 
-        List<Attribute> attributes = Arrays.asList(attribute1, attribute2);
+        List<IdPAttribute> attributes = Arrays.asList(attribute1, attribute2);
 
         MockMatcher attribute1Matcher = new MockMatcher();
         attribute1Matcher.setMatchingAttribute("attribute1");
@@ -210,7 +210,7 @@ public class FilterAttributesTest {
                 profileCtx.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
         Assert.assertNotNull(resultAttributeCtx);
 
-        Map<String, Attribute> resultAttributes = resultAttributeCtx.getAttributes();
+        Map<String, IdPAttribute> resultAttributes = resultAttributeCtx.getAttributes();
         Assert.assertEquals(resultAttributes.size(), 1);
 
         Set<AttributeValue> resultAttributeValue = resultAttributes.get("attribute1").getValues();
@@ -221,11 +221,11 @@ public class FilterAttributesTest {
 
     /** Test that action returns the proper event if the attributes are not able to be filtered. */
     @Test public void testUnableToFilterAttributes() throws Exception {
-        Attribute attribute1 = new MockUncloneableAttribute("attribute1");
+        IdPAttribute attribute1 = new MockUncloneableAttribute("attribute1");
         attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
                 new StringAttributeValue("two")));
 
-        List<Attribute> attributes = Arrays.asList(attribute1);
+        List<IdPAttribute> attributes = Arrays.asList(attribute1);
 
         MockMatcher attribute1Matcher = new MockMatcher();
         attribute1Matcher.setMatchingAttribute("attribute1");
@@ -262,8 +262,8 @@ public class FilterAttributesTest {
         ActionTestingSupport.assertEvent(result, FilterAttributes.UNABLE_FILTER_ATTRIBS);
     }
 
-    /** {@link Attribute} which always throws a {@link CloneNotSupportedException}. */
-    private class MockUncloneableAttribute extends Attribute {
+    /** {@link IdPAttribute} which always throws a {@link CloneNotSupportedException}. */
+    private class MockUncloneableAttribute extends IdPAttribute {
 
         /**
          * Constructor.
@@ -275,7 +275,7 @@ public class FilterAttributesTest {
         }
 
         /** Always throws exception. */
-        public Attribute clone() throws CloneNotSupportedException {
+        public IdPAttribute clone() throws CloneNotSupportedException {
             throw new CloneNotSupportedException();
         }
     }

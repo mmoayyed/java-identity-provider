@@ -23,7 +23,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
@@ -68,7 +68,7 @@ public class CryptoTransientIdAttributeDefinition extends BaseAttributeDefinitio
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Attribute doAttributeDefinitionResolve(@Nonnull AttributeResolutionContext resolutionContext)
+    @Nonnull protected IdPAttribute doAttributeDefinitionResolve(@Nonnull AttributeResolutionContext resolutionContext)
             throws ResolutionException {
 
         Constraint.isNotNull(resolutionContext, "resolution context was null");
@@ -95,7 +95,7 @@ public class CryptoTransientIdAttributeDefinition extends BaseAttributeDefinitio
             throw new ResolutionException(getLogPrefix() + " provided prinicipal name was empty");
         }
 
-        final Attribute result = new Attribute(getId());
+        final IdPAttribute result = new IdPAttribute(getId());
 
         log.debug("{} Building crypto transient ID for recipient: '{}', issuer: {}, principal identifer: {}",
                 new Object[] {getLogPrefix(), attributeRecipientID, attributeIssuerID, principalName,});

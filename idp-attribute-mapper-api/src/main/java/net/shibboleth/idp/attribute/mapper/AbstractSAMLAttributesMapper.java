@@ -26,13 +26,14 @@ import java.util.Map.Entry;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.saml.saml2.core.Attribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,18 +41,16 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 /**
- * The class contains the mechanics to go from a list of {@link org.opensaml.saml.saml2.core.Attribute}s (or
- * derived) to a {@link Multimap} of {@link String},{@link Attribute} (or derived, or null).  The 
- * representation as a {@link Multimap} is useful for filtering situations and is exploited by AttributeInMetadata
- * filter.
- *  
+ * The class contains the mechanics to go from a list of {@link Attribute}s (or derived) to a {@link Multimap} of
+ * {@link String},{@link IdPAttribute} (or derived, or null). The representation as a {@link Multimap} is useful for
+ * filtering situations and is exploited by AttributeInMetadata filter.
+ * 
  * @param <InType> the type which is to be inspected and mapped
  * @param <OutType> some sort of representation of an IdP attribute
  */
 
-public abstract class AbstractSAMLAttributesMapper
-        <InType extends org.opensaml.saml.saml2.core.Attribute, OutType extends Attribute>
-    extends AbstractIdentifiableInitializableComponent implements AttributesMapper<InType, OutType> {
+public abstract class AbstractSAMLAttributesMapper<InType extends Attribute, OutType extends IdPAttribute> extends
+        AbstractIdentifiableInitializableComponent implements AttributesMapper<InType, OutType> {
 
     /** Log. */
     private final Logger log = LoggerFactory.getLogger(AbstractSAMLAttributesMapper.class);
@@ -91,8 +90,7 @@ public abstract class AbstractSAMLAttributesMapper
      * @param prototypes the SAML attributes
      * @return a map from IdP AttributeId to RequestedAttributes (or NULL).
      */
-    public Multimap<String, OutType> mapAttributes(
-            @Nonnull @NonnullElements List<InType> prototypes) {
+    public Multimap<String, OutType> mapAttributes(@Nonnull @NonnullElements List<InType> prototypes) {
 
         Multimap<String, OutType> result = ArrayListMultimap.create();
 

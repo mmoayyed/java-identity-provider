@@ -28,7 +28,7 @@ import javax.script.ScriptContext;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.Matcher;
@@ -113,7 +113,7 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
      * {@inheritDoc}
      */
     @Nullable @NonnullElements @Unmodifiable public Set<AttributeValue> getMatchingValues(
-            @Nonnull final Attribute attribute, @Nonnull final AttributeFilterContext filterContext) {
+            @Nonnull final IdPAttribute attribute, @Nonnull final AttributeFilterContext filterContext) {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);

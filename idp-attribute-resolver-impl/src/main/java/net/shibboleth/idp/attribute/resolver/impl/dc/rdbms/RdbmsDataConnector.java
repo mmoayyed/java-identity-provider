@@ -25,7 +25,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.impl.dc.AbstractSearchDataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.dc.ValidationException;
@@ -136,9 +136,9 @@ public class RdbmsDataConnector extends AbstractSearchDataConnector<ExecutableSt
      * @return attributes gotten from the database
      * 
      * @throws ResolutionException thrown if there is a problem retrieving data from the database or transforming that
-     *             data into {@link Attribute}s
+     *             data into {@link IdPAttribute}s
      */
-    protected Map<String, Attribute> retrieveAttributes(final ExecutableStatement statement)
+    protected Map<String, IdPAttribute> retrieveAttributes(final ExecutableStatement statement)
             throws ResolutionException {
 
         if (statement == null) {

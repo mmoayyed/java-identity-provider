@@ -21,20 +21,20 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 
 import com.google.common.collect.Multimap;
 
 /**
- * This attribute defines the mechanism to go from a list of objects into a collection (IdP) {@link Attribute}, the
+ * This attribute defines the mechanism to go from a list of objects into a collection (IdP) {@link IdPAttribute}, the
  * representation (a {@link Multimap}) being such as is useful to attribute filtering. <br/>
  * Implementations of this interface will be paired with implementations of {@link AttributeMapper}.
  * 
  * @param <InType> the type which is to be inspected and mapped
  * @param <OutType> some sort of representation of an IdP attribute
  */
-public interface AttributesMapper<InType, OutType extends Attribute> {
+public interface AttributesMapper<InType, OutType extends IdPAttribute> {
 
     /**
      * Map the input objects into IdP attributes.

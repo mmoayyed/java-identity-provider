@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
@@ -85,7 +85,7 @@ public class MockMatcher extends AbstractIdentifiableInitializableComponent impl
     }
 
     /** {@inheritDoc} */
-    public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext) {
+    public Set<AttributeValue> getMatchingValues(IdPAttribute attribute, AttributeFilterContext filterContext) {
         if (fails) {
             return null;
         }

@@ -21,7 +21,7 @@ import java.util.Map;
 
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
@@ -43,7 +43,7 @@ public class MockDataConnector extends BaseDataConnector implements ValidatableC
     private int validateCount;
 
     /** Static collection of values returned by this connector. */
-    private Map<String, Attribute> values;
+    private Map<String, IdPAttribute> values;
 
     /** Exception thrown by {@link #doDataConnectorResolve(AttributeResolutionContext)}. */
     private ResolutionException resolutionException;
@@ -54,7 +54,7 @@ public class MockDataConnector extends BaseDataConnector implements ValidatableC
      * @param id unique ID for this data connector
      * @param connectorValues static collection of values returned by this connector
      */
-    public MockDataConnector(String id, Map<String, Attribute> connectorValues) {
+    public MockDataConnector(String id, Map<String, IdPAttribute> connectorValues) {
         setId(id);
         values = connectorValues;
     }
@@ -81,7 +81,7 @@ public class MockDataConnector extends BaseDataConnector implements ValidatableC
     }
 
     /** {@inheritDoc} */
-    protected Map<String, Attribute> doDataConnectorResolve(AttributeResolutionContext resolutionContext)
+    protected Map<String, IdPAttribute> doDataConnectorResolve(AttributeResolutionContext resolutionContext)
             throws ResolutionException {
         if (resolutionException != null) {
             throw resolutionException;

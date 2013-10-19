@@ -22,7 +22,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -56,7 +56,7 @@ public class ComputedIDDataConnector extends BaseComputedIDDataConnector {
     }
 
     /** {@inheritDoc} */
-    @Nullable protected Map<String, Attribute> doDataConnectorResolve(
+    @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(
             @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);

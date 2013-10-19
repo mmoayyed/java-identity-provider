@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -60,7 +60,7 @@ public class SimpleAttributeTest {
         simple.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
         simple.initialize();
 
-        final Attribute result = simple.doAttributeDefinitionResolve(new AttributeResolutionContext());
+        final IdPAttribute result = simple.doAttributeDefinitionResolve(new AttributeResolutionContext());
 
         Assert.assertTrue(result.getValues().isEmpty());
     }

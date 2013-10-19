@@ -28,7 +28,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
@@ -160,10 +160,10 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Attribute doAttributeDefinitionResolve(final AttributeResolutionContext resolutionContext)
+    @Nonnull protected IdPAttribute doAttributeDefinitionResolve(final AttributeResolutionContext resolutionContext)
             throws ResolutionException {
 
-        final Attribute resultantAttribute = new Attribute(getId());
+        final IdPAttribute resultantAttribute = new IdPAttribute(getId());
 
         final Map<String, Iterator<AttributeValue>> sourceValues = new LazyMap<String, Iterator<AttributeValue>>();
         final int valueCount = setupSourceValues(resolutionContext, sourceValues);

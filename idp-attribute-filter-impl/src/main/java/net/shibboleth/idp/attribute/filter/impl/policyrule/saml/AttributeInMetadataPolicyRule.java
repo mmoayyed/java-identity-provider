@@ -25,7 +25,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.Matcher;
@@ -99,7 +99,7 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
     }
 
     /** {@inheritDoc} */
-    @Nonnull public Set<AttributeValue> getMatchingValues(@Nonnull final Attribute attribute,
+    @Nonnull public Set<AttributeValue> getMatchingValues(@Nonnull final IdPAttribute attribute,
             @Nonnull final AttributeFilterContext filterContext) {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -152,7 +152,7 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
      * @param requestedValues the values
      * @return the result of the filter
      */
-    @Nonnull private Set<AttributeValue> filterValues(@Nullable final Attribute attribute,
+    @Nonnull private Set<AttributeValue> filterValues(@Nullable final IdPAttribute attribute,
             @Nonnull @NonnullElements final Set<AttributeValue> requestedValues) {
 
         if (null == requestedValues || requestedValues.isEmpty()) {

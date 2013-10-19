@@ -31,7 +31,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
@@ -174,7 +174,7 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
 
-        Map<String, Attribute> attrs = connector.doResolve(context);
+        Map<String, IdPAttribute> attrs = connector.doResolve(context);
         // check total attributes: userid, name, homephone, mail
         Assert.assertTrue(attrs.size() == 4);
         // check userid
@@ -243,7 +243,7 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         Assert.assertTrue(cache.size() == 0);
-        Map<String, Attribute> optional = connector.doResolve(context);
+        Map<String, IdPAttribute> optional = connector.doResolve(context);
         Assert.assertTrue(cache.size() == 1);
         Assert.assertEquals(cache.iterator().next(), optional);
     }

@@ -21,7 +21,7 @@ import java.util.Collection;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml2NameIDEncoder;
@@ -34,7 +34,7 @@ import com.google.common.base.Objects;
 
 /**
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces the SAML 2 NameID used for the Subject from the
- * first non-null {@link NameID} value of an {@link net.shibboleth.idp.attribute.Attribute}.
+ * first non-null {@link NameID} value of an {@link net.shibboleth.idp.attribute.IdPAttribute}.
  */
 // TODO this class is redundant.
 public class Saml2XmlObjectSubjectNameIDEncoder extends AbstractSaml2NameIDEncoder {
@@ -43,7 +43,7 @@ public class Saml2XmlObjectSubjectNameIDEncoder extends AbstractSaml2NameIDEncod
     private final Logger log = LoggerFactory.getLogger(Saml2XmlObjectSubjectNameIDEncoder.class);
 
     /** {@inheritDoc} */
-    @Nonnull public NameID encode(Attribute attribute) throws AttributeEncodingException {
+    @Nonnull public NameID encode(IdPAttribute attribute) throws AttributeEncodingException {
         final String attributeId = attribute.getId();
 
         final Collection<AttributeValue> attributeValues = attribute.getValues();

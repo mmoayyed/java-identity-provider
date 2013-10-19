@@ -19,7 +19,9 @@ package net.shibboleth.idp.saml.attribute.encoding;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.Attribute;
+import org.opensaml.saml.saml2.core.Attribute;
+
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.mapper.AbstractSAMLAttributeMapper;
 
 /**
@@ -28,12 +30,12 @@ import net.shibboleth.idp.attribute.mapper.AbstractSAMLAttributeMapper;
  * @param <S> The SAML Type
  * @param <I> The IdP Type
  */
-public interface AttributeMapperFactory<S extends org.opensaml.saml.saml2.core.Attribute, I extends Attribute> {
+public interface AttributeMapperFactory<S extends Attribute, I extends IdPAttribute> {
 
     /**
-     * This method creates an attribute mapper to go from a SAML Attribute (or derviative) to an IdP Attribute (or
+     * This method creates an attribute mapper to go from a SAML Attribute (or derivative) to an IdP Attribute (or
      * derivative) such that applying the output of the mapper to the encoder will produce the name attribute
-     * (and vice versa).<br>
+     * (and vice versa).<br/>
      * The created mapper <em>must not</em> have any associated (IdP) Attribute names and <em>must</em> implement
      * {@link Object#equals(Object)} and {@link Object#hashCode()}.
      * 

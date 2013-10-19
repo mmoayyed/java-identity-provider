@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.resolver.impl.ad;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
@@ -36,11 +36,11 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 public class SimpleAttributeDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
-    @Nonnull protected Attribute doAttributeDefinitionResolve(
+    @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
-        final Attribute result = new Attribute(getId());
+        final IdPAttribute result = new IdPAttribute(getId());
         result.setValues(PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies()));
         return result;
     }

@@ -21,7 +21,7 @@ import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -73,7 +73,7 @@ public class Saml1StringSubjectNameIdentifierEncoderTest extends OpenSAMLInitBas
     }
 
     @Test public void encode() throws AttributeEncodingException {
-        Attribute attribute = new Attribute("id");
+        IdPAttribute attribute = new IdPAttribute("id");
         attribute.setValues(Collections.singleton((AttributeValue) new StringAttributeValue("value")));
 
         final Saml1StringSubjectNameIdentifierEncoder enc1 = new Saml1StringSubjectNameIdentifierEncoder();
@@ -93,7 +93,7 @@ public class Saml1StringSubjectNameIdentifierEncoderTest extends OpenSAMLInitBas
 
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void innappropriateTypes()
             throws AttributeEncodingException {
-        Attribute attribute = new Attribute("id");
+        IdPAttribute attribute = new IdPAttribute("id");
 
         final Saml1StringSubjectNameIdentifierEncoder enc1 = new Saml1StringSubjectNameIdentifierEncoder();
 

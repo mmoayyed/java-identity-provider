@@ -28,7 +28,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
@@ -242,7 +242,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
         final Collection<String> attributeIds = new LazyList<String>();
-        for (Attribute requestedAttribute : resolutionContext.getRequestedAttributes()) {
+        for (IdPAttribute requestedAttribute : resolutionContext.getRequestedAttributes()) {
             attributeIds.add(requestedAttribute.getId());
         }
 
@@ -285,7 +285,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         resolveDependencies(definition, resolutionContext);
 
         log.trace("{} resolving attribute definition {}", logPrefix, attributeId);
-        final Attribute resolvedAttribute = definition.resolve(resolutionContext);
+        final IdPAttribute resolvedAttribute = definition.resolve(resolutionContext);
 
         if (null == resolvedAttribute) {
             log.warn("{} attribute definition {} produced no attribute", logPrefix, attributeId);
@@ -324,7 +324,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         }
 
         resolveDependencies(connector, resolutionContext);
-        Map<String, Attribute> resolvedAttributes;
+        Map<String, IdPAttribute> resolvedAttributes;
         try {
             log.debug("{} resolving data connector {}", logPrefix, connectorId);
             resolvedAttributes = connector.resolve(resolutionContext);
@@ -398,9 +398,9 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
     protected void finalizeResolvedAttributes(@Nonnull final AttributeResolutionContext resolutionContext) {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
-        final LazySet<Attribute> resolvedAttributes = new LazySet<Attribute>();
+        final LazySet<IdPAttribute> resolvedAttributes = new LazySet<IdPAttribute>();
 
-        Attribute resolvedAttribute;
+        IdPAttribute resolvedAttribute;
         for (ResolvedAttributeDefinition definition : resolutionContext.getResolvedAttributeDefinitions().values()) {
             resolvedAttribute = definition.getResolvedAttribute();
 

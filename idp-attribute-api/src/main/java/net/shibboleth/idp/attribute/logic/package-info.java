@@ -16,7 +16,7 @@
  */
 
 /** 
- * Function and predicate implementations that deal with {@link net.shibboleth.idp.attribute.Attribute} objects or
+ * Function and predicate implementations that deal with {@link net.shibboleth.idp.attribute.IdPAttribute} objects or
  * their values. 
  */
 

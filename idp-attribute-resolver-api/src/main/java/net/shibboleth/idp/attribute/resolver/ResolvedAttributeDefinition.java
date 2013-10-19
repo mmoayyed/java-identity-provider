@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
@@ -48,7 +48,7 @@ public final class ResolvedAttributeDefinition extends BaseAttributeDefinition {
     private final BaseAttributeDefinition resolvedDefinition;
 
     /** The attribute produced by the resolved attribute definition. */
-    private final Attribute resolvedAttribute;
+    private final IdPAttribute resolvedAttribute;
 
     /**
      * Constructor.
@@ -56,8 +56,7 @@ public final class ResolvedAttributeDefinition extends BaseAttributeDefinition {
      * @param definition attribute definition that was resolved to produce the given attribute
      * @param attribute attribute produced by the given attribute definition
      */
-    public ResolvedAttributeDefinition(@Nonnull BaseAttributeDefinition definition,
-            @Nullable Attribute attribute) {
+    public ResolvedAttributeDefinition(@Nonnull BaseAttributeDefinition definition, @Nullable IdPAttribute attribute) {
         resolvedDefinition = Constraint.isNotNull(definition, "Resolved attribute definition can not be null");
         Constraint.isTrue(definition.isInitialized(), "Resolved definition must have been initialized");
         Constraint.isFalse(definition.isDestroyed(), "Resolved definition can not have been destroyed");
@@ -65,8 +64,9 @@ public final class ResolvedAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Nullable protected Attribute doAttributeDefinitionResolve(
-            @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
+    @Nullable protected IdPAttribute
+            doAttributeDefinitionResolve(@Nonnull AttributeResolutionContext resolutionContext)
+                    throws ResolutionException {
         return resolvedAttribute;
     }
 
@@ -110,7 +110,7 @@ public final class ResolvedAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return resolved attribute, or null
      */
-    @Nullable public Attribute getResolvedAttribute() {
+    @Nullable public IdPAttribute getResolvedAttribute() {
         return resolvedAttribute;
     }
 

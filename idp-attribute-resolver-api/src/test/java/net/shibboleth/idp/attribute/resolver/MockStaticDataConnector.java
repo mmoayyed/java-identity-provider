@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
@@ -47,14 +47,14 @@ public class MockStaticDataConnector extends BaseDataConnector {
     private final Logger log = LoggerFactory.getLogger(MockStaticDataConnector.class);
 
     /** Static collection of values returned by this connector. */
-    private Map<String, Attribute> attributes;
+    private Map<String, IdPAttribute> attributes;
 
     /**
      * Get the static values returned by this connector.
      * 
      * @return static values returned by this connector
      */
-    @Nonnull public Map<String, Attribute> getAttributes() {
+    @Nonnull public Map<String, IdPAttribute> getAttributes() {
         return attributes;
     }
 
@@ -63,7 +63,7 @@ public class MockStaticDataConnector extends BaseDataConnector {
      * 
      * @param newValues static values returned by this connector
      */
-    public synchronized void setValues(@Nullable @NullableElements Collection<Attribute> newValues) {
+    public synchronized void setValues(@Nullable @NullableElements Collection<IdPAttribute> newValues) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -72,8 +72,8 @@ public class MockStaticDataConnector extends BaseDataConnector {
             return;
         } 
         
-        Map<String, Attribute> map = new HashMap<String, Attribute>(newValues.size());
-        for (Attribute attr:newValues) {
+        Map<String, IdPAttribute> map = new HashMap<String, IdPAttribute>(newValues.size());
+        for (IdPAttribute attr:newValues) {
             if (null == attr) {
                 continue;
             }
@@ -84,7 +84,7 @@ public class MockStaticDataConnector extends BaseDataConnector {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Map<String, Attribute> doDataConnectorResolve(
+    @Nonnull protected Map<String, IdPAttribute> doDataConnectorResolve(
             final AttributeResolutionContext resolutionContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);

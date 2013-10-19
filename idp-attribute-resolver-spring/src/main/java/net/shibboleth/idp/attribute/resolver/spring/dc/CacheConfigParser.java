@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -55,7 +55,7 @@ public class CacheConfigParser {
      * 
      * @return cache
      */
-    @Nullable public Cache<String, Map<String, Attribute>> createCache() {
+    @Nullable public Cache<String, Map<String, IdPAttribute>> createCache() {
         final Element cacheElement =
                 ElementSupport.getFirstChildElement(configElement, new QName(
                         DataConnectorNamespaceHandler.NAMESPACE, "ResultCache"));

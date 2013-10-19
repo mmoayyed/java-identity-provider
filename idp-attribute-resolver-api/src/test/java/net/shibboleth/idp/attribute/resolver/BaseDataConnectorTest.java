@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -57,21 +57,21 @@ public class BaseDataConnectorTest {
     @Test public void resolve() throws Exception {
         AttributeResolutionContext context = new AttributeResolutionContext();
 
-        MockBaseDataConnector connector = new MockBaseDataConnector("foo", (Map<String, Attribute>) null);
+        MockBaseDataConnector connector = new MockBaseDataConnector("foo", (Map<String, IdPAttribute>) null);
         connector.initialize();
         Assert.assertNull(connector.resolve(context));
 
-        HashMap<String, Attribute> values = new HashMap<String, Attribute>();
+        HashMap<String, IdPAttribute> values = new HashMap<String, IdPAttribute>();
         connector = new MockBaseDataConnector("foo", values);
         connector.initialize();
         Assert.assertNotNull(connector.resolve(context));
 
-        Attribute attribute = new Attribute("foo");
+        IdPAttribute attribute = new IdPAttribute("foo");
         values.put(attribute.getId(), attribute);
 
         connector = new MockBaseDataConnector("foo", values);
         connector.initialize();
-        Map<String, Attribute> result = connector.resolve(context);
+        Map<String, IdPAttribute> result = connector.resolve(context);
         Assert.assertNotNull(result);
         Assert.assertTrue(result.containsKey(attribute.getId()));
         Assert.assertEquals(result.get(attribute.getId()), attribute);
@@ -84,7 +84,7 @@ public class BaseDataConnectorTest {
     private static final class MockBaseDataConnector extends BaseDataConnector {
 
         /** Static values returned for {@link #resolve(AttributeResolutionContext)}. */
-        private Map<String, Attribute> staticValues;
+        private Map<String, IdPAttribute> staticValues;
 
         /**
          * Constructor.
@@ -92,13 +92,13 @@ public class BaseDataConnectorTest {
          * @param id id of the data connector
          * @param values values returned for {@link #resolve(AttributeResolutionContext)}
          */
-        public MockBaseDataConnector(final String id, final Map<String, Attribute> values) {
+        public MockBaseDataConnector(final String id, final Map<String, IdPAttribute> values) {
             setId(id);
             staticValues = values;
         }
 
         /** {@inheritDoc} */
-        protected Map<String, Attribute> doDataConnectorResolve(
+        protected Map<String, IdPAttribute> doDataConnectorResolve(
                 AttributeResolutionContext resolutionContext) throws ResolutionException {
             return staticValues;
         }

@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.LdapDataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.TemplatedExecutableSearchFilterBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.BaseDataConnectorParser;
@@ -179,7 +179,7 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
         final SearchExecutor searchExecutor = v2Parser.createSearchExecutor();
         builder.addPropertyValue("searchExecutor", searchExecutor);
 
-        final Cache<String, Map<String, Attribute>> cache = v2Parser.createCache();
+        final Cache<String, Map<String, IdPAttribute>> cache = v2Parser.createCache();
         if (cache != null) {
             builder.addPropertyValue("resultsCache", cache);
         }

@@ -42,7 +42,7 @@ import com.google.common.collect.ImmutableMap;
 public class AttributeContext extends BaseContext {
 
     /** The attributes tracked by this context. */
-    private Map<String, Attribute> attributes;
+    private Map<String, IdPAttribute> attributes;
 
     /** Constructor. */
     public AttributeContext() {
@@ -54,7 +54,7 @@ public class AttributeContext extends BaseContext {
      * 
      * @return the collection of attributes indexed by attribute ID
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, Attribute> getAttributes() {
+    @Nonnull @NonnullElements @Unmodifiable public Map<String, IdPAttribute> getAttributes() {
         return attributes;
     }
 
@@ -63,14 +63,14 @@ public class AttributeContext extends BaseContext {
      * 
      * @param newAttributes the attributes
      */
-    public void setAttributes(@Nullable @NullableElements Collection<Attribute> newAttributes) {
+    public void setAttributes(@Nullable @NullableElements Collection<IdPAttribute> newAttributes) {
         if (newAttributes == null) {
             attributes = Collections.emptyMap();
             return;
         }
 
-        HashMap<String, Attribute> checkedAttributes = new HashMap<String, Attribute>();
-        for (Attribute attribute : newAttributes) {
+        HashMap<String, IdPAttribute> checkedAttributes = new HashMap<String, IdPAttribute>();
+        for (IdPAttribute attribute : newAttributes) {
             if (attribute != null) {
                 checkedAttributes.put(attribute.getId(), attribute);
             }

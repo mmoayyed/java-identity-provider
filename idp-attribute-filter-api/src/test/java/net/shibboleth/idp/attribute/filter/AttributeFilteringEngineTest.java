@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
@@ -127,12 +127,12 @@ public class AttributeFilteringEngineTest {
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
 
-        Attribute attribute1 = new Attribute("attribute1");
+        IdPAttribute attribute1 = new IdPAttribute("attribute1");
         attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
                 new StringAttributeValue("two")));
         filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
 
-        Attribute attribute2 = new Attribute("attribute2");
+        IdPAttribute attribute2 = new IdPAttribute("attribute2");
         attribute2.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("a"),
                 new StringAttributeValue("b")));
         filterContext.getPrefilteredAttributes().put(attribute2.getId(), attribute2);
@@ -141,7 +141,7 @@ public class AttributeFilteringEngineTest {
         engine.initialize();
 
         engine.filterAttributes(filterContext);
-        Map<String, Attribute> resultAttrs = filterContext.getFilteredAttributes();
+        Map<String, IdPAttribute> resultAttrs = filterContext.getFilteredAttributes();
         Assert.assertEquals(resultAttrs.size(), 1);
         Set<AttributeValue> result = resultAttrs.get("attribute1").getValues();
         Assert.assertEquals(result.size(), 2);
@@ -163,7 +163,7 @@ public class AttributeFilteringEngineTest {
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
 
-        Attribute attribute1 = new Attribute("attribute1");
+        IdPAttribute attribute1 = new IdPAttribute("attribute1");
         attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
                 new StringAttributeValue("two")));
         filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
@@ -194,7 +194,7 @@ public class AttributeFilteringEngineTest {
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
 
-        Attribute attribute1 = new Attribute("attribute1");
+        IdPAttribute attribute1 = new IdPAttribute("attribute1");
         attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
                 new StringAttributeValue("two")));
         filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
@@ -221,7 +221,7 @@ public class AttributeFilteringEngineTest {
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
 
-        Attribute attribute1 = new Attribute("attribute1");
+        IdPAttribute attribute1 = new IdPAttribute("attribute1");
         attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
                 new StringAttributeValue("two")));
         filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
@@ -256,7 +256,7 @@ public class AttributeFilteringEngineTest {
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
 
-        Attribute attribute1 = new Attribute("attribute1");
+        IdPAttribute attribute1 = new IdPAttribute("attribute1");
         attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
                 new StringAttributeValue("two")));
         filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
@@ -265,7 +265,7 @@ public class AttributeFilteringEngineTest {
         engine.initialize();
 
         engine.filterAttributes(filterContext);
-        Map<String, Attribute> resultAttrs = filterContext.getFilteredAttributes();
+        Map<String, IdPAttribute> resultAttrs = filterContext.getFilteredAttributes();
         Assert.assertEquals(resultAttrs.size(), 1);
         Set<AttributeValue> result = resultAttrs.get("attribute1").getValues();
         Assert.assertEquals(result.size(), 1);
@@ -284,7 +284,7 @@ public class AttributeFilteringEngineTest {
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
 
-        Attribute attribute1 = new Attribute("attribute1");
+        IdPAttribute attribute1 = new IdPAttribute("attribute1");
         attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
                 new StringAttributeValue("two")));
         filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
@@ -315,7 +315,7 @@ public class AttributeFilteringEngineTest {
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
 
-        Attribute attribute1 = new Attribute("attribute1");
+        IdPAttribute attribute1 = new IdPAttribute("attribute1");
         attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
                 new StringAttributeValue("two")));
         filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
@@ -324,7 +324,7 @@ public class AttributeFilteringEngineTest {
         engine.initialize();
 
         engine.filterAttributes(filterContext);
-        Map<String, Attribute> resultAttrs = filterContext.getFilteredAttributes();
+        Map<String, IdPAttribute> resultAttrs = filterContext.getFilteredAttributes();
         Assert.assertTrue(resultAttrs.isEmpty());
     }
 

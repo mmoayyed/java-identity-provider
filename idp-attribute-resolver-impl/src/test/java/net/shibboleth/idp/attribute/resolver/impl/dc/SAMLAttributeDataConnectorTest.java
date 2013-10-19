@@ -23,7 +23,7 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
@@ -33,6 +33,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
+import org.opensaml.saml.saml2.core.Attribute;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -54,7 +55,7 @@ public class SAMLAttributeDataConnectorTest extends XMLObjectBaseTestCase {
         connector.setId(PATH);
         connector.initialize();
     
-        final Map<String, Attribute> attributes = connector.doDataConnectorResolve(null);
+        final Map<String, IdPAttribute> attributes = connector.doDataConnectorResolve(null);
         Assert.assertEquals(attributes.size(), 2);
         
         Set<AttributeValue> attributeValues = attributes.get("SamlName").getValues();
@@ -68,7 +69,7 @@ public class SAMLAttributeDataConnectorTest extends XMLObjectBaseTestCase {
         }
     }
 
-    final class Locator implements Function<AttributeResolutionContext, List<org.opensaml.saml.saml2.core.Attribute>> {
+    final class Locator implements Function<AttributeResolutionContext, List<Attribute>> {
 
         final EntityAttributes obj;
 
@@ -77,7 +78,7 @@ public class SAMLAttributeDataConnectorTest extends XMLObjectBaseTestCase {
         }
 
         /** {@inheritDoc} */
-        @Nullable public List<org.opensaml.saml.saml2.core.Attribute> apply(@Nullable AttributeResolutionContext input) {
+        @Nullable public List<Attribute> apply(@Nullable AttributeResolutionContext input) {
             return obj.getAttributes();
         }
 

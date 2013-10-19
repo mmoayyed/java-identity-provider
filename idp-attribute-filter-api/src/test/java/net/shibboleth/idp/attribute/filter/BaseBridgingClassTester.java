@@ -22,7 +22,7 @@ import java.util.HashSet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -41,14 +41,14 @@ public class BaseBridgingClassTester {
     protected final String NAME2 = "bar";
     
     protected AttributeFilterContext setUpCtx() {
-        HashSet<Attribute> attributes = new HashSet<Attribute>(2);
+        HashSet<IdPAttribute> attributes = new HashSet<IdPAttribute>(2);
 
-        Attribute attribute = new Attribute(NAME1);
+        IdPAttribute attribute = new IdPAttribute(NAME1);
         attribute.getValues().add(VALUE1);
         attribute.getValues().add(VALUE2);
         attributes.add(attribute);
 
-        attribute = new Attribute(NAME2);
+        attribute = new IdPAttribute(NAME2);
         attribute.getValues().add(VALUE1);
         attribute.getValues().add(VALUE3);
         attributes.add(attribute);

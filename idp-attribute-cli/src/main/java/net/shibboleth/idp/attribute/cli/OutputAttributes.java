@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.profile.AbstractProfileAction;
@@ -69,7 +69,7 @@ public final class OutputAttributes extends AbstractProfileAction {
         
         try {
             Writer writer = springRequestContext.getExternalContext().getResponseWriter();
-            for (Attribute a : attributeContext.getAttributes().values()) {
+            for (IdPAttribute a : attributeContext.getAttributes().values()) {
                 writer.write("Attribute: " + a.getId() + "\n");
                 if (a.getDisplayNames().containsKey(Locale.getDefault())) {
                     writer.write("\tDisplay name: " + a.getDisplayNames().get(Locale.getDefault()) + "\n");

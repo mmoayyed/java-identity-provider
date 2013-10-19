@@ -17,7 +17,7 @@
 
 /**
  * This package contains a filtering engine for a collection of 
- * {@link net.shibboleth.idp.attribute.Attribute}s. An {@link AttributeFilterContext} is passed 
+ * {@link net.shibboleth.idp.attribute.IdPAttribute}s. An {@link AttributeFilterContext} is passed 
  * through one or more {@link AttributeFilterPolicy} objects which retain or remove values for the attributes in the 
  * collection.
  */

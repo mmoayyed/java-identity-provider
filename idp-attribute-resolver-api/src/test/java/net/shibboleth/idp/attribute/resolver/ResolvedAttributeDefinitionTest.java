@@ -19,7 +19,7 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Collections;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
 public class ResolvedAttributeDefinitionTest {
 
     @Test public void init() {
-        Attribute attribute = new Attribute("foo");
+        IdPAttribute attribute = new IdPAttribute("foo");
         MockStaticAttributeDefinition attrDef = new MockStaticAttributeDefinition();
 
         try {
@@ -60,22 +60,22 @@ public class ResolvedAttributeDefinitionTest {
     }
 
     @Test public void equalsHashToString() throws ComponentInitializationException {
-        Attribute attribute = new Attribute("foo");
+        IdPAttribute attribute = new IdPAttribute("foo");
         MockStaticAttributeDefinition attrDef = new MockStaticAttributeDefinition();
         attrDef.setValue(attribute);
         attrDef.setId("Defn");
         attrDef.initialize();
         ResolvedAttributeDefinition resolvedAttributeDefinition =
-                new ResolvedAttributeDefinition(attrDef, new Attribute("foo"));
+                new ResolvedAttributeDefinition(attrDef, new IdPAttribute("foo"));
 
         resolvedAttributeDefinition.toString();
 
         ResolvedAttributeDefinition otherResolvedAttributeDefinition;
         MockStaticAttributeDefinition otherDef = new MockStaticAttributeDefinition();
-        otherDef.setValue(new Attribute("bar"));
+        otherDef.setValue(new IdPAttribute("bar"));
         otherDef.setId("OtherDefn");
         otherDef.initialize();
-        otherResolvedAttributeDefinition = new ResolvedAttributeDefinition(otherDef, new Attribute("bar"));
+        otherResolvedAttributeDefinition = new ResolvedAttributeDefinition(otherDef, new IdPAttribute("bar"));
 
         Assert.assertFalse(resolvedAttributeDefinition.equals(null));
         Assert.assertFalse(resolvedAttributeDefinition.equals(this));
@@ -90,7 +90,7 @@ public class ResolvedAttributeDefinitionTest {
 
     @Test public void noops() throws ComponentInitializationException, ComponentValidationException {
 
-        Attribute attribute = new Attribute("foo");
+        IdPAttribute attribute = new IdPAttribute("foo");
         MockStaticAttributeDefinition attrDef = new MockStaticAttributeDefinition();
         attrDef.setValue(attribute);
         attrDef.setId("Defn");
@@ -101,7 +101,7 @@ public class ResolvedAttributeDefinitionTest {
         attrDef.initialize();
 
         ResolvedAttributeDefinition resolvedAttributeDefinition =
-                new ResolvedAttributeDefinition(attrDef, new Attribute("foo"));
+                new ResolvedAttributeDefinition(attrDef, new IdPAttribute("foo"));
         resolvedAttributeDefinition.getActivationCriteria();
 
         Assert.assertEquals(resolvedAttributeDefinition.getDependencies(), attrDef.getDependencies());

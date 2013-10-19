@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -51,7 +51,7 @@ public class AttributeResolutionContextTest {
         Assert.assertNotNull(context.getRequestedAttributes());
         Assert.assertTrue(context.getRequestedAttributes().isEmpty());
 
-        HashSet<Attribute> attributes = new HashSet<Attribute>();
+        HashSet<IdPAttribute> attributes = new HashSet<IdPAttribute>();
         context.setRequestedAttributes(attributes);
         Assert.assertNotNull(context.getRequestedAttributes());
         Assert.assertTrue(context.getRequestedAttributes().isEmpty());
@@ -61,15 +61,15 @@ public class AttributeResolutionContextTest {
         Assert.assertNotNull(context.getRequestedAttributes());
         Assert.assertTrue(context.getRequestedAttributes().isEmpty());
 
-        attributes.add(new Attribute("foo"));
+        attributes.add(new IdPAttribute("foo"));
         attributes.add(null);
-        attributes.add(new Attribute("bar"));
+        attributes.add(new IdPAttribute("bar"));
         context.setRequestedAttributes(attributes);
         Assert.assertNotNull(context.getRequestedAttributes());
         Assert.assertEquals(context.getRequestedAttributes().size(), 2);
 
         attributes.clear();
-        attributes.add(new Attribute("baz"));
+        attributes.add(new IdPAttribute("baz"));
         context.setRequestedAttributes(attributes);
         Assert.assertNotNull(context.getRequestedAttributes());
         Assert.assertEquals(context.getRequestedAttributes().size(), 1);
@@ -83,7 +83,7 @@ public class AttributeResolutionContextTest {
         Assert.assertNotNull(context.getResolvedAttributes());
         Assert.assertTrue(context.getResolvedAttributes().isEmpty());
 
-        HashSet<Attribute> attributes = new HashSet<Attribute>();
+        HashSet<IdPAttribute> attributes = new HashSet<IdPAttribute>();
         context.setResolvedAttributes(attributes);
         Assert.assertNotNull(context.getResolvedAttributes());
         Assert.assertTrue(context.getResolvedAttributes().isEmpty());
@@ -93,15 +93,15 @@ public class AttributeResolutionContextTest {
         Assert.assertNotNull(context.getResolvedAttributes());
         Assert.assertTrue(context.getResolvedAttributes().isEmpty());
 
-        attributes.add(new Attribute("foo"));
+        attributes.add(new IdPAttribute("foo"));
         attributes.add(null);
-        attributes.add(new Attribute("bar"));
+        attributes.add(new IdPAttribute("bar"));
         context.setResolvedAttributes(attributes);
         Assert.assertNotNull(context.getResolvedAttributes());
         Assert.assertEquals(context.getResolvedAttributes().size(), 2);
 
         attributes.clear();
-        attributes.add(new Attribute("baz"));
+        attributes.add(new IdPAttribute("baz"));
         context.setResolvedAttributes(attributes);
         Assert.assertNotNull(context.getResolvedAttributes());
         Assert.assertEquals(context.getResolvedAttributes().size(), 1);
@@ -114,7 +114,7 @@ public class AttributeResolutionContextTest {
         Assert.assertNotNull(context.getResolvedAttributeDefinitions());
         Assert.assertNull(context.getResolvedAttributeDefinitions().get("foo"));
 
-        Attribute attribute = new Attribute("foo");
+        IdPAttribute attribute = new IdPAttribute("foo");
         MockAttributeDefinition definition = new MockAttributeDefinition("foo", attribute);
         definition.initialize();
 
@@ -133,7 +133,7 @@ public class AttributeResolutionContextTest {
             // expected this
         }
 
-        definition = new MockAttributeDefinition("bar", (Attribute) null);
+        definition = new MockAttributeDefinition("bar", (IdPAttribute) null);
         definition.initialize();
 
         context.recordAttributeDefinitionResolution(definition, null);
@@ -154,9 +154,9 @@ public class AttributeResolutionContextTest {
         Assert.assertNotNull(context.getResolvedDataConnectors());
         Assert.assertNull(context.getResolvedDataConnectors().get("foo"));
 
-        Attribute attribute = new Attribute("foo");
+        IdPAttribute attribute = new IdPAttribute("foo");
 
-        Map<String, Attribute> attributes = new HashMap<String, Attribute>();
+        Map<String, IdPAttribute> attributes = new HashMap<String, IdPAttribute>();
         attributes.put(attribute.getId(), attribute);
 
         MockDataConnector connector = new MockDataConnector("foo", attributes);

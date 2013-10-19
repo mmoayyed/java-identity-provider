@@ -25,7 +25,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -38,14 +38,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An encapsulated Attribute suitable for handing to scripts. This handles some of the cumbersome issues associated with
- * {@link Attribute} and also a lot of the V2 backwards compatibility stuff. <br/>
+ * {@link IdPAttribute} and also a lot of the V2 backwards compatibility stuff. <br/>
  * NOTE, the java signature for this class may and will change on minor version changes. However the Scripting interface
  * will remain the same (methods will never be removed).
  */
 public class ScriptedAttribute {
 
-    /** The {@link Attribute} we are encapsulating. */
-    private final Attribute encapsulatedAttribute;
+    /** The {@link IdPAttribute} we are encapsulating. */
+    private final IdPAttribute encapsulatedAttribute;
 
     /** Logger. */
     private final Logger log = LoggerFactory.getLogger(ScriptedAttribute.class);
@@ -69,7 +69,7 @@ public class ScriptedAttribute {
      * @param attribute the attribute we are encapsulating.
      * @param prefix the log path from the definition.
      */
-    public ScriptedAttribute(@Nonnull Attribute attribute, String prefix) {
+    public ScriptedAttribute(@Nonnull IdPAttribute attribute, String prefix) {
         encapsulatedAttribute = attribute;
 
         logPrefix =
@@ -115,7 +115,7 @@ public class ScriptedAttribute {
      * @return the attribute
      * @throws ResolutionException if the script has called getValues.
      */
-    @Nonnull public Attribute getNativeAttribute() throws ResolutionException {
+    @Nonnull public IdPAttribute getNativeAttribute() throws ResolutionException {
         if (null != attributeValues) {
             throw new ResolutionException(getLogPrefix()
                     + "': cannot call getNativeAttribute() and getValues() on the same attribute()");
@@ -187,7 +187,7 @@ public class ScriptedAttribute {
      * @return a suitable modified attribute.
      * @throws ResolutionException if we find the wrong type.
      */
-    @Nonnull protected Attribute getResultingAttribute() throws ResolutionException {
+    @Nonnull protected IdPAttribute getResultingAttribute() throws ResolutionException {
 
         if (null == attributeValues) {
             log.debug("{} return initial attribute unchanged", getLogPrefix());

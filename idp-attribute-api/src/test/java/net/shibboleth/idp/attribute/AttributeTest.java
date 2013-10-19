@@ -32,12 +32,12 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** Unit test for {@link Attribute} class. */
+/** Unit test for {@link IdPAttribute} class. */
 public class AttributeTest {
 
     /** Tests that the attribute has its expected state after instantiation. */
     @Test public void instantiation() {
-        Attribute attrib = new Attribute("foo");
+        IdPAttribute attrib = new IdPAttribute("foo");
 
         Assert.assertEquals(attrib.getId(), "foo");
 
@@ -55,27 +55,27 @@ public class AttributeTest {
 
         Assert.assertNotNull(attrib.hashCode());
 
-        Assert.assertTrue(attrib.equals(new Attribute("foo")));
+        Assert.assertTrue(attrib.equals(new IdPAttribute("foo")));
     }
 
     /** Tests that null/empty IDs aren't accepted. */
     @Test public void nullEmptyId() {
         try {
-            new Attribute(null);
+            new IdPAttribute(null);
             Assert.fail("able to create attribute with null ID");
         } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
-            new Attribute("");
+            new IdPAttribute("");
             Assert.fail("able to create attribute with empty ID");
         } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
-            new Attribute(" ");
+            new IdPAttribute(" ");
             Assert.fail("able to create attribute with empty ID");
         } catch (ConstraintViolationException e) {
             // expected this
@@ -87,7 +87,7 @@ public class AttributeTest {
         Locale en = new Locale("en");
         Locale enbr = new Locale("en", "br");
 
-        Attribute attrib = new Attribute("foo");
+        IdPAttribute attrib = new IdPAttribute("foo");
         attrib.setDisplayNames(null);
         Assert.assertTrue(attrib.getDisplayNames().isEmpty());
 
@@ -153,7 +153,7 @@ public class AttributeTest {
         Locale en = new Locale("en");
         Locale enbr = new Locale("en", "br");
 
-        Attribute attrib = new Attribute("foo");
+        IdPAttribute attrib = new IdPAttribute("foo");
         attrib.setDisplayDescriptions(null);
         Assert.assertTrue(attrib.getDisplayNames().isEmpty());
 
@@ -219,7 +219,7 @@ public class AttributeTest {
         LocalizedStringAttributeValue value1 = new LocalizedStringAttributeValue("value1", null);
         LocalizedStringAttributeValue value2 = new LocalizedStringAttributeValue("value2", null);
 
-        Attribute attrib = new Attribute("foo");
+        IdPAttribute attrib = new IdPAttribute("foo");
         Assert.assertTrue(attrib.getValues().isEmpty());
 
         attrib.setValues(null);
@@ -311,7 +311,7 @@ public class AttributeTest {
         AttributeEncoder<String> enc1 = new MockEncoder<String>();
         AttributeEncoder<String> enc2 = new MockEncoder<String>();
 
-        Attribute attrib = new Attribute("foo");
+        IdPAttribute attrib = new IdPAttribute("foo");
         Assert.assertTrue(attrib.getEncoders().isEmpty());
         attrib.setEncoders(null);
         Assert.assertTrue(attrib.getEncoders().isEmpty());
@@ -363,9 +363,9 @@ public class AttributeTest {
     }
     
     @Test public void cloneToString() {
-        Attribute attrib = new Attribute("foo");
-        Attribute dupl = new Attribute("foo");
-        Attribute diff = new Attribute("bar");
+        IdPAttribute attrib = new IdPAttribute("foo");
+        IdPAttribute dupl = new IdPAttribute("foo");
+        IdPAttribute diff = new IdPAttribute("bar");
 
         Assert.assertTrue(attrib.equals(attrib));
         Assert.assertTrue(attrib.equals(dupl));

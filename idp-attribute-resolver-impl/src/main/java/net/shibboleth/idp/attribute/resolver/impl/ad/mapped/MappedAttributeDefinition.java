@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
@@ -187,7 +187,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Attribute doAttributeDefinitionResolve(
+    @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
@@ -198,7 +198,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
         log.debug("Attribute Definition '{}': Attempting to map the following values: {}", getId(), unmappedResults);
 
         // Bucket for results
-        final Attribute resultAttribute = new Attribute(getId());
+        final IdPAttribute resultAttribute = new IdPAttribute(getId());
 
         if (unmappedResults == null || unmappedResults.isEmpty()) {
             log.debug("Attribute Definition {}: No values from dependencies", getId());

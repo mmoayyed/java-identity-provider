@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.filter;
 import java.util.Arrays;
 import java.util.Collection;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -198,7 +198,7 @@ public class AttributeValueFilterPolicyTest {
         final StringAttributeValue cStringAttributeValue = new StringAttributeValue("c");
         final StringAttributeValue dStringAttributeValue = new StringAttributeValue("d");
         final String ATTR_NAME = "one";
-        final Attribute attribute1 = new Attribute(ATTR_NAME);
+        final IdPAttribute attribute1 = new IdPAttribute(ATTR_NAME);
         attribute1.getValues().add(aStringAttributeValue);
         attribute1.getValues().add(bStringAttributeValue);
         attribute1.getValues().add(cStringAttributeValue);
@@ -223,7 +223,7 @@ public class AttributeValueFilterPolicyTest {
 
         thrown = false;
         try {
-            policy.apply(new Attribute(ATTR_NAME), new AttributeFilterContext());
+            policy.apply(new IdPAttribute(ATTR_NAME), new AttributeFilterContext());
         } catch (UninitializedComponentException e) {
             thrown = true;
         }
@@ -244,7 +244,7 @@ public class AttributeValueFilterPolicyTest {
 
         thrown = false;
         try {
-            policy.apply(new Attribute(ATTR_NAME), null);
+            policy.apply(new IdPAttribute(ATTR_NAME), null);
         } catch (ConstraintViolationException e) {
             thrown = true;
         }

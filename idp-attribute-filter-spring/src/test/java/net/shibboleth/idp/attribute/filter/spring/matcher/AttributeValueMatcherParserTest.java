@@ -24,7 +24,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.Matcher;
@@ -55,11 +55,11 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
  */
 public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTest {
 
-    private Map<String, Attribute> epaUid;
+    private Map<String, IdPAttribute> epaUid;
 
-    private Map<String, Attribute> epaUidJS;
+    private Map<String, IdPAttribute> epaUidJS;
 
-    private Map<String, Attribute> uidEpaJS;
+    private Map<String, IdPAttribute> uidEpaJS;
 
     @BeforeClass public void setupAttributes() throws ComponentInitializationException, ResolutionException {
 

@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
@@ -205,12 +205,12 @@ public class AttributeFilterPolicyTest {
         Assert.assertTrue(thrown);
 
         AttributeFilterContext context = new AttributeFilterContext();
-        Attribute attribute = new Attribute(ATTR_NAME);
+        IdPAttribute attribute = new IdPAttribute(ATTR_NAME);
 
         attribute.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
                 new StringAttributeValue("two"), new StringAttributeValue("three")));
 
-        Attribute attribute2 = new Attribute(ATTR_NAME_2);
+        IdPAttribute attribute2 = new IdPAttribute(ATTR_NAME_2);
         attribute2.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("45")));
         context.setPrefilteredAttributes(Arrays.asList(attribute, attribute2));
 
@@ -248,7 +248,7 @@ public class AttributeFilterPolicyTest {
         // Empty attribute
         //
         AttributeFilterContext context = new AttributeFilterContext();
-        Attribute attribute = new Attribute(ATTR_NAME);
+        IdPAttribute attribute = new IdPAttribute(ATTR_NAME);
         attribute.setValues(Collections.EMPTY_LIST);
         context.setPrefilteredAttributes(Arrays.asList(attribute));
         policy.initialize();

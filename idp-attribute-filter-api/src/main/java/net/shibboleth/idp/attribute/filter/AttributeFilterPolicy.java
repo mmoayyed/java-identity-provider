@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -167,11 +167,11 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
             return;
         }
 
-        final Map<String, Attribute> attributes = filterContext.getPrefilteredAttributes();
+        final Map<String, IdPAttribute> attributes = filterContext.getPrefilteredAttributes();
         log.debug("{} Applying attribute filter policy to current set of attributes: {}", getLogPrefix(),
                 attributes.keySet());
 
-        Attribute attribute;
+        IdPAttribute attribute;
         for (AttributeRule valuePolicy : valuePolicies) {
             attribute = attributes.get(valuePolicy.getAttributeId());
             if (attribute != null) {

@@ -30,26 +30,26 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheStats;
 import com.google.common.collect.ImmutableMap;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 
 /**
  * Simple cache implementation backed by a hash map.
  */
-public class TestCache implements Cache<String, Map<String, Attribute>>, Iterable<Map<String, Attribute>> {
+public class TestCache implements Cache<String, Map<String, IdPAttribute>>, Iterable<Map<String, IdPAttribute>> {
 
     /** Hash map cache. */
-    private final Map<String, Map<String, Attribute>> cache =
-            new HashMap<String, Map<String, Attribute>>();
+    private final Map<String, Map<String, IdPAttribute>> cache =
+            new HashMap<String, Map<String, IdPAttribute>>();
 
     /** {@inheritDoc} */
-    @Nullable public Map<String, Attribute> getIfPresent(Object key) {
+    @Nullable public Map<String, IdPAttribute> getIfPresent(Object key) {
         return cache.get(key);
     }
 
     /** {@inheritDoc} */
-    public Map<String, Attribute> get(String key,
-            Callable<? extends Map<String, Attribute>> valueLoader) throws ExecutionException {
-        Map<String, Attribute> value = cache.get(key);
+    public Map<String, IdPAttribute> get(String key,
+            Callable<? extends Map<String, IdPAttribute>> valueLoader) throws ExecutionException {
+        Map<String, IdPAttribute> value = cache.get(key);
         if (value == null) {
             try {
                 value = valueLoader.call();
@@ -62,17 +62,17 @@ public class TestCache implements Cache<String, Map<String, Attribute>>, Iterabl
     }
 
     /** {@inheritDoc} */
-    public ImmutableMap<String, Map<String, Attribute>> getAllPresent(Iterable<?> keys) {
+    public ImmutableMap<String, Map<String, IdPAttribute>> getAllPresent(Iterable<?> keys) {
         throw new UnsupportedOperationException("Method not implemented");
     }
 
     /** {@inheritDoc} */
-    public void put(String key, Map<String, Attribute> value) {
+    public void put(String key, Map<String, IdPAttribute> value) {
         cache.put(key, value);
     }
 
     /** {@inheritDoc} */
-    public void putAll(Map<? extends String, ? extends Map<String, Attribute>> m) {
+    public void putAll(Map<? extends String, ? extends Map<String, IdPAttribute>> m) {
         cache.putAll(m);
     }
 
@@ -104,7 +104,7 @@ public class TestCache implements Cache<String, Map<String, Attribute>>, Iterabl
     }
 
     /** {@inheritDoc} */
-    public ConcurrentMap<String, Map<String, Attribute>> asMap() {
+    public ConcurrentMap<String, Map<String, IdPAttribute>> asMap() {
         throw new UnsupportedOperationException("Method not implemented");
     }
 
@@ -113,7 +113,7 @@ public class TestCache implements Cache<String, Map<String, Attribute>>, Iterabl
     }
 
     /** {@inheritDoc} */
-    public Iterator<Map<String, Attribute>> iterator() {
+    public Iterator<Map<String, IdPAttribute>> iterator() {
         return cache.values().iterator();
     }
 

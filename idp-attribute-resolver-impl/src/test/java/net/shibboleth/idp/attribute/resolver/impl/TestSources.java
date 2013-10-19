@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
@@ -99,20 +99,20 @@ public final class TestSources {
      * @throws ComponentInitializationException if we cannot initialized (unlikely)
      */
     public static BaseDataConnector populatedStaticConnector() throws ComponentInitializationException {
-        Attribute attr;
-        Set<Attribute> attributeSet;
+        IdPAttribute attr;
+        Set<IdPAttribute> attributeSet;
         Set<AttributeValue> valuesSet;
 
         valuesSet = new LazySet<AttributeValue>();
-        attributeSet = new LazySet<Attribute>();
+        attributeSet = new LazySet<IdPAttribute>();
 
         valuesSet.add(new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING));
         valuesSet.add(new StringAttributeValue(CONNECTOR_ATTRIBUTE_VALUE_STRING));
-        attr = new Attribute(DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
+        attr = new IdPAttribute(DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
         attr.setValues(valuesSet);
         attributeSet.add(attr);
 
-        attr = new Attribute(DEPENDS_ON_SECOND_ATTRIBUTE_NAME);
+        attr = new IdPAttribute(DEPENDS_ON_SECOND_ATTRIBUTE_NAME);
         valuesSet = new LazySet<AttributeValue>();
         valuesSet.add(new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[0]));
         valuesSet.add(new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[1]));
@@ -138,7 +138,7 @@ public final class TestSources {
     }
 
     public static BaseAttributeDefinition populatedStaticAttribute(String definitionName, String attributeName, int attributeCount) throws ComponentInitializationException {
-        Attribute attr;
+        IdPAttribute attr;
         Set<AttributeValue> valuesSet;
 
         valuesSet = new LazySet<AttributeValue>();
@@ -152,7 +152,7 @@ public final class TestSources {
         for (int i = 2; i < attributeCount; i++) {
             valuesSet.add(new StringAttributeValue(ATTRIBUTE_ATTRIBUTE_VALUE_STRING + i));
         }
-        attr = new Attribute(attributeName);
+        attr = new IdPAttribute(attributeName);
         attr.setValues(valuesSet);
         
         StaticAttributeDefinition definition = new StaticAttributeDefinition();

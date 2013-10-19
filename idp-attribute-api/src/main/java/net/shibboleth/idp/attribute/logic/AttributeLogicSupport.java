@@ -19,7 +19,7 @@ package net.shibboleth.idp.attribute.logic;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 
 import org.opensaml.messaging.context.BaseContext;
 
@@ -43,7 +43,7 @@ public final class AttributeLogicSupport {
      * 
      * @return the function
      */
-    @Nonnull public static Function<BaseContext, Attribute> lookupAttributeFromAttributeContext(
+    @Nonnull public static Function<BaseContext, IdPAttribute> lookupAttributeFromAttributeContext(
             @Nonnull String attributeId) {
         return new LookupAttributeFromAttributeContextFunction(attributeId);
     }
@@ -56,7 +56,8 @@ public final class AttributeLogicSupport {
      * 
      * @return the created predicate
      */
-    @Nonnull public static Predicate<Attribute> allAttributeValuesMatches(@Nonnull Predicate valueMatchingPredicate) {
+    @Nonnull public static Predicate<IdPAttribute> allAttributeValuesMatches(
+            @Nonnull Predicate valueMatchingPredicate) {
         return new AttributeValuePredicate(valueMatchingPredicate, true);
     }
 
@@ -68,7 +69,7 @@ public final class AttributeLogicSupport {
      * 
      * @return the created predicate
      */
-    @Nonnull public static Predicate<Attribute> atLeastOneAttributeValueMatches(
+    @Nonnull public static Predicate<IdPAttribute> atLeastOneAttributeValueMatches(
             @Nonnull Predicate valueMatchingPredicate) {
         return new AttributeValuePredicate(valueMatchingPredicate, false);
     }

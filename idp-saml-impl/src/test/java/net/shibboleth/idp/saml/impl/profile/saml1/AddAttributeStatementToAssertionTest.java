@@ -23,7 +23,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
@@ -44,6 +44,7 @@ import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.impl.XSStringImpl;
 import org.opensaml.saml.saml1.core.Assertion;
+import org.opensaml.saml.saml1.core.Attribute;
 import org.opensaml.saml.saml1.core.AttributeStatement;
 import org.opensaml.saml.saml1.core.Response;
 import org.springframework.webflow.execution.Event;
@@ -139,7 +140,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         MockSaml1StringAttributeEncoder attributeEncoder = new MockSaml1StringAttributeEncoder();
 
-        Attribute attribute = new Attribute(MY_NAME_1);
+        IdPAttribute attribute = new IdPAttribute(MY_NAME_1);
         attribute.setValues(Arrays.asList((AttributeValue) new StringAttributeValue(MY_VALUE_1)));
 
         Collection collection = (Collection<AttributeEncoder>) Arrays.asList((AttributeEncoder) attributeEncoder);
@@ -168,7 +169,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         MockSaml1StringAttributeEncoder attributeEncoder = new MockSaml1StringAttributeEncoder();
 
-        Attribute attribute = new Attribute(MY_NAME_1);
+        IdPAttribute attribute = new IdPAttribute(MY_NAME_1);
         attribute.setValues(Arrays.asList((AttributeValue) new StringAttributeValue(MY_VALUE_1)));
 
         Collection collection = (Collection<AttributeEncoder>) Arrays.asList((AttributeEncoder) attributeEncoder);
@@ -328,7 +329,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
      */
     private AttributeContext buildAttributeContext() throws ComponentInitializationException {
 
-        Attribute attribute1 = new Attribute(MY_NAME_1);
+        IdPAttribute attribute1 = new IdPAttribute(MY_NAME_1);
         attribute1.setValues(Arrays.asList((AttributeValue) new StringAttributeValue(MY_VALUE_1)));
 
         Saml1StringAttributeEncoder attributeEncoder1 = new Saml1StringAttributeEncoder();
@@ -339,7 +340,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         Collection collection1 = (Collection<AttributeEncoder>) Arrays.asList((AttributeEncoder) attributeEncoder1);
         attribute1.setEncoders(collection1);
 
-        Attribute attribute2 = new Attribute(MY_NAME_2);
+        IdPAttribute attribute2 = new IdPAttribute(MY_NAME_2);
         attribute2.setValues(Arrays.asList((AttributeValue) new StringAttributeValue(MY_VALUE_2)));
 
         Saml1StringAttributeEncoder attributeEncoder2 = new Saml1StringAttributeEncoder();
@@ -366,7 +367,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         Assert.assertNotNull(attributeStatement.getAttributes());
         Assert.assertEquals(attributeStatement.getAttributes().size(), 2);
 
-        for (org.opensaml.saml.saml1.core.Attribute samlAttr : attributeStatement.getAttributes()) {
+        for (Attribute samlAttr : attributeStatement.getAttributes()) {
             Assert.assertNotNull(samlAttr.getAttributeValues());
             Assert.assertEquals(samlAttr.getAttributeValues().size(), 1);
             XMLObject xmlObject = samlAttr.getAttributeValues().get(0);
@@ -385,7 +386,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     private class MockSaml1StringAttributeEncoder extends Saml1StringAttributeEncoder {
 
         /** {@inheritDoc} */
-        @Nullable public org.opensaml.saml.saml1.core.Attribute encode(@Nonnull final Attribute attribute)
+        @Nullable public Attribute encode(@Nonnull final IdPAttribute attribute)
                 throws AttributeEncodingException {
             throw new AttributeEncodingException("Always thrown.");
         }

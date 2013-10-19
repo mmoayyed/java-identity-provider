@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 
 import org.opensaml.messaging.context.BaseContext;
 
@@ -54,22 +54,22 @@ public final class ConsentContext extends BaseContext {
     }
 
     /** Attributes about the user that are to be released with the user's consent. */
-    private Map<String, Attribute> userAttributes;
+    private Map<String, IdPAttribute> userAttributes;
 
     /** The decision determined by the consent engine. */
     private Consent consentDecision;
 
     /** The attributes the consent engine has determined may be released. */
-    private Map<String, Attribute> consentedAttributes;
+    private Map<String, IdPAttribute> consentedAttributes;
 
     /**
      * Constructor.
      * 
      * @param attributes attributes about the user that are to be released with the user's consent, defensively copied
      */
-    public ConsentContext(Map<String, Attribute> attributes) {
-        userAttributes = Collections.unmodifiableMap(new HashMap<String, Attribute>(attributes));
-        consentedAttributes = new HashMap<String, Attribute>();
+    public ConsentContext(Map<String, IdPAttribute> attributes) {
+        userAttributes = Collections.unmodifiableMap(new HashMap<String, IdPAttribute>(attributes));
+        consentedAttributes = new HashMap<String, IdPAttribute>();
 
         consentDecision = Consent.UNSPECIFIED;
     }
@@ -97,7 +97,7 @@ public final class ConsentContext extends BaseContext {
      * 
      * @return unmodifiable map representing the information to be released about the user
      */
-    public Map<String, Attribute> getUserAttributes() {
+    public Map<String, IdPAttribute> getUserAttributes() {
         return userAttributes;
     }
 
@@ -106,7 +106,7 @@ public final class ConsentContext extends BaseContext {
      * 
      * @return attributes that may be released with the user's consent, never null
      */
-    public Map<String, Attribute> getConsentedAttributes() {
+    public Map<String, IdPAttribute> getConsentedAttributes() {
         return consentedAttributes;
     }
 }

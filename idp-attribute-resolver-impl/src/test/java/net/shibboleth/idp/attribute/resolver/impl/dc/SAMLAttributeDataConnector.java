@@ -26,7 +26,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -39,15 +39,16 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
+import org.opensaml.saml.saml2.core.Attribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 
 /**
- * Data Connector to extra attributes from a saml2 {@link org.opensaml.saml.saml2.core.Assertion}. It is hoped that this
- * connector will eventually end up being used in mainline operation, which is why the code looks more suitable for
- * being plugged into a webflow than into a test.
+ * Data Connector to extra attributes from a saml2 {@link Assertion}. It is hoped that this connector will eventually
+ * end up being used in mainline operation, which is why the code looks more suitable for being plugged into a webflow
+ * than into a test.
  */
 public class SAMLAttributeDataConnector extends BaseDataConnector {
 
@@ -57,14 +58,14 @@ public class SAMLAttributeDataConnector extends BaseDataConnector {
     /**
      * The way to get the list of (SAML) attributes from the resolution context.
      */
-    private Function<AttributeResolutionContext, List<org.opensaml.saml.saml2.core.Attribute>> attributesStrategy;
+    private Function<AttributeResolutionContext, List<Attribute>> attributesStrategy;
 
     /**
      * Gets the strategy for finding the (SAML) Attributes from the resolution context.
      * 
      * @return the required strategy.
      */
-    public Function<AttributeResolutionContext, List<org.opensaml.saml.saml2.core.Attribute>> getAttributesStrategy() {
+    public Function<AttributeResolutionContext, List<Attribute>> getAttributesStrategy() {
         return attributesStrategy;
     }
 
@@ -73,8 +74,7 @@ public class SAMLAttributeDataConnector extends BaseDataConnector {
      * 
      * @param strategy to set.
      */
-    public void setAttributesStrategy(
-            Function<AttributeResolutionContext, List<org.opensaml.saml.saml2.core.Attribute>> strategy) {
+    public void setAttributesStrategy(Function<AttributeResolutionContext, List<Attribute>> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         attributesStrategy = strategy;
     }
@@ -141,28 +141,28 @@ public class SAMLAttributeDataConnector extends BaseDataConnector {
     }
 
     /** {@inheritDoc} */
-    @Nullable protected Map<String, Attribute> doDataConnectorResolve(
+    @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
-        final List<org.opensaml.saml.saml2.core.Attribute> samlAttributes = attributesStrategy.apply(resolutionContext);
+        final List<Attribute> samlAttributes = attributesStrategy.apply(resolutionContext);
 
         if (null == samlAttributes) {
             log.info("Connector '{}' no attributes found", getId());
             return null;
         }
 
-        final Map<String, Attribute> retVal = new HashMap<>(samlAttributes.size());
+        final Map<String, IdPAttribute> retVal = new HashMap<>(samlAttributes.size());
 
-        for (org.opensaml.saml.saml2.core.Attribute samlAttribute : samlAttributes) {
+        for (Attribute samlAttribute : samlAttributes) {
             final String attributeName = samlAttribute.getName();
             log.debug("Connector '{}': found attribute named '{}'", getId(), attributeName);
 
             final Collection<AttributeValue> values = encodeValues(samlAttribute.getAttributeValues());
             log.debug("Connector '{}': attribute '{}', values '{}'", new Object[] {getId(), attributeName, values,});
 
-            final Attribute attribute = new Attribute(attributeName);
-            attribute.setValues(values);
+            final IdPAttribute IdPAttribute = new IdPAttribute(attributeName);
+            IdPAttribute.setValues(values);
 
-            retVal.put(attributeName, attribute);
+            retVal.put(attributeName, IdPAttribute);
         }
         return retVal;
     }

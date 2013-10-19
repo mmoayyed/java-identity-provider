@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.filter.impl.complex;
 import java.util.Collections;
 import java.util.Map;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
@@ -98,8 +98,8 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
         AttributeFilterContext context = new AttributeFilterContext();
         context.setPrefilteredAttributes(getAttributes("epa-uidwithjsmith.xml").values());
         engine.filterAttributes(context);
-        Map<String, Attribute> attributes = context.getFilteredAttributes();
-        Attribute attribute = attributes.get("eduPersonAffiliation");
+        Map<String, IdPAttribute> attributes = context.getFilteredAttributes();
+        IdPAttribute attribute = attributes.get("eduPersonAffiliation");
         Assert.assertEquals(attribute.getValues().size(), 3);
 
         context = new AttributeFilterContext();
@@ -150,8 +150,8 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
         AttributeFilterContext context = new AttributeFilterContext();
         context.setPrefilteredAttributes(getAttributes("epa-uidwithjsmith.xml").values());
         engine.filterAttributes(context);
-        Map<String, Attribute> attributes = context.getFilteredAttributes();
-        Attribute attribute = attributes.get("eduPersonAffiliation");
+        Map<String, IdPAttribute> attributes = context.getFilteredAttributes();
+        IdPAttribute attribute = attributes.get("eduPersonAffiliation");
         Assert.assertEquals(attribute.getValues().size(), 3);
 
         context = new AttributeFilterContext();

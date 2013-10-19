@@ -21,6 +21,7 @@ import java.util.Collection;
 
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
@@ -86,9 +87,7 @@ public class Saml2XmlObjectSubjectNameIDEncoderTest extends OpenSAMLInitBaseTest
 
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void empty() throws Exception {
         final Saml2XmlObjectSubjectNameIDEncoder encoder = new Saml2XmlObjectSubjectNameIDEncoder();
-        final net.shibboleth.idp.attribute.Attribute inputAttribute;
-
-        inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
+        final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
 
         encoder.encode(inputAttribute);
     }
@@ -103,7 +102,7 @@ public class Saml2XmlObjectSubjectNameIDEncoderTest extends OpenSAMLInitBaseTest
                     }
                 }, saml1NameIdFor(OTHERID));
 
-        net.shibboleth.idp.attribute.Attribute inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
+        final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
         encoder.encode(inputAttribute);
@@ -113,9 +112,7 @@ public class Saml2XmlObjectSubjectNameIDEncoderTest extends OpenSAMLInitBaseTest
         final Collection<AttributeValue> values =
                 Lists.newArrayList((AttributeValue) saml1NameIdFor(OTHERID), new StringAttributeValue("foo"),
                         saml2NameIdFor(NAME_1), saml1NameIdFor(NAME_2));
-        final net.shibboleth.idp.attribute.Attribute inputAttribute;
-
-        inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
+        final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
         final NameID outputNameId = encoder.encode(inputAttribute);
@@ -131,8 +128,7 @@ public class Saml2XmlObjectSubjectNameIDEncoderTest extends OpenSAMLInitBaseTest
                 Lists.newArrayList((AttributeValue) saml1NameIdFor(OTHERID), saml2NameIdFor(NAME_1),
                         saml2NameIdFor(NAME_1));
 
-        final net.shibboleth.idp.attribute.Attribute inputAttribute;
-        inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
+        final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
         final NameID outputNameId = encoder.encode(inputAttribute);

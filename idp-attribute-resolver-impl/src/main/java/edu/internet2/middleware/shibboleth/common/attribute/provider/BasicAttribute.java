@@ -20,7 +20,7 @@ package edu.internet2.middleware.shibboleth.common.attribute.provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.impl.ad.ScriptedAttribute;
 
 /**
@@ -38,7 +38,7 @@ public class BasicAttribute extends ScriptedAttribute {
      * @param id The attribute Id.
      */
     public BasicAttribute(String id) {
-        super(new Attribute(id), "Scripted Attribute Definition: ");
+        super(new IdPAttribute(id), "Scripted Attribute Definition: ");
         log.info("{}  Use of V2 emulated class \"BasicAttribute\", consider replacing this code", getLogPrefix());
     }
 }

@@ -20,7 +20,7 @@ package net.shibboleth.idp.profile.impl;
 import java.util.Collections;
 import java.util.Map;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
@@ -48,7 +48,7 @@ public class ResolveAttributesTest {
     @Test public void testNoRelyingPartyContext() throws Exception {
         ProfileRequestContext profileCtx = new ProfileRequestContext();
 
-        Attribute attribute = new Attribute("ad1");
+        IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.getValues().add(new StringAttributeValue("value1"));
 
         LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
@@ -70,7 +70,7 @@ public class ResolveAttributesTest {
     @Test public void testResolveAttributes() throws Exception {
         ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
 
-        Attribute attribute = new Attribute("ad1");
+        IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.getValues().add(new StringAttributeValue("value1"));
 
         LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
@@ -95,7 +95,7 @@ public class ResolveAttributesTest {
                 profileCtx.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
         Assert.assertNotNull(resolvedAttributeCtx);
 
-        Map<String, Attribute> resolvedAttributes = resolvedAttributeCtx.getAttributes();
+        Map<String, IdPAttribute> resolvedAttributes = resolvedAttributeCtx.getAttributes();
         Assert.assertFalse(resolvedAttributes.isEmpty());
         Assert.assertEquals(resolvedAttributes.size(), 1);
         Assert.assertNotNull(resolvedAttributes.get("ad1"));
@@ -105,7 +105,7 @@ public class ResolveAttributesTest {
     @Test public void testResolveSpecificAttributes() throws Exception {
         ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
 
-        Attribute attribute = new Attribute("ad1");
+        IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.getValues().add(new StringAttributeValue("value1"));
 
         LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
@@ -115,7 +115,7 @@ public class ResolveAttributesTest {
         resolver.initialize();
 
         AttributeResolutionContext attributeResolutionCtx = new AttributeResolutionContext();
-        attributeResolutionCtx.setRequestedAttributes(Collections.singleton(new Attribute("ad1")));
+        attributeResolutionCtx.setRequestedAttributes(Collections.singleton(new IdPAttribute("ad1")));
         profileCtx.addSubcontext(attributeResolutionCtx);
 
         ResolveAttributes action = new ResolveAttributes(resolver);
@@ -134,7 +134,7 @@ public class ResolveAttributesTest {
                 profileCtx.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
         Assert.assertNotNull(resolvedAttributeCtx);
 
-        Map<String, Attribute> resolvedAttributes = resolvedAttributeCtx.getAttributes();
+        Map<String, IdPAttribute> resolvedAttributes = resolvedAttributeCtx.getAttributes();
         Assert.assertFalse(resolvedAttributes.isEmpty());
         Assert.assertEquals(resolvedAttributes.size(), 1);
         Assert.assertNotNull(resolvedAttributes.get("ad1"));
@@ -144,7 +144,7 @@ public class ResolveAttributesTest {
         profileCtx = new RequestContextBuilder().buildProfileRequestContext();
 
         attributeResolutionCtx = new AttributeResolutionContext();
-        attributeResolutionCtx.setRequestedAttributes(Collections.singleton(new Attribute("dne")));
+        attributeResolutionCtx.setRequestedAttributes(Collections.singleton(new IdPAttribute("dne")));
         profileCtx.addSubcontext(attributeResolutionCtx, true);
 
         result = action.doExecute(new MockRequestContext(), profileCtx);
@@ -165,7 +165,7 @@ public class ResolveAttributesTest {
     @Test public void testUnableToResolveAttributes() throws Exception {
         ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
 
-        Attribute attribute = new Attribute("ad1");
+        IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.getValues().add(new StringAttributeValue("value1"));
 
         LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();

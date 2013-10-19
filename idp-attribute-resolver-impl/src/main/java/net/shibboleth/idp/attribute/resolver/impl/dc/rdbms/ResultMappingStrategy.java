@@ -21,5 +21,5 @@ import java.sql.ResultSet;
 
 import net.shibboleth.idp.attribute.resolver.impl.dc.MappingStrategy;
 
-/** Strategy for mapping from a {@link ResultSet} to a collection of {@link Attribute}s. */
+/** Strategy for mapping from a {@link ResultSet} to a collection of {@link IdPAttribute}s. */
 public interface ResultMappingStrategy extends MappingStrategy<ResultSet>{}

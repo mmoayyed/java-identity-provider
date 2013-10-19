@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
@@ -53,7 +53,7 @@ public class StaticAttributeDefinitionTest {
             //OK
         }
 
-        Attribute attribute = new Attribute("attribute");
+        IdPAttribute attribute = new IdPAttribute("attribute");
         attribute.setValues(Lists.newArrayList((AttributeValue) new StringAttributeValue("one"), new StringAttributeValue("two")));
 
         attrDef.setValue(attribute);
@@ -71,13 +71,13 @@ public class StaticAttributeDefinitionTest {
         Assert.assertNotNull(attrDef.getValue());
 
         AttributeResolutionContext context = new AttributeResolutionContext();
-        Attribute result = attrDef.doAttributeDefinitionResolve(context);
+        IdPAttribute result = attrDef.doAttributeDefinitionResolve(context);
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.getId(), "attribute");
         
         try {
-            attrDef.setValue(new Attribute("other"));
+            attrDef.setValue(new IdPAttribute("other"));
             Assert.fail();
         } catch (UnmodifiableComponentException e) {
             // OK
@@ -93,7 +93,7 @@ public class StaticAttributeDefinitionTest {
         }
 
         try {
-            attrDef.setValue(new Attribute("other"));
+            attrDef.setValue(new IdPAttribute("other"));
             Assert.fail();
         } catch (UnmodifiableComponentException e) {
             // OK

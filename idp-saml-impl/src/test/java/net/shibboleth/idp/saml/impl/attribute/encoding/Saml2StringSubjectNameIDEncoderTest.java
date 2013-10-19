@@ -21,7 +21,7 @@ import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -78,7 +78,7 @@ public class Saml2StringSubjectNameIDEncoderTest extends OpenSAMLInitBaseTestCas
     }
 
     @Test public void encode() throws AttributeEncodingException {
-        Attribute attribute = new Attribute("id");
+        IdPAttribute attribute = new IdPAttribute("id");
         attribute.setValues(Collections.singleton((AttributeValue) new StringAttributeValue("value")));
 
         final Saml2StringSubjectNameIDEncoder enc1 = new Saml2StringSubjectNameIDEncoder();
@@ -98,7 +98,7 @@ public class Saml2StringSubjectNameIDEncoderTest extends OpenSAMLInitBaseTestCas
 
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void empty()
             throws AttributeEncodingException {
-        Attribute attribute = new Attribute("id");
+        IdPAttribute attribute = new IdPAttribute("id");
 
         final Saml2StringSubjectNameIDEncoder enc1 = new Saml2StringSubjectNameIDEncoder();
 
@@ -107,7 +107,7 @@ public class Saml2StringSubjectNameIDEncoderTest extends OpenSAMLInitBaseTestCas
 
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void nullValues()
             throws AttributeEncodingException {
-        Attribute attribute = new Attribute("id");
+        IdPAttribute attribute = new IdPAttribute("id");
 
         final Saml2StringSubjectNameIDEncoder enc1 = new Saml2StringSubjectNameIDEncoder();
 
@@ -123,7 +123,7 @@ public class Saml2StringSubjectNameIDEncoderTest extends OpenSAMLInitBaseTestCas
 
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void wrongType()
             throws AttributeEncodingException {
-        Attribute attribute = new Attribute("id");
+        IdPAttribute attribute = new IdPAttribute("id");
         final Saml2StringSubjectNameIDEncoder enc1 = new Saml2StringSubjectNameIDEncoder();
         final AttributeValue wrong = new AttributeValue<Integer>() {
             @Nonnull public Integer getValue() {

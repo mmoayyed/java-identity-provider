@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
@@ -44,7 +44,7 @@ public class AttributeFilterServiceTest {
     private final static String SERVICE_CONFIG_FILE = "net/shibboleth/idp/attribute/filter/spring/service.xml";
 
     /** The attributes to be filtered. */
-    private Map<String, Attribute> attributesToBeFiltered;
+    private Map<String, IdPAttribute> attributesToBeFiltered;
 
     /**
      * Instantiate a new service.
@@ -65,20 +65,20 @@ public class AttributeFilterServiceTest {
 
         attributesToBeFiltered = new HashMap<>();
 
-        Attribute firstName = new Attribute("firstName");
+        IdPAttribute firstName = new IdPAttribute("firstName");
         firstName.getValues().add(new StringAttributeValue("john"));
         attributesToBeFiltered.put(firstName.getId(), firstName);
 
-        Attribute lastName = new Attribute("lastName");
+        IdPAttribute lastName = new IdPAttribute("lastName");
         lastName.getValues().add(new StringAttributeValue("smith"));
         attributesToBeFiltered.put(lastName.getId(), lastName);
 
-        Attribute email = new Attribute("email");
+        IdPAttribute email = new IdPAttribute("email");
         email.getValues().add(new StringAttributeValue("jsmith@example.edu"));
         email.getValues().add(new StringAttributeValue("john.smith@example.edu"));
         attributesToBeFiltered.put(email.getId(), email);
 
-        Attribute affiliation = new Attribute("affiliation");
+        IdPAttribute affiliation = new IdPAttribute("affiliation");
         affiliation.getValues().add(new StringAttributeValue("employee"));
         affiliation.getValues().add(new StringAttributeValue("staff"));
         affiliation.getValues().add(new StringAttributeValue("illegalValue"));
@@ -99,7 +99,7 @@ public class AttributeFilterServiceTest {
 
         service.filterAttributes(filterContext);
 
-        Map<String, Attribute> filteredAttributes = filterContext.getFilteredAttributes();
+        Map<String, IdPAttribute> filteredAttributes = filterContext.getFilteredAttributes();
 
         Assert.assertEquals(1, filteredAttributes.size());
 
@@ -127,7 +127,7 @@ public class AttributeFilterServiceTest {
         filterContext.setPrefilteredAttributes(attributesToBeFiltered.values());
         service.filterAttributes(filterContext);
 
-        Map<String, Attribute> filteredAttributes = filterContext.getFilteredAttributes();
+        Map<String, IdPAttribute> filteredAttributes = filterContext.getFilteredAttributes();
 
         Assert.assertEquals(filteredAttributes.size(), 1);
 
@@ -157,7 +157,7 @@ public class AttributeFilterServiceTest {
 
         service.filterAttributes(filterContext);
 
-        Map<String, Attribute> filteredAttributes = filterContext.getFilteredAttributes();
+        Map<String, IdPAttribute> filteredAttributes = filterContext.getFilteredAttributes();
 
         Assert.assertEquals(1, filteredAttributes.size());
 

@@ -23,7 +23,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -47,14 +47,14 @@ public class StringAttributeValueMappingStrategy implements SearchResultMappingS
     private final Logger log = LoggerFactory.getLogger(StringAttributeValueMappingStrategy.class);
 
     /** {@inheritDoc} */
-    @Nullable public Map<String, Attribute> map(@Nonnull final SearchResult results)
+    @Nullable public Map<String, IdPAttribute> map(@Nonnull final SearchResult results)
             throws ResolutionException {
         Constraint.isNotNull(results, "Results can not be null");
 
-        final Map<String, Attribute> attributes = new HashMap<String, Attribute>();
+        final Map<String, IdPAttribute> attributes = new HashMap<String, IdPAttribute>();
         for (LdapEntry entry : results.getEntries()) {
             for (LdapAttribute attr : entry.getAttributes()) {
-                final Attribute attribute = new Attribute(attr.getName());
+                final IdPAttribute attribute = new IdPAttribute(attr.getName());
                 for (String value : attr.getStringValues()) {
                     attribute.getValues().add(new StringAttributeValue(value));
                 }

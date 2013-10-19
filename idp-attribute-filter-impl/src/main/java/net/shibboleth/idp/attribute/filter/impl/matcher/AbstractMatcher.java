@@ -23,7 +23,7 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.Matcher;
@@ -64,7 +64,7 @@ public abstract class AbstractMatcher extends AbstractIdentifiableInitializableC
      * {@inheritDoc}
      */
     @Nonnull @NonnullElements @Unmodifiable public Set<AttributeValue> getMatchingValues(
-            @Nonnull final Attribute attribute, @Nonnull final AttributeFilterContext filterContext) {
+            @Nonnull final IdPAttribute attribute, @Nonnull final AttributeFilterContext filterContext) {
 
         final HashSet matchedValues = new HashSet();
 

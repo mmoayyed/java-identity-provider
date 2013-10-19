@@ -22,7 +22,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.impl.dc.StaticDataConnector;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -55,10 +55,10 @@ public class StaticDataConnectorParser extends BaseDataConnectorParser {
         super.doParse(config, parserContext, builder);
 
         List<Element> children = ElementSupport.getChildElements(config, ATTRIBUTE_ELEMENT_NAME);
-        List<Attribute> attributes = new ArrayList<Attribute>();
+        List<IdPAttribute> attributes = new ArrayList<IdPAttribute>();
         for (Element child : children) {
             String attrId = child.getAttributeNS(null, "id");
-            Attribute attribute = new Attribute(attrId);
+            IdPAttribute attribute = new IdPAttribute(attrId);
             List<Element> values =
                     ElementSupport.getChildElementsByTagNameNS(child, DataConnectorNamespaceHandler.NAMESPACE, "Value");
             for (Element val : values) {

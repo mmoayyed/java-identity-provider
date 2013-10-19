@@ -24,7 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Set;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
@@ -153,7 +153,7 @@ public class CryptoTransientIdAttributeDefinitionTest {
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
 
-        final Attribute result = defn.doAttributeDefinitionResolve(context);
+        final IdPAttribute result = defn.doAttributeDefinitionResolve(context);
 
         final Set<AttributeValue> values = result.getValues();
         Assert.assertEquals(values.size(), 1);

@@ -28,7 +28,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
@@ -46,22 +46,23 @@ import com.google.common.collect.MapConstraints;
 public class AttributeResolutionContext extends BaseContext {
 
     /** Attributes that have been requested to be resolved. */
-    private Set<Attribute> requestedAttributes;
+    private Set<IdPAttribute> requestedAttributes;
 
     /** Attributes which were resolved and released by the attribute resolver. */
-    private Map<String, Attribute> resolvedAttributes;
+    private Map<String, IdPAttribute> resolvedAttributes;
 
     /** Attribute definitions that have been resolved and the resultant attribute. */
     private final Map<String, ResolvedAttributeDefinition> resolvedAttributeDefinitions;
 
     /** Data connectors that have been resolved and the resultant attributes. */
     private final Map<String, ResolvedDataConnector> resolvedDataConnectors;
-    
+
     /** Constructor. */
     public AttributeResolutionContext() {
-        requestedAttributes = Constraints.constrainedSet(new HashSet<Attribute>(), Constraints.notNull());
+        requestedAttributes = Constraints.constrainedSet(new HashSet<IdPAttribute>(), Constraints.notNull());
 
-        resolvedAttributes = MapConstraints.constrainedMap(new HashMap<String, Attribute>(), MapConstraints.notNull());
+        resolvedAttributes =
+                MapConstraints.constrainedMap(new HashMap<String, IdPAttribute>(), MapConstraints.notNull());
 
         resolvedAttributeDefinitions =
                 MapConstraints.constrainedMap(new HashMap<String, ResolvedAttributeDefinition>(),
@@ -76,7 +77,7 @@ public class AttributeResolutionContext extends BaseContext {
      * 
      * @return set of attributes requested to be resolved
      */
-    @Nonnull @NonnullElements public Set<Attribute> getRequestedAttributes() {
+    @Nonnull @NonnullElements public Set<IdPAttribute> getRequestedAttributes() {
         return requestedAttributes;
     }
 
@@ -85,8 +86,8 @@ public class AttributeResolutionContext extends BaseContext {
      * 
      * @param attributes attributes requested to be resolved
      */
-    public void setRequestedAttributes(@Nullable @NullableElements final Set<Attribute> attributes) {
-        Set<Attribute> checkedAttributes = new HashSet<Attribute>();
+    public void setRequestedAttributes(@Nullable @NullableElements final Set<IdPAttribute> attributes) {
+        Set<IdPAttribute> checkedAttributes = new HashSet<IdPAttribute>();
         CollectionSupport.addIf(checkedAttributes, attributes, Predicates.notNull());
         requestedAttributes = checkedAttributes;
     }
@@ -96,7 +97,7 @@ public class AttributeResolutionContext extends BaseContext {
      * 
      * @return set of resolved attributes
      */
-    @Nonnull @NonnullElements public Map<String, Attribute> getResolvedAttributes() {
+    @Nonnull @NonnullElements public Map<String, IdPAttribute> getResolvedAttributes() {
         return resolvedAttributes;
     }
 
@@ -105,12 +106,12 @@ public class AttributeResolutionContext extends BaseContext {
      * 
      * @param attributes set of resolved attributes, may be null, empty or contain null values
      */
-    public void setResolvedAttributes(@Nullable @NullableElements final Collection<Attribute> attributes) {
-        Map<String, Attribute> checkedAttributes =
-                MapConstraints.constrainedMap(new HashMap<String, Attribute>(), MapConstraints.notNull());
+    public void setResolvedAttributes(@Nullable @NullableElements final Collection<IdPAttribute> attributes) {
+        Map<String, IdPAttribute> checkedAttributes =
+                MapConstraints.constrainedMap(new HashMap<String, IdPAttribute>(), MapConstraints.notNull());
 
         if (attributes != null) {
-            for (Attribute attribute : attributes) {
+            for (IdPAttribute attribute : attributes) {
                 if (attribute != null) {
                     checkedAttributes.put(attribute.getId(), attribute);
                 }
@@ -136,11 +137,11 @@ public class AttributeResolutionContext extends BaseContext {
      * @param definition the resolved attribute definition, must not be null
      * @param attribute the attribute produced by the given attribute definition, may be null
      * 
-     * @throws ResolutionException thrown if a result of a resolution for the given attribute definition have
-     *             already been recorded
+     * @throws ResolutionException thrown if a result of a resolution for the given attribute definition have already
+     *             been recorded
      */
     public void recordAttributeDefinitionResolution(@Nonnull final BaseAttributeDefinition definition,
-            @Nullable final Attribute attribute) throws ResolutionException {
+            @Nullable final IdPAttribute attribute) throws ResolutionException {
         Constraint.isNotNull(definition, "Resolver attribute definition can not be null");
 
         if (resolvedAttributeDefinitions.containsKey(definition.getId())) {
@@ -167,11 +168,11 @@ public class AttributeResolutionContext extends BaseContext {
      * @param connector the resolved data connector, must not be null
      * @param attributes the attribute produced by the given data connector, may be null
      * 
-     * @throws ResolutionException thrown if a result of a resolution for the given data connector has already
-     *             been recorded
+     * @throws ResolutionException thrown if a result of a resolution for the given data connector has already been
+     *             recorded
      */
     public void recordDataConnectorResolution(@Nonnull final BaseDataConnector connector,
-            @Nullable final Map<String, Attribute> attributes) throws ResolutionException {
+            @Nullable final Map<String, IdPAttribute> attributes) throws ResolutionException {
         Constraint.isNotNull(connector, "Resolver data connector can not be null");
 
         if (resolvedDataConnectors.containsKey(connector.getId())) {

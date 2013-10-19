@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 /** Base class for data connector resolver plugins. */
 @ThreadSafe
-public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, Attribute>> {
+public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, IdPAttribute>> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(BaseDataConnector.class);
@@ -76,9 +76,9 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
      * This method delegates to {@link #doDataConnectorResolve(AttributeResolutionContext)}. It serves as a future
      * extension point for introducing new common behavior.
      */
-    @Nullable public final Map<String, Attribute> doResolve(
+    @Nullable public final Map<String, IdPAttribute> doResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
-        Map<String, Attribute> result = doDataConnectorResolve(resolutionContext);
+        Map<String, IdPAttribute> result = doDataConnectorResolve(resolutionContext);
 
         if (null == result) {
             log.debug("{} no attributes were produced during resolution", getId());
@@ -87,7 +87,7 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
             log.debug("{} produced the following {} attributes during resolution {}", new Object[] {
                     getLogPrefix(), result.size(), result.keySet(),});
             for (String attrName : result.keySet()) {
-                Attribute attr = result.get(attrName);
+                IdPAttribute attr = result.get(attrName);
                 log.debug("{} Attribute '{}': Values '{}'",
                         new Object[] {getLogPrefix(), attrName, attr.getValues(),});
             }
@@ -113,7 +113,7 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
      * 
      * @throws ResolutionException thrown if there is a problem resolving the attributes
      */
-    @Nullable protected abstract Map<String, Attribute> doDataConnectorResolve(
+    @Nullable protected abstract Map<String, IdPAttribute> doDataConnectorResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException;
     
     /**

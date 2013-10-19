@@ -19,13 +19,13 @@ package net.shibboleth.idp.attribute.logic;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import com.google.common.base.Predicate;
 
 /** A {@link Predicate} that checks to see if one, or all, of the values of an attribute match a given predicate. */
-public class AttributeValuePredicate implements Predicate<Attribute> {
+public class AttributeValuePredicate implements Predicate<IdPAttribute> {
 
     /** Predicate used to check individual attribute values. */
     private final Predicate valuePredicate;
@@ -47,7 +47,7 @@ public class AttributeValuePredicate implements Predicate<Attribute> {
     }
 
     /** {@inheritDoc} */
-    public boolean apply(@Nonnull Attribute attribute) {
+    public boolean apply(@Nonnull IdPAttribute attribute) {
         Constraint.isNotNull( attribute, "Attribute can not be null");
         
         Boolean allValuesMatched = null;
