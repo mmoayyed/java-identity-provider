@@ -12,22 +12,22 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
        
-    <context:property-placeholder location="classpath:conf/idp.properties" />
+    <import resource="../../conf/jaas-authn-config.xml" />
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     
     <bean id="ExtractUsernamePasswordFromBasicAuth" class="net.shibboleth.idp.authn.impl.ExtractUsernamePasswordFromBasicAuth" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
-        
-    <bean id="JAASConfig" class="org.springframework.core.io.FileSystemResource" c:path="${idp.home}/conf/jaas.config" />
-
-    <util:property-path id="JAASConfigURI" path="JAASConfig.URI" />
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:lowercase-ref="shibboleth.authn.JAAS.Lowercase"
+        p:uppercase-ref="shibboleth.authn.JAAS.Uppercase"
+        p:trim-ref="shibboleth.authn.JAAS.Trim"
+        p:transforms-ref="shibboleth.authn.JAAS.Transforms" />
         
     <bean id="ValidateUsernamePasswordAgainstJAAS" class="net.shibboleth.idp.authn.impl.ValidateUsernamePasswordAgainstJAAS" scope="prototype"
-            p:loginConfigName="ShibUserPassAuth" p:loginConfigType="JavaLoginConfig">
+            p:loginConfigName-ref="shibboleth.authn.JAAS.LoginConfigName" p:loginConfigType="JavaLoginConfig">
         <property name="loginConfigParameters">
             <bean class="java.security.URIParameter">
-                <constructor-arg ref="JAASConfigURI" />
+                <constructor-arg ref="shibboleth.authn.JAAS.JAASConfigURI" />
             </bean>
         </property>
     </bean>

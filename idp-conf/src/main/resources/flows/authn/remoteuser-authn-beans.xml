@@ -20,7 +20,11 @@
             p:httpServletRequest-ref="shibboleth.HttpServletRequest"
             p:checkRemoteUser-ref="shibboleth.authn.RemoteUser.checkRemoteUser"
             p:checkHeaders-ref="shibboleth.authn.RemoteUser.checkHeaders"
-            p:checkAttributes-ref="shibboleth.authn.RemoteUser.checkAttributes" />
+            p:checkAttributes-ref="shibboleth.authn.RemoteUser.checkAttributes"
+            p:lowercase-ref="shibboleth.authn.RemoteUser.Lowercase"
+            p:uppercase-ref="shibboleth.authn.RemoteUser.Uppercase"
+            p:trim-ref="shibboleth.authn.RemoteUser.Trim"
+            p:transforms-ref="shibboleth.authn.RemoteUser.Transforms" />
         
     <bean id="ValidateRemoteUser" class="net.shibboleth.idp.authn.impl.ValidateRemoteUser" scope="prototype"
         p:matchExpression="#{getObject('shibboleth.authn.RemoteUser.matchExpression')}"

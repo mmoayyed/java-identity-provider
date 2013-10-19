@@ -17,7 +17,11 @@
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     
     <bean id="ExtractUserAgentAddress" class="net.shibboleth.idp.authn.impl.ExtractUserAgentAddress" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:lowercase-ref="shibboleth.authn.IPAddress.Lowercase"
+        p:uppercase-ref="shibboleth.authn.IPAddress.Uppercase"
+        p:trim-ref="shibboleth.authn.IPAddress.Trim"
+        p:transforms-ref="shibboleth.authn.IPAddress.Transforms" />
         
     <bean id="ValidateUserAgentAddress" class="net.shibboleth.idp.authn.impl.ValidateUserAgentAddress" scope="prototype"
         p:mappings-ref="shibboleth.authn.IPAddress.Mappings" />

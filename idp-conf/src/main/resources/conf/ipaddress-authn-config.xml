@@ -9,10 +9,23 @@
                            http://www.springframework.org/schema/context classpath:/org/springframework/context/config/spring-context-3.2.xsd
                            http://www.springframework.org/schema/util classpath:/org/springframework/beans/factory/xml/spring-util-3.2.xsd">
 
-    <!--
-    You can configure the address range(s) and principal name(s) for IP-based login here.
-    Do not change the name of the bean.
-    -->
+
+
+    <!-- Simple transforms to apply to address before validation. -->
+    <bean id="shibboleth.authn.IPAddress.Lowercase" class="java.lang.Boolean">
+        <constructor-arg type="boolean" value="false" />
+    </bean>
+    <bean id="shibboleth.authn.IPAddress.Uppercase" class="java.lang.Boolean">
+        <constructor-arg type="boolean" value="false" />
+    </bean>
+    <bean id="shibboleth.authn.IPAddress.Trim" class="java.lang.Boolean">
+        <constructor-arg type="boolean" value="true" />
+    </bean>
+
+    <!-- Apply any regular expression replacement pairs before validation. -->
+    <util:list id="shibboleth.authn.IPAddress.Transforms"/>
+
+    <!-- You can configure the address range(s) and principal name(s) for IP-based login here. -->
 
     <util:map id="shibboleth.authn.IPAddress.Mappings">
         <entry key="jdoe">

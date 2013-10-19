@@ -32,6 +32,24 @@
         -->
     </util:list>
     
+    <!-- Simple transforms to apply to username before validation. -->
+    <bean id="shibboleth.authn.RemoteUser.Lowercase" class="java.lang.Boolean">
+        <constructor-arg type="boolean" value="false" />
+    </bean>
+    <bean id="shibboleth.authn.RemoteUser.Uppercase" class="java.lang.Boolean">
+        <constructor-arg type="boolean" value="false" />
+    </bean>
+    <bean id="shibboleth.authn.RemoteUser.Trim" class="java.lang.Boolean">
+        <constructor-arg type="boolean" value="true" />
+    </bean>
+
+    <!-- Apply any regular expression replacement pairs before validation. -->
+    <util:list id="shibboleth.authn.RemoteUser.Transforms">
+        <!--
+        <bean class="net.shibboleth.utilities.java.support.collection.Pair" p:first="^(.+)@example\.edu$" p:second="$1" />
+        -->
+    </util:list>
+    
     <!-- Uncomment/configure to install username whitelist, blacklist, and/or match expressions. -->
     
     <util:list id="shibboleth.authn.RemoteUser.whitelistedUsernames">
@@ -50,5 +68,5 @@
     <bean id="shibboleth.authn.RemoteUser.matchExpression" class="java.util.regex.Pattern" factory-method="compile"
         c:_0="^(.+)@example\.edu]$" />
     -->
-
+    
 </beans>
