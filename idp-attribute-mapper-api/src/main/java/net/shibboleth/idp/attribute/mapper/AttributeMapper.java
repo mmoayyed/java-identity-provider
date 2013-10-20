@@ -40,7 +40,7 @@ public interface AttributeMapper<InType, OutType extends IdPAttribute> extends I
      * Signal this by putting in a name, but no attribute.
      * 
      * @param input the attribute
-     * @return the appropriate  map of names to {@link RequestedAttribute}s.
+     * @return the appropriate  map of names to the output type.
      * 
      */
     @Nonnull @NullableElements Map<String, OutType> mapAttribute(@Nonnull InType input);

@@ -22,7 +22,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 /**
  * IdP Representation of the SAML2 RequestedAttribute.
  */
-public class RequestedAttribute extends IdPAttribute {
+public class IdPRequestedAttribute extends IdPAttribute {
 
     /** Is this attribute required. */
     private boolean isRequired;
@@ -32,7 +32,7 @@ public class RequestedAttribute extends IdPAttribute {
      *
      * @param attributeId the id
      */
-    public RequestedAttribute(String attributeId) {
+    public IdPRequestedAttribute(String attributeId) {
         super(attributeId);
     }
 

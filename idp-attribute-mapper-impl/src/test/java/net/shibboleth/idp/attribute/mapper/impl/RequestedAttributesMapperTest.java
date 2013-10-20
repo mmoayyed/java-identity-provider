@@ -23,9 +23,10 @@ import java.util.Iterator;
 
 import net.shibboleth.idp.attribute.mapper.AbstractSAMLAttributeValueMapper;
 import net.shibboleth.idp.attribute.mapper.AttributeMapper;
-import net.shibboleth.idp.attribute.mapper.RequestedAttribute;
+import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -37,7 +38,7 @@ import com.google.common.collect.Multimap;
  */
 public class RequestedAttributesMapperTest extends MappingTests {
     
-    private AttributeMapper<org.opensaml.saml.saml2.metadata.RequestedAttribute, RequestedAttribute> buildMapper(String name, String samlFormat, AbstractSAMLAttributeValueMapper mapper) {
+    private AttributeMapper<RequestedAttribute, IdPRequestedAttribute> buildMapper(String name, String samlFormat, AbstractSAMLAttributeValueMapper mapper) {
         
         RequestedAttributeMapper result = new RequestedAttributeMapper();
         result.setId(name);
@@ -70,13 +71,13 @@ public class RequestedAttributesMapperTest extends MappingTests {
         
         mapper.initialize();
         
-        Multimap<String, RequestedAttribute> result = mapper.mapAttributes(loadFile("requestedAttributeValues.xml"));
+        Multimap<String, IdPRequestedAttribute> result = mapper.mapAttributes(loadFile("requestedAttributeValues.xml"));
         
         Assert.assertEquals(result.keySet().size(), 2);
         
-        Collection<RequestedAttribute> id = result.get("id");
+        Collection<IdPRequestedAttribute> id = result.get("id");
         Assert.assertEquals(id.size(), 2);
-        Iterator<RequestedAttribute> itr = id.iterator();
+        Iterator<IdPRequestedAttribute> itr = id.iterator();
         Assert.assertEquals(itr.next().getId(), "id");
         Assert.assertNull(itr.next());
         

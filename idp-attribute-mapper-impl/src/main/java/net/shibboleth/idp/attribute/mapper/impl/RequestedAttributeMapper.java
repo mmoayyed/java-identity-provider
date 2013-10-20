@@ -17,19 +17,19 @@
 
 package net.shibboleth.idp.attribute.mapper.impl;
 
+import org.opensaml.saml.saml2.metadata.RequestedAttribute;
+
 import net.shibboleth.idp.attribute.mapper.AbstractSAMLAttributeMapper;
-import net.shibboleth.idp.attribute.mapper.RequestedAttribute;
+import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
 
 /**
- * A class that maps SAML2 {@link org.opensaml.saml.saml2.metadata.RequestedAttribute} into an IdP
- * {@link RequestedAttribute}.
+ * A class that maps a SAML2 {@link RequestedAttribute} into an IdP {@link IdPRequestedAttribute}.
  * 
  */
-public class RequestedAttributeMapper extends
-        AbstractSAMLAttributeMapper<org.opensaml.saml.saml2.metadata.RequestedAttribute, RequestedAttribute> {
+public class RequestedAttributeMapper extends AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute> {
     /** {@inheritDoc} */
-    protected RequestedAttribute newAttribute(org.opensaml.saml.saml2.metadata.RequestedAttribute input, String id) {
-        final RequestedAttribute output = new RequestedAttribute(id);
+    protected IdPRequestedAttribute newAttribute(RequestedAttribute input, String id) {
+        final IdPRequestedAttribute output = new IdPRequestedAttribute(id);
         output.setRequired(input.isRequired());
         return output;
 

@@ -25,7 +25,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
-import net.shibboleth.idp.attribute.mapper.RequestedAttribute;
+import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
@@ -56,21 +56,21 @@ public class AttributeInMetadataPolicyRuleTest {
         return matcher;
     }
     
-    private AttributeFilterContext makeContext(String attributeId, RequestedAttribute attribute) {
+    private AttributeFilterContext makeContext(String attributeId, IdPRequestedAttribute attribute) {
         
         final AttributeFilterContext context = new AttributeFilterContext();
         
         if (null == attributeId) {
             context.setRequestedAttributes(null);
         } else {
-            final Multimap<String, RequestedAttribute> multimap = ArrayListMultimap.create();
+            final Multimap<String, IdPRequestedAttribute> multimap = ArrayListMultimap.create();
             multimap.put(attributeId, attribute);
             context.setRequestedAttributes(multimap);
         }
         return context;
     }
     
-    private AttributeFilterContext makeContext(RequestedAttribute attribute) {
+    private AttributeFilterContext makeContext(IdPRequestedAttribute attribute) {
         
         if (null == attribute) {
             return makeContext(null, null);
@@ -119,7 +119,7 @@ public class AttributeInMetadataPolicyRuleTest {
         Assert.assertTrue(result.contains(DataSources.STRING_VALUE));
         Assert.assertTrue(result.contains(DataSources.NON_MATCH_STRING_VALUE));
         
-        result = matcher.getMatchingValues(attr, makeContext(new RequestedAttribute("wrongAttr")));
+        result = matcher.getMatchingValues(attr, makeContext(new IdPRequestedAttribute("wrongAttr")));
         Assert.assertTrue(result.isEmpty());
     }
     
@@ -129,7 +129,7 @@ public class AttributeInMetadataPolicyRuleTest {
                 makeAttribute("attr", Lists.newArrayList((AttributeValue) DataSources.STRING_VALUE,
                         DataSources.NON_MATCH_STRING_VALUE));
         
-        RequestedAttribute required = new RequestedAttribute("attr");
+        IdPRequestedAttribute required = new IdPRequestedAttribute("attr");
         required.setRequired(false);
         
         AttributeFilterContext context = makeContext(required);
@@ -150,7 +150,7 @@ public class AttributeInMetadataPolicyRuleTest {
                 makeAttribute("attr", Lists.newArrayList((AttributeValue) DataSources.STRING_VALUE,
                         DataSources.NON_MATCH_STRING_VALUE));
         
-        RequestedAttribute required = new RequestedAttribute("attr");
+        IdPRequestedAttribute required = new IdPRequestedAttribute("attr");
         required.setRequired(true);
         required.setValues(Collections.singleton((AttributeValue)DataSources.STRING_VALUE));
         
@@ -179,17 +179,17 @@ public class AttributeInMetadataPolicyRuleTest {
                 makeAttribute("attr", Lists.newArrayList((AttributeValue) DataSources.STRING_VALUE,
                         DataSources.NON_MATCH_STRING_VALUE));
         
-        RequestedAttribute req1 = new RequestedAttribute("attr");
+        IdPRequestedAttribute req1 = new IdPRequestedAttribute("attr");
         req1.setRequired(true);
         req1.setValues(Collections.singleton((AttributeValue)DataSources.STRING_VALUE));
         
-        RequestedAttribute req2 = new RequestedAttribute("attr");
+        IdPRequestedAttribute req2 = new IdPRequestedAttribute("attr");
         req2.setRequired(true);
         req2.setValues(Collections.singleton((AttributeValue)DataSources.NON_MATCH_STRING_VALUE));
         
         final AttributeFilterContext context = new AttributeFilterContext();
         
-        final Multimap<String, RequestedAttribute> multimap = ArrayListMultimap.create();
+        final Multimap<String, IdPRequestedAttribute> multimap = ArrayListMultimap.create();
         multimap.put(req1.getId(), req1);
         multimap.put(req2.getId(), req2);
         context.setRequestedAttributes(multimap);

@@ -31,7 +31,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
-import net.shibboleth.idp.attribute.mapper.RequestedAttribute;
+import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
@@ -61,7 +61,7 @@ public final class AttributeFilterContext extends BaseContext {
     private Map<String, Set<AttributeValue>> deniedValues;
 
     /** The requested Attributes (from the metadata for this request). */
-    private Multimap<String, RequestedAttribute> requestedAttributes;
+    private Multimap<String, IdPRequestedAttribute> requestedAttributes;
 
     /** Attributes which have been filtered. */
     private Map<String, IdPAttribute> filteredAttributes;
@@ -238,7 +238,7 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @return Returns the requestedAttributes.
      */
-    @NullableElements @Nonnull public Multimap<String, RequestedAttribute> getRequestedAttributes() {
+    @NullableElements @Nonnull public Multimap<String, IdPRequestedAttribute> getRequestedAttributes() {
         return requestedAttributes;
     }
 
@@ -247,8 +247,8 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @param attributes The requestedAttributes to set.
      */
-    public void
-            setRequestedAttributes(@Nullable @NullableElements final Multimap<String, RequestedAttribute> attributes) {
+    public void setRequestedAttributes(@Nullable @NullableElements final Multimap<String, 
+            IdPRequestedAttribute> attributes) {
 
         requestedAttributes = attributes;
     }

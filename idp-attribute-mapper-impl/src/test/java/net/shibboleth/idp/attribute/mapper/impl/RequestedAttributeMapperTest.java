@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.mapper.impl.RequestedAttributeMapper;
 import net.shibboleth.idp.attribute.mapper.impl.ScopedStringAttributeValueMapper;
 import net.shibboleth.idp.attribute.mapper.impl.StringAttributeValueMapper;
@@ -108,7 +109,7 @@ public class RequestedAttributeMapperTest extends MappingTests {
         mapper.setAttributeFormat(THE_FORMAT);
         mapper.initialize();
 
-        final Map<String, net.shibboleth.idp.attribute.mapper.RequestedAttribute> result =
+        final Map<String, IdPRequestedAttribute> result =
                 mapper.mapAttribute(getAttr(SAML_NAME_ONE));
 
         Assert.assertEquals(result.size(), 2);
@@ -141,7 +142,7 @@ public class RequestedAttributeMapperTest extends MappingTests {
         mapper.setValueMapper(new StringAttributeValueMapper());
         mapper.initialize();
 
-        Map<String, net.shibboleth.idp.attribute.mapper.RequestedAttribute> result =
+        Map<String, net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute> result =
                 mapper.mapAttribute(getAttr(SAML_NAME_TWO));
 
         Assert.assertEquals(result.size(), 1);
@@ -158,7 +159,7 @@ public class RequestedAttributeMapperTest extends MappingTests {
         mapper.setValueMapper(new ScopedStringAttributeValueMapper());
         mapper.initialize();
 
-        Map<String, net.shibboleth.idp.attribute.mapper.RequestedAttribute> result =
+        Map<String, IdPRequestedAttribute> result =
                 mapper.mapAttribute(getAttr(SAML_NAME_THREE));
         Assert.assertTrue(result.containsKey(ID));
         Assert.assertNull(result.get(ID));

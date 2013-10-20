@@ -29,7 +29,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.Matcher;
-import net.shibboleth.idp.attribute.mapper.RequestedAttribute;
+import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -103,7 +103,7 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
             @Nonnull final AttributeFilterContext filterContext) {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        final Multimap<String, RequestedAttribute> requestedAttributes = filterContext.getRequestedAttributes();
+        final Multimap<String, IdPRequestedAttribute> requestedAttributes = filterContext.getRequestedAttributes();
 
         if (null == requestedAttributes || requestedAttributes.isEmpty()) {
             if (matchIfMetadataSilent) {
@@ -117,7 +117,7 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
             }
         }
 
-        final Collection<RequestedAttribute> requestedAttributeList = requestedAttributes.get(attribute.getId());
+        final Collection<IdPRequestedAttribute> requestedAttributeList = requestedAttributes.get(attribute.getId());
 
         if (null == requestedAttributeList) {
             log.debug("{} Attribute {} not found in metadata", getLogPrefix(), attribute.getId());
@@ -126,7 +126,7 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
 
         final Set<AttributeValue> values = new HashSet<AttributeValue>();
 
-        for (RequestedAttribute requestedAttribute : requestedAttributeList) {
+        for (IdPRequestedAttribute requestedAttribute : requestedAttributeList) {
 
             if (null == requestedAttribute) {
                 log.info("{} Attribute {} found in metadata but with no values that"

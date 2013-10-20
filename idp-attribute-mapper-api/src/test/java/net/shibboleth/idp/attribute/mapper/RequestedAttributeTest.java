@@ -17,19 +17,19 @@
 
 package net.shibboleth.idp.attribute.mapper;
 
-import net.shibboleth.idp.attribute.mapper.RequestedAttribute;
+import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 
 /**
- * test for {@link RequestedAttribute}
+ * test for {@link IdPRequestedAttribute}
  */
 public class RequestedAttributeTest {
 
     @Test public void requestedAttribute(){
-        RequestedAttribute attr = new RequestedAttribute("id");
+        IdPRequestedAttribute attr = new IdPRequestedAttribute("id");
         
         Assert.assertEquals(attr.getId(), "id");
         Assert.assertFalse(attr.getIsRequired());

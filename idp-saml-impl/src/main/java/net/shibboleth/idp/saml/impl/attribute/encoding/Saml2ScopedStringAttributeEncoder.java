@@ -24,7 +24,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
-import net.shibboleth.idp.attribute.mapper.RequestedAttribute;
+import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.mapper.impl.RequestedAttributeMapper;
 import net.shibboleth.idp.attribute.mapper.impl.ScopedStringAttributeValueMapper;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml2AttributeEncoder;
@@ -35,6 +35,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.core.xml.XMLObject;
+import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +45,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Saml2ScopedStringAttributeEncoder extends AbstractSaml2AttributeEncoder<ScopedStringAttributeValue>
         implements
-        AttributeMapperFactory<org.opensaml.saml.saml2.metadata.RequestedAttribute, RequestedAttribute> {
+        AttributeMapperFactory<RequestedAttribute, IdPRequestedAttribute> {
 
     /** The log. */
     private final Logger log = LoggerFactory.getLogger(Saml2ScopedStringAttributeEncoder.class);

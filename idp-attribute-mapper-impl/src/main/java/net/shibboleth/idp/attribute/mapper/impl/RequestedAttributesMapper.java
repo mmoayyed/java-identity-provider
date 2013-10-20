@@ -22,11 +22,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.opensaml.saml.saml2.metadata.RequestedAttribute;
+
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.mapper.AbstractSAMLAttributeMapper;
 import net.shibboleth.idp.attribute.mapper.AbstractSAMLAttributesMapper;
 import net.shibboleth.idp.attribute.mapper.AttributeMapper;
-import net.shibboleth.idp.attribute.mapper.RequestedAttribute;
+import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperFactory;
@@ -36,13 +38,12 @@ import com.google.common.collect.Multimap;
 
 /**
  * This class conceptually represents the content of a attribute-map file, hence it describes (and then does) the
- * mappings from a {@link java.util.List} of SAML2 {@link org.opensaml.saml.saml2.metadata.RequestedAttribute} into a
- * {@link Multimap} going from (SAML2) attributeId to idp {@link RequestedAttribute}s (or null if the mapping failed for
- * type reasons).
+ * mappings from a {@link java.util.List} of SAML2 {@link RequestedAttribute} into a {@link Multimap} going from (SAML2)
+ * attributeId to idp {@link IdPRequestedAttribute}s (or null if the mapping failed for type reasons).
  * 
  */
 public class RequestedAttributesMapper extends
-        AbstractSAMLAttributesMapper<org.opensaml.saml.saml2.metadata.RequestedAttribute, RequestedAttribute> {
+        AbstractSAMLAttributesMapper<org.opensaml.saml.saml2.metadata.RequestedAttribute, IdPRequestedAttribute> {
 
     /**
      * Constructor to create the mapping from an existing resolver. <br/>
@@ -50,8 +51,8 @@ public class RequestedAttributesMapper extends
      * {@link AttributeMapper} (SAML [RequestedAttributes] -> internal [Requested] Attributes). <br/>
      * to generate the {@link AbstractSAMLAttributeMapper} (with no
      * {@link AbstractSAMLAttributeMapper#getAttributeIds(). These are accumulated into a {@link Multimap}, where the
-     * key is the {@link AbstractSAMLAttributeMapper} and the values are the (IdP) attribute names. The collection
-     * of {@link AttributeMapper}s can then be extracted from the map, and the appropriate internal names added (these
+     * key is the {@link AbstractSAMLAttributeMapper} and the values are the (IdP) attribute names. The collection of
+     * {@link AttributeMapper}s can then be extracted from the map, and the appropriate internal names added (these
      * being the value of the {@link Multimap})
      * 
      * @param resolver The resolver
@@ -61,8 +62,7 @@ public class RequestedAttributesMapper extends
         super();
         setId(resolver.getId());
 
-        final Multimap<AbstractSAMLAttributeMapper<org.opensaml.saml.saml2.metadata.RequestedAttribute, 
-                                                   RequestedAttribute>, String> theMappers;
+        final Multimap<AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute>, String> theMappers;
 
         theMappers = HashMultimap.create();
 
@@ -71,8 +71,7 @@ public class RequestedAttributesMapper extends
                 if (encode instanceof AttributeMapperFactory) {
                     // There is an appropriate reverse mappers
                     AttributeMapperFactory factory = (AttributeMapperFactory) encode;
-                    AbstractSAMLAttributeMapper<org.opensaml.saml.saml2.metadata.RequestedAttribute, 
-                                                RequestedAttribute> mapper =
+                    AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute> mapper =
                             factory.getRequestedMapper();
 
                     theMappers.put(mapper, attributeDef.getId());
@@ -80,18 +79,13 @@ public class RequestedAttributesMapper extends
             }
         }
 
-        final List<AttributeMapper<org.opensaml.saml.saml2.metadata.RequestedAttribute, RequestedAttribute>> mappers =
-                new ArrayList<AttributeMapper<org.opensaml.saml.saml2.metadata.RequestedAttribute, RequestedAttribute>>(
-                        theMappers.values().size());
+        final List<AttributeMapper<RequestedAttribute, IdPRequestedAttribute>> mappers =
+                new ArrayList<AttributeMapper<RequestedAttribute, IdPRequestedAttribute>>(theMappers.values().size());
 
-        for (Entry<AbstractSAMLAttributeMapper<org.opensaml.saml.saml2.metadata.RequestedAttribute, 
-                                               RequestedAttribute>, 
-                   Collection<String>> entry : theMappers
-                .asMap().entrySet()) {
+        for (Entry<AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute>, Collection<String>> entry : 
+                 theMappers.asMap().entrySet()) {
 
-            AbstractSAMLAttributeMapper<org.opensaml.saml.saml2.metadata.RequestedAttribute, 
-                                        RequestedAttribute> mapper =
-                    entry.getKey();
+            AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute> mapper = entry.getKey();
             mapper.setAttributeIds(new ArrayList<String>(entry.getValue()));
             mappers.add(mapper);
         }

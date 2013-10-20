@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.mapper.AttributeMapper;
+import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
 
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.metadata.RequestedAttribute;
@@ -41,7 +42,7 @@ public class AbstractSaml2NameIDEncoderTest {
             }
 
             @Nullable public
-                    AttributeMapper<RequestedAttribute, net.shibboleth.idp.attribute.mapper.RequestedAttribute>
+                    AttributeMapper<RequestedAttribute, IdPRequestedAttribute>
                     getMapper(String name) {
                 return null;
             }

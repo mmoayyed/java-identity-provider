@@ -30,6 +30,7 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.mapper.AttributeMapper;
+import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
@@ -157,7 +158,7 @@ public class AbstractSaml2AttributeEncoderTest extends OpenSAMLInitBaseTestCase 
         }
 
         /** {@inheritDoc} */
-        @Nullable public AttributeMapper<RequestedAttribute, net.shibboleth.idp.attribute.mapper.RequestedAttribute>
+        @Nullable public AttributeMapper<RequestedAttribute, IdPRequestedAttribute>
                 getMapper(String name) {
             // TODO Auto-generated method stub
             return null;

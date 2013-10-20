@@ -219,7 +219,7 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
      * by putting in a name, but no attribute.
      * 
      * @param prototype the SAML attribute
-     * @return the appropriate multimap map of names to {@link RequestedAttribute}s.
+     * @return the appropriate map of names to output type
      * 
      */
     @Nonnull @NullableElements public Map<String, OutType> mapAttribute(@Nonnull InType prototype) {

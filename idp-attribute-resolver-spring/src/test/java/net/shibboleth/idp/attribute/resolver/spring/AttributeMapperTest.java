@@ -21,6 +21,7 @@ import java.util.Collection;
 
 import net.shibboleth.idp.attribute.mapper.AbstractSAMLAttributeMapper;
 import net.shibboleth.idp.attribute.mapper.AttributeMapper;
+import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.mapper.impl.RequestedAttributesMapper;
 import net.shibboleth.idp.attribute.mapper.impl.ScopedStringAttributeValueMapper;
 import net.shibboleth.idp.attribute.mapper.impl.StringAttributeValueMapper;
@@ -60,11 +61,11 @@ public class AttributeMapperTest extends OpenSAMLInitBaseTestCase {
 
         RequestedAttributesMapper attributesMapper = new RequestedAttributesMapper(attributeResolverService.getAttributeResolver());
         
-        Collection<AttributeMapper<RequestedAttribute, net.shibboleth.idp.attribute.mapper.RequestedAttribute>> mappers =
+        Collection<AttributeMapper<RequestedAttribute, IdPRequestedAttribute>> mappers =
                 attributesMapper.getMappers();
         Assert.assertEquals(mappers.size(), 5);
         
-        for (AttributeMapper<RequestedAttribute, net.shibboleth.idp.attribute.mapper.RequestedAttribute> mapper: mappers) {
+        for (AttributeMapper<RequestedAttribute, IdPRequestedAttribute> mapper: mappers) {
             AbstractSAMLAttributeMapper sMappers = (AbstractSAMLAttributeMapper) mapper;
             if (mapper.getId().equals("feduPersonScopedAffiliation")) {
                 Assert.assertEquals(sMappers.getSAMLName(), "urn:oid:1.3.6.1.4.1.5923.1.1.1.9");
