@@ -24,7 +24,8 @@
         p:transforms-ref="shibboleth.authn.JAAS.Transforms" />
         
     <bean id="ValidateUsernamePasswordAgainstJAAS" class="net.shibboleth.idp.authn.impl.ValidateUsernamePasswordAgainstJAAS" scope="prototype"
-            p:loginConfigName-ref="shibboleth.authn.JAAS.LoginConfigName" p:loginConfigType="JavaLoginConfig">
+            p:loginConfigName-ref="shibboleth.authn.JAAS.LoginConfigName" p:loginConfigType="JavaLoginConfig"
+            p:resultCachingPredicate="#{getObject('shibboleth.authn.JAAS.resultCachingPredicate')}" >
         <property name="loginConfigParameters">
             <bean class="java.security.URIParameter">
                 <constructor-arg ref="shibboleth.authn.JAAS.JAASConfigURI" />

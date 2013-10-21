@@ -24,6 +24,7 @@
         p:transforms-ref="shibboleth.authn.IPAddress.Transforms" />
         
     <bean id="ValidateUserAgentAddress" class="net.shibboleth.idp.authn.impl.ValidateUserAgentAddress" scope="prototype"
-        p:mappings-ref="shibboleth.authn.IPAddress.Mappings" />
+        p:mappings-ref="shibboleth.authn.IPAddress.Mappings"
+        p:resultCachingPredicate="#{getObject('shibboleth.authn.IPAddress.resultCachingPredicate')}" />
 
 </beans>

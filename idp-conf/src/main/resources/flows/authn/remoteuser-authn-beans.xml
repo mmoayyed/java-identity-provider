@@ -29,6 +29,7 @@
     <bean id="ValidateRemoteUser" class="net.shibboleth.idp.authn.impl.ValidateRemoteUser" scope="prototype"
         p:matchExpression="#{getObject('shibboleth.authn.RemoteUser.matchExpression')}"
         p:whitelistedUsernames-ref="shibboleth.authn.RemoteUser.whitelistedUsernames"
-        p:blacklistedUsernames-ref="shibboleth.authn.RemoteUser.blacklistedUsernames" />
+        p:blacklistedUsernames-ref="shibboleth.authn.RemoteUser.blacklistedUsernames"
+        p:resultCachingPredicate="#{getObject('shibboleth.authn.RemoteUser.resultCachingPredicate')}" />
 
 </beans>
