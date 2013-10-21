@@ -32,7 +32,7 @@ import net.shibboleth.utilities.java.support.resolver.ResolverException;
  * 
  * Needs helpers getting supported formats
  */
-//TODO
+//TODO Is this used ?  Or is it a nascent but unimplemented idea from long, long ago?
 public class NameIdentifierAttributeResolver implements
         Resolver<Pair<IdPAttribute, AbstractSamlNameIdentifierEncoder>, CriteriaSet> {
 
