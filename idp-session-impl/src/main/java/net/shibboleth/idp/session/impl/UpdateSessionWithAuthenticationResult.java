@@ -39,8 +39,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicate;
-
 /**
  * An authentication action that establishes a record of the {@link AuthenticationResult} in an
  * {@link IdPSession} for the client, either by updating an existing session or creating a new
@@ -79,9 +77,6 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
     /** Existing SubjectContext. */
     @Nullable private SubjectContext subjectCtx;
     
-    /** Predicate determining whether to save off an {@link AuthenticationResult} to a session. */
-    @Nullable private Predicate<ProfileRequestContext> saveResultPredicate;
-    
     /** Flag to turn action on or off. */
     private boolean enabled;
     
@@ -112,21 +107,6 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
         enabled = flag;
     }
     
-    /**
-     * Set a {@link Predicate} governing whether to preserve an {@link AuthenticationResult} in
-     * an {@link IdPSession}.
-     * 
-     * <p>If the rules for determining this differ by type of result, a compound predicate may be
-     * needed that can deal with the full range of possible result types and situations.</p>
-     * 
-     * @param predicate the predicate to install, or null
-     */
-    public void setSaveResultPredicate(@Nullable final Predicate<ProfileRequestContext> predicate) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        saveResultPredicate = predicate;
-    }
-    
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
@@ -140,20 +120,13 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
-        if (enabled && authenticationContext.getAuthenticationResult() != null) {
+        if (enabled && authenticationContext.getAuthenticationResult() != null
+                && authenticationContext.getAuthenticationResult().isCacheable()) {
             subjectCtx = profileRequestContext.getSubcontext(SubjectContext.class, false);
             sessionCtx = profileRequestContext.getSubcontext(SessionContext.class, true);
             
             // We can only do work if a session exists or a non-empty SubjectContext exists.
-            if (sessionCtx.getIdPSession() != null || (subjectCtx != null && subjectCtx.getPrincipalName() != null)) {
-                
-                // Check the predicate, if any.
-                if (saveResultPredicate != null) {
-                    return saveResultPredicate.apply(profileRequestContext);
-                } else {
-                    return true;
-                }
-            }
+            return sessionCtx.getIdPSession() != null || (subjectCtx != null && subjectCtx.getPrincipalName() != null);
         }
         
         return false;

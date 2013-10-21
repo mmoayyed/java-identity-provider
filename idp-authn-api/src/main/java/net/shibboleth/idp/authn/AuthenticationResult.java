@@ -45,6 +45,9 @@ import com.google.common.collect.ImmutableSet;
 @ThreadSafe
 public class AuthenticationResult implements PrincipalSupportingComponent {
 
+    /** Result may be cached for reuse in the normal way. */
+    private boolean cacheable;
+    
     /** The Subject established by the authentication result. */
     @Nonnull private final Subject subject;
 
@@ -69,6 +72,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
 
         authenticationFlowId = Constraint.isNotNull(StringSupport.trimOrNull(flowId),
                 "Authentication flow ID cannot be null nor empty");
+        cacheable = true;
         subject = Constraint.isNotNull(newSubject, "Subject list cannot be null or empty");
         authenticationInstant = System.currentTimeMillis();
         lastActivityInstant = authenticationInstant;
@@ -83,6 +87,27 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     public AuthenticationResult(@Nonnull @NotEmpty final String flowId, @Nonnull final Principal principal) {
         this(flowId, new Subject(false, ImmutableSet.of(Constraint.isNotNull(principal, "Principal cannot be null")),
                 Collections.EMPTY_SET, Collections.EMPTY_SET));
+    }
+    
+    /**
+     * Get whether this result is suitable for caching (such as in a session) for reuse.
+     * 
+     * <p>This can be controlled per-instance to override the normal policy set based on
+     * inactivity, etc.</p>
+     * 
+     * @return  true iff the result may be cached/reused, subject to other policy
+     */
+    public boolean isCacheable() {
+        return cacheable;
+    }
+    
+    /**
+     * Set whether this result is suitable for caching (such as in a session) for reuse.
+     * 
+     * @param flag  flag to set
+     */
+    public void setCacheable(final boolean flag) {
+        cacheable = flag;
     }
     
     /**
@@ -178,6 +203,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     /** {@inheritDoc} */
     public String toString() {
         return Objects.toStringHelper(this).add("authenticationFlowId", authenticationFlowId)
+                .add("cacheable", cacheable)
                 .add("authenticatedPrincipal", getSubjectName())
                 .add("authenticationInstant", new DateTime(authenticationInstant))
                 .add("lastActivityInstant", new DateTime(lastActivityInstant)).toString();

@@ -91,6 +91,20 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         Assert.assertEquals(sessionCtx.getIdPSession().getAuthenticationResults().size(), 0);
         Assert.assertNotNull((((MockHttpServletResponse) HttpServletRequestResponseContext.getResponse()).getCookies()[0]));
     }
+
+    @Test public void testNotCacheable() throws ProfileException, SessionException {
+        HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
+        ac.setAttemptedFlow(flowDescriptor);
+        ac.setAuthenticationResult(new AuthenticationResult("test1", new UsernamePrincipal("joe")));
+        ac.getAuthenticationResult().setCacheable(false);
+        
+        SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, true);
+        sessionCtx.setIdPSession(sessionManager.createSession("joe"));
+        
+        action.execute(prc);
+        ActionTestingSupport.assertProceedEvent(prc);
+        Assert.assertEquals(sessionCtx.getIdPSession().getAuthenticationResults().size(), 0);
+    }
     
     @Test public void testNewSession() throws ProfileException, SessionException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
@@ -107,7 +121,7 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         Assert.assertSame(sessionCtx.getIdPSession().getAuthenticationResult("test1"), ac.getAuthenticationResult());
         Assert.assertNotNull((((MockHttpServletResponse) HttpServletRequestResponseContext.getResponse()).getCookies()[0]));
     }
-
+    
     @Test public void testAddToSession() throws ProfileException, SessionException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         ac.setAttemptedFlow(flowDescriptor);
