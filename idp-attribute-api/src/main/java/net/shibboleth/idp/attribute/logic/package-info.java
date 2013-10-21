@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+// TODO Are these guys even used?
 /** 
  * Function and predicate implementations that deal with {@link net.shibboleth.idp.attribute.IdPAttribute} objects or
  * their values. 
