@@ -42,13 +42,13 @@ import org.slf4j.LoggerFactory;
  * NOTE, the java signature for this class may and will change on minor version changes. However the Scripting interface
  * will remain the same (methods will never be removed).
  */
-public class ScriptedAttribute {
+public class ScriptedIdPAttribute {
 
     /** The {@link IdPAttribute} we are encapsulating. */
     private final IdPAttribute encapsulatedAttribute;
 
     /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(ScriptedAttribute.class);
+    private final Logger log = LoggerFactory.getLogger(ScriptedIdPAttribute.class);
 
     /** has method {@link #getNativeAttribute()} be called. */
     private boolean calledGetNativeAttribute;
@@ -69,7 +69,7 @@ public class ScriptedAttribute {
      * @param attribute the attribute we are encapsulating.
      * @param prefix the log path from the definition.
      */
-    public ScriptedAttribute(@Nonnull IdPAttribute attribute, String prefix) {
+    public ScriptedIdPAttribute(@Nonnull IdPAttribute attribute, String prefix) {
         encapsulatedAttribute = attribute;
 
         logPrefix =

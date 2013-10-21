@@ -114,9 +114,9 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
             return null;
         }
 
-        if (result instanceof ScriptedAttribute) {
+        if (result instanceof ScriptedIdPAttribute) {
 
-            ScriptedAttribute scriptedAttribute = (ScriptedAttribute) result;
+            ScriptedIdPAttribute scriptedAttribute = (ScriptedIdPAttribute) result;
             return scriptedAttribute.getResultingAttribute();
 
         } else {
@@ -158,7 +158,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
         } else {
             log.debug("{} adding to-be-populated attribute to script context", getLogPrefix());
             final IdPAttribute newAttribute = new IdPAttribute(getId());
-            scriptContext.setAttribute(getId(), new ScriptedAttribute(newAttribute, getLogPrefix()),
+            scriptContext.setAttribute(getId(), new ScriptedIdPAttribute(newAttribute, getLogPrefix()),
                     ScriptContext.ENGINE_SCOPE);
         }
 
@@ -175,7 +175,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
             final IdPAttribute pseudoAttribute = new IdPAttribute(dependencyAttribute.getKey());
             pseudoAttribute.setValues(dependencyAttribute.getValue());
 
-            scriptContext.setAttribute(dependencyAttribute.getKey(), new ScriptedAttribute(pseudoAttribute,
+            scriptContext.setAttribute(dependencyAttribute.getKey(), new ScriptedIdPAttribute(pseudoAttribute,
                     getLogPrefix()), ScriptContext.ENGINE_SCOPE);
         }
 

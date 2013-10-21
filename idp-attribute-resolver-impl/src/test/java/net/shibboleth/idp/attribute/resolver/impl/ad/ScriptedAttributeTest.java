@@ -53,7 +53,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 
-/** test for {@link net.shibboleth.idp.attribute.resolver.impl.ad.ScriptedAttribute}. */
+/** test for {@link net.shibboleth.idp.attribute.resolver.impl.ad.ScriptedIdPAttribute}. */
 public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
     /** The name. */

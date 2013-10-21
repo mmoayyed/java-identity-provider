@@ -21,16 +21,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.resolver.impl.ad.ScriptedAttribute;
+import net.shibboleth.idp.attribute.resolver.impl.ad.ScriptedIdPAttribute;
 
 /**
  * A class which is here solely to provide compatibility for V2 scripted attribute definitions. The assumption is that a
  * constructor will be called with a string and that only {@link #getValues()} would be called from then on.
  */
-public class BasicAttribute extends ScriptedAttribute {
+public class BasicAttribute extends ScriptedIdPAttribute {
 
     /** Log. */
-    private Logger log = LoggerFactory.getLogger(ScriptedAttribute.class);
+    private Logger log = LoggerFactory.getLogger(ScriptedIdPAttribute.class);
 
     /**
      * Constructor.
