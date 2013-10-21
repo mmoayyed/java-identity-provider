@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -80,6 +81,9 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
     /** Error messages indicating a disabled account. */
     @Nonnull @NonnullElements private Collection<String> accountDisabledErrors;
     
+    /** Predicate to apply when setting AuthenticationResult cacheability. */
+    @Nullable private Predicate<ProfileRequestContext> resultCachingPredicate;
+    
     /** Constructor. */
     public AbstractValidationAction() {
         super();
@@ -107,6 +111,8 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @param messages the "unknown username" error messages to set
      */
     public void setUnknownUsernameErrors(@Nonnull @NonnullElements final Collection<String> messages) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         unknownUsernameErrors = Lists.newArrayList(Collections2.filter(messages, Predicates.notNull()));
     }
     
@@ -125,6 +131,8 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @param messages the "invalid password" error messages to set
      */
     public void setInvalidPasswordErrors(@Nonnull @NonnullElements final Collection<String> messages) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         invalidPasswordErrors = Lists.newArrayList(Collections2.filter(messages, Predicates.notNull()));
     }
     
@@ -143,6 +151,8 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @param messages the "expired password" error messages to set
      */
     public void setExpiredPasswordErrors(@Nonnull @NonnullElements final Collection<String> messages) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         expiredPasswordErrors = Lists.newArrayList(Collections2.filter(messages, Predicates.notNull()));
     }
         
@@ -161,6 +171,8 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @param messages the "account locked" error messages to set
      */
     public void setAccountLockedErrors(@Nonnull @NonnullElements final Collection<String> messages) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         accountLockedErrors = Lists.newArrayList(Collections2.filter(messages, Predicates.notNull()));
     }
     
@@ -179,7 +191,29 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @param messages the "account disabled" error messages to set
      */
     public void setAccountDisabledErrors(@Nonnull @NonnullElements final Collection<String> messages) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         accountDisabledErrors = Lists.newArrayList(Collections2.filter(messages, Predicates.notNull()));
+    }
+
+    /**
+     * Get predicate to apply to determine cacheability of {@link AuthenticationResult}.
+     * 
+     * @return predicate to apply, or null
+     */
+    @Nullable public Predicate<ProfileRequestContext> getResultCachingPredicate() {
+        return resultCachingPredicate;
+    }
+
+    /**
+     * Set predicate to apply to determine cacheability of {@link AuthenticationResult}.
+     * 
+     * @param predicate predicate to apply, or null
+     */
+    public void setResultCachingPredicate(@Nullable final Predicate<ProfileRequestContext> predicate) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        resultCachingPredicate = predicate;
     }
     
     /** {@inheritDoc} */
@@ -272,8 +306,24 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         
         AuthenticationResult result = new AuthenticationResult(authenticationContext.getAttemptedFlow().getId(),
                 populateSubject(authenticatedSubject));
+        result.setCacheable(isResultCacheable(profileRequestContext, authenticationContext));
         authenticationContext.setAuthenticationResult(result);
         profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(result.getSubject());
+    }
+    
+    /**
+     * Override to determine whether the {@link AuthenticationResult} built by this action should be cacheable.
+     * 
+     * <p>The default implementation applies a predicate if one is set.</p>
+     * 
+     * @param profileRequestContext the current profile request context
+     * @param authenticationContext the current authentication context
+     * 
+     * @return true iff result should be cacheable
+     */
+    protected boolean isResultCacheable(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext) {
+        return resultCachingPredicate != null ? resultCachingPredicate.apply(profileRequestContext) : true;
     }
 
     /**
