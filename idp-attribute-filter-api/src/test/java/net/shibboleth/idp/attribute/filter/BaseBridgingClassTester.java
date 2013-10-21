@@ -54,7 +54,7 @@ public class BaseBridgingClassTester {
         attributes.add(attribute);
         AttributeFilterContext filterContext = new AttributeFilterContext();
 
-        filterContext.setPrefilteredAttributes(attributes);
+        filterContext.setPrefilteredIdPAttributes(attributes);
         
         return filterContext;
     }

@@ -132,7 +132,7 @@ public class ResolveAttributes extends AbstractProfileAction {
             relyingPartyCtx.removeSubcontext(resolutionContext);
 
             final AttributeContext attributeCtx = new AttributeContext();
-            attributeCtx.setAttributes(resolutionContext.getResolvedAttributes().values());
+            attributeCtx.setIdPAttributes(resolutionContext.getResolvedIdPAttributes().values());
 
             relyingPartyCtx.addSubcontext(attributeCtx);
         } catch (ResolutionException e) {

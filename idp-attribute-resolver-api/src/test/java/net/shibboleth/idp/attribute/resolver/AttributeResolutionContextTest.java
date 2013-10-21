@@ -35,96 +35,96 @@ public class AttributeResolutionContextTest {
 
         AttributeResolutionContext context = new AttributeResolutionContext();
         Assert.assertNull(context.getParent());
-        Assert.assertNotNull(context.getRequestedAttributes());
-        Assert.assertTrue(context.getRequestedAttributes().isEmpty());
-        Assert.assertNotNull(context.getResolvedAttributeDefinitions());
-        Assert.assertTrue(context.getResolvedAttributeDefinitions().isEmpty());
+        Assert.assertNotNull(context.getRequestedIdPAttributes());
+        Assert.assertTrue(context.getRequestedIdPAttributes().isEmpty());
+        Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions());
+        Assert.assertTrue(context.getResolvedIdPAttributeDefinitions().isEmpty());
         Assert.assertNotNull(context.getResolvedDataConnectors());
         Assert.assertTrue(context.getResolvedDataConnectors().isEmpty());
     }
     
-    /** Test {@link AttributeResolutionContext#setRequestedAttributes(java.util.Set)}. */
+    /** Test {@link AttributeResolutionContext#setRequestedIdPAttributes(java.util.Set)}. */
     @Test public void setRequesedAttributes() {
         AttributeResolutionContext context = new AttributeResolutionContext();
 
-        context.setRequestedAttributes(null);
-        Assert.assertNotNull(context.getRequestedAttributes());
-        Assert.assertTrue(context.getRequestedAttributes().isEmpty());
+        context.setRequestedIdPAttributes(null);
+        Assert.assertNotNull(context.getRequestedIdPAttributes());
+        Assert.assertTrue(context.getRequestedIdPAttributes().isEmpty());
 
         HashSet<IdPAttribute> attributes = new HashSet<IdPAttribute>();
-        context.setRequestedAttributes(attributes);
-        Assert.assertNotNull(context.getRequestedAttributes());
-        Assert.assertTrue(context.getRequestedAttributes().isEmpty());
+        context.setRequestedIdPAttributes(attributes);
+        Assert.assertNotNull(context.getRequestedIdPAttributes());
+        Assert.assertTrue(context.getRequestedIdPAttributes().isEmpty());
 
         attributes.add(null);
-        context.setRequestedAttributes(attributes);
-        Assert.assertNotNull(context.getRequestedAttributes());
-        Assert.assertTrue(context.getRequestedAttributes().isEmpty());
+        context.setRequestedIdPAttributes(attributes);
+        Assert.assertNotNull(context.getRequestedIdPAttributes());
+        Assert.assertTrue(context.getRequestedIdPAttributes().isEmpty());
 
         attributes.add(new IdPAttribute("foo"));
         attributes.add(null);
         attributes.add(new IdPAttribute("bar"));
-        context.setRequestedAttributes(attributes);
-        Assert.assertNotNull(context.getRequestedAttributes());
-        Assert.assertEquals(context.getRequestedAttributes().size(), 2);
+        context.setRequestedIdPAttributes(attributes);
+        Assert.assertNotNull(context.getRequestedIdPAttributes());
+        Assert.assertEquals(context.getRequestedIdPAttributes().size(), 2);
 
         attributes.clear();
         attributes.add(new IdPAttribute("baz"));
-        context.setRequestedAttributes(attributes);
-        Assert.assertNotNull(context.getRequestedAttributes());
-        Assert.assertEquals(context.getRequestedAttributes().size(), 1);
+        context.setRequestedIdPAttributes(attributes);
+        Assert.assertNotNull(context.getRequestedIdPAttributes());
+        Assert.assertEquals(context.getRequestedIdPAttributes().size(), 1);
     }
 
-    /** Test {@link AttributeResolutionContext#setRequestedAttributes(java.util.Set)}. */
+    /** Test {@link AttributeResolutionContext#setRequestedIdPAttributes(java.util.Set)}. */
     @Test public void setResolvedAttributes() {
         AttributeResolutionContext context = new AttributeResolutionContext();
 
-        context.setResolvedAttributes(null);
-        Assert.assertNotNull(context.getResolvedAttributes());
-        Assert.assertTrue(context.getResolvedAttributes().isEmpty());
+        context.setResolvedIdPAttributes(null);
+        Assert.assertNotNull(context.getResolvedIdPAttributes());
+        Assert.assertTrue(context.getResolvedIdPAttributes().isEmpty());
 
         HashSet<IdPAttribute> attributes = new HashSet<IdPAttribute>();
-        context.setResolvedAttributes(attributes);
-        Assert.assertNotNull(context.getResolvedAttributes());
-        Assert.assertTrue(context.getResolvedAttributes().isEmpty());
+        context.setResolvedIdPAttributes(attributes);
+        Assert.assertNotNull(context.getResolvedIdPAttributes());
+        Assert.assertTrue(context.getResolvedIdPAttributes().isEmpty());
 
         attributes.add(null);
-        context.setResolvedAttributes(attributes);
-        Assert.assertNotNull(context.getResolvedAttributes());
-        Assert.assertTrue(context.getResolvedAttributes().isEmpty());
+        context.setResolvedIdPAttributes(attributes);
+        Assert.assertNotNull(context.getResolvedIdPAttributes());
+        Assert.assertTrue(context.getResolvedIdPAttributes().isEmpty());
 
         attributes.add(new IdPAttribute("foo"));
         attributes.add(null);
         attributes.add(new IdPAttribute("bar"));
-        context.setResolvedAttributes(attributes);
-        Assert.assertNotNull(context.getResolvedAttributes());
-        Assert.assertEquals(context.getResolvedAttributes().size(), 2);
+        context.setResolvedIdPAttributes(attributes);
+        Assert.assertNotNull(context.getResolvedIdPAttributes());
+        Assert.assertEquals(context.getResolvedIdPAttributes().size(), 2);
 
         attributes.clear();
         attributes.add(new IdPAttribute("baz"));
-        context.setResolvedAttributes(attributes);
-        Assert.assertNotNull(context.getResolvedAttributes());
-        Assert.assertEquals(context.getResolvedAttributes().size(), 1);
+        context.setResolvedIdPAttributes(attributes);
+        Assert.assertNotNull(context.getResolvedIdPAttributes());
+        Assert.assertEquals(context.getResolvedIdPAttributes().size(), 1);
     }
 
     /** Test adding and retrieving attribute definitions. */
     @Test public void resolvedAttributeDefinitions() throws Exception {
         AttributeResolutionContext context = new AttributeResolutionContext();
 
-        Assert.assertNotNull(context.getResolvedAttributeDefinitions());
-        Assert.assertNull(context.getResolvedAttributeDefinitions().get("foo"));
+        Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions());
+        Assert.assertNull(context.getResolvedIdPAttributeDefinitions().get("foo"));
 
         IdPAttribute attribute = new IdPAttribute("foo");
         MockAttributeDefinition definition = new MockAttributeDefinition("foo", attribute);
         definition.initialize();
 
         context.recordAttributeDefinitionResolution(definition, attribute);
-        Assert.assertNotNull(context.getResolvedAttributeDefinitions());
-        Assert.assertEquals(context.getResolvedAttributeDefinitions().size(), 1);
-        Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("foo"));
-        Assert.assertTrue(context.getResolvedAttributeDefinitions().get("foo") instanceof ResolvedAttributeDefinition);
-        Assert.assertTrue(context.getResolvedAttributeDefinitions().get("foo").getResolvedDefinition() == definition);
-        Assert.assertTrue(context.getResolvedAttributeDefinitions().get("foo").resolve(context) == attribute);
+        Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions());
+        Assert.assertEquals(context.getResolvedIdPAttributeDefinitions().size(), 1);
+        Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions().get("foo"));
+        Assert.assertTrue(context.getResolvedIdPAttributeDefinitions().get("foo") instanceof ResolvedAttributeDefinition);
+        Assert.assertTrue(context.getResolvedIdPAttributeDefinitions().get("foo").getResolvedDefinition() == definition);
+        Assert.assertTrue(context.getResolvedIdPAttributeDefinitions().get("foo").resolve(context) == attribute);
 
         try {
             context.recordAttributeDefinitionResolution(definition, attribute);
@@ -137,14 +137,14 @@ public class AttributeResolutionContextTest {
         definition.initialize();
 
         context.recordAttributeDefinitionResolution(definition, null);
-        Assert.assertNotNull(context.getResolvedAttributeDefinitions());
-        Assert.assertEquals(context.getResolvedAttributeDefinitions().size(), 2);
-        Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("foo"));
-        Assert.assertTrue(context.getResolvedAttributeDefinitions().get("foo") instanceof ResolvedAttributeDefinition);
-        Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("bar"));
-        Assert.assertTrue(context.getResolvedAttributeDefinitions().get("bar") instanceof ResolvedAttributeDefinition);
-        Assert.assertTrue(context.getResolvedAttributeDefinitions().get("bar").getResolvedDefinition() == definition);
-        Assert.assertNull(context.getResolvedAttributeDefinitions().get("bar").resolve(context));
+        Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions());
+        Assert.assertEquals(context.getResolvedIdPAttributeDefinitions().size(), 2);
+        Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions().get("foo"));
+        Assert.assertTrue(context.getResolvedIdPAttributeDefinitions().get("foo") instanceof ResolvedAttributeDefinition);
+        Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions().get("bar"));
+        Assert.assertTrue(context.getResolvedIdPAttributeDefinitions().get("bar") instanceof ResolvedAttributeDefinition);
+        Assert.assertTrue(context.getResolvedIdPAttributeDefinitions().get("bar").getResolvedDefinition() == definition);
+        Assert.assertNull(context.getResolvedIdPAttributeDefinitions().get("bar").resolve(context));
     }
 
     /** Test adding and retrieving data connectors. */

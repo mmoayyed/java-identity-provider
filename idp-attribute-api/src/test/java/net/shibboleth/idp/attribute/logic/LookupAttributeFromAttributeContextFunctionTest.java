@@ -44,7 +44,7 @@ public class LookupAttributeFromAttributeContextFunctionTest {
         final IdPAttribute attrTwo = new IdPAttribute(NAME_TWO);
 
         final AttributeContext attributeChildContext = new AttributeContext();
-        attributeChildContext.setAttributes(Arrays.asList(attrOne, attrTwo));
+        attributeChildContext.setIdPAttributes(Arrays.asList(attrOne, attrTwo));
 
         final BaseContext parent = new BaseContext() {};
         parent.addSubcontext(attributeChildContext);

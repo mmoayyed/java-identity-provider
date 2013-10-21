@@ -30,6 +30,7 @@ import com.google.common.base.Predicate;
  * Support class for attribute-related {@link Function} and {@link Predicate} implementations. The static methods herein
  * can be useful, when used in conjunction with static imports, for creating an internal DSL.
  */
+// TODO Are these guys even used?
 public final class AttributeLogicSupport {
 
     /** Constructor. */

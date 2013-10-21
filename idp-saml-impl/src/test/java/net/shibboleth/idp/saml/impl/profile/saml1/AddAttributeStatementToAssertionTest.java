@@ -147,7 +147,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         attribute.setEncoders(collection);
 
         AttributeContext attribCtx = new AttributeContext();
-        attribCtx.setAttributes(Arrays.asList(attribute));
+        attribCtx.setIdPAttributes(Arrays.asList(attribute));
 
         ((RelyingPartyContext) profileCtx.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
 
@@ -176,7 +176,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         attribute.setEncoders(collection);
 
         AttributeContext attribCtx = new AttributeContext();
-        attribCtx.setAttributes(Arrays.asList(attribute));
+        attribCtx.setIdPAttributes(Arrays.asList(attribute));
 
         ((RelyingPartyContext) profileCtx.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
 
@@ -352,7 +352,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         attribute2.setEncoders(collection2);
 
         AttributeContext attribCtx = new AttributeContext();
-        attribCtx.setAttributes(Arrays.asList(attribute1, attribute2));
+        attribCtx.setIdPAttributes(Arrays.asList(attribute1, attribute2));
 
         return attribCtx;
     }

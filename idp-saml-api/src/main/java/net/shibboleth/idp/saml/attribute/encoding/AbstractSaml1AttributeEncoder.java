@@ -59,7 +59,7 @@ public abstract class AbstractSaml1AttributeEncoder<EncodedType extends Attribut
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Attribute buildAttribute(@Nonnull final IdPAttribute attribute,
+    @Nonnull protected Attribute buildAttribute(@Nonnull final IdPAttribute idpAttribute,
             @Nonnull @NonnullElements final List<XMLObject> attributeValues) throws AttributeEncodingException {
 
         final Attribute samlAttribute = attributeBuilder.buildObject();

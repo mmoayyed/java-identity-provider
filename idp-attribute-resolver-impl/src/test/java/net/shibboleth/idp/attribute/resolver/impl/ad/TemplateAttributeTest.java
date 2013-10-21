@@ -212,7 +212,7 @@ public class TemplateAttributeTest {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        IdPAttribute a = context.getResolvedAttributes().get(name);
+        IdPAttribute a = context.getResolvedIdPAttributes().get(name);
         final Collection results = a.getValues();
         Assert.assertEquals(results.size(), 1, "Templated value count");
         Assert.assertTrue(results.contains(SIMPLE_VALUE_RESULT), "Single value context is correct");
@@ -256,7 +256,7 @@ public class TemplateAttributeTest {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        final IdPAttribute a = context.getResolvedAttributes().get(name);
+        final IdPAttribute a = context.getResolvedIdPAttributes().get(name);
         final Collection results = a.getValues();
         Assert.assertEquals(results.size(), 2, "Templated value count");
         String s =

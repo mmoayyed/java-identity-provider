@@ -99,7 +99,7 @@ public class SimpleAttributeTest {
             Assert.fail("resolution failed", e);
         }
 
-        final Collection values = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(values.size(), 2);
         Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT), "looking for " + TestSources.COMMON_ATTRIBUTE_VALUE_STRING);
         Assert.assertTrue(values.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE_RESULT),
@@ -137,7 +137,7 @@ public class SimpleAttributeTest {
         } catch (ResolutionException e) {
             Assert.fail("resolution failed", e);
         }
-        final Collection<AttributeValue> values = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<AttributeValue> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(values.size(), 2);
         Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT),
@@ -182,7 +182,7 @@ public class SimpleAttributeTest {
             Assert.fail("resolution failed", e);
         }
 
-        final Collection values = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
         Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT),
                 "looking for value " + TestSources.COMMON_ATTRIBUTE_VALUE_STRING);
         Assert.assertTrue(values.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_RESULT),

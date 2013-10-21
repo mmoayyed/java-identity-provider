@@ -212,7 +212,7 @@ public class AttributeFilterPolicyTest {
 
         IdPAttribute attribute2 = new IdPAttribute(ATTR_NAME_2);
         attribute2.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("45")));
-        context.setPrefilteredAttributes(Arrays.asList(attribute, attribute2));
+        context.setPrefilteredIdPAttributes(Arrays.asList(attribute, attribute2));
 
         policyMatcher.setRetVal(state);
         valueMatcher.setMatchingAttribute(ATTR_NAME);
@@ -250,7 +250,7 @@ public class AttributeFilterPolicyTest {
         AttributeFilterContext context = new AttributeFilterContext();
         IdPAttribute attribute = new IdPAttribute(ATTR_NAME);
         attribute.setValues(Collections.EMPTY_LIST);
-        context.setPrefilteredAttributes(Arrays.asList(attribute));
+        context.setPrefilteredIdPAttributes(Arrays.asList(attribute));
         policy.initialize();
         policy.apply(context);
         Assert.assertTrue(context.getPermittedAttributeValues().isEmpty());

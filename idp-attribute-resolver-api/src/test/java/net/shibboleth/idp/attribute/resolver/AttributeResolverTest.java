@@ -171,9 +171,9 @@ public class AttributeResolverTest {
         AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("ad1"));
-        Assert.assertEquals(context.getResolvedAttributes().size(), 1);
-        Assert.assertEquals(context.getResolvedAttributes().get("ad1"), attribute);
+        Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions().get("ad1"));
+        Assert.assertEquals(context.getResolvedIdPAttributes().size(), 1);
+        Assert.assertEquals(context.getResolvedIdPAttributes().get("ad1"), attribute);
     }
 
     /** Test that a simple resolve returns the expected results. */
@@ -188,18 +188,18 @@ public class AttributeResolverTest {
         resolver.initialize();
 
         AttributeResolutionContext context = new AttributeResolutionContext();
-        context.setRequestedAttributes(Collections.singleton(new IdPAttribute("ad1")));
+        context.setRequestedIdPAttributes(Collections.singleton(new IdPAttribute("ad1")));
         resolver.resolveAttributes(context);
 
-        Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("ad1"));
-        Assert.assertEquals(context.getResolvedAttributes().size(), 1);
-        Assert.assertEquals(context.getResolvedAttributes().get("ad1"), attribute);
+        Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions().get("ad1"));
+        Assert.assertEquals(context.getResolvedIdPAttributes().size(), 1);
+        Assert.assertEquals(context.getResolvedIdPAttributes().get("ad1"), attribute);
 
         context = new AttributeResolutionContext();
-        context.setRequestedAttributes(Collections.singleton(new IdPAttribute("1da")));
+        context.setRequestedIdPAttributes(Collections.singleton(new IdPAttribute("1da")));
         resolver.resolveAttributes(context);
 
-        Assert.assertTrue(context.getResolvedAttributeDefinitions().isEmpty());
+        Assert.assertTrue(context.getResolvedIdPAttributeDefinitions().isEmpty());
     }
 
     /** Test that a simple resolve returns the expected results. */
@@ -235,7 +235,7 @@ public class AttributeResolverTest {
         context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Assert.assertTrue(context.getResolvedAttributes().isEmpty());
+        Assert.assertTrue(context.getResolvedIdPAttributes().isEmpty());
         log.debug("Logged Resolve fails");
     }
 
@@ -249,7 +249,7 @@ public class AttributeResolverTest {
         AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Assert.assertTrue(context.getResolvedAttributeDefinitions().isEmpty());
+        Assert.assertTrue(context.getResolvedIdPAttributeDefinitions().isEmpty());
     }
 
     /** Test that resolve w/ dependencies returns the expected results. */
@@ -281,9 +281,9 @@ public class AttributeResolverTest {
         AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("ad0"));
-        Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("ad1"));
-        Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("ad2"));
+        Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions().get("ad0"));
+        Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions().get("ad1"));
+        Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions().get("ad2"));
 
         Assert.assertNotNull(context.getResolvedDataConnectors().get("dc1"));
     }
@@ -379,9 +379,9 @@ public class AttributeResolverTest {
         AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("ad1"));
-        Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("ad2"));
-        Assert.assertEquals(context.getResolvedAttributes().size(), 2);
+        Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions().get("ad1"));
+        Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions().get("ad2"));
+        Assert.assertEquals(context.getResolvedIdPAttributes().size(), 2);
 
         MockDataConnector dcfail1 = new MockDataConnector("failer1", new ResolutionException());
         dcfail1.setInvalid(true);
@@ -447,8 +447,8 @@ public class AttributeResolverTest {
         AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("ad1"));
-        Assert.assertEquals(context.getResolvedAttributes().size(), 1);
+        Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions().get("ad1"));
+        Assert.assertEquals(context.getResolvedIdPAttributes().size(), 1);
         Assert.assertEquals(context.getResolvedDataConnectors().size(), 1);
     }
 
@@ -466,8 +466,8 @@ public class AttributeResolverTest {
         AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("ad1"));
-        Assert.assertTrue(context.getResolvedAttributes().isEmpty());
+        Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions().get("ad1"));
+        Assert.assertTrue(context.getResolvedIdPAttributes().isEmpty());
     }
 
     /**
@@ -490,8 +490,8 @@ public class AttributeResolverTest {
         AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("ad1"));
-        Assert.assertTrue(context.getResolvedAttributes().isEmpty());
+        Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions().get("ad1"));
+        Assert.assertTrue(context.getResolvedIdPAttributes().isEmpty());
     }
 
     /** Test that after resolution that the values for a resolved attribute are deduped. */
@@ -511,9 +511,9 @@ public class AttributeResolverTest {
         AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("ad1"));
-        Assert.assertTrue(context.getResolvedAttributes().containsKey("ad1"));
-        Assert.assertEquals(context.getResolvedAttributes().get("ad1").getValues().size(), 1);
+        Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions().get("ad1"));
+        Assert.assertTrue(context.getResolvedIdPAttributes().containsKey("ad1"));
+        Assert.assertEquals(context.getResolvedIdPAttributes().get("ad1").getValues().size(), 1);
     }
 
     /**
@@ -535,8 +535,8 @@ public class AttributeResolverTest {
         AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("ad1"));
-        Assert.assertTrue(context.getResolvedAttributes().isEmpty());
+        Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions().get("ad1"));
+        Assert.assertTrue(context.getResolvedIdPAttributes().isEmpty());
     }
 
     /** Test a simple, expected-to-be-valid, configuration. */

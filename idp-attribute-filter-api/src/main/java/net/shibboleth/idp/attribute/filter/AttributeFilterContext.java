@@ -83,7 +83,7 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @return attributes to be filtered
      */
-    @Nonnull @NonnullElements public Map<String, IdPAttribute> getPrefilteredAttributes() {
+    @Nonnull @NonnullElements public Map<String, IdPAttribute> getPrefilteredIdPAttributes() {
         return prefilteredAttributes;
     }
 
@@ -92,7 +92,7 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @param attributes attributes which are to be filtered
      */
-    public void setPrefilteredAttributes(@Nullable @NullableElements final Collection<IdPAttribute> attributes) {
+    public void setPrefilteredIdPAttributes(@Nullable @NullableElements final Collection<IdPAttribute> attributes) {
         Collection<IdPAttribute> checkedAttributes = new ArrayList<IdPAttribute>();
         CollectionSupport.addIf(checkedAttributes, attributes, Predicates.notNull());
 
@@ -116,7 +116,7 @@ public final class AttributeFilterContext extends BaseContext {
 
     /**
      * Adds a collection of attribute values that are permitted to be released. Attempting to add values for an
-     * attribute that is not a member of {@link #getPrefilteredAttributes()} will result in an
+     * attribute that is not a member of {@link #getPrefilteredIdPAttributes()} will result in an
      * {@link IllegalArgumentException}. Attempting to add an attribute value that is not a member of
      * {@link IdPAttribute#getValues()} will result in an {@link IllegalArgumentException}.
      * 
@@ -165,7 +165,7 @@ public final class AttributeFilterContext extends BaseContext {
 
     /**
      * Adds a collection of attribute values that are not permitted to be released. Attempting to add values for an
-     * attribute that is not a member of {@link #getPrefilteredAttributes()} will result in an
+     * attribute that is not a member of {@link #getPrefilteredIdPAttributes()} will result in an
      * {@link IllegalArgumentException}. Attempting to add an attribute value that is not a member of
      * {@link IdPAttribute#getValues()} will result in an {@link IllegalArgumentException}.
      * 
@@ -208,7 +208,7 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @return attributes left after the filtering process has run
      */
-    @Nonnull @NonnullElements public Map<String, IdPAttribute> getFilteredAttributes() {
+    @Nonnull @NonnullElements public Map<String, IdPAttribute> getFilteredIdPAttributes() {
         return filteredAttributes;
     }
 
@@ -217,7 +217,7 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @param attributes attributes that have been filtered
      */
-    public void setFilteredAttributes(@Nullable @NullableElements final Collection<IdPAttribute> attributes) {
+    public void setFilteredIdPAttributes(@Nullable @NullableElements final Collection<IdPAttribute> attributes) {
         Collection<IdPAttribute> checkedAttributes = new ArrayList<IdPAttribute>();
         CollectionSupport.addIf(checkedAttributes, attributes, Predicates.notNull());
 
@@ -238,7 +238,7 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @return Returns the requestedAttributes.
      */
-    @NullableElements @Nonnull public Multimap<String, IdPRequestedAttribute> getRequestedAttributes() {
+    @NullableElements @Nonnull public Multimap<String, IdPRequestedAttribute> getRequestedIdPAttributes() {
         return requestedAttributes;
     }
 

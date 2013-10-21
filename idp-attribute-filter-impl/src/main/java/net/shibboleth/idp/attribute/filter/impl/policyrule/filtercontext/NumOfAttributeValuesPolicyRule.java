@@ -68,7 +68,7 @@ public class NumOfAttributeValuesPolicyRule extends AbstractPolicyRule {
     @Nonnull public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
-        final IdPAttribute attribute = filterContext.getPrefilteredAttributes().get(attributeId);
+        final IdPAttribute attribute = filterContext.getPrefilteredIdPAttributes().get(attributeId);
         
         if (null == attribute) {
             log.warn("{} Attribute {} not found", getLogPrefix(), attributeId);

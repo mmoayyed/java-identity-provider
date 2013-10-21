@@ -51,7 +51,7 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
         final ScriptedPolicyRule rule = (ScriptedPolicyRule) getPolicyRule("scripted.xml");
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
-        filterContext.setPrefilteredAttributes(epaUid.values());
+        filterContext.setPrefilteredIdPAttributes(epaUid.values());
         Assert.assertEquals(rule.matches(filterContext), Tristate.FALSE);
     }
     
@@ -63,7 +63,7 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
         final ScriptedMatcher matcher = (ScriptedMatcher) getMatcher("scripted.xml");
         
         AttributeFilterContext filterContext = new AttributeFilterContext();
-        filterContext.setPrefilteredAttributes(epaUid.values());
+        filterContext.setPrefilteredIdPAttributes(epaUid.values());
         Set<AttributeValue> x = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
         Assert.assertEquals(x.size(), 1);
         String val = (String) x.iterator().next().getValue();

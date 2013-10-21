@@ -100,7 +100,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected - two scoped attributes
-        Set<AttributeValue> resultValues = context.getResolvedAttributes().get(OUTPUT_ATTRIBUTE_NAME).getValues();
+        Set<AttributeValue> resultValues = context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(resultValues.size(), 1);
         Assert.assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(), RESULT);
     }
@@ -195,7 +195,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected
-        Set<AttributeValue> resultValues = context.getResolvedAttributes().get(OUTPUT_ATTRIBUTE_NAME).getValues();
+        Set<AttributeValue> resultValues = context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(resultValues.size(), 1);
         Assert.assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(), RESULT);
 
@@ -210,7 +210,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected - two scoped attributes
-        resultValues = context.getResolvedAttributes().get(OUTPUT_ATTRIBUTE_NAME).getValues();
+        resultValues = context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(resultValues.size(), 1);
         Assert.assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(), RESULT);
 
@@ -225,7 +225,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected - two scoped attributes
-        resultValues = context.getResolvedAttributes().get(OUTPUT_ATTRIBUTE_NAME).getValues();
+        resultValues = context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(resultValues.size(), 1);
         Assert.assertNotEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(), RESULT);
 
@@ -240,28 +240,28 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
         AttributeResolutionContext context = TestSources.createResolutionContext(null, null, TestSources.SP_ENTITY_ID);;
         resolver.resolveAttributes(context);
-        Assert.assertNull(context.getResolvedAttributes().get(OUTPUT_ATTRIBUTE_NAME));
+        Assert.assertNull(context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME));
 
         resolver = constructResolver(0);
         resolver.initialize();
 
         context = TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);
-        Assert.assertNull(context.getResolvedAttributes().get(OUTPUT_ATTRIBUTE_NAME));
+        Assert.assertNull(context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME));
 
         resolver = constructResolver(1);
 
         resolver.initialize();
 
         resolver.resolveAttributes(TestSources.createResolutionContext(null, null, null));
-        Assert.assertNull(context.getResolvedAttributes().get(OUTPUT_ATTRIBUTE_NAME));
+        Assert.assertNull(context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME));
 
         resolver = constructResolverWithNonString("nonString");
         resolver.initialize();
 
         context = TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);
-        Assert.assertNull(context.getResolvedAttributes().get(OUTPUT_ATTRIBUTE_NAME));
+        Assert.assertNull(context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME));
 
     }
 }

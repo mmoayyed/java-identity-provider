@@ -74,12 +74,12 @@ public class AttributeRequesterRuleParserTest extends BaseAttributeFilterParserT
         final Matcher matcher = getMatcher("attributeRequester.xml");
 
         AttributeFilterContext filterContext = DataSources.populatedFilterContext("principal", "issuer", "http://example.org");
-        filterContext.setPrefilteredAttributes(epaUid.values());
+        filterContext.setPrefilteredIdPAttributes(epaUid.values());
         Set<AttributeValue> result = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
         Assert.assertTrue(result.isEmpty());
 
         filterContext = DataSources.populatedFilterContext("principal", "issuer", "https://service.example.edu/shibboleth-sp");
-        filterContext.setPrefilteredAttributes(epaUid.values());
+        filterContext.setPrefilteredIdPAttributes(epaUid.values());
         result = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
         Assert.assertEquals(result.size(), 1);
         Assert.assertEquals(result.iterator().next().getValue(), "daffyDuck");

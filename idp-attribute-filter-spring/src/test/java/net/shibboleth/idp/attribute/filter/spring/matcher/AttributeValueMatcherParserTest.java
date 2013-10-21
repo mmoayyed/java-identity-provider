@@ -73,15 +73,15 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
         final PolicyRequirementRule rule = getPolicyRule("attributeValueId.xml", true);
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
-        filterContext.setPrefilteredAttributes(epaUid.values());
+        filterContext.setPrefilteredIdPAttributes(epaUid.values());
         Assert.assertEquals(rule.matches(filterContext), Tristate.FALSE);
 
         filterContext = new AttributeFilterContext();
-        filterContext.setPrefilteredAttributes(epaUidJS.values());
+        filterContext.setPrefilteredIdPAttributes(epaUidJS.values());
         Assert.assertEquals(rule.matches(filterContext), Tristate.TRUE);
 
         filterContext = new AttributeFilterContext();
-        filterContext.setPrefilteredAttributes(uidEpaJS.values());
+        filterContext.setPrefilteredIdPAttributes(uidEpaJS.values());
         Assert.assertEquals(rule.matches(filterContext), Tristate.FALSE);
     }
 
@@ -90,15 +90,15 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
         final PolicyRequirementRule rule = getPolicyRule("attributeValueNoId.xml");
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
-        filterContext.setPrefilteredAttributes(epaUid.values());
+        filterContext.setPrefilteredIdPAttributes(epaUid.values());
         Assert.assertEquals(rule.matches(filterContext), Tristate.FALSE);
 
         filterContext = new AttributeFilterContext();
-        filterContext.setPrefilteredAttributes(epaUidJS.values());
+        filterContext.setPrefilteredIdPAttributes(epaUidJS.values());
         Assert.assertEquals(rule.matches(filterContext), Tristate.TRUE);
 
         filterContext = new AttributeFilterContext();
-        filterContext.setPrefilteredAttributes(uidEpaJS.values());
+        filterContext.setPrefilteredIdPAttributes(uidEpaJS.values());
         Assert.assertEquals(rule.matches(filterContext), Tristate.TRUE);
     }
 
@@ -107,17 +107,17 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
         final Matcher matcher = getMatcher("attributeValueNoId.xml");
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
-        filterContext.setPrefilteredAttributes(epaUid.values());
+        filterContext.setPrefilteredIdPAttributes(epaUid.values());
         Set<AttributeValue> result = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
         Assert.assertTrue(result.isEmpty());
 
         filterContext = new AttributeFilterContext();
-        filterContext.setPrefilteredAttributes(epaUidJS.values());
+        filterContext.setPrefilteredIdPAttributes(epaUidJS.values());
         result = matcher.getMatchingValues(epaUidJS.get("uid"), filterContext);
         Assert.assertEquals(result.size(), 1);
         
         filterContext = new AttributeFilterContext();
-        filterContext.setPrefilteredAttributes(uidEpaJS.values());
+        filterContext.setPrefilteredIdPAttributes(uidEpaJS.values());
         result = matcher.getMatchingValues(uidEpaJS.get("uid"), filterContext);
         Assert.assertTrue(result.isEmpty());
         
@@ -131,17 +131,17 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
         final Matcher matcher = getMatcher("attributeValueId.xml", true);
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
-        filterContext.setPrefilteredAttributes(epaUid.values());
+        filterContext.setPrefilteredIdPAttributes(epaUid.values());
         Set<AttributeValue> result = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
         Assert.assertTrue(result.isEmpty());
 
         filterContext = new AttributeFilterContext();
-        filterContext.setPrefilteredAttributes(epaUidJS.values());
+        filterContext.setPrefilteredIdPAttributes(epaUidJS.values());
         result = matcher.getMatchingValues(epaUidJS.get("uid"), filterContext);
         Assert.assertEquals(result.size(), 2);
         
         filterContext = new AttributeFilterContext();
-        filterContext.setPrefilteredAttributes(uidEpaJS.values());
+        filterContext.setPrefilteredIdPAttributes(uidEpaJS.values());
         result = matcher.getMatchingValues(uidEpaJS.get("uid"), filterContext);
         Assert.assertTrue(result.isEmpty());
     }

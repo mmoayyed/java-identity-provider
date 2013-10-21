@@ -128,7 +128,7 @@ public class FilterAttributesTest {
         ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
 
         AttributeContext attributeCtx = new AttributeContext();
-        attributeCtx.setAttributes(attributes);
+        attributeCtx.setIdPAttributes(attributes);
         profileCtx.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
 
         FilterAttributes action = new FilterAttributes(engine);
@@ -147,7 +147,7 @@ public class FilterAttributesTest {
                 profileCtx.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
         Assert.assertNotNull(resultAttributeCtx);
 
-        Map<String, IdPAttribute> resultAttributes = resultAttributeCtx.getAttributes();
+        Map<String, IdPAttribute> resultAttributes = resultAttributeCtx.getIdPAttributes();
         Assert.assertEquals(resultAttributes.size(), 1);
 
         Set<AttributeValue> resultAttributeValue = resultAttributes.get("attribute1").getValues();
@@ -188,7 +188,7 @@ public class FilterAttributesTest {
         ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
 
         AttributeContext attributeCtx = new AttributeContext();
-        attributeCtx.setAttributes(attributes);
+        attributeCtx.setIdPAttributes(attributes);
         profileCtx.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
 
         AttributeFilterContext attributeFilterCtx = new AttributeFilterContext();
@@ -210,7 +210,7 @@ public class FilterAttributesTest {
                 profileCtx.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
         Assert.assertNotNull(resultAttributeCtx);
 
-        Map<String, IdPAttribute> resultAttributes = resultAttributeCtx.getAttributes();
+        Map<String, IdPAttribute> resultAttributes = resultAttributeCtx.getIdPAttributes();
         Assert.assertEquals(resultAttributes.size(), 1);
 
         Set<AttributeValue> resultAttributeValue = resultAttributes.get("attribute1").getValues();
@@ -247,7 +247,7 @@ public class FilterAttributesTest {
         ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
 
         AttributeContext attributeCtx = new AttributeContext();
-        attributeCtx.setAttributes(attributes);
+        attributeCtx.setIdPAttributes(attributes);
         profileCtx.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
 
         AttributeFilterContext attributeFilterCtx = new AttributeFilterContext();

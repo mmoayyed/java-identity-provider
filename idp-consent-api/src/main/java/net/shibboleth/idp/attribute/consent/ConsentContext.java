@@ -97,7 +97,7 @@ public final class ConsentContext extends BaseContext {
      * 
      * @return unmodifiable map representing the information to be released about the user
      */
-    public Map<String, IdPAttribute> getUserAttributes() {
+    public Map<String, IdPAttribute> getUserIdPAttributes() {
         return userAttributes;
     }
 
@@ -106,7 +106,7 @@ public final class ConsentContext extends BaseContext {
      * 
      * @return attributes that may be released with the user's consent, never null
      */
-    public Map<String, IdPAttribute> getConsentedAttributes() {
+    public Map<String, IdPAttribute> getConsentedIdPAttributes() {
         return consentedAttributes;
     }
 }

@@ -85,7 +85,7 @@ public class PrescopedAtributeTest {
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
-        final Collection f = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection f = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(f.size(), 2);
         Assert.assertTrue(f.contains(new ScopedStringAttributeValue("at1", "Data")));

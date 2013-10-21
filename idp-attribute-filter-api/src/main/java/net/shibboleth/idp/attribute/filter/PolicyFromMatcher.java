@@ -59,7 +59,7 @@ public class PolicyFromMatcher extends BaseBridgingClass implements PolicyRequir
         
         log.info("{} Applying matcher supplied as policy to all values of all attributes", getLogPrefix());
 
-        for (IdPAttribute attribute : context.getPrefilteredAttributes().values()) {
+        for (IdPAttribute attribute : context.getPrefilteredIdPAttributes().values()) {
             Set<AttributeValue> result = matcher.getMatchingValues(attribute, context);
             if (null == result) {
                 log.warn("{} Matcher returned null, returning FAIL", getLogPrefix());

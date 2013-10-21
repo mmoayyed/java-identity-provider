@@ -130,18 +130,18 @@ public class AttributeFilteringEngineTest {
         IdPAttribute attribute1 = new IdPAttribute("attribute1");
         attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
                 new StringAttributeValue("two")));
-        filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
+        filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
         IdPAttribute attribute2 = new IdPAttribute("attribute2");
         attribute2.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("a"),
                 new StringAttributeValue("b")));
-        filterContext.getPrefilteredAttributes().put(attribute2.getId(), attribute2);
+        filterContext.getPrefilteredIdPAttributes().put(attribute2.getId(), attribute2);
 
         AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
         engine.initialize();
 
         engine.filterAttributes(filterContext);
-        Map<String, IdPAttribute> resultAttrs = filterContext.getFilteredAttributes();
+        Map<String, IdPAttribute> resultAttrs = filterContext.getFilteredIdPAttributes();
         Assert.assertEquals(resultAttrs.size(), 1);
         Set<AttributeValue> result = resultAttrs.get("attribute1").getValues();
         Assert.assertEquals(result.size(), 2);
@@ -166,13 +166,13 @@ public class AttributeFilteringEngineTest {
         IdPAttribute attribute1 = new IdPAttribute("attribute1");
         attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
                 new StringAttributeValue("two")));
-        filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
+        filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
         AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
         engine.initialize();
 
         engine.filterAttributes(filterContext);
-        Set<AttributeValue> result = filterContext.getFilteredAttributes().get("attribute1").getValues();
+        Set<AttributeValue> result = filterContext.getFilteredIdPAttributes().get("attribute1").getValues();
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(new StringAttributeValue("one")));
         Assert.assertTrue(result.contains(new StringAttributeValue("two")));
@@ -197,13 +197,13 @@ public class AttributeFilteringEngineTest {
         IdPAttribute attribute1 = new IdPAttribute("attribute1");
         attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
                 new StringAttributeValue("two")));
-        filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
+        filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
         AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
         engine.initialize();
 
         engine.filterAttributes(filterContext);
-        Assert.assertTrue(filterContext.getFilteredAttributes().isEmpty());
+        Assert.assertTrue(filterContext.getFilteredIdPAttributes().isEmpty());
     }
 
 
@@ -224,13 +224,13 @@ public class AttributeFilteringEngineTest {
         IdPAttribute attribute1 = new IdPAttribute("attribute1");
         attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
                 new StringAttributeValue("two")));
-        filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
+        filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
         AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
         engine.initialize();
 
         engine.filterAttributes(filterContext);
-        Assert.assertTrue(filterContext.getFilteredAttributes().isEmpty());
+        Assert.assertTrue(filterContext.getFilteredIdPAttributes().isEmpty());
     }
 
     @Test public void testDenyFilterAttributes() throws Exception {
@@ -259,13 +259,13 @@ public class AttributeFilteringEngineTest {
         IdPAttribute attribute1 = new IdPAttribute("attribute1");
         attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
                 new StringAttributeValue("two")));
-        filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
+        filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
         AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
         engine.initialize();
 
         engine.filterAttributes(filterContext);
-        Map<String, IdPAttribute> resultAttrs = filterContext.getFilteredAttributes();
+        Map<String, IdPAttribute> resultAttrs = filterContext.getFilteredIdPAttributes();
         Assert.assertEquals(resultAttrs.size(), 1);
         Set<AttributeValue> result = resultAttrs.get("attribute1").getValues();
         Assert.assertEquals(result.size(), 1);
@@ -287,13 +287,13 @@ public class AttributeFilteringEngineTest {
         IdPAttribute attribute1 = new IdPAttribute("attribute1");
         attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
                 new StringAttributeValue("two")));
-        filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
+        filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
         AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
         engine.initialize();
 
         engine.filterAttributes(filterContext);
-        Assert.assertTrue(filterContext.getFilteredAttributes().isEmpty());
+        Assert.assertTrue(filterContext.getFilteredIdPAttributes().isEmpty());
     }
 
     @Test public void testDenyAllFilterAttributes() throws Exception {
@@ -318,13 +318,13 @@ public class AttributeFilteringEngineTest {
         IdPAttribute attribute1 = new IdPAttribute("attribute1");
         attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
                 new StringAttributeValue("two")));
-        filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
+        filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
         AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
         engine.initialize();
 
         engine.filterAttributes(filterContext);
-        Map<String, IdPAttribute> resultAttrs = filterContext.getFilteredAttributes();
+        Map<String, IdPAttribute> resultAttrs = filterContext.getFilteredIdPAttributes();
         Assert.assertTrue(resultAttrs.isEmpty());
     }
 

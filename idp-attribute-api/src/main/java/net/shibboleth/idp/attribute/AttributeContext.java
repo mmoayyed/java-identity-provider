@@ -54,7 +54,7 @@ public class AttributeContext extends BaseContext {
      * 
      * @return the collection of attributes indexed by attribute ID
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, IdPAttribute> getAttributes() {
+    @Nonnull @NonnullElements @Unmodifiable public Map<String, IdPAttribute> getIdPAttributes() {
         return attributes;
     }
 
@@ -63,7 +63,7 @@ public class AttributeContext extends BaseContext {
      * 
      * @param newAttributes the attributes
      */
-    public void setAttributes(@Nullable @NullableElements Collection<IdPAttribute> newAttributes) {
+    public void setIdPAttributes(@Nullable @NullableElements Collection<IdPAttribute> newAttributes) {
         if (newAttributes == null) {
             attributes = Collections.emptyMap();
             return;

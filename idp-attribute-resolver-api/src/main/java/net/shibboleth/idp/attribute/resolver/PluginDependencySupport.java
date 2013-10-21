@@ -68,7 +68,7 @@ public final class PluginDependencySupport {
             Constraint.isNotNull(dependency, "Resolver dependency can not be null");
 
             ResolvedAttributeDefinition attributeDefinition =
-                    resolutionContext.getResolvedAttributeDefinitions().get(dependency.getDependencyPluginId());
+                    resolutionContext.getResolvedIdPAttributeDefinitions().get(dependency.getDependencyPluginId());
             if (attributeDefinition != null) {
                 resolvedAttribute = attributeDefinition.getResolvedAttribute();
                 addAttributeValues(resolvedAttribute, values);
@@ -121,7 +121,7 @@ public final class PluginDependencySupport {
             Constraint.isNotNull(dependency, "Resolver dependency can not be null");
 
             final ResolvedAttributeDefinition attributeDefinition =
-                    resolutionContext.getResolvedAttributeDefinitions().get(dependency.getDependencyPluginId());
+                    resolutionContext.getResolvedIdPAttributeDefinitions().get(dependency.getDependencyPluginId());
             if (attributeDefinition != null) {
                 addAttributeValues(attributeDefinition.getResolvedAttribute(), result);
                 continue;

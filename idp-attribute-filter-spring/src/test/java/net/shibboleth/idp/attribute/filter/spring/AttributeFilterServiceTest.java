@@ -95,11 +95,11 @@ public class AttributeFilterServiceTest {
                 AttributeFilterServiceTest.newService("policy2", new ClasspathResource(SERVICE_CONFIG_FILE));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
-        filterContext.setPrefilteredAttributes(attributesToBeFiltered.values());
+        filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());
 
         service.filterAttributes(filterContext);
 
-        Map<String, IdPAttribute> filteredAttributes = filterContext.getFilteredAttributes();
+        Map<String, IdPAttribute> filteredAttributes = filterContext.getFilteredIdPAttributes();
 
         Assert.assertEquals(1, filteredAttributes.size());
 
@@ -124,10 +124,10 @@ public class AttributeFilterServiceTest {
                 AttributeFilterServiceTest.newService("policy3", new ClasspathResource(SERVICE_CONFIG_FILE));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
-        filterContext.setPrefilteredAttributes(attributesToBeFiltered.values());
+        filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());
         service.filterAttributes(filterContext);
 
-        Map<String, IdPAttribute> filteredAttributes = filterContext.getFilteredAttributes();
+        Map<String, IdPAttribute> filteredAttributes = filterContext.getFilteredIdPAttributes();
 
         Assert.assertEquals(filteredAttributes.size(), 1);
 
@@ -153,11 +153,11 @@ public class AttributeFilterServiceTest {
                 AttributeFilterServiceTest.newService("policy4", new ClasspathResource(SERVICE_CONFIG_FILE));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
-        filterContext.setPrefilteredAttributes(attributesToBeFiltered.values());
+        filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());
 
         service.filterAttributes(filterContext);
 
-        Map<String, IdPAttribute> filteredAttributes = filterContext.getFilteredAttributes();
+        Map<String, IdPAttribute> filteredAttributes = filterContext.getFilteredIdPAttributes();
 
         Assert.assertEquals(1, filteredAttributes.size());
 

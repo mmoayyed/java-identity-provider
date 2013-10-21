@@ -83,7 +83,7 @@ public class RegexAtributeTest {
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
-        Collection f = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        Collection f = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(f.size(), 1);
         Assert.assertTrue(f.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_RESULT), "looking for regexp result");

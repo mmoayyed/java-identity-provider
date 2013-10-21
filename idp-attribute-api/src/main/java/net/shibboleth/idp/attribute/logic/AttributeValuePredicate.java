@@ -25,6 +25,8 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import com.google.common.base.Predicate;
 
 /** A {@link Predicate} that checks to see if one, or all, of the values of an attribute match a given predicate. */
+
+//TODO Are these guys even used?
 public class AttributeValuePredicate implements Predicate<IdPAttribute> {
 
     /** Predicate used to check individual attribute values. */

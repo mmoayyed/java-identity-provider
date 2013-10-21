@@ -74,7 +74,7 @@ public class PolicyFromMatcherId extends BaseBridgingClass implements PolicyRequ
         
         log.info("{} Applying matcher supplied as policy to all values of attribute {}", getLogPrefix(), attributeId);
 
-        final IdPAttribute attribute = context.getPrefilteredAttributes().get(attributeId);
+        final IdPAttribute attribute = context.getPrefilteredIdPAttributes().get(attributeId);
         
         if (null == attribute) {
             log.debug("{} No attribute found with Id of {}", getLogPrefix(), attributeId);

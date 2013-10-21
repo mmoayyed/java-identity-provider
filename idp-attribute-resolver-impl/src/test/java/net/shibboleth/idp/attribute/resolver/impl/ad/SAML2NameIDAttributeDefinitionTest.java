@@ -93,7 +93,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);
-        final Collection<AttributeValue> values = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<AttributeValue> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(values.size(), 2);
         Collection<String> nameValues = new HashSet<String>(2);
@@ -160,7 +160,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         } catch (ResolutionException e) {
             Assert.fail("resolution failed");
         }
-        Assert.assertNull(context.getResolvedAttributes().get(SECOND_ATTRIBUTE_NAME));
+        Assert.assertNull(context.getResolvedIdPAttributes().get(SECOND_ATTRIBUTE_NAME));
     }
 
     @Test public void singleValueWithOptions() throws ResolutionException,
@@ -194,7 +194,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         } catch (ResolutionException e) {
             Assert.fail("resolution failed", e);
         }
-        final Collection<AttributeValue> values = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<AttributeValue> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(values.size(), 1);
         NameID id = (NameID) values.iterator().next().getValue();

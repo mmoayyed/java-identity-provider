@@ -95,7 +95,7 @@ public class ResolveAttributesTest {
                 profileCtx.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
         Assert.assertNotNull(resolvedAttributeCtx);
 
-        Map<String, IdPAttribute> resolvedAttributes = resolvedAttributeCtx.getAttributes();
+        Map<String, IdPAttribute> resolvedAttributes = resolvedAttributeCtx.getIdPAttributes();
         Assert.assertFalse(resolvedAttributes.isEmpty());
         Assert.assertEquals(resolvedAttributes.size(), 1);
         Assert.assertNotNull(resolvedAttributes.get("ad1"));
@@ -115,7 +115,7 @@ public class ResolveAttributesTest {
         resolver.initialize();
 
         AttributeResolutionContext attributeResolutionCtx = new AttributeResolutionContext();
-        attributeResolutionCtx.setRequestedAttributes(Collections.singleton(new IdPAttribute("ad1")));
+        attributeResolutionCtx.setRequestedIdPAttributes(Collections.singleton(new IdPAttribute("ad1")));
         profileCtx.addSubcontext(attributeResolutionCtx);
 
         ResolveAttributes action = new ResolveAttributes(resolver);
@@ -134,7 +134,7 @@ public class ResolveAttributesTest {
                 profileCtx.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
         Assert.assertNotNull(resolvedAttributeCtx);
 
-        Map<String, IdPAttribute> resolvedAttributes = resolvedAttributeCtx.getAttributes();
+        Map<String, IdPAttribute> resolvedAttributes = resolvedAttributeCtx.getIdPAttributes();
         Assert.assertFalse(resolvedAttributes.isEmpty());
         Assert.assertEquals(resolvedAttributes.size(), 1);
         Assert.assertNotNull(resolvedAttributes.get("ad1"));
@@ -144,7 +144,7 @@ public class ResolveAttributesTest {
         profileCtx = new RequestContextBuilder().buildProfileRequestContext();
 
         attributeResolutionCtx = new AttributeResolutionContext();
-        attributeResolutionCtx.setRequestedAttributes(Collections.singleton(new IdPAttribute("dne")));
+        attributeResolutionCtx.setRequestedIdPAttributes(Collections.singleton(new IdPAttribute("dne")));
         profileCtx.addSubcontext(attributeResolutionCtx, true);
 
         result = action.doExecute(new MockRequestContext(), profileCtx);
@@ -158,7 +158,7 @@ public class ResolveAttributesTest {
         resolvedAttributeCtx =
                 profileCtx.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
         Assert.assertNotNull(resolvedAttributeCtx);
-        Assert.assertTrue(resolvedAttributeCtx.getAttributes().isEmpty());
+        Assert.assertTrue(resolvedAttributeCtx.getIdPAttributes().isEmpty());
     }
 
     /** Test that action returns the proper event if the attributes are not able to be resolved. */

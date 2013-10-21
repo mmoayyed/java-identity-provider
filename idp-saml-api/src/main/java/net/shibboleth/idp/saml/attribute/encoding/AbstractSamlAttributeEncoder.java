@@ -192,37 +192,37 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
      * Checks if the given value can be handled by the encoder. In many cases this is simply a check to see if the given
      * object is of the right type.
      * 
-     * @param attribute the attribute being encoded, never null
+     * @param idpAttribute the attribute being encoded, never null
      * @param value the value to check, never null
      * 
      * @return true if the encoder can encoder this value, false if not
      */
     protected abstract boolean
-            canEncodeValue(@Nonnull final IdPAttribute attribute, @Nonnull final AttributeValue value);
+            canEncodeValue(@Nonnull final IdPAttribute idpAttribute, @Nonnull final AttributeValue value);
 
     /**
      * Encodes an attribute value in to a SAML attribute value element.
      * 
-     * @param attribute the attribute being encoded, never null
+     * @param idpAttribute the attribute being encoded, never null
      * @param value the value to encoder, never null
      * 
      * @return the attribute value or null if the resulting attribute value would be empty
      * 
      * @throws AttributeEncodingException thrown if there is a problem encoding the attribute value
      */
-    @Nullable protected abstract XMLObject encodeValue(@Nonnull final IdPAttribute attribute,
+    @Nullable protected abstract XMLObject encodeValue(@Nonnull final IdPAttribute idpAttribute,
             @Nonnull final EncodedType value) throws AttributeEncodingException;
 
     /**
      * Builds a SAML attribute element from the given attribute values.
      * 
-     * @param attribute the attribute being encoded, never null
+     * @param idpAttribute the attribute being encoded, never null
      * @param attributeValues the encoded values for the attribute, never null or containing null elements
      * 
      * @return the SAML attribute element
      * 
      * @throws AttributeEncodingException thrown if there is a problem constructing the SAML attribute
      */
-    @Nonnull protected abstract AttributeType buildAttribute(@Nonnull final IdPAttribute attribute,
+    @Nonnull protected abstract AttributeType buildAttribute(@Nonnull final IdPAttribute idpAttribute,
             @Nonnull @NonnullElements final List<XMLObject> attributeValues) throws AttributeEncodingException;
 }

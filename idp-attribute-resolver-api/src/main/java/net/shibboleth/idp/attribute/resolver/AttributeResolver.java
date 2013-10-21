@@ -189,9 +189,9 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
 
     /**
      * Resolves the attribute for the give request. Note, if attributes are requested,
-     * {@link AttributeResolutionContext#getRequestedAttributes()}, the resolver will <strong>not</strong> fail if they
-     * can not be resolved. This information serves only as a hint to the resolver to, potentially, optimize the
-     * resolution of attributes.
+     * {@link AttributeResolutionContext#getRequestedIdPAttributes()}, the resolver will <strong>not</strong> fail 
+     * if they can not be resolved. This information serves only as a hint to the resolver to, potentially, 
+     * optimize the resolution of attributes.
      * 
      * @param resolutionContext the attribute resolution context that identifies the request subject and accumulates the
      *            resolved attributes
@@ -212,7 +212,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
             return;
         }
 
-        final Collection<String> attributeIds = getToBeResolvedAttributes(resolutionContext);
+        final Collection<String> attributeIds = getToBeResolvedAttributeIds(resolutionContext);
         log.debug("{} attempting to resolve the following attribute definitions {}", logPrefix, attributeIds);
 
         for (String attributeId : attributeIds) {
@@ -222,7 +222,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         log.debug("{} finalizing resolved attributes", logPrefix);
         finalizeResolvedAttributes(resolutionContext);
 
-        log.debug("{} final resolved attribute collection: {}", logPrefix, resolutionContext.getResolvedAttributes()
+        log.debug("{} final resolved attribute collection: {}", logPrefix, resolutionContext.getResolvedIdPAttributes()
                 .keySet());
 
         return;
@@ -230,19 +230,19 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
 
     /**
      * Gets the list of attributes, identified by IDs, that should be resolved. If the
-     * {@link AttributeResolutionContext#getRequestedAttributes()} is not empty then those attributes are the ones to be
-     * resolved, otherwise all registered attribute definitions are to be resolved.
+     * {@link AttributeResolutionContext#getRequestedIdPAttributes()} is not empty then those attributes are 
+     * the ones to be resolved, otherwise all registered attribute definitions are to be resolved.
      * 
      * @param resolutionContext current resolution context
      * 
      * @return list of attributes, identified by IDs, that should be resolved
      */
-    @Nonnull @NonnullElements protected Collection<String> getToBeResolvedAttributes(
+    @Nonnull @NonnullElements protected Collection<String> getToBeResolvedAttributeIds(
             @Nonnull final AttributeResolutionContext resolutionContext) {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
         final Collection<String> attributeIds = new LazyList<String>();
-        for (IdPAttribute requestedAttribute : resolutionContext.getRequestedAttributes()) {
+        for (IdPAttribute requestedAttribute : resolutionContext.getRequestedIdPAttributes()) {
             attributeIds.add(requestedAttribute.getId());
         }
 
@@ -271,7 +271,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
 
         log.trace("{} beginning to resolve attribute definition {}", logPrefix, attributeId);
 
-        if (resolutionContext.getResolvedAttributeDefinitions().containsKey(attributeId)) {
+        if (resolutionContext.getResolvedIdPAttributeDefinitions().containsKey(attributeId)) {
             log.trace("{} attribute definition {} was already resolved, nothing to do", logPrefix, attributeId);
             return;
         }
@@ -401,7 +401,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         final LazySet<IdPAttribute> resolvedAttributes = new LazySet<IdPAttribute>();
 
         IdPAttribute resolvedAttribute;
-        for (ResolvedAttributeDefinition definition : resolutionContext.getResolvedAttributeDefinitions().values()) {
+        for (ResolvedAttributeDefinition definition : resolutionContext.getResolvedIdPAttributeDefinitions().values()) {
             resolvedAttribute = definition.getResolvedAttribute();
 
             // remove nulls
@@ -427,7 +427,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
             resolvedAttributes.add(resolvedAttribute);
         }
 
-        resolutionContext.setResolvedAttributes(resolvedAttributes);
+        resolutionContext.setResolvedIdPAttributes(resolvedAttributes);
     }
 
     /**

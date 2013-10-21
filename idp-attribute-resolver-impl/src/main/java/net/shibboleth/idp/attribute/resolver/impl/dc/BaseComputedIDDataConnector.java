@@ -145,7 +145,7 @@ public abstract class BaseComputedIDDataConnector extends BaseDataConnector {
     @Nullable protected String resolveSourceAttribute(@Nonnull AttributeResolutionContext resolutionContext) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ResolvedAttributeDefinition attributeDefinition =
-                resolutionContext.getResolvedAttributeDefinitions().get(getSourceAttributeId());
+                resolutionContext.getResolvedIdPAttributeDefinitions().get(getSourceAttributeId());
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 

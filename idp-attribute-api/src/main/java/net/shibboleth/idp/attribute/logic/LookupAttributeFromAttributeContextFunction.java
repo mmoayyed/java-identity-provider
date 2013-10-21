@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+// TODO Are these guys even used?
 package net.shibboleth.idp.attribute.logic;
 
 import javax.annotation.Nonnull;
@@ -57,7 +58,7 @@ public class LookupAttributeFromAttributeContextFunction implements Function<Bas
         AttributeContext attributeContext;
         if (context instanceof AttributeContext) {
             attributeContext = (AttributeContext) context;
-            return attributeContext.getAttributes().get(id);
+            return attributeContext.getIdPAttributes().get(id);
         }
 
         BaseContext parentContext = context.getParent();
@@ -67,7 +68,7 @@ public class LookupAttributeFromAttributeContextFunction implements Function<Bas
 
         attributeContext = parentContext.getSubcontext(AttributeContext.class, false);
         if (attributeContext != null) {
-            return attributeContext.getAttributes().get(id);
+            return attributeContext.getIdPAttributes().get(id);
         }
 
         return apply(parentContext);

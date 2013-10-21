@@ -119,7 +119,7 @@ public class AttributeResolverServiceTest extends OpenSAMLInitBaseTestCase {
         // try to resolve some attributes
         final AttributeResolutionContext resolutionContext = TestSources.createResolutionContext("PETER_THE_PRINCIPAL", "issuer", "recipient");
         attributeResolverService.resolveAttributes(resolutionContext);
-        Map<String, IdPAttribute> resolvedAttributes = resolutionContext.getResolvedAttributes();
+        Map<String, IdPAttribute> resolvedAttributes = resolutionContext.getResolvedIdPAttributes();
         log.debug("resolved attributes '{}'", resolvedAttributes);
 
         Assert.assertEquals(resolvedAttributes.size(), 12);

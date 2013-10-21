@@ -32,9 +32,9 @@ public class AttributeContextTest {
      * and that there as many as we expected. 
      */
     private void contextAttributes( AttributeContext context, int expectedSize) {
-        Assert.assertEquals(context.getAttributes().size(), expectedSize);
+        Assert.assertEquals(context.getIdPAttributes().size(), expectedSize);
         try {
-            context.getAttributes().put("attr", new IdPAttribute("attr") );
+            context.getIdPAttributes().put("attr", new IdPAttribute("attr") );
             Assert.fail();
         } catch (UnsupportedOperationException e) {
 
@@ -44,16 +44,16 @@ public class AttributeContextTest {
     @Test public void attributeContext() {
         AttributeContext context = new AttributeContext();
         
-        context.setAttributes(Arrays.asList((IdPAttribute)null, null));
+        context.setIdPAttributes(Arrays.asList((IdPAttribute)null, null));
         contextAttributes(context, 0);
 
-        context.setAttributes(Arrays.asList(new IdPAttribute("foo"), null));
+        context.setIdPAttributes(Arrays.asList(new IdPAttribute("foo"), null));
         contextAttributes(context, 1);
         
-        context.setAttributes(null);
+        context.setIdPAttributes(null);
         contextAttributes(context, 0);
         
-        context.setAttributes(Collections.EMPTY_SET);
+        context.setIdPAttributes(Collections.EMPTY_SET);
         contextAttributes(context, 0);
     }
 

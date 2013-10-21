@@ -241,7 +241,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         final AttributeResolutionContext context = generateContext();
         resolver.resolveAttributes(context);
-        final IdPAttribute attribute = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME);
+        final IdPAttribute attribute = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME);
         final Set<AttributeValue> values = attribute.getValues();
 
         Assert.assertEquals(values.size(), 2);
@@ -275,7 +275,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         final AttributeResolutionContext context = generateContext();
         resolver.resolveAttributes(context);
-        final IdPAttribute attribute = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME);
+        final IdPAttribute attribute = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME);
         final Set<AttributeValue> values = attribute.getValues();
 
         Assert.assertEquals(values.size(), 2);
@@ -331,7 +331,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         // The script just put the resolution context in as the attribute value. Yea it makes
         // no sense but it is easy to test.
-        final IdPAttribute attribute = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME);
+        final IdPAttribute attribute = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME);
         final Collection<AttributeValue> values = attribute.getValues();
 
         Assert.assertEquals(values.size(), 1, "looking for context");
@@ -366,7 +366,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
             Assert.fail("resolution failed", e);
         }
 
-        return context.getResolvedAttributes().get(attributeName);
+        return context.getResolvedIdPAttributes().get(attributeName);
 
     }
 

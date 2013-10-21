@@ -128,7 +128,7 @@ public class AttributeFilter extends AbstractDestructableIdentifiableInitializab
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
-        Map<String, IdPAttribute> prefilteredAttributes = filterContext.getPrefilteredAttributes();
+        Map<String, IdPAttribute> prefilteredAttributes = filterContext.getPrefilteredIdPAttributes();
 
         log.debug("{} beginning process of filtering the following {} attributes: {}", new Object[] {getLogPrefix(),
                 prefilteredAttributes.size(), prefilteredAttributes.keySet(),});
@@ -139,7 +139,7 @@ public class AttributeFilter extends AbstractDestructableIdentifiableInitializab
         }
 
         IdPAttribute filteredAttribute;
-        for (String attributeId : filterContext.getPrefilteredAttributes().keySet()) {
+        for (String attributeId : filterContext.getPrefilteredIdPAttributes().keySet()) {
             final Collection filteredAttributeValues = getFilteredValues(attributeId, filterContext);
             if (null != filteredAttributeValues && !filteredAttributeValues.isEmpty()) {
                 try {
@@ -148,7 +148,7 @@ public class AttributeFilter extends AbstractDestructableIdentifiableInitializab
                     throw new AttributeFilterException(e);
                 }
                 filteredAttribute.setValues(filteredAttributeValues);
-                filterContext.getFilteredAttributes().put(filteredAttribute.getId(), filteredAttribute);
+                filterContext.getFilteredIdPAttributes().put(filteredAttribute.getId(), filteredAttribute);
             }
         }
     }

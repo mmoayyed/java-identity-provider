@@ -57,7 +57,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
         returnOneValueScript =
                 new EvaluableScript("JavaScript", new StringBuilder().append("importPackage(Packages.java.util);")
-                        .append("filterContext.getPrefilteredAttributes();").append("x = new HashSet();")
+                        .append("filterContext.getPrefilteredIdPAttributes();").append("x = new HashSet();")
                         .append("x.add(attribute.getValues().iterator().next());").append("x;").toString());
 
         nullReturnScript = new EvaluableScript("JavaScript", "null;");
@@ -66,7 +66,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
         addedValuesScript =
                 new EvaluableScript("JavaScript", new StringBuilder().append("importPackage(Packages.java.util);")
-                        .append("filterContext.getPrefilteredAttributes();").append("x = new HashSet();")
+                        .append("filterContext.getPrefilteredIdPAttributes();").append("x = new HashSet();")
                         .append("x.add(attribute.getValues().iterator().next());")
                         .append("x.add(new net.shibboleth.idp.attribute.StringAttributeValue(\"a\"));").append("x;")
                         .toString());

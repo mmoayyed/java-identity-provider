@@ -60,7 +60,7 @@ public final class StaticResolver extends AbstractProfileAction {
         attribute2.setValues(ImmutableList.<AttributeValue> of(new StringAttributeValue("a"),
                 new StringAttributeValue("b")));
         
-        attributeCtx.setAttributes(ImmutableList.<IdPAttribute> of(attribute1, attribute2));
+        attributeCtx.setIdPAttributes(ImmutableList.<IdPAttribute> of(attribute1, attribute2));
     }
 
 }

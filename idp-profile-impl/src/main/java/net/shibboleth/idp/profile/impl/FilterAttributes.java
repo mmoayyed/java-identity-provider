@@ -129,7 +129,7 @@ public class FilterAttributes extends AbstractProfileAction {
             return ActionSupport.buildEvent(this, EventIds.INVALID_ATTRIBUTE_CTX);
         }
 
-        if (attributeContext.getAttributes().isEmpty()) {
+        if (attributeContext.getIdPAttributes().isEmpty()) {
             log.debug("Action {}: No attributes to filter", getId());
             return ActionSupport.buildProceedEvent(this);
         }
@@ -140,15 +140,15 @@ public class FilterAttributes extends AbstractProfileAction {
 
         // If the filter context doesn't have a set of attributes to filter already
         // then look for them in the profile request context
-        if (filterContext.getPrefilteredAttributes().isEmpty() && attributeContext != null) {
-            filterContext.setPrefilteredAttributes(attributeContext.getAttributes().values());
+        if (filterContext.getPrefilteredIdPAttributes().isEmpty() && attributeContext != null) {
+            filterContext.setPrefilteredIdPAttributes(attributeContext.getIdPAttributes().values());
         }
 
         try {
             filterEngine.filterAttributes(filterContext);
             relyingPartyCtx.removeSubcontext(filterContext);
 
-            attributeContext.setAttributes(filterContext.getFilteredAttributes().values());
+            attributeContext.setIdPAttributes(filterContext.getFilteredIdPAttributes().values());
         } catch (AttributeFilterException e) {
             log.error("Action {}: Error encountered while filtering attributes", getId(), e);
             return ActionSupport.buildEvent(this, UNABLE_FILTER_ATTRIBS);

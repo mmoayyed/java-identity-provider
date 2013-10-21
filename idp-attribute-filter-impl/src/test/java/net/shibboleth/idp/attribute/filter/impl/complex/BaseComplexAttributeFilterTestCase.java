@@ -51,7 +51,7 @@ public class BaseComplexAttributeFilterTestCase extends XMLObjectBaseTestCase {
      * @throws ComponentInitializationException
      * @throws ResolutionException
      */
-    protected Map<String, IdPAttribute> getAttributes(String xmlFileName) throws ComponentInitializationException,
+    protected Map<String, IdPAttribute> getIdPAttributes(String xmlFileName) throws ComponentInitializationException,
             ResolutionException {
 
         final EntityAttributes obj = (EntityAttributes) unmarshallElement(PATH + xmlFileName);

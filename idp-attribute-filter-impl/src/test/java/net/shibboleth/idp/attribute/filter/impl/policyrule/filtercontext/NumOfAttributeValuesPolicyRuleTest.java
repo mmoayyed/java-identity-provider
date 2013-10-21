@@ -111,7 +111,7 @@ public class NumOfAttributeValuesPolicyRuleTest {
             attr.getValues().add(new StringAttributeValue(Integer.toString(i)));
         }
         final AttributeFilterContext context = new AttributeFilterContext();
-        context.setPrefilteredAttributes(Collections.singleton(attr));
+        context.setPrefilteredIdPAttributes(Collections.singleton(attr));
         return context;
     }
     

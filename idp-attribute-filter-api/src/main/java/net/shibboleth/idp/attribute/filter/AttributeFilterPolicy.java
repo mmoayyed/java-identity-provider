@@ -54,7 +54,7 @@ import com.google.common.collect.Iterables;
 /**
  * A policy describing if a set of attribute value filters is applicable.
  * 
- * Note, this filter policy operates on the {@link AttributeFilterContext#getFilteredAttributes()} attribute set. The
+ * Note, this filter policy operates on the {@link AttributeFilterContext#getFilteredIdPAttributes()} attribute set. The
  * idea being that as policies run they will retain or remove attributes and values for this collection. After all
  * policies run this collection will contain the final result.
  */
@@ -167,7 +167,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
             return;
         }
 
-        final Map<String, IdPAttribute> attributes = filterContext.getPrefilteredAttributes();
+        final Map<String, IdPAttribute> attributes = filterContext.getPrefilteredIdPAttributes();
         log.debug("{} Applying attribute filter policy to current set of attributes: {}", getLogPrefix(),
                 attributes.keySet());
 

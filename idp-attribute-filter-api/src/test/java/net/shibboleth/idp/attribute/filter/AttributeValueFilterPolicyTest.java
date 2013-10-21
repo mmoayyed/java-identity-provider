@@ -251,7 +251,7 @@ public class AttributeValueFilterPolicyTest {
         Assert.assertTrue(thrown, "Null context");
 
         AttributeFilterContext context = new AttributeFilterContext();
-        context.setPrefilteredAttributes(Arrays.asList(attribute1));
+        context.setPrefilteredIdPAttributes(Arrays.asList(attribute1));
 
         policy.apply(attribute1, context);
 
@@ -269,7 +269,7 @@ public class AttributeValueFilterPolicyTest {
         policy.initialize();
 
         context = new AttributeFilterContext();
-        context.setPrefilteredAttributes(Arrays.asList(attribute1));
+        context.setPrefilteredIdPAttributes(Arrays.asList(attribute1));
 
         policy.apply(attribute1, context);
 

@@ -167,7 +167,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
         }
 
         try {
-            final AttributeStatement statement = buildAttributeStatement(attributeCtx.getAttributes().values());
+            final AttributeStatement statement = buildAttributeStatement(attributeCtx.getIdPAttributes().values());
             if (statement == null) {
                 log.debug("Action {}: No AttributeStatement was built, nothing left to do", getId());
                 return ActionSupport.buildProceedEvent(this);

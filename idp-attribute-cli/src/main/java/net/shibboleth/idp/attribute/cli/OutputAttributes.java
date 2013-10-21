@@ -69,7 +69,7 @@ public final class OutputAttributes extends AbstractProfileAction {
         
         try {
             Writer writer = springRequestContext.getExternalContext().getResponseWriter();
-            for (IdPAttribute a : attributeContext.getAttributes().values()) {
+            for (IdPAttribute a : attributeContext.getIdPAttributes().values()) {
                 writer.write("Attribute: " + a.getId() + "\n");
                 if (a.getDisplayNames().containsKey(Locale.getDefault())) {
                     writer.write("\tDisplay name: " + a.getDisplayNames().get(Locale.getDefault()) + "\n");

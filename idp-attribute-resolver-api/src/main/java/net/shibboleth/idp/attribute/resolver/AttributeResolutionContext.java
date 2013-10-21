@@ -77,7 +77,7 @@ public class AttributeResolutionContext extends BaseContext {
      * 
      * @return set of attributes requested to be resolved
      */
-    @Nonnull @NonnullElements public Set<IdPAttribute> getRequestedAttributes() {
+    @Nonnull @NonnullElements public Set<IdPAttribute> getRequestedIdPAttributes() {
         return requestedAttributes;
     }
 
@@ -86,7 +86,7 @@ public class AttributeResolutionContext extends BaseContext {
      * 
      * @param attributes attributes requested to be resolved
      */
-    public void setRequestedAttributes(@Nullable @NullableElements final Set<IdPAttribute> attributes) {
+    public void setRequestedIdPAttributes(@Nullable @NullableElements final Set<IdPAttribute> attributes) {
         Set<IdPAttribute> checkedAttributes = new HashSet<IdPAttribute>();
         CollectionSupport.addIf(checkedAttributes, attributes, Predicates.notNull());
         requestedAttributes = checkedAttributes;
@@ -97,7 +97,7 @@ public class AttributeResolutionContext extends BaseContext {
      * 
      * @return set of resolved attributes
      */
-    @Nonnull @NonnullElements public Map<String, IdPAttribute> getResolvedAttributes() {
+    @Nonnull @NonnullElements public Map<String, IdPAttribute> getResolvedIdPAttributes() {
         return resolvedAttributes;
     }
 
@@ -106,7 +106,7 @@ public class AttributeResolutionContext extends BaseContext {
      * 
      * @param attributes set of resolved attributes, may be null, empty or contain null values
      */
-    public void setResolvedAttributes(@Nullable @NullableElements final Collection<IdPAttribute> attributes) {
+    public void setResolvedIdPAttributes(@Nullable @NullableElements final Collection<IdPAttribute> attributes) {
         Map<String, IdPAttribute> checkedAttributes =
                 MapConstraints.constrainedMap(new HashMap<String, IdPAttribute>(), MapConstraints.notNull());
 
@@ -127,7 +127,7 @@ public class AttributeResolutionContext extends BaseContext {
      * @return resolved attribute definitions that been recorded
      */
     @Nonnull @NonnullElements @Unmodifiable public Map<String, ResolvedAttributeDefinition>
-            getResolvedAttributeDefinitions() {
+            getResolvedIdPAttributeDefinitions() {
         return Collections.unmodifiableMap(resolvedAttributeDefinitions);
     }
 
