@@ -1,6 +1,7 @@
 <flow xmlns="http://www.springframework.org/schema/webflow"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.springframework.org/schema/webflow classpath:/org/springframework/webflow/engine/model/builder/spring-webflow-2.0.xsd">
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow classpath:/org/springframework/webflow/engine/model/builder/spring-webflow-2.0.xsd"
+      parent="Authentication.Abstract, Authentication.Subflow.Abstract">
 
     <!--
     This is a login flow for form-based JAAS-backed authentication.
@@ -37,25 +38,6 @@
         <transition on="NoCredentials" to="DisplayUsernamePasswordPage" />
         <transition on="InvalidCredentials" to="DisplayUsernamePasswordPage" />
     </action-state>
-
-    <subflow-state id="CallSubjectCanonicalization" subflow="SubjectC14N/Simple"/>
-    
-    <!-- Successful completion of subflow. -->
-    <end-state id="proceed" />
-
-    <!-- Error events to reflect back from this subflow. -->    
-    <end-state id="InputOutputError" />
-    <end-state id="InvalidCredentials" />
-    <end-state id="InvalidProfileContext" />
-    <end-state id="NoCredentials" />
-    <end-state id="NoPotentialFlow" />
-    <end-state id="RequestUnsupported" />
-    <end-state id="SubjectCanonicalizationError" />
-
-    <!-- Default is to turn any event into its own end-state. -->
-    <global-transitions>
-        <transition on="#{true}" to="#{currentEvent.id}" />
-    </global-transitions>
 
     <bean-import resource="jaas-form-authn-beans.xml" />
 

@@ -1,0 +1,11 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow classpath:/org/springframework/webflow/engine/model/builder/spring-webflow-2.0.xsd"
+      abstract="true">
+
+    <!-- Every authentication method subflow ends in a call to subject c14n. -->
+
+    <subflow-state id="CallSubjectCanonicalization"
+        subflow="#{ getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext').getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext), false).getAttemptedFlow().getSubjectCanonicalizationFlowId() }"/>
+
+</flow>

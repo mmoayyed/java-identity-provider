@@ -16,6 +16,4 @@
     
     <bean id="SimpleSubjectCanonicalization" class="net.shibboleth.idp.authn.impl.SimpleSubjectCanonicalization" scope="prototype" />
     
-    <!-- Add additional c14n implementations as desired, then add a new webflow definitions to call from your login subflow(s). -->
-    
 </beans>

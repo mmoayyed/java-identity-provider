@@ -10,14 +10,6 @@
     
     <webflow:flow-registry id="flowRegistry" base-path="file://${idp.home}/flows" flow-builder-services="flowBuilderServices">
 
-        <!-- Use dot-separated convention for abstract flows. -->
-        <webflow:flow-location id="SAML2.SSO.Abstract" path="/saml2/sso-abstract-flow.xml"  />
-        
-        <!-- Use slash-separated convention for web-executable flows. -->
-        <webflow:flow-location id="SAML2/Redirect/SSO" path="/saml2/sso-redirect-flow.xml"  />
-        <webflow:flow-location id="SAML2/POST/SSO" path="/saml2/sso-post-flow.xml"  />
-        <webflow:flow-location id="SAML2/Unsolicited/SSO" path="/saml2/sso-unsolicited-flow.xml"  />
-    
         <webflow:flow-location id="Authentication.Abstract" path="/authn/authn-abstract-flow.xml" />
         <webflow:flow-location id="Authentication.Subflow.Abstract" path="/authn/authn-subflow-abstract-flow.xml" />
         <webflow:flow-location id="Authentication" path="/authn/authn-flow.xml" />
