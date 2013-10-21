@@ -250,7 +250,7 @@ public class AuthenticationFlowDescriptor implements IdentifiableComponent, Prin
      * 
      * @return  subject canonicalization flow ID
      */
-    @Nonnull @NotEmpty String getSubjectCanonicalizationFlowId() {
+    @Nonnull @NotEmpty public String getSubjectCanonicalizationFlowId() {
         return subjectCanonicalizationFlowId;
     }
     
@@ -260,7 +260,7 @@ public class AuthenticationFlowDescriptor implements IdentifiableComponent, Prin
      * 
      * @param c14nFlowId  subject canonicalization flow ID
      */
-    void setSubjectCanonicalizationFlowId(@Nonnull @NotEmpty final String c14nFlowId) {
+    public void setSubjectCanonicalizationFlowId(@Nonnull @NotEmpty final String c14nFlowId) {
         subjectCanonicalizationFlowId = Constraint.isNotNull(StringSupport.trimOrNull(c14nFlowId),
                 "Subject Canonicalization Flow ID cannot be null or empty");
     }
