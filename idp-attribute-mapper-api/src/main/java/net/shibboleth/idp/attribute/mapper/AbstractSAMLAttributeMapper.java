@@ -177,7 +177,7 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
     /**
      * Compare whether the name and format given "match" ours. Used in checking both against input attributes and as
      * part of equality checking. For the sake of comparison null is considered to be the same as
-     * {@link IdPAttribute.UNSPECIFIED}
+     * {@link Attribute#UNSPECIFIED}
      * 
      * @param otherSAMLName the name to compare against
      * @param otherSAMLFormat the format to compare against
