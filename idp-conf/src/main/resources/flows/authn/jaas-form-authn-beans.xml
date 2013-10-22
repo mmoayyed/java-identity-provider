@@ -20,6 +20,7 @@
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:usernameFieldName-ref="shibboleth.authn.JAAS.UsernameFieldName"
         p:passwordFieldName-ref="shibboleth.authn.JAAS.PasswordFieldName"
+        p:SSOBypassFieldName-ref="shibboleth.authn.JAAS.SSOBypassFieldName"
         p:lowercase-ref="shibboleth.authn.JAAS.Lowercase"
         p:uppercase-ref="shibboleth.authn.JAAS.Uppercase"
         p:trim-ref="shibboleth.authn.JAAS.Trim"

@@ -25,6 +25,7 @@
     <!-- Names of form fields to pull username and password from. -->
     <bean id="shibboleth.authn.JAAS.UsernameFieldName" class="java.lang.String" c:_0="username" />
     <bean id="shibboleth.authn.JAAS.PasswordFieldName" class="java.lang.String" c:_0="password" />
+    <bean id="shibboleth.authn.JAAS.SSOBypassFieldName" class="java.lang.String" c:_0="donotcache" />
 
     <!-- Simple transforms to apply to username before validation. -->
     <bean id="shibboleth.authn.JAAS.Lowercase" class="java.lang.Boolean">
