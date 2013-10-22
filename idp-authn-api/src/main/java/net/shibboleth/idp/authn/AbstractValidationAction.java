@@ -287,7 +287,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
     
     /**
      * Normally called upon successful completion of credential validation, calls the {@link #populateSubject(Subject)}
-     * abstract method, stores an {@AuthenticationResult} in the {@link AuthenticationContext}, and attaches a
+     * abstract method, stores an {@link AuthenticationResult} in the {@link AuthenticationContext}, and attaches a
      * {@link SubjectCanonicalizationContext} to the {@link ProfileRequestContext} in preparation for c14n to occur.
      * 
      * @param profileRequestContext the current profile request context
