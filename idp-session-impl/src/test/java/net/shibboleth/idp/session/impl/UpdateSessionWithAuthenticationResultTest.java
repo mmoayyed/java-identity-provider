@@ -96,7 +96,7 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         ac.setAttemptedFlow(flowDescriptor);
         ac.setAuthenticationResult(new AuthenticationResult("test1", new UsernamePrincipal("joe")));
-        ac.getAuthenticationResult().setCacheable(false);
+        ac.setResultCacheable(false);
         
         SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, true);
         sessionCtx.setIdPSession(sessionManager.createSession("joe"));

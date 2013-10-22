@@ -306,26 +306,19 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         
         AuthenticationResult result = new AuthenticationResult(authenticationContext.getAttemptedFlow().getId(),
                 populateSubject(authenticatedSubject));
-        result.setCacheable(isResultCacheable(profileRequestContext, authenticationContext));
         authenticationContext.setAuthenticationResult(result);
+        
+        // Override cacheability if a predicate is installed.
+        if (authenticationContext.isResultCacheable() && resultCachingPredicate != null) {
+            authenticationContext.setResultCacheable(resultCachingPredicate.apply(profileRequestContext));
+            log.info("{} Predicate indicates authentication result {} be cacheable in a session", getLogPrefix(),
+                    authenticationContext.isResultCacheable() ? "will" : "will not");
+        }
+        
+        // Transfer the subject to a new c14n context.
         profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(result.getSubject());
     }
     
-    /**
-     * Override to determine whether the {@link AuthenticationResult} built by this action should be cacheable.
-     * 
-     * <p>The default implementation applies a predicate if one is set.</p>
-     * 
-     * @param profileRequestContext the current profile request context
-     * @param authenticationContext the current authentication context
-     * 
-     * @return true iff result should be cacheable
-     */
-    protected boolean isResultCacheable(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) {
-        return resultCachingPredicate != null ? resultCachingPredicate.apply(profileRequestContext) : true;
-    }
-
     /**
      * Subclasses must override this method to complete the population of the {@link Subject} with
      * {@link Principal} and credential information based on the validation they perform.

@@ -69,6 +69,22 @@ public class ExtractUsernamePasswordFromFormRequestTest extends InitializeAuthen
         action.execute(prc);
         ActionTestingSupport.assertProceedEvent(prc);
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        Assert.assertTrue(authCtx.isResultCacheable());
+        UsernamePasswordContext upCtx = authCtx.getSubcontext(UsernamePasswordContext.class, false);
+        Assert.assertNotNull(upCtx, "No UsernamePasswordContext attached");
+        Assert.assertEquals(upCtx.getUsername(), "foo");
+        Assert.assertEquals(upCtx.getPassword(), "bar");
+    }
+
+    @Test public void testSSOBypass() throws Exception {
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("j_username", "foo");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("j_password", "bar");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("donotcache", "1");
+        
+        action.execute(prc);
+        ActionTestingSupport.assertProceedEvent(prc);
+        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        Assert.assertFalse(authCtx.isResultCacheable());
         UsernamePasswordContext upCtx = authCtx.getSubcontext(UsernamePasswordContext.class, false);
         Assert.assertNotNull(upCtx, "No UsernamePasswordContext attached");
         Assert.assertEquals(upCtx.getUsername(), "foo");

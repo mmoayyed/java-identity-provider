@@ -74,6 +74,9 @@ public final class AuthenticationContext extends BaseContext {
     
     /** A successfully processed authentication result (the output of the attempted flow, if any). */
     @Nullable private AuthenticationResult authenticationResult;
+
+    /** Result may be cached for reuse in the normal way. */
+    private boolean resultCacheable;
     
     /** Time, in milliseconds since the epoch, when authentication process completed. */
     @NonNegative private long completionInstant;
@@ -88,6 +91,7 @@ public final class AuthenticationContext extends BaseContext {
         activeResults = new HashMap();
         
         evalRegistry = new PrincipalEvalPredicateFactoryRegistry();
+        resultCacheable = true;
     }
 
     /**
@@ -263,7 +267,25 @@ public final class AuthenticationContext extends BaseContext {
         authenticationResult = result;
         return this;
     }
+
+    /**
+     * Get whether the result is suitable for caching (such as in a session) for reuse.
+     * 
+     * @return  true iff the result may be cached/reused, subject to other policy
+     */
+    public boolean isResultCacheable() {
+        return resultCacheable;
+    }
     
+    /**
+     * Set whether the result is suitable for caching (such as in a session) for reuse.
+     * 
+     * @param flag  flag to set
+     */
+    public void setResultCacheable(final boolean flag) {
+        resultCacheable = flag;
+    }
+        
     /**
      * Gets the time, in milliseconds since the epoch, when the authentication process ended. A value of 0 indicates
      * that authentication has not yet completed.
@@ -291,6 +313,7 @@ public final class AuthenticationContext extends BaseContext {
                 .add("potentialFlows", potentialFlows.keySet())
                 .add("activeResults", activeResults.keySet())
                 .add("attemptedFlow", attemptedFlow)
+                .add("resultCacheable", resultCacheable)
                 .add("completionInstant", new DateTime(completionInstant)).toString();
     }
 

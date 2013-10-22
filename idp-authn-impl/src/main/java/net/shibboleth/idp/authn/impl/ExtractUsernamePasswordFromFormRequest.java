@@ -55,20 +55,15 @@ public class ExtractUsernamePasswordFromFormRequest extends AbstractExtractionAc
 
     /** Parameter name for password. */
     @Nonnull @NotEmpty private String passwordFieldName;
+    
+    /** Parameter name for SSO bypass. */
+    @Nonnull @NotEmpty private String ssoBypassFieldName;
 
     /** Constructor. */
     ExtractUsernamePasswordFromFormRequest() {
         usernameFieldName = "username";
         passwordFieldName = "password";
-    }
-    
-    /**
-     * Get the username parameter name, defaults to "username".
-     * 
-     * @return the username parameter name
-     */
-    @Nonnull @NotEmpty public String getUsernameFieldName() {
-        return usernameFieldName;
+        ssoBypassFieldName = "donotcache";
     }
 
     /**
@@ -84,15 +79,6 @@ public class ExtractUsernamePasswordFromFormRequest extends AbstractExtractionAc
     }
 
     /**
-     * Get the password parameter name, defaults to "password".
-     * 
-     * @return the password parameter name
-     */
-    @Nonnull @NotEmpty public String getPasswordFieldName() {
-        return passwordFieldName;
-    }
-
-    /**
      * Set the password parameter name.
      * 
      * @param fieldName the password parameter name
@@ -104,32 +90,50 @@ public class ExtractUsernamePasswordFromFormRequest extends AbstractExtractionAc
                 StringSupport.trimOrNull(fieldName), "Password field name cannot be null or empty.");
     }
 
+    /**
+     * Set the SSO bypass parameter name.
+     * 
+     * @param fieldName the SSO bypass parameter name
+     */
+    public void setSSOBypassFieldName(@Nonnull @NotEmpty final String fieldName) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        ssoBypassFieldName = Constraint.isNotNull(
+                StringSupport.trimOrNull(fieldName), "SSO Bypass field name cannot be null or empty.");
+    }
+    
     /** {@inheritDoc} */
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
         final HttpServletRequest request = getHttpServletRequest();
         if (request == null) {
-            log.debug("{} profile action does not contain an HttpServletRequest", getLogPrefix());
+            log.debug("{} Profile action does not contain an HttpServletRequest", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return;
         }
         
-        final String username = request.getParameter(getUsernameFieldName());
+        final String username = request.getParameter(usernameFieldName);
         if (username == null || username.isEmpty()) {
-            log.debug("{} no username in request", getLogPrefix());
+            log.debug("{} No username in request", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return;
         }
 
-        final String password = request.getParameter(getPasswordFieldName());
+        final String password = request.getParameter(passwordFieldName);
         if (password == null || password.isEmpty()) {
-            log.debug("{} no password in request", getLogPrefix());
+            log.debug("{} No password in request", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return;
         }
 
         authenticationContext.getSubcontext(UsernamePasswordContext.class, true).setUsername(applyTransforms(username))
                 .setPassword(password);
+        
+        final String donotcache = request.getParameter(ssoBypassFieldName);
+        if (donotcache != null && "1".equals(donotcache)) {
+            log.debug("{} Recording do-not-cache instruction in authentication context", getLogPrefix());
+            authenticationContext.setResultCacheable(false);
+        }
     }
 }

@@ -121,7 +121,7 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
         if (enabled && authenticationContext.getAuthenticationResult() != null
-                && authenticationContext.getAuthenticationResult().isCacheable()) {
+                && authenticationContext.isResultCacheable()) {
             subjectCtx = profileRequestContext.getSubcontext(SubjectContext.class, false);
             sessionCtx = profileRequestContext.getSubcontext(SessionContext.class, true);
             
