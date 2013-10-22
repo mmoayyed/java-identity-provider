@@ -45,7 +45,8 @@ import org.slf4j.LoggerFactory;
  * one.
  * 
  * <p>A new {@link AuthenticationResult} may be added to the session, or the last activity time
- * of an existing one updated.</p>
+ * of an existing one updated. A new one will only be added if the authentication context indicates
+ * that the result is "cacheable".</p>
  * 
  * <p>An existing session is identified via a {@link SessionContext} attached to the
  * {@link ProfileRequestContext}. If a new session is created, it will be placed into a
@@ -120,8 +121,7 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
-        if (enabled && authenticationContext.getAuthenticationResult() != null
-                && authenticationContext.isResultCacheable()) {
+        if (enabled && authenticationContext.getAuthenticationResult() != null) {
             subjectCtx = profileRequestContext.getSubcontext(SubjectContext.class, false);
             sessionCtx = profileRequestContext.getSubcontext(SessionContext.class, true);
             
@@ -168,9 +168,11 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
             @Nonnull final IdPSession session) throws SessionException {
         
         if (authenticationContext.getAttemptedFlow() != null) {
-            log.info("{} Adding new AuthenticationResult for flow {} to existing session {}", getLogPrefix(),
-                    authenticationContext.getAuthenticationResult().getAuthenticationFlowId(), session.getId());
-            session.addAuthenticationResult(authenticationContext.getAuthenticationResult());
+            if (authenticationContext.isResultCacheable()) {
+                log.info("{} Adding new AuthenticationResult for flow {} to existing session {}", getLogPrefix(),
+                        authenticationContext.getAuthenticationResult().getAuthenticationFlowId(), session.getId());
+                session.addAuthenticationResult(authenticationContext.getAuthenticationResult());
+            }
         } else {
             log.info("{} Updating activity time on reused AuthenticationResult for flow {} in existing session {}",
                     getLogPrefix(), authenticationContext.getAuthenticationResult().getAuthenticationFlowId(),
@@ -191,6 +193,8 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
         log.info("{} Creating new session for principal {}", getLogPrefix(), subjectCtx.getPrincipalName());
         
         sessionCtx.setIdPSession(sessionManager.createSession(subjectCtx.getPrincipalName()));
-        sessionCtx.getIdPSession().addAuthenticationResult(authenticationContext.getAuthenticationResult());
+        if (authenticationContext.isResultCacheable()) {
+            sessionCtx.getIdPSession().addAuthenticationResult(authenticationContext.getAuthenticationResult());
+        }
     }
 }
