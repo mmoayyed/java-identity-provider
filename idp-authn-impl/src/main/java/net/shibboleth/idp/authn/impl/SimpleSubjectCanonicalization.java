@@ -32,8 +32,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
  * An action that operates on a {@link SubjectCanonicalizationContext} child of the current
- * {@link ProfileRequestContext}, and transforms the input {@link Subject} into a principal name
- * by searching for one and only one {@link UsernamePrincipal} custom principal.
+ * {@link ProfileRequestContext}, and transforms the input {@link javax.security.auth.Subject}
+ * into a principal name by searching for one and only one {@link UsernamePrincipal} custom principal.
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link org.opensaml.profile.action.EventIds#INVALID_PROFILE_CTX}

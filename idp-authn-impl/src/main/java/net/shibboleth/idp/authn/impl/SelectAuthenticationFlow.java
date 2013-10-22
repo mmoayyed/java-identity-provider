@@ -55,7 +55,7 @@ import com.google.common.base.Predicate;
  * returned as the result of the action.</p>
  * 
  * <p>If there are requested principals, then the results or flows chosen must "match"
- * the request information according to the {@link PrincipalEvalPredicateFactoryRegistry}
+ * the request information according to the {@link net.shibboleth.idp.authn.PrincipalEvalPredicateFactoryRegistry}
  * attached to the context. The "favorSSO" option determines whether to select a flow
  * specifically in the order specified by the {@link RequestedPrincipalContext}, or to favor
  * an active but matching result, over a new flow. Forced authentication trumps the

@@ -59,8 +59,9 @@ import org.slf4j.LoggerFactory;
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false).getAttemptedFlow() != null</pre>
  * @post If AuthenticationContext.getSubcontext(UsernamePasswordContext.class, false) != null, then
- * an {@link AuthenticationResult} is saved to the {@link AuthenticationContext} on a successful login.
- * On a failed login, the {@link net.shibboleth.idp.authn.AbstractValidationAction#handleError()} method is called.
+ * an {@link net.shibboleth.idp.authn.AuthenticationResult} is saved to the {@link AuthenticationContext} on a
+ * successful login. On a failed login, the {@link net.shibboleth.idp.authn.AbstractValidationAction#handleError(
+ * ProfileRequestContext, AuthenticationContext, Exception, String)} method is called.
  */
 public class ValidateUsernamePasswordAgainstJAAS extends AbstractValidationAction {
 

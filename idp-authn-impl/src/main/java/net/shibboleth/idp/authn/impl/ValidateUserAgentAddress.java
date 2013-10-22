@@ -59,9 +59,9 @@ import com.google.common.collect.Collections2;
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
  * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false).getAttemptedFlow() != null</pre>
- * @post If AuthenticationContext.getSubcontext(UserAgentContext.class, false) != null, and the
- * content of getAddress() satisfies a configured address range, an {@link AuthenticationResult} is
- * saved to the {@link AuthenticationContext}.
+ * @post If AuthenticationContext.getSubcontext(UserAgentContext.class, false) != null, and the content of getAddress()
+ * satisfies a configured address range, an {@link net.shibboleth.idp.authn.AuthenticationResult} is saved to the
+ * {@link AuthenticationContext}.
  */
 public class ValidateUserAgentAddress extends AbstractValidationAction {
 

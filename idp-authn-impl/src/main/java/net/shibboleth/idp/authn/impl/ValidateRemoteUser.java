@@ -58,7 +58,7 @@ import com.google.common.collect.Sets;
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false).getAttemptedFlow() != null</pre>
  * @post If AuthenticationContext.getSubcontext(UsernameContext.class, false).getUsername() != null, then
- * an {@link AuthenticationResult} is saved to the {@link AuthenticationContext}.
+ * an {@link net.shibboleth.idp.authn.AuthenticationResult} is saved to the {@link AuthenticationContext}.
  */
 public class ValidateRemoteUser extends AbstractValidationAction {
 
