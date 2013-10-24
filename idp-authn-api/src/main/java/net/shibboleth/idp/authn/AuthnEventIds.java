@@ -32,9 +32,9 @@ public final class AuthnEventIds {
     /** ID of event returned if there are no credentials available in the request. */
     public static final String NO_CREDENTIALS = "NoCredentials";
 
-    /** ID of event returned if there given credentials are invalid. */
+    /** ID of event returned if the given credentials are invalid. */
     public static final String INVALID_CREDENTIALS = "InvalidCredentials";
-    
+
     /** ID of event returned if a Subject cannot be canonicalized. */
     public static final String SUBJECT_C14N_ERROR = "SubjectCanonicalizationError";
     

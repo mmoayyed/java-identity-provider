@@ -27,17 +27,27 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.ldaptive.Credential;
+import org.ldaptive.LdapException;
+import org.ldaptive.auth.AuthenticationRequest;
+import org.ldaptive.auth.AuthenticationResponse;
+import org.ldaptive.auth.Authenticator;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.context.EventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * An action that checks for a {@link UsernamePasswordContext} and directly produces an
- * {@link net.shibboleth.idp.authn.AuthenticationResult} based on that identity by binding to LDAP.
- *  
+ * {@link net.shibboleth.idp.authn.AuthenticationResult} based on that identity by authenticating against an LDAP.
+ * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
@@ -50,12 +60,41 @@ import org.slf4j.LoggerFactory;
  */
 public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationAction {
 
-
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ValidateUsernamePasswordAgainstKerberos.class);
+    private final Logger log = LoggerFactory.getLogger(ValidateUsernamePasswordAgainstLDAP.class);
 
     /** UsernamePasswordContext containing the credentials to validate. */
     @Nullable private UsernamePasswordContext upContext;
+
+    /** LDAP authenticator. */
+    @Nonnull private Authenticator authenticator;
+
+    /**
+     * Returns the authenticator.
+     * 
+     * @return authenticator
+     */
+    @NonnullAfterInit public Authenticator getAuthenticator() {
+        return authenticator;
+    }
+
+    /**
+     * Sets the authenticator.
+     * 
+     * @param auth to authenticate with
+     */
+    public void setAuthenticator(@Nonnull final Authenticator auth) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        authenticator = Constraint.isNotNull(auth, "Authenticator cannot be null");
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        if (authenticator == null) {
+            throw new ComponentInitializationException("Authenticator cannot be null");
+        }
+    }
 
     /** {@inheritDoc} */
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
@@ -65,7 +104,7 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
-        
+
         upContext = authenticationContext.getSubcontext(UsernamePasswordContext.class, false);
         if (upContext == null) {
             log.debug("{} no UsernameContext available within authentication context", getLogPrefix());
@@ -78,14 +117,30 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return false;
         }
-        
+
         return super.doPreExecute(profileRequestContext, authenticationContext);
     }
-    
+
     /** {@inheritDoc} */
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
-        // TODO Auto-generated method stub
+        try {
+            log.debug("{} attempting to authenticate user {}", getLogPrefix(), upContext.getUsername());
+            final AuthenticationRequest request =
+                    new AuthenticationRequest(upContext.getUsername(), new Credential(upContext.getPassword()));
+            final AuthenticationResponse response = authenticator.authenticate(request);
+            log.trace("{} authentication response {}", getLogPrefix(), response);
+            if (response.getResult()) {
+                log.debug("{} login by '{}' succeeded", getLogPrefix(), upContext.getUsername());
+                buildAuthenticationResult(profileRequestContext, authenticationContext);
+            } else {
+                log.debug("{} login by '{}' failed", getLogPrefix(), upContext.getUsername());
+                profileRequestContext.getSubcontext(EventContext.class, true).setEvent(response);
+            }
+        } catch (LdapException e) {
+            log.warn(getLogPrefix() + " login by '" + upContext.getUsername() + "' produced exception", e);
+            throw new AuthenticationException(e);
+        }
     }
 
     /** {@inheritDoc} */
@@ -93,5 +148,5 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
         subject.getPrincipals().add(new UsernamePrincipal(upContext.getUsername()));
         return subject;
     }
-    
+
 }
