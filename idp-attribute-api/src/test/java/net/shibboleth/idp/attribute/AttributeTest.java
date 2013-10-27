@@ -297,7 +297,7 @@ public class AttributeTest {
         Assert.assertFalse(attrib.getValues().contains(value2));
 
         // test replacing all entries
-        Collection<AttributeValue> values = new ArrayList<AttributeValue>();
+        Collection<AttributeValue<?>> values = new ArrayList<>();
         values.add(value2);
         attrib.setValues(values);
         Assert.assertFalse(attrib.getValues().isEmpty());
@@ -378,7 +378,7 @@ public class AttributeTest {
         Assert.assertTrue(attrib.compareTo(diff) > 0);
         Assert.assertEquals(attrib.compareTo(dupl) , 0);
         
-        attrib.setValues(Arrays.asList((AttributeValue)new LocalizedStringAttributeValue("value1", null)));
+        attrib.setValues(Collections.singleton(new LocalizedStringAttributeValue("value1", null)));
         attrib.setDisplayDescriptions(Collections.singletonMap(new Locale("en"), "Descrption"));
         attrib.setDisplayNames(Collections.singletonMap(new Locale("en"), "Name"));
         attrib.toString();

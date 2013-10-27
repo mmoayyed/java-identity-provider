@@ -137,7 +137,7 @@ public class SimpleAttributeTest {
         } catch (ResolutionException e) {
             Assert.fail("resolution failed", e);
         }
-        final Collection<AttributeValue> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<AttributeValue<?>> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(values.size(), 2);
         Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT),

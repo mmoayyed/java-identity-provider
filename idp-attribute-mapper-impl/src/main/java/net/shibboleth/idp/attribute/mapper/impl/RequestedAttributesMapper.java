@@ -91,7 +91,6 @@ public class RequestedAttributesMapper extends
         }
 
         setMappers(mappers);
-
     }
 
     /**

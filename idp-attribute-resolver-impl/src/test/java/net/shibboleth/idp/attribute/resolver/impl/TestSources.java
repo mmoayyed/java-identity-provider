@@ -101,9 +101,9 @@ public final class TestSources {
     public static BaseDataConnector populatedStaticConnector() throws ComponentInitializationException {
         IdPAttribute attr;
         Set<IdPAttribute> attributeSet;
-        Set<AttributeValue> valuesSet;
+        Set<AttributeValue<?>> valuesSet;
 
-        valuesSet = new LazySet<AttributeValue>();
+        valuesSet = new LazySet<>();
         attributeSet = new LazySet<IdPAttribute>();
 
         valuesSet.add(new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING));
@@ -113,7 +113,7 @@ public final class TestSources {
         attributeSet.add(attr);
 
         attr = new IdPAttribute(DEPENDS_ON_SECOND_ATTRIBUTE_NAME);
-        valuesSet = new LazySet<AttributeValue>();
+        valuesSet = new LazySet<>();
         valuesSet.add(new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[0]));
         valuesSet.add(new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[1]));
         attr.setValues(valuesSet);
@@ -139,9 +139,9 @@ public final class TestSources {
 
     public static BaseAttributeDefinition populatedStaticAttribute(String definitionName, String attributeName, int attributeCount) throws ComponentInitializationException {
         IdPAttribute attr;
-        Set<AttributeValue> valuesSet;
+        Set<AttributeValue<?>> valuesSet;
 
-        valuesSet = new LazySet<AttributeValue>();
+        valuesSet = new LazySet<>();
 
         if (attributeCount > 0) {
             valuesSet.add(new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING));

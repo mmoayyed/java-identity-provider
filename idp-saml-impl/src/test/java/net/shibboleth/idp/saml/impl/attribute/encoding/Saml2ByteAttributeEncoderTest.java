@@ -73,13 +73,13 @@ public class Saml2ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
-        final Collection<AttributeValue> values =
-                Lists.newArrayList((AttributeValue) new StringAttributeValue("foo"), new ScopedStringAttributeValue(
-                        "foo", "bar"), new AttributeValue() {
-                    public Object getValue() {
-                        return intArray;
-                    }
-                });
+        final Collection<? extends AttributeValue<?>> values =
+                Lists.newArrayList(new StringAttributeValue("foo"), new ScopedStringAttributeValue("foo", "bar"),
+                        new AttributeValue<Object>() {
+                            public Object getValue() {
+                                return intArray;
+                            }
+                        });
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
@@ -87,9 +87,8 @@ public class Saml2ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void single() throws Exception {
-        final Collection<AttributeValue> values =
-                Lists.newArrayList((AttributeValue) new StringAttributeValue("foo"), new ByteAttributeValue(
-                        BYTE_ARRAY_1));
+        final Collection<? extends AttributeValue<?>> values =
+                Lists.newArrayList(new StringAttributeValue("foo"), new ByteAttributeValue(BYTE_ARRAY_1));
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
@@ -114,9 +113,8 @@ public class Saml2ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void multi() throws Exception {
-        final Collection<AttributeValue> values =
-                Lists.newArrayList((AttributeValue) new ByteAttributeValue(BYTE_ARRAY_1), new ByteAttributeValue(
-                        BYTE_ARRAY_2));
+        final Collection<? extends AttributeValue<?>> values =
+                Lists.newArrayList(new ByteAttributeValue(BYTE_ARRAY_1), new ByteAttributeValue(BYTE_ARRAY_2));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);

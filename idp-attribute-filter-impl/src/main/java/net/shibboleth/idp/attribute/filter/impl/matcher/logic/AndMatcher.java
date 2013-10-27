@@ -63,7 +63,7 @@ public class AndMatcher extends AbstractComposedMatcher {
      * If any of the matchers fail then failure is returned
      * {@link Matcher}. {@inheritDoc}
      */
-    @Nullable @NonnullElements public Set<AttributeValue> getMatchingValues(@Nonnull final IdPAttribute attribute,
+    @Nullable @NonnullElements public Set<AttributeValue<?>> getMatchingValues(@Nonnull final IdPAttribute attribute,
             @Nonnull final AttributeFilterContext filterContext) {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
@@ -77,11 +77,11 @@ public class AndMatcher extends AbstractComposedMatcher {
         final Iterator<Matcher> matcherItr = currentMatchers.iterator();
 
         // pre-load the set with the first contents
-        Set<AttributeValue> match = matcherItr.next().getMatchingValues(attribute, filterContext);
+        Set<AttributeValue<?>> match = matcherItr.next().getMatchingValues(attribute, filterContext);
         if (null == match) {
             return null;
         }
-        final Set<AttributeValue> matchingValues = new HashSet(match);
+        final Set<AttributeValue<?>> matchingValues = new HashSet(match);
         while (matcherItr.hasNext()) {
             match = matcherItr.next().getMatchingValues(attribute, filterContext);
             if (null == match) {

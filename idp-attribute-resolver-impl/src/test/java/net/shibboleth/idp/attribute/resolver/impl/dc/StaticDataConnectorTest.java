@@ -23,11 +23,9 @@ import java.util.List;
 import java.util.Map;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.impl.dc.StaticDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -45,7 +43,7 @@ public class StaticDataConnectorTest {
 
     @Test public void resolve() throws ComponentInitializationException, ResolutionException {
         IdPAttribute attribute = new IdPAttribute("attribute");
-        attribute.setValues(Lists.newArrayList((AttributeValue) new StringAttributeValue("one"), new StringAttributeValue("two")));
+        attribute.setValues(Lists.newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
 
         StaticDataConnector connector = new StaticDataConnector();
         connector.setId("Static");

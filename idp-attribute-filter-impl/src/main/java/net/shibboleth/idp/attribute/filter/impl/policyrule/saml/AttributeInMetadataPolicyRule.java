@@ -99,7 +99,7 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
     }
 
     /** {@inheritDoc} */
-    @Nonnull public Set<AttributeValue> getMatchingValues(@Nonnull final IdPAttribute attribute,
+    @Nonnull public Set<AttributeValue<?>> getMatchingValues(@Nonnull final IdPAttribute attribute,
             @Nonnull final AttributeFilterContext filterContext) {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -124,7 +124,7 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
             return Collections.EMPTY_SET;
         }
 
-        final Set<AttributeValue> values = new HashSet<AttributeValue>();
+        final Set<AttributeValue<?>> values = new HashSet<>();
 
         for (IdPRequestedAttribute requestedAttribute : requestedAttributeList) {
 
@@ -152,15 +152,15 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
      * @param requestedValues the values
      * @return the result of the filter
      */
-    @Nonnull private Set<AttributeValue> filterValues(@Nullable final IdPAttribute attribute,
-            @Nonnull @NonnullElements final Set<AttributeValue> requestedValues) {
+    @Nonnull private Set<AttributeValue<?>> filterValues(@Nullable final IdPAttribute attribute,
+            @Nonnull @NonnullElements final Set<? extends AttributeValue> requestedValues) {
 
         if (null == requestedValues || requestedValues.isEmpty()) {
             log.debug("{} Attribute {} found in metadata and no values specified", getLogPrefix(), attribute.getId());
             return attribute.getValues();
         }
 
-        final Set<AttributeValue> result = new HashSet<AttributeValue>(attribute.getValues().size());
+        final Set<AttributeValue<?>> result = new HashSet<>(attribute.getValues().size());
 
         for (AttributeValue attributeValue : attribute.getValues()) {
             if (requestedValues.contains(attributeValue)) {

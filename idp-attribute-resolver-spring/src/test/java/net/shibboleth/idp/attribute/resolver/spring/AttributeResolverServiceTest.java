@@ -127,7 +127,7 @@ public class AttributeResolverServiceTest extends OpenSAMLInitBaseTestCase {
         // Static
         IdPAttribute attribute = resolvedAttributes.get("eduPersonAffiliation");
         Assert.assertNotNull(attribute);
-        Set<AttributeValue> values = attribute.getValues();
+        Set<AttributeValue<?>> values = attribute.getValues();
         Assert.assertEquals(values.size(), 1);
         Assert.assertTrue(values.contains(new StringAttributeValue("member")));
 

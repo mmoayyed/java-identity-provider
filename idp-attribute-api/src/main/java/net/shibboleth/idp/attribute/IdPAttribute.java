@@ -64,7 +64,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
     private Map<Locale, String> displayDescriptions;
 
     /** Values for this attribute. */
-    private Set<AttributeValue> values;
+    private Set<AttributeValue<?>> values;
 
     /** Encoders that may be used to encode this attribute. */
     private Set<AttributeEncoder<?>> encoders;
@@ -80,7 +80,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
         displayNames = Collections.emptyMap();
         displayDescriptions = Collections.emptyMap();
 
-        values = Constraints.constrainedSet(new HashSet<AttributeValue>(), Constraints.notNull());
+        values = Constraints.constrainedSet(new HashSet<AttributeValue<?>>(), Constraints.notNull());
         encoders = Collections.emptySet();
     }
 
@@ -159,7 +159,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      * 
      * @return values of the attribute.
      */
-    @Nonnull @NonnullElements public Set<AttributeValue> getValues() {
+    @Nonnull @NonnullElements public Set<AttributeValue<?>> getValues() {
         return values;
     }
 
@@ -168,10 +168,23 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      * 
      * @param newValues the new values for this attribute
      */
-    public void setValues(@Nullable @NullableElements final Collection<AttributeValue> newValues) {
-        Set<AttributeValue> checkedValues =
+    public void setValues(@Nullable @NullableElements final Collection<? extends AttributeValue<?>> newValues) {
+        // TODO(rdw) - fix when java-support can be revised
+        Set<AttributeValue> oldCheckedValues =
                 Constraints.constrainedSet(new HashSet<AttributeValue>(), Constraints.notNull());
-        CollectionSupport.addIf(checkedValues, newValues, Predicates.<AttributeValue> notNull());
+        Set<AttributeValue> oldNewValues = new HashSet<>();
+        if (null != newValues) {
+            oldNewValues.addAll(newValues);
+        }
+        CollectionSupport.addIf(oldCheckedValues, oldNewValues, Predicates.<AttributeValue> notNull());
+
+        Set<AttributeValue<?>> checkedValues =
+                Constraints.constrainedSet(new HashSet<AttributeValue<?>>(), Constraints.notNull());
+        //
+//        CollectionSupport.addIf(checkedValues, newValues, Predicates.<AttributeValue<?>> notNull());
+        for (AttributeValue oldCheckedValue : oldCheckedValues) {
+            checkedValues.add(oldCheckedValue);
+        }
         values = checkedValues;
     }
 

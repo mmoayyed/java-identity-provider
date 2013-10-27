@@ -22,7 +22,6 @@ import java.util.Collections;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
@@ -51,7 +50,7 @@ public class PrincipalNameAttributeDefinition extends BaseAttributeDefinition {
         }
 
         final IdPAttribute attribute = new IdPAttribute(getId());
-        attribute.setValues(Collections.singleton((AttributeValue) new StringAttributeValue(principalName)));
+        attribute.setValues(Collections.singleton(new StringAttributeValue(principalName)));
         return attribute;
     }
 }

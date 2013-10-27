@@ -18,11 +18,9 @@
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.impl.ad.StaticAttributeDefinition;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -54,7 +52,7 @@ public class StaticAttributeDefinitionTest {
         }
 
         IdPAttribute attribute = new IdPAttribute("attribute");
-        attribute.setValues(Lists.newArrayList((AttributeValue) new StringAttributeValue("one"), new StringAttributeValue("two")));
+        attribute.setValues(Lists.newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
 
         attrDef.setValue(attribute);
         Assert.assertNotNull(attrDef.getValue());

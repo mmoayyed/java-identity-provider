@@ -23,9 +23,8 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -73,7 +72,7 @@ public class AbstractSaml1AttributeEncoderTest extends OpenSAMLInitBaseTestCase 
 
                 
         IdPAttribute attr = new IdPAttribute(ATTRIBUTE_ID);
-        attr.setValues(Lists.newArrayList((AttributeValue) new StringAttributeValue(ATTRIBUTE_VALUE_1),
+        attr.setValues(Lists.newArrayList(new StringAttributeValue(ATTRIBUTE_VALUE_1),
                 new StringAttributeValue(ATTRIBUTE_VALUE_2)));
         
         XMLObject obj = encoder.encode(attr);

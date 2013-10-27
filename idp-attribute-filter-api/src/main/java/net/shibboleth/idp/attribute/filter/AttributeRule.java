@@ -176,7 +176,7 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
         log.debug("{} Filtering values for attribute '{}' which currently contains {} values", getLogPrefix(),
                 getAttributeId(), attribute.getValues().size());
 
-        final Set<AttributeValue> matchingValues = matcher.getMatchingValues(attribute, filterContext);
+        final Set<AttributeValue<?>> matchingValues = matcher.getMatchingValues(attribute, filterContext);
 
         if (!isDenyRule) {
             if (null == matchingValues) {

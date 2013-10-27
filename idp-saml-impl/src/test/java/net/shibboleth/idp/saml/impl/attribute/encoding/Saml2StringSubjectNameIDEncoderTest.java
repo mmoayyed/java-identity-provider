@@ -79,7 +79,7 @@ public class Saml2StringSubjectNameIDEncoderTest extends OpenSAMLInitBaseTestCas
 
     @Test public void encode() throws AttributeEncodingException {
         IdPAttribute attribute = new IdPAttribute("id");
-        attribute.setValues(Collections.singleton((AttributeValue) new StringAttributeValue("value")));
+        attribute.setValues(Collections.singleton(new StringAttributeValue("value")));
 
         final Saml2StringSubjectNameIDEncoder enc1 = new Saml2StringSubjectNameIDEncoder();
 
@@ -111,7 +111,7 @@ public class Saml2StringSubjectNameIDEncoderTest extends OpenSAMLInitBaseTestCas
 
         final Saml2StringSubjectNameIDEncoder enc1 = new Saml2StringSubjectNameIDEncoder();
 
-        final AttributeValue empty = new AttributeValue<String>() {
+        final AttributeValue<?> empty = new AttributeValue<String>() {
             @Nonnull public String getValue() {
                 return null;
             }
@@ -125,7 +125,7 @@ public class Saml2StringSubjectNameIDEncoderTest extends OpenSAMLInitBaseTestCas
             throws AttributeEncodingException {
         IdPAttribute attribute = new IdPAttribute("id");
         final Saml2StringSubjectNameIDEncoder enc1 = new Saml2StringSubjectNameIDEncoder();
-        final AttributeValue wrong = new AttributeValue<Integer>() {
+        final AttributeValue<?> wrong = new AttributeValue<Integer>() {
             @Nonnull public Integer getValue() {
                 return new Integer(3);
             }

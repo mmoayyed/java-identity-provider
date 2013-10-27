@@ -24,7 +24,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
@@ -107,8 +106,8 @@ public class CryptoTransientIdAttributeDefinition extends BaseAttributeDefinitio
         try {
             final String transientId =
                     dataSealer.wrap(principalTokenIdBuilder.toString(), System.currentTimeMillis() + idLifetime);
-            final Set<AttributeValue> vals =
-                    Collections.singleton((AttributeValue) new StringAttributeValue(transientId));
+            final Set<StringAttributeValue> vals =
+                    Collections.singleton(new StringAttributeValue(transientId));
             result.setValues(vals);
         } catch (DataSealerException e) {
             throw new ResolutionException(getLogPrefix() + " Caught exception wrapping principal identifier. {}", e);

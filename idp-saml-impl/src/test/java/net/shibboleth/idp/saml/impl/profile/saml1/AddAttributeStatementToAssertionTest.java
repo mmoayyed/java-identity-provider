@@ -19,20 +19,17 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.profile.ActionTestingSupport;
-
-import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.impl.attribute.encoding.Saml1StringAttributeEncoder;
@@ -43,6 +40,8 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.impl.XSStringImpl;
+import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.Attribute;
 import org.opensaml.saml.saml1.core.AttributeStatement;
@@ -141,7 +140,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         MockSaml1StringAttributeEncoder attributeEncoder = new MockSaml1StringAttributeEncoder();
 
         IdPAttribute attribute = new IdPAttribute(MY_NAME_1);
-        attribute.setValues(Arrays.asList((AttributeValue) new StringAttributeValue(MY_VALUE_1)));
+        attribute.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
 
         Collection collection = (Collection<AttributeEncoder>) Arrays.asList((AttributeEncoder) attributeEncoder);
         attribute.setEncoders(collection);
@@ -170,7 +169,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         MockSaml1StringAttributeEncoder attributeEncoder = new MockSaml1StringAttributeEncoder();
 
         IdPAttribute attribute = new IdPAttribute(MY_NAME_1);
-        attribute.setValues(Arrays.asList((AttributeValue) new StringAttributeValue(MY_VALUE_1)));
+        attribute.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
 
         Collection collection = (Collection<AttributeEncoder>) Arrays.asList((AttributeEncoder) attributeEncoder);
         attribute.setEncoders(collection);
@@ -330,7 +329,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     private AttributeContext buildAttributeContext() throws ComponentInitializationException {
 
         IdPAttribute attribute1 = new IdPAttribute(MY_NAME_1);
-        attribute1.setValues(Arrays.asList((AttributeValue) new StringAttributeValue(MY_VALUE_1)));
+        attribute1.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
 
         Saml1StringAttributeEncoder attributeEncoder1 = new Saml1StringAttributeEncoder();
         attributeEncoder1.setName(MY_NAME_1);
@@ -341,7 +340,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         attribute1.setEncoders(collection1);
 
         IdPAttribute attribute2 = new IdPAttribute(MY_NAME_2);
-        attribute2.setValues(Arrays.asList((AttributeValue) new StringAttributeValue(MY_VALUE_2)));
+        attribute2.setValues(Collections.singleton(new StringAttributeValue(MY_VALUE_2)));
 
         Saml1StringAttributeEncoder attributeEncoder2 = new Saml1StringAttributeEncoder();
         attributeEncoder2.setName(MY_NAME_2);
@@ -386,8 +385,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     private class MockSaml1StringAttributeEncoder extends Saml1StringAttributeEncoder {
 
         /** {@inheritDoc} */
-        @Nullable public Attribute encode(@Nonnull final IdPAttribute attribute)
-                throws AttributeEncodingException {
+        @Nullable public Attribute encode(@Nonnull final IdPAttribute attribute) throws AttributeEncodingException {
             throw new AttributeEncodingException("Always thrown.");
         }
     }

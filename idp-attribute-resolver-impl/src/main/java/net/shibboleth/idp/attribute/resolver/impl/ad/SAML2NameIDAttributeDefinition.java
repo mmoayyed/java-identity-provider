@@ -218,8 +218,8 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        Set<AttributeValue> inputValues;
-        Set<AttributeValue> outputValues = null;
+        Set<AttributeValue<?>> inputValues;
+        Set<? extends AttributeValue<?>> outputValues = null;
         final IdPAttribute result = new IdPAttribute(getId());
 
         inputValues = PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
@@ -227,22 +227,24 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
         if (null != inputValues && !inputValues.isEmpty()) {
 
             if (1 == inputValues.size()) {
-                AttributeValue val = encodeOneValue(inputValues.iterator().next(), resolutionContext);
+                AttributeValue<?> val = encodeOneValue(inputValues.iterator().next(), resolutionContext);
                 if (null != val) {
                     outputValues = Collections.singleton(val);
                 }
             } else {
-                outputValues = new HashSet<AttributeValue>(inputValues.size());
-                for (AttributeValue theValue : inputValues) {
-                    AttributeValue val = encodeOneValue(theValue, resolutionContext);
+                // TODO Intermediate to solve typing issues.
+                final HashSet<XMLObjectAttributeValue> xmlVals = new HashSet<>(inputValues.size());
+                for (AttributeValue<?> theValue : inputValues) {
+                    final XMLObjectAttributeValue val = encodeOneValue(theValue, resolutionContext);
                     if (null != val) {
-                        outputValues.add(val);
+                        xmlVals.add(val);
                     }
                 }
-                if (0 == outputValues.size()) {
+                if (0 == xmlVals.size()) {
                     log.warn("{} no appropriate values", getLogPrefix());
                     return null;
                 }
+                outputValues = xmlVals;
             }
         }
         result.setValues(outputValues);

@@ -46,7 +46,7 @@ public class Saml2XmlObjectSubjectNameIDEncoder extends AbstractSaml2NameIDEncod
     @Nonnull public NameID encode(IdPAttribute attribute) throws AttributeEncodingException {
         final String attributeId = attribute.getId();
 
-        final Collection<AttributeValue> attributeValues = attribute.getValues();
+        final Collection<AttributeValue<?>> attributeValues = attribute.getValues();
         if (attributeValues == null || attributeValues.isEmpty()) {
             throw new AttributeEncodingException("Attribute " + attributeId + " contains no value, nothing to encode");
         }

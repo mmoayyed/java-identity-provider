@@ -58,7 +58,7 @@ public class SAMLAttributeDataConnectorTest extends XMLObjectBaseTestCase {
         final Map<String, IdPAttribute> attributes = connector.doDataConnectorResolve(null);
         Assert.assertEquals(attributes.size(), 2);
         
-        Set<AttributeValue> attributeValues = attributes.get("SamlName").getValues();
+        Set<AttributeValue<?>> attributeValues = attributes.get("SamlName").getValues();
         Assert.assertEquals(attributeValues.size(), 1);
         Assert.assertTrue(attributeValues.iterator().next() instanceof XMLObjectAttributeValue);
         

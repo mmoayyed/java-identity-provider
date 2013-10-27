@@ -99,12 +99,10 @@ public class FilterAttributesTest {
     /** Test that the action filters attributes and proceeds properly while auto-creating a filter context. */
     @Test public void testFilterAttributesAutoCreateFilterContext() throws Exception {
         IdPAttribute attribute1 = new IdPAttribute("attribute1");
-        attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
-                new StringAttributeValue("two")));
+        attribute1.setValues(Lists.newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
 
         IdPAttribute attribute2 = new IdPAttribute("attribute2");
-        attribute2.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("a"),
-                new StringAttributeValue("b")));
+        attribute2.setValues(Lists.newArrayList(new StringAttributeValue("a"), new StringAttributeValue("b")));
 
         List<IdPAttribute> attributes = Arrays.asList(attribute1, attribute2);
 
@@ -150,7 +148,7 @@ public class FilterAttributesTest {
         Map<String, IdPAttribute> resultAttributes = resultAttributeCtx.getIdPAttributes();
         Assert.assertEquals(resultAttributes.size(), 1);
 
-        Set<AttributeValue> resultAttributeValue = resultAttributes.get("attribute1").getValues();
+        Set<AttributeValue<?>> resultAttributeValue = resultAttributes.get("attribute1").getValues();
         Assert.assertEquals(resultAttributeValue.size(), 2);
         Assert.assertTrue(resultAttributeValue.contains(new StringAttributeValue("one")));
         Assert.assertTrue(resultAttributeValue.contains(new StringAttributeValue("two")));
@@ -159,12 +157,10 @@ public class FilterAttributesTest {
     /** Test that the action filters attributes and proceeds properly with an existing filter context. */
     @Test public void testFilterAttributesExistingFilterContext() throws Exception {
         IdPAttribute attribute1 = new IdPAttribute("attribute1");
-        attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
-                new StringAttributeValue("two")));
+        attribute1.setValues(Lists.newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
 
         IdPAttribute attribute2 = new IdPAttribute("attribute2");
-        attribute2.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("a"),
-                new StringAttributeValue("b")));
+        attribute2.setValues(Lists.newArrayList(new StringAttributeValue("a"), new StringAttributeValue("b")));
 
         List<IdPAttribute> attributes = Arrays.asList(attribute1, attribute2);
 
@@ -213,7 +209,7 @@ public class FilterAttributesTest {
         Map<String, IdPAttribute> resultAttributes = resultAttributeCtx.getIdPAttributes();
         Assert.assertEquals(resultAttributes.size(), 1);
 
-        Set<AttributeValue> resultAttributeValue = resultAttributes.get("attribute1").getValues();
+        Set<AttributeValue<?>> resultAttributeValue = resultAttributes.get("attribute1").getValues();
         Assert.assertEquals(resultAttributeValue.size(), 2);
         Assert.assertTrue(resultAttributeValue.contains(new StringAttributeValue("one")));
         Assert.assertTrue(resultAttributeValue.contains(new StringAttributeValue("two")));
@@ -222,8 +218,7 @@ public class FilterAttributesTest {
     /** Test that action returns the proper event if the attributes are not able to be filtered. */
     @Test public void testUnableToFilterAttributes() throws Exception {
         IdPAttribute attribute1 = new MockUncloneableAttribute("attribute1");
-        attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
-                new StringAttributeValue("two")));
+        attribute1.setValues(Lists.newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
 
         List<IdPAttribute> attributes = Arrays.asList(attribute1);
 

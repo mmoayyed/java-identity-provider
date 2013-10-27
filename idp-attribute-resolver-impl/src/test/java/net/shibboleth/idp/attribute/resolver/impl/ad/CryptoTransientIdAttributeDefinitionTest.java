@@ -155,7 +155,7 @@ public class CryptoTransientIdAttributeDefinitionTest {
 
         final IdPAttribute result = defn.doAttributeDefinitionResolve(context);
 
-        final Set<AttributeValue> values = result.getValues();
+        final Set<AttributeValue<?>> values = result.getValues();
         Assert.assertEquals(values.size(), 1);
         final String code = ((StringAttributeValue) values.iterator().next()).getValue();
 

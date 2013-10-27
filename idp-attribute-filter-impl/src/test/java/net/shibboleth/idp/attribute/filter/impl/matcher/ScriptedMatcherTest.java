@@ -128,7 +128,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("Test");
         matcher.initialize();
 
-        Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
+        Set<AttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 1);
         Assert.assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));
@@ -155,7 +155,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("Test");
         matcher.initialize();
 
-        Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
+        Set<AttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 1);
         Assert.assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));

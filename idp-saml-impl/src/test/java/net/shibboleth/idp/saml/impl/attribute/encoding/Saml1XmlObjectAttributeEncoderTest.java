@@ -122,9 +122,9 @@ public class Saml1XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
 
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
-        final Collection<AttributeValue> values =
-                Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
-                        new ScopedStringAttributeValue("foo", "bar"), new AttributeValue() {
+        final Collection<? extends AttributeValue<?>> values =
+                Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
+                        new ScopedStringAttributeValue("foo", "bar"), new AttributeValue<Object>() {
                             public Object getValue() {
                                 return intArray;
                             }
@@ -137,8 +137,8 @@ public class Saml1XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
     }
 
     @Test public void single() throws Exception {
-        final Collection<AttributeValue> values =
-                Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}), ObjectFor(STRING_1));
+        final Collection<? extends AttributeValue<?>> values =
+                Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), ObjectFor(STRING_1));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
@@ -158,8 +158,8 @@ public class Saml1XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
     }
 
     @Test public void testMulti() throws Exception {
-        final Collection<AttributeValue> values =
-                Lists.newArrayList((AttributeValue) ObjectFor(STRING_1), ObjectFor(STRING_2));
+        final Collection<? extends AttributeValue<?>> values =
+                Lists.newArrayList(ObjectFor(STRING_1), ObjectFor(STRING_2));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);

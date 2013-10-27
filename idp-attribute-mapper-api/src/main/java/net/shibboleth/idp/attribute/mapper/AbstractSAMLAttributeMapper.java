@@ -231,7 +231,7 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
         }
 
         final List<XMLObject> inputValues = prototype.getAttributeValues();
-        final List<AttributeValue> outputValues = getValueMapper().decodeValues(inputValues);
+        final List<AttributeValue<?>> outputValues = getValueMapper().decodeValues(inputValues);
 
         final boolean noMatch = !inputValues.isEmpty() && outputValues.isEmpty();
 

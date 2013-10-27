@@ -61,7 +61,7 @@ public class Saml2XmlObjectSubjectNameIDEncoderTest extends OpenSAMLInitBaseTest
 
     private final static String QUALIFIER = "Qualifier";
 
-    private static AttributeValue saml1NameIdFor(final String ident) {
+    private static AttributeValue<?> saml1NameIdFor(final String ident) {
         NameIdentifier id = saml1Builder.buildObject();
 
         id.setNameIdentifier(ident);
@@ -69,7 +69,7 @@ public class Saml2XmlObjectSubjectNameIDEncoderTest extends OpenSAMLInitBaseTest
         return new XMLObjectAttributeValue(id);
     }
 
-    private static AttributeValue saml2NameIdFor(final String ident) {
+    private static AttributeValue<?> saml2NameIdFor(final String ident) {
         NameID id = saml2Builder.buildObject();
 
         id.setValue(ident);
@@ -94,13 +94,13 @@ public class Saml2XmlObjectSubjectNameIDEncoderTest extends OpenSAMLInitBaseTest
 
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
-        final Collection<AttributeValue> values =
-                Lists.newArrayList((AttributeValue) new StringAttributeValue("foo"), new ScopedStringAttributeValue(
-                        "foo", "bar"), new AttributeValue() {
-                    public Object getValue() {
-                        return intArray;
-                    }
-                }, saml1NameIdFor(OTHERID));
+        final Collection<? extends AttributeValue<?>> values =
+                Lists.newArrayList(new StringAttributeValue("foo"), new ScopedStringAttributeValue("foo", "bar"),
+                        new AttributeValue<Object>() {
+                            public Object getValue() {
+                                return intArray;
+                            }
+                        }, saml1NameIdFor(OTHERID));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
@@ -109,9 +109,9 @@ public class Saml2XmlObjectSubjectNameIDEncoderTest extends OpenSAMLInitBaseTest
     }
 
     @Test public void single() throws Exception {
-        final Collection<AttributeValue> values =
-                Lists.newArrayList((AttributeValue) saml1NameIdFor(OTHERID), new StringAttributeValue("foo"),
-                        saml2NameIdFor(NAME_1), saml1NameIdFor(NAME_2));
+        final Collection<? extends AttributeValue<?>> values =
+                Lists.newArrayList(saml1NameIdFor(OTHERID), new StringAttributeValue("foo"), saml2NameIdFor(NAME_1),
+                        saml1NameIdFor(NAME_2));
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
@@ -124,9 +124,8 @@ public class Saml2XmlObjectSubjectNameIDEncoderTest extends OpenSAMLInitBaseTest
     }
 
     @Test public void multi() throws Exception {
-        final Collection<AttributeValue> values =
-                Lists.newArrayList((AttributeValue) saml1NameIdFor(OTHERID), saml2NameIdFor(NAME_1),
-                        saml2NameIdFor(NAME_1));
+        final Collection<? extends AttributeValue<?>> values =
+                Lists.newArrayList(saml1NameIdFor(OTHERID), saml2NameIdFor(NAME_1), saml2NameIdFor(NAME_1));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);

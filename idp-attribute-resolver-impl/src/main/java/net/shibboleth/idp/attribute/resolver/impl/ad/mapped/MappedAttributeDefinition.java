@@ -156,11 +156,11 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return the set of attribute values that the given dependency value maps in to
      */
-    protected Set<AttributeValue> mapValue(@Nullable String value) {
+    protected Set<AttributeValue<?>> mapValue(@Nullable String value) {
         log.debug("Attribute Definition {}: mapping depdenency attribute value {}", getId(), value);
 
         final String trimmedValue = StringSupport.trimOrNull(value);
-        final LazySet<AttributeValue> mappedValues = new LazySet<AttributeValue>();
+        final LazySet<AttributeValue<?>> mappedValues = new LazySet<>();
 
         boolean valueMapMatch = false;
         if (null != trimmedValue) {
@@ -193,7 +193,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
-        final Set<AttributeValue> unmappedResults =
+        final Set<AttributeValue<?>> unmappedResults =
                 PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
         log.debug("Attribute Definition '{}': Attempting to map the following values: {}", getId(), unmappedResults);
 
@@ -216,7 +216,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
                             + unmappedValue.getClass().getName()));
                 }
 
-                Set<AttributeValue> mappingResult = mapValue(((StringAttributeValue) unmappedValue).getValue());
+                Set<AttributeValue<?>> mappingResult = mapValue(((StringAttributeValue) unmappedValue).getValue());
                 resultAttribute.getValues().addAll(mappingResult);
             }
         }

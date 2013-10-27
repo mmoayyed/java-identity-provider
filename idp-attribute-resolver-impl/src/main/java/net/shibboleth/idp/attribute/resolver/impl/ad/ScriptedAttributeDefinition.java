@@ -150,7 +150,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
-        final Map<String, Set<AttributeValue>> dependencyAttributes =
+        final Map<String, Set<AttributeValue<?>>> dependencyAttributes =
                 PluginDependencySupport.getAllAttributeValues(resolutionContext, getDependencies());
 
         if (dependencyAttributes.containsKey(getId())) {
@@ -169,7 +169,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
         scriptContext.setAttribute("requestContext", new V2SAMLProfileRequestContext(resolutionContext, getId()),
                 ScriptContext.ENGINE_SCOPE);
 
-        for (Entry<String, Set<AttributeValue>> dependencyAttribute : dependencyAttributes.entrySet()) {
+        for (Entry<String, Set<AttributeValue<?>>> dependencyAttribute : dependencyAttributes.entrySet()) {
             log.debug("{} adding dependant attribute '{}' with the following values to the script context: {}",
                     new Object[] {getLogPrefix(), dependencyAttribute.getKey(), dependencyAttribute.getValue(),});
             final IdPAttribute pseudoAttribute = new IdPAttribute(dependencyAttribute.getKey());

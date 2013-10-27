@@ -207,11 +207,11 @@ public class AttributeFilterPolicyTest {
         AttributeFilterContext context = new AttributeFilterContext();
         IdPAttribute attribute = new IdPAttribute(ATTR_NAME);
 
-        attribute.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
+        attribute.setValues(Lists.<AttributeValue<?>> newArrayList(new StringAttributeValue("one"),
                 new StringAttributeValue("two"), new StringAttributeValue("three")));
 
         IdPAttribute attribute2 = new IdPAttribute(ATTR_NAME_2);
-        attribute2.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("45")));
+        attribute2.setValues(Lists.<AttributeValue<?>> newArrayList(new StringAttributeValue("45")));
         context.setPrefilteredIdPAttributes(Arrays.asList(attribute, attribute2));
 
         policyMatcher.setRetVal(state);

@@ -20,9 +20,8 @@ package net.shibboleth.idp.attribute.resolver.impl.ad.mapped;
 import java.util.Collections;
 import java.util.Set;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -136,7 +135,7 @@ public class MappedAttributeTest {
 
     @Test public void invalidValueType() throws ComponentInitializationException {
         IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
-        attr.setValues(Collections.singleton((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3})));
+        attr.setValues(Collections.singleton(new ByteAttributeValue(new byte[] {1, 2, 3})));
 
         AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));

@@ -72,7 +72,7 @@ public class TransientIdAttributeDefinitionTest {
                 defn.doAttributeDefinitionResolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
                         TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
 
-        Set<AttributeValue> vals = result.getValues();
+        Set<AttributeValue<?>> vals = result.getValues();
         Assert.assertEquals(vals.size(), 1);
 
         String val = (String) vals.iterator().next().getValue();
@@ -157,7 +157,7 @@ public class TransientIdAttributeDefinitionTest {
                 defn.doAttributeDefinitionResolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
                         TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
 
-        Set<AttributeValue> vals = result.getValues();
+        Set<AttributeValue<?>> vals = result.getValues();
         String firstTime = (String) vals.iterator().next().getValue();
 
         result =

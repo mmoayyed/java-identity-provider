@@ -148,7 +148,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected
-        Set<AttributeValue> resultValues =
+        Set<AttributeValue<?>> resultValues =
                 context.getResolvedIdPAttributes().get(ComputedIDDataConnectorTest.OUTPUT_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(resultValues.size(), 1);
         Assert.assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(),
@@ -190,7 +190,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected
-        Set<AttributeValue> resultValues =
+        Set<AttributeValue<?>> resultValues =
                 context.getResolvedIdPAttributes().get(ComputedIDDataConnectorTest.OUTPUT_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(resultValues.size(), 1);
         Assert.assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(),
@@ -272,7 +272,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected
-        Set<AttributeValue> resultValues =
+        Set<AttributeValue<?>> resultValues =
                 context.getResolvedIdPAttributes().get(ComputedIDDataConnectorTest.OUTPUT_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(resultValues.size(), 1);
         String val = ((StringAttributeValue) resultValues.iterator().next()).getValue();

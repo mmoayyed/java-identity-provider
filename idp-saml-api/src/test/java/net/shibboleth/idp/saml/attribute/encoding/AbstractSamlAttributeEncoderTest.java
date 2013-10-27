@@ -134,10 +134,10 @@ public class AbstractSamlAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         }
         
         final int[] intArray = {1, 2, 3, 4};
-        final Collection<AttributeValue> values =
-                Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
+        final Collection<AttributeValue<?>> values =
+                Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         null,
-                        new AttributeValue() {
+                        new AttributeValue<Object>() {
                             public Object getValue() {
                                 return intArray;
                             }

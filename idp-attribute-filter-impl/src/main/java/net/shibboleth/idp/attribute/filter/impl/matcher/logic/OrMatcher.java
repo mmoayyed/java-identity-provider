@@ -55,7 +55,7 @@ public class OrMatcher extends AbstractComposedMatcher {
     }
 
     /** {@inheritDoc} */
-    @Nullable @NonnullElements public Set<AttributeValue> getMatchingValues(@Nonnull IdPAttribute attribute,
+    @Nullable @NonnullElements public Set<AttributeValue<?>> getMatchingValues(@Nonnull IdPAttribute attribute,
             @Nonnull AttributeFilterContext filterContext) {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
@@ -66,9 +66,9 @@ public class OrMatcher extends AbstractComposedMatcher {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        final Set<AttributeValue> matchingValues = new LazySet<AttributeValue>();
+        final Set<AttributeValue<?>> matchingValues = new LazySet<>();
         for (Matcher matchFunctor : currentMatchers) {
-            Set<AttributeValue> matches = matchFunctor.getMatchingValues(attribute, filterContext);
+            Set<AttributeValue<?>> matches = matchFunctor.getMatchingValues(attribute, filterContext);
             if (null == matches) {
                 return null;
             }

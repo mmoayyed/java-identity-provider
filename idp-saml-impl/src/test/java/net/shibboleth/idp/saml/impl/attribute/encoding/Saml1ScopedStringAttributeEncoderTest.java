@@ -58,14 +58,15 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
 
     /** A second test value. */
     private final static String SCOPE_2 = "scope2";
-    
-    private final static String DELIMITER = "#" ;
-    
+
+    private final static String DELIMITER = "#";
+
     private final static String ATTRIBUTE_NAME = "Scope";
 
     private final ScopedStringAttributeValue value1 = new ScopedStringAttributeValue(VALUE_1, SCOPE_1);
-    private final ScopedStringAttributeValue value2= new ScopedStringAttributeValue(VALUE_2, SCOPE_2);
-    
+
+    private final ScopedStringAttributeValue value2 = new ScopedStringAttributeValue(VALUE_2, SCOPE_2);
+
     public Saml1ScopedStringAttributeEncoder makeEncoder() {
         Saml1ScopedStringAttributeEncoder encoder;
         encoder = new Saml1ScopedStringAttributeEncoder();
@@ -75,23 +76,24 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
         return encoder;
     }
 
-    @Test(expectedExceptions={AttributeEncodingException.class,})   public void empty() throws AttributeEncodingException, ComponentInitializationException {
+    @Test(expectedExceptions = {AttributeEncodingException.class,}) public void empty()
+            throws AttributeEncodingException, ComponentInitializationException {
         final IdPAttribute inputAttribute;
 
         inputAttribute = new IdPAttribute(ATTR_NAME);
 
         Saml1ScopedStringAttributeEncoder encoder = makeEncoder();
         encoder.initialize();
-                encoder.encode(inputAttribute);
+        encoder.encode(inputAttribute);
     }
 
-    @Test(expectedExceptions={AttributeEncodingException.class,})   public void inappropriate() throws AttributeEncodingException, ComponentInitializationException {
+    @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate()
+            throws AttributeEncodingException, ComponentInitializationException {
         final Saml1ScopedStringAttributeEncoder encoder = makeEncoder();
         final int[] intArray = {1, 2, 3, 4};
-        final Collection<AttributeValue> values =
-                Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
-                        new StringAttributeValue("dd"),
-                        new AttributeValue() {
+        final Collection<AttributeValue<?>> values =
+                Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new StringAttributeValue("dd"),
+                        new AttributeValue<Object>() {
                             public Object getValue() {
                                 return intArray;
                             }
@@ -104,15 +106,14 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
             encoder.encode(inputAttribute);
             Assert.fail("not initialized");
         } catch (UninitializedComponentException e) {
-            //OK
+            // OK
         }
         encoder.initialize();
-        
 
         encoder.encode(inputAttribute);
     }
 
-    @Test public void single() throws ComponentInitializationException, AttributeEncodingException  {
+    @Test public void single() throws ComponentInitializationException, AttributeEncodingException {
         final Saml1ScopedStringAttributeEncoder encoder = makeEncoder();
         try {
             encoder.setScopeAttributeName(null);
@@ -123,10 +124,9 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
         }
         encoder.setScopeAttributeName(ATTRIBUTE_NAME);
         encoder.setScopeDelimiter(DELIMITER);
-        
-        final Collection<AttributeValue> values =
-                Lists.newArrayList(Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
-                        value1));
+
+        final Collection<? extends AttributeValue<?>> values =
+                Lists.newArrayList(Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), value1));
 
         final IdPAttribute inputAttribute;
         inputAttribute = new IdPAttribute(ATTR_NAME);
@@ -152,15 +152,14 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
 
         Assert.assertEquals(childAsScopedValue.getValue(), VALUE_1, "Input equals output");
         Assert.assertEquals(childAsScopedValue.getScope(), SCOPE_1, "Input equals output");
-        
+
     }
 
-    @Test public void multi() throws ComponentInitializationException, AttributeEncodingException  {
+    @Test public void multi() throws ComponentInitializationException, AttributeEncodingException {
         final Saml1ScopedStringAttributeEncoder encoder = makeEncoder();
         encoder.initialize();
-        final Collection<AttributeValue> values =
-                Lists.newArrayList(Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
-                        value1, value2));
+        final Collection<? extends AttributeValue<?>> values =
+                Lists.newArrayList(Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), value1, value2));
 
         final IdPAttribute inputAttribute;
         inputAttribute = new IdPAttribute(ATTR_NAME);
@@ -200,9 +199,8 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
             Assert.fail("Value mismatch");
         }
     }
-    
-    
-    @Test public void singleInline() throws ComponentInitializationException, AttributeEncodingException  {
+
+    @Test public void singleInline() throws ComponentInitializationException, AttributeEncodingException {
         final Saml1ScopedStringAttributeEncoder encoder = makeEncoder();
         encoder.setScopeType("wibble");
         try {
@@ -222,9 +220,8 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
         encoder.setScopeDelimiter(DELIMITER);
         encoder.initialize();
 
-        final Collection<AttributeValue> values =
-                Lists.newArrayList(Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
-                        value1));
+        final Collection<? extends AttributeValue<?>> values =
+                Lists.newArrayList(Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), value1));
 
         final IdPAttribute inputAttribute;
         inputAttribute = new IdPAttribute(ATTR_NAME);
@@ -256,9 +253,8 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
         encoder.setScopeDelimiter(DELIMITER);
         encoder.setScopeAttributeName(null);
         encoder.initialize();
-        final Collection<AttributeValue> values =
-                Lists.newArrayList(Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
-                        value1, value2));
+        final Collection<? extends AttributeValue<?>> values =
+                Lists.newArrayList(Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), value1, value2));
 
         final IdPAttribute inputAttribute;
         inputAttribute = new IdPAttribute(ATTR_NAME);
@@ -291,6 +287,5 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
             Assert.assertEquals(child2.getValue(), VALUE_1 + DELIMITER + SCOPE_1, "Input matches output");
         }
     }
-
 
 }

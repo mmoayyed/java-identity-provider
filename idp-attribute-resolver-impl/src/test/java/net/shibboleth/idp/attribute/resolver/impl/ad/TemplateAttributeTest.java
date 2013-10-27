@@ -24,9 +24,8 @@ import java.util.Set;
 
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
@@ -319,7 +318,7 @@ public class TemplateAttributeTest {
         templateDef.initialize();
 
         IdPAttribute attr = new IdPAttribute(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
-        attr.setValues(Collections.singleton((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3})));
+        attr.setValues(Collections.singleton(new ByteAttributeValue(new byte[] {1, 2, 3})));
         StaticAttributeDefinition simple = new StaticAttributeDefinition();
         simple.setId(TestSources.STATIC_ATTRIBUTE_NAME);
         simple.setValue(attr);

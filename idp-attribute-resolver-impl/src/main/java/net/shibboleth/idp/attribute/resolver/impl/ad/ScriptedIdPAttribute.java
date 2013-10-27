@@ -139,7 +139,7 @@ public class ScriptedIdPAttribute {
      * @param values the set to add to.
      * @param value the value to add. Known to be a {@link String} or an {@link AttributeValue}
      */
-    private void addValue(@Nonnull Set<AttributeValue> values, @Nonnull Object value) {
+    private void addValue(@Nonnull Set<AttributeValue<?>> values, @Nonnull Object value) {
         if (value instanceof String) {
             values.add(new StringAttributeValue((String) value));
         } else {
@@ -195,7 +195,7 @@ public class ScriptedIdPAttribute {
         }
 
         // Otherwise re-marshall the {@link #attributeValues}
-        Set<AttributeValue> values = new HashSet<AttributeValue>(attributeValues.size());
+        Set<AttributeValue<?>> values = new HashSet<>(attributeValues.size());
 
         log.debug("{} recreating attribute contents from {}", getLogPrefix(), attributeValues);
         for (Object object : attributeValues) {

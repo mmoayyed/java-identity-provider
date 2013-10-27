@@ -112,7 +112,7 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
      * </p>
      * {@inheritDoc}
      */
-    @Nullable @NonnullElements @Unmodifiable public Set<AttributeValue> getMatchingValues(
+    @Nullable @NonnullElements @Unmodifiable public Set<AttributeValue<?>> getMatchingValues(
             @Nonnull final IdPAttribute attribute, @Nonnull final AttributeFilterContext filterContext) {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
@@ -132,7 +132,7 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
             }
 
             if (result instanceof Set) {
-                HashSet<AttributeValue> returnValues = new HashSet<AttributeValue>(attribute.getValues());
+                HashSet<AttributeValue<?>> returnValues = new HashSet<>(attribute.getValues());
                 returnValues.retainAll((Set) result);
                 return Collections.unmodifiableSet(returnValues);
             } else {

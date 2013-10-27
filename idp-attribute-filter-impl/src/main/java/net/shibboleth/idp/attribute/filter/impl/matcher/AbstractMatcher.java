@@ -63,7 +63,7 @@ public abstract class AbstractMatcher extends AbstractIdentifiableInitializableC
     /**
      * {@inheritDoc}
      */
-    @Nonnull @NonnullElements @Unmodifiable public Set<AttributeValue> getMatchingValues(
+    @Nonnull @NonnullElements @Unmodifiable public Set<AttributeValue<?>> getMatchingValues(
             @Nonnull final IdPAttribute attribute, @Nonnull final AttributeFilterContext filterContext) {
 
         final HashSet matchedValues = new HashSet();

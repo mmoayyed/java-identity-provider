@@ -85,7 +85,7 @@ public class MockMatcher extends AbstractIdentifiableInitializableComponent impl
     }
 
     /** {@inheritDoc} */
-    public Set<AttributeValue> getMatchingValues(IdPAttribute attribute, AttributeFilterContext filterContext) {
+    public Set<AttributeValue<?>> getMatchingValues(IdPAttribute attribute, AttributeFilterContext filterContext) {
         if (fails) {
             return null;
         }
@@ -97,7 +97,7 @@ public class MockMatcher extends AbstractIdentifiableInitializableComponent impl
             return attribute.getValues();
         }
 
-        HashSet<AttributeValue> values = new HashSet<AttributeValue>();
+        HashSet<AttributeValue<?>> values = new HashSet<>();
         for (AttributeValue value : attribute.getValues()) {
             if (matchingValues.contains(value)) {
                 values.add(value);

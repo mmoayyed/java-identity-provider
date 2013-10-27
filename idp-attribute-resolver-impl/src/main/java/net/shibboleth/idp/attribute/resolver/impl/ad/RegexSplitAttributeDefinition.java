@@ -85,7 +85,7 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
 
         final IdPAttribute resultantAttribute = new IdPAttribute(getId());
 
-        final Set<AttributeValue> dependencyValues =
+        final Set<AttributeValue<?>> dependencyValues =
                 PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
 
         for (AttributeValue dependencyValue : dependencyValues) {

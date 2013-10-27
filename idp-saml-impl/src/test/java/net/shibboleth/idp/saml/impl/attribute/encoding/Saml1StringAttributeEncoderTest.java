@@ -71,9 +71,9 @@ public class Saml1StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
         encoder.initialize();
         final int[] intArray = {1, 2, 3, 4};
-        final Collection<AttributeValue> values =
-                Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
-                        new AttributeValue() {
+        final Collection<AttributeValue<?>> values =
+                Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
+                        new AttributeValue<Object>() {
                             public Object getValue() {
                                 return intArray;
                             }
@@ -87,8 +87,8 @@ public class Saml1StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void single() throws Exception {
-        final Collection<AttributeValue> values =
-                Lists.newArrayList(Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
+        final Collection<? extends AttributeValue<?>> values =
+                Lists.newArrayList(Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         new StringAttributeValue(STRING_1)));
 
         final IdPAttribute inputAttribute;
@@ -116,8 +116,8 @@ public class Saml1StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void multi() throws Exception {
-        final Collection<AttributeValue> values =
-                Lists.newArrayList(Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
+        final Collection<? extends AttributeValue<?>> values =
+                Lists.newArrayList(Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         new StringAttributeValue(STRING_1), new StringAttributeValue(STRING_2)));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);

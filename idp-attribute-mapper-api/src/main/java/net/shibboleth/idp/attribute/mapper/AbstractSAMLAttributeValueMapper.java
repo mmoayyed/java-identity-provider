@@ -64,8 +64,9 @@ public abstract class AbstractSAMLAttributeValueMapper extends AbstractInitializ
      * @param inputs the list of SAML Attributes
      * @return a list of IdP Attributes
      */
-    @Nonnull @Unmodifiable public List<AttributeValue> decodeValues(@Nonnull @NonnullElements List<XMLObject> inputs) {
-        List<AttributeValue> outputs = new ArrayList<AttributeValue>(inputs.size());
+    @Nonnull @Unmodifiable public List<AttributeValue<?>>
+            decodeValues(@Nonnull @NonnullElements List<XMLObject> inputs) {
+        List<AttributeValue<?>> outputs = new ArrayList<>(inputs.size());
 
         for (XMLObject input : inputs) {
             AttributeValue output = decodeValue(input);
@@ -103,7 +104,6 @@ public abstract class AbstractSAMLAttributeValueMapper extends AbstractInitializ
 
             retVal = ((XSInteger) object).getValue().toString();
 
-        
         } else if (object instanceof XSDateTime) {
 
             final DateTime dt = ((XSDateTime) object).getValue();
@@ -126,12 +126,13 @@ public abstract class AbstractSAMLAttributeValueMapper extends AbstractInitializ
                 retVal = null;
             }
         }
-    
+
         if (null == retVal) {
             log.info("{} value of type {} could not be converted", getLogPrefix(), object.getClass().toString());
         }
         return retVal;
     }
+
     // Checkstyle: CyclomaticComplexity ON
 
     /**
@@ -160,7 +161,7 @@ public abstract class AbstractSAMLAttributeValueMapper extends AbstractInitializ
             throw new ComponentInitializationException("No log prefix set");
         }
     }
-    
+
     /** {@inheritDoc} */
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -170,7 +171,7 @@ public abstract class AbstractSAMLAttributeValueMapper extends AbstractInitializ
         if (obj == this) {
             return true;
         }
-        
+
         if (obj instanceof AbstractSAMLAttributeValueMapper) {
             AbstractSAMLAttributeValueMapper other = (AbstractSAMLAttributeValueMapper) obj;
 

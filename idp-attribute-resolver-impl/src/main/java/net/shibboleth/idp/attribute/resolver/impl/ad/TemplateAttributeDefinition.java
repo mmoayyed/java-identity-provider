@@ -165,7 +165,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
 
         final IdPAttribute resultantAttribute = new IdPAttribute(getId());
 
-        final Map<String, Iterator<AttributeValue>> sourceValues = new LazyMap<String, Iterator<AttributeValue>>();
+        final Map<String, Iterator<AttributeValue<?>>> sourceValues = new LazyMap<>();
         final int valueCount = setupSourceValues(resolutionContext, sourceValues);
 
         // build velocity context
@@ -256,9 +256,9 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
      * @throws ResolutionException if there is a mismatched count of attributes
      */
     private int setupSourceValues(final AttributeResolutionContext resolutionContext,
-            Map<String, Iterator<AttributeValue>> sourceValues) throws ResolutionException {
+            Map<String, Iterator<AttributeValue<?>>> sourceValues) throws ResolutionException {
 
-        final Map<String, Set<AttributeValue>> dependencyAttributes =
+        final Map<String, Set<AttributeValue<?>>> dependencyAttributes =
                 PluginDependencySupport.getAllAttributeValues(resolutionContext, getDependencies());
 
         int valueCount = 0;
@@ -266,7 +266,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
 
         for (String attributeName : sourceAttributes) {
 
-            final Set<AttributeValue> attributeValues = dependencyAttributes.get(attributeName);
+            final Set<AttributeValue<?>> attributeValues = dependencyAttributes.get(attributeName);
             if (null == attributeValues) {
                 throw new ResolutionException(getLogPrefix() + " no values found for attribute named '" + attributeName
                         + "'");

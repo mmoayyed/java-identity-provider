@@ -59,7 +59,7 @@ public class MatcherFromPolicy extends BaseBridgingClass implements Matcher, Ide
     }
 
     /** {@inheritDoc} */
-    @Nullable public Set<AttributeValue> getMatchingValues(@Nonnull IdPAttribute attribute,
+    @Nullable public Set<AttributeValue<?>> getMatchingValues(@Nonnull IdPAttribute attribute,
             @Nonnull AttributeFilterContext filterContext) {
 
         final Tristate result= rule.matches(filterContext);

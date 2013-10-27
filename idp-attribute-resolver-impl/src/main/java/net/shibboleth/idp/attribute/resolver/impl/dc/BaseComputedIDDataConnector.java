@@ -155,7 +155,7 @@ public abstract class BaseComputedIDDataConnector extends BaseDataConnector {
             return null;
         }
 
-        final Set<AttributeValue> attributeValues = attributeDefinition.getResolvedAttribute().getValues();
+        final Set<AttributeValue<?>> attributeValues = attributeDefinition.getResolvedAttribute().getValues();
         if (attributeValues == null || attributeValues.isEmpty()) {
             log.debug("{} Source attribute {} for connector {} provide no values", getLogPrefix(),
                     getSourceAttributeId(), getId());
@@ -230,7 +230,7 @@ public abstract class BaseComputedIDDataConnector extends BaseDataConnector {
             return null;
         }
         IdPAttribute attribute = new IdPAttribute(getGeneratedAttributeId());
-        attribute.setValues(Collections.singleton((AttributeValue) new StringAttributeValue(value)));
+        attribute.setValues(Collections.singleton(new StringAttributeValue(value)));
         return Collections.singletonMap(getGeneratedAttributeId(), attribute);
     }
 }

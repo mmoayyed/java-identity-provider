@@ -108,7 +108,7 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
-        Set<AttributeValue> result = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
+        Set<AttributeValue<?>> result = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
         Assert.assertTrue(result.isEmpty());
 
         filterContext = new AttributeFilterContext();
@@ -132,7 +132,7 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
-        Set<AttributeValue> result = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
+        Set<AttributeValue<?>> result = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
         Assert.assertTrue(result.isEmpty());
 
         filterContext = new AttributeFilterContext();

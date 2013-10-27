@@ -91,7 +91,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         } catch (ResolutionException e) {
             Assert.fail("resolution failed", e);
         }
-        final Collection<AttributeValue> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<AttributeValue<?>> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(values.size(), 2);
         Collection<String> nameValues = new HashSet<String>(2);
@@ -190,7 +190,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         } catch (ResolutionException e) {
             Assert.fail("resolution failed", e);
         }
-        final Collection<AttributeValue> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<AttributeValue<?>> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(values.size(), 1);
         NameIdentifier id = (NameIdentifier) values.iterator().next().getValue();

@@ -90,7 +90,7 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("Test");
         matcher.initialize();
 
-        Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
+        Set<AttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(value2) && result.contains(value1));
@@ -121,7 +121,7 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("Test");
         matcher.initialize();
 
-        Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
+        Set<AttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(value2) && result.contains(value1));
@@ -138,7 +138,7 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("Test");
         matcher.initialize();
 
-        Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
+        Set<AttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNotNull(result);
         Assert.assertTrue(result.isEmpty());
 
@@ -149,7 +149,7 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("test");
         matcher.initialize();
 
-        Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
+        Set<AttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNull(result);
     }
     

@@ -55,13 +55,13 @@ public final class PluginDependencySupport {
      * 
      * @return the merged value set
      */
-    @Nonnull @NonnullElements public static Set<AttributeValue> getMergedAttributeValues(
+    @Nonnull @NonnullElements public static Set<AttributeValue<?>> getMergedAttributeValues(
             @Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull @NonnullElements final Collection<ResolverPluginDependency> dependencies) {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
         Constraint.isNotNull(dependencies, "Resolver dependency collection can not be null");
 
-        final Set<AttributeValue> values = new HashSet<AttributeValue>();
+        final Set<AttributeValue<?>> values = new HashSet<>();
 
         for (ResolverPluginDependency dependency : dependencies) {
             final IdPAttribute resolvedAttribute;
@@ -111,11 +111,11 @@ public final class PluginDependencySupport {
      * 
      * @return the merged value set
      */
-    public static Map<String, Set<AttributeValue>> getAllAttributeValues(
+    public static Map<String, Set<AttributeValue<?>>> getAllAttributeValues(
             @Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull final Collection<ResolverPluginDependency> dependencies) {
 
-        final HashMap<String, Set<AttributeValue>> result = new HashMap<String, Set<AttributeValue>>();
+        final HashMap<String, Set<AttributeValue<?>>> result = new HashMap<>();
 
         for (ResolverPluginDependency dependency : dependencies) {
             Constraint.isNotNull(dependency, "Resolver dependency can not be null");
@@ -147,7 +147,7 @@ public final class PluginDependencySupport {
      * @param target current set attribute values
      */
     @Nonnull private static void addAttributeValues(@Nonnull final Map<String, IdPAttribute> sources,
-            @Nullable final Map<String, Set<AttributeValue>> target) {
+            @Nullable final Map<String, Set<AttributeValue<?>>> target) {
         for (IdPAttribute source : sources.values()) {
             if (source == null) {
                 continue;
@@ -164,13 +164,13 @@ public final class PluginDependencySupport {
      * @param target current set attribute values
      */
     @Nonnull private static void addAttributeValues(@Nullable final IdPAttribute source,
-            @Nullable final Map<String, Set<AttributeValue>> target) {
+            @Nullable final Map<String, Set<AttributeValue<?>>> target) {
         if (source == null) {
             return;
         }
-        Set<AttributeValue> attributeValues = target.get(source.getId());
+        Set<AttributeValue<?>> attributeValues = target.get(source.getId());
         if (attributeValues == null) {
-            attributeValues = new HashSet<AttributeValue>();
+            attributeValues = new HashSet<>();
             target.put(source.getId(), attributeValues);
         }
 
@@ -184,7 +184,7 @@ public final class PluginDependencySupport {
      * @param target current set attribute values
      */
     @Nonnull private static void addAttributeValues(@Nullable final IdPAttribute source,
-            @Nonnull final Set<AttributeValue> target) {
+            @Nonnull final Set<AttributeValue<?>> target) {
         if (source != null) {
             target.addAll(source.getValues());
         }

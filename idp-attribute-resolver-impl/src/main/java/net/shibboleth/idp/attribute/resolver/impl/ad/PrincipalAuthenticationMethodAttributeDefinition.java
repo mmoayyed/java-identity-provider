@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
@@ -63,7 +62,7 @@ public class PrincipalAuthenticationMethodAttributeDefinition extends BaseAttrib
         }
 
         final IdPAttribute attribute = new IdPAttribute(getId());
-        attribute.setValues(Collections.singleton((AttributeValue) new StringAttributeValue(method)));
+        attribute.setValues(Collections.singleton(new StringAttributeValue(method)));
         return attribute;
     }
 

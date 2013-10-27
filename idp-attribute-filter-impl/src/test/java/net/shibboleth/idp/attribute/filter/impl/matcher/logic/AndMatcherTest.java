@@ -89,7 +89,7 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("test");
         matcher.initialize();
 
-        Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
+        Set<AttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 1);
         Assert.assertTrue(result.contains(value2));
@@ -108,7 +108,7 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("test");
         matcher.initialize();
 
-        Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
+        Set<AttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNull(result);
 
         matcher = new AndMatcher(Lists.<Matcher> newArrayList(Matcher.MATCHER_FAILS, Matcher.MATCHES_ALL));

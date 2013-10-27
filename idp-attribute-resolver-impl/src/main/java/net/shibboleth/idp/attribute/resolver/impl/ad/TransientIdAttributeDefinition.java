@@ -19,18 +19,16 @@ package net.shibboleth.idp.attribute.resolver.impl.ad;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -236,8 +234,7 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
                     // TODO: think we want this to be a NameID-valued attribute now. Or maybe we're keeping this,
                     // but adding a parallel version. I'm thinking maybe we could handle compatibility with the old
                     // String-based encoders by special-casing them to handle NameID-valued attributes?
-                    Set<AttributeValue> vals = Collections.singleton((AttributeValue) new StringAttributeValue(id));
-                    result.setValues(vals);
+                    result.setValues(Collections.singleton(new StringAttributeValue(id)));
                     return result;
                 } else {
                     ++collisions;

@@ -40,7 +40,7 @@ import com.google.common.collect.Multimap;
  */
 public class AttributeInMetadataPolicyRuleTest {
 
-    private IdPAttribute makeAttribute(String id, List<AttributeValue> values) {
+    private IdPAttribute makeAttribute(String id, List<? extends AttributeValue<?>> values) {
         IdPAttribute attr = new IdPAttribute(id);
         attr.setValues(values);
         return attr;
@@ -55,11 +55,11 @@ public class AttributeInMetadataPolicyRuleTest {
         matcher.initialize();
         return matcher;
     }
-    
+
     private AttributeFilterContext makeContext(String attributeId, IdPRequestedAttribute attribute) {
-        
+
         final AttributeFilterContext context = new AttributeFilterContext();
-        
+
         if (null == attributeId) {
             context.setRequestedAttributes(null);
         } else {
@@ -69,15 +69,14 @@ public class AttributeInMetadataPolicyRuleTest {
         }
         return context;
     }
-    
+
     private AttributeFilterContext makeContext(IdPRequestedAttribute attribute) {
-        
+
         if (null == attribute) {
             return makeContext(null, null);
         }
         return makeContext(attribute.getId(), attribute);
     }
-
 
     @Test public void getters() throws ComponentInitializationException {
         AttributeInMetadataPolicyRule matcher = makeMatcher("test", true, true);
@@ -88,14 +87,13 @@ public class AttributeInMetadataPolicyRuleTest {
         Assert.assertFalse(matcher.getMatchIfMetadataSilent());
         Assert.assertFalse(matcher.getOnlyIfRequired());
     }
-    
+
     @Test public void noRequested() throws ComponentInitializationException {
 
         final IdPAttribute attr =
-                makeAttribute("attr", Lists.newArrayList((AttributeValue) DataSources.STRING_VALUE,
-                        DataSources.NON_MATCH_STRING_VALUE));
+                makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
-        Set<AttributeValue> result =
+        Set<AttributeValue<?>> result =
                 makeMatcher("test", true, true).getMatchingValues(attr, new AttributeFilterContext());
 
         Assert.assertEquals(result.size(), 2);
@@ -105,37 +103,35 @@ public class AttributeInMetadataPolicyRuleTest {
         result = makeMatcher("test", false, true).getMatchingValues(attr, new AttributeFilterContext());
         Assert.assertTrue(result.isEmpty());
     }
-    
+
     @Test public void wrongRequested() throws ComponentInitializationException {
 
         final IdPAttribute attr =
-                makeAttribute("attr", Lists.newArrayList((AttributeValue) DataSources.STRING_VALUE,
-                        DataSources.NON_MATCH_STRING_VALUE));
-        
+                makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
+
         final AttributeInMetadataPolicyRule matcher = makeMatcher("test", true, true);
-        Set<AttributeValue> result = matcher.getMatchingValues(attr, makeContext(null));
+        Set<AttributeValue<?>> result = matcher.getMatchingValues(attr, makeContext(null));
 
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(DataSources.STRING_VALUE));
         Assert.assertTrue(result.contains(DataSources.NON_MATCH_STRING_VALUE));
-        
+
         result = matcher.getMatchingValues(attr, makeContext(new IdPRequestedAttribute("wrongAttr")));
         Assert.assertTrue(result.isEmpty());
     }
-    
+
     @Test public void isRequiredOnly() throws ComponentInitializationException {
 
         final IdPAttribute attr =
-                makeAttribute("attr", Lists.newArrayList((AttributeValue) DataSources.STRING_VALUE,
-                        DataSources.NON_MATCH_STRING_VALUE));
-        
+                makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
+
         IdPRequestedAttribute required = new IdPRequestedAttribute("attr");
         required.setRequired(false);
-        
+
         AttributeFilterContext context = makeContext(required);
-        
-        Set<AttributeValue> result = makeMatcher("test", false, false).getMatchingValues(attr, context);
-    
+
+        Set<AttributeValue<?>> result = makeMatcher("test", false, false).getMatchingValues(attr, context);
+
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(DataSources.STRING_VALUE));
         Assert.assertTrue(result.contains(DataSources.NON_MATCH_STRING_VALUE));
@@ -143,58 +139,58 @@ public class AttributeInMetadataPolicyRuleTest {
         result = makeMatcher("test", false, true).getMatchingValues(attr, context);
         Assert.assertTrue(result.isEmpty());
     }
-    
+
     @Test public void values() throws ComponentInitializationException {
-    
+
         final IdPAttribute attr =
-                makeAttribute("attr", Lists.newArrayList((AttributeValue) DataSources.STRING_VALUE,
+                makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE,
                         DataSources.NON_MATCH_STRING_VALUE));
-        
+
         IdPRequestedAttribute required = new IdPRequestedAttribute("attr");
         required.setRequired(true);
-        required.setValues(Collections.singleton((AttributeValue)DataSources.STRING_VALUE));
-        
+        required.setValues(Collections.singleton(DataSources.STRING_VALUE));
+
         AttributeFilterContext context = makeContext(required);
-        
-        Set<AttributeValue> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
+
+        Set<AttributeValue<?>> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
         Assert.assertEquals(result.size(), 1);
         Assert.assertTrue(result.contains(DataSources.STRING_VALUE));
     }
-    
+
     @Test public void valuesButNoConvert() throws ComponentInitializationException {
-        
+
         final IdPAttribute attr =
-                makeAttribute("attr", Lists.newArrayList((AttributeValue) DataSources.STRING_VALUE,
+                makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE,
                         DataSources.NON_MATCH_STRING_VALUE));
-        
+
         AttributeFilterContext context = makeContext("attr", null);
-        
-        Set<AttributeValue> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
+
+        Set<AttributeValue<?>> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
         Assert.assertTrue(result.isEmpty());
     }
 
     @Test public void multiValues() throws ComponentInitializationException {
-        
+
         final IdPAttribute attr =
-                makeAttribute("attr", Lists.newArrayList((AttributeValue) DataSources.STRING_VALUE,
+                makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE,
                         DataSources.NON_MATCH_STRING_VALUE));
-        
+
         IdPRequestedAttribute req1 = new IdPRequestedAttribute("attr");
         req1.setRequired(true);
-        req1.setValues(Collections.singleton((AttributeValue)DataSources.STRING_VALUE));
-        
+        req1.setValues(Collections.singleton(DataSources.STRING_VALUE));
+
         IdPRequestedAttribute req2 = new IdPRequestedAttribute("attr");
         req2.setRequired(true);
-        req2.setValues(Collections.singleton((AttributeValue)DataSources.NON_MATCH_STRING_VALUE));
-        
+        req2.setValues(Collections.singleton(DataSources.NON_MATCH_STRING_VALUE));
+
         final AttributeFilterContext context = new AttributeFilterContext();
-        
+
         final Multimap<String, IdPRequestedAttribute> multimap = ArrayListMultimap.create();
         multimap.put(req1.getId(), req1);
         multimap.put(req2.getId(), req2);
         context.setRequestedAttributes(multimap);
-        
-        Set<AttributeValue> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
+
+        Set<AttributeValue<?>> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(DataSources.STRING_VALUE));
         Assert.assertTrue(result.contains(DataSources.NON_MATCH_STRING_VALUE));

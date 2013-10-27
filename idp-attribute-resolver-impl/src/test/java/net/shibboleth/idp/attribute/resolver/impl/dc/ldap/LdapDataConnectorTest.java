@@ -23,6 +23,19 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.impl.TestSources;
+import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearch;
+import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder;
+import net.shibboleth.idp.attribute.resolver.impl.dc.TestCache;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
+
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.SearchExecutor;
@@ -37,21 +50,6 @@ import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
-
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.impl.TestSources;
-import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearch;
-import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder;
-import net.shibboleth.idp.attribute.resolver.impl.dc.TestCache;
-import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.LdapDataConnector;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
-import net.shibboleth.utilities.java.support.velocity.Template;
-import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
 
 /**
  * Tests for {@link LdapDataConnector}
