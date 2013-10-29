@@ -164,7 +164,7 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends InitializeAuthentic
 
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        action.setAuthenticator(new Authenticator(dnResolver, new BindAuthenticationHandler(new DefaultConnectionFactory("ldap://localhost:3891"))));
+        action.setAuthenticator(new Authenticator(dnResolver, new BindAuthenticationHandler(new DefaultConnectionFactory("ldap://unknown:389"))));
         action.initialize();
 
         doExtract(prc);
