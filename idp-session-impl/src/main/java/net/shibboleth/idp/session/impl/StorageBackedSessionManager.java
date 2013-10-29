@@ -545,7 +545,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
                     if (cookies != null) {
                         for (Cookie cookie : cookies) {
                             if (cookieName.equals(cookie.getName())) {
-                                IdPSession session = lookupByCookie(cookie);
+                                IdPSession session = lookupBySessionId(cookie.getValue());
                                 if (session != null) {
                                     return ImmutableList.of(session);
                                 }
@@ -663,21 +663,6 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
                 indexBySPSession(idpSession, spSession, attempts - 1);
             }
         }
-    }
-    
-    /**
-     * Performs a lookup and deserializes a record based on the session identified by a cookie.
-     * 
-     * @param cookie the cookie to recover the session or session ID from
-     * @return  the IdPSession object, or null
-     * @throws ResolverException if an error occurs during lookup
-     */
-    @Nullable private IdPSession lookupByCookie(@Nonnull final Cookie cookie) throws ResolverException {
-        log.debug("Performing primary lookup on session identified by cookie");
-        
-        // TODO: handle client-side storage case
-        
-        return lookupBySessionId(cookie.getValue());
     }
 
     /**
