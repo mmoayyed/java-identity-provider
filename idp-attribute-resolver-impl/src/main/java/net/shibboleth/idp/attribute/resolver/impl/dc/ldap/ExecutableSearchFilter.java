@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchExecutor;
+import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
 
 import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearch;
@@ -39,6 +40,13 @@ public interface ExecutableSearchFilter extends ExecutableSearch {
      * 
      * @throws LdapException thrown if there is an error performing the search
      */
-    @Nonnull public SearchResult execute(@Nonnull SearchExecutor executor, @Nonnull ConnectionFactory factory)
+    @Nonnull SearchResult execute(@Nonnull SearchExecutor executor, @Nonnull ConnectionFactory factory)
             throws LdapException;
+
+    /**
+     * Returns the search filter associated with this executable search filter.
+     *
+     * @return  search filter
+     */
+    @Nonnull SearchFilter getSearchFilter();
 }

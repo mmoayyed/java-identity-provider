@@ -190,12 +190,35 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolve(builder);
     }
 
+    @Test public void escape() throws ComponentInitializationException, ResolutionException {
+        ParameterizedExecutableSearchFilterBuilder builder =
+                new ParameterizedExecutableSearchFilterBuilder("(cn={principalName})");
+        builder.initialize();
+        AttributeResolutionContext context =
+                TestSources.createResolutionContext("domain\\user*", TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        ExecutableSearchFilter filter = builder.build(context);
+        Assert.assertEquals(filter.getSearchFilter().format(), "(cn=domain\\5cuser\\2a)");
+    }
+
     @Test public void resolveTemplate() throws ComponentInitializationException, ResolutionException {
         TemplatedExecutableSearchFilterBuilder builder = new TemplatedExecutableSearchFilterBuilder();
         builder.setTemplateText("(uid=${recipientContext.principal})");
         builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
         builder.initialize();
         resolve(builder);
+    }
+
+    @Test public void escapeTemplate() throws ComponentInitializationException, ResolutionException {
+        TemplatedExecutableSearchFilterBuilder builder = new TemplatedExecutableSearchFilterBuilder();
+        builder.setTemplateText("(cn=${recipientContext.principal})");
+        builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
+        builder.initialize();
+        AttributeResolutionContext context =
+                TestSources.createResolutionContext("domain\\user*", TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        ExecutableSearchFilter filter = builder.build(context);
+        Assert.assertEquals(filter.getSearchFilter().format(), "(cn=domain\\5cuser\\2a)");
     }
 
     protected void resolve(ExecutableSearchBuilder builder) throws ComponentInitializationException,

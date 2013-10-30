@@ -62,6 +62,11 @@ public abstract class AbstractExecutableSearchFilterBuilder extends AbstractInit
             }
 
             /** {@inheritDoc} */
+            @Nonnull public SearchFilter getSearchFilter() {
+                return searchFilter;
+            }
+
+            /** {@inheritDoc} */
             public String toString() {
                 return searchFilter.toString();
             }

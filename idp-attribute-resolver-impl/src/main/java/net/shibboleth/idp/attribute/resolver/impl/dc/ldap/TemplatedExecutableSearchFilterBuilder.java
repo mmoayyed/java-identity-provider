@@ -31,6 +31,8 @@ import net.shibboleth.utilities.java.support.velocity.Template;
 
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.app.event.EventCartridge;
+import org.apache.velocity.app.event.implement.EscapeReference;
 import org.ldaptive.SearchFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,22 +130,38 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
     /** {@inheritDoc} */
     public ExecutableSearchFilter build(@Nonnull final AttributeResolutionContext resolutionContext)
             throws ResolutionException {
-        
+
         final VelocityContext context = new VelocityContext();
         log.trace("Creating search filter using attribute resolution context {}", resolutionContext);
         context.put("resolutionContext", resolutionContext);
-        
+
         final AttributeRecipientContext recipientContext =
                 resolutionContext.getSubcontext(AttributeRecipientContext.class);
         log.trace("Creating search filter using attribute recipient context {}", recipientContext);
         context.put("recipientContext", recipientContext);
-        
+
         if (isV2Compatibility()) {
             final V2SAMLProfileRequestContext requestContext =
                     new V2SAMLProfileRequestContext(resolutionContext, resolutionContext.getId());
             log.trace("Adding v2 request context {}", requestContext);
             context.put("requestContext", requestContext);
         }
+
+        final EventCartridge cartridge = new EventCartridge();
+        cartridge.addEventHandler(new EscapeReference() {
+
+            @Override protected String getMatchAttribute() {
+                return "eventhandler.escape.ldap.match";
+            }
+
+            @Override protected String escape(final Object text) {
+                final String value = text.toString();
+                // TODO use ldaptive attribute value encoding
+                return value.replace("\\", "\\5c").replace("*", "\\2a").replace("(", "\\28").replace(")", "\\29")
+                        .replace("\u0000", "\\00");
+            }
+        });
+        cartridge.attachToContext(context);
 
         final SearchFilter searchFilter = new SearchFilter(merge(context));
         return super.build(searchFilter);
