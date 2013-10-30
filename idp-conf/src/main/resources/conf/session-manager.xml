@@ -19,7 +19,7 @@
             p:httpServletRequest-ref="shibboleth.HttpServletRequest" p:httpServletResponse-ref="shibboleth.HttpServletResponse"
             p:authenticationFlowDescriptors="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'AuthenticationFlow/(${idp.authn.flows})']}"
             p:cookieManager-ref="shibboleth.CookieManager"
-            p:storageService-ref="shibboleth.StorageService"
+            p:storageService-ref="${idp.session.StorageService}"
             p:consistentAddress="${idp.session.consistentAddress}"
             p:sessionTimeout="${idp.session.timeout}"
             p:sessionSlop="${idp.session.slop}"

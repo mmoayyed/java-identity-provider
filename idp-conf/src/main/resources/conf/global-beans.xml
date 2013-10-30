@@ -108,7 +108,19 @@
     <bean id="shibboleth.CookieManager" class="net.shibboleth.utilities.java.support.net.CookieManager"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest" p:httpServletResponse-ref="shibboleth.HttpServletResponse" />
         
+    <bean id="shibboleth.DataSealer" class="net.shibboleth.utilities.java.support.security.DataSealer"
+        p:keystoreType="${idp.sealer.storeType}"
+        p:keystorePath="${idp.home}/${idp.sealer.storePath}"
+        p:keystorePassword="${idp.sealer.storePassword}"
+        p:cipherKeyAlias="${idp.sealer.alias}"
+        p:cipherKeyPassword="${idp.sealer.keyPassword}" />
+    
     <bean id="shibboleth.StorageService" class="${idp.storage.StorageService}" p:cleanupInterval="${idp.storage.cleanupInterval}" />
+
+    <bean id="shibboleth.ClientStorageService" class="${idp.storage.ClientStorageService}"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest" p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+        p:cookieManager-ref="shibboleth.CookieManager"
+        p:dataSealer-ref="shibboleth.DataSealer" />
 
     <bean id="shibboleth.ReplayCache" class="org.opensaml.storage.ReplayCache" depends-on="shibboleth.LogbackLogging"
         p:storage-ref="shibboleth.StorageService" p:strict="true" />
