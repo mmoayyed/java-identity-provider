@@ -26,9 +26,9 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -39,7 +39,10 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableMap;
 
-/** A data connector that just returns a static collection of attributes. */
+/**
+ * A {@link net.shibboleth.idp.attribute.resolver.BaseDataConnector} that just returns a static collection of
+ * attributes.
+ */
 @ThreadSafe
 public class StaticDataConnector extends AbstractDataConnector {
 
@@ -70,16 +73,16 @@ public class StaticDataConnector extends AbstractDataConnector {
         if (null == newValues) {
             attributes = null;
             return;
-        } 
-        
+        }
+
         final Map<String, IdPAttribute> map = new HashMap<String, IdPAttribute>(newValues.size());
-        for (IdPAttribute attr:newValues) {
+        for (IdPAttribute attr : newValues) {
             if (null == attr) {
                 continue;
             }
             map.put(attr.getId(), attr);
         }
-        
+
         attributes = ImmutableMap.copyOf(map);
     }
 
@@ -97,8 +100,7 @@ public class StaticDataConnector extends AbstractDataConnector {
         super.doInitialize();
 
         if (null == attributes) {
-            throw new ComponentInitializationException(getLogPrefix()
-                    + " No values set up.");
+            throw new ComponentInitializationException(getLogPrefix() + " No values set up.");
         }
     }
 }

@@ -29,8 +29,8 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
+import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolvedAttributeDefinition;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -43,9 +43,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A the basis of a data connector that generates a unique ID by computing the SHA-1 hash of a given attribute value,
- * the entity ID of the inbound message issuer, and a provided salt. The ComputedIDDataConnector is a thin shim on this,
- * the StoredIdConnector a slightly thicker shim.
+ * The basis of a {@link net.shibboleth.idp.attribute.resolver.BaseDataConnector} that generates a unique ID by
+ * computing the SHA-1 hash of a given attribute value, the entity ID of the inbound message issuer, and a provided
+ * salt. The ComputedIDDataConnector is a thin shim on this, the StoredIdConnector a slightly thicker shim.
  */
 public abstract class BaseComputedIDDataConnector extends AbstractDataConnector {
 

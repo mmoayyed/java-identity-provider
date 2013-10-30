@@ -27,8 +27,8 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for {@link AbstractDataConnector}. This test does not test any methods inherited from
- * {@link AbstractResolverPlugin}, those are covered in {@link AbstractResolverPluginTest}.
+ * Unit test for {@link BaseDataConnector}. This test does not test any methods inherited from
+ * {@link BaseResolverPlugin}, those are covered in {@link AbstractResolverPluginTest}.
  */
 public class AbstractDataConnectorTest {
 
@@ -79,7 +79,7 @@ public class AbstractDataConnectorTest {
 
     /**
      * This class implements the minimal level of functionality and is meant only as a means of testing the abstract
-     * {@link AbstractDataConnector}.
+     * {@link BaseDataConnector}.
      */
     private static final class MockBaseDataConnector extends AbstractDataConnector {
 

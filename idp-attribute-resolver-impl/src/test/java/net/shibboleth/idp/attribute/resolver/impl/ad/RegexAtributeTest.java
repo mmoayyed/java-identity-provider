@@ -26,7 +26,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
+import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
@@ -71,7 +71,7 @@ public class RegexAtributeTest {
         attrDef.initialize();
 
         // And resolve
-        final Set<AbstractDataConnector> connectorSet = new LazySet<AbstractDataConnector>();
+        final Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
         connectorSet.add(TestSources.populatedStaticConnector());
 
         final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();

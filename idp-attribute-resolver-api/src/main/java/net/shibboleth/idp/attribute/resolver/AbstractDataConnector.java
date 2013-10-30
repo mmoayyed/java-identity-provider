@@ -34,7 +34,8 @@ import org.slf4j.LoggerFactory;
 
 /** Base class for data connector resolver plugins. */
 @ThreadSafe
-public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<String, IdPAttribute>> {
+public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<String, IdPAttribute>> implements
+        BaseDataConnector {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractDataConnector.class);
@@ -84,26 +85,26 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
             log.debug("{} no attributes were produced during resolution", getId());
             return result;
         } else {
-            log.debug("{} produced the following {} attributes during resolution {}", new Object[] {
-                    getLogPrefix(), result.size(), result.keySet(),});
+            log.debug("{} produced the following {} attributes during resolution {}", new Object[] {getLogPrefix(),
+                    result.size(), result.keySet(),});
             for (String attrName : result.keySet()) {
                 IdPAttribute attr = result.get(attrName);
-                log.debug("{} Attribute '{}': Values '{}'",
-                        new Object[] {getLogPrefix(), attrName, attr.getValues(),});
+                log.debug("{} Attribute '{}': Values '{}'", new Object[] {getLogPrefix(), attrName, attr.getValues(),});
             }
         }
 
         return result;
     }
+
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
-        
+
         super.doInitialize();
-        
-        // The Id is now definitive.  Just in case it was used prior to that, reset the getPrefixCache
+
+        // The Id is now definitive. Just in case it was used prior to that, reset the getPrefixCache
         logPrefix = null;
     }
-    
+
     /**
      * Retrieves a collection of attributes from some data source.
      * 
@@ -115,7 +116,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
      */
     @Nullable protected abstract Map<String, IdPAttribute> doDataConnectorResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException;
-    
+
     /**
      * Return a string which is to be prepended to all log messages.
      * 

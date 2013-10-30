@@ -33,8 +33,6 @@ import net.shibboleth.utilities.java.support.component.AbstractDestructableIdent
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;
@@ -51,8 +49,8 @@ import com.google.common.collect.ImmutableSet;
  * @param <ResolvedType> object type this plug-in resolves to
  */
 @ThreadSafe
-public abstract class AbstractResolverPlugin<ResolvedType> extends
-        AbstractDestructableIdentifiableInitializableComponent implements ValidatableComponent, UnmodifiableComponent {
+public abstract class AbstractResolverPlugin<ResolvedType> 
+    extends AbstractDestructableIdentifiableInitializableComponent implements BaseResolverPlugin<ResolvedType> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractResolverPlugin.class);
