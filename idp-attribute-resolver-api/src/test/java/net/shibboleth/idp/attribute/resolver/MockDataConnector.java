@@ -28,7 +28,7 @@ import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 /** A data connector that just returns a static collection of attributes. */
 @ThreadSafe
-public class MockDataConnector extends BaseDataConnector implements ValidatableComponent {
+public class MockDataConnector extends AbstractDataConnector implements ValidatableComponent {
 
     /** Whether this connector fails validation. */
     private boolean invalid;

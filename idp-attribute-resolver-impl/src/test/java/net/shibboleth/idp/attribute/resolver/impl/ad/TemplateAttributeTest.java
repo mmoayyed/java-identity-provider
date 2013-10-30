@@ -30,7 +30,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
+import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
@@ -202,7 +202,7 @@ public class TemplateAttributeTest {
         final Set<BaseAttributeDefinition> attrDefinitions = new LazySet<BaseAttributeDefinition>();
         attrDefinitions.add(templateDef);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
-        final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
+        final Set<AbstractDataConnector> dataDefinitions = new LazySet<AbstractDataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnector());
 
         final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
@@ -246,7 +246,7 @@ public class TemplateAttributeTest {
         final Set<BaseAttributeDefinition> attrDefinitions = new LazySet<BaseAttributeDefinition>();
         attrDefinitions.add(templateDef);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
-        final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
+        final Set<AbstractDataConnector> dataDefinitions = new LazySet<AbstractDataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnector());
 
         final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);

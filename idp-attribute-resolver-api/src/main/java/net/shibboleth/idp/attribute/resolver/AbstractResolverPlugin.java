@@ -51,11 +51,11 @@ import com.google.common.collect.ImmutableSet;
  * @param <ResolvedType> object type this plug-in resolves to
  */
 @ThreadSafe
-public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructableIdentifiableInitializableComponent
-        implements ValidatableComponent, UnmodifiableComponent {
+public abstract class AbstractResolverPlugin<ResolvedType> extends
+        AbstractDestructableIdentifiableInitializableComponent implements ValidatableComponent, UnmodifiableComponent {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(BaseResolverPlugin.class);
+    private final Logger log = LoggerFactory.getLogger(AbstractResolverPlugin.class);
 
     /** Whether an {@link AttributeResolutionContext} that occurred resolving attributes will be re-thrown. */
     private boolean propagateResolutionExceptions = true;
@@ -239,11 +239,11 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
             return false;
         }
 
-        if (!(obj instanceof BaseResolverPlugin)) {
+        if (!(obj instanceof AbstractResolverPlugin)) {
             return false;
         }
 
-        BaseResolverPlugin<ResolvedType> other = (BaseResolverPlugin<ResolvedType>) obj;
+        AbstractResolverPlugin<ResolvedType> other = (AbstractResolverPlugin<ResolvedType>) obj;
         return Objects.equal(getId(), other.getId());
     }
 
@@ -256,7 +256,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
      * 
      * @throws ResolutionException thrown if there is a problem resolving the attributes
      * 
-     * @see BaseResolverPlugin#resolve(AttributeResolutionContext)
+     * @see AbstractResolverPlugin#resolve(AttributeResolutionContext)
      */
     @Nullable protected abstract ResolvedType doResolve(@Nonnull final AttributeResolutionContext resolutionContext)
             throws ResolutionException;

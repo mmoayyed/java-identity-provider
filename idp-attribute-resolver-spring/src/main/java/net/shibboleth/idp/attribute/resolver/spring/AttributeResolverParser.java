@@ -23,7 +23,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
-import net.shibboleth.idp.attribute.resolver.spring.dc.BaseDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -53,7 +53,7 @@ public class AttributeResolverParser implements BeanDefinitionParser {
         // children = configChildren.get(new QName(AttributeResolverNamespaceHandler.NAMESPACE, "PrincipalConnector"));
         // SpringSupport.parseCustomElements(children, context);
 
-        children = configChildren.get(BaseDataConnectorParser.ELEMENT_NAME);
+        children = configChildren.get(AbstractDataConnectorParser.ELEMENT_NAME);
         SpringSupport.parseCustomElements(children, context);
 
         children = configChildren.get(BaseAttributeDefinitionParser.ELEMENT_NAME);

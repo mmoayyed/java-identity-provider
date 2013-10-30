@@ -28,7 +28,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
+import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -41,7 +41,7 @@ import com.google.common.collect.ImmutableMap;
 /** An attribute definition that simply returns a static value.   Used for testing only.  This is 
  * a cut and paste job from StaticDataConnector in idp-attribute-resolver-impl */
 @ThreadSafe
-public class MockStaticDataConnector extends BaseDataConnector {
+public class MockStaticDataConnector extends AbstractDataConnector {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(MockStaticDataConnector.class);

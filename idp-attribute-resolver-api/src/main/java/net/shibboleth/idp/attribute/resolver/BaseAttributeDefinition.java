@@ -50,7 +50,7 @@ import com.google.common.collect.ImmutableSet;
 
 /** Base class for attribute definition resolver plugins. */
 @ThreadSafe
-public abstract class BaseAttributeDefinition extends BaseResolverPlugin<IdPAttribute> {
+public abstract class BaseAttributeDefinition extends AbstractResolverPlugin<IdPAttribute> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(BaseAttributeDefinition.class);

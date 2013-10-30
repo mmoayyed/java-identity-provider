@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
  * {@link net.shibboleth.idp.attribute.resolver.impl.dc.ComputedIDDataConnector} and
  * {@link net.shibboleth.idp.attribute.resolver.impl.dc.StoredIDDataConnector}.
  */
-public abstract class BaseComputedIDDataConnectorParser extends BaseDataConnectorParser {
+public abstract class BaseComputedIDDataConnectorParser extends AbstractDataConnectorParser {
 
     /** log. */
     private final Logger log = LoggerFactory.getLogger(BaseComputedIDDataConnectorParser.class);

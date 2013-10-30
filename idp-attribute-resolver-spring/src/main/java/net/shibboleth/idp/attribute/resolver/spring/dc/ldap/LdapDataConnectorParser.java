@@ -30,7 +30,7 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.LdapDataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.TemplatedExecutableSearchFilterBuilder;
-import net.shibboleth.idp.attribute.resolver.spring.dc.BaseDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.CacheConfigParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.DataConnectorNamespaceHandler;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -71,7 +71,7 @@ import org.w3c.dom.Element;
 import com.google.common.cache.Cache;
 
 /** Bean definition Parser for a {@link LdapDataConnector}. */
-public class LdapDataConnectorParser extends BaseDataConnectorParser {
+public class LdapDataConnectorParser extends AbstractDataConnectorParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "LDAPDirectory");

@@ -34,10 +34,10 @@ import org.slf4j.LoggerFactory;
 
 /** Base class for data connector resolver plugins. */
 @ThreadSafe
-public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, IdPAttribute>> {
+public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<String, IdPAttribute>> {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(BaseDataConnector.class);
+    private final Logger log = LoggerFactory.getLogger(AbstractDataConnector.class);
 
     /** ID of the data connector to use if this one fails. */
     private String failoverDataConnectorId;
@@ -46,10 +46,10 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, I
     private String logPrefix;
 
     /**
-     * Gets the ID of the {@link BaseDataConnector} whose values will be used in the event that this data connector
+     * Gets the ID of the {@link AbstractDataConnector} whose values will be used in the event that this data connector
      * experiences an error.
      * 
-     * @return ID of the {@link BaseDataConnector} whose values will be used in the event that this data connector
+     * @return ID of the {@link AbstractDataConnector} whose values will be used in the event that this data connector
      *         experiences an error
      */
     @Nullable public String getFailoverDataConnectorId() {
@@ -57,10 +57,10 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, I
     }
 
     /**
-     * Set the ID of the {@link BaseDataConnector} whose values will be used in the event that this data connector
+     * Set the ID of the {@link AbstractDataConnector} whose values will be used in the event that this data connector
      * experiences an error.
      * 
-     * @param id ID of the {@link BaseDataConnector} whose values will be used in the event that this data connector
+     * @param id ID of the {@link AbstractDataConnector} whose values will be used in the event that this data connector
      *            experiences an error
      */
     public synchronized void setFailoverDataConnectorId(@Nullable final String id) {

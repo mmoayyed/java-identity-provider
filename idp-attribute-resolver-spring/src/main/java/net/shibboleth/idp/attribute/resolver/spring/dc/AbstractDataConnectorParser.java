@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
+import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginParser;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -55,7 +55,7 @@ import org.xml.sax.InputSource;
  * it requires. Standard attributes and elements defined by the ResolutionPlugIn and DataConnector schemas will
  * automatically attempt to be parsed.
  */
-public abstract class BaseDataConnectorParser extends BaseResolverPluginParser {
+public abstract class AbstractDataConnectorParser extends BaseResolverPluginParser {
 
     /** Element name. */
     public static final QName ELEMENT_NAME = new QName(AttributeResolverNamespaceHandler.NAMESPACE, "DataConnector");
@@ -72,7 +72,7 @@ public abstract class BaseDataConnectorParser extends BaseResolverPluginParser {
     private String logPrefix;
 
     /** Log4j logger. */
-    private final Logger log = LoggerFactory.getLogger(BaseDataConnectorParser.class);
+    private final Logger log = LoggerFactory.getLogger(AbstractDataConnectorParser.class);
 
     /** {@inheritDoc} */
     protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
@@ -151,10 +151,10 @@ public abstract class BaseDataConnectorParser extends BaseResolverPluginParser {
      * @return property descriptors or null if an error occurred
      */
     @Nullable protected PropertyDescriptor[] getBeanPropertyDescriptors(
-            @Nonnull final Class<? extends BaseDataConnector> connectorClass) {
+            @Nonnull final Class<? extends AbstractDataConnector> connectorClass) {
         PropertyDescriptor[] descriptors = null;
         try {
-            final BeanInfo info = Introspector.getBeanInfo(connectorClass, BaseDataConnector.class);
+            final BeanInfo info = Introspector.getBeanInfo(connectorClass, AbstractDataConnector.class);
             descriptors = info.getPropertyDescriptors();
         } catch (IntrospectionException e) {
             log.error("could not retrieve bean info for class {}", connectorClass, e);
@@ -171,7 +171,7 @@ public abstract class BaseDataConnectorParser extends BaseResolverPluginParser {
      * @param connectorClass to read property descriptors from
      */
     protected void addPropertyDescriptorValues(@Nonnull BeanDefinitionBuilder builder,
-            @Nonnull BeanFactory beanFactory, @Nonnull final Class<? extends BaseDataConnector> connectorClass) {
+            @Nonnull BeanFactory beanFactory, @Nonnull final Class<? extends AbstractDataConnector> connectorClass) {
         for (PropertyDescriptor descriptor : getBeanPropertyDescriptors(connectorClass)) {
             log.debug("parsing property descriptor {}", descriptor);
             final Object value = getBean(beanFactory, descriptor.getPropertyType());

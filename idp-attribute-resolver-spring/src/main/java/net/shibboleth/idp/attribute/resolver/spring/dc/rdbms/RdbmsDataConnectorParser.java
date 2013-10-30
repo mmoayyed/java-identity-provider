@@ -27,7 +27,7 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.impl.dc.rdbms.RdbmsDataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.dc.rdbms.TemplatedExecutableStatementBuilder;
-import net.shibboleth.idp.attribute.resolver.spring.dc.BaseDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.CacheConfigParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.DataConnectorNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.dc.ManagedConnectionParser;
@@ -46,7 +46,7 @@ import org.w3c.dom.Element;
 import com.google.common.cache.Cache;
 
 /** Bean definition Parser for a {@link RdbmsDataConnector}. */
-public class RdbmsDataConnectorParser extends BaseDataConnectorParser {
+public class RdbmsDataConnectorParser extends AbstractDataConnectorParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "RelationalDatabase");

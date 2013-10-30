@@ -28,7 +28,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
+import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -41,7 +41,7 @@ import com.google.common.collect.ImmutableMap;
 
 /** A data connector that just returns a static collection of attributes. */
 @ThreadSafe
-public class StaticDataConnector extends BaseDataConnector {
+public class StaticDataConnector extends AbstractDataConnector {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(StaticDataConnector.class);

@@ -27,7 +27,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
+import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.utilities.java.support.collection.LazySet;
@@ -83,7 +83,7 @@ public class SimpleAttributeTest {
         simple.initialize();
 
         // And resolve
-        final Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
+        final Set<AbstractDataConnector> connectorSet = new LazySet<AbstractDataConnector>();
         connectorSet.add(TestSources.populatedStaticConnector());
 
         final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
@@ -169,7 +169,7 @@ public class SimpleAttributeTest {
         attrDefinitions.add(simple);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
 
-        final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
+        final Set<AbstractDataConnector> dataDefinitions = new LazySet<AbstractDataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnector());
 
         final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);

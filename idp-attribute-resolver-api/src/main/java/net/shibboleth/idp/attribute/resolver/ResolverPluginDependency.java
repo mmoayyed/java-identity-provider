@@ -28,7 +28,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import com.google.common.base.Objects;
 
 /**
- * Represents the dependency of one {@link BaseResolverPlugin} upon another plugin. Note that this serves for
+ * Represents the dependency of one {@link AbstractResolverPlugin} upon another plugin. Note that this serves for
  * dependencies both on data connectors (in which case the {@link #dependencyAttributeId} member will be null) or
  * attributes. The dependency analysis stages is aware of this difference and relies on it.
  */

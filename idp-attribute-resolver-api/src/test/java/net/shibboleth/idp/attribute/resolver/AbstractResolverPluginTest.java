@@ -26,8 +26,8 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicates;
 
-/** Unit test for {@link BaseResolverPlugin}. */
-public class BaseResolverPluginTest {
+/** Unit test for {@link AbstractResolverPlugin}. */
+public class AbstractResolverPluginTest {
 
     /** Test an instantiated object has the proper state. */
     @Test public void instantiation() {
@@ -55,7 +55,7 @@ public class BaseResolverPluginTest {
         }
     }
 
-    /** Test setters to {@link BaseResolverPlugin#setPropagateResolutionExceptions(boolean)}. */
+    /** Test setters to {@link AbstractResolverPlugin#setPropagateResolutionExceptions(boolean)}. */
     @Test public void propogateSetters() {
         MockBaseResolverPlugin plugin = new MockBaseResolverPlugin("foo", "bar");
 
@@ -108,7 +108,7 @@ public class BaseResolverPluginTest {
         }
     }
 
-    /** Test {@link BaseResolverPlugin#resolve(AttributeResolutionContext)}. */
+    /** Test {@link AbstractResolverPlugin#resolve(AttributeResolutionContext)}. */
     @Test public void resolver() throws Exception {
         AttributeResolutionContext context = new AttributeResolutionContext();
         MockBaseResolverPlugin plugin = new MockBaseResolverPlugin("foo", "bar");
@@ -127,9 +127,9 @@ public class BaseResolverPluginTest {
 
     /**
      * This class implements the minimal level of functionality and is meant only as a means of testing the abstract
-     * {@link BaseResolverPlugin}.
+     * {@link AbstractResolverPlugin}.
      */
-    private static final class MockBaseResolverPlugin extends BaseResolverPlugin<String> {
+    private static final class MockBaseResolverPlugin extends AbstractResolverPlugin<String> {
 
         /** Static value return by {@link #doResolve(AttributeResolutionContext)}. */
         private String resolverValue;

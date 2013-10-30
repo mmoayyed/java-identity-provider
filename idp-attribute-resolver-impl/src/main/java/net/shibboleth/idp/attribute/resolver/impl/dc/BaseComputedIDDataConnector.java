@@ -30,7 +30,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
+import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolvedAttributeDefinition;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * the entity ID of the inbound message issuer, and a provided salt. The ComputedIDDataConnector is a thin shim on this,
  * the StoredIdConnector a slightly thicker shim.
  */
-public abstract class BaseComputedIDDataConnector extends BaseDataConnector {
+public abstract class BaseComputedIDDataConnector extends AbstractDataConnector {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(BaseComputedIDDataConnector.class);

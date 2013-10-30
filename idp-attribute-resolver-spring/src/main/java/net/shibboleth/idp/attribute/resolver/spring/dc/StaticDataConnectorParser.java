@@ -34,7 +34,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /** Bean definition Parser for a {@link StaticDataConnector}. */
-public class StaticDataConnectorParser extends BaseDataConnectorParser {
+public class StaticDataConnectorParser extends AbstractDataConnectorParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "Static");

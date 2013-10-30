@@ -47,7 +47,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  * TODO This is highly likly to change, or even become irrelevant.
  */
-public abstract class BaseSubjectNamePrincipalConnectorDefinition extends BaseResolverPlugin<String> implements
+public abstract class BaseSubjectNamePrincipalConnectorDefinition extends AbstractResolverPlugin<String> implements
         PrincipalConnectorDefinition<AttributeResolutionContext> {
 
     /**

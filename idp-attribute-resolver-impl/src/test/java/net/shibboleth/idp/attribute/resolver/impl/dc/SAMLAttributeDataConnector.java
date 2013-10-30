@@ -32,7 +32,7 @@ import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
+import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -50,7 +50,7 @@ import com.google.common.base.Function;
  * end up being used in mainline operation, which is why the code looks more suitable for being plugged into a webflow
  * than into a test.
  */
-public class SAMLAttributeDataConnector extends BaseDataConnector {
+public class SAMLAttributeDataConnector extends AbstractDataConnector {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(SAMLAttributeDataConnector.class);

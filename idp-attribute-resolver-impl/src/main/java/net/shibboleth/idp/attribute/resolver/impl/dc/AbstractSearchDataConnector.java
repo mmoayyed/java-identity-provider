@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
+import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -37,12 +37,12 @@ import org.slf4j.LoggerFactory;
 import com.google.common.cache.Cache;
 
 /**
- * A {@link BaseDataConnector} containing functionality common to data connectors that retrieve attribute data by
+ * A {@link AbstractDataConnector} containing functionality common to data connectors that retrieve attribute data by
  * searching a data source.
  *
  * @param <T> type of executable search
  */
-public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> extends BaseDataConnector {
+public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> extends AbstractDataConnector {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractSearchDataConnector.class);

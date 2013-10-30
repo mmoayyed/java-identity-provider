@@ -171,7 +171,7 @@ public class AttributeResolutionContext extends BaseContext {
      * @throws ResolutionException thrown if a result of a resolution for the given data connector has already been
      *             recorded
      */
-    public void recordDataConnectorResolution(@Nonnull final BaseDataConnector connector,
+    public void recordDataConnectorResolution(@Nonnull final AbstractDataConnector connector,
             @Nullable final Map<String, IdPAttribute> attributes) throws ResolutionException {
         Constraint.isNotNull(connector, "Resolver data connector can not be null");
 
