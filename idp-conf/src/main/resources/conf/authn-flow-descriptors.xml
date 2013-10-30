@@ -17,13 +17,14 @@
     You can turn on and off individual mechanisms by adding and remove them here. Nothing left out will
     be used, regardless any other files loaded by the Spring container.
     -->
-    
+
     <util:list id="shibboleth.AvailableAuthenticationFlows">
         
         <bean c:id="AuthenticationFlow/IPAddress" class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
+                p:resultSerializer-ref="shibboleth.DefaultAuthenticationResultSerializer"
                 p:passiveAuthenticationSupported="true"
                 p:forcedAuthenticationSupported="false"
-                p:lifetime="PT60S" p:inactivityTimeout="0">
+                p:lifetime="PT60S" p:inactivityTimeout="PT60S">
             <property name="supportedPrincipals">
                 <list>
                     <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
@@ -33,6 +34,7 @@
         </bean>
         
         <bean c:id="AuthenticationFlow/RemoteUser" class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
+                p:resultSerializer-ref="shibboleth.DefaultAuthenticationResultSerializer"
                 p:passiveAuthenticationSupported="false"
                 p:forcedAuthenticationSupported="true"
                 p:lifetime="${idp.authn.defaultLifetime}" p:inactivityTimeout="${idp.authn.defaultTimeout}">
@@ -47,6 +49,7 @@
         </bean>
 
         <bean c:id="AuthenticationFlow/JAASForm" class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
+                p:resultSerializer-ref="shibboleth.DefaultAuthenticationResultSerializer"
                 p:passiveAuthenticationSupported="false"
                 p:forcedAuthenticationSupported="true"
                 p:lifetime="${idp.authn.defaultLifetime}" p:inactivityTimeout="${idp.authn.defaultTimeout}">
@@ -61,6 +64,7 @@
         </bean>
 
         <bean c:id="AuthenticationFlow/JAASBasic" class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
+                p:resultSerializer-ref="shibboleth.DefaultAuthenticationResultSerializer"
                 p:passiveAuthenticationSupported="true"
                 p:forcedAuthenticationSupported="false"
                 p:lifetime="${idp.authn.defaultLifetime}" p:inactivityTimeout="${idp.authn.defaultTimeout}">
@@ -73,7 +77,26 @@
                 </list>
             </property>
         </bean>
-        
+
     </util:list>
+
+    <!--
+    Defining this allows us to specify symbolic text replacements that shrink the size of results
+    saved to client-side storage such as cookies.
+    -->
+    <bean id="shibboleth.DefaultAuthenticationResultSerializer"
+            class="net.shibboleth.idp.authn.DefaultAuthenticationResultSerializer">
+        <property name="symbolics">
+            <map>
+                <entry key="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal" value="1" />
+                <entry key="net.shibboleth.idp.saml.authn.AuthnContextDeclRefPrincipal" value="2" />
+                <entry key="javax.security.auth.kerberos.KerberosPrincipal" value="3" />
+                
+                <entry key="urn:oasis:names:tc:SAML:2.0:ac:classes:Password" value="10" />
+                <entry key="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" value="11" />
+                <entry key="urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocol" value="12" />
+            </map>
+        </property>
+    </bean>
 
 </beans>
