@@ -28,8 +28,8 @@ import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.PrincipalEvalPredicate;
 import net.shibboleth.idp.authn.PrincipalEvalPredicateFactory;
-import net.shibboleth.idp.authn.PrincipalSupportingComponent;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 
@@ -38,7 +38,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicate;
 
 /**
  * An authentication action that selects an authentication flow to invoke, or re-uses an
@@ -232,9 +231,10 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                     authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
                             p.getClass(), requestedPrincipalCtx.getOperator());
             if (factory != null) {
-                Predicate<PrincipalSupportingComponent> predicate = factory.getPredicate(p);
+                PrincipalEvalPredicate predicate = factory.getPredicate(p);
                 for (AuthenticationFlowDescriptor descriptor : potentialFlows.values()) {
                     if (predicate.apply(descriptor)) {
+                        requestedPrincipalCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
                         selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);
                         return;
                     }
@@ -273,9 +273,10 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                         authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
                                 p.getClass(), requestedPrincipalCtx.getOperator());
                 if (factory != null) {
-                    Predicate<PrincipalSupportingComponent> predicate = factory.getPredicate(p);
+                    PrincipalEvalPredicate predicate = factory.getPredicate(p);
                     for (AuthenticationResult result : activeResults.values()) {
                         if (predicate.apply(result)) {
+                            requestedPrincipalCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
                             selectActiveResult(profileRequestContext, authenticationContext, result);
                             return;
                         }
@@ -304,7 +305,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                         authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
                                 p.getClass(), requestedPrincipalCtx.getOperator());
                 if (factory != null) {
-                    Predicate<PrincipalSupportingComponent> predicate = factory.getPredicate(p);
+                    PrincipalEvalPredicate predicate = factory.getPredicate(p);
                     for (AuthenticationFlowDescriptor descriptor : potentialFlows.values()) {
                         if (predicate.apply(descriptor)) {
                             
@@ -316,6 +317,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                             } else {
                                 selectActiveResult(profileRequestContext, authenticationContext, result);
                             }
+                            requestedPrincipalCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
                             return;
                         }
                     }

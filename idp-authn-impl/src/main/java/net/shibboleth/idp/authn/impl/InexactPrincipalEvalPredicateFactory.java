@@ -24,13 +24,14 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import net.shibboleth.idp.authn.PrincipalEvalPredicate;
 import net.shibboleth.idp.authn.PrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.PrincipalSupportingComponent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
@@ -88,15 +89,18 @@ public class InexactPrincipalEvalPredicateFactory implements PrincipalEvalPredic
     }
     
     /** {@inheritDoc} */
-    @Nonnull public Predicate<PrincipalSupportingComponent> getPredicate(@Nonnull final Principal candidate) {
+    @Nonnull public PrincipalEvalPredicate getPredicate(@Nonnull final Principal candidate) {
         return new InexactMatchPredicate(candidate);
     }
     
     /** Implementation of an inexact-matching predicate. */
-    private class InexactMatchPredicate implements Predicate<PrincipalSupportingComponent> {
+    private class InexactMatchPredicate implements PrincipalEvalPredicate {
 
         /** The principal object to compare against. */
         @Nonnull private final Principal principal;
+        
+        /** The principal object that matched. */
+        @Nullable private Principal theMatch;
         
         /**
          * Constructor.
@@ -113,12 +117,18 @@ public class InexactPrincipalEvalPredicateFactory implements PrincipalEvalPredic
             Set<? extends Principal> inputs = input.getSupportedPrincipals(principal.getClass());
             
             for (Principal p : inputs) {
-                if (p != null && matches.contains(p.getName())) {
+                if (matches.contains(p.getName())) {
+                    theMatch = p;
                     return true;
                 }
             }
             
             return false;
+        }
+
+        /** {@inheritDoc} */
+        @Nullable public Principal getMatchingPrincipal() {
+            return theMatch;
         }
     }
     

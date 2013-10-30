@@ -21,16 +21,14 @@ import java.security.Principal;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.base.Predicate;
-
 /**
- * Generates a {@link Predicate} to evaluate a {@link Principal} that represents a requested
- * form of authentication.
+ * Generates a {@link Predicate} to evaluate a {@link PrincipalSupportingComponent}
+ * against a requested form of authentication expressed in terms of a {@link Principal}.
  * 
- * <p>The predicate is constructed around a {@link PrincipalSupportingComponent}
- * to compare in an implementation-specific manner against the candidate principal.
- * A given factory produces predicates that implement a particular set of matching
- * rules. Factories are accessed via a {@link PrincipalEvalPredicateFactoryRegistry}.
+ * <p>The predicate is constructed around a {@link Principal} to compare in an
+ * implementation-specific manner against the candidate component. A given factory
+ * produces predicates that implement a particular set of matching rules.
+ * Factories are accessed via a {@link PrincipalEvalPredicateFactoryRegistry}.</p>
  */
 public interface PrincipalEvalPredicateFactory {
 
@@ -43,5 +41,5 @@ public interface PrincipalEvalPredicateFactory {
      * 
      * @return a {@link Predicate} implementing custom matching rules
      */
-    @Nonnull public Predicate<PrincipalSupportingComponent> getPredicate(@Nonnull final Principal candidate);
+    @Nonnull public PrincipalEvalPredicate getPredicate(@Nonnull final Principal candidate);
 }

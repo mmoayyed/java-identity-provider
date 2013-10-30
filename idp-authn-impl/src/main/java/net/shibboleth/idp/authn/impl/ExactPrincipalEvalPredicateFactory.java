@@ -20,12 +20,12 @@ package net.shibboleth.idp.authn.impl;
 import java.security.Principal;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import net.shibboleth.idp.authn.PrincipalEvalPredicate;
 import net.shibboleth.idp.authn.PrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.PrincipalSupportingComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import com.google.common.base.Predicate;
 
 /**
  * {@link PrincipalEvalPredicateFactory} that implements exact matching of principals,
@@ -34,12 +34,12 @@ import com.google.common.base.Predicate;
 public class ExactPrincipalEvalPredicateFactory implements PrincipalEvalPredicateFactory {
 
     /** {@inheritDoc} */
-    @Nonnull public Predicate<PrincipalSupportingComponent> getPredicate(@Nonnull final Principal candidate) {
+    @Nonnull public PrincipalEvalPredicate getPredicate(@Nonnull final Principal candidate) {
         return new ExactMatchPredicate(candidate);
     }
 
     /** Implementation of an exact-matching predicate. */
-    private class ExactMatchPredicate implements Predicate<PrincipalSupportingComponent> {
+    private class ExactMatchPredicate implements PrincipalEvalPredicate {
 
         /** The principal object to compare against. */
         @Nonnull private final Principal principal;
@@ -56,6 +56,11 @@ public class ExactPrincipalEvalPredicateFactory implements PrincipalEvalPredicat
         /** {@inheritDoc} */
         public boolean apply(PrincipalSupportingComponent input) {
             return input != null && input.getSupportedPrincipals(principal.getClass()).contains(principal);
+        }
+
+        /** {@inheritDoc} */
+        @Nullable public Principal getMatchingPrincipal() {
+            return principal;
         }
     }
     

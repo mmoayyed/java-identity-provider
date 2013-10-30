@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -48,6 +49,9 @@ import com.google.common.collect.ImmutableList;
  * <p>During the authentication process, interactions with {@link PrincipalSupportingComponent}-
  * supporting objects will depend on them satisfying context requirements, via the use of
  * registered {@link PrincipalEvalPredicateFactory} objects.</p>
+ * 
+ * <p>Upon successful authentication the most appropriate "matching" {@link Principal} will be
+ * saved back to this context for use in generating a protocol response.
  */
 public class RequestedPrincipalContext extends BaseContext {
 
@@ -56,6 +60,9 @@ public class RequestedPrincipalContext extends BaseContext {
 
     /** The principals reflecting the request requirements. */
     @Nonnull @NotEmpty @NonnullElements private final List<Principal> requestedPrincipals;
+    
+    /** The principal that satisfied the request, if any. */
+    @Nullable private Principal matchingPrincipal;
     
     /**
      * Constructor.
@@ -90,4 +97,21 @@ public class RequestedPrincipalContext extends BaseContext {
         return ImmutableList.copyOf(requestedPrincipals);
     }
     
+    /**
+     * Get the principal that matched the request's requirements, if any.
+     * 
+     * @return  a matching principal, or null
+     */
+    @Nullable public Principal getMatchingPrincipal() {
+        return matchingPrincipal;
+    }
+    
+    /**
+     * Set the principal that matched the request's requirements, if any.
+     * 
+     * @param principal a matching principal, or null
+     */
+    public void setMatchingPrincipal(@Nullable final Principal principal) {
+       matchingPrincipal = principal;
+    }
 }

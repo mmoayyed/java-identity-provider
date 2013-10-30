@@ -97,25 +97,29 @@ public class SelectAuthenticationFlowTest extends InitializeAuthenticationContex
         action.execute(prc);
         
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.REQUEST_UNSUPPORTED);
+        Assert.assertNull(rpc.getMatchingPrincipal());
     }
 
     @Test public void testRequestNoneActive() throws ProfileException {
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"));
-        authCtx.addSubcontext(new RequestedPrincipalContext("exact", principals), true);
+        RequestedPrincipalContext rpc = new RequestedPrincipalContext("exact", principals);
+        authCtx.addSubcontext(rpc, true);
         authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(principals);
         
         action.execute(prc);
         
         Assert.assertNull(authCtx.getAuthenticationResult());
         Assert.assertEquals(authCtx.getAttemptedFlow(), authCtx.getPotentialFlows().get("test3"));
+        Assert.assertEquals(rpc.getMatchingPrincipal().getName(), "test3");
     }
 
     @Test public void testRequestPickInactive() throws ProfileException {
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
                 new TestPrincipal("test2"));
-        authCtx.addSubcontext(new RequestedPrincipalContext("exact", principals), true);
+        RequestedPrincipalContext rpc = new RequestedPrincipalContext("exact", principals);
+        authCtx.addSubcontext(rpc, true);
         AuthenticationResult active = new AuthenticationResult("test2", new Subject());
         active.getSubject().getPrincipals().add(new TestPrincipal("test2"));
         authCtx.setActiveResults(Arrays.asList(active));
@@ -125,13 +129,15 @@ public class SelectAuthenticationFlowTest extends InitializeAuthenticationContex
         
         Assert.assertNull(authCtx.getAuthenticationResult());
         Assert.assertEquals(authCtx.getAttemptedFlow(), authCtx.getPotentialFlows().get("test3"));
+        Assert.assertEquals(rpc.getMatchingPrincipal().getName(), "test3");
     }
 
     @Test public void testRequestPickActive() throws ProfileException {
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
                 new TestPrincipal("test2"));
-        authCtx.addSubcontext(new RequestedPrincipalContext("exact", principals), true);
+        RequestedPrincipalContext rpc = new RequestedPrincipalContext("exact", principals);
+        authCtx.addSubcontext(rpc, true);
         AuthenticationResult active = new AuthenticationResult("test3", new Subject());
         active.getSubject().getPrincipals().add(new TestPrincipal("test3"));
         authCtx.setActiveResults(Arrays.asList(active));
@@ -141,13 +147,15 @@ public class SelectAuthenticationFlowTest extends InitializeAuthenticationContex
         
         ActionTestingSupport.assertProceedEvent(prc);
         Assert.assertEquals(active, authCtx.getAuthenticationResult());
+        Assert.assertEquals(rpc.getMatchingPrincipal().getName(), "test3");
     }
 
     @Test public void testRequestFavorSSO() throws ProfileException {
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
                 new TestPrincipal("test2"));
-        authCtx.addSubcontext(new RequestedPrincipalContext("exact", principals), true);
+        RequestedPrincipalContext rpc = new RequestedPrincipalContext("exact", principals);
+        authCtx.addSubcontext(rpc, true);
         AuthenticationResult active = new AuthenticationResult("test2", new Subject());
         active.getSubject().getPrincipals().add(new TestPrincipal("test2"));
         authCtx.setActiveResults(Arrays.asList(active));
@@ -158,5 +166,6 @@ public class SelectAuthenticationFlowTest extends InitializeAuthenticationContex
         
         ActionTestingSupport.assertProceedEvent(prc);
         Assert.assertEquals(active, authCtx.getAuthenticationResult());
+        Assert.assertEquals(rpc.getMatchingPrincipal().getName(), "test2");
     }
 }

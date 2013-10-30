@@ -263,9 +263,11 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
                         authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
                                 p.getClass(), rpCtx.getOperator());
                 if (factory != null) {
-                    if (factory.getPredicate(p).apply(this)) {
+                    PrincipalEvalPredicate predicate = factory.getPredicate(p);
+                    if (predicate.apply(this)) {
                         log.debug("{} Compatible with principal type '{}' and operator '{}'", getLogPrefix(),
                                 p.getClass(), rpCtx.getOperator());
+                        rpCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
                         return true;
                     } else {
                         log.debug("{} Not compatible with principal type '{}' and operator '{}'", getLogPrefix(),
