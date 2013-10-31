@@ -26,7 +26,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.MockAttributeDefinition;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 
@@ -51,7 +51,7 @@ public class ResolveAttributesTest {
         IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.getValues().add(new StringAttributeValue("value1"));
 
-        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(new MockAttributeDefinition("ad1", attribute));
 
         AttributeResolver resolver = new AttributeResolver("resolver", definitions, null);
@@ -73,7 +73,7 @@ public class ResolveAttributesTest {
         IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.getValues().add(new StringAttributeValue("value1"));
 
-        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(new MockAttributeDefinition("ad1", attribute));
 
         AttributeResolver resolver = new AttributeResolver("resolver", definitions, null);
@@ -108,7 +108,7 @@ public class ResolveAttributesTest {
         IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.getValues().add(new StringAttributeValue("value1"));
 
-        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(new MockAttributeDefinition("ad1", attribute));
 
         AttributeResolver resolver = new AttributeResolver("resolver", definitions, null);
@@ -168,7 +168,7 @@ public class ResolveAttributesTest {
         IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.getValues().add(new StringAttributeValue("value1"));
 
-        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(new MockAttributeDefinition("ad1", new ResolutionException()));
 
         AttributeResolver resolver = new AttributeResolver("resolver", definitions, null);
