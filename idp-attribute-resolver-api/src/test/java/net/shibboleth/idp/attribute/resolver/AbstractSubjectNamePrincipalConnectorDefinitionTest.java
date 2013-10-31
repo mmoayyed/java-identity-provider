@@ -35,9 +35,9 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * test for {@link BaseSubjectNamePrincipalConnectorDefinition}
+ * test for {@link SubjectNamePrincipalConnectorDefinition}
  */
-public class BaseSubjectNamePrincipalConnectorDefinitionTest extends OpenSAMLInitBaseTestCase  {
+public class AbstractSubjectNamePrincipalConnectorDefinitionTest extends OpenSAMLInitBaseTestCase  {
 
     private final static String ID =  "SubjectNamePrincipalConnector";
     
@@ -51,7 +51,7 @@ public class BaseSubjectNamePrincipalConnectorDefinitionTest extends OpenSAMLIni
 
     @Test public void setterGetters() throws ComponentInitializationException {
         
-        BaseSubjectNamePrincipalConnectorDefinition defn = new MockSubjectNamePrincipalConnector();
+        AbstractSubjectNamePrincipalConnectorDefinition defn = new MockSubjectNamePrincipalConnector();
         
         defn.setId(ID);
         try {
@@ -94,7 +94,7 @@ public class BaseSubjectNamePrincipalConnectorDefinitionTest extends OpenSAMLIni
         context.getSubcontext(SamlPeerEntityContext.class, true).setEntityId(ISSUER);
         context.getSubcontext(SamlSubjectNameIdentifierContext.class, true).setSubjectNameIdentifier(nameId);
         
-        final BaseSubjectNamePrincipalConnectorDefinition defn = new MockSubjectNamePrincipalConnector();
+        final AbstractSubjectNamePrincipalConnectorDefinition defn = new MockSubjectNamePrincipalConnector();
         defn.setContextFinderStrategy(new SamlContextFinder(context)); 
         defn.setId(ID);
         defn.setFormat(FORMAT);
@@ -114,7 +114,7 @@ public class BaseSubjectNamePrincipalConnectorDefinitionTest extends OpenSAMLIni
         context.getSubcontext(SamlPeerEntityContext.class, true).setEntityId(ISSUER);
         context.getSubcontext(SamlSubjectNameIdentifierContext.class, true).setSubjectNameIdentifier(nameId);
         
-        final BaseSubjectNamePrincipalConnectorDefinition defn = new MockSubjectNamePrincipalConnector();
+        final AbstractSubjectNamePrincipalConnectorDefinition defn = new MockSubjectNamePrincipalConnector();
         defn.setContextFinderStrategy(new SamlContextFinder(context)); 
         defn.setId(ID);
         defn.setFormat(FORMAT);
@@ -131,7 +131,7 @@ public class BaseSubjectNamePrincipalConnectorDefinitionTest extends OpenSAMLIni
         context.getSubcontext(SamlPeerEntityContext.class, true).setEntityId(ISSUER);
         context.getSubcontext(SamlSubjectNameIdentifierContext.class, true).setSubjectNameIdentifier(null);
         
-        BaseSubjectNamePrincipalConnectorDefinition defn = new MockSubjectNamePrincipalConnector();
+        AbstractSubjectNamePrincipalConnectorDefinition defn = new MockSubjectNamePrincipalConnector();
         defn.setContextFinderStrategy(new SamlContextFinder(context)); 
         defn.setId(ID);
         defn.setFormat(FORMAT);

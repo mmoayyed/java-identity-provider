@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 /**
  * A principal connector which just pulls the value from the 
  */
-public class MockSubjectNamePrincipalConnector extends BaseSubjectNamePrincipalConnectorDefinition {
+public class MockSubjectNamePrincipalConnector extends AbstractSubjectNamePrincipalConnectorDefinition {
 
     /** {@inheritDoc} */
     @Nonnull protected String doResolve(AttributeResolutionContext resolutionContext)

@@ -48,7 +48,7 @@ import com.google.common.collect.ImmutableSet;
  * TODO This is highly likely to change, or even become irrelevant.
  */
 public abstract class AbstractSubjectNamePrincipalConnectorDefinition extends AbstractResolverPlugin<String> implements
-        PrincipalConnectorDefinition<AttributeResolutionContext> {
+        SubjectNamePrincipalConnectorDefinition {
 
     /**
      * The nameID format we are interested in.
