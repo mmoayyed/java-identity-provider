@@ -30,7 +30,7 @@ import net.shibboleth.idp.attribute.mapper.AbstractSAMLAttributesMapper;
 import net.shibboleth.idp.attribute.mapper.AttributeMapper;
 import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperFactory;
 
 import com.google.common.collect.HashMultimap;
@@ -66,7 +66,7 @@ public class RequestedAttributesMapper extends
 
         theMappers = HashMultimap.create();
 
-        for (BaseAttributeDefinition attributeDef : resolver.getAttributeDefinitions().values()) {
+        for (AttributeDefinition attributeDef : resolver.getAttributeDefinitions().values()) {
             for (AttributeEncoder encode : attributeDef.getAttributeEncoders()) {
                 if (encode instanceof AttributeMapperFactory) {
                     // There is an appropriate reverse mappers
