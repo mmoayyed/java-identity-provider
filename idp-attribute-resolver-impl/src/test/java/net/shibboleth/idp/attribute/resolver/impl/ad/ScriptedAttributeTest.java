@@ -33,7 +33,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
@@ -229,7 +229,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         scripted.initialize();
 
         // And resolve
-        final Set<BaseAttributeDefinition> attrDefinitions = new LazySet<BaseAttributeDefinition>();
+        final Set<AttributeDefinition> attrDefinitions = new LazySet<AttributeDefinition>();
         attrDefinitions.add(scripted);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
 
@@ -264,9 +264,9 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         scripted.initialize();
 
         // And resolve
-        final Set<BaseAttributeDefinition> attrDefinitions = new HashSet<BaseAttributeDefinition>(3);
+        final Set<AttributeDefinition> attrDefinitions = new HashSet<AttributeDefinition>(3);
         attrDefinitions.add(scripted);
-        BaseAttributeDefinition nonString = TestSources.nonStringAttributeDefiniton(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR); 
+        AttributeDefinition nonString = TestSources.nonStringAttributeDefiniton(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR); 
         attrDefinitions.add(nonString);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
 
@@ -309,7 +309,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         scripted.initialize();
 
         // And resolve
-        final Set<BaseAttributeDefinition> attrDefinitions = new LazySet<BaseAttributeDefinition>();
+        final Set<AttributeDefinition> attrDefinitions = new LazySet<AttributeDefinition>();
         attrDefinitions.add(scripted);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
 
@@ -352,7 +352,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         scripted.setDependencies(ds);
 
         final Set<DataConnector> dataDefinitions = Collections.singleton((DataConnector) connector);
-        final Set<BaseAttributeDefinition> attrDefinitions = Collections.singleton((BaseAttributeDefinition) scripted);
+        final Set<AttributeDefinition> attrDefinitions = Collections.singleton((AttributeDefinition) scripted);
 
         final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
         resolver.initialize();

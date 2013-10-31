@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.service.AbstractSpringService;
@@ -92,7 +92,7 @@ public class AttributeResolverService extends AbstractSpringService {
         GenericApplicationContext appCtx = (GenericApplicationContext) context.get(APP_CTX_CTX_KEY);
 
         // attribute definitions
-        Map<String, BaseAttributeDefinition> adMap = appCtx.getBeansOfType(BaseAttributeDefinition.class);
+        Map<String, AttributeDefinition> adMap = appCtx.getBeansOfType(AttributeDefinition.class);
         log.debug("Loading {} attribute definitions", adMap.size());
 
         // data connectors

@@ -26,7 +26,7 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.impl.ad.SAML2NameIDAttributeDefinition;
@@ -133,11 +133,11 @@ public final class TestSources {
      * @return the attribute definition
      * @throws ComponentInitializationException if we cannot initialized (unlikely)
      */
-    public static BaseAttributeDefinition populatedStaticAttribute() throws ComponentInitializationException {
+    public static AttributeDefinition populatedStaticAttribute() throws ComponentInitializationException {
         return populatedStaticAttribute(STATIC_ATTRIBUTE_NAME, DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 2);
     }
 
-    public static BaseAttributeDefinition populatedStaticAttribute(String definitionName, String attributeName, int attributeCount) throws ComponentInitializationException {
+    public static AttributeDefinition populatedStaticAttribute(String definitionName, String attributeName, int attributeCount) throws ComponentInitializationException {
         IdPAttribute attr;
         Set<AttributeValue<?>> valuesSet;
 
@@ -162,7 +162,7 @@ public final class TestSources {
         return definition;
     }
     
-    public static BaseAttributeDefinition nonStringAttributeDefiniton(String name) {
+    public static AttributeDefinition nonStringAttributeDefiniton(String name) {
         final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();
         defn.setId(name);
 

@@ -25,9 +25,9 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * The identifier itself is the record key, and the value combines the principal name
  * with the identifier of the recipient.
  */
-public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
+public class TransientIdAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Context label for storage of IDs. */
     public static final String CONTEXT = "TransientId";

@@ -25,12 +25,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
+import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -42,11 +42,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An {@link BaseAttributeDefinition} that produces its attribute values by taking the first group match of a regular
- * expression evaluating against the values of this definition's dependencies.
+ * An {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition} that produces its attribute values by taking
+ * the first group match of a regular expression evaluating against the values of this definition's dependencies.
  */
 @ThreadSafe
-public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
+public class RegexSplitAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(RegexSplitAttributeDefinition.class);
@@ -91,9 +91,8 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
         for (AttributeValue dependencyValue : dependencyValues) {
             if (!(dependencyValue instanceof StringAttributeValue)) {
                 throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
-                        + "This attribute definition only operates on attribute values of type "
-                        + StringAttributeValue.class.getName() + "; was given " 
-                        + dependencyValue.getClass().getName()));
+                       + "This attribute definition only operates on attribute values of type "
+                       + StringAttributeValue.class.getName() + "; was given " + dependencyValue.getClass().getName()));
             }
 
             log.debug("{} applying regexp '{}' to input value '{}'", new Object[] {getLogPrefix(), regexp.pattern(),

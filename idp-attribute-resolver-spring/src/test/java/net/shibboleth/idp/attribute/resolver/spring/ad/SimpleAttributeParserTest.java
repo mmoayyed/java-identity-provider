@@ -21,7 +21,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.idp.attribute.resolver.impl.ad.SimpleAttributeDefinition;
@@ -40,7 +40,7 @@ import org.testng.annotations.Test;
 public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest {
 
     @Test public void simple() {
-        BaseAttributeDefinition attrDef = getAttributeDefn("simpleAttributeUnpopulated.xml", SimpleAttributeDefinition.class);
+        AttributeDefinition attrDef = getAttributeDefn("simpleAttributeUnpopulated.xml", SimpleAttributeDefinition.class);
         
         Assert.assertEquals(attrDef.getId(), "simpleUnpopulated");
         Assert.assertFalse(attrDef.isDependencyOnly(), "isDependencyOnly");
@@ -51,7 +51,7 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
 }
     
     @Test public void populated() throws ComponentInitializationException {
-        BaseAttributeDefinition attrDef = getAttributeDefn("simpleAttributePopulated.xml", SimpleAttributeDefinition.class, true);
+        AttributeDefinition attrDef = getAttributeDefn("simpleAttributePopulated.xml", SimpleAttributeDefinition.class, true);
         
         attrDef.initialize();
         
@@ -83,7 +83,7 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
     }
 
     @Test public void populated2() throws ComponentInitializationException {
-        BaseAttributeDefinition attrDef = getAttributeDefn("simpleAttributePopulated2.xml", SimpleAttributeDefinition.class);
+        AttributeDefinition attrDef = getAttributeDefn("simpleAttributePopulated2.xml", SimpleAttributeDefinition.class);
         
         attrDef.initialize();
         

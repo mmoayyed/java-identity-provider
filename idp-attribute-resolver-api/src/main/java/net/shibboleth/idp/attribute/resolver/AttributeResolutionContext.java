@@ -140,7 +140,7 @@ public class AttributeResolutionContext extends BaseContext {
      * @throws ResolutionException thrown if a result of a resolution for the given attribute definition have already
      *             been recorded
      */
-    public void recordAttributeDefinitionResolution(@Nonnull final BaseAttributeDefinition definition,
+    public void recordAttributeDefinitionResolution(@Nonnull final AttributeDefinition definition,
             @Nullable final IdPAttribute attribute) throws ResolutionException {
         Constraint.isNotNull(definition, "Resolver attribute definition can not be null");
 

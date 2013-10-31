@@ -26,7 +26,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
@@ -77,7 +77,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         defn.initialize();
 
         // And resolve
-        final Set<BaseAttributeDefinition> am = new LazySet<BaseAttributeDefinition>();
+        final Set<AttributeDefinition> am = new LazySet<AttributeDefinition>();
         am.add(defn);
         am.add(TestSources.populatedStaticAttribute());
 
@@ -134,7 +134,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
 
     @Test public void badValue() throws ResolutionException, ComponentInitializationException {
 
-        final BaseAttributeDefinition defn = TestSources.nonStringAttributeDefiniton(TEST_ATTRIBUTE_NAME);
+        final AttributeDefinition defn = TestSources.nonStringAttributeDefiniton(TEST_ATTRIBUTE_NAME);
 
         final SAML2NameIDAttributeDefinition defn2 = new SAML2NameIDAttributeDefinition();
         defn2.setId(SECOND_ATTRIBUTE_NAME);
@@ -145,7 +145,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         defn2.setDependencies(dependencySet);
 
         // And resolve
-        Set<BaseAttributeDefinition> am = new LazySet<BaseAttributeDefinition>();
+        Set<AttributeDefinition> am = new LazySet<AttributeDefinition>();
         am.add(defn);
         am.add(TestSources.populatedStaticAttribute());
         am.add(defn2);
@@ -180,7 +180,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         defn.initialize();
 
         // And resolve
-        final Set<BaseAttributeDefinition> am = new LazySet<BaseAttributeDefinition>();
+        final Set<AttributeDefinition> am = new LazySet<AttributeDefinition>();
         am.add(defn);
         am.add(TestSources.populatedStaticAttribute(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));

@@ -50,14 +50,15 @@ import com.google.common.collect.ImmutableSet;
 
 /** Base class for attribute definition resolver plugins. */
 @ThreadSafe
-public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin<IdPAttribute> {
+public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin<IdPAttribute> implements
+        AttributeDefinition {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractAttributeDefinition.class);
 
     /** Whether this attribute definition is only a dependency and thus its values should never be released. */
     private boolean dependencyOnly;
-    
+
     /** The sourceAttributeID attributeName. */
     private String sourceAttributeID;
 
@@ -110,8 +111,8 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
      * 
      * @param descriptions localized human readable descriptions of attribute
      */
-    public synchronized void setDisplayDescriptions(@Nullable @NullableElements final 
-            Map<Locale, String> descriptions) {
+    public synchronized void setDisplayDescriptions(@Nullable @NullableElements 
+            final Map<Locale, String> descriptions) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -181,15 +182,19 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
         CollectionSupport.addIf(checkedEncoders, attributeEncoders, Predicates.notNull());
         encoders = ImmutableSet.copyOf(checkedEncoders);
     }
-    
-    /** Gets the source attribute id.
+
+    /**
+     * Gets the source attribute id.
+     * 
      * @return the source attribute id
      */
     public String getSourceAttributeId() {
         return sourceAttributeID;
     }
 
-    /** Sets the source attribute id.
+    /**
+     * Sets the source attribute id.
+     * 
      * @param attributeId the source attribute id
      */
     public void setSourceAttributeId(String attributeId) {
@@ -212,8 +217,8 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
-        
-        // Set up the dependencies first.  Then the initialize in the parent
+
+        // Set up the dependencies first. Then the initialize in the parent
         // will correctly rehash the dependencies.
         if (null != sourceAttributeID) {
             for (ResolverPluginDependency depends : getDependencies()) {
@@ -221,10 +226,10 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
             }
         }
         super.doInitialize();
-        
-        // The Id is now definitive.  Just in case it was used prior to that, reset the getPrefixCache
+
+        // The Id is now definitive. Just in case it was used prior to that, reset the getPrefixCache
         logPrefix = null;
-        
+
         for (AttributeEncoder encoder : encoders) {
             ComponentSupport.initialize(encoder);
         }
@@ -243,9 +248,8 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
      * {@inheritDoc}
      * 
      * This method delegates the actual resolution of the attribute's values to the
-     * {@link #doAttributeDefinitionResolve(AttributeResolutionContext)} method. Afterwards, if
-     * null was not returned, this method will attach the registered display names, descriptions,
-     * and encoders to the resultant attribute.
+     * {@link #doAttributeDefinitionResolve(AttributeResolutionContext)} method. Afterwards, if null was not returned,
+     * this method will attach the registered display names, descriptions, and encoders to the resultant attribute.
      */
     @Nullable protected IdPAttribute doResolve(@Nonnull final AttributeResolutionContext resolutionContext)
             throws ResolutionException {
@@ -264,16 +268,16 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
                     resolvedAttribute.getValues());
         }
 
-        log.trace("{} associating the following display descriptions"
-                + " with the resolved attribute: {}", getLogPrefix(), getDisplayDescriptions());
+        log.trace("{} associating the following display descriptions" + " with the resolved attribute: {}",
+                getLogPrefix(), getDisplayDescriptions());
         resolvedAttribute.setDisplayDescriptions(getDisplayDescriptions());
 
-        log.trace("{} associating the following display names with the resolved attribute: {}",
-                getLogPrefix(), getDisplayNames());
+        log.trace("{} associating the following display names with the resolved attribute: {}", getLogPrefix(),
+                getDisplayNames());
         resolvedAttribute.setDisplayNames(getDisplayNames());
 
-        log.trace("{} associating the following encoders with the resolved attribute: {}",
-                getLogPrefix(), getAttributeEncoders());
+        log.trace("{} associating the following encoders with the resolved attribute: {}", getLogPrefix(),
+                getAttributeEncoders());
         resolvedAttribute.setEncoders(getAttributeEncoders());
 
         return resolvedAttribute;
@@ -292,7 +296,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
      */
     @Nullable protected abstract IdPAttribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException;
-    
+
     /**
      * return a string which is to be prepended to all log messages.
      * 

@@ -28,12 +28,12 @@ import javax.script.ScriptContext;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -46,7 +46,8 @@ import org.slf4j.LoggerFactory;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfileRequestContext;
 
 /**
- * An {@link BaseAttributeDefinition} that executes a script in order to populate the values of the generated attribute.
+ * An {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition} that executes a script in order to populate
+ * the values of the generated attribute.
  * 
  * <p>
  * The evaluated script has access to the following information:
@@ -66,7 +67,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfi
  * </p>
  */
 @ThreadSafe
-public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
+public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ScriptedAttributeDefinition.class);

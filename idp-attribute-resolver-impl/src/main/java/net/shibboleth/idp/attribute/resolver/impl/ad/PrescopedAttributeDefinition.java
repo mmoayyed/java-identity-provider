@@ -27,8 +27,8 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
+import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * it at a delimiter. The first atom becomes the attribute value and the second value becomes the scope.
  */
 @ThreadSafe
-public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
+public class PrescopedAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(PrescopedAttributeDefinition.class);

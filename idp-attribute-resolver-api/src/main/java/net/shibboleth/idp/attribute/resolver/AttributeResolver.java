@@ -62,7 +62,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
     private final Logger log = LoggerFactory.getLogger(AttributeResolver.class);
 
     /** Attribute definitions defined for this resolver. */
-    private final Map<String, BaseAttributeDefinition> attributeDefinitions;
+    private final Map<String, AttributeDefinition> attributeDefinitions;
 
     /** Data connectors defined for this resolver. */
     private final Map<String, DataConnector> dataConnectors;
@@ -78,16 +78,16 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
      * @param connectors data connectors loaded in to this resolver
      */
     public AttributeResolver(@Nonnull @NotEmpty String resolverId,
-            @Nullable @NullableElements Collection<BaseAttributeDefinition> definitions,
+            @Nullable @NullableElements Collection<AttributeDefinition> definitions,
             @Nullable @NullableElements Collection<DataConnector> connectors) {
         setId(resolverId);
 
         logPrefix = new StringBuilder("Attribute Resolver '").append(getId()).append("':").toString();
 
-        Map<String, BaseAttributeDefinition> checkedDefinitions;
+        Map<String, AttributeDefinition> checkedDefinitions;
         if (definitions != null) {
-            checkedDefinitions = new HashMap<String, BaseAttributeDefinition>(definitions.size());
-            for (BaseAttributeDefinition definition : definitions) {
+            checkedDefinitions = new HashMap<String, AttributeDefinition>(definitions.size());
+            for (AttributeDefinition definition : definitions) {
                 if (definition != null) {
                     if (checkedDefinitions.containsKey(definition.getId())) {
                         throw new IllegalArgumentException(logPrefix + " duplicate Attribute Definition with id "
@@ -124,7 +124,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
      * 
      * @return attribute definitions loaded in to this resolver
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, BaseAttributeDefinition> getAttributeDefinitions() {
+    @Nonnull @NonnullElements @Unmodifiable public Map<String, AttributeDefinition> getAttributeDefinitions() {
         return attributeDefinitions;
     }
 
@@ -157,7 +157,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         }
 
         final LazyList<String> invalidAttributeDefinitions = new LazyList<String>();
-        for (BaseAttributeDefinition plugin : attributeDefinitions.values()) {
+        for (AttributeDefinition plugin : attributeDefinitions.values()) {
             log.debug("{} checking if attribute definition {} is valid", logPrefix, plugin.getId());
             try {
                 plugin.validate();
@@ -255,7 +255,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
     }
 
     /**
-     * Resolve the {@link BaseAttributeDefinition} which has the specified ID.
+     * Resolve the {@link AttributeDefinition} which has the specified ID.
      * 
      * The results of the resolution are stored in the given {@link AttributeResolutionContext}.
      * 
@@ -276,7 +276,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
             return;
         }
 
-        final BaseAttributeDefinition definition = attributeDefinitions.get(attributeId);
+        final AttributeDefinition definition = attributeDefinitions.get(attributeId);
         if (definition == null) {
             log.debug("{} no attribute definition was registered with ID {}, nothing to do", logPrefix, attributeId);
             return;
@@ -390,7 +390,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
 
     /**
      * Finalizes the set of resolved attributes and places them in the {@link AttributeResolutionContext}. The result of
-     * each {@link BaseAttributeDefinition} resolution is inspected. If the result is not null, a dependency-only
+     * each {@link AttributeDefinition} resolution is inspected. If the result is not null, a dependency-only
      * attribute, or an attribute that contains no values then it becomes part of the final set of resolved attributes.
      * 
      * @param resolutionContext current resolution context
@@ -492,7 +492,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         for (DataConnector plugin : dataConnectors.values()) {
             ComponentSupport.initialize(plugin);
         }
-        for (BaseAttributeDefinition plugin : attributeDefinitions.values()) {
+        for (AttributeDefinition plugin : attributeDefinitions.values()) {
             ComponentSupport.initialize(plugin);
         }
 
@@ -501,7 +501,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
             checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);
         }
 
-        for (BaseAttributeDefinition plugin : attributeDefinitions.values()) {
+        for (AttributeDefinition plugin : attributeDefinitions.values()) {
             log.debug("{} checking if attribute definition {} has a circular dependency", logPrefix, plugin.getId());
             checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);
         }

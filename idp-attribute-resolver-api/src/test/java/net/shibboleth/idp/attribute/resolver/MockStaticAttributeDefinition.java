@@ -22,9 +22,6 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
@@ -34,7 +31,7 @@ import org.slf4j.LoggerFactory;
 /** An attribute definition that simply returns a static value.   Used for testing only.  This is 
  * a cut and paste job from StaticAttributeDefinition in idp-attribute-resolver-impl */
 @ThreadSafe
-public class MockStaticAttributeDefinition extends BaseAttributeDefinition {
+public class MockStaticAttributeDefinition extends AbstractAttributeDefinition {
     
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(MockStaticAttributeDefinition.class);

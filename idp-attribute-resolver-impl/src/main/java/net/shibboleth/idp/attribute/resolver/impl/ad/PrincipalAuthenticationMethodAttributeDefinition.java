@@ -24,9 +24,9 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * An attribute definition which returns an attribute with a single value - the AuthenticationMethod.
  */
-public class PrincipalAuthenticationMethodAttributeDefinition extends BaseAttributeDefinition {
+public class PrincipalAuthenticationMethodAttributeDefinition extends AbstractAttributeDefinition    {
 
     /** Log. */
     private final Logger log = LoggerFactory.getLogger(PrincipalAuthenticationMethodAttributeDefinition.class);

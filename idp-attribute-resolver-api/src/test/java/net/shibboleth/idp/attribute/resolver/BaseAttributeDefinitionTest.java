@@ -33,7 +33,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for {@link BaseAttributeDefinition}. This test does not test any methods inherited from
+ * Unit test for {@link AttributeDefinition}. This test does not test any methods inherited from
  * {@link ResolverPlugin}, those are covered in {@link AbstractResolverPluginTest}.
  */
 public class BaseAttributeDefinitionTest {
@@ -41,7 +41,7 @@ public class BaseAttributeDefinitionTest {
     /** Tests the state of a newly instantiated object. */
     @Test
     public void instantiation() {
-        MockBaseAttributeDefinition definition = new MockBaseAttributeDefinition("foo", null);
+        MockAttributeDefinition definition = new MockAttributeDefinition("foo", null);
 
         Assert.assertEquals(definition.getId(), "foo");
         Assert.assertFalse(definition.isDependencyOnly());
@@ -56,7 +56,7 @@ public class BaseAttributeDefinitionTest {
     /** Tests setting and retrieving the dependency only option. */
     @Test
     public void dependencyOnly() {
-        MockBaseAttributeDefinition definition = new MockBaseAttributeDefinition("foo", null);
+        MockAttributeDefinition definition = new MockAttributeDefinition("foo", null);
         Assert.assertFalse(definition.isDependencyOnly());
 
         definition.setDependencyOnly(true);
@@ -75,7 +75,7 @@ public class BaseAttributeDefinitionTest {
     /** Tests setting and retrieving encoders. */
     @Test
     public void encoders() {
-        MockBaseAttributeDefinition definition = new MockBaseAttributeDefinition("foo", null);
+        MockAttributeDefinition definition = new MockAttributeDefinition("foo", null);
 
         MockAttributeEncoder enc1 = new MockAttributeEncoder(null, null);
         MockAttributeEncoder enc2 = new MockAttributeEncoder(null, null);
@@ -122,7 +122,7 @@ public class BaseAttributeDefinitionTest {
         Locale en = new Locale("en");
         Locale enbr = new Locale("en", "br");
 
-        MockBaseAttributeDefinition definition = new MockBaseAttributeDefinition("foo", null);
+        MockAttributeDefinition definition = new MockAttributeDefinition("foo", null);
         
         Map<Locale, String> descriptions = new HashMap<Locale, String>();
         descriptions.put(en, "english");
@@ -148,7 +148,7 @@ public class BaseAttributeDefinitionTest {
         Locale en = new Locale("en");
         Locale enbr = new Locale("en", "br");
 
-        MockBaseAttributeDefinition definition = new MockBaseAttributeDefinition("foo", null);
+        MockAttributeDefinition definition = new MockAttributeDefinition("foo", null);
 
         Map<Locale, String> names = new HashMap<Locale, String>();
         names.put(en, "english");
@@ -186,7 +186,7 @@ public class BaseAttributeDefinitionTest {
     
     @Test
     public void dependencies() throws ComponentInitializationException {
-        MockBaseAttributeDefinition definition = new MockBaseAttributeDefinition("foo", null);
+        MockAttributeDefinition definition = new MockAttributeDefinition("foo", null);
         
         definition.setDependencies(Collections.singleton(new ResolverPluginDependency("plugin")));
         definition.initialize();
@@ -197,7 +197,7 @@ public class BaseAttributeDefinitionTest {
         Assert.assertNull(definition.getSourceAttributeId());
         Assert.assertNull(depends.iterator().next().getDependencyAttributeId());
         
-        definition = new MockBaseAttributeDefinition("foo", null);
+        definition = new MockAttributeDefinition("foo", null);
         definition.setSourceAttributeId("source");
         definition.setDependencies(Collections.singleton(new ResolverPluginDependency("plugin")));
         definition.initialize();
@@ -212,7 +212,7 @@ public class BaseAttributeDefinitionTest {
     
     @Test public void initDestroyValidate() throws ComponentInitializationException, ComponentValidationException {
         MockAttributeEncoder encoder = new MockAttributeEncoder("foo", "baz");
-        MockBaseAttributeDefinition definition = new MockBaseAttributeDefinition("foo", (IdPAttribute) null);
+        MockAttributeDefinition definition = new MockAttributeDefinition("foo", (IdPAttribute) null);
         
         Set<AttributeEncoder<?>> encoders = new HashSet<AttributeEncoder<?>>(1);
         encoders.add(encoder);
@@ -242,9 +242,9 @@ public class BaseAttributeDefinitionTest {
 
     /**
      * This class implements the minimal level of functionality and is meant only as a means of testing the abstract
-     * {@link BaseAttributeDefinition}.
+     * {@link AttributeDefinition}.
      */
-    private static final class MockBaseAttributeDefinition extends BaseAttributeDefinition {
+    private static final class MockAttributeDefinition extends AbstractAttributeDefinition {
 
         /** Static attribute value returned from resolution. */
         private IdPAttribute staticAttribute;
@@ -255,7 +255,7 @@ public class BaseAttributeDefinitionTest {
          * @param id id of the attribute definition, never null or empty
          * @param attribute value returned from the resolution of this attribute, may be null
          */
-        public MockBaseAttributeDefinition(String id, IdPAttribute attribute) {
+        public MockAttributeDefinition(String id, IdPAttribute attribute) {
             setId(id);
             staticAttribute = attribute;
         }

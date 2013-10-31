@@ -24,7 +24,7 @@ import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 // TODO incomplete
 /**
- * Namespace handler for {@link net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition.BaseAttributeDefinition}s.
+ * Namespace handler for {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition.BaseAttributeDefinition}s.
  */
 public class AttributeDefinitionNamespaceHandler extends BaseSpringNamespaceHandler {
 

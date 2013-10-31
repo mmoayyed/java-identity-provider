@@ -25,7 +25,7 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
@@ -85,7 +85,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         simple.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency(TEST_CONNECTOR_NAME,
                 TEST_ATTRIBUTE_NAME)));
 
-        Set<BaseAttributeDefinition> set = new HashSet<BaseAttributeDefinition>(2);
+        Set<AttributeDefinition> set = new HashSet<AttributeDefinition>(2);
         set.add(simple);
         set.add(TestSources.populatedStaticAttribute(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));
@@ -148,7 +148,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         simple.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency(TEST_CONNECTOR_NAME,
                 TEST_CONNECTOR_NAME)));
 
-        Set<BaseAttributeDefinition> set = new HashSet<BaseAttributeDefinition>(2);
+        Set<AttributeDefinition> set = new HashSet<AttributeDefinition>(2);
         set.add(simple);
         set.add(TestSources.populatedStaticAttribute(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, values));
@@ -173,7 +173,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         simple.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency(TEST_CONNECTOR_NAME,
                 TEST_CONNECTOR_NAME)));
 
-        Set<BaseAttributeDefinition> set = new HashSet<BaseAttributeDefinition>(3);
+        Set<AttributeDefinition> set = new HashSet<AttributeDefinition>(3);
         set.add(simple);
         set.add(TestSources.populatedStaticAttribute(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));

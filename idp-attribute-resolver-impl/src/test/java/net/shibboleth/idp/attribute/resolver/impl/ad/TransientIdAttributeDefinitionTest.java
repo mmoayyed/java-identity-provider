@@ -24,7 +24,7 @@ import java.util.Set;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeValue;
-import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -45,7 +45,7 @@ public class TransientIdAttributeDefinitionTest {
 
     private static final int TEST_ID_SIZE = 32;
 
-    private void testInitializeFail(BaseAttributeDefinition simple, String message) {
+    private void testInitializeFail(AttributeDefinition simple, String message) {
         try {
             simple.initialize();
             Assert.fail(message);

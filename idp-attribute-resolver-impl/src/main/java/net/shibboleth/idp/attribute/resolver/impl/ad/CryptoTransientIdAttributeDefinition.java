@@ -25,9 +25,9 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * An attribute definition that generates integrity protected, encrypted identifiers useful for stateless transient
  * subject IDs.
  */
-public class CryptoTransientIdAttributeDefinition extends BaseAttributeDefinition {
+public class CryptoTransientIdAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Class logger. */
     private Logger log = LoggerFactory.getLogger(CryptoTransientIdAttributeDefinition.class);

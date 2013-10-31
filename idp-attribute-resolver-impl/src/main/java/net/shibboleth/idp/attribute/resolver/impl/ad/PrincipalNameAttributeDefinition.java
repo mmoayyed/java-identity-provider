@@ -23,16 +23,16 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * An attribute definition which returns an attribute with a single value - the principal.
  */
-public class PrincipalNameAttributeDefinition extends BaseAttributeDefinition {
+public class PrincipalNameAttributeDefinition extends AbstractAttributeDefinition {
 
     /** {@inheritDoc} */
     @Nonnull protected IdPAttribute doAttributeDefinitionResolve(@Nonnull AttributeResolutionContext resolutionContext)

@@ -21,19 +21,19 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * A {@link BaseAttributeDefinition} that creates an attribute whose values are the values the values of all its
- * dependencies.
+ * A {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition} that creates an attribute whose values are
+ * the values the values of all its dependencies.
  */
 @ThreadSafe
-public class SimpleAttributeDefinition extends BaseAttributeDefinition {
+public class SimpleAttributeDefinition extends AbstractAttributeDefinition {
 
     /** {@inheritDoc} */
     @Nonnull protected IdPAttribute doAttributeDefinitionResolve(

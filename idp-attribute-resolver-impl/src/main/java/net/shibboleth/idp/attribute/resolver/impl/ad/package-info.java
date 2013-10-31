@@ -15,6 +15,6 @@
  * limitations under the License.
  */
 
-/** Implementations of various {@link net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition}s. */
+/** Implementations of various {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition}s. */
 
 package net.shibboleth.idp.attribute.resolver.impl.ad;

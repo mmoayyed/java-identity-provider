@@ -26,7 +26,7 @@ import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 /** An attribute definition that simply returns a static value. */
 @ThreadSafe
-public class MockAttributeDefinition extends BaseAttributeDefinition implements ValidatableComponent {
+public class MockAttributeDefinition extends AbstractAttributeDefinition implements ValidatableComponent {
 
     /** Whether this connector fails validation. */
     private boolean invalid;

@@ -29,7 +29,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
@@ -199,7 +199,7 @@ public class TemplateAttributeTest {
         templateDef.setSourceAttributes(Collections.singletonList(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         templateDef.initialize();
 
-        final Set<BaseAttributeDefinition> attrDefinitions = new LazySet<BaseAttributeDefinition>();
+        final Set<AttributeDefinition> attrDefinitions = new LazySet<AttributeDefinition>();
         attrDefinitions.add(templateDef);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
         final Set<DataConnector> dataDefinitions = new LazySet<DataConnector>();
@@ -243,7 +243,7 @@ public class TemplateAttributeTest {
                 TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME));
         templateDef.initialize();
 
-        final Set<BaseAttributeDefinition> attrDefinitions = new LazySet<BaseAttributeDefinition>();
+        final Set<AttributeDefinition> attrDefinitions = new LazySet<AttributeDefinition>();
         attrDefinitions.add(templateDef);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
         final Set<DataConnector> dataDefinitions = new LazySet<DataConnector>();
@@ -284,7 +284,7 @@ public class TemplateAttributeTest {
         templateDef.setSourceAttributes(Arrays.asList(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, otherAttrName));
         templateDef.initialize();
 
-        final Set<BaseAttributeDefinition> attrDefinitions = new LazySet<BaseAttributeDefinition>();
+        final Set<AttributeDefinition> attrDefinitions = new LazySet<AttributeDefinition>();
         attrDefinitions.add(templateDef);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
         attrDefinitions.add(TestSources.populatedStaticAttribute(otherDefName, otherAttrName, 1));
@@ -323,7 +323,7 @@ public class TemplateAttributeTest {
         simple.setId(TestSources.STATIC_ATTRIBUTE_NAME);
         simple.setValue(attr);
         simple.initialize();
-        final Set<BaseAttributeDefinition> attrDefinitions = new LazySet<BaseAttributeDefinition>();
+        final Set<AttributeDefinition> attrDefinitions = new LazySet<AttributeDefinition>();
         attrDefinitions.add(templateDef);
         attrDefinitions.add(simple);
 

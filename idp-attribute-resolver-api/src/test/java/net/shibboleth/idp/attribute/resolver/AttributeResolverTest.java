@@ -48,7 +48,7 @@ public class AttributeResolverTest {
         MockAttributeDefinition attrDef = new MockAttributeDefinition("foo", new IdPAttribute("test"));
         MockDataConnector dataCon = new MockDataConnector("bar", (Map) null);
         AttributeResolver resolver =
-                new AttributeResolver("toto", Collections.singleton((BaseAttributeDefinition) attrDef),
+                new AttributeResolver("toto", Collections.singleton((AttributeDefinition) attrDef),
                         Collections.singleton((DataConnector) dataCon));
 
         Assert.assertFalse(attrDef.isInitialized());
@@ -118,7 +118,7 @@ public class AttributeResolverTest {
 
     /** Test getting, setting, overwriting, defensive collection copy. */
     @Test public void setAttributeDefinitions() throws Exception {
-        ArrayList<BaseAttributeDefinition> definitions = new ArrayList<BaseAttributeDefinition>();
+        ArrayList<AttributeDefinition> definitions = new ArrayList<AttributeDefinition>();
         definitions.add(new MockAttributeDefinition("foo", new IdPAttribute("test")));
         definitions.add(null);
         definitions.add(new MockAttributeDefinition("bar", new IdPAttribute("test")));
@@ -162,7 +162,7 @@ public class AttributeResolverTest {
         IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.getValues().add(new StringAttributeValue("value1"));
 
-        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(new MockAttributeDefinition("ad1", attribute));
 
         AttributeResolver resolver = new AttributeResolver("foo", definitions, null);
@@ -181,7 +181,7 @@ public class AttributeResolverTest {
         IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.getValues().add(new StringAttributeValue("value1"));
 
-        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(new MockAttributeDefinition("ad1", attribute));
 
         AttributeResolver resolver = new AttributeResolver("foo", definitions, null);
@@ -208,8 +208,8 @@ public class AttributeResolverTest {
         IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.getValues().add(new StringAttributeValue("value1"));
 
-        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
-        BaseAttributeDefinition attrDef = new MockAttributeDefinition("ad1", new ResolutionException());
+        LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
+        AttributeDefinition attrDef = new MockAttributeDefinition("ad1", new ResolutionException());
         attrDef.setPropagateResolutionExceptions(true);
         definitions.add(attrDef);
 
@@ -224,7 +224,7 @@ public class AttributeResolverTest {
             // OK
         }
 
-        definitions = new LazySet<BaseAttributeDefinition>();
+        definitions = new LazySet<AttributeDefinition>();
         attrDef = new MockAttributeDefinition("ad1", new ResolutionException());
         attrDef.setPropagateResolutionExceptions(false);
         definitions.add(attrDef);
@@ -241,7 +241,7 @@ public class AttributeResolverTest {
 
     /** Test that a resolve with no definitions returns nothing the expected results. */
     @Test public void resolveEmpty() throws Exception {
-        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
 
         AttributeResolver resolver = new AttributeResolver("foo", definitions, null);
         resolver.initialize();
@@ -270,7 +270,7 @@ public class AttributeResolverTest {
         LazySet<DataConnector> connectors = new LazySet<DataConnector>();
         connectors.add(dc1);
 
-        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(ad0);
         definitions.add(ad1);
         definitions.add(ad2);
@@ -306,7 +306,7 @@ public class AttributeResolverTest {
         LazySet<DataConnector> connectors = new LazySet<DataConnector>();
         connectors.add(dc1);
 
-        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(ad1);
 
         AttributeResolver resolver = new AttributeResolver("foo", definitions, connectors);
@@ -336,7 +336,7 @@ public class AttributeResolverTest {
         LazySet<DataConnector> connectors = new LazySet<DataConnector>();
         connectors.add(dc1);
 
-        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(ad1);
 
         AttributeResolver resolver = new AttributeResolver("foo", definitions, connectors);
@@ -369,7 +369,7 @@ public class AttributeResolverTest {
         LazySet<DataConnector> connectors = new LazySet<DataConnector>();
         connectors.add(dc1);
 
-        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(ad1);
         definitions.add(ad2);
 
@@ -404,7 +404,7 @@ public class AttributeResolverTest {
         ad11.setDependencies(Sets.newHashSet(depFail2));
         ad11.setPropagateResolutionExceptions(false);
 
-        definitions = new LazySet<BaseAttributeDefinition>();
+        definitions = new LazySet<AttributeDefinition>();
         definitions.add(ad10);
         definitions.add(ad11);
 
@@ -439,7 +439,7 @@ public class AttributeResolverTest {
         LazySet<DataConnector> connectors = new LazySet<DataConnector>();
         connectors.add(dc1);
 
-        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(ad1);
         AttributeResolver resolver = new AttributeResolver("foo", definitions, connectors);
         resolver.initialize();
@@ -457,7 +457,7 @@ public class AttributeResolverTest {
      * the resolved attribute set.
      */
     @Test public void resolveCleanNullAttributes() throws Exception {
-        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(new MockAttributeDefinition("ad1", new IdPAttribute("test")));
 
         AttributeResolver resolver = new AttributeResolver("foo", definitions, null);
@@ -481,7 +481,7 @@ public class AttributeResolverTest {
         MockAttributeDefinition definition = new MockAttributeDefinition("ad1", attribute);
         definition.setDependencyOnly(true);
 
-        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(definition);
 
         AttributeResolver resolver = new AttributeResolver("foo", definitions, null);
@@ -502,7 +502,7 @@ public class AttributeResolverTest {
 
         MockAttributeDefinition definition = new MockAttributeDefinition("ad1", attribute);
 
-        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(definition);
 
         AttributeResolver resolver = new AttributeResolver("foo", definitions, null);
@@ -526,7 +526,7 @@ public class AttributeResolverTest {
         MockAttributeDefinition definition = new MockAttributeDefinition("ad1", attribute);
         definition.setDependencyOnly(true);
 
-        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(definition);
 
         AttributeResolver resolver = new AttributeResolver("foo", definitions, null);
@@ -557,7 +557,7 @@ public class AttributeResolverTest {
         LazySet<DataConnector> connectors = new LazySet<DataConnector>();
         connectors.add(dc1);
 
-        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(ad0);
         definitions.add(ad1);
         definitions.add(ad2);
@@ -574,7 +574,7 @@ public class AttributeResolverTest {
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", (IdPAttribute) null);
         ad1.setInvalid(true);
 
-        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(ad0);
         definitions.add(ad1);
 
@@ -665,7 +665,7 @@ public class AttributeResolverTest {
         MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", new IdPAttribute("test"));
         ad0.setDependencies(Sets.newHashSet(dep2));
 
-        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(ad0);
         definitions.add(ad1);
 
@@ -680,7 +680,7 @@ public class AttributeResolverTest {
         ResolverPluginDependency dep3 = new ResolverPluginDependency("ad0");
         ad0 = new MockAttributeDefinition("ad0", new IdPAttribute("test"));
         ad0.setDependencies(Sets.newHashSet(dep3));
-        definitions = new LazySet<BaseAttributeDefinition>();
+        definitions = new LazySet<AttributeDefinition>();
         definitions.add(ad0);
 
         resolver = new AttributeResolver("foo", definitions, null);
@@ -698,7 +698,7 @@ public class AttributeResolverTest {
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new IdPAttribute("test"));
         ad1.setDependencies(Sets.newHashSet(new ResolverPluginDependency("ad1")));
 
-        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(ad1);
         AttributeResolver resolver = new AttributeResolver("foo", definitions, null);
 
@@ -725,7 +725,7 @@ public class AttributeResolverTest {
         LazySet<DataConnector> connectors = new LazySet<DataConnector>();
         connectors.add(dc1);
 
-        definitions = new LazySet<BaseAttributeDefinition>();
+        definitions = new LazySet<AttributeDefinition>();
         definitions.add(ad0);
         definitions.add(ad1);
         definitions.add(ad2);

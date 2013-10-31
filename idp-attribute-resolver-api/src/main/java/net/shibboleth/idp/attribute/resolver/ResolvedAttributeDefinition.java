@@ -37,15 +37,15 @@ import com.google.common.base.Predicates;
 /**
  * A proxy which wraps a resolved attribute definition and always returns the same attribute. The goal being that once
  * an attribute definition is resolved once this can be used in its place and calls to
- * {@link BaseAttributeDefinition#resolve(AttributeResolutionContext)} are "free".
+ * {@link AttributeDefinition#resolve(AttributeResolutionContext)} are "free".
  * 
  * This proxy is immutable so all setter methods simply return.
  */
 @ThreadSafe
-public final class ResolvedAttributeDefinition extends BaseAttributeDefinition {
+public final class ResolvedAttributeDefinition extends AbstractAttributeDefinition {
 
     /** The attribute definition that was resolved to produce the attribute. */
-    private final BaseAttributeDefinition resolvedDefinition;
+    private final AttributeDefinition resolvedDefinition;
 
     /** The attribute produced by the resolved attribute definition. */
     private final IdPAttribute resolvedAttribute;
@@ -56,7 +56,7 @@ public final class ResolvedAttributeDefinition extends BaseAttributeDefinition {
      * @param definition attribute definition that was resolved to produce the given attribute
      * @param attribute attribute produced by the given attribute definition
      */
-    public ResolvedAttributeDefinition(@Nonnull BaseAttributeDefinition definition, @Nullable IdPAttribute attribute) {
+    public ResolvedAttributeDefinition(@Nonnull AttributeDefinition definition, @Nullable IdPAttribute attribute) {
         resolvedDefinition = Constraint.isNotNull(definition, "Resolved attribute definition can not be null");
         Constraint.isTrue(definition.isInitialized(), "Resolved definition must have been initialized");
         Constraint.isFalse(definition.isDestroyed(), "Resolved definition can not have been destroyed");
@@ -159,7 +159,7 @@ public final class ResolvedAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return the resolved attribute definition
      */
-    @Nonnull public BaseAttributeDefinition getResolvedDefinition() {
+    @Nonnull public AttributeDefinition getResolvedDefinition() {
         return resolvedDefinition;
     }
 

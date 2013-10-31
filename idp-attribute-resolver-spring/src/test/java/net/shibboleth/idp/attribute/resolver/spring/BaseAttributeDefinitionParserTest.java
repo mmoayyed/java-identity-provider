@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring;
 import java.util.Collection;
 
 import net.shibboleth.idp.attribute.AttributeEncoder;
-import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.SimpleAttributeDefinitionParser;
@@ -63,25 +63,25 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         return getBean(fileName, claz, context, false);
     }
 
-    protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz,
+    protected <Type extends AttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz,
             GenericApplicationContext context) {
 
         return getBean(ATTRIBUTE_FILE_PATH + fileName, claz, context);
     }
 
-    protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz,
+    protected <Type extends AttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz,
             GenericApplicationContext context, boolean supressValidation) {
 
         return getBean(ATTRIBUTE_FILE_PATH + fileName, claz, context, supressValidation);
     }
 
-    protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, String beanFileName,
+    protected <Type extends AttributeDefinition> Type getAttributeDefn(String fileName, String beanFileName,
             Class<Type> claz) {
         return getAttributeDefn(fileName, beanFileName, claz, false);
 
     }
 
-    protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, String beanFileName,
+    protected <Type extends AttributeDefinition> Type getAttributeDefn(String fileName, String beanFileName,
                 Class<Type> claz, boolean supressValidation) {
 
         GenericApplicationContext context = new GenericApplicationContext();
@@ -93,11 +93,11 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         return getAttributeDefn(fileName, claz, context, supressValidation);
     }
 
-    protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz) {
+    protected <Type extends AttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz) {
         return getAttributeDefn(fileName, claz, false);
         
     }
-        protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz, boolean supressValid) {
+        protected <Type extends AttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz, boolean supressValid) {
 
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + claz);

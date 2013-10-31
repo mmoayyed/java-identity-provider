@@ -26,7 +26,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
@@ -76,7 +76,7 @@ public class PrescopedAtributeTest {
         final Set<DataConnector> connectorSet = new LazySet<DataConnector>();
         connectorSet.add(TestSources.populatedStaticConnector());
 
-        final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
+        final Set<AttributeDefinition> attributeSet = new LazySet<AttributeDefinition>();
         attributeSet.add(attrDef);
 
         final AttributeResolver resolver = new AttributeResolver("foo", attributeSet, connectorSet);
@@ -114,7 +114,7 @@ public class PrescopedAtributeTest {
         final Set<DataConnector> connectorSet = new LazySet<DataConnector>();
         connectorSet.add(TestSources.populatedStaticConnector());
 
-        final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
+        final Set<AttributeDefinition> attributeSet = new LazySet<AttributeDefinition>();
         attributeSet.add(attrDef);
 
         final AttributeResolver resolver = new AttributeResolver("foo", attributeSet, connectorSet);
