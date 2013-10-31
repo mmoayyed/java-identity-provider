@@ -6,22 +6,22 @@
 ## flowRequestContext - the Spring Web Flow RequestContext
 ## flowExecutionKey - the SWF execution key (this is built into the flowExecutionUrl)
 
-#set ( $profileRequestContext = $flowRequestContext.getConversationScope().get("org.opensaml.profile.context.ProfileRequestContext") )
-#set ( $authnContext = $profileRequestContext.getSubcontext($flowRequestContext.getViewScope().get("classAuthenticationContext", false)) )
-#set ( $errorContext = $authnContext.getSubcontext($flowRequestContext.getViewScope().get("classAuthenticationErrorContext", false)) )
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <body>
-        
-#if ( $errorContext && $errorContext.getExceptions().size() > 0 )
-		<p>ERROR: $errorContext.getExceptions().get(0).getMessage()</p>
+    
+    <h2>Testbed Login</h2>
+
+#if ( $authenticationErrorContext && $authenticationErrorContext.getExceptions().size() > 0 )
+		<p>ERROR: $esapiEncoder.encodeForHTML($authenticationErrorContext.getExceptions().get(0).getMessage())</p>
 #end
         
         <form action="$flowExecutionUrl" method="post">
             Username: <input type="text" name="username" value=""/> <br/>
             Password: <input type="password" name="password" value=""/> <br/>
             
-            <input type="submit" name="_eventId_proceed" value="Login"/>
+            <input type="submit" name="_eventId_proceed" value="Login"/> <br/>
+            <input type="checkbox" name="donotcache" value="1" /> Don't Remember Login
         </form>
         
     </body>

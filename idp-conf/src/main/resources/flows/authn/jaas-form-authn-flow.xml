@@ -13,14 +13,10 @@
     
     <view-state id="DisplayUsernamePasswordPage" view="login">
         <on-render>
-            <!--
-            TODO: Eventually would like to populate subcontexts directly into viewScope, but they aren't Serializable.
-            For now, I'm injecting some class types so a Velocity template can navigate the context tree. 
-            -->
-            <evaluate expression="T(net.shibboleth.idp.authn.context.AuthenticationContext)" result="viewScope.classAuthenticationContext" />
-            <evaluate expression="T(net.shibboleth.idp.authn.context.AuthenticationErrorContext)" result="viewScope.classAuthenticationErrorContext" />
-            <!-- This should work once we fix the serializability requirement for view scope. -->
-            <!-- <evaluate expression="T(org.owasp.esapi.ESAPI).encoder()" result="viewScope.esapiEncoder" />  -->
+            <evaluate expression="flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext')" result="viewScope.profileRequestContext" />
+            <evaluate expression="profileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext), false)" result="viewScope.authenticationContext" />
+            <evaluate expression="authenticationContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationErrorContext), false)" result="viewScope.authenticationErrorContext" />
+            <evaluate expression="T(org.owasp.esapi.ESAPI).encoder()" result="viewScope.esapiEncoder" />
         </on-render>
         <transition on="proceed" to="ExtractUsernamePasswordFromFormRequest" />
     </view-state>
