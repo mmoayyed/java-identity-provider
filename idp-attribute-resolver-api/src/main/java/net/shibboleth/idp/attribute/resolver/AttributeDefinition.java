@@ -31,7 +31,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
-/** Defintion of attribute definition resolver plugins. */
+/** Definition of attribute definition resolver plugins. */
 @ThreadSafe
 public interface AttributeDefinition extends ResolverPlugin<IdPAttribute> {
 
