@@ -49,7 +49,7 @@ public class AttributeResolverTest {
         MockDataConnector dataCon = new MockDataConnector("bar", (Map) null);
         AttributeResolver resolver =
                 new AttributeResolver("toto", Collections.singleton((BaseAttributeDefinition) attrDef),
-                        Collections.singleton((BaseDataConnector) dataCon));
+                        Collections.singleton((DataConnector) dataCon));
 
         Assert.assertFalse(attrDef.isInitialized());
         Assert.assertFalse(attrDef.getValidateCount() > 0);
@@ -139,7 +139,7 @@ public class AttributeResolverTest {
 
     /** Test getting, setting, overwriting, defensive collection copy. */
     @Test public void setDataConnectors() throws Exception {
-        ArrayList<BaseDataConnector> connectors = new ArrayList<BaseDataConnector>();
+        ArrayList<DataConnector> connectors = new ArrayList<DataConnector>();
         connectors.add(new MockDataConnector("foo", (Map) null));
         connectors.add(null);
         connectors.add(new MockDataConnector("bar", (Map) null));
@@ -267,7 +267,7 @@ public class AttributeResolverTest {
         MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", new IdPAttribute("test"));
         ad0.setDependencies(Sets.newHashSet(dep2, dep3));
 
-        LazySet<BaseDataConnector> connectors = new LazySet<BaseDataConnector>();
+        LazySet<DataConnector> connectors = new LazySet<DataConnector>();
         connectors.add(dc1);
 
         LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
@@ -303,7 +303,7 @@ public class AttributeResolverTest {
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new IdPAttribute("test"));
         ad1.setDependencies(Sets.newHashSet(dep1));
 
-        LazySet<BaseDataConnector> connectors = new LazySet<BaseDataConnector>();
+        LazySet<DataConnector> connectors = new LazySet<DataConnector>();
         connectors.add(dc1);
 
         LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
@@ -333,7 +333,7 @@ public class AttributeResolverTest {
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new IdPAttribute("test"));
         ad1.setDependencies(Sets.newHashSet(dep1));
 
-        LazySet<BaseDataConnector> connectors = new LazySet<BaseDataConnector>();
+        LazySet<DataConnector> connectors = new LazySet<DataConnector>();
         connectors.add(dc1);
 
         LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
@@ -366,7 +366,7 @@ public class AttributeResolverTest {
         MockAttributeDefinition ad2 = new MockAttributeDefinition("ad2", attr);
         ad2.setDependencies(Sets.newHashSet(new ResolverPluginDependency("dc1")));
 
-        LazySet<BaseDataConnector> connectors = new LazySet<BaseDataConnector>();
+        LazySet<DataConnector> connectors = new LazySet<DataConnector>();
         connectors.add(dc1);
 
         LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
@@ -392,7 +392,7 @@ public class AttributeResolverTest {
         dcfail2.setInvalid(true);
         ResolverPluginDependency depFail2 = new ResolverPluginDependency("failer2");
 
-        connectors = new LazySet<BaseDataConnector>();
+        connectors = new LazySet<DataConnector>();
         connectors.add(dcfail1);
         connectors.add(dcfail2);
 
@@ -436,7 +436,7 @@ public class AttributeResolverTest {
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", attr);
         ad1.setDependencies(Sets.newHashSet(dep1));
 
-        LazySet<BaseDataConnector> connectors = new LazySet<BaseDataConnector>();
+        LazySet<DataConnector> connectors = new LazySet<DataConnector>();
         connectors.add(dc1);
 
         LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
@@ -554,7 +554,7 @@ public class AttributeResolverTest {
         MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", new IdPAttribute("test"));
         ad0.setDependencies(Sets.newHashSet(dep2, dep3));
 
-        LazySet<BaseDataConnector> connectors = new LazySet<BaseDataConnector>();
+        LazySet<DataConnector> connectors = new LazySet<DataConnector>();
         connectors.add(dc1);
 
         LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
@@ -596,7 +596,7 @@ public class AttributeResolverTest {
         dc1.setInvalid(true);
         dc1.setFailoverDataConnectorId("dc0");
 
-        LazySet<BaseDataConnector> connectors = new LazySet<BaseDataConnector>();
+        LazySet<DataConnector> connectors = new LazySet<DataConnector>();
         connectors.add(dc0);
         connectors.add(dc1);
 
@@ -611,7 +611,7 @@ public class AttributeResolverTest {
         dc1.setInvalid(true);
         dc1.setFailoverDataConnectorId("dc0");
 
-        LazySet<BaseDataConnector> connectors = new LazySet<BaseDataConnector>();
+        LazySet<DataConnector> connectors = new LazySet<DataConnector>();
         connectors.add(dc1);
 
         AttributeResolver resolver = new AttributeResolver("foo", null, connectors);
@@ -630,7 +630,7 @@ public class AttributeResolverTest {
         dc1.setInvalid(true);
         dc1.setFailoverDataConnectorId("dc0");
 
-        connectors = new LazySet<BaseDataConnector>();
+        connectors = new LazySet<DataConnector>();
         connectors.add(dc1);
         connectors.add(dc0);
 
@@ -722,7 +722,7 @@ public class AttributeResolverTest {
         ad0.setDependencies(Sets.newHashSet(new ResolverPluginDependency("ad1"), new ResolverPluginDependency(
                 "ad2")));
 
-        LazySet<BaseDataConnector> connectors = new LazySet<BaseDataConnector>();
+        LazySet<DataConnector> connectors = new LazySet<DataConnector>();
         connectors.add(dc1);
 
         definitions = new LazySet<BaseAttributeDefinition>();

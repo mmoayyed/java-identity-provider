@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.cache.Cache;
 
 /**
- * A {@link net.shibboleth.idp.attribute.resolver.BaseDataConnector} containing functionality common to data connectors
+ * A {@link net.shibboleth.idp.attribute.resolver.DataConnector} containing functionality common to data connectors
  * that retrieve attribute data by searching a data source.
  * 
  * @param <T> type of executable search

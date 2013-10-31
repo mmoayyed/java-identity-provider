@@ -16,7 +16,7 @@
  */
 
 /** 
- * A {@link net.shibboleth.idp.attribute.resolver.BaseDataConnector} implementation that reads data from a relational
+ * A {@link net.shibboleth.idp.attribute.resolver.DataConnector} implementation that reads data from a relational
  * database. 
  */
 

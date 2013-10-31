@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The basis of a {@link net.shibboleth.idp.attribute.resolver.BaseDataConnector} that generates a unique ID by
+ * The basis of a {@link net.shibboleth.idp.attribute.resolver.DataConnector} that generates a unique ID by
  * computing the SHA-1 hash of a given attribute value, the entity ID of the inbound message issuer, and a provided
  * salt. The ComputedIDDataConnector is a thin shim on this, the StoredIdConnector a slightly thicker shim.
  */

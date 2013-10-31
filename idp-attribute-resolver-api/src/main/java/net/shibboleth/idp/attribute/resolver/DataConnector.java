@@ -27,22 +27,22 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 
 /** Base class for data connector resolver plugins. */
 @ThreadSafe
-public interface BaseDataConnector extends BaseResolverPlugin<Map<String, IdPAttribute>> {
+public interface DataConnector extends ResolverPlugin<Map<String, IdPAttribute>> {
 
     /**
-     * Gets the ID of the {@link BaseDataConnector} whose values will be used in the event that this data connector
+     * Gets the ID of the {@link DataConnector} whose values will be used in the event that this data connector
      * experiences an error.
      * 
-     * @return ID of the {@link BaseDataConnector} whose values will be used in the event that this data connector
+     * @return ID of the {@link DataConnector} whose values will be used in the event that this data connector
      *         experiences an error
      */
     @Nullable public String getFailoverDataConnectorId();
 
     /**
-     * Set the ID of the {@link BaseDataConnector} whose values will be used in the event that this data connector
+     * Set the ID of the {@link DataConnector} whose values will be used in the event that this data connector
      * experiences an error.
      * 
-     * @param id ID of the {@link BaseDataConnector} whose values will be used in the event that this data connector
+     * @param id ID of the {@link DataConnector} whose values will be used in the event that this data connector
      *            experiences an error
      */
     public  void setFailoverDataConnectorId(@Nullable  String id);

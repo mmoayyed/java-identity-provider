@@ -40,7 +40,7 @@ import com.google.common.base.Predicate;
  * @param <ResolvedType> object type this plug-in resolves to
  */
 @ThreadSafe
-public interface BaseResolverPlugin<ResolvedType> extends ValidatableComponent, UnmodifiableComponent,
+public interface ResolverPlugin<ResolvedType> extends ValidatableComponent, UnmodifiableComponent,
         InitializableComponent, DestructableComponent, IdentifiableComponent {
 
     /**

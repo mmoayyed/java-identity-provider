@@ -16,7 +16,7 @@
  */
 
 /** 
- * A {@link net.shibboleth.idp.attribute.resolver.BaseDataConnector} implementation that reads data from an LDAP.
+ * A {@link net.shibboleth.idp.attribute.resolver.DataConnector} implementation that reads data from an LDAP.
  */
 
 package net.shibboleth.idp.attribute.resolver.impl.dc.ldap;

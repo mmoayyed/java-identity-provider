@@ -16,7 +16,7 @@
  */
 
 /** 
- * A {@link net.shibboleth.idp.attribute.resolver.BaseDataConnector} implementation that maps from a given set of
+ * A {@link net.shibboleth.idp.attribute.resolver.DataConnector} implementation that maps from a given set of
  * source value to an output value. 
  */
 

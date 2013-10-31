@@ -45,13 +45,13 @@ public class ResolverTestSupport {
 
     public static final String[] EPE3_VALUES = new String[] {"urn:example.org:entitlement2"};
 
-    public static AttributeResolutionContext buildResolutionContext(BaseResolverPlugin... plugins) {
+    public static AttributeResolutionContext buildResolutionContext(ResolverPlugin... plugins) {
         AttributeResolutionContext resolutionContext = new AttributeResolutionContext();
 
         MockStaticAttributeDefinition definition;
         MockStaticDataConnector connector;
         try {
-            for (BaseResolverPlugin plugin : plugins) {
+            for (ResolverPlugin plugin : plugins) {
                 if (plugin instanceof MockStaticAttributeDefinition) {
                     definition = (MockStaticAttributeDefinition) plugin;
                     resolutionContext.recordAttributeDefinitionResolution(definition,

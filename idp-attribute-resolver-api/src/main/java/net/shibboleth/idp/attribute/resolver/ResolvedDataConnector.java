@@ -35,7 +35,7 @@ import com.google.common.base.Predicates;
 /**
  * A proxy which wraps a resolved data connector and always returns the same attributes. The goal being that once a data
  * connector is resolved this can be used in its place and calls to
- * {@link BaseDataConnector#resolve(AttributeResolutionContext)} are "free".
+ * {@link DataConnector#resolve(AttributeResolutionContext)} are "free".
  * 
  * This proxy is immutable so all setter methods simply return.
  */
@@ -43,7 +43,7 @@ import com.google.common.base.Predicates;
 public final class ResolvedDataConnector extends AbstractDataConnector {
 
     /** The data connector that was resolved to produce the attributes. */
-    private final BaseDataConnector resolvedConnector;
+    private final DataConnector resolvedConnector;
 
     /** The attributes produced by the resolved data connector. */
     private final Map<String, IdPAttribute> resolvedAttributes;
@@ -54,7 +54,7 @@ public final class ResolvedDataConnector extends AbstractDataConnector {
      * @param connector data connector that was resolved to produce the attributes
      * @param attributes attributes produced by the resolved data connector
      */
-    public ResolvedDataConnector(@Nonnull BaseDataConnector connector,
+    public ResolvedDataConnector(@Nonnull DataConnector connector,
             @Nullable Map<String, IdPAttribute> attributes) {
         resolvedConnector = Constraint.isNotNull(connector, "Resolved data connector can not be null");
         resolvedAttributes = attributes;
@@ -132,7 +132,7 @@ public final class ResolvedDataConnector extends AbstractDataConnector {
      * 
      * @return the resolved data connector
      */
-    @Nonnull public BaseDataConnector getResolvedConnector() {
+    @Nonnull public DataConnector getResolvedConnector() {
         return resolvedConnector;
     }
 

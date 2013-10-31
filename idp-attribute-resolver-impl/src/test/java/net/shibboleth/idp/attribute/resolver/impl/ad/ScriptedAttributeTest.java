@@ -34,7 +34,7 @@ import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
+import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
@@ -233,7 +233,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         attrDefinitions.add(scripted);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
 
-        final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
+        final Set<DataConnector> dataDefinitions = new LazySet<DataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnector());
 
         final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
@@ -313,7 +313,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         attrDefinitions.add(scripted);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
 
-        final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
+        final Set<DataConnector> dataDefinitions = new LazySet<DataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnector());
 
         final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
@@ -351,7 +351,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript(exampleScript)));
         scripted.setDependencies(ds);
 
-        final Set<BaseDataConnector> dataDefinitions = Collections.singleton((BaseDataConnector) connector);
+        final Set<DataConnector> dataDefinitions = Collections.singleton((DataConnector) connector);
         final Set<BaseAttributeDefinition> attrDefinitions = Collections.singleton((BaseAttributeDefinition) scripted);
 
         final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);

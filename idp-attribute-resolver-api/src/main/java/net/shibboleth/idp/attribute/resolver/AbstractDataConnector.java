@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 /** Base class for data connector resolver plugins. */
 @ThreadSafe
 public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<String, IdPAttribute>> implements
-        BaseDataConnector {
+        DataConnector {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractDataConnector.class);

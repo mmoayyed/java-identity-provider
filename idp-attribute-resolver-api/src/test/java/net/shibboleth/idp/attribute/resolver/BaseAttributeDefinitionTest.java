@@ -34,7 +34,7 @@ import org.testng.annotations.Test;
 
 /**
  * Unit test for {@link BaseAttributeDefinition}. This test does not test any methods inherited from
- * {@link BaseResolverPlugin}, those are covered in {@link AbstractResolverPluginTest}.
+ * {@link ResolverPlugin}, those are covered in {@link AbstractResolverPluginTest}.
  */
 public class BaseAttributeDefinitionTest {
 

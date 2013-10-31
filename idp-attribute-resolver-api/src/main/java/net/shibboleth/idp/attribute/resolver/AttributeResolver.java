@@ -65,7 +65,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
     private final Map<String, BaseAttributeDefinition> attributeDefinitions;
 
     /** Data connectors defined for this resolver. */
-    private final Map<String, BaseDataConnector> dataConnectors;
+    private final Map<String, DataConnector> dataConnectors;
 
     /** cache for the log prefix - to save multiple recalculations. */
     private final String logPrefix;
@@ -79,7 +79,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
      */
     public AttributeResolver(@Nonnull @NotEmpty String resolverId,
             @Nullable @NullableElements Collection<BaseAttributeDefinition> definitions,
-            @Nullable @NullableElements Collection<BaseDataConnector> connectors) {
+            @Nullable @NullableElements Collection<DataConnector> connectors) {
         setId(resolverId);
 
         logPrefix = new StringBuilder("Attribute Resolver '").append(getId()).append("':").toString();
@@ -101,10 +101,10 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         }
         attributeDefinitions = ImmutableMap.copyOf(checkedDefinitions);
 
-        Map<String, BaseDataConnector> checkedConnectors;
+        Map<String, DataConnector> checkedConnectors;
         if (connectors != null) {
-            checkedConnectors = new HashMap<String, BaseDataConnector>(connectors.size());
-            for (BaseDataConnector connector : connectors) {
+            checkedConnectors = new HashMap<String, DataConnector>(connectors.size());
+            for (DataConnector connector : connectors) {
                 if (connector != null) {
                     if (checkedConnectors.containsKey(connector.getId())) {
                         throw new IllegalArgumentException(logPrefix + " duplicate Data Connector Definition with id "
@@ -133,13 +133,13 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
      * 
      * @return data connectors loaded in to this resolver
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, BaseDataConnector> getDataConnectors() {
+    @Nonnull @NonnullElements @Unmodifiable public Map<String, DataConnector> getDataConnectors() {
         return dataConnectors;
     }
 
     /**
      * This method checks if each registered data connector and attribute definition is valid (via
-     * {@link BaseResolverPlugin#validate()} and checks to see if there are any loops in the dependency for all
+     * {@link ResolverPlugin#validate()} and checks to see if there are any loops in the dependency for all
      * registered plugins.
      * 
      * {@inheritDoc}
@@ -149,7 +149,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         final LazyList<String> invalidDataConnectors = new LazyList<String>();
-        for (BaseDataConnector plugin : dataConnectors.values()) {
+        for (DataConnector plugin : dataConnectors.values()) {
             log.debug("{} checking if data connector {} is valid", logPrefix, plugin.getId());
             if (!validateDataConnector(plugin, invalidDataConnectors)) {
                 invalidDataConnectors.add(plugin.getId());
@@ -178,11 +178,11 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
 
     /** {@inheritDoc} */
     protected void doDestroy() {
-        for (BaseResolverPlugin plugin : attributeDefinitions.values()) {
+        for (ResolverPlugin plugin : attributeDefinitions.values()) {
             plugin.destroy();
         }
 
-        for (BaseResolverPlugin plugin : dataConnectors.values()) {
+        for (ResolverPlugin plugin : dataConnectors.values()) {
             plugin.destroy();
         }
     }
@@ -298,7 +298,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
     }
 
     /**
-     * Resolve the {@link BaseDataConnector} which has the specified ID.
+     * Resolve the {@link DataConnector} which has the specified ID.
      * 
      * The results of the resolution are stored in the given {@link AttributeResolutionContext}.
      * 
@@ -317,7 +317,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
             return;
         }
 
-        final BaseDataConnector connector = dataConnectors.get(connectorId);
+        final DataConnector connector = dataConnectors.get(connectorId);
         if (connector == null) {
             log.debug("{} no data connector was registered with ID {}, nothing to do", logPrefix, connectorId);
             return;
@@ -360,7 +360,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
      * 
      * @throws ResolutionException thrown if there is a problem resolving a dependency
      */
-    protected void resolveDependencies(@Nonnull final BaseResolverPlugin<?> plugin,
+    protected void resolveDependencies(@Nonnull final ResolverPlugin<?> plugin,
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(plugin, "Plugin dependency can not be null");
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
@@ -438,7 +438,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
      * 
      * @return whether the given data connector is valid
      */
-    protected boolean validateDataConnector(@Nonnull BaseDataConnector connector,
+    protected boolean validateDataConnector(@Nonnull DataConnector connector,
             @Nonnull LazyList<String> invalidDataConnectors) {
         Constraint.isNotNull(connector, "To-be-validated connector can not be null");
         Constraint.isNotNull(invalidDataConnectors, "List of invalid data connectors can not be null");
@@ -489,14 +489,14 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         super.doInitialize();
 
         HashSet<String> dependencyVerifiedPlugins = new HashSet<String>();
-        for (BaseDataConnector plugin : dataConnectors.values()) {
+        for (DataConnector plugin : dataConnectors.values()) {
             ComponentSupport.initialize(plugin);
         }
         for (BaseAttributeDefinition plugin : attributeDefinitions.values()) {
             ComponentSupport.initialize(plugin);
         }
 
-        for (BaseDataConnector plugin : dataConnectors.values()) {
+        for (DataConnector plugin : dataConnectors.values()) {
             log.debug("{} checking if data connector {} is has a circular dependency", logPrefix, plugin.getId());
             checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);
         }
@@ -516,11 +516,11 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
      * 
      * @throws ComponentInitializationException thrown if there is a dependency loop
      */
-    protected void checkPlugInDependencies(final String circularCheckPluginId, final BaseResolverPlugin<?> plugin,
+    protected void checkPlugInDependencies(final String circularCheckPluginId, final ResolverPlugin<?> plugin,
             final Set<String> checkedPlugins) throws ComponentInitializationException {
         final String pluginId = plugin.getId();
 
-        BaseResolverPlugin<?> dependencyPlugin;
+        ResolverPlugin<?> dependencyPlugin;
         for (ResolverPluginDependency dependency : plugin.getDependencies()) {
             if (checkedPlugins.contains(pluginId)) {
                 continue;

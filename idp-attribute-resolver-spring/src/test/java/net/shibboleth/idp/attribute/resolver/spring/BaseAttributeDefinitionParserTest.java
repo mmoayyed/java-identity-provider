@@ -21,7 +21,7 @@ import java.util.Collection;
 
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
+import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.SimpleAttributeDefinitionParser;
 import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
@@ -105,11 +105,11 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         return getAttributeDefn(fileName, claz, context, supressValid);
     }
 
-    protected <Type extends BaseDataConnector> Type getDataConnector(String fileName, Class<Type> claz) {
+    protected <Type extends DataConnector> Type getDataConnector(String fileName, Class<Type> claz) {
         return getDataConnector(fileName, claz, false);
     }
 
-    protected <Type extends BaseDataConnector> Type getDataConnector(String fileName, Class<Type> claz, boolean supressValid) {
+    protected <Type extends DataConnector> Type getDataConnector(String fileName, Class<Type> claz, boolean supressValid) {
 
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + claz);

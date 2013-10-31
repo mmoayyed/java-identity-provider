@@ -50,7 +50,7 @@ import com.google.common.collect.ImmutableSet;
  */
 @ThreadSafe
 public abstract class AbstractResolverPlugin<ResolvedType> 
-    extends AbstractDestructableIdentifiableInitializableComponent implements BaseResolverPlugin<ResolvedType> {
+    extends AbstractDestructableIdentifiableInitializableComponent implements ResolverPlugin<ResolvedType> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractResolverPlugin.class);

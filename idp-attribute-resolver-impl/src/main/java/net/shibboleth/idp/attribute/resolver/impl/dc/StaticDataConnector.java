@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableMap;
 
 /**
- * A {@link net.shibboleth.idp.attribute.resolver.BaseDataConnector} that just returns a static collection of
+ * A {@link net.shibboleth.idp.attribute.resolver.DataConnector} that just returns a static collection of
  * attributes.
  */
 @ThreadSafe
