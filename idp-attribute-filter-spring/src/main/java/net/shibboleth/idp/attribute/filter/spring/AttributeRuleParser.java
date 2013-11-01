@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.filter.spring;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.AttributeRule;
@@ -67,7 +68,7 @@ public class AttributeRuleParser extends BaseFilterParser {
     private final Logger log = LoggerFactory.getLogger(AttributeRuleParser.class);
 
     /** {@inheritDoc} */
-    protected Class<?> getBeanClass(Element arg0) {
+    @Nonnull protected Class<?> getBeanClass(@Nullable Element arg) {
         return AttributeRule.class;
     }
 

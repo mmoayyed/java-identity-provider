@@ -40,7 +40,7 @@ public class AttributeInMetadataRuleParser extends BasePolicyRuleParser {
             "AttributeInMetadata");
 
     /** {@inheritDoc} */
-    @Nonnull protected Class<?> getNativeBeanClass() {
+    @Nonnull protected Class<AttributeInMetadataPolicyRule> getNativeBeanClass() {
         return AttributeInMetadataPolicyRule.class;
     }
 

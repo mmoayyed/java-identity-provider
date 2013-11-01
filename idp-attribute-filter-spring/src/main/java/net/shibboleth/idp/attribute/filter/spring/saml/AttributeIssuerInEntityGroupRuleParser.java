@@ -32,7 +32,7 @@ public class AttributeIssuerInEntityGroupRuleParser extends AbstractEntityGroupR
             "AttributeIssuerInEntityGroup");
    
     /** {@inheritDoc} */
-    @Nonnull protected Class<?> getNativeBeanClass() {
+    @Nonnull protected Class<AttributeIssuerInEntityGroupPolicyRule> getNativeBeanClass() {
        return AttributeIssuerInEntityGroupPolicyRule.class;
     }
 }

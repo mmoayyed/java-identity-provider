@@ -33,7 +33,7 @@ public class AuthenticationMethodRegexRuleParser extends AbstractRegexPolicyRule
             "AuthenticationMethodRegex");
 
     /** {@inheritDoc} */
-    @Nonnull protected Class<?> getNativeBeanClass() {
+    @Nonnull protected Class<AuthenticationMethodRegexpPolicyRule> getNativeBeanClass() {
         return AuthenticationMethodRegexpPolicyRule.class;
     }
 }

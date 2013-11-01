@@ -32,9 +32,8 @@ public class AttributeIssuerRuleParser extends AbstractStringPolicyRuleParser {
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
             "AttributeIssuerString");
 
-
     /** {@inheritDoc} */
-    @Nonnull protected Class<?> getNativeBeanClass() {
+    @Nonnull protected Class<AttributeIssuerPolicyRule> getNativeBeanClass() {
         return AttributeIssuerPolicyRule.class;
     }
 

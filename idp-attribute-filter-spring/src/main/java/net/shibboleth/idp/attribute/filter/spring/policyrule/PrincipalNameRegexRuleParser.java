@@ -33,7 +33,7 @@ public class PrincipalNameRegexRuleParser extends AbstractRegexPolicyRuleParser 
             "PrincipalNameRegex");
 
     /** {@inheritDoc} */
-    @Nonnull protected Class<?> getNativeBeanClass() {
+    @Nonnull protected Class<PrincipalNameRegexpPolicyRule> getNativeBeanClass() {
         return PrincipalNameRegexpPolicyRule.class;
     }
 }

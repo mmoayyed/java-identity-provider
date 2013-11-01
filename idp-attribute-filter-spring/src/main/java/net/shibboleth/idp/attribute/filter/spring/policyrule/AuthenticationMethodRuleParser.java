@@ -32,9 +32,8 @@ public class AuthenticationMethodRuleParser extends AbstractStringPolicyRulePars
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
             "AuthenticationMethodString");
 
-
     /** {@inheritDoc} */
-    @Nonnull protected Class<?>getNativeBeanClass() {
+    @Nonnull protected Class<AuthenticationMethodPolicyRule>getNativeBeanClass() {
         return AuthenticationMethodPolicyRule.class;
     }
 

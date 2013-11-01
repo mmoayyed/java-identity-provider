@@ -32,7 +32,7 @@ public class AttributeIssuerNameIdFormatRuleParser extends AbstractNameIdFormatR
             "AttributeIssuerNameIDFormatExactMatch");
     
     /** {@inheritDoc} */
-    @Nonnull protected Class<?> getNativeBeanClass() {
+    @Nonnull protected Class<AttributeIssuerNameIDFormatExactPolicyRule> getNativeBeanClass() {
         return AttributeIssuerNameIDFormatExactPolicyRule.class;
     }
 }

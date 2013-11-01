@@ -38,7 +38,7 @@ public class NumOfAttributeValuesRuleParser extends BasePolicyRuleParser {
             "NumberOfAttributeValues");
 
     /** {@inheritDoc} */
-    @Nonnull protected Class<?> getNativeBeanClass() {
+    @Nonnull protected Class<NumOfAttributeValuesPolicyRule> getNativeBeanClass() {
         return NumOfAttributeValuesPolicyRule.class;
     }
 

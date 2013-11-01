@@ -32,7 +32,7 @@ public class AttributeIssuerEntityAttributeExactRuleParser extends AbstractEntit
             "AttributeIssuerEntityAttributeExactMatch");
     
     /** {@inheritDoc} */
-    @Nonnull protected Class<?> getNativeBeanClass() {
+    @Nonnull protected Class<AttributeIssuerEntityAttributeExactPolicyRule> getNativeBeanClass() {
         
         return AttributeIssuerEntityAttributeExactPolicyRule.class;
     }

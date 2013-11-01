@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter.spring;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.spring.service.AbstractServiceParser;
@@ -31,7 +33,7 @@ public class AttributeFilterServiceParser extends AbstractServiceParser {
             "ShibbolethAttributeFilteringEngine");
 
     /** {@inheritDoc} */
-    protected Class<?> getBeanClass(Element element) {
+    @Nonnull protected Class<?> getBeanClass(@Nullable Element element) {
         return AttributeFilterService.class;
     }
 }

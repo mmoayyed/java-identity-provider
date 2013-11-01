@@ -100,5 +100,6 @@ public abstract class BasePolicyRuleParser extends BaseFilterParser {
      * @param parserContext the context
      * @param builder the builder
      */
-    protected abstract void doNativeParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder);
+    protected abstract void doNativeParse(@Nonnull Element element, @Nonnull ParserContext parserContext,
+            @Nonnull BeanDefinitionBuilder builder);
 }

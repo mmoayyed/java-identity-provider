@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -24,13 +26,14 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Base definition for all EntityAttribute Parsers.<br/> the common attributes 
- * are 'attributeName' and 'attributeNameFormat'.
+ * Base definition for all EntityAttribute Parsers.<br/>
+ * the common attributes are 'attributeName' and 'attributeNameFormat'.
  */
 public abstract class AbstractEntityAttributeRuleParser extends BasePolicyRuleParser {
 
     /** {@inheritDoc} */
-    protected void doNativeParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
 
         builder.addPropertyValue("attributeName", element.getAttributeNS(null, "attributeName"));
 

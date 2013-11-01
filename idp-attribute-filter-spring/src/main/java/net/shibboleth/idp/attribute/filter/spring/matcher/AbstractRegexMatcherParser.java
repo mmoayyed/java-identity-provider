@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter.spring.matcher;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.BeanCreationException;
@@ -30,7 +32,8 @@ import org.w3c.dom.Element;
 public abstract class AbstractRegexMatcherParser extends BaseAttributeValueMatcherParser {
 
     /** {@inheritDoc} */
-    protected void doNativeParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doNativeParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, builder);
 
         final String regexp = StringSupport.trimOrNull(config.getAttributeNS(null, "regex"));

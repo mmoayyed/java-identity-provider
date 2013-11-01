@@ -34,7 +34,7 @@ public class PrincipalNameRuleParser extends AbstractStringPolicyRuleParser {
 
 
     /** {@inheritDoc} */
-    @Nonnull protected Class<?> getNativeBeanClass() {
+    @Nonnull protected Class<PrincipalNamePolicyRule> getNativeBeanClass() {
         return PrincipalNamePolicyRule.class;
     }
 
