@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.impl.attribute.encoding.Saml1ScopedStringAttributeEncoder;
@@ -40,12 +42,13 @@ public class Saml1ScopedStringAttributeEncoderParser extends
     public static final String NAMESPACE_ATTRIBUTE_NAME = "namespace";
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
+    protected Class<Saml1ScopedStringAttributeEncoder> getBeanClass(@Nullable Element element) {
         return Saml1ScopedStringAttributeEncoder.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
         if (config.hasAttributeNS(null, "scopeType")) {

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.script.ScriptException;
 import javax.xml.namespace.QName;
 
@@ -57,7 +58,7 @@ public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionPa
     private final Logger log = LoggerFactory.getLogger(ScriptedAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element arg0) {
+    protected Class<ScriptedAttributeDefinition> getBeanClass(@Nullable Element element) {
         return ScriptedAttributeDefinition.class;
     }
 
@@ -96,7 +97,8 @@ public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionPa
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
         String scriptLanguage = "javascript";

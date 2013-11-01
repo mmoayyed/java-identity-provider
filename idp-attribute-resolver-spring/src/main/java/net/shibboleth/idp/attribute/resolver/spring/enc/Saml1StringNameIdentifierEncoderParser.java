@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.impl.attribute.encoding.Saml1StringSubjectNameIdentifierEncoder;
@@ -37,12 +39,13 @@ public class Saml1StringNameIdentifierEncoderParser extends AbstractSingleBeanDe
             "SAML1StringNameIdentifier");
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element arg0) {
+    protected Class<Saml1StringSubjectNameIdentifierEncoder> getBeanClass(@Nullable Element element) {
         return Saml1StringSubjectNameIdentifierEncoder.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
         String namespace = "urn:oasis:names:tc:SAML:1.0:nameid-format:unspecified";

@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
@@ -45,7 +46,7 @@ public class AttributeResolverParser implements BeanDefinitionParser {
             "AttributeResolverType");
 
     /** {@inheritDoc} */
-    public BeanDefinition parse(final Element config, final ParserContext context) {
+    public BeanDefinition parse(@Nonnull final Element config, @Nonnull final ParserContext context) {
         Map<QName, List<Element>> configChildren = ElementSupport.getIndexedChildElements(config);
         List<Element> children;
 

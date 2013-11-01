@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -30,7 +32,8 @@ import org.w3c.dom.Element;
 public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefinitionParser {
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         builder.addPropertyValue("name", StringSupport.trimOrNull(config.getAttributeNS(null, "name")));
     }
 

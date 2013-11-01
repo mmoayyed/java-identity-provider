@@ -141,7 +141,8 @@ final class X509CredentialSupport {
      * 
      * @return private key
      */
-    @Nullable protected static PrivateKey parsePrivateKey(@Nullable final Element keyElement, @Nonnull final Type type) {
+    @Nullable protected static PrivateKey parsePrivateKey(@Nullable final Element keyElement,
+            @Nonnull final Type type) {
 
         PrivateKey key = null;
         if (keyElement != null) {

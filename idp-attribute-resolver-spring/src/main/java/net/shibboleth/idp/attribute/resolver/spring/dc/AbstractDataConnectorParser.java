@@ -75,8 +75,9 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
     private final Logger log = LoggerFactory.getLogger(AbstractDataConnectorParser.class);
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(config, parserContext, builder);
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
+         super.doParse(config, parserContext, builder);
 
         final List<Element> failoverConnector =
                 ElementSupport.getChildElements(config, FAILOVER_DATA_CONNECTOR_ELEMENT_NAME);

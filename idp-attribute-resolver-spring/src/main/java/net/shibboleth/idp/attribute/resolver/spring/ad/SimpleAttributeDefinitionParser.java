@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.SimpleAttributeDefinition;
@@ -32,12 +34,13 @@ public class SimpleAttributeDefinitionParser extends BaseAttributeDefinitionPars
     public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Simple");
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
+    protected Class<SimpleAttributeDefinition> getBeanClass(@Nullable Element element) {
         return SimpleAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
     }
 }

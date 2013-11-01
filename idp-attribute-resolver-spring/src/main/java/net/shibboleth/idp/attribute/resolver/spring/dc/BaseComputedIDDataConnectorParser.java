@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
@@ -44,28 +47,29 @@ public abstract class BaseComputedIDDataConnectorParser extends AbstractDataConn
      * @param builder Spring's bean builder.
      * @param generatedIdDefaultName the name to give the generated Attribute if none was provided.
      */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder,
-            String generatedIdDefaultName) {
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder, @Nullable String generatedIdDefaultName) {
         super.doParse(config, parserContext, builder);
 
-        String generatedAttribute;
+        final String generatedAttribute;
         if (config.hasAttributeNS(null, "generatedAttributeID")) {
             generatedAttribute = config.getAttributeNS(null, "generatedAttributeID");
         } else {
             generatedAttribute = generatedIdDefaultName;
         }
 
-        String sourceAttribute = config.getAttributeNS(null, "sourceAttributeID");
+        final String sourceAttribute = config.getAttributeNS(null, "sourceAttributeID");
 
-        String salt = StringSupport.trimOrNull(config.getAttributeNS(null, "salt"));
-        byte[] saltBytes = null;
+        final String salt = StringSupport.trimOrNull(config.getAttributeNS(null, "salt"));
+        final byte[] saltBytes;
         if (null == salt) {
-            log.debug("{} generated Attribute : '{}', sourceAttribute = '{}', no salt provided.",
-                    new Object[] {getLogPrefix(), generatedAttribute, sourceAttribute,});
+            saltBytes = null;
+            log.debug("{} generated Attribute : '{}', sourceAttribute = '{}', no salt provided.", new Object[] {
+                    getLogPrefix(), generatedAttribute, sourceAttribute,});
         } else {
             saltBytes = salt.getBytes();
-            log.debug("{} generated Attribute : '{}', sourceAttribute = '{}', salt: '{}'.",
-                    new Object[] {getLogPrefix(), generatedAttribute, sourceAttribute, saltBytes,});
+            log.debug("{} generated Attribute : '{}', sourceAttribute = '{}', salt: '{}'.", new Object[] {
+                    getLogPrefix(), generatedAttribute, sourceAttribute, saltBytes,});
         }
 
         builder.addPropertyValue("generatedAttributeId", generatedAttribute);

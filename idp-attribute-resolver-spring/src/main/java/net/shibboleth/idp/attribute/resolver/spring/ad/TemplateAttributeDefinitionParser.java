@@ -20,6 +20,8 @@ package net.shibboleth.idp.attribute.resolver.spring.ad;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.TemplateAttributeDefinition;
@@ -53,12 +55,13 @@ public class TemplateAttributeDefinitionParser extends BaseAttributeDefinitionPa
             .getLogger(TemplateAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element arg0) {
+    protected Class<TemplateAttributeDefinition> getBeanClass(@Nullable Element element) {
         return TemplateAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
         final List<Element> templateElements = ElementSupport.getChildElements(config, TEMPLATE_ELEMENT_NAME);

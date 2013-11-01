@@ -83,13 +83,13 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
     private final Logger log = LoggerFactory.getLogger(LdapDataConnectorParser.class);
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(final Element element) {
+    protected Class<LdapDataConnector> getBeanClass(@Nullable final Element element) {
         return LdapDataConnector.class;
     }
 
     /** {@inheritDoc} */
-    protected void
-            doParse(final Element config, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
         log.debug("doParse {}", config);
 
@@ -110,8 +110,8 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
      * @param parserContext bean definition parsing context
      * @param builder to initialize
      */
-    protected void doParseInternal(final Element config, final ParserContext parserContext,
-            final BeanDefinitionBuilder builder) {
+    protected void doParseInternal(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
 
         final Element springBeans = getSpringBeansElement(config);
         final BeanFactory beanFactory = createBeanFactory(springBeans);
@@ -134,8 +134,8 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
      * @param parserContext bean definition parsing context
      * @param builder to initialize
      */
-    protected void doParseV2(final Element config, final ParserContext parserContext,
-            final BeanDefinitionBuilder builder) {
+    protected void doParseV2(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
 
         final V2Parser v2Parser = new V2Parser(config);
 
@@ -328,6 +328,7 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
          * 
          * @return search executor
          */
+        // CheckStyle: CyclomaticComplexity OFF
         @Nonnull public SearchExecutor createSearchExecutor() {
             final String baseDn = AttributeSupport.getAttributeValue(configElement, new QName("baseDN"));
             final String searchScope = AttributeSupport.getAttributeValue(configElement, new QName("searchScope"));
@@ -387,6 +388,7 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
 
             return searchExecutor;
         }
+        // CheckStyle: CyclomaticComplexity ON
 
         /**
          * Creates a new connection pool from a v2 XML configuration.

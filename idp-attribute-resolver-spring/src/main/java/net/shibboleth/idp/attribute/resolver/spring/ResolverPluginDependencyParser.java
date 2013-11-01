@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
@@ -39,13 +41,14 @@ public class ResolverPluginDependencyParser extends AbstractSingleBeanDefinition
     private final Logger log = LoggerFactory.getLogger(ResolverPluginDependencyParser.class);
 
     /** {@inheritDoc} */
-    protected Class<?> getBeanClass(Element element) {
+    protected Class<ResolverPluginDependency> getBeanClass(@Nullable Element element) {
         return ResolverPluginDependency.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        String pluginId = StringSupport.trimOrNull(config.getAttributeNS(null, "ref"));
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
+        final String pluginId = StringSupport.trimOrNull(config.getAttributeNS(null, "ref"));
         log.info("Parsing configuration for {} with pluginId : {}", config.getLocalName(), pluginId);
         builder.addConstructorArgValue(pluginId);
     }

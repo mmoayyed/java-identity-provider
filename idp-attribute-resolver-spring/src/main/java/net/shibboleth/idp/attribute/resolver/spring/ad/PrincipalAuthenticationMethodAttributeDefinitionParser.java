@@ -34,7 +34,7 @@ public class PrincipalAuthenticationMethodAttributeDefinitionParser extends
             "PrincipalAuthenticationMethod");
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
+    protected Class<PrincipalAuthenticationMethodAttributeDefinition> getBeanClass(Element element) {
         return PrincipalAuthenticationMethodAttributeDefinition.class;
     }
 }

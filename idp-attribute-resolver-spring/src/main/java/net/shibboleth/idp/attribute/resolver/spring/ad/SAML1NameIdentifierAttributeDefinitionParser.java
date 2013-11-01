@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.SAML1NameIdentifierAttributeDefinition;
@@ -41,12 +43,13 @@ public class SAML1NameIdentifierAttributeDefinitionParser extends
             .getLogger(SAML1NameIdentifierAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
+    protected Class<SAML1NameIdentifierAttributeDefinition> getBeanClass(@Nullable Element element) {
         return SAML1NameIdentifierAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
         String nameIdFormat = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";

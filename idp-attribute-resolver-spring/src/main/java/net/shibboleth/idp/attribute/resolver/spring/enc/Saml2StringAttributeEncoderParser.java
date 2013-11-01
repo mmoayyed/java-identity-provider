@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.impl.attribute.encoding.Saml2StringAttributeEncoder;
@@ -43,12 +45,13 @@ public class Saml2StringAttributeEncoderParser extends BaseAttributeEncoderParse
 
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
+    protected Class<Saml2StringAttributeEncoder> getBeanClass(@Nullable Element element) {
         return Saml2StringAttributeEncoder.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
         String namespace = "urn:oasis:names:tc:SAML:2.0:attrname-format:uri";

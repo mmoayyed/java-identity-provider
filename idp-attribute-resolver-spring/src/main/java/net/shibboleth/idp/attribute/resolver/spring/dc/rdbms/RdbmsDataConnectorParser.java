@@ -58,7 +58,7 @@ public class RdbmsDataConnectorParser extends AbstractDataConnectorParser {
     private final Logger log = LoggerFactory.getLogger(RdbmsDataConnectorParser.class);
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(final Element element) {
+    protected Class<RdbmsDataConnector> getBeanClass(@Nullable final Element element) {
         return RdbmsDataConnector.class;
     }
 

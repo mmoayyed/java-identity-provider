@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.impl.attribute.encoding.Saml2StringSubjectNameIDEncoder;
@@ -35,12 +37,13 @@ public class Saml2StringNameIDEncoderParser extends AbstractSingleBeanDefinition
     public static final QName SCHEMA_TYPE = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML2StringNameID");
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element arg0) {
+    protected Class<Saml2StringSubjectNameIDEncoder> getBeanClass(@Nullable Element element) {
         return Saml2StringSubjectNameIDEncoder.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
         String namespace = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";

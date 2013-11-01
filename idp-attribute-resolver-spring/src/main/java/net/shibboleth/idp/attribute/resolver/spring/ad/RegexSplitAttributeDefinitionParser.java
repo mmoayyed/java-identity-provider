@@ -19,6 +19,8 @@ package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.RegexSplitAttributeDefinition;
@@ -44,12 +46,13 @@ public class RegexSplitAttributeDefinitionParser extends BaseAttributeDefinition
     private final Logger log = LoggerFactory.getLogger(RegexSplitAttributeDefinitionParser.class); 
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
+    protected Class<RegexSplitAttributeDefinition> getBeanClass(@Nullable Element element) {
         return RegexSplitAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
         final String regexp = StringSupport.trimOrNull(config.getAttributeNS(null, "regex"));

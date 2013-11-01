@@ -19,6 +19,8 @@ package net.shibboleth.idp.attribute.resolver.spring.ad.mapped;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.mapped.MappedAttributeDefinition;
@@ -52,13 +54,14 @@ public class MappedAttributeDefinitionParser extends BaseAttributeDefinitionPars
     private Logger log = LoggerFactory.getLogger(MappedAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
+    protected Class<MappedAttributeDefinition> getBeanClass(@Nullable final Element element) {
         return MappedAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(config, parserContext, builder);
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
+         super.doParse(config, parserContext, builder);
 
         final List<Element> defaultValueElements = ElementSupport.getChildElements(config, DEFAULT_VALUE_ELEMENT_NAME);
         String defaultValue = null;

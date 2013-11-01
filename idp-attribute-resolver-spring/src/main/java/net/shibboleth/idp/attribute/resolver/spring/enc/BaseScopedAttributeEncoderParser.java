@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
+import javax.annotation.Nonnull;
+
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -36,7 +38,8 @@ public abstract class BaseScopedAttributeEncoderParser extends BaseAttributeEnco
     public static final String SCOPE_ATTRIBUTE_ATTRIBUTE_NAME = "scopeAttribute";
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
         if (config.hasAttributeNS(null, SCOPE_DELIMITER_ATTRIBUTE_NAME)) {

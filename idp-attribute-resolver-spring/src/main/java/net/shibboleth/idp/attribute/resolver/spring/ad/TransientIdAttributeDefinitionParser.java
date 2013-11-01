@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.TransientIdAttributeDefinition;
@@ -41,12 +43,13 @@ public class TransientIdAttributeDefinitionParser extends BaseAttributeDefinitio
     private final Logger log = LoggerFactory.getLogger(TransientIdAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
+    protected Class<TransientIdAttributeDefinition> getBeanClass(@Nullable Element element) {
         return TransientIdAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
         Long lifetime = null;

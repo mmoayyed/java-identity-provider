@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.impl.dc.ComputedIDDataConnector;
@@ -34,12 +35,13 @@ public class ComputedIDDataConnectorParser extends BaseComputedIDDataConnectorPa
     public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "ComputedId");
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
+    protected Class<ComputedIDDataConnector> getBeanClass(Element element) {
         return ComputedIDDataConnector.class;
     }
     
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder, "computedId");
     }
 }

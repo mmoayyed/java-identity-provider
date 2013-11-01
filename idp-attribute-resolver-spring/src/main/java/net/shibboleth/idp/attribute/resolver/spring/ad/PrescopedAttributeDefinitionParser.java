@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.PrescopedAttributeDefinition;
@@ -37,12 +39,13 @@ public class PrescopedAttributeDefinitionParser extends BaseAttributeDefinitionP
     private final Logger log = LoggerFactory.getLogger(PrescopedAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
+    protected Class<PrescopedAttributeDefinition> getBeanClass(@Nullable Element element) {
         return PrescopedAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
         String scopeDelimiter = "@";
         

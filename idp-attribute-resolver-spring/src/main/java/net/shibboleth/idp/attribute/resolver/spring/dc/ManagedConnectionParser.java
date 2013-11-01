@@ -115,6 +115,8 @@ public class ManagedConnectionParser {
      * 
      * @return data source
      */
+    // Checkstyle: CyclomaticComplexity OFF
+    // Checkstyle: MethodLength OFF
     @Nonnull protected DataSource createApplicationManagedDataSource(
             @Nonnull final Element applicationManagedElement) {
         Constraint.isNotNull(applicationManagedElement, "ApplicationManagedConnection element cannot be null");
@@ -211,4 +213,6 @@ public class ManagedConnectionParser {
 
         return datasource;
     }
+    // Checkstyle: MethodLength ON
+    // Checkstyle: CyclomaticComplexity ON
 }

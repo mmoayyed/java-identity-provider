@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad.mapped;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.mapped.SourceValue;
@@ -40,13 +42,14 @@ public class SourceValueParser extends AbstractSingleBeanDefinitionParser {
     private Logger log = LoggerFactory.getLogger(SourceValueParser.class);
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
+    protected Class<SourceValue> getBeanClass(@Nullable final Element element) {
         return SourceValue.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(config, parserContext, builder);
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
+         super.doParse(config, parserContext, builder);
 
         boolean ignoreCase = false;
 

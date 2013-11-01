@@ -37,19 +37,22 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
 
     /** An Id for the definition, used for debugging messages. */
     private String defnId = "<Unnamed Attribute or Connector>";
-    
+
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(BaseResolverPluginParser.class);
 
-    /** Helper for logging.
+    /**
+     * Helper for logging.
+     * 
      * @return the definition ID
      */
     @Nonnull protected String getDefinitionId() {
         return defnId;
     }
-    
+
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         String id = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
         log.info("Parsing configuration for {} plugin with id : {}", config.getLocalName(), id);
         builder.addPropertyValue("id", id);

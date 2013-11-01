@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring.dc;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -46,12 +47,13 @@ public class StaticDataConnectorParser extends AbstractDataConnectorParser {
     private final Logger log = LoggerFactory.getLogger(StaticDataConnectorParser.class);
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
+    protected Class<StaticDataConnector> getBeanClass(Element element) {
         return StaticDataConnector.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
         List<Element> children = ElementSupport.getChildElements(config, ATTRIBUTE_ELEMENT_NAME);

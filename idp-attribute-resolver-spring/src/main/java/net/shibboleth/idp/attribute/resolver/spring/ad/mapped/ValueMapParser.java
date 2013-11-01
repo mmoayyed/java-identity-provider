@@ -19,6 +19,8 @@ package net.shibboleth.idp.attribute.resolver.spring.ad.mapped;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.mapped.ValueMap;
@@ -51,13 +53,14 @@ public class ValueMapParser extends AbstractSingleBeanDefinitionParser {
     private Logger log = LoggerFactory.getLogger(ValueMapParser.class);
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
+    protected Class<ValueMap> getBeanClass(@Nullable final Element element) {
         return ValueMap.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(config, parserContext, builder);
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
+         super.doParse(config, parserContext, builder);
 
         final List<Element> returnElems = ElementSupport.getChildElements(config, RETURN_VALUE_ELEMENT_NAME);
         String returnValue = null;

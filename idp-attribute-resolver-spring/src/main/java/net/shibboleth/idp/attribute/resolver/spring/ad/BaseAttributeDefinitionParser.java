@@ -61,7 +61,8 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
     private String logPrefix;
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
         final List<Element> displayNames =
@@ -118,7 +119,7 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
      * 
      * @return the localized string indexed by locale
      */
-    protected Map<Locale, String> processLocalizedElement(List<Element> elements) {
+    protected Map<Locale, String> processLocalizedElement(@Nonnull final List<Element> elements) {
         HashMap<Locale, String> localizedString = new HashMap<Locale, String>(elements.size());
         for (Element element : elements) {
             localizedString.put(AttributeSupport.getXMLLangAsLocale(element), element.getTextContent());

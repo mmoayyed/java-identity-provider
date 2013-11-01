@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.impl.attribute.encoding.Saml1ByteAttributeEncoder;
@@ -36,12 +38,13 @@ public class Saml1Base64AttributeEncoderParser extends BaseAttributeEncoderParse
     public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML1Base64");
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
+    protected Class<Saml1ByteAttributeEncoder> getBeanClass(@Nullable Element element) {
         return Saml1ByteAttributeEncoder.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
         String namespace = "urn:mace:shibboleth:1.0:attributeNamespace:uri";

@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.spring.service.AbstractServiceParser;
@@ -33,7 +34,7 @@ public class AttributeResolverServiceParser extends AbstractServiceParser {
 
     /** {@inheritDoc} */
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected Class getBeanClass(Element element) {
+    protected Class<AttributeResolverService> getBeanClass(@Nonnull final Element element) {
         return AttributeResolverService.class;
     }
 }

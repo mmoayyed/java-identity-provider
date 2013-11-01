@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.PrincipalNameAttributeDefinition;
@@ -32,7 +33,7 @@ public class PrincipalNameAttributeDefinitionParser extends BaseAttributeDefinit
     public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "PrincipalName");
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
+    protected Class<PrincipalNameAttributeDefinition> getBeanClass(@Nullable Element element) {
         return PrincipalNameAttributeDefinition.class;
     }
 }

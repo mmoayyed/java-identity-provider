@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
+import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 import javax.xml.namespace.QName;
 
@@ -41,12 +42,13 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
     private final Logger log = LoggerFactory.getLogger(StoredIDDataConnectorParser.class);
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
+    protected Class<StoredIDDataConnector> getBeanClass(Element element) {
         return StoredIDDataConnector.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder, "storedId");
         log.debug("doParse {}", config);
         builder.addPropertyValue("dataSource", getDataSource(config));
@@ -58,7 +60,7 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
      * @param config the DOM element under consideration. 
      * @return the DataSource
      */
-    protected DataSource getDataSource(Element config) {
+    protected DataSource getDataSource(@Nonnull Element config) {
         final Element springBeans = getSpringBeansElement(config);
         if (springBeans == null) {
             log.debug("parsing v2 configuration");

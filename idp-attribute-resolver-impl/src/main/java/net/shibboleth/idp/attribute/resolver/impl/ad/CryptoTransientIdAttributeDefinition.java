@@ -29,6 +29,7 @@ import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -52,7 +53,7 @@ public class CryptoTransientIdAttributeDefinition extends AbstractAttributeDefin
     private DataSealer dataSealer;
 
     /** Length, in milliseconds, tokens are valid. */
-    private long idLifetime;
+    @Duration private long idLifetime;
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
@@ -130,7 +131,7 @@ public class CryptoTransientIdAttributeDefinition extends AbstractAttributeDefin
      * 
      * @param lifetime time, in milliseconds, that ids are valid for.
      */
-    public void setIdLifetime(long lifetime) {
+    public void setIdLifetime(@Duration long lifetime) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         idLifetime = lifetime;
     }
