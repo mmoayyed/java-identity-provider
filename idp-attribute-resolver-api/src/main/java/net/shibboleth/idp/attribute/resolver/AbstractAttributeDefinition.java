@@ -90,7 +90,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
      * 
      * @param isDependencyOnly whether this attribute definition is only a dependency
      */
-    public synchronized void setDependencyOnly(final boolean isDependencyOnly) {
+    public void setDependencyOnly(final boolean isDependencyOnly) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -111,7 +111,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
      * 
      * @param descriptions localized human readable descriptions of attribute
      */
-    public synchronized void setDisplayDescriptions(@Nullable @NullableElements 
+    public void setDisplayDescriptions(@Nullable @NullableElements 
             final Map<Locale, String> descriptions) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
@@ -142,7 +142,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
      * 
      * @param names localized human readable names of the attribute
      */
-    public synchronized void setDisplayNames(@Nullable @NullableElements final Map<Locale, String> names) {
+    public void setDisplayNames(@Nullable @NullableElements final Map<Locale, String> names) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -173,7 +173,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
      * 
      * @param attributeEncoders encoders used to encode the values of this attribute in to protocol specific formats
      */
-    public synchronized void setAttributeEncoders(
+    public void setAttributeEncoders(
             @Nullable @NullableElements final Set<AttributeEncoder<?>> attributeEncoders) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);

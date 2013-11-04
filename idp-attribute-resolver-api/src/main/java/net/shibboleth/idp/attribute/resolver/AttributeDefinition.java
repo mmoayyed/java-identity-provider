@@ -21,11 +21,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
@@ -46,14 +46,14 @@ public interface AttributeDefinition extends ResolverPlugin<IdPAttribute> {
      * 
      * @return human readable descriptions of attribute
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<Locale, String> getDisplayDescriptions();
+    @NonnullAfterInit @NonnullElements @Unmodifiable public Map<Locale, String> getDisplayDescriptions();
 
     /**
      * Gets the localized human readable names of the attribute.
      * 
      * @return human readable names of the attribute
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<Locale, String> getDisplayNames();
+    @NonnullAfterInit @NonnullElements @Unmodifiable public Map<Locale, String> getDisplayNames();
 
     /**
      * Gets the unmodifiable encoders used to encode the values of this attribute in to protocol specific formats. The
@@ -61,7 +61,7 @@ public interface AttributeDefinition extends ResolverPlugin<IdPAttribute> {
      * 
      * @return encoders used to encode the values of this attribute in to protocol specific formats, never null
      */
-    @Nonnull @NonnullElements @Unmodifiable public Set<AttributeEncoder<?>> getAttributeEncoders();
+    @NonnullAfterInit @NonnullElements @Unmodifiable public Set<AttributeEncoder<?>> getAttributeEncoders();
 
 
 }

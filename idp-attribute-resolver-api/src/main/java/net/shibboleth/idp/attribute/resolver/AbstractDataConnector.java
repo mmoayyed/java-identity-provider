@@ -64,7 +64,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
      * @param id ID of the {@link AbstractDataConnector} whose values will be used in the event that this data connector
      *            experiences an error
      */
-    public synchronized void setFailoverDataConnectorId(@Nullable final String id) {
+    public void setFailoverDataConnectorId(@Nullable final String id) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 

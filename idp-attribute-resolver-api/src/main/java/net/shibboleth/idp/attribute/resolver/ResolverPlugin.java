@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
@@ -55,14 +56,14 @@ public interface ResolverPlugin<ResolvedType> extends ValidatableComponent, Unmo
      * 
      * @return criteria that must be met for this plugin to be active for a given request, never null
      */
-    @Nonnull public Predicate<AttributeResolutionContext> getActivationCriteria();
+    @NonnullAfterInit public Predicate<AttributeResolutionContext> getActivationCriteria();
 
     /**
      * Gets the unmodifiable list of dependencies for this plugin.
      * 
      * @return unmodifiable list of dependencies for this plugin, never null
      */
-    @Nonnull @NonnullElements @Unmodifiable public Set<ResolverPluginDependency> getDependencies();
+    @NonnullAfterInit @NonnullElements @Unmodifiable public Set<ResolverPluginDependency> getDependencies();
 
     /**
      * Performs the attribute resolution for this plugin.

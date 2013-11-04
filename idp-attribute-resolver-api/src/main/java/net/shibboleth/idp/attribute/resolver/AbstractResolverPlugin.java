@@ -49,8 +49,8 @@ import com.google.common.collect.ImmutableSet;
  * @param <ResolvedType> object type this plug-in resolves to
  */
 @ThreadSafe
-public abstract class AbstractResolverPlugin<ResolvedType> 
-    extends AbstractDestructableIdentifiableInitializableComponent implements ResolverPlugin<ResolvedType> {
+public abstract class AbstractResolverPlugin<ResolvedType> extends
+        AbstractDestructableIdentifiableInitializableComponent implements ResolverPlugin<ResolvedType> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractResolverPlugin.class);
@@ -65,7 +65,7 @@ public abstract class AbstractResolverPlugin<ResolvedType>
     private Set<ResolverPluginDependency> dependencies = Collections.emptySet();
 
     /** {@inheritDoc} */
-    public synchronized void setId(final String componentId) {
+    public void setId(final String componentId) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -88,7 +88,7 @@ public abstract class AbstractResolverPlugin<ResolvedType>
      * 
      * @param propagate true if {@link ResolutionException}s are propagated, false if not
      */
-    public synchronized void setPropagateResolutionExceptions(final boolean propagate) {
+    public void setPropagateResolutionExceptions(final boolean propagate) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -109,7 +109,7 @@ public abstract class AbstractResolverPlugin<ResolvedType>
      * 
      * @param criteria criteria that must be met for this plugin to be active for a given request
      */
-    public synchronized void setActivationCriteria(@Nonnull final Predicate<AttributeResolutionContext> criteria) {
+    public void setActivationCriteria(@Nonnull final Predicate<AttributeResolutionContext> criteria) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         activationCriteria = Constraint.isNotNull(criteria, "Activiation criteria can not be null");
@@ -129,8 +129,7 @@ public abstract class AbstractResolverPlugin<ResolvedType>
      * 
      * @param pluginDependencies unmodifiable list of dependencies for this plugin
      */
-    public synchronized void setDependencies(
-            @Nullable @NullableElements final Set<ResolverPluginDependency> pluginDependencies) {
+    public void setDependencies(@Nullable @NullableElements final Set<ResolverPluginDependency> pluginDependencies) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
