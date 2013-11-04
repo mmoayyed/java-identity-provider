@@ -19,7 +19,6 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Map;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -38,22 +37,4 @@ public interface DataConnector extends ResolverPlugin<Map<String, IdPAttribute>>
      */
     @Nullable public String getFailoverDataConnectorId();
 
-    /**
-     * Set the ID of the {@link DataConnector} whose values will be used in the event that this data connector
-     * experiences an error.
-     * 
-     * @param id ID of the {@link DataConnector} whose values will be used in the event that this data connector
-     *            experiences an error
-     */
-    public  void setFailoverDataConnectorId(@Nullable  String id);
-    
-    /**
-     * {@inheritDoc}
-     * 
-     * This method delegates to {@link #doDataConnectorResolve(AttributeResolutionContext)}. It serves as a future
-     * extension point for introducing new common behavior.
-     */
-    @Nullable public Map<String, IdPAttribute> doResolve(
-            @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException;
-    
 }
