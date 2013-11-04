@@ -69,7 +69,7 @@ public final class SamlEncoderSupport {
             return null;
         }
 
-        final XMLObjectBuilder<XSString> stringBuilder =
+        final XMLObjectBuilder<XSString> stringBuilder = (XMLObjectBuilder<XSString>)
                 XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
 
         LOG.debug("Encoding value {} of attribute {}", value, attribute.getId());
@@ -96,7 +96,7 @@ public final class SamlEncoderSupport {
         Constraint.isNotNull(attribute, "Attribute can not be null");
         Constraint.isNotNull(attributeValueElementName, "Attribute Element Name resolution context can not be null");
 
-        final XMLObjectBuilder<XSString> stringBuilder =
+        final XMLObjectBuilder<XSString> stringBuilder = (XMLObjectBuilder<XSString>)
                 XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
 
         final XSString samlAttributeValue = stringBuilder.buildObject(attributeValueElementName, XSString.TYPE_NAME);
@@ -123,7 +123,7 @@ public final class SamlEncoderSupport {
         Constraint.isNotNull(attribute, "Attribute can not be null");
         Constraint.isNotNull(attributeValueElementName, "Attribute Element Name resolution context can not be null");
 
-        final XMLObjectBuilder<XSAny> attributeValueBuilder =
+        final XMLObjectBuilder<XSAny> attributeValueBuilder = (XMLObjectBuilder<XSAny>)
                 XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(XSAny.TYPE_NAME);
         final XSAny samlAttributeValue = attributeValueBuilder.buildObject(attributeValueElementName);
         samlAttributeValue.getUnknownXMLObjects().add(value);
@@ -155,7 +155,7 @@ public final class SamlEncoderSupport {
             return null;
         }
         
-        final XMLObjectBuilder<ScopedValue> scopedValueBuilder =
+        final XMLObjectBuilder<ScopedValue> scopedValueBuilder = (XMLObjectBuilder<ScopedValue>)
                 XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(ScopedValue.TYPE_NAME);
         final ScopedValue scopedValue = scopedValueBuilder.buildObject(attributeValueElementName);
 
