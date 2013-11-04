@@ -99,7 +99,7 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
 
         Set<ResolverPluginDependency> dependencies = attrDef.getDependencies();
         Assert.assertEquals(dependencies.size(), 1, "getDisplayDescriptions");
-        Assert.assertTrue(dependencies.contains(TestSources.makeResolverPluginDependency("dep3", null)));
+        Assert.assertTrue(dependencies.contains(TestSources.makeResolverPluginDependency("dep3", "simplePopulated2")));
 
         //
         // TODO
