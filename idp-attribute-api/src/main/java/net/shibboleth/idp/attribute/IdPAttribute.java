@@ -169,22 +169,9 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      * @param newValues the new values for this attribute
      */
     public void setValues(@Nullable @NullableElements final Collection<? extends AttributeValue<?>> newValues) {
-        // TODO(rdw) - fix when java-support can be revised
-        Set<AttributeValue> oldCheckedValues =
-                Constraints.constrainedSet(new HashSet<AttributeValue>(), Constraints.notNull());
-        Set<AttributeValue> oldNewValues = new HashSet<>();
-        if (null != newValues) {
-            oldNewValues.addAll(newValues);
-        }
-        CollectionSupport.addIf(oldCheckedValues, oldNewValues, Predicates.<AttributeValue> notNull());
-
         Set<AttributeValue<?>> checkedValues =
                 Constraints.constrainedSet(new HashSet<AttributeValue<?>>(), Constraints.notNull());
-        //
-//        CollectionSupport.addIf(checkedValues, newValues, Predicates.<AttributeValue<?>> notNull());
-        for (AttributeValue oldCheckedValue : oldCheckedValues) {
-            checkedValues.add(oldCheckedValue);
-        }
+        CollectionSupport.addIf(checkedValues, newValues, Predicates.<AttributeValue> notNull());
         values = checkedValues;
     }
 
