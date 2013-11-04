@@ -220,9 +220,9 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
 
         // Set up the dependencies first. Then the initialize in the parent
         // will correctly rehash the dependencies.
-        if (null != sourceAttributeID) {
+        if (null != getSourceAttributeId()) {
             for (ResolverPluginDependency depends : getDependencies()) {
-                depends.setDependencyAttributeId(sourceAttributeID);
+                depends.setDependencyAttributeId(getSourceAttributeId());
             }
         }
         super.doInitialize();

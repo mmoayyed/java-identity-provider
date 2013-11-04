@@ -95,11 +95,14 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
         log.debug("{} setting displayDescriptions {}.", getLogPrefix(), dependencyOnly);
         builder.addPropertyValue("dependencyOnly", dependencyOnly);
 
+        final String sourceAttributeId;
         if (config.hasAttributeNS(null, "sourceAttributeID")) {
-            String sourceAttributeId = config.getAttributeNodeNS(null, "sourceAttributeID").getValue();
+            sourceAttributeId = config.getAttributeNodeNS(null, "sourceAttributeID").getValue();
             log.debug("{} setting sourceAttributeId {}.", getLogPrefix(), sourceAttributeId);
-            builder.addPropertyValue("sourceAttributeId", sourceAttributeId);
+        } else {
+            sourceAttributeId = getDefinitionId();
         }
+        builder.addPropertyValue("sourceAttributeId", sourceAttributeId);
 
         final List<Element> attributeEncoders =
                 ElementSupport.getChildElements(config, new QName(AttributeResolverNamespaceHandler.NAMESPACE,
