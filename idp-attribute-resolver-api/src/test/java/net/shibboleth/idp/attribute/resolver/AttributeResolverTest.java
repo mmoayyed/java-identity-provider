@@ -209,7 +209,7 @@ public class AttributeResolverTest {
         attribute.getValues().add(new StringAttributeValue("value1"));
 
         LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
-        AttributeDefinition attrDef = new MockAttributeDefinition("ad1", new ResolutionException());
+        AbstractAttributeDefinition attrDef = new MockAttributeDefinition("ad1", new ResolutionException());
         attrDef.setPropagateResolutionExceptions(true);
         definitions.add(attrDef);
 

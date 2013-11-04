@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
@@ -52,14 +51,6 @@ public interface ResolverPlugin<ResolvedType> extends ValidatableComponent, Unmo
     public boolean isPropagateResolutionExceptions();
 
     /**
-     * Sets whether an {@link AttributeResolutionContext} that occurred resolving attributes will be re-thrown. Doing so
-     * will cause the entire attribute resolution request to fail.
-     * 
-     * @param propagate true if {@link ResolutionException}s are propagated, false if not
-     */
-    public void setPropagateResolutionExceptions(boolean propagate);
-
-    /**
      * Gets the criteria that must be met for this plugin to be active for a given request.
      * 
      * @return criteria that must be met for this plugin to be active for a given request, never null
@@ -67,25 +58,11 @@ public interface ResolverPlugin<ResolvedType> extends ValidatableComponent, Unmo
     @Nonnull public Predicate<AttributeResolutionContext> getActivationCriteria();
 
     /**
-     * Sets the criteria that must be met for this plugin to be active for a given request.
-     * 
-     * @param criteria criteria that must be met for this plugin to be active for a given request
-     */
-    public void setActivationCriteria(@Nonnull Predicate<AttributeResolutionContext> criteria);
-
-    /**
      * Gets the unmodifiable list of dependencies for this plugin.
      * 
      * @return unmodifiable list of dependencies for this plugin, never null
      */
     @Nonnull @NonnullElements @Unmodifiable public Set<ResolverPluginDependency> getDependencies();
-
-    /**
-     * Sets the list of dependencies for this plugin.
-     * 
-     * @param pluginDependencies unmodifiable list of dependencies for this plugin
-     */
-    public void setDependencies(@Nullable @NullableElements Set<ResolverPluginDependency> pluginDependencies);
 
     /**
      * Performs the attribute resolution for this plugin.
