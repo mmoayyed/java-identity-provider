@@ -69,6 +69,9 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
     /** Track whether custom principals have been explicitly set (including the empty set). */
     private boolean principalsAdded;
     
+    /** Indicates whether to clear any existing {@link AuthenticationErrorContext} before execution. */
+    private boolean clearErrorContext;
+    
     /** Error messages associated with a specific error condition token. */
     @Nonnull @NonnullElements private Map<String,Collection<String>> classifiedMessages;
     
@@ -80,6 +83,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         super();
 
         authenticatedSubject = new Subject();
+        clearErrorContext = true;
         classifiedMessages = Collections.emptyMap();
     }
 
@@ -197,6 +201,10 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
             log.info("{} Skipping validator, not compatible with request's principal requirements", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
             return false;
+        }
+        
+        if (clearErrorContext) {
+            authenticationContext.removeSubcontext(AuthenticationErrorContext.class);
         }
         
         return true;
