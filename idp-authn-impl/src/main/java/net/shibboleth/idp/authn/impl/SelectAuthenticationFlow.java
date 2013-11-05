@@ -105,6 +105,14 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         
         requestedPrincipalCtx = authenticationContext.getSubcontext(RequestedPrincipalContext.class, false);
+        
+        // Detect a previous attempted flow, and move it to the intermediate collection.
+        // This will prevent re-selecting the same (probably failed) flow again.
+        if (authenticationContext.getAttemptedFlow() != null) {
+            authenticationContext.getIntermediateFlows().put(
+                    authenticationContext.getAttemptedFlow().getId(), authenticationContext.getAttemptedFlow());
+        }
+        
         return true;
     }
     
@@ -132,27 +140,44 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         
         if (authenticationContext.isForceAuthn()) {
             log.debug("{} forced authentication requested, selecting an inactive flow", getLogPrefix());
-            if (authenticationContext.getPotentialFlows().isEmpty()) {
-                log.error("{} no potential flows to choose from, authentication will fail", getLogPrefix());
+            AuthenticationFlowDescriptor flow = getUnattemptedInactiveFlow(authenticationContext);
+            if (flow == null) {
+                log.error("{} no potential flows left to choose from, authentication will fail", getLogPrefix());
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_POTENTIAL_FLOW);
                 return;
             }
-            selectInactiveFlow(profileRequestContext, authenticationContext,
-                    authenticationContext.getPotentialFlows().values().iterator().next());
+            selectInactiveFlow(profileRequestContext, authenticationContext, flow);
         } else if (authenticationContext.getActiveResults().isEmpty()) {
             log.debug("{} no active results available, selecting an inactive flow", getLogPrefix());
-            if (authenticationContext.getPotentialFlows().isEmpty()) {
-                log.error("{} no potential flows to choose from, authentication will fail", getLogPrefix());
+            AuthenticationFlowDescriptor flow = getUnattemptedInactiveFlow(authenticationContext);
+            if (flow == null) {
+                log.error("{} no potential flows left to choose from, authentication will fail", getLogPrefix());
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_POTENTIAL_FLOW);
                 return;
             }
-            selectInactiveFlow(profileRequestContext, authenticationContext,
-                    authenticationContext.getPotentialFlows().values().iterator().next());
+            selectInactiveFlow(profileRequestContext, authenticationContext, flow);
         } else {
             // Pick a result to reuse.
             selectActiveResult(profileRequestContext, authenticationContext,
                     authenticationContext.getActiveResults().values().iterator().next());
         }
+    }
+
+    /**
+     * Return the first inactive potential flow not found in the intermediate flows collection. 
+     * 
+     * @param authenticationContext the current authentication context
+     * @return an eligible flow, or null
+     */
+    @Nullable private AuthenticationFlowDescriptor getUnattemptedInactiveFlow(
+            @Nonnull final AuthenticationContext authenticationContext) {
+        for (AuthenticationFlowDescriptor flow : authenticationContext.getPotentialFlows().values()) {
+            if (!authenticationContext.getIntermediateFlows().containsKey(flow.getId())) {
+                return flow;
+            }
+        }
+        
+        return null;
     }
 
     /**
@@ -224,6 +249,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         Map<String,AuthenticationFlowDescriptor> potentialFlows = authenticationContext.getPotentialFlows();
         
         // Check each flow for compatibility with request. Don't check for an active result also.
+        // Also omit anything in the intermediates collection already.
         for (Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
             log.debug("{} Checking for an inactive flow compatible with operator '{}' and principal '{}'",
                     getLogPrefix(), requestedPrincipalCtx.getOperator(), p);
@@ -233,7 +259,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             if (factory != null) {
                 PrincipalEvalPredicate predicate = factory.getPredicate(p);
                 for (AuthenticationFlowDescriptor descriptor : potentialFlows.values()) {
-                    if (predicate.apply(descriptor)) {
+                    if (!authenticationContext.getIntermediateFlows().containsKey(descriptor.getId())
+                            && predicate.apply(descriptor)) {
                         requestedPrincipalCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
                         selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);
                         return;
@@ -307,7 +334,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                 if (factory != null) {
                     PrincipalEvalPredicate predicate = factory.getPredicate(p);
                     for (AuthenticationFlowDescriptor descriptor : potentialFlows.values()) {
-                        if (predicate.apply(descriptor)) {
+                        if (!authenticationContext.getIntermediateFlows().containsKey(descriptor.getId())
+                                && predicate.apply(descriptor)) {
                             
                             // Now check for an active result we can use from this flow. Not all results from a flow
                             // will necessarily match the request just because the flow might.
