@@ -59,8 +59,6 @@
     -->
     <subflow-state id="CallAuthenticationFlow" subflow="#{currentEvent.id}">
         <transition on="proceed" to="InvalidateSessionOnIdentitySwitch" />
-        
-        <transition on="#{true}" to="#{currentEvent.id}" />
     </subflow-state>
 
     <!-- Handles an identity switch by dumping the old session. -->
