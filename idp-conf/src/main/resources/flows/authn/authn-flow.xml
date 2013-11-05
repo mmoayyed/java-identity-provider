@@ -58,6 +58,7 @@
     is an error, otherwise control passes to the wrap-up actions.
     -->
     <subflow-state id="CallAuthenticationFlow" subflow="#{currentEvent.id}">
+        <transition on="ReselectFlow" to="SelectAuthenticationFlow" />
         <transition on="proceed" to="InvalidateSessionOnIdentitySwitch" />
     </subflow-state>
 

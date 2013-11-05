@@ -28,12 +28,14 @@
     <!-- You can configure the address range(s) and principal name(s) for IP-based login here. -->
 
     <util:map id="shibboleth.authn.IPAddress.Mappings">
+        <!--
         <entry key="jdoe">
             <list>
                 <value>127.0.0.1/32</value>
                 <value>::1/128</value>
             </list>
         </entry>
+        -->
     </util:map>
 
 </beans>

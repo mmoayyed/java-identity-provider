@@ -15,6 +15,7 @@
     <end-state id="NoCredentials" />
     <end-state id="NoPotentialFlow" />
     <end-state id="RequestUnsupported" />
+    <end-state id="ReselectFlow" />
     <end-state id="SubjectCanonicalizationError" />
 
     <!-- Default is to turn any event into its own end-state. -->
