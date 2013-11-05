@@ -20,6 +20,10 @@ package net.shibboleth.idp.authn.impl;
 import java.io.File;
 import java.io.IOException;
 import java.security.URIParameter;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.security.auth.login.LoginException;
 
@@ -40,7 +44,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
@@ -81,8 +84,12 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
         super.setUp();
 
         action = new ValidateUsernamePasswordAgainstJAAS();
-        action.setUnknownUsernameErrors(ImmutableList.of("DN_RESOLUTION_FAILURE"));
-        action.setInvalidPasswordErrors(ImmutableList.of("INVALID_CREDENTIALS"));
+        
+        Map<String,Collection<String>> mappings = new HashMap<>();
+        mappings.put("UnknownUsername", Collections.singleton("DN_RESOLUTION_FAILURE"));
+        mappings.put("InvalidPassword", Collections.singleton("INVALID_CREDENTIALS"));
+        action.setClassifiedMessages(mappings);
+        
         action.setHttpServletRequest(new MockHttpServletRequest());
     }
 
@@ -146,8 +153,8 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
         AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class, false);
         Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
-        Assert.assertTrue(errorCtx.isUnknownUsername());
-        Assert.assertFalse(errorCtx.isInvalidPassword());
+        Assert.assertTrue(errorCtx.isClassifiedError("UnknownUsername"));
+        Assert.assertFalse(errorCtx.isClassifiedError("InvalidPassword"));
     }
 
     @Test public void testBadPassword() throws Exception {
@@ -168,8 +175,8 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
         AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class, false);
         Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
-        Assert.assertFalse(errorCtx.isUnknownUsername());
-        Assert.assertTrue(errorCtx.isInvalidPassword());
+        Assert.assertFalse(errorCtx.isClassifiedError("UnknownUsername"));
+        Assert.assertTrue(errorCtx.isClassifiedError("InvalidPassword"));
     }
 
     @Test public void testAuthorized() throws Exception {

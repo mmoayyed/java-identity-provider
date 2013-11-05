@@ -18,11 +18,15 @@
 package net.shibboleth.idp.authn.context;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -43,30 +47,16 @@ public class AuthenticationErrorContext extends BaseContext {
 
     /** Ordered list of exceptions encountered. */
     @Nonnull @NonnullElements private List<Exception> exceptions;
-
-    /** Indicates at least one action didn't recognize the username. */
-    private boolean unknownUsername;
-
-    /** Indicates at least one action didn't recognize the password. */
-    private boolean invalidPassword;
-
-    /** Indicates at least one action detected an expired password. */
-    private boolean expiredPassword;
-
-    /** Indicates at least one action detected an account lockout. */
-    private boolean accountLocked;
-
-    /** Indicates at least one action detected a disabled account. */
-    private boolean accountDisabled;
-
-    /** Indicates at least one action detected a password needing reset. */
-    private boolean passwordReset;
+    
+    /** Error conditions detected through classified error messages. */
+    private Collection<String> classifiedErrors;
     
     /** Constructor. */
     public AuthenticationErrorContext() {
         super();
         
         exceptions = new ArrayList();
+        classifiedErrors = new HashSet();
     }
 
     /**
@@ -90,111 +80,21 @@ public class AuthenticationErrorContext extends BaseContext {
     }
     
     /**
-     * Get the unknown username indicator.
+     * Get a mutable collection of error "tokens" associated with the context.
      * 
-     * @return the unknown username indicator
+     * @return mutable collection of error strings
      */
-    public boolean isUnknownUsername() {
-        return unknownUsername;
-    }
-
-    /**
-     * Get the invalid password indicator.
-     * 
-     * @return invalid password indicator
-     */
-    public boolean isInvalidPassword() {
-        return invalidPassword;
-    }
-
-    /**
-     * Get the expired password indicator.
-     * 
-     * @return expired password indicator
-     */
-    public boolean isExpiredPassword() {
-        return expiredPassword;
-    }
-
-    /**
-     * Get the account lockout indicator.
-     * .
-     * @return account lockout indicator
-     */
-    public boolean isAccountLocked() {
-        return accountLocked;
-    }
-
-    /**
-     * Get the account disabled indicator.
-     * 
-     * @return account disabled indicator
-     */
-    public boolean isAccountDisabled() {
-        return accountDisabled;
-    }
-
-    /**
-     * Get the password reset indicator.
-     * 
-     * @return password reset indicator
-     */
-    public boolean isPasswordReset() {
-        return passwordReset;
+    @Nonnull @NonnullElements @Live public Collection<String> getClassifiedErrors() {
+        return classifiedErrors;
     }
     
     /**
-     * Set the unknown username indicator.
+     * Check for the presence of a particular error condition in the context.
      * 
-     * @param flag the indicator to set
+     * @param error the condition to check for
+     * @return  true iff the context contains the error condition specified
      */
-    public void setUnknownUsername(boolean flag) {
-        unknownUsername = flag;
+    public boolean isClassifiedError(@Nonnull @NotEmpty final String error) {
+        return classifiedErrors.contains(error);
     }
-
-    /**
-     * Set the invalid password indicator.
-     * 
-     * @param flag the indicator to set
-     */
-    public void setInvalidPassword(boolean flag) {
-        invalidPassword = flag;
-    }
-
-    /**
-     * Set the expired password indicator.
-     * 
-     * @param flag the indicator to set 
-     */
-    public void setExpiredPassword(boolean flag) {
-        expiredPassword = flag;
-    }
-
-    /**
-     * Set the account lockout indicator.
-     * 
-     * @param flag the indicator to set 
-     */
-    public void setAccountLocked(boolean flag) {
-        accountLocked = flag;
-    }
-
-    /**
-     * Set the account disabled indicator.
-     * 
-     * @param flag the indicator to set 
-     */
-    public void setAccountDisabled(boolean flag) {
-        accountDisabled = flag;
-    }
-
-    /**
-     * Set the password reset indicator.
-     * 
-     * @param flag the indicator to set
-     */
-    public void setPasswordReset(boolean flag) {
-        passwordReset = flag;
-    }
-
 }

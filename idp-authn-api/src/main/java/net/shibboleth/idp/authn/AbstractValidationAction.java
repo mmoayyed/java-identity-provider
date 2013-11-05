@@ -20,6 +20,7 @@ package net.shibboleth.idp.authn;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -32,6 +33,7 @@ import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -45,8 +47,9 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * A base class for authentication related actions that validate credentials and produce an
@@ -66,20 +69,8 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
     /** Track whether custom principals have been explicitly set (including the empty set). */
     private boolean principalsAdded;
     
-    /** Error messages indicating an unknown username. */
-    @Nonnull @NonnullElements private Collection<String> unknownUsernameErrors;
-
-    /** Error messages indicating an invalid password. */
-    @Nonnull @NonnullElements private Collection<String> invalidPasswordErrors;
-
-    /** Error messages indicating an expired password. */
-    @Nonnull @NonnullElements private Collection<String> expiredPasswordErrors;
-
-    /** Error messages indicating a locked account. */
-    @Nonnull @NonnullElements private Collection<String> accountLockedErrors;
-
-    /** Error messages indicating a disabled account. */
-    @Nonnull @NonnullElements private Collection<String> accountDisabledErrors;
+    /** Error messages associated with a specific error condition token. */
+    @Nonnull @NonnullElements private Map<String,Collection<String>> classifiedMessages;
     
     /** Predicate to apply when setting AuthenticationResult cacheability. */
     @Nullable private Predicate<ProfileRequestContext> resultCachingPredicate;
@@ -89,20 +80,16 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         super();
 
         authenticatedSubject = new Subject();
-        unknownUsernameErrors = Collections.emptyList();
-        invalidPasswordErrors = Collections.emptyList();
-        expiredPasswordErrors = Collections.emptyList();
-        accountLockedErrors = Collections.emptyList();
-        accountDisabledErrors = Collections.emptyList();
+        classifiedMessages = Collections.emptyMap();
     }
 
     /**
-     * Get the error messages indicating an unknown username.
+     * Get the error messages classified by specific error conditions.
      * 
-     * @return the "unknown username" error messages
+     * @return classified error message map
      */
-    @Nonnull @NonnullElements @Unmodifiable public Collection<String> getUnknownUsernameErrors() {
-        return ImmutableList.copyOf(unknownUsernameErrors);
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public Map<String,Collection<String>> getClassifiedErrors() {
+        return ImmutableMap.copyOf(classifiedMessages);
     }
     
     /**
@@ -110,90 +97,18 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * 
      * @param messages the "unknown username" error messages to set
      */
-    public void setUnknownUsernameErrors(@Nonnull @NonnullElements final Collection<String> messages) {
+    public void setClassifiedMessages(@Nonnull @NonnullElements final Map<String,Collection<String>> messages) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        Constraint.isNotNull(messages, "Map of classified messages cannot be null");
         
-        unknownUsernameErrors = Lists.newArrayList(Collections2.filter(messages, Predicates.notNull()));
-    }
-    
-    /**
-     * Get the error messages indicating an invalid password.
-     * 
-     * @return the "invalid password" error messages
-     */
-    @Nonnull @NonnullElements @Unmodifiable public Collection<String> getInvalidPasswordErrors() {
-        return ImmutableList.copyOf(invalidPasswordErrors);
-    }
-    
-    /**
-     * Sets the error messages indicating an invalid password.
-     * 
-     * @param messages the "invalid password" error messages to set
-     */
-    public void setInvalidPasswordErrors(@Nonnull @NonnullElements final Collection<String> messages) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        invalidPasswordErrors = Lists.newArrayList(Collections2.filter(messages, Predicates.notNull()));
-    }
-    
-    /**
-     * Get the error messages indicating an expired password.
-     * 
-     * @return the "expired password" error messages
-     */
-    @Nonnull @NonnullElements @Unmodifiable public Collection<String> getExpiredPasswordErrors() {
-        return ImmutableList.copyOf(expiredPasswordErrors);
-    }
-
-    /**
-     * Sets the error messages indicating an expired password.
-     * 
-     * @param messages the "expired password" error messages to set
-     */
-    public void setExpiredPasswordErrors(@Nonnull @NonnullElements final Collection<String> messages) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        expiredPasswordErrors = Lists.newArrayList(Collections2.filter(messages, Predicates.notNull()));
-    }
-        
-    /**
-     * Get the error messages indicating a locked account.
-     * 
-     * @return the "account locked" error messages
-     */
-    @Nonnull @NonnullElements @Unmodifiable public Collection<String> getAccountLockedErrors() {
-        return ImmutableList.copyOf(accountLockedErrors);
-    }
-
-    /**
-     * Sets the error messages indicating a locked account.
-     * 
-     * @param messages the "account locked" error messages to set
-     */
-    public void setAccountLockedErrors(@Nonnull @NonnullElements final Collection<String> messages) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        accountLockedErrors = Lists.newArrayList(Collections2.filter(messages, Predicates.notNull()));
-    }
-    
-    /**
-     * Get the error messages indicating a disabled account.
-     * 
-     * @return the "account disabled" error messages
-     */
-    @Nonnull @NonnullElements @Unmodifiable public Collection<String> getAccountDisabledErrors() {
-        return ImmutableList.copyOf(accountDisabledErrors);
-    }
-
-    /**
-     * Sets the error messages indicating a disabled account.
-     * 
-     * @param messages the "account disabled" error messages to set
-     */
-    public void setAccountDisabledErrors(@Nonnull @NonnullElements final Collection<String> messages) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        accountDisabledErrors = Lists.newArrayList(Collections2.filter(messages, Predicates.notNull()));
+        classifiedMessages = Maps.newHashMap();
+        for (Map.Entry<String, Collection<String>> entry : messages.entrySet()) {
+            if (entry.getKey() != null && !entry.getKey().isEmpty()
+                    && entry.getValue() != null && !entry.getValue().isEmpty()) {
+                classifiedMessages.put(entry.getKey(),
+                        ImmutableList.copyOf(Collections2.filter(entry.getValue(), Predicates.notNull())));
+            }
+        }
     }
 
     /**
@@ -217,7 +132,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
     }
     
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @Unmodifiable public <T extends Principal> Set<T> getSupportedPrincipals(
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public <T extends Principal> Set<T> getSupportedPrincipals(
             @Nonnull final Class<T> c) {
         return authenticatedSubject.getPrincipals(c);
     }
@@ -358,16 +273,10 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
 
         MessageChecker checker = new MessageChecker(e);
         
-        if (Iterables.any(unknownUsernameErrors, checker)) {
-            errorCtx.setUnknownUsername(true);
-        } else if (Iterables.any(invalidPasswordErrors, checker)) {
-            errorCtx.setInvalidPassword(true);
-        } else if (Iterables.any(expiredPasswordErrors, checker)) {
-            errorCtx.setExpiredPassword(true);
-        } else if (Iterables.any(accountDisabledErrors, checker)) {
-            errorCtx.setAccountDisabled(true);
-        } else if (Iterables.any(accountLockedErrors, checker)) {
-            errorCtx.setAccountLocked(true);
+        for (Map.Entry<String, Collection<String>> entry : classifiedMessages.entrySet()) {
+            if (Iterables.any(entry.getValue(), checker)) {
+                errorCtx.getClassifiedErrors().add(entry.getKey());
+            }
         }
     }
     
