@@ -8,23 +8,13 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.2.xsd
                            http://www.springframework.org/schema/context classpath:/org/springframework/context/config/spring-context-3.2.xsd
                            http://www.springframework.org/schema/util classpath:/org/springframework/beans/factory/xml/spring-util-3.2.xsd"
-                           
+
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <import resource="../../conf/ipaddress-authn-config.xml" />
+    <context:property-placeholder location="classpath:conf/idp.properties" />
 
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
-    
-    <bean id="ExtractUserAgentAddress" class="net.shibboleth.idp.authn.impl.ExtractUserAgentAddress" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:lowercase-ref="shibboleth.authn.IPAddress.Lowercase"
-        p:uppercase-ref="shibboleth.authn.IPAddress.Uppercase"
-        p:trim-ref="shibboleth.authn.IPAddress.Trim"
-        p:transforms-ref="shibboleth.authn.IPAddress.Transforms" />
+    <import resource="authn-comparison.xml" />
+    <import resource="authn-flow-descriptors.xml" />
         
-    <bean id="ValidateUserAgentAddress" class="net.shibboleth.idp.authn.impl.ValidateUserAgentAddress" scope="prototype"
-        p:mappings-ref="shibboleth.authn.IPAddress.Mappings"
-        p:resultCachingPredicate="#{getObject('shibboleth.authn.IPAddress.resultCachingPredicate')}" />
-
 </beans>

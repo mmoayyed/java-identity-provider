@@ -8,7 +8,12 @@
     
     <context:property-placeholder location="classpath:conf/idp.properties" />
     
-    <webflow:flow-registry id="flowRegistry" base-path="file://${idp.home}/flows" flow-builder-services="flowBuilderServices">
+    <!-- Define custom flows, or override system flows, inside here. -->
+    <webflow:flow-registry id="flowRegistry" parent="systemFlowRegistry" base-path="file://${idp.home}/flows" flow-builder-services="flowBuilderServices">
+    </webflow:flow-registry>
+
+    <!-- System-supplied flows, do not modify. -->
+    <webflow:flow-registry id="flowRegistry" base-path="file://${idp.home}/system/flows" flow-builder-services="flowBuilderServices">
 
         <webflow:flow-location id="Authentication.Abstract" path="/authn/authn-abstract-flow.xml" />
         <webflow:flow-location id="Authentication.Subflow.Abstract" path="/authn/authn-subflow-abstract-flow.xml" />

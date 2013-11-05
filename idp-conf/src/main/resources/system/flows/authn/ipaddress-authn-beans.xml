@@ -11,27 +11,20 @@
                            
        default-init-method="initialize"
        default-destroy-method="destroy">
-       
-    <import resource="../../conf/jaas-authn-config.xml" />
+
+    <import resource="../../../conf/ipaddress-authn-config.xml" />
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     
-    <bean id="ExtractUsernamePasswordFromBasicAuth" class="net.shibboleth.idp.authn.impl.ExtractUsernamePasswordFromBasicAuth" scope="prototype"
+    <bean id="ExtractUserAgentAddress" class="net.shibboleth.idp.authn.impl.ExtractUserAgentAddress" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:lowercase-ref="shibboleth.authn.JAAS.Lowercase"
-        p:uppercase-ref="shibboleth.authn.JAAS.Uppercase"
-        p:trim-ref="shibboleth.authn.JAAS.Trim"
-        p:transforms-ref="shibboleth.authn.JAAS.Transforms" />
+        p:lowercase-ref="shibboleth.authn.IPAddress.Lowercase"
+        p:uppercase-ref="shibboleth.authn.IPAddress.Uppercase"
+        p:trim-ref="shibboleth.authn.IPAddress.Trim"
+        p:transforms-ref="shibboleth.authn.IPAddress.Transforms" />
         
-    <bean id="ValidateUsernamePasswordAgainstJAAS" class="net.shibboleth.idp.authn.impl.ValidateUsernamePasswordAgainstJAAS" scope="prototype"
-            p:loginConfigName-ref="shibboleth.authn.JAAS.LoginConfigName" p:loginConfigType="JavaLoginConfig"
-            p:classifiedMessages-ref="shibboleth.ClassifiedMessageMap"
-            p:resultCachingPredicate="#{getObject('shibboleth.authn.JAAS.resultCachingPredicate')}" >
-        <property name="loginConfigParameters">
-            <bean class="java.security.URIParameter">
-                <constructor-arg ref="shibboleth.authn.JAAS.JAASConfigURI" />
-            </bean>
-        </property>
-    </bean>
+    <bean id="ValidateUserAgentAddress" class="net.shibboleth.idp.authn.impl.ValidateUserAgentAddress" scope="prototype"
+        p:mappings-ref="shibboleth.authn.IPAddress.Mappings"
+        p:resultCachingPredicate="#{getObject('shibboleth.authn.IPAddress.resultCachingPredicate')}" />
 
 </beans>

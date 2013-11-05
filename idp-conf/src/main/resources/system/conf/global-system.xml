@@ -24,8 +24,6 @@
         </property>
     </bean>
 
-    <import resource="authn-comparison.xml" />
-    <import resource="authn-flow-descriptors.xml" />
     <import resource="session-manager.xml" />
     
     <bean id="shibboleth.LogbackLogging" class="net.shibboleth.idp.log.LogbackLoggingService" init-method="start" destroy-method="stop">

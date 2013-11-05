@@ -12,15 +12,12 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
        
-    <import resource="../../conf/jaas-authn-config.xml" />
+    <import resource="../../../conf/jaas-authn-config.xml" />
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     
-    <bean id="ExtractUsernamePasswordFromFormRequest" class="net.shibboleth.idp.authn.impl.ExtractUsernamePasswordFromFormRequest" scope="prototype"
+    <bean id="ExtractUsernamePasswordFromBasicAuth" class="net.shibboleth.idp.authn.impl.ExtractUsernamePasswordFromBasicAuth" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:usernameFieldName-ref="shibboleth.authn.JAAS.UsernameFieldName"
-        p:passwordFieldName-ref="shibboleth.authn.JAAS.PasswordFieldName"
-        p:SSOBypassFieldName-ref="shibboleth.authn.JAAS.SSOBypassFieldName"
         p:lowercase-ref="shibboleth.authn.JAAS.Lowercase"
         p:uppercase-ref="shibboleth.authn.JAAS.Uppercase"
         p:trim-ref="shibboleth.authn.JAAS.Trim"
@@ -29,7 +26,7 @@
     <bean id="ValidateUsernamePasswordAgainstJAAS" class="net.shibboleth.idp.authn.impl.ValidateUsernamePasswordAgainstJAAS" scope="prototype"
             p:loginConfigName-ref="shibboleth.authn.JAAS.LoginConfigName" p:loginConfigType="JavaLoginConfig"
             p:classifiedMessages-ref="shibboleth.ClassifiedMessageMap"
-            p:resultCachingPredicate="#{getObject('shibboleth.authn.JAAS.resultCachingPredicate')}">
+            p:resultCachingPredicate="#{getObject('shibboleth.authn.JAAS.resultCachingPredicate')}" >
         <property name="loginConfigParameters">
             <bean class="java.security.URIParameter">
                 <constructor-arg ref="shibboleth.authn.JAAS.JAASConfigURI" />
