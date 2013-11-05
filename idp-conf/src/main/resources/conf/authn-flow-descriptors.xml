@@ -81,6 +81,25 @@
     </util:list>
 
     <!--
+    Define entries here to map error messages thrown by authentication plugins like JAAS modules
+    and classify them as particular kinds of errors for use in your templates.
+    -->
+    <util:map id="shibboleth.ClassifiedMessageMap">
+        <entry key="UnknownUsername">
+            <list>
+                <value>CLIENT_NOT_FOUND</value>
+                <value>DN_RESOLUTION_FAILURE</value>
+            </list>
+        </entry>
+        <entry key="InvalidPassword">
+            <list>
+                <value>PREAUTH_FAILED</value>
+                <value>INVALID_CREDENTIALS</value>
+            </list>
+        </entry>
+    </util:map>
+
+    <!--
     Defining this allows us to specify symbolic text replacements that shrink the size of results
     saved to client-side storage such as cookies.
     -->

@@ -15,7 +15,11 @@
 #if ( $authenticationErrorContext && $authenticationErrorContext.getExceptions().size() > 0 )
 		<p>ERROR: $esapiEncoder.encodeForHTML($authenticationErrorContext.getExceptions().get(0).getMessage())</p>
 #end
-        
+
+#if ( $authenticationErrorContext && $authenticationErrorContext.getClassifiedErrors().size() > 0 )
+        <p>Classified errors: $authenticationErrorContext.getClassifiedErrors()</p>
+#end
+
         <form action="$flowExecutionUrl" method="post">
             Username: <input type="text" name="username" value=""/> <br/>
             Password: <input type="password" name="password" value=""/> <br/>
