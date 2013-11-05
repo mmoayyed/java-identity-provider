@@ -109,6 +109,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         // Detect a previous attempted flow, and move it to the intermediate collection.
         // This will prevent re-selecting the same (probably failed) flow again.
         if (authenticationContext.getAttemptedFlow() != null) {
+            log.info("{} moving incomplete flow {} to intermediate set, reselecting a different one", getLogPrefix(),
+                    authenticationContext.getAttemptedFlow().getId());
             authenticationContext.getIntermediateFlows().put(
                     authenticationContext.getAttemptedFlow().getId(), authenticationContext.getAttemptedFlow());
         }

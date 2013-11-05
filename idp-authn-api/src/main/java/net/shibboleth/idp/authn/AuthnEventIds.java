@@ -35,6 +35,9 @@ public final class AuthnEventIds {
     /** ID of event returned if the given credentials are invalid. */
     public static final String INVALID_CREDENTIALS = "InvalidCredentials";
 
+    /** ID of event returned if a flow wishes to indicate that another flow should be selected instead. */
+    public static final String RESELECT_FLOW = "ReselectFlow";
+    
     /** ID of event returned if a Subject cannot be canonicalized. */
     public static final String SUBJECT_C14N_ERROR = "SubjectCanonicalizationError";
     

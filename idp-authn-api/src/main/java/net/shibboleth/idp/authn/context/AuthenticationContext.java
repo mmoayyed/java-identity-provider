@@ -18,6 +18,7 @@
 package net.shibboleth.idp.authn.context;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -90,7 +91,7 @@ public final class AuthenticationContext extends BaseContext {
 
         initiationInstant = System.currentTimeMillis();
         
-        potentialFlows = new HashMap<>();
+        potentialFlows = new LinkedHashMap<>();
         activeResults = new HashMap<>();
         intermediateFlows = new HashMap<>();
         
