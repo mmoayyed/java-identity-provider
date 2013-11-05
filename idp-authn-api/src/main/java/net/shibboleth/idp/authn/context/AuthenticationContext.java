@@ -69,6 +69,9 @@ public final class AuthenticationContext extends BaseContext {
     /** The registry of predicate factories for custom principal evaluation. */
     @Nonnull private PrincipalEvalPredicateFactoryRegistry evalRegistry;
 
+    /** Previously attempted flows (could be failures or intermediate results). */
+    @Nonnull @NonnullElements private final Map<String, AuthenticationFlowDescriptor> intermediateFlows;
+    
     /** Authentication flow being attempted to authenticate the user. */
     @Nullable private AuthenticationFlowDescriptor attemptedFlow;
     
@@ -87,15 +90,16 @@ public final class AuthenticationContext extends BaseContext {
 
         initiationInstant = System.currentTimeMillis();
         
-        potentialFlows = new HashMap();
-        activeResults = new HashMap();
+        potentialFlows = new HashMap<>();
+        activeResults = new HashMap<>();
+        intermediateFlows = new HashMap<>();
         
         evalRegistry = new PrincipalEvalPredicateFactoryRegistry();
         resultCacheable = true;
     }
 
     /**
-     * Gets the time, in milliseconds since the epoch, when the authentication process started.
+     * Get the time, in milliseconds since the epoch, when the authentication process started.
      * 
      * @return time when the authentication process started
      */
@@ -104,7 +108,7 @@ public final class AuthenticationContext extends BaseContext {
     }
 
     /**
-     * Gets the authentication results currently active for the subject.
+     * Get the authentication results currently active for the subject.
      * 
      * @return authentication results currently active for the subject
      */
@@ -113,7 +117,7 @@ public final class AuthenticationContext extends BaseContext {
     }
 
     /**
-     * Sets the authentication results currently active for the subject.
+     * Set the authentication results currently active for the subject.
      * 
      * @param results authentication results currently active for the subject
      * 
@@ -132,12 +136,22 @@ public final class AuthenticationContext extends BaseContext {
     }
     
     /**
-     * Gets the set of flows that could potentially be used for user authentication.
+     * Get the set of flows that could potentially be used for user authentication.
      * 
      * @return the potential flows
      */
     @Nonnull @NonnullElements @Live public Map<String, AuthenticationFlowDescriptor> getPotentialFlows() {
         return potentialFlows;
+    }
+
+    
+    /**
+     * Get the set of flows that have been executed, successfully or otherwise, without producing a completed result.
+     * 
+     * @return the intermediately executed flows
+     */
+    @Nonnull @NonnullElements @Live public Map<String, AuthenticationFlowDescriptor> getIntermediateFlows() {
+        return intermediateFlows;
     }
     
     /**
@@ -287,7 +301,7 @@ public final class AuthenticationContext extends BaseContext {
     }
         
     /**
-     * Gets the time, in milliseconds since the epoch, when the authentication process ended. A value of 0 indicates
+     * Get the time, in milliseconds since the epoch, when the authentication process ended. A value of 0 indicates
      * that authentication has not yet completed.
      * 
      * @return time when the authentication process ended
@@ -297,7 +311,7 @@ public final class AuthenticationContext extends BaseContext {
     }
 
     /**
-     * Sets the completion time of the authentication attempt to the current time.
+     * Set the completion time of the authentication attempt to the current time.
      * 
      * @return this authentication context
      */
