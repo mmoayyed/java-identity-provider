@@ -32,7 +32,7 @@ import net.shibboleth.utilities.java.support.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.app.event.EventCartridge;
-import org.apache.velocity.app.event.implement.EscapeReference;
+import org.apache.velocity.app.event.ReferenceInsertionEventHandler;
 import org.ldaptive.SearchFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -148,16 +148,15 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
         }
 
         final EventCartridge cartridge = new EventCartridge();
-        cartridge.addEventHandler(new EscapeReference() {
-
-            @Override protected String getMatchAttribute() {
-                return "eventhandler.escape.ldap.match";
-            }
-
-            @Override protected String escape(final Object text) {
-                final String value = text.toString();
+        cartridge.addEventHandler(new ReferenceInsertionEventHandler() {
+            
+            @Override public Object referenceInsert(final String reference, final Object value) {
+                if (value == null){ 
+                    return null;
+                }
+                final String text = value.toString();
                 // TODO use ldaptive attribute value encoding
-                return value.replace("\\", "\\5c").replace("*", "\\2a").replace("(", "\\28").replace(")", "\\29")
+                return text.replace("\\", "\\5c").replace("*", "\\2a").replace("(", "\\28").replace(")", "\\29")
                         .replace("\u0000", "\\00");
             }
         });
