@@ -53,7 +53,15 @@ import com.google.common.collect.ImmutableMap;
 //TODO(lajoie) need to deal with thread safety issue 
 //             where attribute definitions/data connectors might change in the midst of a resolution
 
-/** A component that resolves the attributes for a particular subject. */
+/**
+ * A component that resolves the attributes for a particular subject.
+ * 
+ * <em>Note Well</em>This class is about <em>attribute resolution</em>, that is to say the summoning up of attributes in
+ * response to thre exigies of the provided context. It does <em>not</em> implement
+ * {@link net.shibboleth.utilities.java.support.resolver.Resolver} which in about summoning up bits of generic data from
+ * the configuration (usually the metadata) in response to specific
+ * {@link net.shibboleth.utilities.java.support.resolver.Criterion}s.
+ * */
 @ThreadSafe
 public class AttributeResolver extends AbstractDestructableIdentifiableInitializableComponent implements
         ValidatableComponent, UnmodifiableComponent {
@@ -139,8 +147,8 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
 
     /**
      * This method checks if each registered data connector and attribute definition is valid (via
-     * {@link ResolverPlugin#validate()} and checks to see if there are any loops in the dependency for all
-     * registered plugins.
+     * {@link ResolverPlugin#validate()} and checks to see if there are any loops in the dependency for all registered
+     * plugins.
      * 
      * {@inheritDoc}
      */
@@ -189,9 +197,9 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
 
     /**
      * Resolves the attribute for the give request. Note, if attributes are requested,
-     * {@link AttributeResolutionContext#getRequestedIdPAttributes()}, the resolver will <strong>not</strong> fail 
-     * if they can not be resolved. This information serves only as a hint to the resolver to, potentially, 
-     * optimize the resolution of attributes.
+     * {@link AttributeResolutionContext#getRequestedIdPAttributes()}, the resolver will <strong>not</strong> fail if
+     * they can not be resolved. This information serves only as a hint to the resolver to, potentially, optimize the
+     * resolution of attributes.
      * 
      * @param resolutionContext the attribute resolution context that identifies the request subject and accumulates the
      *            resolved attributes
@@ -230,8 +238,8 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
 
     /**
      * Gets the list of attributes, identified by IDs, that should be resolved. If the
-     * {@link AttributeResolutionContext#getRequestedIdPAttributes()} is not empty then those attributes are 
-     * the ones to be resolved, otherwise all registered attribute definitions are to be resolved.
+     * {@link AttributeResolutionContext#getRequestedIdPAttributes()} is not empty then those attributes are the ones to
+     * be resolved, otherwise all registered attribute definitions are to be resolved.
      * 
      * @param resolutionContext current resolution context
      * 
@@ -390,8 +398,8 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
 
     /**
      * Finalizes the set of resolved attributes and places them in the {@link AttributeResolutionContext}. The result of
-     * each {@link AttributeDefinition} resolution is inspected. If the result is not null, a dependency-only
-     * attribute, or an attribute that contains no values then it becomes part of the final set of resolved attributes.
+     * each {@link AttributeDefinition} resolution is inspected. If the result is not null, a dependency-only attribute,
+     * or an attribute that contains no values then it becomes part of the final set of resolved attributes.
      * 
      * @param resolutionContext current resolution context
      */
