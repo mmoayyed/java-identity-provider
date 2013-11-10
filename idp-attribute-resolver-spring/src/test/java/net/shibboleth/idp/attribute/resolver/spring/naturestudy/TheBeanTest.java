@@ -38,7 +38,7 @@ public class TheBeanTest {
 
         beanDefinitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
         beanDefinitionReader.loadBeanDefinitions(fileName);
-        context.refresh();
+        context.refresh(); // Gotta have this line or the proprty replacement won't work.
         
         Collection<TheBean> beans = context.getBeansOfType(TheBean.class).values();
         Assert.assertEquals(beans.size(), 1);
