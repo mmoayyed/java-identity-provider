@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <NatureStudy2 
+    xmlns="urn:mace:shibboleth:2.0:naturestudy"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    theSecondMessage="CustomRaw2"
+    xsi:schemaLocation="urn:mace:shibboleth:2.0:naturestudy classpath:/schema/nature-study.xsd"
+   />

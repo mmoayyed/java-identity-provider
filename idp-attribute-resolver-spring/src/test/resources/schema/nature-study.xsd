@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+xmlns:ns="urn:mace:shibboleth:2.0:naturestudy"
+targetNamespace="urn:mace:shibboleth:2.0:naturestudy"
+	elementFormDefault="qualified">
+
+	<complexType name="NatureStudyType">
+			<attribute name="theMessage" type="string" use="required"/>
+	</complexType>
+
+    <element name="NatureStudy" type="ns:NatureStudyType"/>
+
+    <complexType name="NatureStudy2Type">
+            <attribute name="theSecondMessage" type="string" use="required"/>
+    </complexType>
+
+    <element name="NatureStudy2" type="ns:NatureStudy2Type"/>
+</schema>
