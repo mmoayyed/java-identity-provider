@@ -25,13 +25,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.spring.SpringSupport;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.resource.FilesystemResource;
-import net.shibboleth.utilities.java.support.resource.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.webflow.executor.FlowExecutionResult;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.test.MockExternalContext;
@@ -125,16 +124,11 @@ public final class Main {
                 errorAndExit("Configuration file " + config.getAbsolutePath() + " is a directory or is not readable",
                         null);
             }
-            Resource r = new FilesystemResource(config.getPath());
-            try {
-                r.initialize();
-            } catch (ComponentInitializationException e) {
-                errorAndExit("Configuration resource " + config.getPath() + " failed to initialize", e);
-            }
+            Resource r = new FileSystemResource(config.getPath());
             configs.add(r);
         }
                 
-        return SpringSupport.newContext(Main.class.getName(), configs, null);
+        return SpringSupport.newContextSpring(Main.class.getName(), configs, null);
     }
     
     /**
