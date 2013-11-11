@@ -13,11 +13,15 @@
     </webflow:flow-registry>
 
     <!-- System-supplied flows, do not modify. -->
-    <webflow:flow-registry id="flowRegistry" base-path="file://${idp.home}/system/flows" flow-builder-services="flowBuilderServices">
+    <webflow:flow-registry id="systemflowRegistry" base-path="file://${idp.home}/system/flows" flow-builder-services="flowBuilderServices">
 
         <webflow:flow-location id="Authentication.Abstract" path="/authn/authn-abstract-flow.xml" />
         <webflow:flow-location id="Authentication.Subflow.Abstract" path="/authn/authn-subflow-abstract-flow.xml" />
         <webflow:flow-location id="Authentication" path="/authn/authn-flow.xml" />
+
+        <!-- Login error subflows. -->
+        <webflow:flow-location id="Authentication.ExpiredPassword" path="/authn/placeholder-flow.xml" />
+        <webflow:flow-location id="Authentication.AccountLocked" path="/authn/placeholder-flow.xml" />
         
         <!-- Login methods. -->
         <webflow:flow-location id="AuthenticationFlow/IPAddress" path="/authn/ipaddress-authn-flow.xml" />

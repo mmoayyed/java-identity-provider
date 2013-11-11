@@ -31,9 +31,20 @@
         
         <transition on="proceed" to="CallSubjectCanonicalization" />
         
+        <transition on="#{ getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext').getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext), false).getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationErrorContext), true).isClassifiedError('ExpiredPassword') }" to="CallExpiredPassword" />
+        <transition on="#{ getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext').getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext), false).getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationErrorContext), true).isClassifiedError('AccountLocked') }" to="CallAccountLocked" />
+        
         <transition on="NoCredentials" to="DisplayUsernamePasswordPage" />
         <transition on="InvalidCredentials" to="DisplayUsernamePasswordPage" />
     </action-state>
+
+    <subflow-state id="CallExpiredPassword" subflow="Authentication.ExpiredPassword">
+        <transition on="proceed" to="DisplayUsernamePasswordPage" />
+    </subflow-state>
+
+    <subflow-state id="CallAccountLocked" subflow="Authentication.AccountLocked">
+        <transition on="proceed" to="DisplayUsernamePasswordPage" />
+    </subflow-state>
 
     <bean-import resource="jaas-form-authn-beans.xml" />
 
