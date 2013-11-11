@@ -6,7 +6,7 @@
                            http://www.springframework.org/schema/context classpath:/org/springframework/context/config/spring-context-3.2.xsd
                            http://www.springframework.org/schema/webflow-config classpath:/org/springframework/webflow/config/spring-webflow-config-2.3.xsd">
     
-    <context:property-placeholder location="classpath:conf/idp.properties" />
+    <context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
     
     <!-- Define custom flows, or override system flows, inside here. -->
     <webflow:flow-registry id="flowRegistry" parent="systemFlowRegistry" base-path="file://${idp.home}/flows" flow-builder-services="flowBuilderServices">

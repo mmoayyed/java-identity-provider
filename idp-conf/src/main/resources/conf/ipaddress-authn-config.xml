@@ -10,7 +10,6 @@
                            http://www.springframework.org/schema/util classpath:/org/springframework/beans/factory/xml/spring-util-3.2.xsd">
 
 
-
     <!-- Simple transforms to apply to address before validation. -->
     <bean id="shibboleth.authn.IPAddress.Lowercase" class="java.lang.Boolean">
         <constructor-arg type="boolean" value="false" />

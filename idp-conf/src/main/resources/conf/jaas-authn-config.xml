@@ -12,7 +12,7 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
        
-    <context:property-placeholder location="classpath:conf/idp.properties" />
+    <context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
     
     <!-- Specify your JAAS config. -->
     <bean id="JAASConfig" class="org.springframework.core.io.FileSystemResource" c:path="${idp.home}/conf/jaas.config" />
