@@ -20,7 +20,7 @@ package net.shibboleth.idp.saml.impl.attribute.encoding;
 import java.util.Collection;
 
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -62,7 +62,7 @@ public class Saml1XmlObjectSubjectNameIdentifierEncoderTest extends OpenSAMLInit
 
     private final static String QUALIFIER = "Qualifier";
 
-    private static AttributeValue<?> saml1NameIdFor(final String ident) {
+    private static IdPAttributeValue<?> saml1NameIdFor(final String ident) {
         NameIdentifier id = saml1Builder.buildObject();
 
         id.setNameIdentifier(ident);
@@ -70,7 +70,7 @@ public class Saml1XmlObjectSubjectNameIdentifierEncoderTest extends OpenSAMLInit
         return new XMLObjectAttributeValue(id);
     }
 
-    private static AttributeValue<?> saml2NameIdFor(final String ident) {
+    private static IdPAttributeValue<?> saml2NameIdFor(final String ident) {
         NameID id = saml2Builder.buildObject();
 
         id.setValue(ident);
@@ -95,9 +95,9 @@ public class Saml1XmlObjectSubjectNameIdentifierEncoderTest extends OpenSAMLInit
 
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
-        final Collection<? extends AttributeValue<?>> values =
+        final Collection<? extends IdPAttributeValue<?>> values =
                 Lists.newArrayList(new StringAttributeValue("foo"), new ScopedStringAttributeValue("foo", "bar"),
-                        new AttributeValue<Object>() {
+                        new IdPAttributeValue<Object>() {
                             public Object getValue() {
                                 return intArray;
                             }
@@ -110,7 +110,7 @@ public class Saml1XmlObjectSubjectNameIdentifierEncoderTest extends OpenSAMLInit
     }
 
     @Test public void single() throws Exception {
-        final Collection<? extends AttributeValue<?>> values =
+        final Collection<? extends IdPAttributeValue<?>> values =
                 Lists.newArrayList(saml2NameIdFor(OTHERID), new StringAttributeValue("foo"), saml1NameIdFor(NAME_1),
                         saml2NameIdFor(NAME_2));
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
@@ -125,7 +125,7 @@ public class Saml1XmlObjectSubjectNameIdentifierEncoderTest extends OpenSAMLInit
     }
 
     @Test public void multi() throws Exception {
-        final Collection<? extends AttributeValue<?>> values =
+        final Collection<? extends IdPAttributeValue<?>> values =
                 Lists.newArrayList(saml2NameIdFor(OTHERID), saml1NameIdFor(NAME_1), saml1NameIdFor(NAME_1));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);

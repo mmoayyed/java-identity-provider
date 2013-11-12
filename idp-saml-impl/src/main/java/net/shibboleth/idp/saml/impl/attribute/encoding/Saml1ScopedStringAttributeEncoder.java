@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml1AttributeEncoder;
 import net.shibboleth.idp.saml.attribute.encoding.SamlEncoderSupport;
@@ -30,6 +30,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.core.xml.XMLObject;
+import org.opensaml.saml.saml1.core.AttributeValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,7 +143,7 @@ public class Saml1ScopedStringAttributeEncoder extends AbstractSaml1AttributeEnc
     }
 
     /** {@inheritDoc} */
-    protected boolean canEncodeValue(IdPAttribute attribute, AttributeValue value) {
+    protected boolean canEncodeValue(IdPAttribute attribute, IdPAttributeValue value) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         return value instanceof ScopedStringAttributeValue;
     }
@@ -153,10 +154,10 @@ public class Saml1ScopedStringAttributeEncoder extends AbstractSaml1AttributeEnc
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         if ("attribute".equals(getScopeType())) {
             return SamlEncoderSupport.encodeScopedStringValueAttribute(attribute,
-                    org.opensaml.saml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME, value, getScopeAttributeName());
+                    AttributeValue.DEFAULT_ELEMENT_NAME, value, getScopeAttributeName());
         } else {
             return SamlEncoderSupport.encodeScopedStringValueInline(attribute,
-                    org.opensaml.saml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME, value, getScopeDelimiter());
+                    AttributeValue.DEFAULT_ELEMENT_NAME, value, getScopeDelimiter());
         }
     }
 }

@@ -22,7 +22,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
@@ -80,7 +80,7 @@ public class PolicyFromMatcherId extends BaseBridgingClass implements PolicyRequ
             log.debug("{} No attribute found with Id of {}", getLogPrefix(), attributeId);
             return Tristate.FALSE;
         }
-        final Set<AttributeValue<?>> result = theMatcher.getMatchingValues(attribute, context);
+        final Set<IdPAttributeValue<?>> result = theMatcher.getMatchingValues(attribute, context);
 
         if (null == result) {
             log.warn("{} Matcher returned null, returning FAIL", getLogPrefix());

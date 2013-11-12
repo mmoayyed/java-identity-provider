@@ -19,7 +19,7 @@ package net.shibboleth.idp.attribute.filter;
 
 import java.util.Set;
 
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -35,7 +35,7 @@ public class MatcherFromPolicyTest extends BaseBridgingClassTester {
         
         AttributeFilterContext context = setUpCtx();
         
-        Set<AttributeValue<?>> values = matcher.getMatchingValues(context.getPrefilteredIdPAttributes().get(NAME1), context);
+        Set<IdPAttributeValue<?>> values = matcher.getMatchingValues(context.getPrefilteredIdPAttributes().get(NAME1), context);
         
         Assert.assertEquals(values.size(), 2);
         Assert.assertTrue(values.contains(VALUE1));
@@ -47,7 +47,7 @@ public class MatcherFromPolicyTest extends BaseBridgingClassTester {
         
         AttributeFilterContext context = setUpCtx();
         
-        Set<AttributeValue<?>> values = matcher.getMatchingValues(context.getPrefilteredIdPAttributes().get(NAME1), context);
+        Set<IdPAttributeValue<?>> values = matcher.getMatchingValues(context.getPrefilteredIdPAttributes().get(NAME1), context);
         
         Assert.assertTrue(values.isEmpty());
     }
@@ -57,7 +57,7 @@ public class MatcherFromPolicyTest extends BaseBridgingClassTester {
         
         AttributeFilterContext context = setUpCtx();
         
-        Set<AttributeValue<?>> values = matcher.getMatchingValues(context.getPrefilteredIdPAttributes().get(NAME1), context);
+        Set<IdPAttributeValue<?>> values = matcher.getMatchingValues(context.getPrefilteredIdPAttributes().get(NAME1), context);
         
         Assert.assertNull(values);
     }

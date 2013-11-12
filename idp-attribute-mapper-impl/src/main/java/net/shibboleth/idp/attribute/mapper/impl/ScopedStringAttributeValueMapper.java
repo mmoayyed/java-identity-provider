@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.mapper.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.mapper.AbstractSAMLAttributeValueMapper;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -62,7 +62,7 @@ public class ScopedStringAttributeValueMapper extends AbstractSAMLAttributeValue
     }
 
     /** {@inheritDoc} */
-    @Nullable protected AttributeValue decodeValue(@Nonnull final XMLObject object) {
+    @Nullable protected IdPAttributeValue decodeValue(@Nonnull final XMLObject object) {
         Constraint.isNotNull(object, "Object supplied to must not be null");
         final String stringValue = getStringValue(object);
 

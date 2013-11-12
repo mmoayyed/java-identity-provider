@@ -23,7 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
@@ -85,7 +85,7 @@ public class MockMatcher extends AbstractIdentifiableInitializableComponent impl
     }
 
     /** {@inheritDoc} */
-    public Set<AttributeValue<?>> getMatchingValues(IdPAttribute attribute, AttributeFilterContext filterContext) {
+    public Set<IdPAttributeValue<?>> getMatchingValues(IdPAttribute attribute, AttributeFilterContext filterContext) {
         if (fails) {
             return null;
         }
@@ -97,8 +97,8 @@ public class MockMatcher extends AbstractIdentifiableInitializableComponent impl
             return attribute.getValues();
         }
 
-        HashSet<AttributeValue<?>> values = new HashSet<>();
-        for (AttributeValue value : attribute.getValues()) {
+        HashSet<IdPAttributeValue<?>> values = new HashSet<>();
+        for (IdPAttributeValue value : attribute.getValues()) {
             if (matchingValues.contains(value)) {
                 values.add(value);
             }

@@ -155,7 +155,7 @@ public class AttributeFilter extends AbstractDestructableIdentifiableInitializab
 
     /**
      * Gets the permitted values for the given attribute from the
-     * {@link AttributeFilterContext#getPermittedAttributeValues()} and removes all denied values given in the
+     * {@link AttributeFilterContext#getPermittedIdPAttributeValues()} and removes all denied values given in the
      * {@link AttributeFilterContext#getDeniedAttributeValues()}.
      * 
      * @param attributeId ID of the attribute whose values are to be retrieved
@@ -169,7 +169,7 @@ public class AttributeFilter extends AbstractDestructableIdentifiableInitializab
         Constraint.isNotNull(attributeId, "attributeId can not be null");
         Constraint.isNotNull(filterContext, "filterContext can not be null");
 
-        final Collection filteredAttributeValues = filterContext.getPermittedAttributeValues().get(attributeId);
+        final Collection filteredAttributeValues = filterContext.getPermittedIdPAttributeValues().get(attributeId);
 
         if (filteredAttributeValues == null || filteredAttributeValues.isEmpty()) {
             log.debug("Attribute filtering engine '{}': no policy permitted release of attribute {} values", getId(),

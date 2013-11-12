@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 import javax.script.ScriptException;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
@@ -96,7 +96,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         Assert.assertNotNull(attr.getScript());
 
         final IdPAttribute val = attr.doAttributeDefinitionResolve(generateContext());
-        final Set<AttributeValue<?>> results = val.getValues();
+        final Set<IdPAttributeValue<?>> results = val.getValues();
 
         Assert.assertTrue(test.equals(val), "Scripted result is the same as bases");
         Assert.assertEquals(results.size(), 1, "Scripted result value count");
@@ -126,7 +126,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         Assert.assertNotNull(attr.getScript());
 
         final IdPAttribute val = attr.doAttributeDefinitionResolve(generateContext());
-        final Set<AttributeValue<?>> results = val.getValues();
+        final Set<IdPAttributeValue<?>> results = val.getValues();
 
         Assert.assertTrue(test.equals(val), "Scripted result is the same as bases");
         Assert.assertEquals(results.size(), 1, "Scripted result value count");
@@ -137,7 +137,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
             ScriptException, IOException {
 
         final IdPAttribute test = new IdPAttribute(TEST_ATTRIBUTE_NAME);
-        final AttributeValue attributeValue = new StringAttributeValue(SIMPLE_VALUE);
+        final IdPAttributeValue attributeValue = new StringAttributeValue(SIMPLE_VALUE);
 
         test.getValues().add(attributeValue);
 
@@ -149,7 +149,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         Assert.assertNotNull(attr.getScript());
 
         final IdPAttribute val = attr.doAttributeDefinitionResolve(generateContext());
-        final Set<AttributeValue<?>> results = val.getValues();
+        final Set<IdPAttributeValue<?>> results = val.getValues();
 
         Assert.assertTrue(test.equals(val), "Scripted result is the same as bases");
         Assert.assertEquals(results.size(), 1, "Scripted result value count");
@@ -202,7 +202,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         final IdPAttribute result =
                 buildTest("addAfterGetValues.script").doAttributeDefinitionResolve(generateContext());
-        final Set<AttributeValue<?>> values = result.getValues();
+        final Set<IdPAttributeValue<?>> values = result.getValues();
         Assert.assertEquals(values.size(), 1);
         Assert.assertTrue(values.contains(new StringAttributeValue("newValue")));
     }
@@ -242,7 +242,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final AttributeResolutionContext context = generateContext();
         resolver.resolveAttributes(context);
         final IdPAttribute attribute = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME);
-        final Set<AttributeValue<?>> values = attribute.getValues();
+        final Set<IdPAttributeValue<?>> values = attribute.getValues();
 
         Assert.assertEquals(values.size(), 2);
         Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT));
@@ -276,10 +276,10 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final AttributeResolutionContext context = generateContext();
         resolver.resolveAttributes(context);
         final IdPAttribute attribute = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME);
-        final Set<AttributeValue<?>> values = attribute.getValues();
+        final Set<IdPAttributeValue<?>> values = attribute.getValues();
 
         Assert.assertEquals(values.size(), 2);
-        for (AttributeValue value: values) {
+        for (IdPAttributeValue value: values) {
             if (!(value instanceof XMLObjectAttributeValue)) {
                 Assert.fail("Wrong type: " + value.getClass().getName());
             }
@@ -332,7 +332,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         // The script just put the resolution context in as the attribute value. Yea it makes
         // no sense but it is easy to test.
         final IdPAttribute attribute = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME);
-        final Collection<AttributeValue<?>> values = attribute.getValues();
+        final Collection<IdPAttributeValue<?>> values = attribute.getValues();
 
         Assert.assertEquals(values.size(), 1, "looking for context");
         Assert.assertEquals(values.iterator().next().getValue(), "TestContainerContextid");
@@ -378,7 +378,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
                 DigestUtils.md5Hex("12345678some#salt#value#12345679") + "@switch.ch");
 
         attribute = runExample("example2.script", "example2.attribute.xml", "eduPersonAffiliation");
-        HashSet<AttributeValue> set = new HashSet(attribute.getValues());
+        HashSet<IdPAttributeValue> set = new HashSet(attribute.getValues());
         Assert.assertEquals(set.size(), 3);
         Assert.assertTrue(set.contains(new StringAttributeValue("affiliate")));
         Assert.assertTrue(set.contains(new StringAttributeValue("student")));
@@ -422,7 +422,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         scripted.initialize();
 
         IdPAttribute result = scripted.doAttributeDefinitionResolve(generateContext());
-        HashSet<AttributeValue> set = new HashSet(result.getValues());
+        HashSet<IdPAttributeValue> set = new HashSet(result.getValues());
         Assert.assertEquals(set.size(), 3);
         Assert.assertTrue(set.contains(new StringAttributeValue(TestSources.PRINCIPAL_ID)));
         Assert.assertTrue(set.contains(new StringAttributeValue(TestSources.IDP_ENTITY_ID)));

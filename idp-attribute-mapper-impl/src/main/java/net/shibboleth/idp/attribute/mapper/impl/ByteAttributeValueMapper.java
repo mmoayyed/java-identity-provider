@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.mapper.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.mapper.AbstractSAMLAttributeValueMapper;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
@@ -33,7 +33,7 @@ import org.opensaml.core.xml.XMLObject;
 public class ByteAttributeValueMapper extends AbstractSAMLAttributeValueMapper {
 
     /** {@inheritDoc} */
-    @Nullable protected AttributeValue decodeValue(@Nonnull final XMLObject object) {
+    @Nullable protected IdPAttributeValue decodeValue(@Nonnull final XMLObject object) {
         final String value = getStringValue(object);
         if (null == value) {
             return null;

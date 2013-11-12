@@ -24,7 +24,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -63,14 +63,14 @@ public abstract class AbstractMatcher extends AbstractIdentifiableInitializableC
     /**
      * {@inheritDoc}
      */
-    @Nonnull @NonnullElements @Unmodifiable public Set<AttributeValue<?>> getMatchingValues(
+    @Nonnull @NonnullElements @Unmodifiable public Set<IdPAttributeValue<?>> getMatchingValues(
             @Nonnull final IdPAttribute attribute, @Nonnull final AttributeFilterContext filterContext) {
 
         final HashSet matchedValues = new HashSet();
 
         log.debug("{} Applying value comparison to all values of Attribute '{}'", getLogPrefix(), attribute.getId());
 
-        for (AttributeValue value : attribute.getValues()) {
+        for (IdPAttributeValue value : attribute.getValues()) {
             if (compareAttributeValue(value)) {
                 matchedValues.add(value);
             }
@@ -85,7 +85,7 @@ public abstract class AbstractMatcher extends AbstractIdentifiableInitializableC
      * @param value the value to look at
      * @return yes if we do, otherwise no.
      */
-    protected abstract boolean compareAttributeValue(AttributeValue value);
+    protected abstract boolean compareAttributeValue(IdPAttributeValue value);
 
     /**
      * Return a string which is to be prepended to all log messages.

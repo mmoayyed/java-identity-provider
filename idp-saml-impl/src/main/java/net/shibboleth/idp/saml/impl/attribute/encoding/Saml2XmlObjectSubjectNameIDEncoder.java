@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml2NameIDEncoder;
 
 import org.opensaml.saml.saml2.core.NameID;
@@ -46,12 +46,12 @@ public class Saml2XmlObjectSubjectNameIDEncoder extends AbstractSaml2NameIDEncod
     @Nonnull public NameID encode(IdPAttribute attribute) throws AttributeEncodingException {
         final String attributeId = attribute.getId();
 
-        final Collection<AttributeValue<?>> attributeValues = attribute.getValues();
+        final Collection<IdPAttributeValue<?>> attributeValues = attribute.getValues();
         if (attributeValues == null || attributeValues.isEmpty()) {
             throw new AttributeEncodingException("Attribute " + attributeId + " contains no value, nothing to encode");
         }
 
-        for (AttributeValue attrValue : attributeValues) {
+        for (IdPAttributeValue attrValue : attributeValues) {
             if (attrValue == null) {
                 log.debug("Skipping null value of attribute {}", attributeId);
                 continue;

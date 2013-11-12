@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -73,7 +73,7 @@ public final class NotMatcher extends AbstractDestructableIdentifiableInitializa
      * A given attribute value is considered to have matched if it is not returned by the composed {@link Matcher}.
      * {@inheritDoc}
      */
-    @Nullable @NonnullElements public Set<AttributeValue<?>> getMatchingValues(@Nonnull final IdPAttribute attribute,
+    @Nullable @NonnullElements public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull final IdPAttribute attribute,
             @Nonnull final AttributeFilterContext filterContext) {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
@@ -84,9 +84,9 @@ public final class NotMatcher extends AbstractDestructableIdentifiableInitializa
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        Set<AttributeValue<?>> attributeValues = new HashSet<>(attribute.getValues());
+        Set<IdPAttributeValue<?>> attributeValues = new HashSet<>(attribute.getValues());
         
-        Set<AttributeValue<?>> matches = currentMatcher.getMatchingValues(attribute, filterContext);
+        Set<IdPAttributeValue<?>> matches = currentMatcher.getMatchingValues(attribute, filterContext);
         if (null == matches) {
             return matches;
         }

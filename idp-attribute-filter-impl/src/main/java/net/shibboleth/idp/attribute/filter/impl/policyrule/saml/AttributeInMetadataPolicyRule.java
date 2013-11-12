@@ -26,7 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
@@ -99,7 +99,7 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
     }
 
     /** {@inheritDoc} */
-    @Nonnull public Set<AttributeValue<?>> getMatchingValues(@Nonnull final IdPAttribute attribute,
+    @Nonnull public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull final IdPAttribute attribute,
             @Nonnull final AttributeFilterContext filterContext) {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -124,7 +124,7 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
             return Collections.EMPTY_SET;
         }
 
-        final Set<AttributeValue<?>> values = new HashSet<>();
+        final Set<IdPAttributeValue<?>> values = new HashSet<>();
 
         for (IdPRequestedAttribute requestedAttribute : requestedAttributeList) {
 
@@ -152,17 +152,17 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
      * @param requestedValues the values
      * @return the result of the filter
      */
-    @Nonnull private Set<AttributeValue<?>> filterValues(@Nullable final IdPAttribute attribute,
-            @Nonnull @NonnullElements final Set<? extends AttributeValue> requestedValues) {
+    @Nonnull private Set<IdPAttributeValue<?>> filterValues(@Nullable final IdPAttribute attribute,
+            @Nonnull @NonnullElements final Set<? extends IdPAttributeValue> requestedValues) {
 
         if (null == requestedValues || requestedValues.isEmpty()) {
             log.debug("{} Attribute {} found in metadata and no values specified", getLogPrefix(), attribute.getId());
             return attribute.getValues();
         }
 
-        final Set<AttributeValue<?>> result = new HashSet<>(attribute.getValues().size());
+        final Set<IdPAttributeValue<?>> result = new HashSet<>(attribute.getValues().size());
 
-        for (AttributeValue attributeValue : attribute.getValues()) {
+        for (IdPAttributeValue attributeValue : attribute.getValues()) {
             if (requestedValues.contains(attributeValue)) {
                 result.add(attributeValue);
             }

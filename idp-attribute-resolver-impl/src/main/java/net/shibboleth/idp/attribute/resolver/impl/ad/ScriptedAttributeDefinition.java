@@ -28,7 +28,7 @@ import javax.script.ScriptContext;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
@@ -57,7 +57,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfi
  * <li>A script attribute whose name is <code>context</code> and whose value is the current
  * {@link AttributeResolutionContext}</li>
  * <li>A script attribute for every attribute produced by the dependencies of this attribute definition. The name of the
- * script attribute is the ID of the {@link IdPAttribute} and its value is the {@link Set} of {@link AttributeValue} for
+ * script attribute is the ID of the {@link IdPAttribute} and its value is the {@link Set} of {@link IdPAttributeValue} for
  * the attribute.</li>
  * </ul>
  * </p>
@@ -151,7 +151,7 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
-        final Map<String, Set<AttributeValue<?>>> dependencyAttributes =
+        final Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes =
                 PluginDependencySupport.getAllAttributeValues(resolutionContext, getDependencies());
 
         if (dependencyAttributes.containsKey(getId())) {
@@ -170,7 +170,7 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
         scriptContext.setAttribute("requestContext", new V2SAMLProfileRequestContext(resolutionContext, getId()),
                 ScriptContext.ENGINE_SCOPE);
 
-        for (Entry<String, Set<AttributeValue<?>>> dependencyAttribute : dependencyAttributes.entrySet()) {
+        for (Entry<String, Set<IdPAttributeValue<?>>> dependencyAttribute : dependencyAttributes.entrySet()) {
             log.debug("{} adding dependant attribute '{}' with the following values to the script context: {}",
                     new Object[] {getLogPrefix(), dependencyAttribute.getKey(), dependencyAttribute.getValue(),});
             final IdPAttribute pseudoAttribute = new IdPAttribute(dependencyAttribute.getKey());

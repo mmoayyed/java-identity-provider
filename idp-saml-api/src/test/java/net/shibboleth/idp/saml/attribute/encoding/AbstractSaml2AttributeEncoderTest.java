@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -143,12 +143,12 @@ public class AbstractSaml2AttributeEncoderTest extends OpenSAMLInitBaseTestCase 
     protected class mockEncoder extends AbstractSaml2AttributeEncoder {
         
         /** {@inheritDoc} */
-        protected boolean canEncodeValue(IdPAttribute attribute, AttributeValue value) {
+        protected boolean canEncodeValue(IdPAttribute attribute, IdPAttributeValue value) {
             return ! (value instanceof ByteAttributeValue);
         }
 
         /** {@inheritDoc} */
-        protected XMLObject encodeValue(IdPAttribute attribute, AttributeValue value) throws AttributeEncodingException {
+        protected XMLObject encodeValue(IdPAttribute attribute, IdPAttributeValue value) throws AttributeEncodingException {
             if (!(value instanceof StringAttributeValue)) {
                 return null;
             }

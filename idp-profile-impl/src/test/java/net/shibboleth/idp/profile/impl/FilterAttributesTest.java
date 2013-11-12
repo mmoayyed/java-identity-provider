@@ -24,7 +24,7 @@ import java.util.Set;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeContext;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
@@ -148,7 +148,7 @@ public class FilterAttributesTest {
         Map<String, IdPAttribute> resultAttributes = resultAttributeCtx.getIdPAttributes();
         Assert.assertEquals(resultAttributes.size(), 1);
 
-        Set<AttributeValue<?>> resultAttributeValue = resultAttributes.get("attribute1").getValues();
+        Set<IdPAttributeValue<?>> resultAttributeValue = resultAttributes.get("attribute1").getValues();
         Assert.assertEquals(resultAttributeValue.size(), 2);
         Assert.assertTrue(resultAttributeValue.contains(new StringAttributeValue("one")));
         Assert.assertTrue(resultAttributeValue.contains(new StringAttributeValue("two")));
@@ -209,7 +209,7 @@ public class FilterAttributesTest {
         Map<String, IdPAttribute> resultAttributes = resultAttributeCtx.getIdPAttributes();
         Assert.assertEquals(resultAttributes.size(), 1);
 
-        Set<AttributeValue<?>> resultAttributeValue = resultAttributes.get("attribute1").getValues();
+        Set<IdPAttributeValue<?>> resultAttributeValue = resultAttributes.get("attribute1").getValues();
         Assert.assertEquals(resultAttributeValue.size(), 2);
         Assert.assertTrue(resultAttributeValue.contains(new StringAttributeValue("one")));
         Assert.assertTrue(resultAttributeValue.contains(new StringAttributeValue("two")));

@@ -26,7 +26,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -194,7 +194,7 @@ public class AbstractComposedMatcherTest {
             super(composedMatchers);
         }
 
-        public Set<AttributeValue<?>> getMatchingValues(IdPAttribute attribute, AttributeFilterContext filterContext) {
+        public Set<IdPAttributeValue<?>> getMatchingValues(IdPAttribute attribute, AttributeFilterContext filterContext) {
             return null;
         }
 
@@ -202,7 +202,7 @@ public class AbstractComposedMatcherTest {
     
     public static class TestMatcher extends CountingDestructableInitializableValidatableComponent implements  Matcher, DestructableComponent, InitializableComponent, ValidatableComponent {
 
-        public Set<AttributeValue<?>> getMatchingValues(IdPAttribute attribute, AttributeFilterContext filterContext) {
+        public Set<IdPAttributeValue<?>> getMatchingValues(IdPAttribute attribute, AttributeFilterContext filterContext) {
             return null;
         }
 

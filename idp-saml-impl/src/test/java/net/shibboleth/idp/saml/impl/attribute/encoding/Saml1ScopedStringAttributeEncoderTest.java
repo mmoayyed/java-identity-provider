@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.List;
 
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
@@ -34,6 +34,7 @@ import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.saml.saml1.core.Attribute;
+import org.opensaml.saml.saml1.core.AttributeValue;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -91,9 +92,9 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
             throws AttributeEncodingException, ComponentInitializationException {
         final Saml1ScopedStringAttributeEncoder encoder = makeEncoder();
         final int[] intArray = {1, 2, 3, 4};
-        final Collection<AttributeValue<?>> values =
+        final Collection<IdPAttributeValue<?>> values =
                 Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new StringAttributeValue("dd"),
-                        new AttributeValue<Object>() {
+                        new IdPAttributeValue<Object>() {
                             public Object getValue() {
                                 return intArray;
                             }
@@ -125,7 +126,7 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
         encoder.setScopeAttributeName(ATTRIBUTE_NAME);
         encoder.setScopeDelimiter(DELIMITER);
 
-        final Collection<? extends AttributeValue<?>> values =
+        final Collection<? extends IdPAttributeValue<?>> values =
                 Lists.newArrayList(Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), value1));
 
         final IdPAttribute inputAttribute;
@@ -143,7 +144,7 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
 
         final XMLObject child = children.get(0);
 
-        Assert.assertEquals(child.getElementQName(), org.opensaml.saml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME,
+        Assert.assertEquals(child.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
 
         Assert.assertTrue(child instanceof ScopedValue, "Child of result attribute shoulld be a string");
@@ -158,7 +159,7 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
     @Test public void multi() throws ComponentInitializationException, AttributeEncodingException {
         final Saml1ScopedStringAttributeEncoder encoder = makeEncoder();
         encoder.initialize();
-        final Collection<? extends AttributeValue<?>> values =
+        final Collection<? extends IdPAttributeValue<?>> values =
                 Lists.newArrayList(Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), value1, value2));
 
         final IdPAttribute inputAttribute;
@@ -176,11 +177,11 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
                 "Child of result attribute shoulld be a string");
 
         final ScopedValue child1 = (ScopedValue) children.get(0);
-        Assert.assertEquals(child1.getElementQName(), org.opensaml.saml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME,
+        Assert.assertEquals(child1.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
 
         final ScopedValue child2 = (ScopedValue) children.get(1);
-        Assert.assertEquals(child2.getElementQName(), org.opensaml.saml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME,
+        Assert.assertEquals(child2.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
         //
         // order of results is not guaranteed so sense the result from the length
@@ -220,7 +221,7 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
         encoder.setScopeDelimiter(DELIMITER);
         encoder.initialize();
 
-        final Collection<? extends AttributeValue<?>> values =
+        final Collection<? extends IdPAttributeValue<?>> values =
                 Lists.newArrayList(Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), value1));
 
         final IdPAttribute inputAttribute;
@@ -237,7 +238,7 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
 
         final XMLObject child = children.get(0);
 
-        Assert.assertEquals(child.getElementQName(), org.opensaml.saml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME,
+        Assert.assertEquals(child.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
 
         Assert.assertTrue(child instanceof XSString, "Child of result attribute shoulld be a string");
@@ -253,7 +254,7 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
         encoder.setScopeDelimiter(DELIMITER);
         encoder.setScopeAttributeName(null);
         encoder.initialize();
-        final Collection<? extends AttributeValue<?>> values =
+        final Collection<? extends IdPAttributeValue<?>> values =
                 Lists.newArrayList(Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), value1, value2));
 
         final IdPAttribute inputAttribute;
@@ -271,11 +272,11 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
                 "Child of result attribute shoulld be a string");
 
         final XSString child1 = (XSString) children.get(0);
-        Assert.assertEquals(child1.getElementQName(), org.opensaml.saml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME,
+        Assert.assertEquals(child1.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
 
         final XSString child2 = (XSString) children.get(1);
-        Assert.assertEquals(child2.getElementQName(), org.opensaml.saml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME,
+        Assert.assertEquals(child2.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
         //
         // order of results is not guaranteed so sense the result from the length

@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
@@ -137,7 +137,7 @@ public class SimpleAttributeTest {
         } catch (ResolutionException e) {
             Assert.fail("resolution failed", e);
         }
-        final Collection<AttributeValue<?>> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<IdPAttributeValue<?>> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(values.size(), 2);
         Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT),

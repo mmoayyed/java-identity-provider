@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.impl.matcher;
 
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
@@ -31,7 +31,7 @@ public class AbstractRegexpStringMatcherTest {
     @Test public void testApply() throws ComponentInitializationException {
         AbstractRegexpStringMatcher predicate = new AbstractRegexpStringMatcher() {
 
-            protected boolean compareAttributeValue(AttributeValue value) {
+            protected boolean compareAttributeValue(IdPAttributeValue value) {
                 return false;
             }};
         predicate.setRegularExpression(DataSources.TEST_REGEX);
@@ -45,7 +45,7 @@ public class AbstractRegexpStringMatcherTest {
 
         predicate = new AbstractRegexpStringMatcher() {
 
-            protected boolean compareAttributeValue(AttributeValue value) {
+            protected boolean compareAttributeValue(IdPAttributeValue value) {
                 return false;
             }};
         predicate.setRegularExpression("^p.*");

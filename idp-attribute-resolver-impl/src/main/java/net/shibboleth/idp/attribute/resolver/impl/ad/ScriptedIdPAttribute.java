@@ -26,7 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -97,7 +97,7 @@ public class ScriptedIdPAttribute {
 
         // NOTE. This has to be a List - the examples use get(0)
         ArrayList<Object> newValues = new ArrayList<Object>(encapsulatedAttribute.getValues().size());
-        for (AttributeValue value : encapsulatedAttribute.getValues()) {
+        for (IdPAttributeValue value : encapsulatedAttribute.getValues()) {
             if ((value instanceof StringAttributeValue) && !(value instanceof ScopedStringAttributeValue)) {
                 newValues.add(((StringAttributeValue) value).getValue());
             } else {
@@ -137,18 +137,18 @@ public class ScriptedIdPAttribute {
      * Add the provided value to the provided set, converting {@link String} to {@link StringAttributeValue}.
      * 
      * @param values the set to add to.
-     * @param value the value to add. Known to be a {@link String} or an {@link AttributeValue}
+     * @param value the value to add. Known to be a {@link String} or an {@link IdPAttributeValue}
      */
-    private void addValue(@Nonnull Set<AttributeValue<?>> values, @Nonnull Object value) {
+    private void addValue(@Nonnull Set<IdPAttributeValue<?>> values, @Nonnull Object value) {
         if (value instanceof String) {
             values.add(new StringAttributeValue((String) value));
         } else {
-            values.add((AttributeValue) value);
+            values.add((IdPAttributeValue) value);
         }
     }
 
     /**
-     * Check that provided object is of type {@link String} or {@link AttributeValue}.
+     * Check that provided object is of type {@link String} or {@link IdPAttributeValue}.
      * 
      * @param what value to check
      * @throws ResolutionException if there is a type conflict.
@@ -157,7 +157,7 @@ public class ScriptedIdPAttribute {
         if (null == what) {
             throw new ResolutionException(getLogPrefix() + " added element was null");
 
-        } else if (!(what instanceof String) && !(what instanceof AttributeValue)) {
+        } else if (!(what instanceof String) && !(what instanceof IdPAttributeValue)) {
             throw new ResolutionException(getLogPrefix()
                     + " added element must be a String or AttributeValue, provided = " + what.getClass().toString());
         }
@@ -166,7 +166,7 @@ public class ScriptedIdPAttribute {
     /**
      * Add the provided object to the attribute values, policing for type.
      * 
-     * @param what a {@link String} or a {@link AttributeValue} to add.
+     * @param what a {@link String} or a {@link IdPAttributeValue} to add.
      * @throws ResolutionException if the provided value is of the wrong type
      */
     public void addValue(@Nullable Object what) throws ResolutionException {
@@ -195,7 +195,7 @@ public class ScriptedIdPAttribute {
         }
 
         // Otherwise re-marshall the {@link #attributeValues}
-        Set<AttributeValue<?>> values = new HashSet<>(attributeValues.size());
+        Set<IdPAttributeValue<?>> values = new HashSet<>(attributeValues.size());
 
         log.debug("{} recreating attribute contents from {}", getLogPrefix(), attributeValues);
         for (Object object : attributeValues) {

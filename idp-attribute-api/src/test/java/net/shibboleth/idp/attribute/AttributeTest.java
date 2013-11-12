@@ -297,7 +297,7 @@ public class AttributeTest {
         Assert.assertFalse(attrib.getValues().contains(value2));
 
         // test replacing all entries
-        Collection<AttributeValue<?>> values = new ArrayList<>();
+        Collection<IdPAttributeValue<?>> values = new ArrayList<>();
         values.add(value2);
         attrib.setValues(values);
         Assert.assertFalse(attrib.getValues().isEmpty());

@@ -25,7 +25,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -231,7 +231,7 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
         }
 
         final List<XMLObject> inputValues = prototype.getAttributeValues();
-        final List<AttributeValue<?>> outputValues = getValueMapper().decodeValues(inputValues);
+        final List<IdPAttributeValue<?>> outputValues = getValueMapper().decodeValues(inputValues);
 
         final boolean noMatch = !inputValues.isEmpty() && outputValues.isEmpty();
 

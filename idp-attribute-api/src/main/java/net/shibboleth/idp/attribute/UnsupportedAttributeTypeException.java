@@ -20,7 +20,8 @@ package net.shibboleth.idp.attribute;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-/** Exception thrown when a particular {@link AttributeValue} type was expected but a different one was encountered. */
+/** Exception thrown when a particular {@link IdPAttributeValue} type was expected but a 
+ *  different one was encountered. */
 @ThreadSafe
 public class UnsupportedAttributeTypeException extends AttributeException {
 

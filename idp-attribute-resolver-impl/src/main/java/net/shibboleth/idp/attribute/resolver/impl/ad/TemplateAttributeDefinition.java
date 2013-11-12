@@ -28,7 +28,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
@@ -165,7 +165,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
 
         final IdPAttribute resultantAttribute = new IdPAttribute(getId());
 
-        final Map<String, Iterator<AttributeValue<?>>> sourceValues = new LazyMap<>();
+        final Map<String, Iterator<IdPAttributeValue<?>>> sourceValues = new LazyMap<>();
         final int valueCount = setupSourceValues(resolutionContext, sourceValues);
 
         // build velocity context
@@ -177,7 +177,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
             velocityContext = new VelocityContext();
 
             for (String attributeId : sourceValues.keySet()) {
-                final AttributeValue value = sourceValues.get(attributeId).next();
+                final IdPAttributeValue value = sourceValues.get(attributeId).next();
                 if (!(value instanceof StringAttributeValue)) {
                     throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
                             + "This attribute definition only supports attribute value types of "
@@ -256,9 +256,9 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
      * @throws ResolutionException if there is a mismatched count of attributes
      */
     private int setupSourceValues(final AttributeResolutionContext resolutionContext,
-            Map<String, Iterator<AttributeValue<?>>> sourceValues) throws ResolutionException {
+            Map<String, Iterator<IdPAttributeValue<?>>> sourceValues) throws ResolutionException {
 
-        final Map<String, Set<AttributeValue<?>>> dependencyAttributes =
+        final Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes =
                 PluginDependencySupport.getAllAttributeValues(resolutionContext, getDependencies());
 
         int valueCount = 0;
@@ -266,7 +266,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
 
         for (String attributeName : sourceAttributes) {
 
-            final Set<AttributeValue<?>> attributeValues = dependencyAttributes.get(attributeName);
+            final Set<IdPAttributeValue<?>> attributeValues = dependencyAttributes.get(attributeName);
             if (null == attributeValues) {
                 throw new ResolutionException(getLogPrefix() + " no values found for attribute named '" + attributeName
                         + "'");

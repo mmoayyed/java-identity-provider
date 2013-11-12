@@ -22,7 +22,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -38,7 +38,7 @@ import org.opensaml.saml.saml1.core.Attribute;
  * 
  * @param <EncodedType> the type of data that can be encoded by the encoder
  */
-public abstract class AbstractSaml1AttributeEncoder<EncodedType extends AttributeValue> extends
+public abstract class AbstractSaml1AttributeEncoder<EncodedType extends IdPAttributeValue> extends
         AbstractSamlAttributeEncoder<Attribute, EncodedType> {
 
     /** Builder used to construct {@link Attribute} objects. */

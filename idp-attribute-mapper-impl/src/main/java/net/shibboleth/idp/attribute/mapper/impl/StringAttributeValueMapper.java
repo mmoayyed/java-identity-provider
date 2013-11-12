@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.mapper.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.mapper.AbstractSAMLAttributeValueMapper;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -28,12 +28,12 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.core.xml.XMLObject;
 
 /**
- * Mapping extract a {@link org.opensaml.core.xml.schema.XSString} from an {@link AttributeValue}.
+ * Mapping extract a {@link org.opensaml.core.xml.schema.XSString} from an {@link IdPAttributeValue}.
  */
 public class StringAttributeValueMapper extends AbstractSAMLAttributeValueMapper {
 
     /** {@inheritDoc} */
-    @Nullable protected AttributeValue decodeValue(final XMLObject object) {
+    @Nullable protected IdPAttributeValue decodeValue(final XMLObject object) {
         Constraint.isNotNull(object, "Object supplied to must not be null");
         String value = getStringValue(object);
         if (null == value) {

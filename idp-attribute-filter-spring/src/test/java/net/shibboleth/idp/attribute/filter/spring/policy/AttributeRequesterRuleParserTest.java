@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
@@ -75,7 +75,7 @@ public class AttributeRequesterRuleParserTest extends BaseAttributeFilterParserT
 
         AttributeFilterContext filterContext = DataSources.populatedFilterContext("principal", "issuer", "http://example.org");
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
-        Set<AttributeValue<?>> result = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
+        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
         Assert.assertTrue(result.isEmpty());
 
         filterContext = DataSources.populatedFilterContext("principal", "issuer", "https://service.example.edu/shibboleth-sp");

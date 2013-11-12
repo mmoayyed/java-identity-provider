@@ -26,7 +26,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -134,10 +134,10 @@ public class AbstractSamlAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         }
         
         final int[] intArray = {1, 2, 3, 4};
-        final Collection<AttributeValue<?>> values =
+        final Collection<IdPAttributeValue<?>> values =
                 Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         null,
-                        new AttributeValue<Object>() {
+                        new IdPAttributeValue<Object>() {
                             public Object getValue() {
                                 return intArray;
                             }
@@ -190,17 +190,17 @@ public class AbstractSamlAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNotSame(enc1,  enc2);
         Assert.assertNotSame(enc1.hashCode(),  enc2.hashCode());        
         
-        AbstractSamlAttributeEncoder enc3 = new AbstractSamlAttributeEncoder<SAMLObject, AttributeValue>() {
+        AbstractSamlAttributeEncoder enc3 = new AbstractSamlAttributeEncoder<SAMLObject, IdPAttributeValue>() {
 
             public String getProtocol() {
                 return "Random Stuff";
             }
 
-            protected boolean canEncodeValue(IdPAttribute attribute, AttributeValue value) {
+            protected boolean canEncodeValue(IdPAttribute attribute, IdPAttributeValue value) {
                 return false;
             }
 
-            protected XMLObject encodeValue(IdPAttribute attribute, AttributeValue value)
+            protected XMLObject encodeValue(IdPAttribute attribute, IdPAttributeValue value)
                     throws AttributeEncodingException {
                 return null;
             }
@@ -226,12 +226,12 @@ public class AbstractSamlAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         }
 
         /** {@inheritDoc} */
-        protected boolean canEncodeValue(IdPAttribute attribute, AttributeValue value) {
+        protected boolean canEncodeValue(IdPAttribute attribute, IdPAttributeValue value) {
             return ! (value instanceof ByteAttributeValue);
         }
 
         /** {@inheritDoc} */
-        protected XMLObject encodeValue(IdPAttribute attribute, AttributeValue value) throws AttributeEncodingException {
+        protected XMLObject encodeValue(IdPAttribute attribute, IdPAttributeValue value) throws AttributeEncodingException {
             if (!(value instanceof StringAttributeValue)) {
                 return null;
             }

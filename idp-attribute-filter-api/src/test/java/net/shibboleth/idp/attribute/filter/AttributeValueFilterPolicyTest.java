@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
@@ -255,7 +255,7 @@ public class AttributeValueFilterPolicyTest {
 
         policy.apply(attribute1, context);
 
-        Collection<AttributeValue> result = context.getPermittedAttributeValues().get(ATTR_NAME);
+        Collection<IdPAttributeValue> result = context.getPermittedIdPAttributeValues().get(ATTR_NAME);
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(aStringAttributeValue));
         Assert.assertTrue(result.contains(cStringAttributeValue));
@@ -277,7 +277,7 @@ public class AttributeValueFilterPolicyTest {
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(aStringAttributeValue));
         Assert.assertTrue(result.contains(cStringAttributeValue));
-        Assert.assertNull(context.getPermittedAttributeValues().get(ATTR_NAME));
+        Assert.assertNull(context.getPermittedIdPAttributeValues().get(ATTR_NAME));
 
         policy.destroy();
 

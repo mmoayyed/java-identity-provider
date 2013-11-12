@@ -19,7 +19,7 @@ package net.shibboleth.idp.attribute.filter.impl.matcher;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -54,7 +54,7 @@ public abstract class DataSources {
 
     public final static ByteAttributeValue BYTE_ATTRIBUTE_VALUE = new ByteAttributeValue(TEST_STRING.getBytes());
 
-    public final static AttributeValue OTHER_VALUE = new AttributeValue() {
+    public final static IdPAttributeValue OTHER_VALUE = new IdPAttributeValue() {
 
         @Nonnull public Object getValue() {
             return TEST_STRING;

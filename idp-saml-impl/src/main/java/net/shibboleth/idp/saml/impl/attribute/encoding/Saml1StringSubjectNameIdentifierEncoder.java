@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml1NameIdentifierEncoder;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -101,7 +101,7 @@ public class Saml1StringSubjectNameIdentifierEncoder extends AbstractSaml1NameId
     @Nonnull public NameIdentifier encode(IdPAttribute attribute) throws AttributeEncodingException {
         final String attributeId = attribute.getId();
 
-        final Collection<AttributeValue<?>> attributeValues = attribute.getValues();
+        final Collection<IdPAttributeValue<?>> attributeValues = attribute.getValues();
         if (attributeValues == null || attributeValues.isEmpty()) {
             throw new AttributeEncodingException("Attribute " + attribute.getId()
                     + " does not contain any values to encode");
@@ -117,7 +117,7 @@ public class Saml1StringSubjectNameIdentifierEncoder extends AbstractSaml1NameId
             nameId.setNameQualifier(qualifier);
         }
 
-        for (AttributeValue attrValue : attributeValues) {
+        for (IdPAttributeValue attrValue : attributeValues) {
             if (attrValue == null || attrValue.getValue() == null) {
                 // Should not be null, but check anyway
                 log.debug("Skipping null value of attribute {}", attributeId);

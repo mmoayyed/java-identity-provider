@@ -26,7 +26,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -92,14 +92,14 @@ public class SAMLAttributeDataConnector extends AbstractDataConnector {
     }
 
     /**
-     * Method to convert a singled {@link XMLObject} into an {@link AttributeValue} if possible. TODO for testing this
+     * Method to convert a singled {@link XMLObject} into an {@link IdPAttributeValue} if possible. TODO for testing this
      * is hard-wired - strings become scoped or non scoped (with the scope delimiter being '@'), everything else an
      * {@link XMLObjectAttributeValue}
      * 
      * @param object the object to encode
-     * @return an {@link AttributeValue}, or null if no encoding exists.
+     * @return an {@link IdPAttributeValue}, or null if no encoding exists.
      */
-    protected AttributeValue encodeValue(XMLObject object) {
+    protected IdPAttributeValue encodeValue(XMLObject object) {
         if (null == object) {
             return null;
         } else if (object instanceof XSString) {
@@ -113,7 +113,7 @@ public class SAMLAttributeDataConnector extends AbstractDataConnector {
      * @param object
      * @return
      */
-    private AttributeValue encodeString(XSString inputString) {
+    private IdPAttributeValue encodeString(XSString inputString) {
         String value = inputString.getValue();
         int separator = value.indexOf('@');
 
@@ -125,16 +125,16 @@ public class SAMLAttributeDataConnector extends AbstractDataConnector {
     }
 
     /**
-     * Encode a list of SAML objects as set of {@link AttributeValue}.
+     * Encode a list of SAML objects as set of {@link IdPAttributeValue}.
      * 
      * @param attributeValues the input values
      * @return a list of values, Possibly empty.
      */
-    @Nullable protected @Nonnull Collection<AttributeValue<?>> encodeValues(final List<XMLObject> attributeValues) {
-        final ArrayList<AttributeValue<?>> result = new ArrayList<>(attributeValues.size());
+    @Nullable protected @Nonnull Collection<IdPAttributeValue<?>> encodeValues(final List<XMLObject> attributeValues) {
+        final ArrayList<IdPAttributeValue<?>> result = new ArrayList<>(attributeValues.size());
 
         for (XMLObject object : attributeValues) {
-            AttributeValue val = encodeValue(object);
+            IdPAttributeValue val = encodeValue(object);
 
             result.add(val);
         }
@@ -157,7 +157,7 @@ public class SAMLAttributeDataConnector extends AbstractDataConnector {
             final String attributeName = samlAttribute.getName();
             log.debug("Connector '{}': found attribute named '{}'", getId(), attributeName);
 
-            final Collection<AttributeValue<?>> values = encodeValues(samlAttribute.getAttributeValues());
+            final Collection<IdPAttributeValue<?>> values = encodeValues(samlAttribute.getAttributeValues());
             log.debug("Connector '{}': attribute '{}', values '{}'", new Object[] {getId(), attributeName, values,});
 
             final IdPAttribute IdPAttribute = new IdPAttribute(attributeName);

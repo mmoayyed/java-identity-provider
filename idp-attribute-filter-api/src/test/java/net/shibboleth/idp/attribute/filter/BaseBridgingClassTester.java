@@ -23,7 +23,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
@@ -33,9 +33,9 @@ import net.shibboleth.utilities.java.support.component.ComponentValidationExcept
  */
 public class BaseBridgingClassTester {
     
-    protected final AttributeValue VALUE1 = new StringAttributeValue("value1");
-    protected final AttributeValue VALUE2 = new StringAttributeValue("value2");
-    protected final AttributeValue VALUE3 = new StringAttributeValue("value3");
+    protected final IdPAttributeValue VALUE1 = new StringAttributeValue("value1");
+    protected final IdPAttributeValue VALUE2 = new StringAttributeValue("value2");
+    protected final IdPAttributeValue VALUE3 = new StringAttributeValue("value3");
     
     protected final String NAME1 = "foo";
     protected final String NAME2 = "bar";

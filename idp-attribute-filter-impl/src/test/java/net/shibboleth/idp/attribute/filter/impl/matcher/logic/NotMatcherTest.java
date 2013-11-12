@@ -22,7 +22,7 @@ import static com.google.common.base.Predicates.or;
 
 import java.util.Set;
 
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractMatcherPolicyRuleTest;
 import net.shibboleth.idp.attribute.filter.impl.matcher.MockValuePredicateMatcher;
@@ -144,7 +144,7 @@ public class NotMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("test");
         matcher.initialize();
 
-        Set<AttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 1);
         Assert.assertTrue(result.contains(value3));
@@ -176,7 +176,7 @@ public class NotMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("test");
         matcher.initialize();
 
-        Set<AttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNull(result);
     }
 }

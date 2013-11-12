@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
@@ -155,7 +155,7 @@ public abstract class BaseComputedIDDataConnector extends AbstractDataConnector 
             return null;
         }
 
-        final Set<AttributeValue<?>> attributeValues = attributeDefinition.getResolvedAttribute().getValues();
+        final Set<IdPAttributeValue<?>> attributeValues = attributeDefinition.getResolvedAttribute().getValues();
         if (attributeValues == null || attributeValues.isEmpty()) {
             log.debug("{} Source attribute {} for connector {} provide no values", getLogPrefix(),
                     getSourceAttributeId(), getId());
@@ -167,7 +167,7 @@ public abstract class BaseComputedIDDataConnector extends AbstractDataConnector 
                     getLogPrefix(), getSourceAttributeId(), getId());
         }
 
-        final AttributeValue attributeValue = attributeValues.iterator().next();
+        final IdPAttributeValue attributeValue = attributeValues.iterator().next();
 
         final String val;
 

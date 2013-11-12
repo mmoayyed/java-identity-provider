@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -111,7 +111,7 @@ public class Saml2StringSubjectNameIDEncoderTest extends OpenSAMLInitBaseTestCas
 
         final Saml2StringSubjectNameIDEncoder enc1 = new Saml2StringSubjectNameIDEncoder();
 
-        final AttributeValue<?> empty = new AttributeValue<String>() {
+        final IdPAttributeValue<?> empty = new IdPAttributeValue<String>() {
             @Nonnull public String getValue() {
                 return null;
             }
@@ -125,7 +125,7 @@ public class Saml2StringSubjectNameIDEncoderTest extends OpenSAMLInitBaseTestCas
             throws AttributeEncodingException {
         IdPAttribute attribute = new IdPAttribute("id");
         final Saml2StringSubjectNameIDEncoder enc1 = new Saml2StringSubjectNameIDEncoder();
-        final AttributeValue<?> wrong = new AttributeValue<Integer>() {
+        final IdPAttributeValue<?> wrong = new IdPAttributeValue<Integer>() {
             @Nonnull public Integer getValue() {
                 return new Integer(3);
             }

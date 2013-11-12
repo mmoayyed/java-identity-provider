@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
@@ -49,8 +49,8 @@ public class AttributeFilterContextTest {
         Assert.assertNull(context.getParent());
         Assert.assertNotNull(context.getPrefilteredIdPAttributes());
         Assert.assertTrue(context.getPrefilteredIdPAttributes().isEmpty());
-        Assert.assertNotNull(context.getPermittedAttributeValues());
-        Assert.assertTrue(context.getPermittedAttributeValues().isEmpty());
+        Assert.assertNotNull(context.getPermittedIdPAttributeValues());
+        Assert.assertTrue(context.getPermittedIdPAttributeValues().isEmpty());
         Assert.assertNotNull(context.getDeniedAttributeValues());
         Assert.assertTrue(context.getDeniedAttributeValues().isEmpty());
     }
@@ -188,41 +188,41 @@ public class AttributeFilterContextTest {
         attribute1.getValues().add(bStringAttributeValue);
         context.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
-        context.addPermittedAttributeValues("one", Lists.newArrayList(aStringAttributeValue));
-        Assert.assertEquals(context.getPermittedAttributeValues().get("one").size(), 1);
+        context.addPermittedIdPAttributeValues("one", Lists.newArrayList(aStringAttributeValue));
+        Assert.assertEquals(context.getPermittedIdPAttributeValues().get("one").size(), 1);
 
-        context.addPermittedAttributeValues("one", null);
-        Assert.assertEquals(context.getPermittedAttributeValues().get("one").size(), 1);
+        context.addPermittedIdPAttributeValues("one", null);
+        Assert.assertEquals(context.getPermittedIdPAttributeValues().get("one").size(), 1);
 
-        context.addPermittedAttributeValues("one", new ArrayList<AttributeValue>());
-        Assert.assertEquals(context.getPermittedAttributeValues().get("one").size(), 1);
+        context.addPermittedIdPAttributeValues("one", new ArrayList<IdPAttributeValue>());
+        Assert.assertEquals(context.getPermittedIdPAttributeValues().get("one").size(), 1);
 
-        context.addPermittedAttributeValues("one", Lists.newArrayList(bStringAttributeValue));
-        Assert.assertEquals(context.getPermittedAttributeValues().get("one").size(), 2);
+        context.addPermittedIdPAttributeValues("one", Lists.newArrayList(bStringAttributeValue));
+        Assert.assertEquals(context.getPermittedIdPAttributeValues().get("one").size(), 2);
 
         try {
-            context.addPermittedAttributeValues(null, Lists.newArrayList(aStringAttributeValue));
+            context.addPermittedIdPAttributeValues(null, Lists.newArrayList(aStringAttributeValue));
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
-            context.addPermittedAttributeValues("", Lists.newArrayList(aStringAttributeValue));
+            context.addPermittedIdPAttributeValues("", Lists.newArrayList(aStringAttributeValue));
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
-            context.addPermittedAttributeValues("two", Lists.newArrayList(aStringAttributeValue));
+            context.addPermittedIdPAttributeValues("two", Lists.newArrayList(aStringAttributeValue));
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
-            context.addPermittedAttributeValues("one", Lists.newArrayList(cStringAttributeValue));
+            context.addPermittedIdPAttributeValues("one", Lists.newArrayList(cStringAttributeValue));
             Assert.fail();
         } catch (IllegalArgumentException e) {
             // expected this
@@ -238,41 +238,41 @@ public class AttributeFilterContextTest {
         attribute1.getValues().add(bStringAttributeValue);
         context.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
-        context.addDeniedAttributeValues("one", Lists.newArrayList(aStringAttributeValue));
+        context.addDeniedIdPAttributeValues("one", Lists.newArrayList(aStringAttributeValue));
         Assert.assertEquals(context.getDeniedAttributeValues().get("one").size(), 1);
 
-        context.addDeniedAttributeValues("one", null);
+        context.addDeniedIdPAttributeValues("one", null);
         Assert.assertEquals(context.getDeniedAttributeValues().get("one").size(), 1);
 
-        context.addDeniedAttributeValues("one", new ArrayList<AttributeValue>());
+        context.addDeniedIdPAttributeValues("one", new ArrayList<IdPAttributeValue>());
         Assert.assertEquals(context.getDeniedAttributeValues().get("one").size(), 1);
 
-        context.addDeniedAttributeValues("one", Lists.newArrayList(bStringAttributeValue));
+        context.addDeniedIdPAttributeValues("one", Lists.newArrayList(bStringAttributeValue));
         Assert.assertEquals(context.getDeniedAttributeValues().get("one").size(), 2);
 
         try {
-            context.addDeniedAttributeValues(null, Lists.newArrayList(bStringAttributeValue));
+            context.addDeniedIdPAttributeValues(null, Lists.newArrayList(bStringAttributeValue));
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
-            context.addDeniedAttributeValues("", Lists.newArrayList(bStringAttributeValue));
+            context.addDeniedIdPAttributeValues("", Lists.newArrayList(bStringAttributeValue));
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
-            context.addDeniedAttributeValues("two", Lists.newArrayList(bStringAttributeValue));
+            context.addDeniedIdPAttributeValues("two", Lists.newArrayList(bStringAttributeValue));
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
-            context.addDeniedAttributeValues("one", Lists.newArrayList(cStringAttributeValue));
+            context.addDeniedIdPAttributeValues("one", Lists.newArrayList(cStringAttributeValue));
             Assert.fail();
         } catch (IllegalArgumentException e) {
             // expected this

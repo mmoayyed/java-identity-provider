@@ -27,7 +27,7 @@ import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeContext;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 
@@ -77,7 +77,7 @@ public final class OutputAttributes extends AbstractProfileAction {
                 
                 if (!a.getValues().isEmpty()) {
                     writer.write("\tValues:\n");
-                    for (AttributeValue av : a.getValues()) {
+                    for (IdPAttributeValue av : a.getValues()) {
                         writer.write("\t\t" + av.getValue().toString() + "\n");
                     }
                 } else {

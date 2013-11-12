@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.impl.matcher.ScriptedMatcher;
@@ -64,7 +64,7 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
         
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
-        Set<AttributeValue<?>> x = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
+        Set<IdPAttributeValue<?>> x = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
         Assert.assertEquals(x.size(), 1);
         String val = (String) x.iterator().next().getValue();
         Assert.assertTrue(val.equals("jsmith") || val.equals("daffyDuck"));

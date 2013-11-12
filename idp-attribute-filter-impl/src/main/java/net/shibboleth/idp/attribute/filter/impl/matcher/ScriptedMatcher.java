@@ -29,7 +29,7 @@ import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -107,12 +107,12 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
      * <li><code>filterContext</code> - the current instance of {@link AttributeFilterContext}</li>
      * <li><code>attribute</code> - the attribute whose values are to be evaluated
      * </ul>
-     * The script <strong>MUST</strong> return a {@link Set} containing the {@link AttributeValue} objects that were
+     * The script <strong>MUST</strong> return a {@link Set} containing the {@link IdPAttributeValue} objects that were
      * matched.
      * </p>
      * {@inheritDoc}
      */
-    @Nullable @NonnullElements @Unmodifiable public Set<AttributeValue<?>> getMatchingValues(
+    @Nullable @NonnullElements @Unmodifiable public Set<IdPAttributeValue<?>> getMatchingValues(
             @Nonnull final IdPAttribute attribute, @Nonnull final AttributeFilterContext filterContext) {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
@@ -132,7 +132,7 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
             }
 
             if (result instanceof Set) {
-                HashSet<AttributeValue<?>> returnValues = new HashSet<>(attribute.getValues());
+                HashSet<IdPAttributeValue<?>> returnValues = new HashSet<>(attribute.getValues());
                 returnValues.retainAll((Set) result);
                 return Collections.unmodifiableSet(returnValues);
             } else {

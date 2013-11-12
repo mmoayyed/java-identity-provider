@@ -19,7 +19,7 @@ package net.shibboleth.idp.attribute.filter.impl.matcher;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ public class AttributeScopeStringMatcher extends AbstractStringMatcher {
     private final Logger log = LoggerFactory.getLogger(AttributeScopeStringMatcher.class);
 
     /** {@inheritDoc} */
-    public boolean compareAttributeValue(@Nullable final AttributeValue value) {
+    public boolean compareAttributeValue(@Nullable final IdPAttributeValue value) {
 
         if (null == value) {
             return false;

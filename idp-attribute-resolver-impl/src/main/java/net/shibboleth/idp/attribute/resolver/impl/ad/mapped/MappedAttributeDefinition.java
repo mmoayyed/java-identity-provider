@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
@@ -156,11 +156,11 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @return the set of attribute values that the given dependency value maps in to
      */
-    protected Set<AttributeValue<?>> mapValue(@Nullable String value) {
+    protected Set<IdPAttributeValue<?>> mapValue(@Nullable String value) {
         log.debug("Attribute Definition {}: mapping depdenency attribute value {}", getId(), value);
 
         final String trimmedValue = StringSupport.trimOrNull(value);
-        final LazySet<AttributeValue<?>> mappedValues = new LazySet<>();
+        final LazySet<IdPAttributeValue<?>> mappedValues = new LazySet<>();
 
         boolean valueMapMatch = false;
         if (null != trimmedValue) {
@@ -193,7 +193,7 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
-        final Set<AttributeValue<?>> unmappedResults =
+        final Set<IdPAttributeValue<?>> unmappedResults =
                 PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
         log.debug("Attribute Definition '{}': Attempting to map the following values: {}", getId(), unmappedResults);
 
@@ -209,14 +209,14 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
             }
         } else {
 
-            for (AttributeValue unmappedValue : unmappedResults) {
+            for (IdPAttributeValue unmappedValue : unmappedResults) {
                 if (!(unmappedValue instanceof StringAttributeValue)) {
                     throw new ResolutionException(new UnsupportedAttributeTypeException("Attribute definition '"
                             + getId() + "' does not support dependency values of type "
                             + unmappedValue.getClass().getName()));
                 }
 
-                Set<AttributeValue<?>> mappingResult = mapValue(((StringAttributeValue) unmappedValue).getValue());
+                Set<IdPAttributeValue<?>> mappingResult = mapValue(((StringAttributeValue) unmappedValue).getValue());
                 resultAttribute.getValues().addAll(mappingResult);
             }
         }

@@ -23,7 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
@@ -93,11 +93,11 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);
-        final Collection<AttributeValue<?>> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<IdPAttributeValue<?>> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(values.size(), 2);
         Collection<String> nameValues = new HashSet<String>(2);
-        for (AttributeValue val : values) {
+        for (IdPAttributeValue val : values) {
             NameID id = (NameID) val.getValue();
             Assert.assertNull(id.getFormat());
             Assert.assertNull(id.getSPProvidedID());
@@ -194,7 +194,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         } catch (ResolutionException e) {
             Assert.fail("resolution failed", e);
         }
-        final Collection<AttributeValue<?>> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<IdPAttributeValue<?>> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(values.size(), 1);
         NameID id = (NameID) values.iterator().next().getValue();

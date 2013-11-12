@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
@@ -49,7 +49,8 @@ import com.google.common.base.Objects;
  * @param <EncodedType> the type of data that can be encoded by the encoder
  */
 // TODO display name and description
-public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObject, EncodedType extends AttributeValue>
+public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObject, 
+                                                   EncodedType extends IdPAttributeValue>
         extends AbstractInitializableComponent implements AttributeEncoder<AttributeType>, UnmodifiableComponent {
 
     /** Class logger. */
@@ -132,7 +133,7 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
 
         EncodedType attributeValue;
         XMLObject samlAttributeValue;
-        for (AttributeValue o : attribute.getValues()) {
+        for (IdPAttributeValue o : attribute.getValues()) {
             if (o == null) {
                 // filtered out upstream leave in test for sanity
                 log.debug("Skipping null value of attribute {}", attributeId);
@@ -197,8 +198,8 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
      * 
      * @return true if the encoder can encoder this value, false if not
      */
-    protected abstract boolean
-            canEncodeValue(@Nonnull final IdPAttribute idpAttribute, @Nonnull final AttributeValue value);
+    protected abstract boolean canEncodeValue(@Nonnull final IdPAttribute idpAttribute,
+            @Nonnull final IdPAttributeValue value);
 
     /**
      * Encodes an attribute value in to a SAML attribute value element.

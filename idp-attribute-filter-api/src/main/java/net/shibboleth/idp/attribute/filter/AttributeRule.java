@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
@@ -176,7 +176,7 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
         log.debug("{} Filtering values for attribute '{}' which currently contains {} values", getLogPrefix(),
                 getAttributeId(), attribute.getValues().size());
 
-        final Set<AttributeValue<?>> matchingValues = matcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue<?>> matchingValues = matcher.getMatchingValues(attribute, filterContext);
 
         if (!isDenyRule) {
             if (null == matchingValues) {
@@ -185,17 +185,17 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
             } else {
                 log.debug("{} Filter has permitted the release of {} values for attribute '{}'", getLogPrefix(),
                         matchingValues.size(), attribute.getId());
-                filterContext.addPermittedAttributeValues(attribute.getId(), matchingValues);
+                filterContext.addPermittedIdPAttributeValues(attribute.getId(), matchingValues);
             }
         } else {
             if (null == matchingValues) {
                 log.warn("{} Filter failed. All values denied for attribute '{}'", getLogPrefix(),
                         getAttributeId());
-                filterContext.addDeniedAttributeValues(attribute.getId(), attribute.getValues());
+                filterContext.addDeniedIdPAttributeValues(attribute.getId(), attribute.getValues());
             } else {
                 log.debug("{} Filter has denied the release of {} values for attribute '{}'", getLogPrefix(),
                         matchingValues.size(), attribute.getId());
-                filterContext.addDeniedAttributeValues(attribute.getId(), matchingValues);
+                filterContext.addDeniedIdPAttributeValues(attribute.getId(), matchingValues);
             }
         }
     }

@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
@@ -101,7 +101,7 @@ public final class TestSources {
     public static DataConnector populatedStaticConnector() throws ComponentInitializationException {
         IdPAttribute attr;
         Set<IdPAttribute> attributeSet;
-        Set<AttributeValue<?>> valuesSet;
+        Set<IdPAttributeValue<?>> valuesSet;
 
         valuesSet = new LazySet<>();
         attributeSet = new LazySet<IdPAttribute>();
@@ -139,7 +139,7 @@ public final class TestSources {
 
     public static AttributeDefinition populatedStaticAttribute(String definitionName, String attributeName, int attributeCount) throws ComponentInitializationException {
         IdPAttribute attr;
-        Set<AttributeValue<?>> valuesSet;
+        Set<IdPAttributeValue<?>> valuesSet;
 
         valuesSet = new LazySet<>();
 

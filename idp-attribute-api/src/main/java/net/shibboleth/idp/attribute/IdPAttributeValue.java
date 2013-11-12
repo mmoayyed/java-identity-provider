@@ -30,7 +30,7 @@ import javax.annotation.Nonnull;
  * 
  * @param <ValueType> the type of value
  */
-public interface AttributeValue<ValueType> {
+public interface IdPAttributeValue<ValueType> {
 
     /**
      * Gets the value of this attribute.

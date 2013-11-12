@@ -24,7 +24,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
@@ -64,12 +64,12 @@ public abstract class AbstractSAMLAttributeValueMapper extends AbstractInitializ
      * @param inputs the list of SAML Attributes
      * @return a list of IdP Attributes
      */
-    @Nonnull @Unmodifiable public List<AttributeValue<?>>
+    @Nonnull @Unmodifiable public List<IdPAttributeValue<?>>
             decodeValues(@Nonnull @NonnullElements List<XMLObject> inputs) {
-        List<AttributeValue<?>> outputs = new ArrayList<>(inputs.size());
+        List<IdPAttributeValue<?>> outputs = new ArrayList<>(inputs.size());
 
         for (XMLObject input : inputs) {
-            AttributeValue output = decodeValue(input);
+            IdPAttributeValue output = decodeValue(input);
             if (null != output) {
                 outputs.add(output);
             }
@@ -186,12 +186,12 @@ public abstract class AbstractSAMLAttributeValueMapper extends AbstractInitializ
     }
 
     /**
-     * Function to decode a single {@link XMLObject} into an {@link AttributeValue}.
+     * Function to decode a single {@link XMLObject} into an {@link IdPAttributeValue}.
      * 
      * @param object the object to decode
-     * @return the returned final {@link AttributeValue} or null if decoding failed
+     * @return the returned final {@link IdPAttributeValue} or null if decoding failed
      */
-    @Nullable protected abstract AttributeValue decodeValue(@Nonnull final XMLObject object);
+    @Nullable protected abstract IdPAttributeValue decodeValue(@Nonnull final XMLObject object);
 
     /**
      * Return the output type (for logging).

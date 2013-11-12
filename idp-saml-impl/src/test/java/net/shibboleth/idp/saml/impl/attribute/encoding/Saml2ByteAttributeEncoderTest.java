@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.List;
 
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
@@ -32,6 +32,7 @@ import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.saml.saml2.core.Attribute;
+import org.opensaml.saml.saml2.core.AttributeValue;
 import org.owasp.esapi.codecs.Base64;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -73,9 +74,9 @@ public class Saml2ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
-        final Collection<? extends AttributeValue<?>> values =
+        final Collection<? extends IdPAttributeValue<?>> values =
                 Lists.newArrayList(new StringAttributeValue("foo"), new ScopedStringAttributeValue("foo", "bar"),
-                        new AttributeValue<Object>() {
+                        new IdPAttributeValue<Object>() {
                             public Object getValue() {
                                 return intArray;
                             }
@@ -87,7 +88,7 @@ public class Saml2ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void single() throws Exception {
-        final Collection<? extends AttributeValue<?>> values =
+        final Collection<? extends IdPAttributeValue<?>> values =
                 Lists.newArrayList(new StringAttributeValue("foo"), new ByteAttributeValue(BYTE_ARRAY_1));
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
@@ -101,7 +102,7 @@ public class Saml2ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(children.size(), 1, "Encoding one entry");
 
         XMLObject child = children.get(0);
-        Assert.assertEquals(child.getElementQName(), org.opensaml.saml.saml2.core.AttributeValue.DEFAULT_ELEMENT_NAME);
+        Assert.assertEquals(child.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME);
 
         Assert.assertTrue(child instanceof XSString, "Child of result attribute shoulld be a string");
 
@@ -113,7 +114,7 @@ public class Saml2ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void multi() throws Exception {
-        final Collection<? extends AttributeValue<?>> values =
+        final Collection<? extends IdPAttributeValue<?>> values =
                 Lists.newArrayList(new ByteAttributeValue(BYTE_ARRAY_1), new ByteAttributeValue(BYTE_ARRAY_2));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
@@ -127,12 +128,12 @@ public class Saml2ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(children.size(), 2, "Encoding two entries");
 
         XMLObject child = children.get(0);
-        Assert.assertEquals(child.getElementQName(), org.opensaml.saml.saml2.core.AttributeValue.DEFAULT_ELEMENT_NAME,
+        Assert.assertEquals(child.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
         Assert.assertTrue(child instanceof XSString, "Child of result attribute shoulld be a string");
 
         XSString childAsString = (XSString) child;
-        Assert.assertEquals(child.getElementQName(), org.opensaml.saml.saml2.core.AttributeValue.DEFAULT_ELEMENT_NAME,
+        Assert.assertEquals(child.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
         final byte[] res0 = Base64.decode(childAsString.getValue());
 

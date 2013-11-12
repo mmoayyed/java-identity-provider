@@ -27,7 +27,7 @@ import org.opensaml.core.xml.XMLObject;
 import com.google.common.base.Objects;
 
 /** A {@link XMLObjectAttributeValue} value for an {@link net.shibboleth.idp.attribute.IdPAttribute}. */
-public class XMLObjectAttributeValue implements AttributeValue<XMLObject> {
+public class XMLObjectAttributeValue implements IdPAttributeValue<XMLObject> {
 
     /** Value of the attribute. */
     private final XMLObject value;

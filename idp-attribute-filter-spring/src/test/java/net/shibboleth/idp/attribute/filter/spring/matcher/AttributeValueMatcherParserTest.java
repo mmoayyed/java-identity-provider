@@ -25,7 +25,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
@@ -108,7 +108,7 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
-        Set<AttributeValue<?>> result = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
+        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
         Assert.assertTrue(result.isEmpty());
 
         filterContext = new AttributeFilterContext();
@@ -132,7 +132,7 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
-        Set<AttributeValue<?>> result = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
+        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
         Assert.assertTrue(result.isEmpty());
 
         filterContext = new AttributeFilterContext();

@@ -30,7 +30,7 @@ import org.apache.commons.codec.binary.Hex;
 import com.google.common.base.Objects;
 
 /** A <code>byte[]</code> value for an {@link IdPAttribute}. */
-public class ByteAttributeValue implements AttributeValue<byte[]> {
+public class ByteAttributeValue implements IdPAttributeValue<byte[]> {
 
     /** Value of the attribute. */
     private final byte[] value;

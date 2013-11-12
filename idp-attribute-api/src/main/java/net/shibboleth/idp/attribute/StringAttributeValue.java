@@ -26,7 +26,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import com.google.common.base.Objects;
 
 /** Base class for {@link IdPAttribute} values that are strings. */
-public class StringAttributeValue implements AttributeValue<String> {
+public class StringAttributeValue implements IdPAttributeValue<String> {
 
     /** The attribute value. */
     private final String value;

@@ -21,7 +21,7 @@ import java.util.Set;
 
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
@@ -128,7 +128,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("Test");
         matcher.initialize();
 
-        Set<AttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 1);
         Assert.assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));
@@ -155,7 +155,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("Test");
         matcher.initialize();
 
-        Set<AttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 1);
         Assert.assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));

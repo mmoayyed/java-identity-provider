@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -55,7 +55,7 @@ public class OrMatcher extends AbstractComposedMatcher {
     }
 
     /** {@inheritDoc} */
-    @Nullable @NonnullElements public Set<AttributeValue<?>> getMatchingValues(@Nonnull IdPAttribute attribute,
+    @Nullable @NonnullElements public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull IdPAttribute attribute,
             @Nonnull AttributeFilterContext filterContext) {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
@@ -66,9 +66,9 @@ public class OrMatcher extends AbstractComposedMatcher {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        final Set<AttributeValue<?>> matchingValues = new LazySet<>();
+        final Set<IdPAttributeValue<?>> matchingValues = new LazySet<>();
         for (Matcher matchFunctor : currentMatchers) {
-            Set<AttributeValue<?>> matches = matchFunctor.getMatchingValues(attribute, filterContext);
+            Set<IdPAttributeValue<?>> matches = matchFunctor.getMatchingValues(attribute, filterContext);
             if (null == matches) {
                 return null;
             }

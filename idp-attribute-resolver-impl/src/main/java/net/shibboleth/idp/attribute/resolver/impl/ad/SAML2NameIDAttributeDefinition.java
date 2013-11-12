@@ -24,7 +24,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
@@ -200,7 +200,7 @@ public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition 
      * @return null or an attributeValue.
      * @throws ResolutionException if the IdP Name is empty.
      */
-    @Nullable private XMLObjectAttributeValue encodeOneValue(@Nonnull AttributeValue theValue,
+    @Nullable private XMLObjectAttributeValue encodeOneValue(@Nonnull IdPAttributeValue theValue,
             @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
         if (theValue instanceof StringAttributeValue) {
             StringAttributeValue value = (StringAttributeValue) theValue;
@@ -218,8 +218,8 @@ public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition 
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        Set<AttributeValue<?>> inputValues;
-        Set<? extends AttributeValue<?>> outputValues = null;
+        Set<IdPAttributeValue<?>> inputValues;
+        Set<? extends IdPAttributeValue<?>> outputValues = null;
         final IdPAttribute result = new IdPAttribute(getId());
 
         inputValues = PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
@@ -227,14 +227,14 @@ public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition 
         if (null != inputValues && !inputValues.isEmpty()) {
 
             if (1 == inputValues.size()) {
-                AttributeValue<?> val = encodeOneValue(inputValues.iterator().next(), resolutionContext);
+                IdPAttributeValue<?> val = encodeOneValue(inputValues.iterator().next(), resolutionContext);
                 if (null != val) {
                     outputValues = Collections.singleton(val);
                 }
             } else {
                 // TODO Intermediate to solve typing issues.
                 final HashSet<XMLObjectAttributeValue> xmlVals = new HashSet<>(inputValues.size());
-                for (AttributeValue<?> theValue : inputValues) {
+                for (IdPAttributeValue<?> theValue : inputValues) {
                     final XMLObjectAttributeValue val = encodeOneValue(theValue, resolutionContext);
                     if (null != val) {
                         xmlVals.add(val);

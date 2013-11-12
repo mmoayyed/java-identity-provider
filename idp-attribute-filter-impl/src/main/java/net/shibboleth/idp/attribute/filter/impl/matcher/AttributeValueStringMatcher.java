@@ -19,16 +19,16 @@ package net.shibboleth.idp.attribute.filter.impl.matcher;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Test that an {@link AttributeValue} is a string match to the configured string.<br/>
+ * Test that an {@link IdPAttributeValue} is a string match to the configured string.<br/>
  * If the value is not a {@link StringAttributeValue} string it is coerced into a string via the value's
- * {@link AttributeValue#toString()} method.
+ * {@link IdPAttributeValue#toString()} method.
  */
 public class AttributeValueStringMatcher extends AbstractStringMatcher {
 
@@ -36,7 +36,7 @@ public class AttributeValueStringMatcher extends AbstractStringMatcher {
     private final Logger log = LoggerFactory.getLogger(AttributeValueStringMatcher.class);
 
     /** {@inheritDoc} */
-    public boolean compareAttributeValue(@Nullable final AttributeValue value) {
+    public boolean compareAttributeValue(@Nullable final IdPAttributeValue value) {
 
         if (null == value) {
             return false;

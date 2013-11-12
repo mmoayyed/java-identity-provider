@@ -24,7 +24,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
@@ -58,13 +58,13 @@ public class SAMLAttributeDataConnectorTest extends XMLObjectBaseTestCase {
         final Map<String, IdPAttribute> attributes = connector.doDataConnectorResolve(null);
         Assert.assertEquals(attributes.size(), 2);
         
-        Set<AttributeValue<?>> attributeValues = attributes.get("SamlName").getValues();
+        Set<IdPAttributeValue<?>> attributeValues = attributes.get("SamlName").getValues();
         Assert.assertEquals(attributeValues.size(), 1);
         Assert.assertTrue(attributeValues.iterator().next() instanceof XMLObjectAttributeValue);
         
         attributeValues = attributes.get("MultiName").getValues();
         Assert.assertEquals(attributeValues.size(), 3);
-        for (AttributeValue val: attributeValues) {
+        for (IdPAttributeValue val: attributeValues) {
             Assert.assertTrue(val instanceof StringAttributeValue);    
         }
     }

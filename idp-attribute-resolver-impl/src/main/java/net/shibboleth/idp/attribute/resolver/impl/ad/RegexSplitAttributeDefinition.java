@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
@@ -85,10 +85,10 @@ public class RegexSplitAttributeDefinition extends AbstractAttributeDefinition {
 
         final IdPAttribute resultantAttribute = new IdPAttribute(getId());
 
-        final Set<AttributeValue<?>> dependencyValues =
+        final Set<IdPAttributeValue<?>> dependencyValues =
                 PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
 
-        for (AttributeValue dependencyValue : dependencyValues) {
+        for (IdPAttributeValue dependencyValue : dependencyValues) {
             if (!(dependencyValue instanceof StringAttributeValue)) {
                 throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
                        + "This attribute definition only operates on attribute values of type "

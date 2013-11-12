@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.resolver;
 import java.util.Map;
 import java.util.Set;
 
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 
 import org.testng.Assert;
@@ -55,7 +55,7 @@ public class PluginDependencySupportTest {
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildAttributeDefinition(
                         ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA1_VALUES));
 
-        Set<AttributeValue<?>> result =
+        Set<IdPAttributeValue<?>> result =
                 PluginDependencySupport.getMergedAttributeValues(resolutionContext,
                         Lists.newArrayList(new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID)));
 
@@ -74,7 +74,7 @@ public class PluginDependencySupportTest {
 
         final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
         depend.setDependencyAttributeId(ResolverTestSupport.EPE_ATTRIB_ID);
-        Set<AttributeValue<?>> result =
+        Set<IdPAttributeValue<?>> result =
                 PluginDependencySupport.getMergedAttributeValues(resolutionContext, Lists.newArrayList(depend));
 
         Assert.assertNotNull(result);
@@ -99,7 +99,7 @@ public class PluginDependencySupportTest {
 
         final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
         depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
-        Set<AttributeValue<?>> result =
+        Set<IdPAttributeValue<?>> result =
                 PluginDependencySupport.getMergedAttributeValues(resolutionContext,
                         Lists.newArrayList(depend, new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID)));
 
@@ -126,14 +126,14 @@ public class PluginDependencySupportTest {
 
         final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
         depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
-        Map<String, Set<AttributeValue<?>>> result =
+        Map<String, Set<IdPAttributeValue<?>>> result =
                 PluginDependencySupport.getAllAttributeValues(resolutionContext,
                         Lists.newArrayList(depend, new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID)));
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 2);
 
-        Set<AttributeValue<?>> values = result.get(ResolverTestSupport.EPE_ATTRIB_ID);
+        Set<IdPAttributeValue<?>> values = result.get(ResolverTestSupport.EPE_ATTRIB_ID);
         Assert.assertNotNull(values);
         Assert.assertEquals(values.size(), 2);
         Assert.assertTrue(values.contains(new StringAttributeValue(ResolverTestSupport.EPE1_VALUES[0])));

@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.List;
 
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
@@ -33,6 +33,7 @@ import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.saml.saml1.core.Attribute;
+import org.opensaml.saml.saml1.core.AttributeValue;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -122,9 +123,9 @@ public class Saml1XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
 
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
-        final Collection<? extends AttributeValue<?>> values =
+        final Collection<? extends IdPAttributeValue<?>> values =
                 Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
-                        new ScopedStringAttributeValue("foo", "bar"), new AttributeValue<Object>() {
+                        new ScopedStringAttributeValue("foo", "bar"), new IdPAttributeValue<Object>() {
                             public Object getValue() {
                                 return intArray;
                             }
@@ -137,7 +138,7 @@ public class Saml1XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
     }
 
     @Test public void single() throws Exception {
-        final Collection<? extends AttributeValue<?>> values =
+        final Collection<? extends IdPAttributeValue<?>> values =
                 Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), ObjectFor(STRING_1));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
@@ -149,7 +150,7 @@ public class Saml1XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
         final List<XMLObject> children = outputAttribute.getOrderedChildren();
         Assert.assertEquals(children.size(), 1, "Encoding one entry");
         Assert.assertEquals(children.get(0).getElementQName(),
-                org.opensaml.saml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME,
+                AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
         Assert.assertEquals(children.get(0).getOrderedChildren().size(), 1,
                 "Expected exactly one child inside the <AttributeValue/>");
@@ -158,7 +159,7 @@ public class Saml1XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
     }
 
     @Test public void testMulti() throws Exception {
-        final Collection<? extends AttributeValue<?>> values =
+        final Collection<? extends IdPAttributeValue<?>> values =
                 Lists.newArrayList(ObjectFor(STRING_1), ObjectFor(STRING_2));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
@@ -171,13 +172,13 @@ public class Saml1XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
         Assert.assertEquals(children.size(), 2, "Encoding two entries");
 
         Assert.assertEquals(children.get(0).getElementQName(),
-                org.opensaml.saml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME,
+                AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
         Assert.assertEquals(children.get(0).getOrderedChildren().size(), 1,
                 "Expected exactly one child inside the <AttributeValue/> for first Attribute");
 
         Assert.assertEquals(children.get(1).getElementQName(),
-                org.opensaml.saml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME,
+                AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
         Assert.assertEquals(children.get(1).getOrderedChildren().size(), 1,
                 "Expected exactly one child inside the <AttributeValue/> for second Attribute");

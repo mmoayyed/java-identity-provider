@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
 import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
@@ -40,7 +40,7 @@ import com.google.common.collect.Multimap;
  */
 public class AttributeInMetadataPolicyRuleTest {
 
-    private IdPAttribute makeAttribute(String id, List<? extends AttributeValue<?>> values) {
+    private IdPAttribute makeAttribute(String id, List<? extends IdPAttributeValue<?>> values) {
         IdPAttribute attr = new IdPAttribute(id);
         attr.setValues(values);
         return attr;
@@ -93,7 +93,7 @@ public class AttributeInMetadataPolicyRuleTest {
         final IdPAttribute attr =
                 makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
-        Set<AttributeValue<?>> result =
+        Set<IdPAttributeValue<?>> result =
                 makeMatcher("test", true, true).getMatchingValues(attr, new AttributeFilterContext());
 
         Assert.assertEquals(result.size(), 2);
@@ -110,7 +110,7 @@ public class AttributeInMetadataPolicyRuleTest {
                 makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
         final AttributeInMetadataPolicyRule matcher = makeMatcher("test", true, true);
-        Set<AttributeValue<?>> result = matcher.getMatchingValues(attr, makeContext(null));
+        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attr, makeContext(null));
 
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(DataSources.STRING_VALUE));
@@ -130,7 +130,7 @@ public class AttributeInMetadataPolicyRuleTest {
 
         AttributeFilterContext context = makeContext(required);
 
-        Set<AttributeValue<?>> result = makeMatcher("test", false, false).getMatchingValues(attr, context);
+        Set<IdPAttributeValue<?>> result = makeMatcher("test", false, false).getMatchingValues(attr, context);
 
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(DataSources.STRING_VALUE));
@@ -152,7 +152,7 @@ public class AttributeInMetadataPolicyRuleTest {
 
         AttributeFilterContext context = makeContext(required);
 
-        Set<AttributeValue<?>> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
+        Set<IdPAttributeValue<?>> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
         Assert.assertEquals(result.size(), 1);
         Assert.assertTrue(result.contains(DataSources.STRING_VALUE));
     }
@@ -165,7 +165,7 @@ public class AttributeInMetadataPolicyRuleTest {
 
         AttributeFilterContext context = makeContext("attr", null);
 
-        Set<AttributeValue<?>> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
+        Set<IdPAttributeValue<?>> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
         Assert.assertTrue(result.isEmpty());
     }
 
@@ -190,7 +190,7 @@ public class AttributeInMetadataPolicyRuleTest {
         multimap.put(req2.getId(), req2);
         context.setRequestedAttributes(multimap);
 
-        Set<AttributeValue<?>> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
+        Set<IdPAttributeValue<?>> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(DataSources.STRING_VALUE));
         Assert.assertTrue(result.contains(DataSources.NON_MATCH_STRING_VALUE));

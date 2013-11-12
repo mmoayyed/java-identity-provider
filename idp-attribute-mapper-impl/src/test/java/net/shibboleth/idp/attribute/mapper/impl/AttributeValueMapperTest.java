@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -69,12 +69,12 @@ public class AttributeValueMapperTest extends MappingTests {
 
         mapper.setLogPrefix("testString");
         mapper.initialize();
-        final List<AttributeValue<?>> result = mapper.decodeValues(getValues("stdFormat"));
+        final List<IdPAttributeValue<?>> result = mapper.decodeValues(getValues("stdFormat"));
 
         Assert.assertEquals(result.size(), 4);
         final Set<String> strings = new HashSet(4);
 
-        for (AttributeValue val : result) {
+        for (IdPAttributeValue val : result) {
             strings.add(((StringAttributeValue) val).getValue());
         }
         Assert.assertTrue(strings.contains("String"));
@@ -89,7 +89,7 @@ public class AttributeValueMapperTest extends MappingTests {
 
         mapper.setLogPrefix("testScopedString");
         mapper.initialize();
-        List<AttributeValue<?>> result = mapper.decodeValues(getValues("stdFormat"));
+        List<IdPAttributeValue<?>> result = mapper.decodeValues(getValues("stdFormat"));
         Assert.assertEquals(result.size(), 1);
         ScopedStringAttributeValue value = (ScopedStringAttributeValue) result.get(0);
         Assert.assertEquals(value.getValue(), "scope");
@@ -115,11 +115,11 @@ public class AttributeValueMapperTest extends MappingTests {
         
         mapper.setLogPrefix("testByte");
         mapper.initialize();
-        final List<AttributeValue<?>> result = mapper.decodeValues(getValues("stdFormat"));
+        final List<IdPAttributeValue<?>> result = mapper.decodeValues(getValues("stdFormat"));
         Assert.assertEquals(result.size(), 4);
         final Set<String> strings = new HashSet(4);
         
-        for (AttributeValue val: result) {
+        for (IdPAttributeValue val: result) {
             final String s = Base64Support.encode(((ByteAttributeValue)val).getValue(), Base64Support.CHUNKED);
             strings.add(s);
         }
@@ -132,7 +132,7 @@ public class AttributeValueMapperTest extends MappingTests {
         
         mapper.setLogPrefix("testXMLObject");
         mapper.initialize();
-        final List<AttributeValue<?>> result = mapper.decodeValues(getValues("stdFormat"));
+        final List<IdPAttributeValue<?>> result = mapper.decodeValues(getValues("stdFormat"));
         Assert.assertEquals(result.size(), 1);
         XMLObject object = ((XMLObjectAttributeValue) result.get(0)).getValue();
         

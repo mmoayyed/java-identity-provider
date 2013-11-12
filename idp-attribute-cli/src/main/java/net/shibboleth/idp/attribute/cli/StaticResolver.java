@@ -28,7 +28,7 @@ import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeContext;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 
 import com.google.common.collect.ImmutableList;
@@ -53,11 +53,11 @@ public final class StaticResolver extends AbstractProfileAction {
         final AttributeContext attributeCtx = profileRequestContext.getSubcontext(AttributeContext.class, true);
 
         IdPAttribute attribute1 = new IdPAttribute("attribute1");
-        attribute1.setValues(ImmutableList.<AttributeValue<?>> of(new StringAttributeValue("one"),
+        attribute1.setValues(ImmutableList.<IdPAttributeValue<?>> of(new StringAttributeValue("one"),
                 new StringAttributeValue("two")));
 
         IdPAttribute attribute2 = new IdPAttribute("attribute2");
-        attribute2.setValues(ImmutableList.<AttributeValue<?>> of(new StringAttributeValue("a"),
+        attribute2.setValues(ImmutableList.<IdPAttributeValue<?>> of(new StringAttributeValue("a"),
                 new StringAttributeValue("b")));
         
         attributeCtx.setIdPAttributes(ImmutableList.<IdPAttribute> of(attribute1, attribute2));

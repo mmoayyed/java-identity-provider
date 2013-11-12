@@ -24,7 +24,7 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -148,7 +148,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected
-        Set<AttributeValue<?>> resultValues =
+        Set<IdPAttributeValue<?>> resultValues =
                 context.getResolvedIdPAttributes().get(ComputedIDDataConnectorTest.OUTPUT_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(resultValues.size(), 1);
         Assert.assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(),
@@ -190,7 +190,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected
-        Set<AttributeValue<?>> resultValues =
+        Set<IdPAttributeValue<?>> resultValues =
                 context.getResolvedIdPAttributes().get(ComputedIDDataConnectorTest.OUTPUT_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(resultValues.size(), 1);
         Assert.assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(),
@@ -272,7 +272,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected
-        Set<AttributeValue<?>> resultValues =
+        Set<IdPAttributeValue<?>> resultValues =
                 context.getResolvedIdPAttributes().get(ComputedIDDataConnectorTest.OUTPUT_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(resultValues.size(), 1);
         String val = ((StringAttributeValue) resultValues.iterator().next()).getValue();

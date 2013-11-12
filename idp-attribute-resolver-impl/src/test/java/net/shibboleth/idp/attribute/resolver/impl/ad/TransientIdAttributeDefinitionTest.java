@@ -23,7 +23,7 @@ import java.util.Set;
 
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
@@ -72,7 +72,7 @@ public class TransientIdAttributeDefinitionTest {
                 defn.doAttributeDefinitionResolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
                         TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
 
-        Set<AttributeValue<?>> vals = result.getValues();
+        Set<IdPAttributeValue<?>> vals = result.getValues();
         Assert.assertEquals(vals.size(), 1);
 
         String val = (String) vals.iterator().next().getValue();
@@ -157,7 +157,7 @@ public class TransientIdAttributeDefinitionTest {
                 defn.doAttributeDefinitionResolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
                         TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
 
-        Set<AttributeValue<?>> vals = result.getValues();
+        Set<IdPAttributeValue<?>> vals = result.getValues();
         String firstTime = (String) vals.iterator().next().getValue();
 
         result =
