@@ -23,7 +23,7 @@ import java.util.Set;
 import javax.sql.DataSource;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -127,7 +127,7 @@ public class AttributeResolverServiceTest extends OpenSAMLInitBaseTestCase {
         // Static
         IdPAttribute attribute = resolvedAttributes.get("eduPersonAffiliation");
         Assert.assertNotNull(attribute);
-        Set<AttributeValue<?>> values = attribute.getValues();
+        Set<IdPAttributeValue<?>> values = attribute.getValues();
         Assert.assertEquals(values.size(), 1);
         Assert.assertTrue(values.contains(new StringAttributeValue("member")));
 

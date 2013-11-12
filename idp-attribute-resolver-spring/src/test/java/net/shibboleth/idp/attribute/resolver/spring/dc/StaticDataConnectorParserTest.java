@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring.dc;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.impl.dc.StaticDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
@@ -38,7 +38,7 @@ public class StaticDataConnectorParserTest extends BaseAttributeDefinitionParser
         
         Assert.assertEquals(connector.getAttributes().keySet().size(), 2);
         IdPAttribute epe = connector.getAttributes().get("eduPersonEntitlement");
-        Set<AttributeValue<?>> values = epe.getValues();
+        Set<IdPAttributeValue<?>> values = epe.getValues();
         Assert.assertEquals(values.size(), 2);
         Assert.assertTrue(values.contains(new StringAttributeValue("urn:example.org:entitlement:entitlement1")));
         Assert.assertTrue(values.contains(new StringAttributeValue("urn:mace:dir:entitlement:common-lib-terms")));
