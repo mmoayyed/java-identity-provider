@@ -45,6 +45,15 @@ public class AttributeFilterService extends AbstractSpringService {
     private AttributeFilter attributeFilter;
 
     /**
+     * Return the configured filter. TODO - do we want to return this
+     * 
+     * @return the filter.
+     */
+    public AttributeFilter getAttributeFilter() {
+        return attributeFilter;
+    }
+    
+    /**
      * Filters attributes and values. This filtering process may remove attributes and values but must never add them.
      * 
      * @param filterContext context containing the attributes to be filtered and collecting the results of the filtering
