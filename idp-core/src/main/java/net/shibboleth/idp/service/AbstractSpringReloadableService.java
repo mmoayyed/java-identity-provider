@@ -52,6 +52,7 @@ import com.google.common.collect.Iterables;
  * 
  * @see AbstractSpringService
  */
+// TODO Probably need to implement ApplicationContextAware. 
 @ThreadSafe
 public abstract class AbstractSpringReloadableService extends AbstractReloadableService {
 

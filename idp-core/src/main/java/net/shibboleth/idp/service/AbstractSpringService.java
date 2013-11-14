@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.GenericApplicationContext;
 
 import com.google.common.base.Predicates;
@@ -52,7 +53,7 @@ import com.google.common.collect.Iterables;
  * change occurs the service context will not be replaced until after all current reads have completed.
  */
 @ThreadSafe
-public abstract class AbstractSpringService extends AbstractService {
+public abstract class AbstractSpringService extends AbstractService implements ApplicationContextAware {
 
     /** Key under which the Spring Application Context is stored in the start/stop context. */
     public static final String APP_CTX_CTX_KEY = "appContext";
@@ -100,6 +101,13 @@ public abstract class AbstractSpringService extends AbstractService {
      */
     @Nonnull public List<Resource> getServiceConfigurations() {
         return serviceConfigurations;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        setParentContext(applicationContext);
     }
 
     /**
