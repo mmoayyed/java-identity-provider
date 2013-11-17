@@ -81,13 +81,12 @@ public class TransientIdAttributeDefinitionTest {
         
         Assert.assertNotNull(record);
         Assert.assertTrue(val.length() >= defn.getIdSize());
+ 
+        TransientIdParameters parms = new TransientIdParameters(record.getValue());
         
-        String[] fields = record.getValue().split(TransientIdAttributeDefinition.DELIMITER);
-        
-        Assert.assertNotNull(fields);
-        Assert.assertEquals(fields.length, 2);
-        Assert.assertEquals(fields[TransientIdAttributeDefinition.RELYING_PARTY_ID_INDEX], TestSources.SP_ENTITY_ID);
-        Assert.assertEquals(fields[TransientIdAttributeDefinition.PRINCIPAL_NAME_INDEX], TestSources.PRINCIPAL_ID);
+        Assert.assertNotNull(parms);
+        Assert.assertEquals(parms.getAttributeRecipient(), TestSources.SP_ENTITY_ID);
+        Assert.assertEquals(parms.getPrincipal(), TestSources.PRINCIPAL_ID);
 
         defn.destroy();
         store.destroy();

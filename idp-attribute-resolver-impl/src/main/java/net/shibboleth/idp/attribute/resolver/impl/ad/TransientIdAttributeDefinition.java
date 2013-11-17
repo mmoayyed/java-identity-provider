@@ -54,15 +54,6 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
     /** Context label for storage of IDs. */
     public static final String CONTEXT = "TransientId";
 
-    /** Delimiter for storage of ID-associated data. */
-    public static final String DELIMITER = "!";
-
-    /** Index into delimited field storage of relying party identifier. */
-    public static final int RELYING_PARTY_ID_INDEX = 0;
-
-    /** Index into delimited field storage of principal name. */
-    public static final int PRINCIPAL_NAME_INDEX = 1;
-    
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(TransientIdAttributeDefinition.class);
 
@@ -187,7 +178,7 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
         }
         return principalName;
     }
-
+    
     /** {@inheritDoc} */
     @Nonnull protected IdPAttribute doAttributeDefinitionResolve(@Nonnull AttributeResolutionContext resolutionContext)
             throws ResolutionException {
@@ -208,10 +199,13 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
 
         final IdPAttribute result = new IdPAttribute(getId());
 
-        StringBuilder principalTokenIdBuilder = new StringBuilder();
-        principalTokenIdBuilder.append(attributeRecipientID).append("!").append(principalName);
-        String principalTokenId = principalTokenIdBuilder.toString();
-
+        final String principalTokenId;
+        try {
+            principalTokenId = new TransientIdParameters(attributeRecipientID, principalName).encode();
+        } catch (IOException except) {
+            throw new ResolutionException(except);
+        } 
+                
         // This code used to store the entries keyed by the ID *and* the value, which I think
         // was used to prevent generation of multiple IDs if the resolver runs multiple times.
         // This is the source of the current V2 bug that causes the same transient to be reused
