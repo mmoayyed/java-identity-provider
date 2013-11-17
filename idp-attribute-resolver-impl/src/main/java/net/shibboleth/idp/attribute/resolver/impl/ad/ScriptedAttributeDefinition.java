@@ -46,8 +46,8 @@ import org.slf4j.LoggerFactory;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfileRequestContext;
 
 /**
- * An {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition} that executes a script in order to populate
- * the values of the generated attribute.
+ * An {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition} that executes a script in order to populate the
+ * values of the generated attribute.
  * 
  * <p>
  * The evaluated script has access to the following information:
@@ -57,8 +57,8 @@ import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfi
  * <li>A script attribute whose name is <code>context</code> and whose value is the current
  * {@link AttributeResolutionContext}</li>
  * <li>A script attribute for every attribute produced by the dependencies of this attribute definition. The name of the
- * script attribute is the ID of the {@link IdPAttribute} and its value is the {@link Set} of {@link IdPAttributeValue} for
- * the attribute.</li>
+ * script attribute is the ID of the {@link IdPAttribute} and its value is the {@link Set} of 
+ * {@link IdPAttributeValue} for the attribute.</li>
  * </ul>
  * </p>
  * <p>
