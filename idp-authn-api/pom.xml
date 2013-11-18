@@ -43,7 +43,7 @@
         <!-- TODO - needed? -->
         <dependency>
             <groupId>org.glassfish</groupId>
-            <artifactId>json</artifactId>
+            <artifactId>javax.json</artifactId>
         </dependency>
 
         <!-- Test Dependencies -->
