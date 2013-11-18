@@ -40,7 +40,10 @@ import org.ldaptive.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** A {@link DataConnector} that queries an LDAP in order to retrieve attribute data. */
+/**
+ * A {@link net.shibboleth.idp.attribute.resolver.DataConnector} that queries an LDAP in order to retrieve attribute
+ * data.
+ */
 public class LdapDataConnector extends AbstractSearchDataConnector<ExecutableSearchFilter> {
 
     /** Class logger. */

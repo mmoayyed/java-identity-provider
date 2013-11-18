@@ -38,7 +38,10 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** A {@link DataConnector} that queries a relation database in order to retrieve attribute data. */
+/**
+ * A {@link net.shibboleth.idp.attribute.resolver.DataConnector} that queries a relation database in order to retrieve
+ * attribute data.
+ */
 public class RdbmsDataConnector extends AbstractSearchDataConnector<ExecutableStatement> {
 
     /** Class logger. */

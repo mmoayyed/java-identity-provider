@@ -34,7 +34,8 @@ import net.shibboleth.utilities.java.support.component.AbstractInitializableComp
 /**
  * Abstract executable search filter builder for implementations that can provide a search filter.
  */
-public abstract class AbstractExecutableSearchFilterBuilder extends AbstractInitializableComponent implements ExecutableSearchBuilder<ExecutableSearchFilter> {
+public abstract class AbstractExecutableSearchFilterBuilder extends AbstractInitializableComponent 
+    implements ExecutableSearchBuilder<ExecutableSearchFilter> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractExecutableSearchFilterBuilder.class);
@@ -45,6 +46,7 @@ public abstract class AbstractExecutableSearchFilterBuilder extends AbstractInit
      * @param searchFilter to execute a search with
      * @return executable search filter
      */
+    // Checkstyle: AnonInnerLength OFF
     protected ExecutableSearchFilter build(@Nonnull final SearchFilter searchFilter) {
         return new ExecutableSearchFilter() {
 
@@ -72,4 +74,5 @@ public abstract class AbstractExecutableSearchFilterBuilder extends AbstractInit
             }
         };
     }
+    // Checkstyle: AnonInnerLength ON
 }

@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Test that an {@link IdPAttributeValue} is a string match to the configured string.<br/>
  * If the value is not a {@link StringAttributeValue} string it is coerced into a string via the value's
- * {@link IdPAttributeValue#toString()} method.
+ * {@link java.lang.Object#toString()} method.
  */
 public class AttributeValueStringMatcher extends AbstractStringMatcher {
 

@@ -24,8 +24,9 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * An {@link ExecutableStatementBuilder} that generates the SQL statement to be executed by invoking
- * {@link String#format(String, Object...) with {@link AttributeRecipientContext#getPrincipal()}.
+ * An {@link net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder}. It generates the SQL statement
+ * to be executed by invoking {@link String#format(String, Object...)} with
+ * {@link AttributeRecipientContext#getPrincipal() }.
  */
 public class FormatExecutableStatementBuilder extends AbstractExecutableStatementBuilder {
 

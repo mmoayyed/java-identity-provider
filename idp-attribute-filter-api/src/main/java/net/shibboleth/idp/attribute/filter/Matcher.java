@@ -77,7 +77,7 @@ public interface Matcher extends IdentifiableComponent {
     };
 
     /**
-     * Return those {@link AttributeValues} which match this rule, or null if the matcher failed.
+     * Return those {@link IdPAttributeValue}s which match this rule, or null if the matcher failed.
      * 
      * @param attribute the attribute under question.
      * @param filterContext the filter context

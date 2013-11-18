@@ -35,7 +35,7 @@ import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 import com.google.common.base.Predicate;
 
 /**
- * Base class for all {@link ResolutionPlugIn}s.
+ * Interface defining the base work done by all plugins used within attribute resolution.
  * 
  * @param <ResolvedType> object type this plug-in resolves to
  */
@@ -44,7 +44,7 @@ public interface ResolverPlugin<ResolvedType> extends ValidatableComponent, Unmo
         InitializableComponent, DestructableComponent, IdentifiableComponent {
 
     /**
-     * Gets whether an {@link AttributeResolutionContext} that occurred resolving attributes will be re-thrown. Doing so
+     * Get whether an {@link AttributeResolutionContext} that occurred resolving attributes will be re-thrown. Doing so
      * will cause the entire attribute resolution request to fail.
      * 
      * @return true if {@link ResolutionException}s are propagated, false if not
@@ -52,29 +52,21 @@ public interface ResolverPlugin<ResolvedType> extends ValidatableComponent, Unmo
     public boolean isPropagateResolutionExceptions();
 
     /**
-     * Gets the criteria that must be met for this plugin to be active for a given request.
+     * Get the criteria that must be met for this plugin to be active for a given request.
      * 
      * @return criteria that must be met for this plugin to be active for a given request, never null
      */
     @NonnullAfterInit public Predicate<AttributeResolutionContext> getActivationCriteria();
 
     /**
-     * Gets the unmodifiable list of dependencies for this plugin.
+     * Get the unmodifiable list of dependencies for this plugin.
      * 
      * @return unmodifiable list of dependencies for this plugin, never null
      */
     @NonnullAfterInit @NonnullElements @Unmodifiable public Set<ResolverPluginDependency> getDependencies();
 
     /**
-     * Performs the attribute resolution for this plugin.
-     * 
-     * <p>
-     * This method first checks to see if this plugin has been initialized and has not be destroyed. Then it checks if
-     * the plugins activation criterion has been met. Finally it delegates to
-     * {@link #doResolve(AttributeResolutionContext)}. If an exception is thrown and
-     * {@link #isPropagateResolutionExceptions()} is false the exception is logged but not re-thrown, otherwise it is
-     * re-thrown.
-     * </p>
+     * Perform the attribute resolution for this plugin.
      * 
      * @param resolutionContext current attribute resolution context
      * 

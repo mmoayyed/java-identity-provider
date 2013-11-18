@@ -98,7 +98,7 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
     }
 
     /**
-     * Checks to see if the entity returned by {@link #getEntityMetadata(ShibbolethFilteringContext)} contains the
+     * Checks to see if the entity returned by {@link #getEntityMetadata(AttributeFilterContext)} contains the
      * entity attribute specified by this matcher's configuration.
      * 
      * @param filterContext current request context

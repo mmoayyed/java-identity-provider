@@ -38,7 +38,7 @@ public final class NavigationSupport {
     }
 
     /**
-     * Find the {@link AttributeResoltuionContext} for this filter Context.
+     * Find the {@link AttributeResolutionContext} for this filter Context.
      * 
      * @param filterContext the filterContext
      * @return the associated resolution context. Null if navigation failed.

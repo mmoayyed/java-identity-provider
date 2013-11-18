@@ -57,7 +57,7 @@ import com.google.common.collect.ImmutableMap;
  * A component that resolves the attributes for a particular subject.
  * 
  * <em>Note Well</em>This class is about <em>attribute resolution</em>, that is to say the summoning up of attributes in
- * response to thre exigies of the provided context. It does <em>not</em> implement
+ * response to the exigies of the provided context. It does <em>not</em> implement
  * {@link net.shibboleth.utilities.java.support.resolver.Resolver} which in about summoning up bits of generic data from
  * the configuration (usually the metadata) in response to specific
  * {@link net.shibboleth.utilities.java.support.resolver.Criterion}s.

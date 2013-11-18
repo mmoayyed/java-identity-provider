@@ -47,7 +47,7 @@ public class LocalizedStringAttributeValue extends StringAttributeValue {
     /**
      * Gets the locale of the attribute value.
      * 
-     * @return the local of the attribute or {@link Optional#absent()} if there no explicity locale
+     * @return the local of the attribute or null if there no explicit locale
      */
     @Nullable public final Locale getValueLocale() {
         return valueLocale;

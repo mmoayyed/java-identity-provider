@@ -44,7 +44,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Base class for all {@link ResolutionPlugIn}s.
+ * Base class for all {@link ResolverPlugin}s.
  * 
  * @param <ResolvedType> object type this plug-in resolves to
  */

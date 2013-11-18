@@ -16,8 +16,10 @@
  */
 
 /**
- * {@link IdPAttribute}s are protocol-agnostic units of information about some thing, usually a user.  Attributes and
- * their values are encoded in to protocol-specific formats by means of {@link AttributeEncoder}s.
+ * {@link net.shibboleth.idp.attribute.IdPAttribute}s are protocol-agnostic 
+ * units of information about some thing, usually a user.  Attributes and
+ * their values are encoded in to protocol-specific formats by means of 
+ * {@link net.shibboleth.idp.attribute.AttributeEncoder}s.
  */
 
 package net.shibboleth.idp.attribute;

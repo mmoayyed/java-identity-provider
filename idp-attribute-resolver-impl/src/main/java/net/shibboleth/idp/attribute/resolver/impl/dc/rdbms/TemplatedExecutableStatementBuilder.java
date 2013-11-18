@@ -36,8 +36,9 @@ import org.slf4j.LoggerFactory;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfileRequestContext;
 
 /**
- * An {@link ExecutableStatementBuilder} that generates the SQL statement to be executed by evaluating a
- * {@link Template} against the currently resolved attributes within a {@link AttributeResolutionContext}.
+ * An {@link net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder} that generates the SQL statement to
+ * be executed by evaluating a {@link Template} against the currently resolved attributes within a
+ * {@link AttributeResolutionContext}.
  */
 public class TemplatedExecutableStatementBuilder extends AbstractExecutableStatementBuilder {
 
@@ -143,7 +144,7 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
         final VelocityContext context = new VelocityContext();
         log.trace("Creating search filter using attribute resolution context {}", resolutionContext);
         context.put("resolutionContext", resolutionContext);
-        
+
         final AttributeRecipientContext recipientContext =
                 resolutionContext.getSubcontext(AttributeRecipientContext.class);
         log.trace("Creating search filter using attribute recipient context {}", recipientContext);

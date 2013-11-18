@@ -40,8 +40,9 @@ import org.slf4j.LoggerFactory;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfileRequestContext;
 
 /**
- * An {@link ExecutableSearchFilterBuilder} that generates the search filter to be executed by evaluating a
- * {@link Template} against the currently resolved attributes within a {@link AttributeResolutionContext}.
+ * An {@link net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder} that generates the search
+ * filter to be executed by evaluating a {@link Template} against the currently resolved attributes within a
+ * {@link AttributeResolutionContext}.
  */
 public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSearchFilterBuilder {
 
@@ -149,9 +150,9 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
 
         final EventCartridge cartridge = new EventCartridge();
         cartridge.addEventHandler(new ReferenceInsertionEventHandler() {
-            
+
             @Override public Object referenceInsert(final String reference, final Object value) {
-                if (value == null){ 
+                if (value == null) {
                     return null;
                 }
                 final String text = value.toString();

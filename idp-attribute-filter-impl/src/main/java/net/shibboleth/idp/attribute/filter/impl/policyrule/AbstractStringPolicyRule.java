@@ -19,12 +19,13 @@ package net.shibboleth.idp.attribute.filter.impl.policyrule;
 
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 /**
- * General {@link Matcher} for {@link String} comparison of strings in Attribute Filters.   
+ * General {@link PolicyRequirementRule} for {@link String} comparison of strings in Attribute Filters.   
  */
-public abstract class AbstractStringPolicyRule extends AbstractPolicyRule {
+public abstract class AbstractStringPolicyRule extends AbstractPolicyRule implements PolicyRequirementRule {
 
     /** String to match for a positive evaluation. */
     private String matchString;

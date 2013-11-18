@@ -139,8 +139,6 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
      * 
      * If an ID has been issued to the given tuple than a new, random type 4 UUID is generated as the persistent ID.
      * 
-     * @param resolutionContext
-     * 
      * @param principalName principal name of the user to whom the persistent ID belongs
      * @param localEntityId ID of the local entity associated with the persistent ID
      * @param peerEntityId ID of the peer entity associated with the persistent ID

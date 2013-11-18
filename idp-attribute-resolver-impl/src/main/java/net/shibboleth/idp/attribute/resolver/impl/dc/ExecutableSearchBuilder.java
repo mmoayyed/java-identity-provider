@@ -22,7 +22,10 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 
-/** Builder used to created {@link ExecutableSearch} instances. */
+/** Builder used to created {@link ExecutableSearch} instances.
+ * 
+ * @param <T> The type to build.
+ */
 public interface ExecutableSearchBuilder<T extends ExecutableSearch> {
 
     /**

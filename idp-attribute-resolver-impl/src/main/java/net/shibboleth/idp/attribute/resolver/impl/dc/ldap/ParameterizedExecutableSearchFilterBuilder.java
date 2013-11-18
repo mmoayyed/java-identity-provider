@@ -29,8 +29,9 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * An {@link ExecutableSearchFilterBuilder} that generates the search filter to be executed by evaluating a
- * parameterized filter string against the currently resolved attributes within a {@link AttributeResolutionContext}.
+ * An {@link net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder} that generates the search
+ * filter to be executed by evaluating a parameterized filter string against the currently resolved attributes within a
+ * {@link AttributeResolutionContext}.
  */
 public class ParameterizedExecutableSearchFilterBuilder extends AbstractExecutableSearchFilterBuilder {
 

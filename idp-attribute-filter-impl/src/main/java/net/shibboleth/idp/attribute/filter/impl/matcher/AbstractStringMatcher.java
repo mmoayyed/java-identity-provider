@@ -19,10 +19,12 @@ package net.shibboleth.idp.attribute.filter.impl.matcher;
 
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.attribute.filter.Matcher;
+
 /**
  * General {@link Matcher} for {@link String} comparison of strings in Attribute Filters.   
  */
-public abstract class AbstractStringMatcher extends AbstractMatcher {
+public abstract class AbstractStringMatcher extends AbstractMatcher implements Matcher {
 
     /** String to match for a positive evaluation. */
     private String matchString;
