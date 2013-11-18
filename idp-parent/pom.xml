@@ -106,8 +106,6 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <!-- TODO : move to java-parent -->
-            <version>1.0.11</version>
         </dependency>
         <dependency>
             <!-- needed for logback SMTP appender -->
