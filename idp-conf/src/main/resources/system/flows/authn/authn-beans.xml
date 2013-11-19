@@ -27,7 +27,7 @@
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:sessionResolver-ref="shibboleth.SessionManager" />
     
-    <bean id="ExtractActiveAuthenticationResults" class="net.shibboleth.idp.session.impl.ExtractActiveAuthenticationResults" scope="prototype" />
+    <bean id="ExtractActiveAuthenticationResults" class="${idp.session.activeResultExtraction}" scope="prototype" />
 
     <bean id="FilterFlowsByForcedAuthn" class="net.shibboleth.idp.authn.impl.FilterFlowsByForcedAuthn" scope="prototype" />
 
