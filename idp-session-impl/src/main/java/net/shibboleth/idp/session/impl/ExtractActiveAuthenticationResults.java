@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
@@ -47,16 +48,16 @@ import org.slf4j.LoggerFactory;
 public class ExtractActiveAuthenticationResults extends AbstractAuthenticationAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ExtractActiveAuthenticationResults.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractActiveAuthenticationResults.class);
 
     /** Session to copy results from. */
-    private IdPSession session;
+    @Nullable private IdPSession session;
     
     /** {@inheritDoc} */
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
-        SessionContext ctx = profileRequestContext.getSubcontext(SessionContext.class, false);
+        final SessionContext ctx = profileRequestContext.getSubcontext(SessionContext.class, false);
         if (ctx != null) {
             session = ctx.getIdPSession();
             if (session != null) {
@@ -71,7 +72,7 @@ public class ExtractActiveAuthenticationResults extends AbstractAuthenticationAc
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
-        List<AuthenticationResult> actives = new ArrayList();
+        List<AuthenticationResult> actives = new ArrayList<>();
         for (AuthenticationResult result : session.getAuthenticationResults()) {
             AuthenticationFlowDescriptor descriptor =
                     authenticationContext.getPotentialFlows().get(result.getAuthenticationFlowId());
