@@ -19,8 +19,10 @@
     
     <util:property-path id="shibboleth.authn.JAAS.JAASConfigURI" path="JAASConfig.URI" />
     
-    <!-- Specify the application name in the JAAS config. -->
-    <bean id="shibboleth.authn.JAAS.LoginConfigName" class="java.lang.String" c:_0="ShibUserPassAuth" />
+    <!-- Specify the application name(s) in the JAAS config. -->
+    <util:list id="shibboleth.authn.JAAS.LoginConfigNames">
+        <value>ShibUserPassAuth</value>
+    </util:list>
 
     <!-- Names of form fields to pull username and password from. -->
     <bean id="shibboleth.authn.JAAS.UsernameFieldName" class="java.lang.String" c:_0="username" />
