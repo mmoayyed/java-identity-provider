@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.spring.naturestudy;
+package net.shibboleth.idp.spring.naturestudy;
 
 import java.util.Collection;
 
@@ -55,13 +55,13 @@ public class TheBeanTest {
     @Test public void testRawNativeBean() {
         //Resource re
         
-        TheBean bean = getBeanNative("classpath:net/shibboleth/idp/attribute/resolver/spring/naturestudy/SimpleBean.xml");
+        TheBean bean = getBeanNative("classpath:net/shibboleth/idp/spring/naturestudy/SimpleBean.xml");
         
         Assert.assertEquals(bean.getMessage(), "Spring");
     }
 
     @Test public void testRawReplaceBean() {
-        TheBean bean = getBeanNative("classpath:net/shibboleth/idp/attribute/resolver/spring/naturestudy/SimpleBeanReplace.xml");
+        TheBean bean = getBeanNative("classpath:net/shibboleth/idp/spring/naturestudy/SimpleBeanReplace.xml");
         
         Assert.assertEquals(bean.getMessage(), "REPLACE_SIMPLE_STRING");
     }
@@ -69,7 +69,7 @@ public class TheBeanTest {
     @Test public void testRawCustomBean() {
         //Resource re
         
-        TheBean bean = getBeanNative("classpath:net/shibboleth/idp/attribute/resolver/spring/naturestudy/CustomBean.xml");
+        TheBean bean = getBeanNative("classpath:net/shibboleth/idp/spring/naturestudy/CustomBean.xml");
         
         Assert.assertEquals(bean.getMessage(), "CustomRaw");
     }
@@ -77,7 +77,7 @@ public class TheBeanTest {
     @Test public void testReplaceCustomBean() {
         //Resource re
         
-        TheBean bean = getBeanNative("classpath:net/shibboleth/idp/attribute/resolver/spring/naturestudy/CustomBeanReplace.xml");
+        TheBean bean = getBeanNative("classpath:net/shibboleth/idp/spring/naturestudy/CustomBeanReplace.xml");
         
         Assert.assertEquals(bean.getMessage(), "REPLACE_CUSTOM_STRING");
     }
@@ -85,7 +85,7 @@ public class TheBeanTest {
     @Test public void testRawCustomBean2() {
         //Resource re
         
-        TheBean bean = getBeanNative("classpath:net/shibboleth/idp/attribute/resolver/spring/naturestudy/CustomBean2.xml");
+        TheBean bean = getBeanNative("classpath:net/shibboleth/idp/spring/naturestudy/CustomBean2.xml");
         
         Assert.assertEquals(bean.getMessage(), "CustomRaw2");
     }
@@ -93,7 +93,7 @@ public class TheBeanTest {
     @Test public void testReplaceCustomBean2() {
         //Resource re
         
-        TheBean bean = getBeanNative("classpath:net/shibboleth/idp/attribute/resolver/spring/naturestudy/CustomBeanReplace2.xml");
+        TheBean bean = getBeanNative("classpath:net/shibboleth/idp/spring/naturestudy/CustomBeanReplace2.xml");
         
         Assert.assertEquals(bean.getMessage(), "REPLACE_CUSTOM_2");
     }

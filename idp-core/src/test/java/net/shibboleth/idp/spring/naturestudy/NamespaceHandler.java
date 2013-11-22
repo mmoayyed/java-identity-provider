@@ -15,27 +15,26 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.spring.naturestudy;
+package net.shibboleth.idp.spring.naturestudy;
+
+import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 /**
- *  The test bean we are to summon and teardown.
+ *
  */
-public class TheBean {
-    
-    private String theMessage;
+public class NamespaceHandler extends BaseSpringNamespaceHandler {
 
-    /**
-     * @return Returns the theMessage.
-     */
-    public String getMessage() {
-        return theMessage;
-    }
+    /** Namespace for this handler. */
+    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:naturestudy";
 
-    /**
-     * @param theMessage The theMessage to set.
-     */
-    public void setMessage(String message) {
-        theMessage = message;
+    /** {@inheritDoc} */
+    public void init() {
+        registerBeanDefinitionParser(TheBeanParser.SCHEMA_TYPE,
+                new TheBeanParser());
+        registerBeanDefinitionParser(TheBeanParser2.SCHEMA_TYPE,
+                new TheBeanParser2());
+
+
     }
 
 }

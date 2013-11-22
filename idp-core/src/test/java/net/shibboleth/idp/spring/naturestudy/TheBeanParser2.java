@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.spring.naturestudy;
+package net.shibboleth.idp.spring.naturestudy;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,19 +31,19 @@ import org.w3c.dom.Element;
 /**
  *
  */
-public class TheBeanParser extends AbstractSingleBeanDefinitionParser  {
+public class TheBeanParser2 extends AbstractSingleBeanDefinitionParser  {
 
-    public static final QName SCHEMA_TYPE = new QName(NamespaceHandler.NAMESPACE, "NatureStudy");
+    public static final QName SCHEMA_TYPE = new QName(NamespaceHandler.NAMESPACE, "NatureStudy2");
 
     /** {@inheritDoc} */
-    protected Class<TheBeanFactoryBean> getBeanClass(@Nullable Element element) {
-        return TheBeanFactoryBean.class;
+    protected Class<TheBean> getBeanClass(@Nullable Element element) {
+        return TheBean.class;
     }
 
     /** {@inheritDoc} */
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
-        final String message = StringSupport.trimOrNull(config.getAttributeNS(null, "theMessage"));
+        final String message = StringSupport.trimOrNull(config.getAttributeNS(null, "theSecondMessage"));
         builder.addPropertyValue("message", message);
     }
 

@@ -14,8 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Module to contain 
- */
 
-package net.shibboleth.idp.attribute.resolver.spring.naturestudy;
+package net.shibboleth.idp.spring.naturestudy;
+
+import org.springframework.beans.factory.config.AbstractFactoryBean;
+
+/**
+ *  The factory bean we are to summon and teardown.
+ */
+public class TheBeanFactoryBean extends AbstractFactoryBean {
+    
+    private String theMessage;
+
+    /**
+     * @return Returns the theMessage.
+     */
+    public String getMessage() {
+        return theMessage;
+    }
+
+    /**
+     * @param theMessage The theMessage to set.
+     */
+    public void setMessage(String message) {
+        theMessage = message;
+    }
+
+    /** {@inheritDoc} */
+    public Class getObjectType() {
+        return TheBean.class;
+    }
+
+    /** {@inheritDoc} */
+    protected Object createInstance() throws Exception {
+        TheBean bean = new TheBean();
+        bean.setMessage(getMessage());
+        return bean;
+    }
+}
+

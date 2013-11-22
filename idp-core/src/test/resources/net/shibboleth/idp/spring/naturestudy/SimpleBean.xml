@@ -5,6 +5,6 @@
 
 
 	<bean id="RequestedAttributesMapper"
-		class="net.shibboleth.idp.attribute.resolver.spring.naturestudy.TheBean"
+		class="net.shibboleth.idp.spring.naturestudy.TheBean"
 		p:message="Spring"/>
 </beans>

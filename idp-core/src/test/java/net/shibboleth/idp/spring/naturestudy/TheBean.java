@@ -15,14 +15,12 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.spring.naturestudy;
-
-import org.springframework.beans.factory.config.AbstractFactoryBean;
+package net.shibboleth.idp.spring.naturestudy;
 
 /**
- *  The factory bean we are to summon and teardown.
+ *  The test bean we are to summon and teardown.
  */
-public class TheBeanFactoryBean extends AbstractFactoryBean {
+public class TheBean {
     
     private String theMessage;
 
@@ -40,16 +38,4 @@ public class TheBeanFactoryBean extends AbstractFactoryBean {
         theMessage = message;
     }
 
-    /** {@inheritDoc} */
-    public Class getObjectType() {
-        return TheBean.class;
-    }
-
-    /** {@inheritDoc} */
-    protected Object createInstance() throws Exception {
-        TheBean bean = new TheBean();
-        bean.setMessage(getMessage());
-        return bean;
-    }
 }
-

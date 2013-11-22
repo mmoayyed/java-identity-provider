@@ -5,9 +5,9 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 	                   http://www.springframework.org/schema/context classpath:/org/springframework/context/config/spring-context-3.2.xsd">
 
-    <context:property-placeholder location="classpath:net/shibboleth/idp/attribute/resolver/spring/naturestudy/test.properties" />
+    <context:property-placeholder location="classpath:net/shibboleth/idp/spring/naturestudy/test.properties" />
 
 	<bean id="RequestedAttributesMapper"
-		class="net.shibboleth.idp.attribute.resolver.spring.naturestudy.TheBean"
+		class="net.shibboleth.idp.spring.naturestudy.TheBean"
 		p:message="${idp.xml.naturestudy.replaceSimple}"/>
 </beans>

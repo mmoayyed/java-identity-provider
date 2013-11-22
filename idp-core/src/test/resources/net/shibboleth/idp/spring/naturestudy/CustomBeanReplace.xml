@@ -5,12 +5,11 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                        http://www.springframework.org/schema/context classpath:/org/springframework/context/config/spring-context-3.2.xsd">
                        
-<context:property-placeholder location="classpath:net/shibboleth/idp/attribute/resolver/spring/naturestudy/test.properties" />
-
- <NatureStudy2 
+<context:property-placeholder location="classpath:net/shibboleth/idp/spring/naturestudy/test.properties" />
+ <NatureStudy 
     xmlns="urn:mace:shibboleth:2.0:naturestudy"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-    theSecondMessage="${idp.xml.naturestudy.replaceCustom2}"
+    theMessage="${idp.xml.naturestudy.replaceCustom}"
     xsi:schemaLocation="urn:mace:shibboleth:2.0:naturestudy classpath:/schema/nature-study.xsd"
    />
 </beans>
