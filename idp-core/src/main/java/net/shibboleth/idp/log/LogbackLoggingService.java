@@ -26,10 +26,9 @@ import net.shibboleth.idp.service.AbstractReloadableService;
 import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
-import net.shibboleth.utilities.java.support.resource.Resource;
-import net.shibboleth.utilities.java.support.resource.ResourceException;
 
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
@@ -52,7 +51,7 @@ public class LogbackLoggingService extends AbstractReloadableService {
     private StatusManager statusManager;
 
     /** URL to the fallback logback configuration found in the IdP jar. */
-    private URL fallbackConfiguraiton;
+    private URL fallbackConfiguration;
 
     /** Logging configuration resource. */
     private Resource configurationResource;
@@ -82,25 +81,20 @@ public class LogbackLoggingService extends AbstractReloadableService {
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
         super.validate();
-        try {
-            if (!configurationResource.exists()) {
-                throw new ComponentValidationException("Logging service configuration resource "
-                        + configurationResource.getLocation() + " does not exist.");
-            }
-        } catch (ResourceException e) {
-            throw new ComponentValidationException("Unable to determing if logging service configuration resource "
-                    + configurationResource.getLocation(), e);
+        if (!configurationResource.exists()) {
+            throw new ComponentValidationException("Logging service configuration resource "
+                    + configurationResource.getDescription() + " does not exist.");
         }
     }
 
     /** {@inheritDoc} */
     protected boolean shouldReload() {
         try {
-            return configurationResource.getLastModifiedTime() > getLastSuccessfulReloadInstant().getMillis();
-        } catch (ResourceException e) {
+            return configurationResource.lastModified() > getLastSuccessfulReloadInstant().getMillis();
+        } catch (IOException e) {
             statusManager.add(new ErrorStatus(
                     "Error checking last modified time of logging service configuration resource "
-                            + configurationResource.getLocation(), this, e));
+                            + configurationResource.getDescription(), this, e));
             return false;
         }
     }
@@ -121,16 +115,16 @@ public class LogbackLoggingService extends AbstractReloadableService {
         InputStream ins = null;
         try {
             statusManager.add(new InfoStatus("Loading new logging configuration resource: "
-                    + configurationResource.getLocation(), this));
+                    + configurationResource.getDescription(), this));
             ins = configurationResource.getInputStream();
             loadLoggingConfiguration(ins);
         } catch (Exception e) {
             Closeables.closeQuietly(ins);
             statusManager.add(new ErrorStatus("Error loading logging configuration file: "
-                    + configurationResource.getLocation(), this, e));
+                    + configurationResource.getDescription(), this, e));
             try {
                 statusManager.add(new InfoStatus("Loading fallback logging configuration", this));
-                ins = fallbackConfiguraiton.openStream();
+                ins = fallbackConfiguration.openStream();
                 loadLoggingConfiguration(ins);
             } catch (IOException ioe) {
                 Closeables.closeQuietly(ins);
@@ -170,7 +164,7 @@ public class LogbackLoggingService extends AbstractReloadableService {
             throw new ComponentInitializationException("Logging configuration must be specified.");
         }
 
-        fallbackConfiguraiton = LogbackLoggingService.class.getResource("/logback.xml");
+        fallbackConfiguration = LogbackLoggingService.class.getResource("/logback.xml");
         loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         statusManager = loggerContext.getStatusManager();
     }
