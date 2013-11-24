@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,8 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.spring.SpringSupport;
+import net.shibboleth.idp.spring.resource.ShibbolethResourceImpl;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.resource.Resource;
 
 import org.slf4j.Logger;
@@ -33,7 +36,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.ResourceLoader;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
@@ -53,7 +58,8 @@ import com.google.common.collect.Iterables;
  * change occurs the service context will not be replaced until after all current reads have completed.
  */
 @ThreadSafe
-public abstract class AbstractSpringService extends AbstractService implements ApplicationContextAware {
+public abstract class AbstractSpringService extends AbstractService implements ApplicationContextAware,
+        ResourceLoaderAware {
 
     /** Key under which the Spring Application Context is stored in the start/stop context. */
     public static final String APP_CTX_CTX_KEY = "appContext";
@@ -64,11 +70,19 @@ public abstract class AbstractSpringService extends AbstractService implements A
     /** List of configuration resources for this service. */
     private List<Resource> serviceConfigurations = Collections.emptyList();
 
+    /** List of configuration resource objects for this service. */
+    private List<Object> configurations;
+
     /** Application context owning this service. */
     private ApplicationContext parentContext;
 
     /** Context containing service content. */
     private GenericApplicationContext serviceContext;
+
+    /**
+     * The Resource Loader.
+     */
+    private ResourceLoader resourceLoader;
 
     /**
      * Gets the application context that is the parent to this service's context.
@@ -77,6 +91,21 @@ public abstract class AbstractSpringService extends AbstractService implements A
      */
     @Nullable public ApplicationContext getParentContext() {
         return parentContext;
+    }
+
+    /** {@inheritDoc} */
+    public void setResourceLoader(ResourceLoader loader) {
+        resourceLoader = loader;
+    }
+
+    /**
+     * Gets the Resource loader associated with this bean.
+     * 
+     * @return the loader.
+     */
+    public ResourceLoader getResourceLoader() {
+
+        return resourceLoader;
     }
 
     /**
@@ -90,7 +119,6 @@ public abstract class AbstractSpringService extends AbstractService implements A
         if (isInitialized()) {
             return;
         }
-
         parentContext = context;
     }
 
@@ -111,19 +139,67 @@ public abstract class AbstractSpringService extends AbstractService implements A
     }
 
     /**
-     * Sets the list of configurations for this service.
+     * Gets the untyped configurations.
+     * 
+     * @return Returns the configurations - if any have been set.
+     */
+    @Nullable public List<Object> getConfigurations() {
+        return configurations;
+    }
+
+    /**
+     * Sets the configurations (suitable for injection as a &lt;util:List&gt;). <br/>
+     * These have to be staged because the resource loader may be set after this.
+     * 
+     * @param configs The configurations to set.
+     */
+    public void setConfigurations(@Nonnull List<Object> configs) {
+        configurations = configs;
+    }
+
+    /**
+     * Sets the list of configurations for this service.<br/>
+     * This is a legacy api left in place to allow the IdP to continue to work 
+     * in backwards 
      * 
      * This setting can not be changed after the service has been initialized.
      * 
-     * @param configs list of configurations for this service, may be null or empty
+     * @param configs list of configurations for this service, may be null or empty. The configurations can be spring or
      */
-    public synchronized void setServiceConfigurations(@Nonnull final List<Resource> configs) {
+    public void setServiceConfigurations(@Nonnull final List<Resource> configs) {
         if (isInitialized()) {
             return;
         }
 
         serviceConfigurations =
                 ImmutableList.<Resource> builder().addAll(Iterables.filter(configs, Predicates.notNull())).build();
+    }
+
+    /**
+     * {@inheritDoc}. <br/>
+     * This method will convert the untyped list of configurations into a typed one.
+     */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        if (null == getConfigurations()) {
+            return;
+        }
+        final List<Resource> resources = new ArrayList<Resource>(getConfigurations().size());
+
+        for (Object obj : getConfigurations()) {
+            if (obj instanceof Resource) {
+                Resource resource = (Resource) obj;
+                resources.add(resource);
+            } else if (obj instanceof org.springframework.core.io.Resource) {
+                Resource resource = new ShibbolethResourceImpl((org.springframework.core.io.Resource) obj);
+                resources.add(resource);
+            } else if (obj instanceof String) {
+                resources.add(new ShibbolethResourceImpl(getResourceLoader().getResource((String) obj)));
+            } else {
+                log.error("Provided object {} was not a recognised resource type");
+            }
+        }
+        setServiceConfigurations(resources);
     }
 
     /**
