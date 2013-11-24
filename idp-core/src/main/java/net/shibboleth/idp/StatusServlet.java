@@ -81,7 +81,8 @@ public class StatusServlet extends HttpServlet {
     }
 
     /** {@inheritDoc} */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
         if (!isAuthenticated(request)) {
             // TODO do we need commons httpclient ?
             // response.sendError(HttpStatus.SC_UNAUTHORIZED);

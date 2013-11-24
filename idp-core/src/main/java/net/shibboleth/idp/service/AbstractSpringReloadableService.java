@@ -225,6 +225,7 @@ public abstract class AbstractSpringReloadableService extends AbstractReloadable
     }
     
     /** {@inheritDoc} */
+    // Checkstyle: CyclomaticComplexity OFF
     protected boolean shouldReload() {
         // Loop over each resource and check if the any resources have been changed since
         // the last time the service was reloaded. I believe a read lock is all we need here
@@ -286,5 +287,5 @@ public abstract class AbstractSpringReloadableService extends AbstractReloadable
             readLock.unlock();
         }
     }
-
+    // Checkstyle: CyclomaticComplexity ON
 }
