@@ -53,6 +53,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
@@ -124,6 +125,40 @@ public class LdapDataConnectorParserTest {
                         TestSources.SP_ENTITY_ID);
         Map<String, IdPAttribute> attrs = dataConnector.doResolve(context);
         Assert.assertNotNull(attrs);
+    }
+
+    /**
+     * This test will fail when it is time to revert the fixes put in for
+     * https://issues.shibboleth.net/jira/browse/IDP-338.
+     * @return 
+     */
+    @Test public void IdP338Canary() {
+        GenericApplicationContext context = new GenericApplicationContext();
+        context.setDisplayName("ApplicationContext: " + LdapDataConnectorParserTest.class);
+
+        XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
+
+        configReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/dc/IdP338.xml");
+        
+        Object cbc,cc=null,cb,c;
+        
+        cbc = context.getBean(CacheBuilder.class);
+        try {
+            cc = context.getBean(Cache.class);
+            Assert.fail("The Spring bug described in https://issues.shibboleth.net/jira/browse/IDP-338 has been fixed");
+        } catch (Exception e) {
+            // OK - the bug is that this throws.  The fix is when it doesn't.
+        }
+        cb = context.getBean("cacheBuilder");
+        c = context.getBean("cache");
+        Object ccc = context.getBean(Cache.class);
+        
+        Assert.assertNotNull(cb);        
+        Assert.assertNotNull(c);        
+        Assert.assertNotNull(cbc);        
+        Assert.assertNotNull(ccc);        
+        Assert.assertNull(cc, "The Spring bug described in https://issues.shibboleth.net/jira/browse/IDP-338 has been fixed"); 
+
     }
 
     protected LdapDataConnector getLdapDataConnector(final String springContext) {

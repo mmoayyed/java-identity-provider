@@ -120,6 +120,13 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         SerializeSupport.writeNode(springBeans, outputStream);
         definitionReader.loadBeanDefinitions(new InputSource(new ByteArrayInputStream(outputStream.toByteArray())));
+        
+        //
+        // Needed to work around https://jira.springsource.org/browse/SPR-11112
+        // See https://issues.shibboleth.net/jira/browse/IDP-338
+        //
+        @SuppressWarnings("unused")
+        final Object l = beanFactory.getBean("IDP338");
         return beanFactory;
     }
 
