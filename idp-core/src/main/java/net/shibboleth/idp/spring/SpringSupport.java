@@ -24,17 +24,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.resource.Resource;
-import net.shibboleth.utilities.java.support.resource.ResourceException;
 
-import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.w3c.dom.Element;
 
 /**
@@ -63,23 +59,7 @@ public final class SpringSupport {
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
-        // TODO change opensaml resources in to Spring resource
-        // beanDefinitionReader.loadBeanDefinitions(configurationResources.toArray(new Resource[] {}));
-        try {
-            for (Resource configurationResource : configurationResources) {
-
-                // TODO initialize resources here ?
-                configurationResource.initialize();
-
-                beanDefinitionReader.loadBeanDefinitions(new InputStreamResource(
-                        configurationResource.getInputStream(), configurationResource.getLocation()));
-            }
-        } catch (BeanDefinitionStoreException | ComponentInitializationException | ResourceException e) {
-            // TODO fix exception handling
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-
+        beanDefinitionReader.loadBeanDefinitions(configurationResources.toArray(new Resource[] {}));
         context.refresh();
         return context;
     }

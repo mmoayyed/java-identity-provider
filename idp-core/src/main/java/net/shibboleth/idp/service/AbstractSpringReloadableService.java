@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.service;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
@@ -26,14 +27,13 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.spring.SpringSupport;
-import net.shibboleth.utilities.java.support.resource.Resource;
-import net.shibboleth.utilities.java.support.resource.ResourceException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.Resource;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
@@ -130,12 +130,12 @@ public abstract class AbstractSpringReloadableService extends AbstractReloadable
                 serviceConfig = serviceConfigurations.get(i);
                 try {
                     if (serviceConfig.exists()) {
-                        resourceLastModifiedTimes[i] = serviceConfig.getLastModifiedTime();
+                        resourceLastModifiedTimes[i] = serviceConfig.lastModified();
                     } else {
                         resourceLastModifiedTimes[i] = -1;
                     }
-                } catch (ResourceException e) {
-                    log.info("Configuration resource '" + serviceConfig.getLocation()
+                } catch (IOException e) {
+                    log.info("Configuration resource '" + serviceConfig.getDescription()
                             + "' last modification date could not be determined", e);
                     resourceLastModifiedTimes[i] = -1;
                 }
@@ -254,28 +254,28 @@ public abstract class AbstractSpringReloadableService extends AbstractReloadable
                 try {
                     if (resourceLastModifiedTimes[i] == -1 && !serviceConfig.exists()) {
                         // Resource did not exist and still does not exist.
-                        log.debug("Resource remains unavailable/inaccessible: '{}'", serviceConfig.getLocation());
+                        log.debug("Resource remains unavailable/inaccessible: '{}'", serviceConfig.getDescription());
                     } else if (resourceLastModifiedTimes[i] == -1 && serviceConfig.exists()) {
                         // Resource did not exist, but does now.
-                        log.debug("Resource was unavailable, now present: '{}'", serviceConfig.getLocation());
+                        log.debug("Resource was unavailable, now present: '{}'", serviceConfig.getDescription());
                         configResourceChanged = true;
-                        resourceLastModifiedTimes[i] = serviceConfig.getLastModifiedTime();
+                        resourceLastModifiedTimes[i] = serviceConfig.lastModified();
                     } else if (resourceLastModifiedTimes[i] > -1 && !serviceConfig.exists()) {
                         // Resource existed, but is now unavailable.
-                        log.debug("Resource was available, now is not: '{}'", serviceConfig.getLocation());
+                        log.debug("Resource was available, now is not: '{}'", serviceConfig.getDescription());
                         configResourceChanged = true;
                         resourceLastModifiedTimes[i] = -1;
                     } else {
                         // Check to see if an existing resource, that still exists, has been modified.
-                        serviceConfigLastModified = serviceConfig.getLastModifiedTime();
+                        serviceConfigLastModified = serviceConfig.lastModified();
                         if (serviceConfigLastModified != resourceLastModifiedTimes[i]) {
-                            log.debug("Resource has changed: '{}'", serviceConfig.getLocation());
+                            log.debug("Resource has changed: '{}'", serviceConfig.getDescription());
                             configResourceChanged = true;
                             resourceLastModifiedTimes[i] = serviceConfigLastModified;
                         }
                     }
-                } catch (ResourceException e) {
-                    log.info("Configuration resource '" + serviceConfig.getLocation()
+                } catch (IOException e) {
+                    log.info("Configuration resource '" + serviceConfig.getDescription()
                             + "' last modification date could not be determined", e);
                     configResourceChanged = true;
                 }

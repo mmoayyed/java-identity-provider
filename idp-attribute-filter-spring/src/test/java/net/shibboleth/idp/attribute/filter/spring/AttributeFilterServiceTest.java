@@ -28,10 +28,10 @@ import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.spring.AttributeFilterService;
 import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.idp.spring.SpringSupport;
-import net.shibboleth.utilities.java.support.resource.ClasspathResource;
-import net.shibboleth.utilities.java.support.resource.Resource;
 
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -92,7 +92,7 @@ public class AttributeFilterServiceTest {
     @Test public void testPolicy2() throws ServiceException, AttributeFilterException {
 
         AttributeFilterService service =
-                AttributeFilterServiceTest.newService("policy2", new ClasspathResource(SERVICE_CONFIG_FILE));
+                AttributeFilterServiceTest.newService("policy2", new ClassPathResource(SERVICE_CONFIG_FILE));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());
@@ -121,7 +121,7 @@ public class AttributeFilterServiceTest {
     @Test public void testPolicy3() throws ServiceException, AttributeFilterException {
 
         AttributeFilterService service =
-                AttributeFilterServiceTest.newService("policy3", new ClasspathResource(SERVICE_CONFIG_FILE));
+                AttributeFilterServiceTest.newService("policy3", new ClassPathResource(SERVICE_CONFIG_FILE));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());
@@ -150,7 +150,7 @@ public class AttributeFilterServiceTest {
 
 
         AttributeFilterService service =
-                AttributeFilterServiceTest.newService("policy4", new ClasspathResource(SERVICE_CONFIG_FILE));
+                AttributeFilterServiceTest.newService("policy4", new ClassPathResource(SERVICE_CONFIG_FILE));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());

@@ -20,15 +20,15 @@ package net.shibboleth.idp.spring.resource;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.resource.ClasspathResource;
 
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.core.io.ClassPathResource;
 import org.w3c.dom.Element;
 
 //TODO incomplete port from v2
-/** Bean definition parser for {@link ClasspathResource}s. */
+/** Bean definition parser for {@link ClassPathResource}s. */
 public class ClasspathResourceBeanDefinitionParser extends AbstractResourceBeanDefinitionParser {
 
     /** Schema type. */
@@ -36,13 +36,13 @@ public class ClasspathResourceBeanDefinitionParser extends AbstractResourceBeanD
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
-        return ClasspathResource.class;
+        return ClassPathResource.class;
     }
 
     /** {@inheritDoc} */
     protected String
             resolveId(Element configElement, AbstractBeanDefinition beanDefinition, ParserContext parserContext) {
-        return ClasspathResource.class.getName() + ":"
+        return ClassPathResource.class.getName() + ":"
                 + StringSupport.trimOrNull(configElement.getAttributeNS(null, "file"));
 
         // TODO remove later

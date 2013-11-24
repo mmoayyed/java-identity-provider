@@ -27,9 +27,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.spring.SpringSupport;
-import net.shibboleth.idp.spring.resource.ShibbolethResourceImpl;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.resource.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +36,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 import com.google.common.base.Predicates;
@@ -191,10 +190,10 @@ public abstract class AbstractSpringService extends AbstractService implements A
                 Resource resource = (Resource) obj;
                 resources.add(resource);
             } else if (obj instanceof org.springframework.core.io.Resource) {
-                Resource resource = new ShibbolethResourceImpl((org.springframework.core.io.Resource) obj);
+                Resource resource = (org.springframework.core.io.Resource) obj;
                 resources.add(resource);
             } else if (obj instanceof String) {
-                resources.add(new ShibbolethResourceImpl(getResourceLoader().getResource((String) obj)));
+                resources.add(getResourceLoader().getResource((String) obj));
             } else {
                 log.error("Provided object {} was not a recognised resource type");
             }

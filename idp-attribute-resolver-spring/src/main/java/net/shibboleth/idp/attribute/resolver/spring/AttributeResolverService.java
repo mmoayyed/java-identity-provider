@@ -21,15 +21,14 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.service.AbstractSpringService;
 import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.resource.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,16 +75,6 @@ public class AttributeResolverService extends AbstractSpringService {
 
         // TODO do we have to init resources here ?
         log.debug("getServiceConfigurations() '{}'", getServiceConfigurations());
-        for (Resource resource : this.getServiceConfigurations()) {
-            try {
-                log.debug("initializing resource '{}'", resource);
-                resource.initialize();
-            } catch (ComponentInitializationException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                throw new ServiceException(e);
-            }
-        }
 
         super.doPreStart(context);
 
