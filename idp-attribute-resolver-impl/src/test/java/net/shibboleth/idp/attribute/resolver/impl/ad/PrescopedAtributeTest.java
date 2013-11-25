@@ -24,9 +24,9 @@ import java.util.Set;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
@@ -79,7 +79,7 @@ public class PrescopedAtributeTest {
         final Set<AttributeDefinition> attributeSet = new LazySet<AttributeDefinition>();
         attributeSet.add(attrDef);
 
-        final AttributeResolver resolver = new AttributeResolver("foo", attributeSet, connectorSet);
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attributeSet, connectorSet);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -117,7 +117,7 @@ public class PrescopedAtributeTest {
         final Set<AttributeDefinition> attributeSet = new LazySet<AttributeDefinition>();
         attributeSet.add(attrDef);
 
-        final AttributeResolver resolver = new AttributeResolver("foo", attributeSet, connectorSet);
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attributeSet, connectorSet);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();

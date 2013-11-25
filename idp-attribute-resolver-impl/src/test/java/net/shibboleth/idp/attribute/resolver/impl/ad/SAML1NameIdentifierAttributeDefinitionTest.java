@@ -24,9 +24,10 @@ import java.util.Set;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
@@ -82,7 +83,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         am.add(defn);
         am.add(TestSources.populatedStaticAttribute());
 
-        final AttributeResolver resolver = new AttributeResolver("foo", am, null);
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", am, null);
         resolver.initialize();
 
         AttributeResolutionContext context = TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, null);
@@ -119,7 +120,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         final Set<AttributeDefinition> am = new LazySet<AttributeDefinition>();
         am.add(defn);
         am.add(TestSources.populatedStaticAttribute());
-        final AttributeResolver resolver = new AttributeResolver("foo", am, null);
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", am, null);
         resolver.initialize();
 
         AttributeResolutionContext context = new AttributeResolutionContext();
@@ -149,7 +150,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         am.add(TestSources.populatedStaticAttribute());
         am.add(defn2);
 
-        AttributeResolver resolver = new AttributeResolver("foo", am, null);
+        AttributeResolverImpl resolver = new AttributeResolverImpl("foo", am, null);
         resolver.initialize();
 
         //
@@ -181,7 +182,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         am.add(TestSources.populatedStaticAttribute(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));
 
-        final AttributeResolver resolver = new AttributeResolver("foo", am, null);
+        final AttributeResolver resolver = new AttributeResolverImpl("foo", am, null);
         resolver.initialize();
 
         AttributeResolutionContext context = TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, null);

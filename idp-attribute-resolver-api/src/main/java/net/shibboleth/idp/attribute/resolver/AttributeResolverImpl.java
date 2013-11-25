@@ -39,8 +39,6 @@ import net.shibboleth.utilities.java.support.component.AbstractDestructableIdent
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -64,7 +62,7 @@ import com.google.common.collect.ImmutableMap;
  * */
 @ThreadSafe
 public class AttributeResolverImpl extends AbstractDestructableIdentifiableInitializableComponent implements
-        ValidatableComponent, UnmodifiableComponent {
+        AttributeResolver {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeResolverImpl.class);

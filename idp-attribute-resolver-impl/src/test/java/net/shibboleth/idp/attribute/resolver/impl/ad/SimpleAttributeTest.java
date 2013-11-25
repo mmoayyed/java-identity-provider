@@ -24,6 +24,7 @@ import java.util.Set;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
@@ -89,7 +90,7 @@ public class SimpleAttributeTest {
         final Set<AttributeDefinition> attributeSet = new LazySet<AttributeDefinition>();
         attributeSet.add(simple);
 
-        final AttributeResolver resolver = new AttributeResolver("foo", attributeSet, connectorSet);
+        final AttributeResolver resolver = new AttributeResolverImpl("foo", attributeSet, connectorSet);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -128,7 +129,7 @@ public class SimpleAttributeTest {
         am.add(simple);
         am.add(TestSources.populatedStaticAttribute());
 
-        final AttributeResolver resolver = new AttributeResolver("foo", am, null);
+        final AttributeResolver resolver = new AttributeResolverImpl("foo", am, null);
         resolver.initialize();
 
         AttributeResolutionContext context = new AttributeResolutionContext();
@@ -172,7 +173,7 @@ public class SimpleAttributeTest {
         final Set<DataConnector> dataDefinitions = new LazySet<DataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnector());
 
-        final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
+        final AttributeResolver resolver = new AttributeResolverImpl("foo", attrDefinitions, dataDefinitions);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();

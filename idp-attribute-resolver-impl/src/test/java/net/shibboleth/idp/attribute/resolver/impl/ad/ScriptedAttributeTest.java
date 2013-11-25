@@ -34,6 +34,7 @@ import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
@@ -236,7 +237,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final Set<DataConnector> dataDefinitions = new LazySet<DataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnector());
 
-        final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
+        final AttributeResolver resolver = new AttributeResolverImpl("foo", attrDefinitions, dataDefinitions);
         resolver.initialize();
 
         final AttributeResolutionContext context = generateContext();
@@ -270,7 +271,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         attrDefinitions.add(nonString);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
 
-        final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, null);
+        final AttributeResolver resolver = new AttributeResolverImpl("foo", attrDefinitions, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = generateContext();
@@ -316,7 +317,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final Set<DataConnector> dataDefinitions = new LazySet<DataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnector());
 
-        final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
+        final AttributeResolver resolver = new AttributeResolverImpl("foo", attrDefinitions, dataDefinitions);
         resolver.initialize();
 
         TestContextContainer parent = new TestContextContainer();
@@ -354,7 +355,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final Set<DataConnector> dataDefinitions = Collections.singleton((DataConnector) connector);
         final Set<AttributeDefinition> attrDefinitions = Collections.singleton((AttributeDefinition) scripted);
 
-        final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
+        final AttributeResolver resolver = new AttributeResolverImpl("foo", attrDefinitions, dataDefinitions);
         resolver.initialize();
 
         final AttributeResolutionContext context =

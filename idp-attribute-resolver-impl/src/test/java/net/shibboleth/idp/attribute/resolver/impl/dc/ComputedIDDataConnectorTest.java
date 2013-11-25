@@ -26,6 +26,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
@@ -91,7 +92,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));
 
         final AttributeResolver resolver =
-                new AttributeResolver("atresolver", set, Collections.singleton((DataConnector) connector));
+                new AttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector));
 
         resolver.initialize();
 
@@ -153,7 +154,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         set.add(TestSources.populatedStaticAttribute(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, values));
 
-        return new AttributeResolver("atresolver", set, Collections.singleton((DataConnector) connector));
+        return new AttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector));
     }
 
     private AttributeResolver constructResolverWithNonString(String dependantOn)
@@ -179,7 +180,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));
         set.add(TestSources.nonStringAttributeDefiniton(dependantOn));
 
-        return new AttributeResolver("atresolver", set, Collections.singleton((DataConnector) connector));
+        return new AttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector));
     }
 
     protected static BaseComputedIDDataConnector connectorFromResolver(AttributeResolver resolver) {

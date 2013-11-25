@@ -30,6 +30,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
@@ -205,7 +206,7 @@ public class TemplateAttributeTest {
         final Set<DataConnector> dataDefinitions = new LazySet<DataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnector());
 
-        final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
+        final AttributeResolver resolver = new AttributeResolverImpl("foo", attrDefinitions, dataDefinitions);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -249,7 +250,7 @@ public class TemplateAttributeTest {
         final Set<DataConnector> dataDefinitions = new LazySet<DataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnector());
 
-        final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
+        final AttributeResolver resolver = new AttributeResolverImpl("foo", attrDefinitions, dataDefinitions);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -289,7 +290,7 @@ public class TemplateAttributeTest {
         attrDefinitions.add(TestSources.populatedStaticAttribute());
         attrDefinitions.add(TestSources.populatedStaticAttribute(otherDefName, otherAttrName, 1));
 
-        final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, Collections.EMPTY_SET);
+        final AttributeResolver resolver = new AttributeResolverImpl("foo", attrDefinitions, Collections.EMPTY_SET);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -327,7 +328,7 @@ public class TemplateAttributeTest {
         attrDefinitions.add(templateDef);
         attrDefinitions.add(simple);
 
-        final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, Collections.EMPTY_SET);
+        final AttributeResolver resolver = new AttributeResolverImpl("foo", attrDefinitions, Collections.EMPTY_SET);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
