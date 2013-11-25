@@ -30,10 +30,6 @@ import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
-//TODO(lajoie) perf metrics
-//TODO(lajoie) need to deal with thread safety issue 
-//             where attribute definitions/data connectors might change in the midst of a resolution
-
 /**
  * A component that resolves the attributes for a particular subject.
  * 
