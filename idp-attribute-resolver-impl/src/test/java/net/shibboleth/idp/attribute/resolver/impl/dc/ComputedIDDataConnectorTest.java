@@ -32,6 +32,7 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.idp.attribute.resolver.impl.ad.SimpleAttributeDefinition;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -91,7 +92,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         set.add(TestSources.populatedStaticAttribute(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));
 
-        final AttributeResolver resolver =
+        final AttributeResolverImpl resolver =
                 new AttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector));
 
         resolver.initialize();
@@ -190,7 +191,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
     @Test public void altDataConnector() throws ComponentInitializationException, ResolutionException {
         AttributeResolver resolver = constructResolver(1);
 
-        resolver.initialize();
+        ComponentSupport.initialize(resolver);
 
         AttributeResolutionContext context = TestSources.createResolutionContext(null, null, TestSources.SP_ENTITY_ID);;
         resolver.resolveAttributes(context);
@@ -205,7 +206,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         //
         resolver = constructResolver(3);
 
-        resolver.initialize();
+        ComponentSupport.initialize(resolver);
 
         context = TestSources.createResolutionContext(null, null, TestSources.SP_ENTITY_ID);;
         resolver.resolveAttributes(context);
@@ -220,7 +221,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         //
         resolver = constructResolver(1);
 
-        resolver.initialize();
+        ComponentSupport.initialize(resolver);
 
         context = TestSources.createResolutionContext(null, null, "foo");
         resolver.resolveAttributes(context);
@@ -237,14 +238,15 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
         connectorFromResolver(resolver).setSourceAttributeId(TestSources.STATIC_ATTRIBUTE_NAME + "1");
 
-        resolver.initialize();
+        ComponentSupport.initialize(resolver);
 
         AttributeResolutionContext context = TestSources.createResolutionContext(null, null, TestSources.SP_ENTITY_ID);;
         resolver.resolveAttributes(context);
         Assert.assertNull(context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME));
 
         resolver = constructResolver(0);
-        resolver.initialize();
+        ComponentSupport.initialize(resolver);
+
 
         context = TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);
@@ -252,13 +254,13 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
         resolver = constructResolver(1);
 
-        resolver.initialize();
+        ComponentSupport.initialize(resolver);
 
         resolver.resolveAttributes(TestSources.createResolutionContext(null, null, null));
         Assert.assertNull(context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME));
 
         resolver = constructResolverWithNonString("nonString");
-        resolver.initialize();
+        ComponentSupport.initialize(resolver);
 
         context = TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);

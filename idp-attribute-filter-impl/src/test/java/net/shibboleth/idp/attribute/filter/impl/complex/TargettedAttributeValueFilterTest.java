@@ -24,6 +24,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
+import net.shibboleth.idp.attribute.filter.AttributeFilterImpl;
 import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filter.AttributeRule;
 import net.shibboleth.idp.attribute.filter.Matcher;
@@ -33,6 +34,7 @@ import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.impl.matcher.AttributeValueStringMatcher;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -91,9 +93,9 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
                 new AttributeFilterPolicy("targettedAtPermit", PolicyRequirementRule.MATCHES_ALL,
                         Collections.singleton(attributeValueFilterPolicy));
 
-        final AttributeFilter engine = new AttributeFilter("engine", Collections.singleton(policy));
+        final AttributeFilter engine = new AttributeFilterImpl("engine", Collections.singleton(policy));
 
-        engine.initialize();
+        ComponentSupport.initialize(engine);
 
         AttributeFilterContext context = new AttributeFilterContext();
         context.setPrefilteredIdPAttributes(getIdPAttributes("epa-uidwithjsmith.xml").values());
@@ -143,9 +145,9 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
         final AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("targettedAtPermit", rule,  Collections.singleton(attributeValueFilterPolicy));
 
-        final AttributeFilter engine = new AttributeFilter("engine", Collections.singleton(policy));
+        final AttributeFilter engine = new AttributeFilterImpl("engine", Collections.singleton(policy));
 
-        engine.initialize();
+        ComponentSupport.initialize(engine);
 
         AttributeFilterContext context = new AttributeFilterContext();
         context.setPrefilteredIdPAttributes(getIdPAttributes("epa-uidwithjsmith.xml").values());

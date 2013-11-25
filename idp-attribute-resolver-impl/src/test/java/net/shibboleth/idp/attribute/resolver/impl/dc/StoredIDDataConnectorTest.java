@@ -32,6 +32,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.impl.DatabaseTestingSupport;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
@@ -140,7 +141,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
             ResolutionException {
         AttributeResolver resolver = constructResolver(1);
 
-        resolver.initialize();
+        ComponentSupport.initialize(resolver);
 
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
@@ -181,7 +182,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
             SQLException, ResolutionException {
         AttributeResolver resolver = constructResolver(1);
 
-        resolver.initialize();
+        ComponentSupport.initialize(resolver);
 
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
@@ -200,7 +201,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
         resolver = constructResolver(1);
 
-        resolver.initialize();
+        ComponentSupport.initialize(resolver);
         StoredIDDataConnector connector =
                 (StoredIDDataConnector) ComputedIDDataConnectorTest.connectorFromResolver(resolver);
         connector.getStoredIDStore().deactivatePersistentId(ComputedIDDataConnectorTest.RESULT, null);
@@ -227,7 +228,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
         AttributeResolver resolver = ComputedIDDataConnectorTest.constructResolverWithNonString(connector, "nonString");
 
-        resolver.initialize();
+        ComponentSupport.initialize(resolver);
 
         connector.getStoredIDStore().deactivatePersistentId(ComputedIDDataConnectorTest.RESULT, null);
 
@@ -257,7 +258,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         // Precharge the store with a duplicate persisent ID
         //
 
-        resolver.initialize();
+        ComponentSupport.initialize(resolver);
         PersistentIdEntry idEntry = new PersistentIdEntry();
         idEntry.setAttributeIssuerId(TestSources.IDP_ENTITY_ID);
         idEntry.setLocalId("wibble");

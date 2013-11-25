@@ -26,7 +26,6 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
@@ -182,7 +181,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         am.add(TestSources.populatedStaticAttribute(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));
 
-        final AttributeResolver resolver = new AttributeResolverImpl("foo", am, null);
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", am, null);
         resolver.initialize();
 
         AttributeResolutionContext context = TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, null);

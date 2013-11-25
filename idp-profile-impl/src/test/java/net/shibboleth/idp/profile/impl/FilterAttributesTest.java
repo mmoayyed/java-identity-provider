@@ -22,12 +22,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeContext;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filter.AttributeFilterImpl;
 import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filter.AttributeRule;
 import net.shibboleth.idp.attribute.filter.MockMatcher;
@@ -35,6 +36,7 @@ import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -52,7 +54,7 @@ public class FilterAttributesTest {
     @Test public void testNoRelyingPartyContext() throws Exception {
         ProfileRequestContext profileCtx = new ProfileRequestContext();
 
-        AttributeFilter engine = new AttributeFilter("test", null);
+        AttributeFilter engine = new AttributeFilterImpl("test", null);
 
         FilterAttributes action = new FilterAttributes(engine);
         action.setId("test");
@@ -67,7 +69,7 @@ public class FilterAttributesTest {
     @Test public void testNoAttributeContext() throws Exception {
         ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
 
-        AttributeFilter engine = new AttributeFilter("test", null);
+        AttributeFilterImpl engine = new AttributeFilterImpl("test", null);
 
         FilterAttributes action = new FilterAttributes(engine);
         action.setId("test");
@@ -85,7 +87,7 @@ public class FilterAttributesTest {
         AttributeContext attribCtx = new AttributeContext();
         profileCtx.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
 
-        AttributeFilter engine = new AttributeFilter("test", null);
+        AttributeFilter engine = new AttributeFilterImpl("test", null);
 
         FilterAttributes action = new FilterAttributes(engine);
         action.setId("test");
@@ -120,8 +122,8 @@ public class FilterAttributesTest {
                 new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
                         Lists.newArrayList(attribute1Policy));
 
-        AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
-        engine.initialize();
+        AttributeFilter engine = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        ComponentSupport.initialize(engine);
 
         ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
 
@@ -178,8 +180,8 @@ public class FilterAttributesTest {
                 new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
                         Lists.newArrayList(attribute1Policy));
 
-        AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
-        engine.initialize();
+        AttributeFilter engine = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        ComponentSupport.initialize(engine);
 
         ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
 
@@ -236,8 +238,8 @@ public class FilterAttributesTest {
                 new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
                         Lists.newArrayList(attribute1Policy));
 
-        AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
-        engine.initialize();
+        AttributeFilter engine = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        ComponentSupport.initialize(engine);
 
         ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
 

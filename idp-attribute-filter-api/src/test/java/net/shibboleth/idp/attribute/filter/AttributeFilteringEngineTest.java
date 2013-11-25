@@ -31,6 +31,7 @@ import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeRule;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -46,27 +47,27 @@ public class AttributeFilteringEngineTest {
 
     /** Test that post-construction state is what is expected. */
     @Test public void testPostConstructionState() throws Exception {
-        AttributeFilter engine = new AttributeFilter("engine", null);
+        AttributeFilter engine = new AttributeFilterImpl("engine", null);
         Assert.assertNotNull(engine.getFilterPolicies());
         Assert.assertTrue(engine.getFilterPolicies().isEmpty());
         Assert.assertEquals(engine.getId(), "engine");
 
         try {
-            new AttributeFilter("  ", null);
+            new AttributeFilterImpl("  ", null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected
         }
 
         try {
-            new AttributeFilter("", null);
+            new AttributeFilterImpl("", null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected
         }
 
         try {
-            new AttributeFilter(null, null);
+            new AttributeFilterImpl(null, null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected
@@ -79,8 +80,8 @@ public class AttributeFilteringEngineTest {
         AttributeFilterPolicy policy2 = new AttributeFilterPolicy("policy2", PolicyRequirementRule.MATCHES_NONE, null);
         AttributeFilterPolicy policy3 = new AttributeFilterPolicy("policy3", PolicyRequirementRule.MATCHES_NONE, null);
 
-        AttributeFilter engine =
-                new AttributeFilter("engine", Lists.<AttributeFilterPolicy> newArrayList(policy1, policy1,
+        AttributeFilterImpl engine =
+                new AttributeFilterImpl("engine", Lists.<AttributeFilterPolicy> newArrayList(policy1, policy1,
                         policy2));
         engine.initialize();
 
@@ -93,7 +94,7 @@ public class AttributeFilteringEngineTest {
         Assert.assertFalse(engine.getFilterPolicies().contains(policy3));
         Assert.assertFalse(policy3.isInitialized());
 
-        engine = new AttributeFilter("engine", Lists.<AttributeFilterPolicy> newArrayList(policy1, policy2));
+        engine = new AttributeFilterImpl("engine", Lists.<AttributeFilterPolicy> newArrayList(policy1, policy2));
         engine.initialize();
 
         Assert.assertEquals(engine.getFilterPolicies().size(), 2);
@@ -137,8 +138,8 @@ public class AttributeFilteringEngineTest {
                 new StringAttributeValue("b")));
         filterContext.getPrefilteredIdPAttributes().put(attribute2.getId(), attribute2);
 
-        AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
-        engine.initialize();
+        AttributeFilterImpl engine = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        ComponentSupport.initialize(engine);
 
         engine.filterAttributes(filterContext);
         Map<String, IdPAttribute> resultAttrs = filterContext.getFilteredIdPAttributes();
@@ -168,7 +169,7 @@ public class AttributeFilteringEngineTest {
                 new StringAttributeValue("two")));
         filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
-        AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
+        AttributeFilterImpl engine = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
         engine.initialize();
 
         engine.filterAttributes(filterContext);
@@ -199,7 +200,7 @@ public class AttributeFilteringEngineTest {
                 new StringAttributeValue("two")));
         filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
-        AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
+        AttributeFilterImpl engine = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
         engine.initialize();
 
         engine.filterAttributes(filterContext);
@@ -226,8 +227,8 @@ public class AttributeFilteringEngineTest {
                 new StringAttributeValue("two")));
         filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
-        AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
-        engine.initialize();
+        AttributeFilter engine = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        ComponentSupport.initialize(engine);
 
         engine.filterAttributes(filterContext);
         Assert.assertTrue(filterContext.getFilteredIdPAttributes().isEmpty());
@@ -261,7 +262,7 @@ public class AttributeFilteringEngineTest {
                 new StringAttributeValue("two")));
         filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
-        AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
+        AttributeFilterImpl engine = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
         engine.initialize();
 
         engine.filterAttributes(filterContext);
@@ -289,8 +290,8 @@ public class AttributeFilteringEngineTest {
                 new StringAttributeValue("two")));
         filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
-        AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
-        engine.initialize();
+        AttributeFilter engine = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        ComponentSupport.initialize(engine);
 
         engine.filterAttributes(filterContext);
         Assert.assertTrue(filterContext.getFilteredIdPAttributes().isEmpty());
@@ -320,8 +321,8 @@ public class AttributeFilteringEngineTest {
                 new StringAttributeValue("two")));
         filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
-        AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
-        engine.initialize();
+        AttributeFilter engine = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        ComponentSupport.initialize(engine);
 
         engine.filterAttributes(filterContext);
         Map<String, IdPAttribute> resultAttrs = filterContext.getFilteredIdPAttributes();
@@ -344,8 +345,8 @@ public class AttributeFilteringEngineTest {
         Assert.assertFalse(matcher.isInitialized());
         Assert.assertFalse(matcher.isDestroyed());
 
-        AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
-        engine.initialize();
+        AttributeFilter engine = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        ComponentSupport.initialize(engine);
 
         Assert.assertTrue(policyRule.isInitialized());
         Assert.assertFalse(policyRule.isDestroyed());
@@ -359,7 +360,8 @@ public class AttributeFilteringEngineTest {
         Assert.assertTrue(matcher.isDestroyed());
 
         try {
-            engine.initialize();
+            ComponentSupport.initialize(engine);
+
             Assert.fail();
         } catch (DestroyedComponentException e) {
             // OK
@@ -377,7 +379,7 @@ public class AttributeFilteringEngineTest {
         MockPolicyRequirementRule policyRule = new MockPolicyRequirementRule();
         AttributeFilterPolicy policy = new AttributeFilterPolicy("Id", policyRule, Arrays.asList(filterPolicy));
 
-        AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
+        AttributeFilter engine = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
         Assert.assertFalse(policyRule.getValidated());
         Assert.assertFalse(matcher.getValidated());
 
@@ -390,7 +392,7 @@ public class AttributeFilteringEngineTest {
         Assert.assertFalse(policyRule.getValidated());
         Assert.assertFalse(matcher.getValidated());
 
-        engine.initialize();
+        ComponentSupport.initialize(engine);
         engine.validate();
         Assert.assertTrue(policyRule.getValidated());
         Assert.assertTrue(matcher.getValidated());

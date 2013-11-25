@@ -30,6 +30,7 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.service.AbstractSpringService;
 import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,10 +93,9 @@ public class AttributeResolverService extends AbstractSpringService {
         attributeResolver = new AttributeResolverImpl(getId(), adMap.values(), dataConnectorMap.values());
 
         try {
-            attributeResolver.initialize();
+            ComponentSupport.initialize(attributeResolver);
         } catch (ComponentInitializationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new ServiceException(e);
         }
     }
 }

@@ -23,12 +23,14 @@ import java.util.HashMap;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filter.AttributeFilterImpl;
 import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.service.AbstractSpringService;
 import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,9 +83,9 @@ public class AttributeFilterService extends AbstractSpringService {
 
         Collection<AttributeFilterPolicy> policies = appCtx.getBeansOfType(AttributeFilterPolicy.class).values();
 
-        attributeFilter = new AttributeFilter(getId(), policies);
+        attributeFilter = new AttributeFilterImpl(getId(), policies);
         try {
-            attributeFilter.initialize();
+            ComponentSupport.initialize(attributeFilter);
         } catch (ComponentInitializationException e) {
             throw new ServiceException("Unable to initialize the attribute filtering engine", e);
         }
