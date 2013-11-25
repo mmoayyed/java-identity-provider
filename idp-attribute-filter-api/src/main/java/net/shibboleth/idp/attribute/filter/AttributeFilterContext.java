@@ -43,7 +43,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.opensaml.messaging.context.BaseContext;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.Constraints;
 import com.google.common.collect.MapConstraints;
 import com.google.common.collect.Multimap;
 
@@ -136,8 +135,7 @@ public final class AttributeFilterContext extends BaseContext {
 
         Set<IdPAttributeValue> permittedAttributeValues = permittedValues.get(trimmedAttributeId);
         if (permittedAttributeValues == null) {
-            permittedAttributeValues =
-                    Constraints.constrainedSet(new HashSet<IdPAttributeValue>(), Constraints.notNull());
+            permittedAttributeValues = new HashSet<IdPAttributeValue>();
             permittedValues.put(trimmedAttributeId, permittedAttributeValues);
         }
 
@@ -186,7 +184,7 @@ public final class AttributeFilterContext extends BaseContext {
 
         Set<IdPAttributeValue> deniedAttributeValues = deniedValues.get(trimmedAttributeId);
         if (deniedAttributeValues == null) {
-            deniedAttributeValues = Constraints.constrainedSet(new HashSet<IdPAttributeValue>(), Constraints.notNull());
+            deniedAttributeValues = new HashSet<IdPAttributeValue>();
             deniedValues.put(trimmedAttributeId, deniedAttributeValues);
         }
 
