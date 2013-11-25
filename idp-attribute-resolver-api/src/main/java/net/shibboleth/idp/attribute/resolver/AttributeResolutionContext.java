@@ -38,7 +38,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.messaging.context.BaseContext;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.Constraints;
 import com.google.common.collect.MapConstraints;
 
 /** A context which carries and collects information through an attribute resolution. */
@@ -59,7 +58,7 @@ public class AttributeResolutionContext extends BaseContext {
 
     /** Constructor. */
     public AttributeResolutionContext() {
-        requestedAttributes = Constraints.constrainedSet(new HashSet<IdPAttribute>(), Constraints.notNull());
+        requestedAttributes = new HashSet<IdPAttribute>();
 
         resolvedAttributes =
                 MapConstraints.constrainedMap(new HashMap<String, IdPAttribute>(), MapConstraints.notNull());
