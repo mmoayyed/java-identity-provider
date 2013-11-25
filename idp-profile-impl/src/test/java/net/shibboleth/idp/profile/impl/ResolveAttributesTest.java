@@ -24,6 +24,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
@@ -54,7 +55,7 @@ public class ResolveAttributesTest {
         LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(new MockAttributeDefinition("ad1", attribute));
 
-        AttributeResolver resolver = new AttributeResolver("resolver", definitions, null);
+        AttributeResolver resolver = new AttributeResolverImpl("resolver", definitions, null);
         resolver.initialize();
 
         ResolveAttributes action = new ResolveAttributes(resolver);
@@ -76,7 +77,7 @@ public class ResolveAttributesTest {
         LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(new MockAttributeDefinition("ad1", attribute));
 
-        AttributeResolver resolver = new AttributeResolver("resolver", definitions, null);
+        AttributeResolver resolver = new AttributeResolverImpl("resolver", definitions, null);
         resolver.initialize();
 
         ResolveAttributes action = new ResolveAttributes(resolver);
@@ -111,7 +112,7 @@ public class ResolveAttributesTest {
         LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(new MockAttributeDefinition("ad1", attribute));
 
-        AttributeResolver resolver = new AttributeResolver("resolver", definitions, null);
+        AttributeResolver resolver = new AttributeResolverImpl("resolver", definitions, null);
         resolver.initialize();
 
         AttributeResolutionContext attributeResolutionCtx = new AttributeResolutionContext();
@@ -171,7 +172,7 @@ public class ResolveAttributesTest {
         LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(new MockAttributeDefinition("ad1", new ResolutionException()));
 
-        AttributeResolver resolver = new AttributeResolver("resolver", definitions, null);
+        AttributeResolver resolver = new AttributeResolverImpl("resolver", definitions, null);
         resolver.initialize();
 
         ResolveAttributes action = new ResolveAttributes(resolver);
