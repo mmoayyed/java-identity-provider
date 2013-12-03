@@ -28,12 +28,12 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicates;
 
 /** Unit test for {@link ConditionalRelyingPartyConfigurationResolver}. */
-public class ActivatedRelyingPartyConfigurationResolverTest {
+public class ConditionalRelyingPartyConfigurationResolverTest {
 
     @Test public void testConstruction() {
         ConditionalRelyingPartyConfigurationResolver resolver;
 
-        ArrayList<ConditionalRelyingPartyConfiguration> rpConfigs = new ArrayList<ConditionalRelyingPartyConfiguration>();
+        ArrayList<ConditionalRelyingPartyConfiguration> rpConfigs = new ArrayList<>();
         rpConfigs.add(new ConditionalRelyingPartyConfiguration("one", "foo", null, Predicates
                 .<ProfileRequestContext> alwaysTrue()));
         rpConfigs.add(new ConditionalRelyingPartyConfiguration("two", "foo", null, Predicates
@@ -71,7 +71,7 @@ public class ActivatedRelyingPartyConfigurationResolverTest {
                 new ConditionalRelyingPartyConfiguration("three", "foo", null,
                         Predicates.<ProfileRequestContext> alwaysTrue());
 
-        ArrayList<ConditionalRelyingPartyConfiguration> rpConfigs = new ArrayList<ConditionalRelyingPartyConfiguration>();
+        ArrayList<ConditionalRelyingPartyConfiguration> rpConfigs = new ArrayList<>();
         rpConfigs.add(config1);
         rpConfigs.add(config2);
         rpConfigs.add(config3);
@@ -79,6 +79,7 @@ public class ActivatedRelyingPartyConfigurationResolverTest {
         ConditionalRelyingPartyConfigurationResolver resolver = new ConditionalRelyingPartyConfigurationResolver();
         resolver.setId("test");
         resolver.setRelyingPartyConfigurations(rpConfigs);
+        resolver.initialize();
 
         Iterable<ConditionalRelyingPartyConfiguration> results = resolver.resolve(requestContext);
         Assert.assertNotNull(results);

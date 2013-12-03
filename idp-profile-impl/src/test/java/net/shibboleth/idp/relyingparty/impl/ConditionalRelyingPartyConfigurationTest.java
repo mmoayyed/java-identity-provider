@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicates;
 
 /** Unit test for {@link ConditionalRelyingPartyConfiguration}. */
-public class ActivatedRelyingPartyConfigurationTest {
+public class ConditionalRelyingPartyConfigurationTest {
 
     @Test public void testConstruction() {
         ConditionalRelyingPartyConfiguration config =
