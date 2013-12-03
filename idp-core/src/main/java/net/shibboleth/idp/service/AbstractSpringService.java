@@ -52,11 +52,10 @@ import com.google.common.collect.Iterables;
  * 
  * Services derived from this base class may not be re-initialized after they have been destroyed.
  * 
- * <strong>NOTE:</strong> Service implementations must acquire a read lock, through {@link #getServiceLock()}, whenever
- * reading or operating on information controlled by the service context. This will ensure that if a configuration
- * change occurs the service context will not be replaced until after all current reads have completed.
+ * <strong>NOTE:</strong> Do not use this class.  It is being rewritten
  */
 @ThreadSafe
+@Deprecated
 public abstract class AbstractSpringService extends AbstractService implements ApplicationContextAware,
         ResourceLoaderAware {
 

@@ -19,15 +19,15 @@ package net.shibboleth.idp.log;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.util.HashMap;
 
 import net.shibboleth.idp.service.AbstractReloadableService;
 import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 
+import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import ch.qos.logback.classic.LoggerContext;
@@ -51,7 +51,7 @@ public class LogbackLoggingService extends AbstractReloadableService {
     private StatusManager statusManager;
 
     /** URL to the fallback logback configuration found in the IdP jar. */
-    private URL fallbackConfiguration;
+    private Resource fallbackConfiguration;
 
     /** Logging configuration resource. */
     private Resource configurationResource;
@@ -88,9 +88,13 @@ public class LogbackLoggingService extends AbstractReloadableService {
     }
 
     /** {@inheritDoc} */
-    protected boolean shouldReload() {
+    protected synchronized boolean shouldReload() {
         try {
-            return configurationResource.lastModified() > getLastSuccessfulReloadInstant().getMillis();
+            final DateTime lastReload = getLastSuccessfulReloadInstant();
+            if (null == lastReload) {
+                return true;
+            }
+            return configurationResource.lastModified() > lastReload.getMillis();
         } catch (IOException e) {
             statusManager.add(new ErrorStatus(
                     "Error checking last modified time of logging service configuration resource "
@@ -100,8 +104,7 @@ public class LogbackLoggingService extends AbstractReloadableService {
     }
 
     /** {@inheritDoc} */
-    protected void doReload(HashMap context) throws ServiceException {
-        super.doReload(context);
+    protected synchronized void doReload() throws ServiceException {
 
         loadLoggingConfiguration();
     }
@@ -119,22 +122,38 @@ public class LogbackLoggingService extends AbstractReloadableService {
             ins = configurationResource.getInputStream();
             loadLoggingConfiguration(ins);
         } catch (Exception e) {
-            Closeables.closeQuietly(ins);
+            try {
+                Closeables.close(ins, true);
+            } catch (IOException e1) {
+                // swallowed && logged by Closeables but...
+                throw new ServiceException(e1);
+            }
             statusManager.add(new ErrorStatus("Error loading logging configuration file: "
                     + configurationResource.getDescription(), this, e));
             try {
                 statusManager.add(new InfoStatus("Loading fallback logging configuration", this));
-                ins = fallbackConfiguration.openStream();
+                ins = fallbackConfiguration.getInputStream();
                 loadLoggingConfiguration(ins);
             } catch (IOException ioe) {
-                Closeables.closeQuietly(ins);
+                try {
+                    Closeables.close(ins, true);
+                } catch (IOException e1) {
+                    // swallowed && logged by Closeables
+                    throw new ServiceException(e1);
+                }
                 statusManager.add(new ErrorStatus("Error loading fallback logging configuration", this, e));
                 throw new ServiceException("Unable to load fallback logging configuration");
             }
         } finally {
-            Closeables.closeQuietly(ins);
+            try {
+                Closeables.close(ins, true);
+            } catch (IOException e) {
+                // swallowed && logged by Closeables
+                throw new ServiceException(e);
+            }
         }
     }
+    // Checkstyle: EmtpyBlock ON
 
     /**
      * Loads a logging configuration in to the active logger context. Error messages are printed out to the status
@@ -158,14 +177,21 @@ public class LogbackLoggingService extends AbstractReloadableService {
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-
         if (configurationResource == null) {
             throw new ComponentInitializationException("Logging configuration must be specified.");
         }
 
-        fallbackConfiguration = LogbackLoggingService.class.getResource("/logback.xml");
+        fallbackConfiguration = new ClassPathResource("/logback.xml");
         loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         statusManager = loggerContext.getStatusManager();
+        if (!fallbackConfiguration.exists()) {
+            if (isFailFast()) {
+                throw new ComponentInitializationException(getLogPrefix() + "Cannot locate fallback logger");
+            }
+            statusManager.add(new ErrorStatus("Cannot locate fallback logger at "
+                    + fallbackConfiguration.getDescription(), this));
+        }
+        super.doInitialize();
+
     }
 }

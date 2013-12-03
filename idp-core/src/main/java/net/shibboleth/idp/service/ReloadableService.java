@@ -20,13 +20,11 @@ package net.shibboleth.idp.service;
 import javax.annotation.Nullable;
 
 import org.joda.time.DateTime;
+import org.springframework.context.Lifecycle;
 
 /** A service that supports reloading its configuration. */
-public interface ReloadableService extends Service {
+public interface ReloadableService extends Lifecycle {
     
-    /** Indicates the service is in the process of reloading its configuration files. */
-    public static final String STATE_RELOADING = "reloading";
-
     /**
      * Gets the time when the service was last successfully reloaded.
      * 

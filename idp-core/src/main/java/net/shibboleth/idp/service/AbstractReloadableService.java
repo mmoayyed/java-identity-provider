@@ -17,18 +17,22 @@
 
 package net.shibboleth.idp.service;
 
-import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.locks.Lock;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.log.EventLogger;
 import net.shibboleth.idp.log.PerformanceEvent;
+import net.shibboleth.utilities.java.support.annotation.Duration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
+import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
@@ -37,9 +41,17 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Base class for {@link ReloadableService}. This base class will start a background thread that will perform a periodic
- * check, via {@link #shouldReload()}, and, if required, invoke the services {@link #reload()} method.
+ * check, via {@link #shouldReload()}, and, if required, invoke the services {@link #reload()} method. <br/>
+ * This class implements {@link ReloadableService} which in turn extends {@link org.springframework.context.Lifecycle}.
+ * It acts as the bridge between this interface and
+ * {@link net.shibboleth.utilities.java.support.component.InitializableComponent} and
+ * {@link net.shibboleth.utilities.java.support.component.DestructableComponent}
+ * 
+ * This class doe <em>not</em> deal with any syncrhonization. That is left to implementing classes.
+ * 
  */
-public abstract class AbstractReloadableService extends AbstractService implements ReloadableService {
+public abstract class AbstractReloadableService extends AbstractDestructableIdentifiableInitializableComponent
+        implements ValidatableComponent, ReloadableService, UnmodifiableComponent {
 
     /** Class logger. */
     private Logger log = LoggerFactory.getLogger(AbstractReloadableService.class);
@@ -48,7 +60,7 @@ public abstract class AbstractReloadableService extends AbstractService implemen
      * Number of milliseconds between one reload check and another. A value of 0 or less indicates that no reloading
      * will be performed. Default value: {@value} (5 minutes)
      */
-    private long reloadCheckDelay = 300000;
+    @Duration private long reloadCheckDelay = 300000;
 
     /** Timer used to schedule configuration reload tasks. */
     private Timer reloadTaskTimer;
@@ -64,6 +76,12 @@ public abstract class AbstractReloadableService extends AbstractService implemen
 
     /** The cause of the last reload failure, if the last reload failed. */
     private Throwable reloadFailureCause;
+
+    /** Do we fail immediately if the config is bogus? */
+    private boolean failFast;
+
+    /** The log prefix. */
+    private String logPrefix;
 
     /**
      * Gets the number of milliseconds between one reload check and another. A value of 0 or less indicates that no
@@ -83,10 +101,8 @@ public abstract class AbstractReloadableService extends AbstractService implemen
      * 
      * @param delay number of milliseconds between one reload check and another
      */
-    public synchronized void setReloadCheckDelay(long delay) {
-        if (isInitialized()) {
-            return;
-        }
+    public void setReloadCheckDelay(@Duration long delay) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         reloadCheckDelay = delay;
     }
@@ -108,9 +124,7 @@ public abstract class AbstractReloadableService extends AbstractService implemen
      * @param timer timer used to schedule configuration reload tasks
      */
     public synchronized void setReloadTaskTimer(@Nullable final Timer timer) {
-        if (isInitialized()) {
-            return;
-        }
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         reloadTaskTimer = timer;
     }
@@ -130,131 +144,160 @@ public abstract class AbstractReloadableService extends AbstractService implemen
         return reloadFailureCause;
     }
 
+    /** {@inheritDoc}. */
+    public void setId(String id) {
+        super.setId(id);
+    }
+
+    /**
+     * Do we fail fast?
+     * 
+     * @return Returns whether we fast.
+     */
+    public boolean isFailFast() {
+        return failFast;
+    }
+
+    /**
+     * Sets whether we fail fast.
+     * 
+     * @param value what to set.
+     */
+    public void setFailFast(boolean value) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        failFast = value;
+    }
+
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
+
+        log.info("{} Performing a initial load", getLogPrefix());
+        try {
+            doReload();
+        } catch (ServiceException e) {
+            if (isFailFast()) {
+                throw new ComponentInitializationException(getLogPrefix() + " could not perform initial load", e);
+            }
+            log.error("{} initial load failed {}", getLogPrefix(), e);
+            if (reloadCheckDelay > 0) {
+                log.info("{} Continuing to poll configuration", getLogPrefix());
+            } else {
+                log.error("{} No further attempts will be made to reload", getLogPrefix());
+            }
+        }
+
+        if (reloadCheckDelay > 0) {
+            if (null == reloadTaskTimer) {
+                log.info("{} no reload tast timer specified, creating default");
+                reloadTaskTimer = new Timer("Timer for " + getId());
+            }
+            log.info("{} reload time set to: {}, starting refresh thread", getLogPrefix(), reloadCheckDelay);
+            reloadTask = new ServiceReloadTask();
+            reloadTaskTimer.schedule(reloadTask, reloadCheckDelay, reloadCheckDelay);
+        }
     }
 
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
-        super.validate();
         if (reloadCheckDelay > 0 && reloadTaskTimer == null) {
-            throw new ComponentValidationException("Reload task timer cannot be null");
+            throw new ComponentValidationException(getLogPrefix() + " Reload task timer cannot be null");
         }
     }
-    
+
     /** {@inheritDoc} */
-    protected void doStart(@Nonnull final HashMap context) throws ServiceException {
-        super.doStart(context);
-        if (reloadCheckDelay > 0) {
-            reloadTask = new ServiceReloadTask();
-            reloadTaskTimer.schedule(reloadTask, reloadCheckDelay, reloadCheckDelay);
-        } else {
-            doReload(context);
+    public final void start() {
+        if (isInitialized()) {
+            return;
         }
-    }    
-    
+        try {
+            initialize();
+        } catch (ComponentInitializationException e) {
+            log.error("{} Could not start service : {}", getLogPrefix(), e);
+            return;
+        }
+    }
+
     /**
      * {@inheritDoc}
      * 
-     * This implementation will set the current state to {@link ReloadableService#STATE_RELOADING}, call
-     * {@link #doPreReload(HashMap)}, {@link #doReload(HashMap)}, and {@link #doPostReload(HashMap)} in turn. It will
-     * manage the {@link #lastReloadInstant} and {@link #lastSuccessfulReleaseIntant} information and record the reload
-     * performance event.
      */
     public final void reload() {
         final PerformanceEvent perfEvent = new PerformanceEvent(getId() + ".reload");
         perfEvent.startTime();
 
-        final Lock serviceWriteLock = getServiceLock().writeLock();
-        final HashMap context = new HashMap();
-
         final DateTime now = new DateTime(ISOChronology.getInstanceUTC());
         lastReloadInstant = now;
 
         try {
-            serviceWriteLock.lock();
-
-            setCurrentState(STATE_RELOADING);
-            doPreReload(context);
-            doReload(context);
-            doPostReload(context);
-            setCurrentState(STATE_STARTED);
+            doReload();
 
             lastSuccessfulReleaseIntant = now;
             perfEvent.stopTime(true);
         } catch (ServiceException e) {
+            log.error("Reload for {} failed: {}", getId(), e);
             reloadFailureCause = e;
             perfEvent.stopTime(false);
         } finally {
-            serviceWriteLock.unlock();
             EventLogger.log(perfEvent);
         }
+    }
+
+    /** {@inheritDoc} */
+    public final void stop() {
+        log.info("{} Starting shutdown", getLogPrefix());
+        destroy();
+        log.info("{} Completing shutdown", getLogPrefix());
+        if (reloadTask != null) {
+            reloadTask.cancel();
+        }
+    }
+
+    /** {@inheritDoc}. */
+    public boolean isRunning() {
+        return isInitialized();
     }
 
     /**
      * Called by the {@link ServiceReloadTask} to determine if the service should be reloaded.
      * 
-     * <p>No lock is held when this method is called, so any locking needed should be handled
-     * internally.</p>
+     * <p>
+     * No lock is held when this method is called, so any locking needed should be handled internally.
+     * </p>
      * 
      * @return true iff the service should be reloaded
      */
     protected abstract boolean shouldReload();
 
-    /** {@inheritDoc} */
-    protected void doStop(@Nonnull final HashMap context) throws ServiceException {
-        if (reloadTask != null) {
-            reloadTask.cancel();
-        }
-        super.doStop(context);
-    }
-
-    /**
-     * Prepares the service to reload its configuration.
-     * 
-     * This method is called within the service write lock and may change service state.
-     * 
-     * @param context Collection of data carried through {@link #doPreReload(HashMap)}, {@link #doReload(HashMap)}, and
-     *            {@link #doPostReload(HashMap)}. This is an appropriate place to keep state as the reload process
-     *            progresses.
-     * 
-     * @throws ServiceException thrown if there is a problem reloading the service
-     */
-    protected void doPreReload(@Nonnull final HashMap context) throws ServiceException {
-        log.debug("Reloading service '{}'", getId());
-    }
-
     /**
      * Performs the actual reload.
      * 
-     * This method is called within the service write lock and may change service state.
-     * 
-     * @param context Collection of data carried through {@link #doPreReload(HashMap)}, {@link #doReload(HashMap)}, and
-     *            {@link #doPostReload(HashMap)}. This is an appropriate place to keep state as the reload process
-     *            progresses
+     * <p>
+     * No lock is held when this method is called, so any locking needed should be handled internally.
+     * </p>
      * 
      * @throws ServiceException thrown if there is a problem reloading the service
      */
-    protected void doReload(@Nonnull final HashMap context) throws ServiceException {
+    protected void doReload() throws ServiceException {
 
     }
 
     /**
-     * Performs any final tasks necessary for the reload.
+     * Return a string which is to be prepended to all log messages.
      * 
-     * This method is called within the service write lock and may change service state.
-     * 
-     * The default implementation of this method does not do anything.
-     * 
-     * @param context Collection of data carried through {@link #doPreReload(HashMap)}, {@link #doReload(HashMap)}, and
-     *            {@link #doPostReload(HashMap)}. This is an appropriate place to keep state as the reload process
-     *            progresses
-     * 
-     * @throws ServiceException thrown if there is a problem reloading the service
+     * @return "Service '<definitionID>' :"
      */
-    protected void doPostReload(@Nonnull final HashMap context) throws ServiceException {
-        log.info("Service '{}' reloaded", getId());
+    @Nonnull @NotEmpty protected String getLogPrefix() {
+        // local cache of cached entry to allow unsynchronised clearing of per class cache.
+        String prefix = logPrefix;
+        if (null == prefix) {
+            StringBuilder builder = new StringBuilder("Service '").append(getId()).append("':");
+            prefix = builder.toString();
+            if (null == logPrefix) {
+                logPrefix = prefix;
+            }
+        }
+        return prefix;
     }
 
     /**
@@ -264,6 +307,7 @@ public abstract class AbstractReloadableService extends AbstractService implemen
 
         /** {@inheritDoc} */
         public void run() {
+
             if (shouldReload()) {
                 reload();
             }
