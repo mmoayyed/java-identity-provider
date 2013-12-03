@@ -70,9 +70,7 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
     /**
      * Constructor.
      * 
-     * Initializes the ID of this action to the class name. Initializes {@link #httpRequestLookupStrategy} to
-     * {@link WebflowRequestContextHttpServletRequestLookup}. Initializes {@link #httpResponseLookupStrategy} to
-     * {@link WebflowRequestContextHttpServletResponseLookup}. Initializes {@link #profileContextLookupStrategy} to
+     * Initializes the ID of this action to the class name. Initializes {@link #profileContextLookupStrategy} to
      * {@link WebflowRequestContextProfileRequestContextLookup}.
      */
     public AbstractProfileAction() {

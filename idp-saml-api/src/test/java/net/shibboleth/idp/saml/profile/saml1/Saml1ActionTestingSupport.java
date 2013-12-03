@@ -87,11 +87,10 @@ public final class Saml1ActionTestingSupport {
                 new RelyingPartyConfiguration(id, ActionTestingSupport.OUTBOUND_MSG_ISSUER,
                         buildProfileConfigurations());
 
-        RelyingPartyContext subcontext = new RelyingPartyContext(id);
+        RelyingPartyContext subcontext = parent.getSubcontext(RelyingPartyContext.class, true);
+        subcontext.setRelyingPartyId(id);
         subcontext.setProfileConfiguration(rpConfig.getProfileConfiguration(SsoProfileConfiguration.PROFILE_ID));
         subcontext.setRelyingPartyConfiguration(rpConfig);
-
-        parent.addSubcontext(subcontext);
 
         return subcontext;
     }

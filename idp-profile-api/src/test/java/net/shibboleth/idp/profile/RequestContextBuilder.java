@@ -483,13 +483,12 @@ public class RequestContextBuilder {
      */
     @Nonnull protected RelyingPartyContext buildRelyingPartyContext(
             @Nonnull final ProfileRequestContext profileRequestContext) {
-        final RelyingPartyContext rpCtx;
+        final RelyingPartyContext rpCtx = profileRequestContext.getSubcontext(RelyingPartyContext.class, true);
         if (Objects.equal(NO_VAL, inboundMessageIssuer) || inboundMessageIssuer == null) {
-            rpCtx = new RelyingPartyContext(ActionTestingSupport.INBOUND_MSG_ISSUER);
+            rpCtx.setRelyingPartyId(ActionTestingSupport.INBOUND_MSG_ISSUER);
         } else {
-            rpCtx = new RelyingPartyContext(inboundMessageIssuer);
+            rpCtx.setRelyingPartyId(inboundMessageIssuer);
         }
-        profileRequestContext.addSubcontext(rpCtx);
 
         final RelyingPartyConfiguration rpConfig = buildRelyingPartyConfiguration();
         rpCtx.setRelyingPartyConfiguration(rpConfig);

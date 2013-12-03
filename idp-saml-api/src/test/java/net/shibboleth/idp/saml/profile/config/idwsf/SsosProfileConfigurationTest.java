@@ -28,7 +28,7 @@ public class SsosProfileConfigurationTest {
         Assert.assertEquals(SsosProfileConfiguration.PROFILE_ID, "http://shibboleth.net/ns/profiles/liberty/ssos");
 
         SsosProfileConfiguration config = new SsosProfileConfiguration();
-        Assert.assertEquals(config.getProfileId(), SsosProfileConfiguration.PROFILE_ID);
+        Assert.assertEquals(config.getId(), SsosProfileConfiguration.PROFILE_ID);
     }
     
     @Test

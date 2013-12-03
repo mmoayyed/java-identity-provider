@@ -28,7 +28,7 @@ public class SsoProfileConfigurationTest {
         Assert.assertEquals(SsoProfileConfiguration.PROFILE_ID, "http://shibboleth.net/ns/profiles/saml1/sso");
 
         SsoProfileConfiguration config = new SsoProfileConfiguration();
-        Assert.assertEquals(config.getProfileId(), SsoProfileConfiguration.PROFILE_ID);
+        Assert.assertEquals(config.getId(), SsoProfileConfiguration.PROFILE_ID);
     }
     
     @Test

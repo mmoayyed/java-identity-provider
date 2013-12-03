@@ -24,7 +24,7 @@ import org.opensaml.messaging.context.BaseContext;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * A context component which holds the Spring WebFlow {@link RequestContext} in which the
+ * A {@link BaseContext} which holds the Spring WebFlow {@link RequestContext} in which the
  * overall parent context is operating.
  * 
  * <p>Actions that make use of this context type are specific to Spring Web Flow and cannot
@@ -33,7 +33,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class SpringRequestContext extends BaseContext {
 
     /** The request context represented. */
-    private RequestContext context;
+    @Nullable private RequestContext context;
 
     /**
      * Get the request context.

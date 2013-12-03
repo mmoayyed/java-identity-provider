@@ -97,7 +97,8 @@ public class InitializeRelyingPartyContextBasedOnInboundMessageIssuer extends Ab
         log.debug("Action {}: Attaching RelyingPartySubcontext with relying party ID {} to ProfileRequestContext",
                 getId(), messageSubcontext.getMessageIssuer());
 
-        profileRequestContext.addSubcontext(new RelyingPartyContext(messageSubcontext.getMessageIssuer()));
+        profileRequestContext.getSubcontext(RelyingPartyContext.class, true).setRelyingPartyId(
+                messageSubcontext.getMessageIssuer());
 
         return ActionSupport.buildProceedEvent(this);
     }

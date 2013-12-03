@@ -94,7 +94,7 @@ public class SelectProfileConfigurationTest {
         ActionTestingSupport.assertEvent(result, EventIds.PROCEED_EVENT_ID);
 
         Assert.assertNotNull(profileCtx.getSubcontext(RelyingPartyContext.class).getProfileConfig());
-        Assert.assertEquals(profileCtx.getSubcontext(RelyingPartyContext.class).getProfileConfig().getProfileId(),
+        Assert.assertEquals(profileCtx.getSubcontext(RelyingPartyContext.class).getProfileConfig().getId(),
                 SsoProfileConfiguration.PROFILE_ID);
     }
 }

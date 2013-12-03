@@ -29,7 +29,7 @@ public class AbstractProfileConfigurationTest {
     @Test
     public void testProfileId() {
         MockProfileConfiguration config = new MockProfileConfiguration("mock");
-        Assert.assertEquals(config.getProfileId(), "mock");
+        Assert.assertEquals(config.getId(), "mock");
 
         try {
             config = new MockProfileConfiguration(null);

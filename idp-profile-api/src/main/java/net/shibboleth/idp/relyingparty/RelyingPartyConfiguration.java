@@ -73,9 +73,9 @@ public class RelyingPartyConfiguration {
             if (config != null) {
                 final String trimmedId =
                         Constraint
-                                .isNotNull(StringSupport.trimOrNull(config.getProfileId()),
+                                .isNotNull(StringSupport.trimOrNull(config.getId()),
                                         "ID of profile configuration class " + config.getClass().getName()
-                                                + " can not be null");
+                                                + " cannot be null");
                 configBuilder.put(trimmedId, config);
             }
         }

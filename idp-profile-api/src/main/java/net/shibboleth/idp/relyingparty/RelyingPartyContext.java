@@ -17,83 +17,79 @@
 
 package net.shibboleth.idp.relyingparty;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
 
 /**
- * {@link org.opensaml.messaging.context.Subcontext} containing relying party specific information. This is usually a
- * subcontext of a {@link net.shibboleth.idp.profile.ProfileRequestContext}.
+ * {@link BaseContext} containing relying party specific information. This is usually a
+ * subcontext of an {@link org.opensaml.profile.context.ProfileRequestContext}.
  */
 public final class RelyingPartyContext extends BaseContext {
 
     /** The identifier for the relying party. */
-    private final String relyingPartyId;
+    @Nullable private String relyingPartyId;
 
     /** The relying party configuration. */
-    private RelyingPartyConfiguration relyingPartyConfiguration;
+    @Nullable private RelyingPartyConfiguration relyingPartyConfiguration;
 
     /** Profile configuration that is in use. */
-    private ProfileConfiguration profileConfiguration;
+    @Nullable private ProfileConfiguration profileConfiguration;
 
     /**
-     * Constructor.
+     * Get the unique identifier of the relying party.
      * 
-     * @param rpId the relying party identifier, can not be null or empty
+     * @return unique identifier of the relying party
      */
-    public RelyingPartyContext(@Nonnull @NotEmpty final String rpId) {
-        relyingPartyId =
-                Constraint.isNotNull(StringSupport.trimOrNull(rpId), "Relying party ID can not be null or empty");
-    }
-
-    /**
-     * Gets the unique identifier of the relying party.
-     * 
-     * @return unique identifier of the relying party, never null or empty
-     */
-    @Nonnull @NotEmpty public String getRelyingPartyId() {
+    @Nullable public String getRelyingPartyId() {
         return relyingPartyId;
     }
 
     /**
-     * Gets the relying party configuration.
+     * Set the unique identifier of the relying party.
      * 
-     * @return the relying party configuration, may be null
+     * @param rpId the relying party identifier, or null
+     */
+    public void setRelyingPartyId(@Nullable final String rpId) {
+        relyingPartyId = StringSupport.trimOrNull(rpId);
+    }
+
+    /**
+     * Get the relying party configuration.
+     * 
+     * @return the relying party configuration, or null
      */
     @Nullable public RelyingPartyConfiguration getConfiguration() {
         return relyingPartyConfiguration;
     }
 
     /**
-     * Sets the configuration to use when processing requests for this relying party.
+     * Set the configuration to use when processing requests for this relying party.
      * 
-     * @param config configuration to use when processing requests for this relying party, may be null
+     * @param config configuration to use when processing requests for this relying party, or null
      */
     public void setRelyingPartyConfiguration(@Nullable final RelyingPartyConfiguration config) {
         relyingPartyConfiguration = config;
     }
 
     /**
-     * Gets the configuration for the request profile currently being processed.
+     * Get the configuration for the request profile currently being processed.
      * 
-     * @return profile configuration for the request profile currently being processed, may be null
+     * @return profile configuration for the request profile currently being processed, or null
      */
     @Nullable public ProfileConfiguration getProfileConfig() {
         return profileConfiguration;
     }
 
     /**
-     * Sets the configuration for the request profile currently being processed.
+     * Set the configuration for the request profile currently being processed.
      * 
-     * @param config configuration for the request profile currently being processed, may be null
+     * @param config configuration for the request profile currently being processed, or null
      */
     public void setProfileConfiguration(@Nullable final ProfileConfiguration config) {
-        this.profileConfiguration = config;
+        profileConfiguration = config;
     }
 }

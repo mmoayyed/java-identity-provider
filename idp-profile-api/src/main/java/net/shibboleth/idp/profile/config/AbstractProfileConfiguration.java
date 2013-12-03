@@ -17,6 +17,10 @@
 
 package net.shibboleth.idp.profile.config;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -26,26 +30,26 @@ import com.google.common.base.Objects;
 public abstract class AbstractProfileConfiguration implements ProfileConfiguration {
 
     /** ID of the profile configured. */
-    private final String id;
+    @Nonnull @NotEmpty private final String id;
 
     /** Whether this profile is enabled. */
     private boolean enabled;
 
     /** The security configuration for this profile. */
-    private SecurityConfiguration securityConfiguration;
+    @Nullable private SecurityConfiguration securityConfiguration;
 
     /**
      * Constructor.
      * 
      * @param profileId ID of the the communication profile, never null or empty
      */
-    public AbstractProfileConfiguration(final String profileId) {
-        id = Constraint.isNotNull(StringSupport.trimOrNull(profileId), "Profile identifier can not be null or empty");
+    public AbstractProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
+        id = Constraint.isNotNull(StringSupport.trimOrNull(profileId), "Profile identifier cannot be null or empty");
         enabled = true;
     }
 
     /** {@inheritDoc} */
-    public String getProfileId() {
+    @Nullable public String getId() {
         return id;
     }
 
@@ -59,12 +63,12 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
      * 
      * @param isEnabled whether this profile is enabled
      */
-    public void setEnabled(boolean isEnabled) {
+    public void setEnabled(final boolean isEnabled) {
         enabled = isEnabled;
     }
 
     /** {@inheritDoc} */
-    public SecurityConfiguration getSecurityConfiguration() {
+    @Nullable public SecurityConfiguration getSecurityConfiguration() {
         return securityConfiguration;
     }
 
@@ -73,16 +77,18 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
      * 
      * @param configuration security configuration for this profile
      */
-    public void setSecurityConfiguration(SecurityConfiguration configuration) {
+    public void setSecurityConfiguration(@Nullable final SecurityConfiguration configuration) {
         securityConfiguration = configuration;
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return id.hashCode();
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -97,6 +103,6 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
         }
 
         AbstractProfileConfiguration other = (AbstractProfileConfiguration) obj;
-        return Objects.equal(id, other.getProfileId());
+        return Objects.equal(id, other.getId());
     }
 }

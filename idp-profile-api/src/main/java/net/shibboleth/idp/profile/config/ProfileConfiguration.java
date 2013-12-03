@@ -17,30 +17,24 @@
 
 package net.shibboleth.idp.profile.config;
 
-//TODO should this be an identifiable component?
-//TODO should this be immutable after initialization?
+import javax.annotation.Nullable;
 
-/** Represents the configuration of a particular Identity Provider communication profile. */
-public interface ProfileConfiguration {
+import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 
-    /**
-     * Gets the unique identifier of the profile.
-     * 
-     * @return unique identifier of the profile
-     */
-    public String getProfileId();
+/** Represents the configuration of a particular communication profile. */
+public interface ProfileConfiguration extends IdentifiableComponent {
     
     /**
-     * Gets whether the this profile is enabled for use.
+     * Get whether this profile is enabled for use.
      * 
-     * @return whether the this profile is enabled for use
+     * @return whether this profile is enabled for use
      */
     public boolean isEnabled();
     
     /**
-     * Gets the security configuration to use with this profile.
+     * Get the {@link SecurityConfiguration} to use with this profile.
      * 
-     * @return security configuration to use with this profile, never null
+     * @return security configuration to use with this profile
      */
-    public SecurityConfiguration getSecurityConfiguration();
+    @Nullable public SecurityConfiguration getSecurityConfiguration();
 }

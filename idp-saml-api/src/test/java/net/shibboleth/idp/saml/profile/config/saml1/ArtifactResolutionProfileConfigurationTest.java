@@ -29,6 +29,6 @@ public class ArtifactResolutionProfileConfigurationTest {
                 "http://shibboleth.net/ns/profiles/saml1/query/artifact");
 
         ArtifactResolutionProfileConfiguration config = new ArtifactResolutionProfileConfiguration();
-        Assert.assertEquals(config.getProfileId(), ArtifactResolutionProfileConfiguration.PROFILE_ID);
+        Assert.assertEquals(config.getId(), ArtifactResolutionProfileConfiguration.PROFILE_ID);
     }
 }

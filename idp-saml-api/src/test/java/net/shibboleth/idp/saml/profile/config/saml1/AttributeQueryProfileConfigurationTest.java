@@ -29,6 +29,6 @@ public class AttributeQueryProfileConfigurationTest {
                 "http://shibboleth.net/ns/profiles/saml1/query/attribute");
 
         AttributeQueryProfileConfiguration config = new AttributeQueryProfileConfiguration();
-        Assert.assertEquals(config.getProfileId(), AttributeQueryProfileConfiguration.PROFILE_ID);
+        Assert.assertEquals(config.getId(), AttributeQueryProfileConfiguration.PROFILE_ID);
     }
 }
