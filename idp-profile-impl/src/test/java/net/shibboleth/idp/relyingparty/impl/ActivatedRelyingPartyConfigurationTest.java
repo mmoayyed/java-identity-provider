@@ -27,21 +27,21 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicates;
 
-/** Unit test for {@link ActivatedRelyingPartyConfiguration}. */
+/** Unit test for {@link ConditionalRelyingPartyConfiguration}. */
 public class ActivatedRelyingPartyConfigurationTest {
 
     @Test public void testConstruction() {
-        ActivatedRelyingPartyConfiguration config =
-                new ActivatedRelyingPartyConfiguration("foo", "http://idp.example.org", Collections.EMPTY_LIST,
+        ConditionalRelyingPartyConfiguration config =
+                new ConditionalRelyingPartyConfiguration("foo", "http://idp.example.org", Collections.EMPTY_LIST,
                         Predicates.<ProfileRequestContext> alwaysFalse());
-        Assert.assertEquals(config.getConfigurationId(), "foo");
+        Assert.assertEquals(config.getId(), "foo");
         Assert.assertEquals(config.getResponderEntityId(), "http://idp.example.org");
-        Assert.assertSame(config.getActivationCriteria(), Predicates.<ProfileRequestContext> alwaysFalse());
+        Assert.assertSame(config.getActivationCondition(), Predicates.<ProfileRequestContext> alwaysFalse());
         Assert.assertTrue(config.getProfileConfigurations().isEmpty());
 
         try {
             config =
-                    new ActivatedRelyingPartyConfiguration("foo", "http://idp.example.org", Collections.EMPTY_LIST,
+                    new ConditionalRelyingPartyConfiguration("foo", "http://idp.example.org", Collections.EMPTY_LIST,
                             null);
             Assert.fail();
         } catch (ConstraintViolationException e) {

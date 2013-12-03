@@ -33,12 +33,12 @@ public class RelyingPartyConfigurationTest {
         RelyingPartyConfiguration config;
 
         config = new RelyingPartyConfiguration("foo", "http://idp.example.org", Collections.EMPTY_LIST);
-        Assert.assertEquals(config.getConfigurationId(), "foo");
+        Assert.assertEquals(config.getId(), "foo");
         Assert.assertEquals(config.getResponderEntityId(), "http://idp.example.org");
         Assert.assertTrue(config.getProfileConfigurations().isEmpty());
 
         config = new RelyingPartyConfiguration("foo", "http://idp.example.org", null);
-        Assert.assertEquals(config.getConfigurationId(), "foo");
+        Assert.assertEquals(config.getId(), "foo");
         Assert.assertEquals(config.getResponderEntityId(), "http://idp.example.org");
         Assert.assertTrue(config.getProfileConfigurations().isEmpty());
 
@@ -48,7 +48,7 @@ public class RelyingPartyConfigurationTest {
         profileConfigs.add(new MockProfileConfiguration("bar"));
 
         config = new RelyingPartyConfiguration("foo", "http://idp.example.org", profileConfigs);
-        Assert.assertEquals(config.getConfigurationId(), "foo");
+        Assert.assertEquals(config.getId(), "foo");
         Assert.assertEquals(config.getResponderEntityId(), "http://idp.example.org");
         Assert.assertEquals(config.getProfileConfigurations().size(), 2);
 

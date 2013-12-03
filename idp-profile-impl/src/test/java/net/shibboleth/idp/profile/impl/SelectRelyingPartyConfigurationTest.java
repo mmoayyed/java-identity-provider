@@ -110,7 +110,7 @@ public class SelectRelyingPartyConfigurationTest {
 
         RelyingPartyConfiguration resolvedConfig =
                 profileCtx.getSubcontext(RelyingPartyContext.class).getConfiguration();
-        Assert.assertEquals(resolvedConfig.getConfigurationId(), config.getConfigurationId());
+        Assert.assertEquals(resolvedConfig.getId(), config.getId());
         Assert.assertEquals(resolvedConfig.getResponderEntityId(), config.getResponderEntityId());
         Assert.assertEquals(resolvedConfig.getProfileConfigurations(), config.getProfileConfigurations());
     }

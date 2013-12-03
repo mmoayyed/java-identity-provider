@@ -49,7 +49,7 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
     }
 
     /** {@inheritDoc} */
-    @Nullable public String getId() {
+    @Nonnull @NotEmpty public String getId() {
         return id;
     }
 

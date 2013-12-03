@@ -27,24 +27,28 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
-/** The configuration that applies to given relying party. */
-public class RelyingPartyConfiguration {
+/** The configuration that applies to a given relying party. */
+public class RelyingPartyConfiguration implements IdentifiableComponent {
 
     /** Unique identifier for this configuration. */
-    private final String id;
+    @Nonnull @NotEmpty private final String id;
 
     /** The entity ID of the IdP. */
-    private final String responderEntityId;
+    @Nonnull @NotEmpty private final String responderEntityId;
 
     /** Registered and usable communication profile configurations for this relying party. */
-    private final Map<String, ProfileConfiguration> profileConfigurations;
+    @Nonnull @NonnullElements private final Map<String, ProfileConfiguration> profileConfigurations;
 
     /**
      * Constructor.
@@ -55,39 +59,29 @@ public class RelyingPartyConfiguration {
      */
     public RelyingPartyConfiguration(@Nonnull @NotEmpty final String configurationId,
             @Nonnull @NotEmpty final String responderId,
-            @Nullable @NullableElements final Collection<? extends ProfileConfiguration> configurations) {
-        id =
-                Constraint.isNotNull(StringSupport.trimOrNull(configurationId),
-                        "Relying party configuration ID can not be null or empty");
+            @Nonnull @NonnullElements final Collection<? extends ProfileConfiguration> configurations) {
+        id = Constraint.isNotNull(StringSupport.trimOrNull(configurationId),
+                "Relying party configuration ID cannot be null or empty");
 
-        responderEntityId =
-                Constraint.isNotNull(StringSupport.trimOrNull(responderId), "Responder entity ID can not be null");
+        responderEntityId = Constraint.isNotNull(StringSupport.trimOrNull(responderId),
+                "Responder entity ID cannot be null or empty");
 
         if (configurations == null || configurations.isEmpty()) {
             profileConfigurations = Collections.emptyMap();
             return;
         }
 
-        Builder<String, ProfileConfiguration> configBuilder = new Builder<String, ProfileConfiguration>();
-        for (ProfileConfiguration config : configurations) {
-            if (config != null) {
-                final String trimmedId =
-                        Constraint
-                                .isNotNull(StringSupport.trimOrNull(config.getId()),
-                                        "ID of profile configuration class " + config.getClass().getName()
-                                                + " cannot be null");
-                configBuilder.put(trimmedId, config);
-            }
+        profileConfigurations = Maps.newHashMap();
+        
+        for (ProfileConfiguration config : Collections2.filter(configurations, Predicates.notNull())) {
+            final String trimmedId = Constraint.isNotNull(StringSupport.trimOrNull(config.getId()),
+                    "ID of profile configuration class " + config.getClass().getName() + " cannot be null");
+            profileConfigurations.put(trimmedId, config);
         }
-        profileConfigurations = configBuilder.build();
     }
 
-    /**
-     * Gets the unique ID of this configuration.
-     * 
-     * @return unique ID of this configuration, never null or empty
-     */
-    @Nonnull @NotEmpty public String getConfigurationId() {
+    /** {@inheritDoc} */
+    @Nonnull @NotEmpty public String getId() {
         return id;
     }
 
@@ -105,8 +99,9 @@ public class RelyingPartyConfiguration {
      * 
      * @return unmodifiable set of profile configurations for this relying party, never null
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, ProfileConfiguration> getProfileConfigurations() {
-        return profileConfigurations;
+    @Nonnull @NonnullElements @Unmodifiable @NotLive
+    public Map<String, ProfileConfiguration> getProfileConfigurations() {
+        return ImmutableMap.copyOf(profileConfigurations);
     }
 
     /**

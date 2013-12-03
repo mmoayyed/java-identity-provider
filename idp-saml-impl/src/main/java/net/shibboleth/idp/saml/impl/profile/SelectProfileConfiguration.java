@@ -98,7 +98,7 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
         final ProfileConfiguration profileConfiguration = rpConfig.getProfileConfiguration(profileId);
         if (profileConfiguration == null) {
             log.debug("Action {}: Profile {} is not configured for relying party configuration {}", new Object[] {
-                    getId(), profileId, rpConfig.getConfigurationId(),});
+                    getId(), profileId, rpConfig.getId(),});
             return ActionSupport.buildEvent(this, EventIds.INVALID_PROFILE_CONFIG);
         }
 

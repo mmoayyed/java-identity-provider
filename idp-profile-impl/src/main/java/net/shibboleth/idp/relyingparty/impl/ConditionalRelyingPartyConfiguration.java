@@ -20,13 +20,13 @@ package net.shibboleth.idp.relyingparty.impl;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import com.google.common.base.Predicate;
@@ -35,10 +35,10 @@ import com.google.common.base.Predicate;
  * A {@link RelyingPartyConfiguration} that contains a {@link Predicate} that indicates whether it should be active for
  * a given {@link ProfileRequestContext}.
  */
-public class ActivatedRelyingPartyConfiguration extends RelyingPartyConfiguration {
+public class ConditionalRelyingPartyConfiguration extends RelyingPartyConfiguration {
 
-    /** Criterion that must be met for this configuration to be active for a given request. */
-    private final Predicate<ProfileRequestContext> activationCriteria;
+    /** Predicate that must be true for this configuration to be active for a given request. */
+    @Nonnull private final Predicate<ProfileRequestContext> activationCondition;
 
     /**
      * Constructor.
@@ -46,24 +46,25 @@ public class ActivatedRelyingPartyConfiguration extends RelyingPartyConfiguratio
      * @param configurationId unique ID for this configuration
      * @param responderId the ID by which the responder is known by this relying party
      * @param configurations communication profile configurations for this relying party
-     * @param criteria criteria that must be met in order for this relying party configuration to apply to a given
+     * @param condition criteria that must be met in order for this relying party configuration to apply to a given
      *            profile request
      */
-    public ActivatedRelyingPartyConfiguration(@Nonnull @NotEmpty final String configurationId,
+    public ConditionalRelyingPartyConfiguration(@Nonnull @NotEmpty final String configurationId,
             @Nonnull @NotEmpty final String responderId,
-            @Nullable @NullableElements final Collection<? extends ProfileConfiguration> configurations,
-            @Nonnull final Predicate<ProfileRequestContext> criteria) {
+            @Nonnull @NonnullElements final Collection<? extends ProfileConfiguration> configurations,
+            @Nonnull final Predicate<ProfileRequestContext> condition) {
         super(configurationId, responderId, configurations);
 
-        activationCriteria = Constraint.isNotNull(criteria, "Relying partying configuration criteria can not be null");
+        activationCondition = Constraint.isNotNull(condition,
+                "Relying partying configuration activation condition cannot be null");
     }
 
     /**
-     * Gets the criteria that must be met for this configuration to be active for a given request.
+     * Get the predicate that must be met for this configuration to be active for a given request.
      * 
-     * @return criteria that must be met for this configuration to be active for a given request, never null
+     * @return criteria that must be met for this configuration to be active for a given request
      */
-    @Nonnull public Predicate<ProfileRequestContext> getActivationCriteria() {
-        return activationCriteria;
+    @Nonnull public Predicate<ProfileRequestContext> getActivationCondition() {
+        return activationCondition;
     }
 }

@@ -19,6 +19,11 @@ package net.shibboleth.idp.profile.config;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import net.shibboleth.utilities.java.support.annotation.Duration;
+import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.RandomIdentifierGenerationStrategy;
@@ -28,30 +33,32 @@ import org.opensaml.xmlsec.EncryptionConfiguration;
 import org.opensaml.xmlsec.SignatureSigningConfiguration;
 import org.opensaml.xmlsec.SignatureValidationConfiguration;
 
-/** Configuration for request/response security operations. */
+/** Configuration for security behavior of profiles. */
 public class SecurityConfiguration {
 
     /** Acceptable clock skew expressed in milliseconds. */
-    private final long clockSkew;
+    @Duration @Positive private final long clockSkew;
 
     /** Generator used to generate various secure IDs (e.g., message identifiers). */
-    private final IdentifierGenerationStrategy idGenerator;
+    @Nonnull private final IdentifierGenerationStrategy idGenerator;
 
     /** Configuration used when validating protocol message signatures. */
-    private SignatureValidationConfiguration sigValidateConfig;
+    @Nullable private SignatureValidationConfiguration sigValidateConfig;
 
     /** Configuration used when generating protocol message signatures. */
-    private SignatureSigningConfiguration sigSigningConfig;
+    @Nullable private SignatureSigningConfiguration sigSigningConfig;
 
     /** Configuration used when decrypting protocol message information. */
-    private DecryptionConfiguration decryptConfig;
+    @Nullable private DecryptionConfiguration decryptConfig;
 
     /** Configuration used when encrypting protocol message information. */
-    private EncryptionConfiguration encryptConfig;
+    @Nullable private EncryptionConfiguration encryptConfig;
 
     /**
-     * Constructor. Initializes the clock skew to 5 minutes and the identifier generator to
-     * {@link SecureRandomIdentifierGenerator} using the SHA1PRNG algorithm.
+     * Constructor.
+     * 
+     * Initializes the clock skew to 5 minutes and the identifier generator to
+     * {@link RandomIdentifierGenerationStrategy} using the SHA1PRNG algorithm.
      */
     public SecurityConfiguration() {
         clockSkew = TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES);
@@ -64,98 +71,99 @@ public class SecurityConfiguration {
      * @param skew the clock skew, must be greater than 0
      * @param generator the identifier generator, must not be null
      */
-    public SecurityConfiguration(int skew, IdentifierGenerationStrategy generator) {
+    public SecurityConfiguration(@Duration @Positive final long skew,
+            @Nonnull final IdentifierGenerationStrategy generator) {
         clockSkew = (int) Constraint.isGreaterThan(0, skew, "Clock skew must be greater than 0");
-        idGenerator = Constraint.isNotNull(generator, "Identifier generator can not be null");
+        idGenerator = Constraint.isNotNull(generator, "Identifier generator cannot be null");
     }
 
     /**
-     * Gets the acceptable clock skew expressed in milliseconds.
+     * Get the acceptable clock skew expressed in milliseconds.
      * 
      * @return acceptable clock skew expressed in milliseconds
      */
-    public long getClockSkew() {
+    @Positive public long getClockSkew() {
         return clockSkew;
     }
 
     /**
-     * Gets the generator used to generate secure identifiers.
+     * Get the generator used to generate secure identifiers.
      * 
-     * @return generator used to generate secure identifiers, never null
+     * @return generator used to generate secure identifiers
      */
-    public IdentifierGenerationStrategy getIdGenerator() {
+    @Nonnull public IdentifierGenerationStrategy getIdGenerator() {
         return idGenerator;
     }
 
     /**
-     * Gets the configuration used when validating protocol message signatures.
+     * Get the configuration used when validating protocol message signatures.
      * 
-     * @return configuration used when validating protocol message signatures, may be null
+     * @return configuration used when validating protocol message signatures, or null
      */
-    public SignatureValidationConfiguration getSignatureValidationConfiguration() {
+    @Nullable public SignatureValidationConfiguration getSignatureValidationConfiguration() {
         return sigValidateConfig;
     }
 
     /**
-     * Sets the configuration used when validating protocol message signatures.
+     * Set the configuration used when validating protocol message signatures.
      * 
-     * @param config configuration used when validating protocol message signatures, may be null
+     * @param config configuration used when validating protocol message signatures, or null
      */
-    public void setSignatureValidationConfiguration(SignatureValidationConfiguration config) {
+    public void setSignatureValidationConfiguration(@Nullable final SignatureValidationConfiguration config) {
         sigValidateConfig = config;
     }
 
     /**
-     * Gets the configuration used when generating protocol message signatures.
+     * Get the configuration used when generating protocol message signatures.
      * 
-     * @return configuration used when generating protocol message signatures, may be null
+     * @return configuration used when generating protocol message signatures, or null
      */
-    public SignatureSigningConfiguration getSignatureSigningConfiguration() {
+    @Nullable public SignatureSigningConfiguration getSignatureSigningConfiguration() {
         return sigSigningConfig;
     }
 
     /**
-     * Sets the configuration used when generating protocol message signatures.
+     * Set the configuration used when generating protocol message signatures.
      * 
-     * @param config configuration used when generating protocol message signatures, may be null
+     * @param config configuration used when generating protocol message signatures, or null
      */
-    public void setSignatureSigningConfiguration(SignatureSigningConfiguration config) {
+    public void setSignatureSigningConfiguration(@Nullable final SignatureSigningConfiguration config) {
         sigSigningConfig = config;
     }
 
     /**
-     * Gets the configuration used when decrypting protocol message information.
+     * Get the configuration used when decrypting protocol message information.
      * 
-     * @return configuration used when decrypting protocol message information, may be null
+     * @return configuration used when decrypting protocol message information, or null
      */
-    public DecryptionConfiguration getDecryptionConfiguration() {
+    @Nullable public DecryptionConfiguration getDecryptionConfiguration() {
         return decryptConfig;
     }
 
     /**
-     * Sets the configuration used when decrypting protocol message information.
+     * Set the configuration used when decrypting protocol message information.
      * 
-     * @param config configuration used when decrypting protocol message information, never null
+     * @param config configuration used when decrypting protocol message information, or null
      */
-    public void setDecryptionConfiguration(DecryptionConfiguration config) {
+    public void setDecryptionConfiguration(@Nullable final DecryptionConfiguration config) {
         decryptConfig = config;
     }
 
     /**
-     * Gets the configuration used when encrypting protocol message information.
+     * Get the configuration used when encrypting protocol message information.
      * 
-     * @return configuration used when encrypting protocol message information, may be null
+     * @return configuration used when encrypting protocol message information, or null
      */
-    public EncryptionConfiguration getEncryptionConfiguration() {
+    @Nullable public EncryptionConfiguration getEncryptionConfiguration() {
         return encryptConfig;
     }
 
     /**
-     * Sets the configuration used when encrypting protocol message information.
+     * Set the configuration used when encrypting protocol message information.
      * 
-     * @param config configuration used when encrypting protocol message information, may be null
+     * @param config configuration used when encrypting protocol message information, or null
      */
-    public void setEncryptionConfiguration(EncryptionConfiguration config) {
+    public void setEncryptionConfiguration(@Nullable final EncryptionConfiguration config) {
         encryptConfig = config;
     }
 }
