@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * {@link net.shibboleth.utilities.java.support.component.InitializableComponent} and
  * {@link net.shibboleth.utilities.java.support.component.DestructableComponent}
  * 
- * This class doe <em>not</em> deal with any syncrhonization. That is left to implementing classes.
+ * This class does <em>not</em> deal with any synchronization. That is left to implementing classes.
  * 
  */
 public abstract class AbstractReloadableService extends AbstractDestructableIdentifiableInitializableComponent
