@@ -25,6 +25,7 @@ import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.SamlEventIds;
 import net.shibboleth.idp.saml.profile.config.AbstractSamlProfileConfiguration;
@@ -35,7 +36,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -51,7 +51,7 @@ import com.google.common.base.Function;
 
 /** Adds an {@link AudienceRestriction} to every {@link Assertion} contained on the {@link Response}. */
 @Events({
-        @Event(id = EventIds.PROCEED_EVENT_ID),
+        @Event(id = org.opensaml.profile.action.EventIds.PROCEED_EVENT_ID),
         @Event(id = EventIds.INVALID_RELYING_PARTY_CTX,
                 description = "No relying party information is associated with the current request"),
         @Event(id = SamlEventIds.NO_ASSERTION, description = "Outbound response does not contain an assertion"),

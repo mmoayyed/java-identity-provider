@@ -29,21 +29,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 
 /**
- * Base class for IdP profile processing steps.
- * 
- * This base class takes care of the following things:
- * <ul>
- * <li>retrieving the {@link ProfileRequestContext} from the current request environment</li>
- * <li>ensuring the {@link javax.servlet.http.HttpServletRequest} and {@link javax.servlet.http.HttpServletResponse} is
- * available on the {@link ProfileRequestContext}</li>
- * <li>tracking performance metrics for the action</li>
- * </ul>
- * 
- * Action implementations should generally override
- * {@link #doExecute(HttpServletRequest, HttpServletResponse, ProfileRequestContext)}, however if an action needs access
- * to the Spring Webflow {@link RequestContext} it may override
- * {@link #doExecute(HttpServletRequest, HttpServletResponse, RequestContext, ProfileRequestContext)} instead. In
- * general, implementations should avoid doing this however.
+ * Adaptor that wraps a {@link ProfileAction} with a Spring Web Flow compatible action implementation
+ * so that it can be executed as part of a flow.
  * 
  * @param <InboundMessageType> type of in-bound message
  * @param <OutboundMessageType> type of out-bound message
@@ -67,6 +54,7 @@ public class WebFlowProfileActionAdaptor<InboundMessageType, OutboundMessageType
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull protected void doExecute(
             @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
                     throws ProfileException {

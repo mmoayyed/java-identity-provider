@@ -24,9 +24,11 @@ import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.EventIds;
+
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
+
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.SamlEventIds;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
@@ -60,7 +62,7 @@ import com.google.common.base.Function;
  * information is retrieved from the {@link AuthenticationRequestContext} on the {@link ProfileRequestContext}.
  */
 @Events({
-        @Event(id = EventIds.PROCEED_EVENT_ID),
+        @Event(id = org.opensaml.profile.action.EventIds.PROCEED_EVENT_ID),
         @Event(id = EventIds.INVALID_RELYING_PARTY_CTX,
                 description = "Returned if no relying party information is associated with the current request"),
         @Event(id = SamlEventIds.NO_RESPONSE,

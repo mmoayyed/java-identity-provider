@@ -17,21 +17,20 @@
 
 package net.shibboleth.idp.profile.impl;
 
-import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.messaging.encoder.AbstractMessageEncoder;
 import org.opensaml.messaging.encoder.MessageEncodingException;
+import org.opensaml.profile.action.ActionTestingSupport;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.test.MockRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-/** Unit test for {@link EncodeMessageMessage}. */
+/** Unit test for {@link EncodeMessage}. */
 public class EncodeMessageTest {
     
     private MockMessage message; 
@@ -70,9 +69,8 @@ public class EncodeMessageTest {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
-
-        ActionTestingSupport.assertProceedEvent(result);
+        action.execute(profileCtx);
+        ActionTestingSupport.assertProceedEvent(profileCtx);
 
         Assert.assertEquals(encoder.getEncodedMessage(), expectedMessage);
     }
@@ -85,9 +83,8 @@ public class EncodeMessageTest {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
-
-        ActionTestingSupport.assertEvent(result, EncodeMessage.UNABLE_TO_ENCODE);
+        action.execute(profileCtx);
+        ActionTestingSupport.assertEvent(profileCtx, EventIds.UNABLE_TO_ENCODE);
     }
 
     /**

@@ -18,9 +18,10 @@
 package net.shibboleth.idp.saml.impl.profile;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.idp.profile.EventIds;
 
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
+
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.config.saml1.SsoProfileConfiguration;
@@ -91,7 +92,7 @@ public class SelectProfileConfigurationTest {
 
         Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
-        ActionTestingSupport.assertEvent(result, EventIds.PROCEED_EVENT_ID);
+        ActionTestingSupport.assertProceedEvent(result);
 
         Assert.assertNotNull(profileCtx.getSubcontext(RelyingPartyContext.class).getProfileConfig());
         Assert.assertEquals(profileCtx.getSubcontext(RelyingPartyContext.class).getProfileConfig().getId(),

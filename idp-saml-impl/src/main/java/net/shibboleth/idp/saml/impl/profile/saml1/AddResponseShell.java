@@ -23,9 +23,11 @@ import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.EventIds;
+
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
+
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.SamlEventIds;
@@ -54,7 +56,7 @@ import com.google.common.base.Function;
  * message for the {@link ProfileRequestContext#getOutboundMessageContext()}.
  */
 @Events({
-        @Event(id = EventIds.PROCEED_EVENT_ID),
+        @Event(id = org.opensaml.profile.action.EventIds.PROCEED_EVENT_ID),
         @Event(id = EventIds.INVALID_RELYING_PARTY_CTX, description = "No relying party context available"),
         @Event(id = SamlEventIds.RESPONSE_EXISTS,
                 description = "If the outgoing message context already contains a message")})

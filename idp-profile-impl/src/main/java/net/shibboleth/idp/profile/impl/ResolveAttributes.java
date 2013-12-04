@@ -18,18 +18,19 @@
 package net.shibboleth.idp.profile.impl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import net.shibboleth.ext.spring.webflow.Event;
-import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.ActionSupport;
+
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.action.AbstractProfileAction;
+import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
+
+import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -37,90 +38,76 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
-/** A stage which invokes the {@link AttributeResolver} for the current request. */
-@Events({
-        @Event(id = EventIds.PROCEED_EVENT_ID),
-        @Event(id = EventIds.INVALID_RELYING_PARTY_CTX, description = "No relying party context available for request"),
-        @Event(id = ResolveAttributes.UNABLE_RESOLVE_ATTRIBS, description = "Error resolving attributes")})
-public class ResolveAttributes extends AbstractProfileAction {
-
-    /** ID of the event returned when there is a problem resolving events. */
-    public static final String UNABLE_RESOLVE_ATTRIBS = "UnableToResolveAttributes";
+/**
+ * Action that invokes the {@link AttributeResolver} for the current request.
+ * 
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
+ * @event {@link EventIds#INVALID_RELYING_PARTY_CTX}
+ * @event {@link EventIds#UNABLE_RESOLVE_ATTRIBS}
+ * 
+ * @post If resolution is successful, the relevant
+ * RelyingPartyContext.getSubcontext(AttributeContext.class, false) != null
+ */
+public final class ResolveAttributes extends AbstractProfileAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ResolveAttributes.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ResolveAttributes.class);
 
     /** Resolver used to fetch attributes. */
-    private final AttributeResolver attributeResolver;
+    @Nonnull private final AttributeResolver attributeResolver;
 
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
      */
-    private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
 
+    /** RelyingPartyContext to operate on. */
+    @Nullable private RelyingPartyContext rpContext;
+    
     /**
      * Constructor. Initializes {@link #relyingPartyContextLookupStrategy} to {@link ChildContextLookup}.
      * 
      * @param resolver resolver used to fetch attributes
      */
     public ResolveAttributes(@Nonnull final AttributeResolver resolver) {
-        super();
-
-        attributeResolver = Constraint.isNotNull(resolver, "Attribute resolver cannot be null");
-
-        relyingPartyContextLookupStrategy =
-                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class, false);
+        attributeResolver = Constraint.isNotNull(resolver, "AttributeResolver cannot be null");
+        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
     }
 
     /**
-     * Gets the resolver used to fetch attributes.
-     * 
-     * @return resolver used to fetch attributes
-     */
-    @Nonnull public AttributeResolver getAttributeResolver() {
-        return attributeResolver;
-    }
-
-    /**
-     * Gets the strategy used to locate the {@link RelyingPartyContext} associated with a given
-     * {@link ProfileRequestContext}.
-     * 
-     * @return strategy used to locate the {@link RelyingPartyContext} associated with a given
-     *         {@link ProfileRequestContext}
-     */
-    @Nonnull public Function<ProfileRequestContext, RelyingPartyContext> getRelyingPartyContextLookupStrategy() {
-        return relyingPartyContextLookupStrategy;
-    }
-
-    /**
-     * Sets the strategy used to locate the {@link RelyingPartyContext} associated with a given
+     * Set the strategy used to locate the {@link RelyingPartyContext} associated with a given
      * {@link ProfileRequestContext}.
      * 
      * @param strategy strategy used to locate the {@link RelyingPartyContext} associated with a given
      *            {@link ProfileRequestContext}
      */
-    public synchronized void setRelyingPartyContextLookupStrategy(
+    public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        relyingPartyContextLookupStrategy =
-                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
+        relyingPartyContextLookupStrategy = Constraint.isNotNull(strategy,
+                "RelyingPartyContext lookup strategy cannot be null");
     }
 
     /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event
-            doExecute(@Nonnull final RequestContext springRequestContext,
-                    @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
-
-        final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (relyingPartyCtx == null) {
-            log.debug("Action {}: No relying party context available.", getId());
-            return ActionSupport.buildEvent(this, EventIds.INVALID_RELYING_PARTY_CTX);
+    @Override
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+        rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
+        if (rpContext == null) {
+            log.debug("{} No relying party context available.", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_RELYING_PARTY_CTX);
+            return false;
         }
+        
+        return true;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
         // Get the resolution context from the profile request
         // this may already exist but if not, auto-create it
@@ -129,17 +116,16 @@ public class ResolveAttributes extends AbstractProfileAction {
 
         try {
             attributeResolver.resolveAttributes(resolutionContext);
-            relyingPartyCtx.removeSubcontext(resolutionContext);
+            profileRequestContext.removeSubcontext(resolutionContext);
 
             final AttributeContext attributeCtx = new AttributeContext();
             attributeCtx.setIdPAttributes(resolutionContext.getResolvedIdPAttributes().values());
 
-            relyingPartyCtx.addSubcontext(attributeCtx);
+            rpContext.addSubcontext(attributeCtx);
         } catch (ResolutionException e) {
-            log.error("Action {}: Error resolving attributes", getId(), e);
-            return ActionSupport.buildEvent(this, UNABLE_RESOLVE_ATTRIBS);
+            log.error(getLogPrefix() + "{} Error resolving attributes", e);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.UNABLE_RESOLVE_ATTRIBS);
         }
-
-        return ActionSupport.buildProceedEvent(this);
     }
+    
 }

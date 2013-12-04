@@ -25,9 +25,11 @@ import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.EventIds;
+
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
+
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.SamlEventIds;
 import net.shibboleth.idp.saml.profile.config.AbstractSamlProfileConfiguration;
@@ -55,7 +57,7 @@ import com.google.common.base.Function;
  * {@link Assertion}.
  */
 @Events({
-        @Event(id = EventIds.PROCEED_EVENT_ID),
+        @Event(id = org.opensaml.profile.action.EventIds.PROCEED_EVENT_ID),
         @Event(id = EventIds.INVALID_RELYING_PARTY_CTX,
                 description = "No relying party information is associated with the current request"),
         @Event(id = SamlEventIds.NO_ASSERTION, description = "Outbound response does not contain an assertion"),

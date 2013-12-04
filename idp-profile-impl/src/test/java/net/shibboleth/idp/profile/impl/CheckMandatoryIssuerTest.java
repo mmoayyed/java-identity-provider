@@ -17,13 +17,11 @@
 
 package net.shibboleth.idp.profile.impl;
 
-import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
-import net.shibboleth.idp.profile.impl.CheckMandatoryIssuer.NoMessageIssuerException;
 
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.test.MockRequestContext;
-import org.testng.Assert;
+import org.opensaml.profile.action.ActionTestingSupport;
+import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link CheckMandatoryIssuer}. */
@@ -34,11 +32,10 @@ public class CheckMandatoryIssuerTest {
         action.setId("test");
         action.initialize();
 
-        Event result =
-                action.doExecute(new MockRequestContext(),
-                        new RequestContextBuilder().setInboundMessageIssuer("issuer").buildProfileRequestContext());
-
-        ActionTestingSupport.assertProceedEvent(result);
+        ProfileRequestContext prc =
+                new RequestContextBuilder().setInboundMessageIssuer("issuer").buildProfileRequestContext();
+        action.execute(prc);
+        ActionTestingSupport.assertProceedEvent(prc);
     }
 
     @Test public void testNoIssuer() throws Exception {
@@ -46,12 +43,10 @@ public class CheckMandatoryIssuerTest {
         action.setId("test");
         action.initialize();
 
-        try {
-            action.doExecute(new MockRequestContext(),
-                    new RequestContextBuilder().setInboundMessageIssuer(null).buildProfileRequestContext());
-            Assert.fail();
-        } catch (NoMessageIssuerException e) {
-            // expected this
-        }
+        ProfileRequestContext prc =
+                new RequestContextBuilder().setInboundMessageIssuer(null).buildProfileRequestContext();
+        action.execute(prc);
+        ActionTestingSupport.assertEvent(prc, EventIds.INVALID_MSG_MD);
     }
+    
 }

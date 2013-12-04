@@ -31,6 +31,7 @@ import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml2AttributeEncoder;
 import net.shibboleth.idp.saml.profile.SamlEventIds;
@@ -41,7 +42,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -62,7 +62,7 @@ import com.google.common.base.Function;
  * {@link #relyingPartyContextLookupStrategy}.
  */
 @Events({
-        @Event(id = EventIds.PROCEED_EVENT_ID),
+        @Event(id = org.opensaml.profile.action.EventIds.PROCEED_EVENT_ID),
         @Event(id = EventIds.INVALID_RELYING_PARTY_CTX,
                 description = "Returned if no relying party information is associated with the current request"),
         @Event(id = EventIds.INVALID_ATTRIBUTE_CTX,

@@ -18,14 +18,14 @@
 package net.shibboleth.idp.profile.impl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import net.shibboleth.ext.spring.webflow.Event;
-import net.shibboleth.ext.spring.webflow.Events;
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.ActionSupport;
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.action.AbstractProfileAction;
+import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
+
+import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -36,33 +36,36 @@ import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
 /**
  * This action attempts to resolve a {@link RelyingPartyConfiguration} and adds it to the {@link RelyingPartyContext}
  * that was looked up.
+ * 
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
+ * @event {@link EventIds#INVALID_RELYING_PARTY_CTX}
+ * @event {@link EventIds#INVALID_RELYING_PARTY_CONFIG}
+ * 
+ * @post If a {@link ReplyingPartyContext} is located, it will be populated with a non-null result of applying
+ * the suppled relying party config {@link Resolver} to to the {@link ProfileRequestContext}.
  */
-@Events({
-        @Event(id = EventIds.PROCEED_EVENT_ID),
-        @Event(id = EventIds.INVALID_RELYING_PARTY_CTX,
-                description = "No relying party context return by lookup strategy"),
-        @Event(id = EventIds.INVALID_RELYING_PARTY_CONFIG,
-                description = "No relying party configuation can be associated with the profile request")})
 public final class SelectRelyingPartyConfiguration extends AbstractProfileAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(SelectRelyingPartyConfiguration.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(SelectRelyingPartyConfiguration.class);
 
     /** Resolver used to look up relying party configurations. */
-    private final Resolver<RelyingPartyConfiguration, ProfileRequestContext> rpConfigResolver;
+    @Nonnull private final Resolver<RelyingPartyConfiguration, ProfileRequestContext> rpConfigResolver;
 
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
      */
-    private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
 
+    /** The {@link RelyingPartyContext} to manipulate. */
+    @Nullable private RelyingPartyContext relyingPartyCtx;
+    
     /**
      * Constructor.
      * 
@@ -70,12 +73,9 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
      */
     public SelectRelyingPartyConfiguration(
             @Nonnull final Resolver<RelyingPartyConfiguration, ProfileRequestContext> resolver) {
-        super();
 
-        rpConfigResolver = Constraint.isNotNull(resolver, "Relying party configuration resolver can not be null");
-
-        relyingPartyContextLookupStrategy =
-                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class, false);
+        rpConfigResolver = Constraint.isNotNull(resolver, "Relying party configuration resolver cannot be null");
+        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
     }
 
     /**
@@ -105,38 +105,44 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
      * @param strategy strategy used to locate the {@link RelyingPartyContext} associated with a given
      *            {@link ProfileRequestContext}
      */
-    public synchronized void setRelyingPartyContextLookupStrategy(
+    public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         relyingPartyContextLookupStrategy =
-                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy can not be null");
+                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
 
     /** {@inheritDoc} */
-    public org.springframework.webflow.execution.Event
-            doExecute(@Nonnull final RequestContext springRequestContext,
-                    @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
-
-        final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
+    @Override
+    public boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+        relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyCtx == null) {
-            log.debug("Action {}: No relying party context available for this request", getId());
-            return ActionSupport.buildEvent(this, EventIds.INVALID_RELYING_PARTY_CTX);
+            log.debug("{} No relying party context available for this request", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_RELYING_PARTY_CTX);
+            return false;
         }
+        
+        return true;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
         try {
             final RelyingPartyConfiguration config = rpConfigResolver.resolveSingle(profileRequestContext);
             if (config == null) {
-                log.debug("Action {}: No relying party configuration applies to this request", getId());
-                return ActionSupport.buildEvent(this, EventIds.INVALID_RELYING_PARTY_CONFIG);
+                log.debug("{} No relying party configuration applies to this request", getLogPrefix());
+                ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_RELYING_PARTY_CONFIG);
+                return;
             }
 
-            log.debug("Action {}: Found relying party configuration for request", getId());
+            log.debug("{} Found relying party configuration for request", getLogPrefix());
             relyingPartyCtx.setRelyingPartyConfiguration(config);
-            return ActionSupport.buildProceedEvent(this);
         } catch (ResolverException e) {
-            log.error("Action {}: error trying to resolve relying party configuration", getId(), e);
-            return ActionSupport.buildEvent(this, EventIds.INVALID_RELYING_PARTY_CONFIG);
+            log.error(getLogPrefix() + " Error trying to resolve relying party configuration", e);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_RELYING_PARTY_CONFIG);
         }
     }
 }

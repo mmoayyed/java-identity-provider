@@ -30,6 +30,7 @@ import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.impl.attribute.encoding.Saml1StringAttributeEncoder;
@@ -40,7 +41,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.impl.XSStringImpl;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.Attribute;

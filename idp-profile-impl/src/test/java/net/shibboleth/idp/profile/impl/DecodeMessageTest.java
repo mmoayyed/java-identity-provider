@@ -17,16 +17,16 @@
 
 package net.shibboleth.idp.profile.impl;
 
-import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.AbstractMessageDecoder;
 import org.opensaml.messaging.decoder.MessageDecoder;
 import org.opensaml.messaging.decoder.MessageDecodingException;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.action.ActionTestingSupport;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.test.MockRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -50,31 +50,41 @@ public class DecodeMessageTest {
         profileCtx = new ProfileRequestContext();
     }
 
-    /** Test that the action proceeds properly if the message can be decoded. */
-    @Test public void testDecodeMessage() throws Exception {
+    /**
+     * Test that the action proceeds properly if the message can be decoded.
+     *  
+     * @throws ComponentInitializationException 
+     * @throws ProfileException
+     */
+    @Test public void testDecodeMessage() throws ComponentInitializationException, ProfileException {
         DecodeMessage action = new DecodeMessage(decoder);
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
+        action.execute(profileCtx);
 
-        ActionTestingSupport.assertProceedEvent(result);
+        ActionTestingSupport.assertProceedEvent(profileCtx);
 
         Assert.assertNotNull(profileCtx.getInboundMessageContext());
         Assert.assertEquals(profileCtx.getInboundMessageContext().getMessage(), message);
     }
 
-    /** Test that the action errors out properly if the message can not be decoded. */
-    @Test public void testThrowException() throws Exception {
+    /**
+     * Test that the action errors out properly if the message can not be decoded.
+     * 
+     * @throws ComponentInitializationException 
+     * @throws ProfileException
+     */
+    @Test public void testFailure() throws ComponentInitializationException, ProfileException {
         decoder.setThrowException(true);
 
         DecodeMessage action = new DecodeMessage(decoder);
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
+        action.execute(profileCtx);
 
-        ActionTestingSupport.assertEvent(result, DecodeMessage.UNABLE_TO_DECODE);
+        ActionTestingSupport.assertEvent(profileCtx, EventIds.UNABLE_TO_DECODE);
     }
 
     /**
@@ -94,7 +104,6 @@ public class DecodeMessageTest {
          *
          */
         public MockMessageDecoder(MockMessage mockMessage) {
-            super();
             message = mockMessage;
         }
 
@@ -108,6 +117,7 @@ public class DecodeMessageTest {
         }
 
         /** {@inheritDoc} */
+        @Override
         protected void doDecode() throws MessageDecodingException {
             if (throwException) {
                 throw new MessageDecodingException();

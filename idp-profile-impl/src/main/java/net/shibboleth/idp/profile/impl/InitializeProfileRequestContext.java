@@ -17,10 +17,12 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
+
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -32,19 +34,24 @@ import org.springframework.webflow.execution.RequestContext;
 /**
  * Action that creates a new {@link ProfileRequestContext} and binds it to the current conversation under the
  * {@link ProfileRequestContext#BINDING_KEY} key.
+ * 
+ * <p>This is a native SWF action in order to access conversation scope.</p>
+ * 
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
+ * @post RequestContext.getConversationScope().get(ProfileRequestContext.BINDING_KEY) != null
  */
 @ThreadSafe
 public final class InitializeProfileRequestContext extends AbstractProfileAction {
 
     /** {@inheritDoc} */
-    public Event execute(final RequestContext springRequestContext) throws ProfileException {
+    @Override
+    @Nonnull public Event execute(@Nonnull final RequestContext springRequestContext) throws ProfileException {
 
         // We have to override execute() because the profile request context doesn't exist yet.
         
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
-        ProfileRequestContext profileRequestContext = new ProfileRequestContext();
-        springRequestContext.getConversationScope().put(ProfileRequestContext.BINDING_KEY, profileRequestContext);
+        springRequestContext.getConversationScope().put(ProfileRequestContext.BINDING_KEY, new ProfileRequestContext());
 
         return ActionSupport.buildProceedEvent(this);
     }

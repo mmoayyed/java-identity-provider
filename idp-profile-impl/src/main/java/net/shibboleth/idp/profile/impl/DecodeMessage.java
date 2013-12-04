@@ -19,35 +19,35 @@ package net.shibboleth.idp.profile.impl;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.ext.spring.webflow.Event;
-import net.shibboleth.ext.spring.webflow.Events;
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecoder;
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.action.AbstractProfileAction;
+import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
 
-/** A profile stage that decodes an incoming request into a given {@link MessageContext}. */
-@Events({@Event(id = EventIds.PROCEED_EVENT_ID),
-        @Event(id = DecodeMessage.UNABLE_TO_DECODE, description = "An error occured trying to decode the message")})
+/**
+ * Action that decodes an incoming request into a {@link MessageContext}.
+ * 
+ * @event {@link EventIds#PROCEED_EVENT_ID}
+ * @event {@link EventIds#UNABLE_TO_DECODE}
+ * 
+ * @post If decode succeeds, ProfileRequestContext.getInboundMessageContext() != null
+ * @post The injected {@link MessageDecoder} is destroyed.
+ */
 public class DecodeMessage extends AbstractProfileAction {
 
-    /** ID of the event returned if incoming message could not be decoded. */
-    public static final String UNABLE_TO_DECODE = "UnableToDecode";
-
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(DecodeMessage.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(DecodeMessage.class);
 
     /** The {@link MessageDecoder} instance used to decode the incoming message. */
-    private final MessageDecoder decoder;
+    @Nonnull private final MessageDecoder decoder;
 
     /**
      * Constructor.
@@ -55,30 +55,28 @@ public class DecodeMessage extends AbstractProfileAction {
      * @param messageDecoder the {@link MessageDecoder} used for the incoming request
      */
     public DecodeMessage(@Nonnull final MessageDecoder messageDecoder) {
-        decoder = Constraint.isNotNull(messageDecoder, "Message decoder can not be null");
+        decoder = Constraint.isNotNull(messageDecoder, "MessageDecoder cannot be null");
     }
 
     /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event
-            doExecute(@Nonnull final RequestContext springRequestContext,
-                    @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    @Override
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
         try {
-            log.debug("Action {}: Using message decoder of type {} for this request", getId(), decoder.getClass()
-                    .getName());
-
-            log.debug("Action {}: Decoding incoming request", getId());         
+            log.debug("{} Decoding message using message decoder of type {} for this request", getLogPrefix(),
+                    decoder.getClass().getName());
             decoder.decode();
             final MessageContext msgContext = decoder.getMessageContext();
-            log.debug("Action {}: Incoming request decoded into a message of type {}", getId(), 
+            log.debug("{} Incoming request decoded into a message of type {}", getLogPrefix(), 
                     msgContext.getMessage().getClass().getName());
 
             profileRequestContext.setInboundMessageContext(msgContext);
-            return ActionSupport.buildProceedEvent(this);
         } catch (MessageDecodingException e) {
-            log.debug("Action {}: Unable to decode incoming request", getId(), e);
-            return ActionSupport.buildEvent(this, UNABLE_TO_DECODE);
+            log.error(getLogPrefix() + " Unable to decode incoming request", e);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.UNABLE_TO_DECODE);
         } finally {
+            // TODO: should we actually destroy the MessageDecoder here?
             decoder.destroy();
         }
     }
+    
 }

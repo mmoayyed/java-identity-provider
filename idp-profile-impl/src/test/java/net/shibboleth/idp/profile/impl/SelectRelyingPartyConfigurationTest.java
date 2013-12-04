@@ -17,16 +17,15 @@
 
 package net.shibboleth.idp.profile.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.idp.profile.EventIds;
 
-import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
+
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
@@ -34,8 +33,6 @@ import net.shibboleth.utilities.java.support.component.AbstractIdentifiableIniti
 import net.shibboleth.utilities.java.support.resolver.Resolver;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.test.MockRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -52,9 +49,9 @@ public class SelectRelyingPartyConfigurationTest {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
+        action.execute(profileCtx);
 
-        ActionTestingSupport.assertEvent(result, EventIds.INVALID_RELYING_PARTY_CTX);
+        ActionTestingSupport.assertEvent(profileCtx, EventIds.INVALID_RELYING_PARTY_CTX);
     }
 
     /** Test that the action errors out properly if there is no relying party configuration. */
@@ -67,9 +64,9 @@ public class SelectRelyingPartyConfigurationTest {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
+        action.execute(profileCtx);
 
-        ActionTestingSupport.assertEvent(result, EventIds.INVALID_RELYING_PARTY_CONFIG);
+        ActionTestingSupport.assertEvent(profileCtx, EventIds.INVALID_RELYING_PARTY_CONFIG);
     }
 
     /** Test that the action errors out properly if the relying party configuration can not be resolved. */
@@ -86,9 +83,9 @@ public class SelectRelyingPartyConfigurationTest {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
+        action.execute(profileCtx);
 
-        ActionTestingSupport.assertEvent(result, EventIds.INVALID_RELYING_PARTY_CONFIG);
+        ActionTestingSupport.assertEvent(profileCtx, EventIds.INVALID_RELYING_PARTY_CONFIG);
     }
 
     /** Test that the action resolves the relying party and proceeds properly. */
@@ -104,9 +101,9 @@ public class SelectRelyingPartyConfigurationTest {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
+        action.execute(profileCtx);
 
-        ActionTestingSupport.assertEvent(result, EventIds.PROCEED_EVENT_ID);
+        ActionTestingSupport.assertProceedEvent(profileCtx);
 
         RelyingPartyConfiguration resolvedConfig =
                 profileCtx.getSubcontext(RelyingPartyContext.class).getConfiguration();
@@ -144,7 +141,7 @@ public class SelectRelyingPartyConfigurationTest {
             if (exception != null) {
                 throw exception;
             }
-            return new ArrayList<RelyingPartyConfiguration>(Arrays.asList(configuration));
+            return Collections.singleton(configuration);
         }
 
         /** {@inheritDoc} */
