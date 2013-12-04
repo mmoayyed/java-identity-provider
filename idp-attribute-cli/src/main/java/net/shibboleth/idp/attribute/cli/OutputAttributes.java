@@ -25,14 +25,14 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
-import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeContext;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.EventIds;
 
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,10 +41,10 @@ import org.springframework.webflow.execution.RequestContext;
 
 /**
  * A Spring-aware action to write the attribute context information to the external output sink.
- * This is for use in command line scenaros where there is no servlet environment for output.
+ * This is for use in command line scenarios where there is no servlet environment for output.
  */
 @Events({
-    @Event(id = EventIds.PROCEED_EVENT_ID),
+    @Event(id = org.opensaml.profile.action.EventIds.PROCEED_EVENT_ID),
     @Event(id = EventIds.INVALID_ATTRIBUTE_CTX, description = "No attributes were available for filtering"),
     })
 public final class OutputAttributes extends AbstractProfileAction {
