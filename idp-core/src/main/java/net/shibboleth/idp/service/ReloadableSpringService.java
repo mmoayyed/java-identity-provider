@@ -17,53 +17,269 @@
 
 package net.shibboleth.idp.service;
 
-import net.shibboleth.utilities.java.support.annotation.Duration;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
-import org.springframework.context.Lifecycle;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
+
+import net.shibboleth.idp.spring.SpringSupport;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.Resource;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 /**
  * This class provides a reloading interface to a ServiceableComponent.
  * 
- * @param <T>  The precise service being implemented.
+ * @param <T> The precise service being implemented.
  */
-public class ReloadableSpringService<T> implements Lifecycle{
+@ThreadSafe
+public class ReloadableSpringService<T> extends AbstractReloadableService {
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(ReloadableSpringService.class);
+
+    /** List of configuration resources for this service. */
+    private List<Resource> serviceConfigurations;
+
+    /** The class we are looking for. */
+    private final Class<T> theClaz;
+
+    /** Application context owning this engine. */
+    private ApplicationContext parentContext;
+
+    /** The last known good component. */
+    private ServiceableComponent<T> cachedComponent;
+
+    /** Did the last load fail? An optimization only. */
+    private boolean lastLoadFailed = true;
+
+    /**
+     * Time, in milliseconds, when the service configuration for the given index was last observed to have changed. -1
+     * indicates the configuration resource did not exist.
+     */
+    private long[] resourceLastModifiedTimes;
 
     /**
      * Constructor.
-     *
+     * 
      * @param claz The interface being implemented.
-     * @param resources the configuration.
-     * @param reloadFrequency How frequently to reload.
      */
-    public ReloadableSpringService(Class<T> claz, Resource[] resources, @Duration long reloadFrequency) {
+    public ReloadableSpringService(Class<T> claz) {
+        theClaz = claz;
     }
-    
+
     /**
-     * Get the serviceable component.
-     * @param <S> the type returned.
-     * @return the component (with reference).
+     * Gets the application context that is the parent to this service's context.
+     * 
+     * @return application context that is the parent to this service's context
      */
-    public <S extends ServiceableComponent<T>> S getServiceableComponent() {
-        return null;
+    @Nullable public ApplicationContext getParentContext() {
+        return parentContext;
     }
-    
-    /** {@inheritDoc} */
-    public void start() {
-        // TODO Auto-generated method stub        
+
+    /**
+     * Sets the application context that is the parent to this service's context.
+     * 
+     * This setting can not be changed after the service has been initialized.
+     * 
+     * @param context context that is the parent to this service's context, may be null
+     */
+    public synchronized void setParentContext(@Nullable final ApplicationContext context) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        parentContext = context;
+    }
+
+    /**
+     * Gets an unmodifiable list of configurations for this service.
+     * 
+     * @return unmodifiable list of configurations for this service
+     */
+    @Nonnull public List<Resource> getServiceConfigurations() {
+        return serviceConfigurations;
+    }
+
+    /**
+     * Sets the list of configurations for this service.
+     * 
+     * This setting can not be changed after the service has been initialized.
+     * 
+     * @param configs list of configurations for this service, may be null or empty
+     */
+    public void setServiceConfigurations(@Nonnull final List<Resource> configs) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
+        serviceConfigurations =
+                ImmutableList.<Resource> builder().addAll(Iterables.filter(configs, Predicates.notNull())).build();
+        if (!serviceConfigurations.isEmpty()) {
+            resourceLastModifiedTimes = new long[serviceConfigurations.size()];
+
+            int numOfResources = serviceConfigurations.size();
+            Resource serviceConfig;
+            for (int i = 0; i < numOfResources; i++) {
+                serviceConfig = serviceConfigurations.get(i);
+                try {
+                    if (serviceConfig.exists()) {
+                        resourceLastModifiedTimes[i] = serviceConfig.lastModified();
+                    } else {
+                        resourceLastModifiedTimes[i] = -1;
+                    }
+                } catch (IOException e) {
+                    log.info("Configuration resource '" + serviceConfig.getDescription()
+                            + "' last modification date could not be determined", e);
+                    resourceLastModifiedTimes[i] = -1;
+                }
+            }
+        } else {
+            resourceLastModifiedTimes = null;
+        }
     }
 
     /** {@inheritDoc} */
-    public void stop() {
-        // TODO Auto-generated method stub
+    // Checkstyle: CyclomaticComplexity OFF
+    protected boolean shouldReload() {
+        // Loop over each resource and check if the any resources have been changed since
+        // the last time the service was reloaded. I believe a read lock is all we need here
+        // to allow use of the service to proceed while we check on the state. Actual reloading
+        // requires the write lock, and the only post-initialization code that reads or writes
+        // the array of resource mod-time data is this code, which is on one thread.
+
+        if (resourceLastModifiedTimes == null) {
+            return false;
+        }
+
+        if (lastLoadFailed) {
+            return true;
+        }
+
+        boolean configResourceChanged = false;
+        int numOfResources = serviceConfigurations.size();
+
+        Resource serviceConfig;
+        long serviceConfigLastModified;
+        for (int i = 0; i < numOfResources; i++) {
+            serviceConfig = serviceConfigurations.get(i);
+            try {
+                if (resourceLastModifiedTimes[i] == -1 && !serviceConfig.exists()) {
+                    // Resource did not exist and still does not exist.
+                    log.debug("Resource remains unavailable/inaccessible: '{}'", serviceConfig.getDescription());
+                } else if (resourceLastModifiedTimes[i] == -1 && serviceConfig.exists()) {
+                    // Resource did not exist, but does now.
+                    log.debug("Resource was unavailable, now present: '{}'", serviceConfig.getDescription());
+                    configResourceChanged = true;
+                    resourceLastModifiedTimes[i] = serviceConfig.lastModified();
+                } else if (resourceLastModifiedTimes[i] > -1 && !serviceConfig.exists()) {
+                    // Resource existed, but is now unavailable.
+                    log.debug("Resource was available, now is not: '{}'", serviceConfig.getDescription());
+                    configResourceChanged = true;
+                    resourceLastModifiedTimes[i] = -1;
+                } else {
+                    // Check to see if an existing resource, that still exists, has been modified.
+                    serviceConfigLastModified = serviceConfig.lastModified();
+                    if (serviceConfigLastModified != resourceLastModifiedTimes[i]) {
+                        log.debug("Resource has changed: '{}'", serviceConfig.getDescription());
+                        configResourceChanged = true;
+                        resourceLastModifiedTimes[i] = serviceConfigLastModified;
+                    }
+                }
+            } catch (IOException e) {
+                log.info("Configuration resource '" + serviceConfig.getDescription()
+                        + "' last modification date could not be determined", e);
+                configResourceChanged = true;
+            }
+        }
+
+        return configResourceChanged;
+    }
+
+    // Checkstyle: CyclomaticComplexity ON
+
+    /** {@inheritDoc} */
+    protected void doReload() throws ServiceException {
+        super.doReload();
+
+        log.debug("Creating new ApplicationContext for service '{}'", getId());
+        GenericApplicationContext appContext =
+                SpringSupport.newContext(getId(), getServiceConfigurations(), getParentContext());
+
+        log.debug("New Application Context created for service '{}'", getId());
+
+        final Collection<ServiceableComponent> components =
+                appContext.getBeansOfType(ServiceableComponent.class).values();
+
+        log.debug("Context for service {} yiedled {} beans", getId(), components.size());
         
+        if (components.size() == 0) {
+            throw new ServiceException("Reload did not produce any ServiceableComponents");
+        }
+        if (components.size() > 1) {
+            for (ServiceableComponent c:components) {
+                c.unloadComponent();
+            }
+            throw new ServiceException("Reload produced too many ServiceableComponents");
+        }
+
+        final ServiceableComponent<T> service = components.iterator().next();
+        service.pinComponent();
+        
+        //
+        // Now check it's the right type before we continue.
+        //
+        final T theComponent = service.getComponent(); 
+        
+        log.debug("testing that {} is a superclass of {}", theComponent.getClass(), theClaz);
+        
+        if (!theComponent.getClass().isAssignableFrom(theClaz)) {
+            //
+            // tear it down
+            //
+            service.unpinComponent();
+            service.unloadComponent();
+            throw new ServiceException("Class was not the same or a superclass of configured class");
+        }
+        
+        //
+        // Otherwise we are ready to swap in the new component; so only
+        // now do we grab the lock.
+        //
+        // Note that we are grabbing the lock on the component before the lock on this
+        // object, which would be an inversion with the getServiceableComponent ranking
+        // except the component will never be seen before we drop the lock and so
+        // there can be no inversion
+        //
+        final ServiceableComponent<T> oldComponent;
+        synchronized (this) {
+            oldComponent = cachedComponent;
+            cachedComponent = service; 
+            service.unpinComponent();
+        }
+        oldComponent.unloadComponent();
+        lastLoadFailed = false;
     }
 
-    /** {@inheritDoc} */
-    public boolean isRunning() {
-        // TODO Auto-generated method stub
-        return false;
+    /**
+     * Get the serviceable component.  We do this under interlock and grab the lock on the component.
+     * 
+     * @return the <em>pinned</em> component.
+     */
+    public synchronized ServiceableComponent<T> getServiceableComponent() {
+        if (null == cachedComponent) {
+            return null;
+        }
+        cachedComponent.pinComponent();
+        return cachedComponent;
     }
 
-    
 }

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.service;
 
+import javax.annotation.Nonnull;
+
 /**
  * Any Component that wants to be reloaded via the Service interface and spring implements this interface.
  * @param <T> The underlying type of the component.
@@ -31,19 +33,25 @@ package net.shibboleth.idp.service;
 public interface ServiceableComponent<T> {
 
     /**
-     * This function takes a lock on the component which guarantees that it will not be disposed until the release call
-     * is made.<br/>
-     * <em>Every call to {@link #getComponent()} must be matched by a call to {@link #releaseComponent()}</em>
-     * <br/> The need to have the type converting return parameter is to get around the java typing restrictions. 
+     * Extract the component that does the actual work.  Callers <em>MUST</em> have the ServiceableComponent
+     * pinned at this stage.
      *
      * @return the component.       
      */
-    public T getComponent();
+    @Nonnull public T getComponent();
+    
+    /**
+     * This function takes a lock on the component which guarantees that it will not be disposed until the release call
+     * is made.<br/>
+     * <em>Every call to {@link #pinComponent()} must be matched by a call to {@link #unpinComponent()}</em>
+     * <br/> The need to have the type converting return parameter is to get around the java typing restrictions. 
+     */
+    public void pinComponent();
 
     /**
      * This undoes the work that is done by {@link #getComponent()}.
      */
-    public void releaseComponent();
+    public void unpinComponent();
     
 
     /**
