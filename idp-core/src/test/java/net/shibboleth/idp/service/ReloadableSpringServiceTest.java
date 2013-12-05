@@ -71,24 +71,31 @@ public class ReloadableSpringServiceTest {
 
         service.start();
 
-        ServiceableComponent<TestServiceableComponent> component = service.getServiceableComponent();
+        ServiceableComponent<TestServiceableComponent> serviceableComponent = service.getServiceableComponent();
+        TestServiceableComponent component  = serviceableComponent.getComponent();
 
-        Assert.assertEquals(component.getComponent().getTheValue(), "One");
+        Assert.assertEquals(component.getTheValue(), "One");
         Assert.assertFalse(component.getComponent().isDestroyed());
 
-        component.unpinComponent();
+        serviceableComponent.unpinComponent();
         overwriteFileWith("net/shibboleth/idp/service/ServiceableBean2.xml");
 
-        Thread.sleep(RELOAD_DELAY * 2);
+        long count = 70;
+        while (count > 0 && !component.isDestroyed()) {
+            Thread.sleep(RELOAD_DELAY);
+            count--;
+        }
+        Assert.assertTrue("After 7 second initial component has still not be destroyed", component.isDestroyed());
 
         //
         // The reload will have destroyed the old component
         //
-        Assert.assertTrue(component.getComponent().isDestroyed());
+        Assert.assertTrue(serviceableComponent.getComponent().isDestroyed());
 
-        component = service.getServiceableComponent();
+        serviceableComponent = service.getServiceableComponent();
 
-        Assert.assertEquals(component.getComponent().getTheValue(), "Two");
+        Assert.assertEquals(serviceableComponent.getComponent().getTheValue(), "Two");
+        serviceableComponent.unpinComponent();
     }
 
     @Test public void deferedReload() throws IOException, InterruptedException {
@@ -107,29 +114,40 @@ public class ReloadableSpringServiceTest {
         ServiceableComponent<TestServiceableComponent> serviceableComponent = service.getServiceableComponent();
         TestServiceableComponent component = serviceableComponent.getComponent();
 
-        Assert.assertEquals(component.getTheValue(), "One");
+        Assert.assertEquals("One", component.getTheValue());
         Assert.assertFalse(component.isDestroyed());
 
         overwriteFileWith("net/shibboleth/idp/service/ServiceableBean2.xml");
-
-        Thread.sleep(RELOAD_DELAY*2);
 
         //
         // The reload will not have destroyed the old component yet
         //
         Assert.assertFalse(component.isDestroyed());
-        component.unpinComponent();
 
-        serviceableComponent = service.getServiceableComponent();
-
-        Assert.assertEquals(serviceableComponent.getComponent().getTheValue(), "Two");
-
-        long count = 50;
-        while (count > 0 && !component.isDestroyed()) {
-            Thread.sleep(100);
+        long count = 70;
+        TestServiceableComponent component2 = null;
+        while (count > 0) {
+            serviceableComponent = service.getServiceableComponent();
+            component2 = serviceableComponent.getComponent();
+            if ("Two".equals(component2.getTheValue())) {
+                break;
+            }
+            component2.unpinComponent();
+            component2 = null;
+            Thread.sleep(RELOAD_DELAY);
             count--;
         }
-        Assert.assertTrue("After 5 second initial component has still not be destroyed", component.isDestroyed());
+        Assert.assertNotNull("After 7 second initial component has still not got new value", component2);
+        
+        component.unpinComponent();
+
+        count = 70;
+        while (count > 0 && !component.isDestroyed()) {
+            Thread.sleep(RELOAD_DELAY);
+            count--;
+        }
+        Assert.assertTrue("After 7 second initial component has still not be destroyed", component.isDestroyed());
+        
     }
     
     @Test
@@ -183,18 +201,18 @@ public class ReloadableSpringServiceTest {
         Thread.sleep(RELOAD_DELAY*2);
         final ServiceableComponent<TestServiceableComponent> serviceableComponent = service.getServiceableComponent();
         final TestServiceableComponent component = serviceableComponent.getComponent();
-        Assert.assertEquals(component.getTheValue(), "Two");
+        Assert.assertEquals("Two", component.getTheValue());
         
         Assert.assertFalse(component.isDestroyed());
         component.unpinComponent();
         service.stop();
 
-        long count = 50;
+        long count = 70;
         while (count > 0 && !component.isDestroyed()) {
-            Thread.sleep(100);
+            Thread.sleep(RELOAD_DELAY);
             count--;
         }
-        Assert.assertTrue("After 5 second initial component has still not be destroyed", component.isDestroyed());
+        Assert.assertTrue("After 7 second initial component has still not be destroyed", component.isDestroyed());
         
         
     }
