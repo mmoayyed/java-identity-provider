@@ -30,6 +30,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.FatalBeanException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.Resource;
@@ -117,7 +118,7 @@ public class ReloadableSpringService<T> extends AbstractReloadableService {
      * 
      * @param configs list of configurations for this service, may be null or empty
      */
-    public void setServiceConfigurations(@Nonnull final List<Resource> configs) {
+    public void setServiceConfigurations(@Nonnull final Collection<Resource> configs) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -211,8 +212,12 @@ public class ReloadableSpringService<T> extends AbstractReloadableService {
         super.doReload();
 
         log.debug("Creating new ApplicationContext for service '{}'", getId());
-        GenericApplicationContext appContext =
-                SpringSupport.newContext(getId(), getServiceConfigurations(), getParentContext());
+        GenericApplicationContext appContext = null;
+        try {
+            appContext = SpringSupport.newContext(getId(), getServiceConfigurations(), getParentContext());
+        } catch (FatalBeanException e) {
+            throw new ServiceException(e);
+        }
 
         log.debug("New Application Context created for service '{}'", getId());
 
@@ -220,12 +225,12 @@ public class ReloadableSpringService<T> extends AbstractReloadableService {
                 appContext.getBeansOfType(ServiceableComponent.class).values();
 
         log.debug("Context for service {} yiedled {} beans", getId(), components.size());
-        
+
         if (components.size() == 0) {
             throw new ServiceException("Reload did not produce any ServiceableComponents");
         }
         if (components.size() > 1) {
-            for (ServiceableComponent c:components) {
+            for (ServiceableComponent c : components) {
                 c.unloadComponent();
             }
             throw new ServiceException("Reload produced too many ServiceableComponents");
@@ -233,14 +238,14 @@ public class ReloadableSpringService<T> extends AbstractReloadableService {
 
         final ServiceableComponent<T> service = components.iterator().next();
         service.pinComponent();
-        
+
         //
         // Now check it's the right type before we continue.
         //
-        final T theComponent = service.getComponent(); 
-        
+        final T theComponent = service.getComponent();
+
         log.debug("testing that {} is a superclass of {}", theComponent.getClass(), theClaz);
-        
+
         if (!theComponent.getClass().isAssignableFrom(theClaz)) {
             //
             // tear it down
@@ -249,7 +254,7 @@ public class ReloadableSpringService<T> extends AbstractReloadableService {
             service.unloadComponent();
             throw new ServiceException("Class was not the same or a superclass of configured class");
         }
-        
+
         //
         // Otherwise we are ready to swap in the new component; so only
         // now do we grab the lock.
@@ -262,15 +267,27 @@ public class ReloadableSpringService<T> extends AbstractReloadableService {
         final ServiceableComponent<T> oldComponent;
         synchronized (this) {
             oldComponent = cachedComponent;
-            cachedComponent = service; 
+            cachedComponent = service;
             service.unpinComponent();
         }
-        oldComponent.unloadComponent();
+        if (null != oldComponent) {
+            oldComponent.unloadComponent();
+        }
         lastLoadFailed = false;
     }
 
+    /** {@inheritDoc} */
+    protected void doDestroy() {
+        final ServiceableComponent<T> oldComponent = cachedComponent;
+        cachedComponent = null;
+        // And tear down. Note that we are synchronized on this right now
+        // and this will grab the lock - but that is OK because the ranking
+        // is to lock this object, then the ServicableComponent.
+        oldComponent.unloadComponent();
+    }
+
     /**
-     * Get the serviceable component.  We do this under interlock and grab the lock on the component.
+     * Get the serviceable component. We do this under interlock and grab the lock on the component.
      * 
      * @return the <em>pinned</em> component.
      */

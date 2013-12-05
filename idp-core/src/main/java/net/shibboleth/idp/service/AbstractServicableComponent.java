@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
 
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -34,7 +35,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  * @param <T> The type of service.
  */
 public abstract class AbstractServicableComponent<T> extends AbstractDestructableIdentifiableInitializableComponent
-        implements ServiceableComponent<T>, ApplicationContextAware {
+        implements ServiceableComponent<T>, ApplicationContextAware, DisposableBean  {
 
     /** The context used to load this bean. */
     private ApplicationContext applicationContext;

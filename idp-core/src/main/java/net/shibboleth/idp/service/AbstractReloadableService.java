@@ -38,6 +38,7 @@ import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanInitializationException;
 
 /**
  * Base class for {@link ReloadableService}. This base class will start a background thread that will perform a periodic
@@ -213,8 +214,7 @@ public abstract class AbstractReloadableService extends AbstractDestructableIden
         try {
             initialize();
         } catch (ComponentInitializationException e) {
-            log.error("{} Could not start service : {}", getLogPrefix(), e);
-            return;
+            throw new BeanInitializationException("Could not start service", e);
         }
     }
 
@@ -255,7 +255,7 @@ public abstract class AbstractReloadableService extends AbstractDestructableIden
 
     /** {@inheritDoc}. */
     public boolean isRunning() {
-        return isInitialized();
+        return isInitialized() && !isDestroyed();
     }
 
     /**
