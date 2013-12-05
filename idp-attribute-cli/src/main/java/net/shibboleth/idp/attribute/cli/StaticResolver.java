@@ -21,11 +21,8 @@ import javax.annotation.Nonnull;
 
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.AbstractProfileAction;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import net.shibboleth.ext.spring.webflow.Event;
-import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -36,18 +33,13 @@ import com.google.common.collect.ImmutableList;
 /**
  * A dummy action to generate some data conformant to the current attribute
  * resolver action.
+ * 
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  */
-@Events({
-    @Event(id = EventIds.PROCEED_EVENT_ID)
-    })
 public final class StaticResolver extends AbstractProfileAction {
 
-    /** Constructor. */
-    public StaticResolver() {
-        super();
-    }
-
     /** {@inheritDoc} */
+    @Override
     public void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
         final AttributeContext attributeCtx = profileRequestContext.getSubcontext(AttributeContext.class, true);
