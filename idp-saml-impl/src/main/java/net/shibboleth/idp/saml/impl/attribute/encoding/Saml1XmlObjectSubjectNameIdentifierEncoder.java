@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml1NameIdentifierEncoder;
+import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML1NameIdentifierEncoder;
 
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.slf4j.Logger;
@@ -37,7 +37,7 @@ import com.google.common.base.Objects;
  * from the first non-null {@link NameIdentifier} value of an {@link net.shibboleth.idp.attribute.IdPAttribute}.
  */
 // TODO Is this class redundant?
-public class Saml1XmlObjectSubjectNameIdentifierEncoder extends AbstractSaml1NameIdentifierEncoder {
+public class Saml1XmlObjectSubjectNameIdentifierEncoder extends AbstractSAML1NameIdentifierEncoder {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(Saml1XmlObjectSubjectNameIdentifierEncoder.class);

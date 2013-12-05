@@ -29,12 +29,17 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.saml.xmlobject.KeyAuthority;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.security.SecurityException;
 import org.opensaml.security.x509.PKIXValidationInformation;
 import org.opensaml.xmlsec.keyinfo.KeyInfoSupport;
 import org.opensaml.xmlsec.signature.KeyInfo;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 
 
 /**
@@ -46,7 +51,9 @@ public final class KeyAuthoritySupport {
     public static final int KEY_AUTHORITY_VERIFY_DEPTH_DEFAULT = 1;
     
     /** Constructor. Private to prevent instantiation. */
-    private KeyAuthoritySupport() { }
+    private KeyAuthoritySupport() {
+        
+    }
     
     /**
      * Extracts PKIX validation information from the Shibboleth KeyAuthority metadata extension element.
@@ -62,14 +69,14 @@ public final class KeyAuthoritySupport {
             return null;
         }
 
-        List<X509Certificate> certs = new ArrayList<X509Certificate>();
-        List<X509CRL> crls = new ArrayList<X509CRL>();
+        final List<X509Certificate> certs = new ArrayList<>();
+        final List<X509CRL> crls = new ArrayList<>();
         Integer depth = keyAuthority.getVerifyDepth();
         if (depth == null) {
             depth = KEY_AUTHORITY_VERIFY_DEPTH_DEFAULT;
         }
         
-        List<KeyInfo> keyInfos = keyAuthority.getKeyInfos();
+        final List<KeyInfo> keyInfos = keyAuthority.getKeyInfos();
         if (keyInfos == null || keyInfos.isEmpty()) {
             return null;
         }
@@ -94,7 +101,7 @@ public final class KeyAuthoritySupport {
      * @return a collection of X509 certificates, possibly empty
      * @throws SecurityException thrown if the certificate information is represented in an unsupported format
      */
-    private static List<X509Certificate> getX509Certificates(KeyInfo keyInfo) throws SecurityException {
+    private static Collection<X509Certificate> getX509Certificates(KeyInfo keyInfo) throws SecurityException {
         try {
             return KeyInfoSupport.getCertificates(keyInfo);
         } catch (CertificateException e) {
@@ -110,7 +117,7 @@ public final class KeyAuthoritySupport {
      * @return a collection of X509 CRL's, possibly empty
      * @throws SecurityException thrown if the CRL information is represented in an unsupported format
      */
-    private static List<X509CRL> getX509CRLs(KeyInfo keyInfo) throws SecurityException {
+    private static Collection<X509CRL> getX509CRLs(KeyInfo keyInfo) throws SecurityException {
         try {
             return KeyInfoSupport.getCRLs(keyInfo);
         } catch (CRLException e) {
@@ -125,13 +132,13 @@ public final class KeyAuthoritySupport {
     public static class KeyAuthorityPKIXValidationInformation implements PKIXValidationInformation {
 
         /** Certs used as the trust anchors. */
-        private final Collection<X509Certificate> trustAnchors;
+        @Nullable @NonnullElements private final Collection<X509Certificate> trustAnchors;
 
         /** CRLs used during validation. */
-        private final Collection<X509CRL> trustedCRLs;
+        @Nullable @NonnullElements private final Collection<X509CRL> trustedCRLs;
 
         /** Max verification depth during PKIX validation. */
-        private final Integer verificationDepth;
+        @Nonnull private final Integer verificationDepth;
 
         /**
          * Constructor.
@@ -144,8 +151,18 @@ public final class KeyAuthoritySupport {
                 @Nullable final Collection<X509CRL> crls, @Nonnull final Integer depth) {
 
             verificationDepth = Constraint.isNotNull(depth, "Verification depth cannot be null");
-            trustAnchors = anchors;
-            trustedCRLs = crls;
+            
+            if (anchors != null) {
+                trustAnchors = Lists.newArrayList(Collections2.filter(anchors, Predicates.notNull()));
+            } else {
+                trustAnchors = null;
+            }
+            
+            if (crls != null) {
+                trustedCRLs = Lists.newArrayList(Collections2.filter(crls, Predicates.notNull()));
+            } else {
+                trustedCRLs = null;
+            }
         }
 
         /** {@inheritDoc} */

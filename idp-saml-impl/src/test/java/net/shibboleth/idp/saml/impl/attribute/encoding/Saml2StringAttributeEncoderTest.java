@@ -59,7 +59,7 @@ public class Saml2StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
     @BeforeClass public void initTest() throws ComponentInitializationException {
         encoder = new Saml2StringAttributeEncoder();
         encoder.setName(ATTR_NAME);
-        encoder.setNamespace("NameSpace");
+        encoder.setNameFormat("NameSpace");
         encoder.setFriendlyName("friendly");
         encoder.initialize();
     }

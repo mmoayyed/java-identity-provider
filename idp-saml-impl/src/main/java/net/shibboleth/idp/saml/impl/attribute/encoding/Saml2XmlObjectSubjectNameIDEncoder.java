@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml2NameIDEncoder;
+import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML2NameIDEncoder;
 
 import org.opensaml.saml.saml2.core.NameID;
 import org.slf4j.Logger;
@@ -37,7 +37,7 @@ import com.google.common.base.Objects;
  * first non-null {@link NameID} value of an {@link net.shibboleth.idp.attribute.IdPAttribute}.
  */
 // TODO this class is redundant.
-public class Saml2XmlObjectSubjectNameIDEncoder extends AbstractSaml2NameIDEncoder {
+public class Saml2XmlObjectSubjectNameIDEncoder extends AbstractSAML2NameIDEncoder {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(Saml2XmlObjectSubjectNameIDEncoder.class);

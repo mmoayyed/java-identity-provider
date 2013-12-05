@@ -49,7 +49,7 @@ import org.w3c.dom.Element;
 import com.google.common.base.Strings;
 
 /**
- * Test form {@link SamlEncoderSupport}.
+ * Test form {@link SAMLEncoderSupport}.
  */
 public class SamlEncoderSupportTest  extends OpenSAMLInitBaseTestCase {
     
@@ -67,23 +67,23 @@ public class SamlEncoderSupportTest  extends OpenSAMLInitBaseTestCase {
     @Test public void encodeStringValue() {
         
         try {
-            SamlEncoderSupport.encodeStringValue(null, QNAME, STRING_VALUE );
+            SAMLEncoderSupport.encodeStringValue(null, QNAME, STRING_VALUE );
             Assert.fail("Missed contraint");
         } catch (ConstraintViolationException ex) {
             //OK
         }
         
         try {
-            SamlEncoderSupport.encodeStringValue(ATTR, null, STRING_VALUE );
+            SAMLEncoderSupport.encodeStringValue(ATTR, null, STRING_VALUE );
             Assert.fail("Missed contraint");
         } catch (ConstraintViolationException ex) {
             //OK
         }
         
-        Assert.assertNull(SamlEncoderSupport.encodeStringValue(ATTR, QNAME, ""));
-        Assert.assertNull(SamlEncoderSupport.encodeStringValue(ATTR, QNAME, null));
+        Assert.assertNull(SAMLEncoderSupport.encodeStringValue(ATTR, QNAME, ""));
+        Assert.assertNull(SAMLEncoderSupport.encodeStringValue(ATTR, QNAME, null));
         
-        XMLObject obj = SamlEncoderSupport.encodeStringValue(ATTR, QNAME, STRING_VALUE);
+        XMLObject obj = SAMLEncoderSupport.encodeStringValue(ATTR, QNAME, STRING_VALUE);
         Assert.assertEquals(obj.getElementQName().getLocalPart(), QNAME_LOCALPART);
         Assert.assertTrue(obj instanceof XSString);
         XSString str = (XSString) obj;
@@ -94,23 +94,23 @@ public class SamlEncoderSupportTest  extends OpenSAMLInitBaseTestCase {
     @Test public void encodeByteArrayValue() {
         
         try {
-            SamlEncoderSupport.encodeByteArrayValue(null, QNAME, BYTE_ARRAY_VALUE);
+            SAMLEncoderSupport.encodeByteArrayValue(null, QNAME, BYTE_ARRAY_VALUE);
             Assert.fail("Missed contraint");
         } catch (ConstraintViolationException ex) {
             //OK
         }
         
         try {
-            SamlEncoderSupport.encodeByteArrayValue(ATTR, null, BYTE_ARRAY_VALUE);
+            SAMLEncoderSupport.encodeByteArrayValue(ATTR, null, BYTE_ARRAY_VALUE);
             Assert.fail("Missed contraint");
         } catch (ConstraintViolationException ex) {
             //OK
         }
         
-        Assert.assertNull(SamlEncoderSupport.encodeByteArrayValue(ATTR, QNAME, null));
-        Assert.assertNull(SamlEncoderSupport.encodeByteArrayValue(ATTR, QNAME, new byte[] {}));
+        Assert.assertNull(SAMLEncoderSupport.encodeByteArrayValue(ATTR, QNAME, null));
+        Assert.assertNull(SAMLEncoderSupport.encodeByteArrayValue(ATTR, QNAME, new byte[] {}));
         
-        XMLObject obj = SamlEncoderSupport.encodeByteArrayValue(ATTR, QNAME, BYTE_ARRAY_VALUE);
+        XMLObject obj = SAMLEncoderSupport.encodeByteArrayValue(ATTR, QNAME, BYTE_ARRAY_VALUE);
         Assert.assertEquals(obj.getElementQName().getLocalPart(), QNAME_LOCALPART);
         Assert.assertTrue(obj instanceof XSString);
         XSString str = (XSString) obj;
@@ -124,22 +124,22 @@ public class SamlEncoderSupportTest  extends OpenSAMLInitBaseTestCase {
         objToEncode.setValue(STRING_VALUE);
         
         try {
-            SamlEncoderSupport.encodeXmlObjectValue(null, QNAME, objToEncode);
+            SAMLEncoderSupport.encodeXMLObjectValue(null, QNAME, objToEncode);
             Assert.fail("Missed contraint");
         } catch (ConstraintViolationException ex) {
             //OK
         }
         
         try {
-            SamlEncoderSupport.encodeXmlObjectValue(ATTR, null, objToEncode);
+            SAMLEncoderSupport.encodeXMLObjectValue(ATTR, null, objToEncode);
             Assert.fail("Missed contraint");
         } catch (ConstraintViolationException ex) {
             //OK
         }
         
-        Assert.assertNull(SamlEncoderSupport.encodeXmlObjectValue(ATTR, QNAME, null));
+        Assert.assertNull(SAMLEncoderSupport.encodeXMLObjectValue(ATTR, QNAME, null));
         
-        XMLObject obj = SamlEncoderSupport.encodeXmlObjectValue(ATTR, QNAME, objToEncode);
+        XMLObject obj = SAMLEncoderSupport.encodeXMLObjectValue(ATTR, QNAME, objToEncode);
         Assert.assertEquals(obj.getElementQName().getLocalPart(), QNAME_LOCALPART);
         Assert.assertTrue(obj instanceof XSAny);
         XSAny any = (XSAny) obj;
@@ -157,29 +157,29 @@ public class SamlEncoderSupportTest  extends OpenSAMLInitBaseTestCase {
         XMLObjectProviderRegistrySupport.registerObjectProvider(ScopedValue.TYPE_NAME, new ScopedValueBuilder(), new ScopedValueMarshaller(), new ScopedValueUnmarshaller());
         
         try {
-            SamlEncoderSupport.encodeScopedStringValueAttribute(null, QNAME, SCOPEDVAL, SCOPE_ATTRIBUTE_NAME);
+            SAMLEncoderSupport.encodeScopedStringValueAttribute(null, QNAME, SCOPEDVAL, SCOPE_ATTRIBUTE_NAME);
             Assert.fail("Missed contraint");
         } catch (ConstraintViolationException ex) {
             //OK
         }
         
         try {
-            SamlEncoderSupport.encodeScopedStringValueAttribute(ATTR, null,  SCOPEDVAL, SCOPE_ATTRIBUTE_NAME);
+            SAMLEncoderSupport.encodeScopedStringValueAttribute(ATTR, null,  SCOPEDVAL, SCOPE_ATTRIBUTE_NAME);
             Assert.fail("Missed contraint");
         } catch (ConstraintViolationException ex) {
             //OK
         }
         
         try {
-            SamlEncoderSupport.encodeScopedStringValueAttribute(ATTR, QNAME, SCOPEDVAL, null);
+            SAMLEncoderSupport.encodeScopedStringValueAttribute(ATTR, QNAME, SCOPEDVAL, null);
             Assert.fail("Missed contraint");
         } catch (ConstraintViolationException ex) {
             //OK
         }
 
-        Assert.assertNull(SamlEncoderSupport.encodeScopedStringValueAttribute(ATTR, QNAME, null, SCOPE_ATTRIBUTE_NAME));
+        Assert.assertNull(SAMLEncoderSupport.encodeScopedStringValueAttribute(ATTR, QNAME, null, SCOPE_ATTRIBUTE_NAME));
         
-        XMLObject obj = SamlEncoderSupport.encodeScopedStringValueAttribute(ATTR, QNAME, SCOPEDVAL, SCOPE_ATTRIBUTE_NAME);
+        XMLObject obj = SAMLEncoderSupport.encodeScopedStringValueAttribute(ATTR, QNAME, SCOPEDVAL, SCOPE_ATTRIBUTE_NAME);
         Assert.assertEquals(obj.getElementQName().getLocalPart(), QNAME_LOCALPART);
         Assert.assertTrue(obj instanceof ScopedValue);
         ScopedValue sv = (ScopedValue) obj;
@@ -191,29 +191,29 @@ public class SamlEncoderSupportTest  extends OpenSAMLInitBaseTestCase {
     @Test public void encodeScopedStringValueInline() {
         
         try {
-            SamlEncoderSupport.encodeScopedStringValueInline(null, QNAME, SCOPEDVAL, DELIMITER);
+            SAMLEncoderSupport.encodeScopedStringValueInline(null, QNAME, SCOPEDVAL, DELIMITER);
             Assert.fail("Missed contraint");
         } catch (ConstraintViolationException ex) {
             //OK
         }
         
         try {
-            SamlEncoderSupport.encodeScopedStringValueInline(ATTR, null,  SCOPEDVAL, DELIMITER);
+            SAMLEncoderSupport.encodeScopedStringValueInline(ATTR, null,  SCOPEDVAL, DELIMITER);
             Assert.fail("Missed contraint");
         } catch (ConstraintViolationException ex) {
             //OK
         }
         
         try {
-            SamlEncoderSupport.encodeScopedStringValueInline(ATTR, QNAME, SCOPEDVAL, null);
+            SAMLEncoderSupport.encodeScopedStringValueInline(ATTR, QNAME, SCOPEDVAL, null);
             Assert.fail("Missed contraint");
         } catch (ConstraintViolationException ex) {
             //OK
         }
 
-        Assert.assertNull(SamlEncoderSupport.encodeScopedStringValueInline(ATTR, QNAME, null, DELIMITER));
+        Assert.assertNull(SAMLEncoderSupport.encodeScopedStringValueInline(ATTR, QNAME, null, DELIMITER));
         
-        XMLObject obj = SamlEncoderSupport.encodeScopedStringValueInline(ATTR, QNAME, SCOPEDVAL, DELIMITER);
+        XMLObject obj = SAMLEncoderSupport.encodeScopedStringValueInline(ATTR, QNAME, SCOPEDVAL, DELIMITER);
         Assert.assertEquals(obj.getElementQName().getLocalPart(), QNAME_LOCALPART);
         Assert.assertTrue(obj instanceof XSString);
         XSString str = (XSString) obj;

@@ -26,9 +26,9 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.mapper.impl.ByteAttributeValueMapper;
 import net.shibboleth.idp.attribute.mapper.impl.RequestedAttributeMapper;
-import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml2AttributeEncoder;
+import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML2AttributeEncoder;
 import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperFactory;
-import net.shibboleth.idp.saml.attribute.encoding.SamlEncoderSupport;
+import net.shibboleth.idp.saml.attribute.encoding.SAMLEncoderSupport;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.saml2.core.AttributeValue;
@@ -38,7 +38,7 @@ import org.opensaml.saml.saml2.metadata.RequestedAttribute;
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces SAML 2 attributes from
  * {@link IdPAttribute} that contains <code>byte[]</code> values.
  */
-public class Saml2ByteAttributeEncoder extends AbstractSaml2AttributeEncoder<ByteAttributeValue> implements
+public class Saml2ByteAttributeEncoder extends AbstractSAML2AttributeEncoder<ByteAttributeValue> implements
         AttributeMapperFactory<RequestedAttribute, IdPRequestedAttribute> {
 
     /** {@inheritDoc} */
@@ -49,7 +49,7 @@ public class Saml2ByteAttributeEncoder extends AbstractSaml2AttributeEncoder<Byt
     /** {@inheritDoc} */
     protected XMLObject encodeValue(IdPAttribute attribute, ByteAttributeValue value)
             throws AttributeEncodingException {
-        return SamlEncoderSupport.encodeByteArrayValue(attribute,
+        return SAMLEncoderSupport.encodeByteArrayValue(attribute,
                 AttributeValue.DEFAULT_ELEMENT_NAME, value.getValue());
     }
 
@@ -58,7 +58,7 @@ public class Saml2ByteAttributeEncoder extends AbstractSaml2AttributeEncoder<Byt
         final RequestedAttributeMapper val;
 
         val = new RequestedAttributeMapper();
-        val.setAttributeFormat(getNamespace());
+        val.setAttributeFormat(getNameFormat());
         val.setId(getFriendlyName());
         val.setSAMLName(getName());
         val.setValueMapper(new ByteAttributeValueMapper());

@@ -21,8 +21,8 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
-import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml1AttributeEncoder;
-import net.shibboleth.idp.saml.attribute.encoding.SamlEncoderSupport;
+import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML1AttributeEncoder;
+import net.shibboleth.idp.saml.attribute.encoding.SAMLEncoderSupport;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.saml1.core.AttributeValue;
@@ -31,7 +31,7 @@ import org.opensaml.saml.saml1.core.AttributeValue;
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces SAML 1 attributes from
  * {@link net.shibboleth.idp.attribute.IdPAttribute} that contains {@link XMLObjectAttributeValue} values.
  */
-public class Saml1XmlObjectAttributeEncoder extends AbstractSaml1AttributeEncoder<XMLObjectAttributeValue> {
+public class Saml1XmlObjectAttributeEncoder extends AbstractSAML1AttributeEncoder<XMLObjectAttributeValue> {
 
     /** {@inheritDoc} */
     protected boolean canEncodeValue(IdPAttribute attribute, IdPAttributeValue value) {
@@ -41,7 +41,7 @@ public class Saml1XmlObjectAttributeEncoder extends AbstractSaml1AttributeEncode
     /** {@inheritDoc} */
     protected XMLObject encodeValue(IdPAttribute attribute, XMLObjectAttributeValue value)
             throws AttributeEncodingException {
-        return SamlEncoderSupport.encodeXmlObjectValue(attribute,
+        return SAMLEncoderSupport.encodeXMLObjectValue(attribute,
                 AttributeValue.DEFAULT_ELEMENT_NAME, value.getValue());
     }
 }

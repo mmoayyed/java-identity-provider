@@ -27,9 +27,9 @@ import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.mapper.impl.RequestedAttributeMapper;
 import net.shibboleth.idp.attribute.mapper.impl.ScopedStringAttributeValueMapper;
-import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml2AttributeEncoder;
+import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML2AttributeEncoder;
 import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperFactory;
-import net.shibboleth.idp.saml.attribute.encoding.SamlEncoderSupport;
+import net.shibboleth.idp.saml.attribute.encoding.SAMLEncoderSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces SAML 2 attributes from
  * {@link net.shibboleth.idp.attribute.IdPAttribute} that contains scope string values.
  */
-public class Saml2ScopedStringAttributeEncoder extends AbstractSaml2AttributeEncoder<ScopedStringAttributeValue>
+public class Saml2ScopedStringAttributeEncoder extends AbstractSAML2AttributeEncoder<ScopedStringAttributeValue>
         implements
         AttributeMapperFactory<RequestedAttribute, IdPRequestedAttribute> {
 
@@ -161,10 +161,10 @@ public class Saml2ScopedStringAttributeEncoder extends AbstractSaml2AttributeEnc
             throws AttributeEncodingException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         if ("attribute".equals(getScopeType())) {
-            return SamlEncoderSupport.encodeScopedStringValueAttribute(attribute,
+            return SAMLEncoderSupport.encodeScopedStringValueAttribute(attribute,
                     AttributeValue.DEFAULT_ELEMENT_NAME, value, getScopeAttributeName());
         } else {
-            return SamlEncoderSupport.encodeScopedStringValueInline(attribute,
+            return SAMLEncoderSupport.encodeScopedStringValueInline(attribute,
                     AttributeValue.DEFAULT_ELEMENT_NAME, value, getScopeDelimiter());
         }
     }
@@ -174,7 +174,7 @@ public class Saml2ScopedStringAttributeEncoder extends AbstractSaml2AttributeEnc
         final RequestedAttributeMapper val;
 
         val = new RequestedAttributeMapper();
-        val.setAttributeFormat(getNamespace());
+        val.setAttributeFormat(getNameFormat());
         val.setId(getFriendlyName());
         val.setSAMLName(getName());
         final ScopedStringAttributeValueMapper foo = new ScopedStringAttributeValueMapper();

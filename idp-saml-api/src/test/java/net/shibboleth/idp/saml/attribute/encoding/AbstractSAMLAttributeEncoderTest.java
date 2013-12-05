@@ -22,6 +22,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -32,12 +34,12 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.impl.XSStringBuilder;
-import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml1.core.Attribute;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -48,7 +50,7 @@ import com.google.common.collect.Lists;
 /**
  *
  */
-public class AbstractSamlAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
+public class AbstractSAMLAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
     
     private XSStringBuilder theBuilder;
     private QName theQName = new QName("LocalQNAME");
@@ -63,36 +65,27 @@ public class AbstractSamlAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
     }
     
     @Test public void initializeAndSetters() throws AttributeEncodingException, ComponentInitializationException {
-        AbstractSamlAttributeEncoder encoder = new mockEncoder(theBuilder, theQName);
+        AbstractSAML1AttributeEncoder encoder = new mockEncoder(theBuilder, theQName);
         
         Assert.assertNull(encoder.getName());
         Assert.assertNull(encoder.getNamespace());
         
-        encoder.setName("");
-        Assert.assertNull(encoder.getName());
-        encoder.setNamespace(MY_NAMESPACE);
-        Assert.assertEquals(encoder.getNamespace(), MY_NAMESPACE);
+        try {
+            encoder.setName("");
+            Assert.fail();
+        } catch (ConstraintViolationException e) {
+            
+        }
         
-        try {
-            encoder.initialize();
-            Assert.fail();
-        } catch (ComponentInitializationException ex) {
-            //OK
-        }
         encoder = new mockEncoder(theBuilder, theQName);
-        encoder.setNamespace("");
-        Assert.assertNull(encoder.getNamespace());
-        encoder.setName(MY_NAME);
-        Assert.assertEquals(encoder.getName(), MY_NAME);
-
         try {
-            encoder.initialize();
+            encoder.setNamespace("");
             Assert.fail();
-        } catch (ComponentInitializationException ex) {
-            //OK
+        } catch (ConstraintViolationException e) {
+            
         }
+        
         encoder = new mockEncoder(theBuilder, theQName);
-        encoder.setNamespace("");
         encoder.setNamespace(MY_NAMESPACE);
         encoder.setName(MY_NAME);
         
@@ -121,7 +114,7 @@ public class AbstractSamlAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void encode() throws AttributeEncodingException, ComponentInitializationException {
-        AbstractSamlAttributeEncoder encoder = new mockEncoder(theBuilder, theQName);
+        AbstractSAML1AttributeEncoder encoder = new mockEncoder(theBuilder, theQName);
         encoder.setNamespace(MY_NAMESPACE);
         encoder.setName(MY_NAME);
         encoder.initialize();
@@ -189,49 +182,35 @@ public class AbstractSamlAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         enc2.setNamespace(MY_NAME);
         Assert.assertNotSame(enc1,  enc2);
         Assert.assertNotSame(enc1.hashCode(),  enc2.hashCode());        
-        
-        AbstractSamlAttributeEncoder enc3 = new AbstractSamlAttributeEncoder<SAMLObject, IdPAttributeValue>() {
-
-            public String getProtocol() {
-                return "Random Stuff";
-            }
-
-            protected boolean canEncodeValue(IdPAttribute attribute, IdPAttributeValue value) {
-                return false;
-            }
-
-            protected XMLObject encodeValue(IdPAttribute attribute, IdPAttributeValue value)
-                    throws AttributeEncodingException {
-                return null;
-            }
-
-            protected SAMLObject buildAttribute(IdPAttribute attribute, List<XMLObject> attributeValues)
-                    throws AttributeEncodingException {
-                return null;
-            }};
-            enc3.setName(MY_NAME);
-            enc3.setNamespace(MY_NAMESPACE);
-            Assert.assertNotSame(enc1,  enc3);
-            Assert.assertNotSame(enc1.hashCode(),  enc3.hashCode());        
     }
  
-    protected static class mockEncoder extends AbstractSaml1AttributeEncoder {
+    protected static class mockEncoder extends AbstractSAML1AttributeEncoder {
         
-        private final XSStringBuilder builder;
-        private final QName myQName;
-        
-        public mockEncoder(final XSStringBuilder theBuilder, final QName theQName) {
+        @Nonnull private final XSStringBuilder builder;
+        @Nonnull private final QName myQName;
+
+        /**
+         * Constructor.
+         *
+         * @param theBuilder
+         * @param theQName
+         */
+        public mockEncoder(@Nonnull final XSStringBuilder theBuilder, @Nonnull final QName theQName) {
             builder = theBuilder;
             myQName = theQName;
         }
 
         /** {@inheritDoc} */
-        protected boolean canEncodeValue(IdPAttribute attribute, IdPAttributeValue value) {
+        @Override
+        protected boolean canEncodeValue(@Nonnull final IdPAttribute attribute,
+                @Nonnull final IdPAttributeValue value) {
             return ! (value instanceof ByteAttributeValue);
         }
 
         /** {@inheritDoc} */
-        protected XMLObject encodeValue(IdPAttribute attribute, IdPAttributeValue value) throws AttributeEncodingException {
+        @Override
+        @Nullable protected XMLObject encodeValue(@Nonnull final IdPAttribute attribute,
+                @Nonnull final IdPAttributeValue value) throws AttributeEncodingException {
             if (!(value instanceof StringAttributeValue)) {
                 return null;
             }

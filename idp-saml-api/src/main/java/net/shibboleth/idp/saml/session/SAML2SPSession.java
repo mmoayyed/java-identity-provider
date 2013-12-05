@@ -87,16 +87,19 @@ public class SAML2SPSession extends BasicSPSession {
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nullable public String getSPSessionKey() {
         return nameID.getValue();
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return (getId() + '!' + nameID.getValue() + '!' + sessionIndex).hashCode();
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object obj) {
         if (!super.equals(obj)) {
             return false;
@@ -115,6 +118,7 @@ public class SAML2SPSession extends BasicSPSession {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         try {
             return Objects.toStringHelper(this)

@@ -35,9 +35,10 @@ public interface AttributeMapperFactory<S extends Attribute, I extends IdPAttrib
     /**
      * This method creates an attribute mapper to go from a SAML Attribute (or derivative) to an IdP Attribute (or
      * derivative) such that applying the output of the mapper to the encoder will produce the name attribute
-     * (and vice versa).<br/>
-     * The created mapper <em>must not</em> have any associated (IdP) Attribute names and <em>must</em> implement
-     * {@link Object#equals(Object)} and {@link Object#hashCode()}.
+     * (and vice versa).
+     * 
+     * <p>The created mapper <em>must not</em> have any associated (IdP) Attribute names and <em>must</em> implement
+     * {@link Object#equals(Object)} and {@link Object#hashCode()}.</p>
      * 
      * @return the mapper.
      */

@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml1NameIdentifierEncoder;
+import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML1NameIdentifierEncoder;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -40,7 +40,7 @@ import com.google.common.base.Objects;
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces the SAML 1 NameIdentifier used for the Subject
  * from the first non-null {@link NameIdentifier} value of an {@link net.shibboleth.idp.attribute.IdPAttribute}.
  */
-public class Saml1StringSubjectNameIdentifierEncoder extends AbstractSaml1NameIdentifierEncoder {
+public class Saml1StringSubjectNameIdentifierEncoder extends AbstractSAML1NameIdentifierEncoder {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(Saml1StringSubjectNameIdentifierEncoder.class);

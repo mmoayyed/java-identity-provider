@@ -26,9 +26,9 @@ import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.mapper.impl.RequestedAttributeMapper;
 import net.shibboleth.idp.attribute.mapper.impl.XmlObjectAttributeValueMapper;
-import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml2AttributeEncoder;
+import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML2AttributeEncoder;
 import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperFactory;
-import net.shibboleth.idp.saml.attribute.encoding.SamlEncoderSupport;
+import net.shibboleth.idp.saml.attribute.encoding.SAMLEncoderSupport;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.saml2.core.AttributeValue;
@@ -38,7 +38,7 @@ import org.opensaml.saml.saml2.metadata.RequestedAttribute;
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces SAML 2 attributes from
  * {@link IdPAttribute} that contains {@link XMLObject} values.
  */
-public class Saml2XmlObjectAttributeEncoder extends AbstractSaml2AttributeEncoder<XMLObjectAttributeValue> implements
+public class Saml2XmlObjectAttributeEncoder extends AbstractSAML2AttributeEncoder<XMLObjectAttributeValue> implements
         AttributeMapperFactory<RequestedAttribute, IdPRequestedAttribute> {
 
     /** {@inheritDoc} */
@@ -49,7 +49,7 @@ public class Saml2XmlObjectAttributeEncoder extends AbstractSaml2AttributeEncode
     /** {@inheritDoc} */
     protected XMLObject encodeValue(IdPAttribute attribute, XMLObjectAttributeValue value)
             throws AttributeEncodingException {
-        return SamlEncoderSupport.encodeXmlObjectValue(attribute,
+        return SAMLEncoderSupport.encodeXMLObjectValue(attribute,
                 AttributeValue.DEFAULT_ELEMENT_NAME, value.getValue());
     }
 
@@ -58,7 +58,7 @@ public class Saml2XmlObjectAttributeEncoder extends AbstractSaml2AttributeEncode
         final RequestedAttributeMapper val;
 
         val = new RequestedAttributeMapper();
-        val.setAttributeFormat(getNamespace());
+        val.setAttributeFormat(getNameFormat());
         val.setId(getFriendlyName());
         val.setSAMLName(getName());
         val.setValueMapper(new XmlObjectAttributeValueMapper());

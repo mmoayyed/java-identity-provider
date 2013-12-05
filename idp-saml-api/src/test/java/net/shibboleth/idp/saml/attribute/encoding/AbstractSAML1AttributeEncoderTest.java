@@ -40,9 +40,9 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Lists;
 
 /**
- * test for {@link AbstractSaml1AttributeEncoder
+ * Test for {@link AbstractSAML1AttributeEncoder}.
  */
-public class AbstractSaml1AttributeEncoderTest extends OpenSAMLInitBaseTestCase {
+public class AbstractSAML1AttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
     private XSStringBuilder theBuilder;
 
@@ -62,8 +62,8 @@ public class AbstractSaml1AttributeEncoderTest extends OpenSAMLInitBaseTestCase 
         theBuilder = new XSStringBuilder();
     }
 
-    @Test public void abstractSaml1AttributeEncoder() throws ComponentInitializationException, AttributeEncodingException {
-        AbstractSaml1AttributeEncoder encoder = new AbstractSamlAttributeEncoderTest.mockEncoder(theBuilder, theQName);
+    @Test public void abstractSAML1AttributeEncoder() throws ComponentInitializationException, AttributeEncodingException {
+        AbstractSAML1AttributeEncoder encoder = new AbstractSAMLAttributeEncoderTest.mockEncoder(theBuilder, theQName);
         encoder.setName(MY_NAME);
         encoder.setNamespace(MY_NAMESPACE);
         encoder.initialize();

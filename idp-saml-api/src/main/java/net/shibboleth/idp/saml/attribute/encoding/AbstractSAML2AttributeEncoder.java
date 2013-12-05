@@ -25,8 +25,10 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.core.xml.XMLObject;
@@ -35,27 +37,33 @@ import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.Attribute;
 
+import com.google.common.base.Objects;
+
 /**
  * Base class for encoders that produce a SAML 2 {@link Attribute}.
  * 
  * @param <EncodedType> the type of data that can be encoded by the encoder
  */
-public abstract class AbstractSaml2AttributeEncoder<EncodedType extends IdPAttributeValue> extends
-        AbstractSamlAttributeEncoder<Attribute, EncodedType> {
+public abstract class AbstractSAML2AttributeEncoder<EncodedType extends IdPAttributeValue> extends
+        AbstractSAMLAttributeEncoder<Attribute, EncodedType> {
 
     /** Builder used to construct {@link Attribute} objects. */
-    private final SAMLObjectBuilder<Attribute> attributeBuilder;
+    @Nonnull private final SAMLObjectBuilder<Attribute> attributeBuilder;
 
     /** A friendly, human readable, name for the attribute. */
-    private String friendlyName;
+    @Nullable private String friendlyName;
+
+    /** The format of the attribute name. */
+    @Nullable private String format;
 
     /** Constructor. */
-    public AbstractSaml2AttributeEncoder() {
-        super();
-
+    public AbstractSAML2AttributeEncoder() {
         attributeBuilder =
                 (SAMLObjectBuilder<Attribute>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
                         Attribute.TYPE_NAME);
+        if (attributeBuilder == null) {
+            throw new ConstraintViolationException("SAML 2 Attribute builder is unavailable");
+        }
     }
 
     /** {@inheritDoc} */
@@ -64,7 +72,7 @@ public abstract class AbstractSaml2AttributeEncoder<EncodedType extends IdPAttri
     }
 
     /**
-     * Gets the friendly, human readable, name for the attribute.
+     * Get the friendly, human readable, name for the attribute.
      * 
      * @return friendly, human readable, name for the attribute
      */
@@ -73,39 +81,79 @@ public abstract class AbstractSaml2AttributeEncoder<EncodedType extends IdPAttri
     }
 
     /**
-     * Sets the friendly, human readable, name for the attribute.
+     * Set the friendly, human readable, name for the attribute.
      * 
      * @param attributeFriendlyName friendly, human readable, name for the attribute
      */
-    public final synchronized void setFriendlyName(@Nullable final String attributeFriendlyName) {
+    public synchronized void setFriendlyName(@Nullable final String attributeFriendlyName) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         friendlyName = StringSupport.trimOrNull(attributeFriendlyName);
+    }
+
+    /**
+     * Get the format of the attribute name.
+     * 
+     * @return format of the attribute name
+     */
+    @Nullable public String getNameFormat() {
+        return format;
     }
     
     /**
-     * Ensures that the friendly is not null.
+     * Get the name format, or the SAML constants for "unspecified", if not set.
      * 
-     * {@inheritDoc}
+     * @return the effective name format regardless of nulls
      */
-    protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-
-        if (friendlyName == null) {
-            throw new ComponentInitializationException("Friendly name can not be null or empty");
-        }
+    @Nonnull @NotEmpty public String getEffectiveNameFormat() {
+        return format != null ? format : Attribute.UNSPECIFIED;
     }
-
-
+    
+    /**
+     * Set the format of the attribute name.
+     * 
+     * @param nameFormat format in which the attribute name is interpreted
+     */
+    public synchronized void setNameFormat(@Nullable final String nameFormat) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        format = StringSupport.trimOrNull(nameFormat);
+    }
+    
     /** {@inheritDoc} */
-    @Nonnull protected Attribute buildAttribute(final IdPAttribute idpAttribute,
-            final List<XMLObject> attributeValues) throws AttributeEncodingException {
+    @Override
+    @Nonnull protected Attribute buildAttribute(@Nonnull final IdPAttribute idpAttribute,
+            @Nonnull @NonnullElements final List<XMLObject> attributeValues) throws AttributeEncodingException {
 
         final Attribute samlAttribute = attributeBuilder.buildObject();
         samlAttribute.setName(getName());
         samlAttribute.setFriendlyName(getFriendlyName());
-        samlAttribute.setNameFormat(getNamespace());
+        samlAttribute.setNameFormat(getNameFormat());
         samlAttribute.getAttributeValues().addAll(attributeValues);
 
         return samlAttribute;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(Object obj) {
+
+        if (!super.equals(obj)) {
+            return false;
+        }
+        
+        if (!(obj instanceof AbstractSAML2AttributeEncoder)) {
+            return false;
+        }
+
+        AbstractSAML2AttributeEncoder other = (AbstractSAML2AttributeEncoder) obj;
+
+        return Objects.equal(getEffectiveNameFormat(), other.getEffectiveNameFormat());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(super.hashCode(), getEffectiveNameFormat());
     }
 }

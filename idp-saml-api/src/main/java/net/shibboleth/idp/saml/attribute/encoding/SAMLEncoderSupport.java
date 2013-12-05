@@ -39,20 +39,20 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 
 /** Support class for encoding IdP Attributes and their value. */
-public final class SamlEncoderSupport {
+public final class SAMLEncoderSupport {
 
     /** Class logger. */
-    private static final Logger LOG = LoggerFactory.getLogger(SamlEncoderSupport.class);
+    @Nonnull private static final Logger LOG = LoggerFactory.getLogger(SAMLEncoderSupport.class);
 
     /** Constructor. */
-    private SamlEncoderSupport() {
+    private SAMLEncoderSupport() {
 
     }
 
     /**
-     * Encodes a String value in to an {@link XSString} SAML attribute value element.
+     * Encodes a String value into an {@link XSString} SAML attribute value element.
      * 
-     * @param attribute attribute to be encoded, never null
+     * @param attribute attribute to be encoded
      * @param attributeValueElementName the SAML 1 or SAML 1 attribute name
      * @param value value to encoded
      * 
@@ -61,8 +61,8 @@ public final class SamlEncoderSupport {
     @Nullable public static XMLObject encodeStringValue(@Nonnull final IdPAttribute attribute,
             @Nonnull final QName attributeValueElementName, @Nullable final String value) {
 
-        Constraint.isNotNull(attribute, "Attribute can not be null");
-        Constraint.isNotNull(attributeValueElementName, "Attribute Element Name resolution context can not be null");
+        Constraint.isNotNull(attribute, "Attribute cannot be null");
+        Constraint.isNotNull(attributeValueElementName, "Attribute Element Name cannot be null");
 
         if (Strings.isNullOrEmpty(value)) {
             LOG.debug("Skipping empty value for attribute {}", attribute.getId());
@@ -81,7 +81,7 @@ public final class SamlEncoderSupport {
     /**
      * Base64 encodes a <code>byte[]</code> in to an {@link XSString} SAML attribute value element.
      * 
-     * @param attribute attribute to be encoded, never null
+     * @param attribute attribute to be encoded
      * @param attributeValueElementName the SAML 1 or SAML 1 attribute name
      * @param value value to encoded
      * 
@@ -93,8 +93,8 @@ public final class SamlEncoderSupport {
             LOG.debug("Skipping empty value for attribute {}", attribute.getId());
             return null;
         }
-        Constraint.isNotNull(attribute, "Attribute can not be null");
-        Constraint.isNotNull(attributeValueElementName, "Attribute Element Name resolution context can not be null");
+        Constraint.isNotNull(attribute, "Attribute cannot be null");
+        Constraint.isNotNull(attributeValueElementName, "Attribute Element Name cannot be null");
 
         final XMLObjectBuilder<XSString> stringBuilder = (XMLObjectBuilder<XSString>)
                 XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
@@ -108,20 +108,20 @@ public final class SamlEncoderSupport {
     /**
      * Encodes an {@link XMLObject} value in to a {@link XSAny} SAML attribute value.
      * 
-     * @param attribute attribute to be encoded, never null
+     * @param attribute attribute to be encoded
      * @param attributeValueElementName the SAML 1 or SAML 1 attribute name
      * @param value value to encoded
      * 
      * @return the attribute value element or null if the given value was null or empty
      */
-    @Nullable public static XMLObject encodeXmlObjectValue(@Nonnull final IdPAttribute attribute,
+    @Nullable public static XMLObject encodeXMLObjectValue(@Nonnull final IdPAttribute attribute,
             @Nonnull final QName attributeValueElementName, @Nullable final XMLObject value) {
         if (value == null) {
             LOG.debug("Skipping empty value for attribute {}", attribute.getId());
             return null;
         }
-        Constraint.isNotNull(attribute, "Attribute can not be null");
-        Constraint.isNotNull(attributeValueElementName, "Attribute Element Name resolution context can not be null");
+        Constraint.isNotNull(attribute, "Attribute cannot be null");
+        Constraint.isNotNull(attributeValueElementName, "Attribute Element Name cannot be null");
 
         final XMLObjectBuilder<XSAny> attributeValueBuilder = (XMLObjectBuilder<XSAny>)
                 XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(XSAny.TYPE_NAME);
@@ -133,9 +133,9 @@ public final class SamlEncoderSupport {
 
     /**
      * Encode a {@link ScopedStringAttributeValue} value in to an SAML attribute value element using the "attribute"
-     * (Shibboleth) sytnax.
+     * (older Shibboleth) sytnax.
      * 
-     * @param attribute attribute to be encoded, never null
+     * @param attribute attribute to be encoded
      * @param attributeValueElementName the SAML 1 or SAML 1 attribute name
      * @param value value to encoded
      * @param scopeAttributeName the name that the attribute will be given
@@ -146,9 +146,9 @@ public final class SamlEncoderSupport {
             @Nonnull @NotEmpty final String scopeAttributeName) {
 
 
-        Constraint.isNotNull(attribute, "Attribute can not be null");
-        Constraint.isNotNull(attributeValueElementName, "Attribute Element Name resolution context can not be null");
-        Constraint.isNotNull(scopeAttributeName, "Scope Attribute Name can not be null");
+        Constraint.isNotNull(attribute, "Attribute cannot be null");
+        Constraint.isNotNull(attributeValueElementName, "Attribute Element Name cannot be null");
+        Constraint.isNotNull(scopeAttributeName, "Scope Attribute Name cannot be null");
 
         if (null == value || Strings.isNullOrEmpty(value.getScope()) || Strings.isNullOrEmpty(value.getValue())) {
             LOG.debug("Skipping empty value (or contents) for attribute {}", attribute.getId());
@@ -170,7 +170,7 @@ public final class SamlEncoderSupport {
      * Encode a {@link ScopedStringAttributeValue} value in to an {@link XSString} SAML attribute value element using
      * the "inline" syntax.
      * 
-     * @param attribute attribute to be encoded, never null
+     * @param attribute attribute to be encoded
      * @param attributeValueElementName the SAML 1 or SAML 1 attribute name
      * @param value value to encoded
      * @param scopeDelimiter the delimiter to put between the value and the scope
@@ -180,9 +180,9 @@ public final class SamlEncoderSupport {
             @Nonnull final QName attributeValueElementName, @Nullable final ScopedStringAttributeValue value,
             @Nonnull String scopeDelimiter) {
 
-        Constraint.isNotNull(attribute, "Attribute can not be null");
-        Constraint.isNotNull(attributeValueElementName, "Attribute Element Name resolution context can not be null");
-        Constraint.isNotNull(scopeDelimiter, "Scope delimiter can not be null");
+        Constraint.isNotNull(attribute, "Attribute cannot be null");
+        Constraint.isNotNull(attributeValueElementName, "Attribute Element Name cannot be null");
+        Constraint.isNotNull(scopeDelimiter, "Scope delimiter cannot be null");
 
         if (null == value || Strings.isNullOrEmpty(value.getScope()) || Strings.isNullOrEmpty(value.getValue())) {
             LOG.debug("Skipping empty value (or contents) for attribute {}", attribute.getId());

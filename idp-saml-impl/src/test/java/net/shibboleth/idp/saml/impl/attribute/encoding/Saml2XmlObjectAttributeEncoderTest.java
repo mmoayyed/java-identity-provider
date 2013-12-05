@@ -63,7 +63,7 @@ public class Saml2XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
     @BeforeClass public void initTest() throws ComponentInitializationException {
         encoder = new Saml2XmlObjectAttributeEncoder();
         encoder.setName(ATTR_NAME);
-        encoder.setNamespace("NameSpace");
+        encoder.setNameFormat("NameSpace");
         encoder.setFriendlyName("friendly");
         encoder.initialize();
 

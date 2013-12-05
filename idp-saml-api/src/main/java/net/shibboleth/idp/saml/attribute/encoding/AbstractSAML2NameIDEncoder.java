@@ -17,26 +17,19 @@
 
 package net.shibboleth.idp.saml.attribute.encoding;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.AttributeEncodingException;
+import javax.annotation.Nonnull;
 
-import org.opensaml.saml.saml1.core.NameIdentifier;
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import net.shibboleth.idp.saml.nameid.NameIdentifierAttributeEncoder;
 
-/**
- * test for {@link AbstractSaml1NameIdentifierEncoder}
- */
-public class AbstractSaml1NameIdentifierEncoderTest {
+import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.saml2.core.NameID;
 
-    @Test public void abstractSaml1NameIdentifierEncoder() {
-        
-        AbstractSaml1NameIdentifierEncoder encoder = new AbstractSaml1NameIdentifierEncoder() {
-            public NameIdentifier encode(IdPAttribute attribute) throws AttributeEncodingException {
-                return null;
-            }
-        };
-        // Again, use constants
-        Assert.assertEquals(encoder.getProtocol(), "urn:oasis:names:tc:SAML:1.1:protocol");
+/** Base class for attribute encoders that produce a SAML 2 {@link NameID}. */
+public abstract class AbstractSAML2NameIDEncoder implements NameIdentifierAttributeEncoder<NameID> {
+
+    /** {@inheritDoc} */
+    @Nonnull public final String getProtocol() {
+        return SAMLConstants.SAML20P_NS;
     }
+    
 }

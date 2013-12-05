@@ -15,18 +15,19 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.attribute.encoding;
+package net.shibboleth.idp.saml.nameid;
 
-import javax.annotation.Nonnull;
+import org.opensaml.saml.common.SAMLObject;
 
-import org.opensaml.saml.common.xml.SAMLConstants;
-import org.opensaml.saml.saml2.core.NameID;
+import net.shibboleth.idp.attribute.AttributeEncoder;
 
-/** Base class for attribute encoders that produce a SAML 2 {@link NameID}. */
-public abstract class AbstractSaml2NameIDEncoder extends AbstractSamlNameIdentifierEncoder<NameID> {
+/**
+ * Marker interface for {@link AttributeEncoder} that prooduces SAML name identifiers
+ * instead of attributes.
+ * 
+ * @param <NameIdType>  type of object produced
+ */
+public interface NameIdentifierAttributeEncoder<NameIdType extends SAMLObject>
+    extends AttributeEncoder<NameIdType> {
 
-    /** {@inheritDoc} */
-    @Nonnull public final String getProtocol() {
-        return SAMLConstants.SAML20P_NS;
-    }
 }

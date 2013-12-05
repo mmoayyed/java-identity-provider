@@ -20,7 +20,6 @@ package net.shibboleth.idp.saml.nameid;
 import java.util.Collections;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.saml.attribute.encoding.AbstractSamlNameIdentifierEncoder;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.Resolver;
@@ -34,16 +33,16 @@ import net.shibboleth.utilities.java.support.resolver.ResolverException;
  */
 //TODO Is this used ?  Or is it a nascent but unimplemented idea from long, long ago?
 public class NameIdentifierAttributeResolver implements
-        Resolver<Pair<IdPAttribute, AbstractSamlNameIdentifierEncoder>, CriteriaSet> {
+        Resolver<Pair<IdPAttribute, NameIdentifierAttributeEncoder>, CriteriaSet> {
 
     /** {@inheritDoc} */
-    public Iterable<Pair<IdPAttribute, AbstractSamlNameIdentifierEncoder>> resolve(CriteriaSet criteria)
+    public Iterable<Pair<IdPAttribute, NameIdentifierAttributeEncoder>> resolve(CriteriaSet criteria)
             throws ResolverException {
         return Collections.singleton(resolveSingle(criteria));
     }
 
     /** {@inheritDoc} */
-    public Pair<IdPAttribute, AbstractSamlNameIdentifierEncoder> resolveSingle(CriteriaSet criteria)
+    public Pair<IdPAttribute, NameIdentifierAttributeEncoder> resolveSingle(CriteriaSet criteria)
             throws ResolverException {
         // TODO Auto-generated method stub
         return null;

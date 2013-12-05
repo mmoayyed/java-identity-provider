@@ -47,9 +47,9 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Lists;
 
 /**
- * test for {@link AbstractSaml2AttributeEncoder
+ * Test for {@link AbstractSAML2AttributeEncoder}.
  */
-public class AbstractSaml2AttributeEncoderTest extends OpenSAMLInitBaseTestCase {
+public class AbstractSAML2AttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
     private XSStringBuilder theBuilder;
 
@@ -71,11 +71,11 @@ public class AbstractSaml2AttributeEncoderTest extends OpenSAMLInitBaseTestCase 
         theBuilder = new XSStringBuilder();
     }
 
-    @Test public void abstractSaml2AttributeEncoder() throws ComponentInitializationException, AttributeEncodingException {
-        AbstractSaml2AttributeEncoder encoder = new mockEncoder();
+    @Test public void abstractSAML2AttributeEncoder() throws ComponentInitializationException, AttributeEncodingException {
+        AbstractSAML2AttributeEncoder encoder = new mockEncoder();
         
         encoder.setName(MY_NAME);
-        encoder.setNamespace(MY_NAMESPACE);
+        encoder.setNameFormat(MY_NAMESPACE);
         encoder.setFriendlyName(FRIENDLY_NAME);
         encoder.initialize();
         // Use literal here to catch things being edited by mistake
@@ -103,32 +103,17 @@ public class AbstractSaml2AttributeEncoderTest extends OpenSAMLInitBaseTestCase 
     }
     
     @Test public void friendlyName() throws ComponentInitializationException {
-        AbstractSaml2AttributeEncoder encoder = new mockEncoder();
+        AbstractSAML2AttributeEncoder encoder = new mockEncoder();
         Assert.assertNull(encoder.getFriendlyName());
         encoder.setName(MY_NAME);
-        encoder.setNamespace(MY_NAMESPACE);
-        try {
-            encoder.initialize();
-            Assert.fail();
-        } catch (ComponentInitializationException ex) {
-            //OK
-        }
-        // test that the parent init tests are running
+        encoder.setNameFormat(MY_NAMESPACE);
+        encoder.initialize();
+        
         encoder = new mockEncoder();
         Assert.assertNull(encoder.getFriendlyName());
         encoder.setName(MY_NAME);
         encoder.setFriendlyName(FRIENDLY_NAME);
-        try {
-            encoder.initialize();
-            Assert.fail();
-        } catch (ComponentInitializationException ex) {
-            //OK
-        }
-        encoder = new mockEncoder();
-        Assert.assertNull(encoder.getFriendlyName());
-        encoder.setName(MY_NAME);
-        encoder.setFriendlyName(FRIENDLY_NAME);
-        encoder.setNamespace(MY_NAMESPACE);
+        encoder.setNameFormat(MY_NAMESPACE);
         Assert.assertEquals(encoder.getFriendlyName(), FRIENDLY_NAME);
         encoder.initialize();
         Assert.assertEquals(encoder.getFriendlyName(), FRIENDLY_NAME);
@@ -140,7 +125,7 @@ public class AbstractSaml2AttributeEncoderTest extends OpenSAMLInitBaseTestCase 
         }
     }
     
-    protected class mockEncoder extends AbstractSaml2AttributeEncoder {
+    protected class mockEncoder extends AbstractSAML2AttributeEncoder {
         
         /** {@inheritDoc} */
         protected boolean canEncodeValue(IdPAttribute attribute, IdPAttributeValue value) {

@@ -17,16 +17,15 @@
 
 package net.shibboleth.idp.saml.authn.context;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import net.shibboleth.idp.authn.context.AuthenticationContext;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.saml.saml2.core.Assertion;
 
 /**
- * Context, usually attached to {@link AuthenticationContext}, that carries a SAML {@link Assertion} to be
- * validated.
+ * Context, usually attached to {@link net.shibboleth.idp.authn.context.AuthenticationContext},
+ * that carries a SAML {@link Assertion} to be validated.
  */
 public class SAMLContext extends BaseContext {
 
@@ -49,7 +48,7 @@ public class SAMLContext extends BaseContext {
      * 
      * @return this context
      */
-    public SAMLContext setAssertion(@Nullable final Assertion newAssertion) {
+    @Nonnull public SAMLContext setAssertion(@Nullable final Assertion newAssertion) {
         assertion = newAssertion;
         return this;
     }

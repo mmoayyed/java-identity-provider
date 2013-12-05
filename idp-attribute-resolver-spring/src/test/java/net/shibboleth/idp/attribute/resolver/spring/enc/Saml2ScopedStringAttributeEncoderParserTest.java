@@ -35,7 +35,7 @@ public class Saml2ScopedStringAttributeEncoderParserTest extends BaseAttributeDe
 
         Assert.assertEquals(encoder.getName(), "ATTRIBUTE_NAME");
         Assert.assertEquals(encoder.getFriendlyName(),"ATTRIBUTE_FRIENDLY_NAME"); 
-        Assert.assertEquals(encoder.getNamespace(),"ATTRIBUTE_NAME_FORMAT");
+        Assert.assertEquals(encoder.getNameFormat(),"ATTRIBUTE_NAME_FORMAT");
         Assert.assertEquals(encoder.getScopeType(),"attribute");
         Assert.assertEquals(encoder.getScopeAttributeName(),"scopeAttrib");
         Assert.assertEquals(encoder.getScopeDelimiter(),"###");
@@ -47,7 +47,7 @@ public class Saml2ScopedStringAttributeEncoderParserTest extends BaseAttributeDe
 
         Assert.assertEquals(encoder.getName(), "name");
         Assert.assertNull(encoder.getFriendlyName()); 
-        Assert.assertEquals(encoder.getNamespace(),"urn:oasis:names:tc:SAML:2.0:attrname-format:uri");
+        Assert.assertEquals(encoder.getNameFormat(),"urn:oasis:names:tc:SAML:2.0:attrname-format:uri");
         Assert.assertEquals(encoder.getScopeType(),"inline");
         Assert.assertEquals(encoder.getScopeDelimiter(),"@");
         Assert.assertEquals(encoder.getScopeAttributeName(),"Scope");

@@ -37,7 +37,7 @@ import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
-import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml1AttributeEncoder;
+import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML1AttributeEncoder;
 import net.shibboleth.idp.saml.profile.SamlEventIds;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -301,7 +301,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
 
         for (AttributeEncoder<?> encoder : encoders) {
             if (SAMLConstants.SAML11P_NS.equals(encoder.getProtocol())
-                    && encoder instanceof AbstractSaml1AttributeEncoder) {
+                    && encoder instanceof AbstractSAML1AttributeEncoder) {
                 log.debug("Action {}: Encoding attribute {} as a SAML 1 Attribute", getId(), attribute.getId());
                 try {
                     return (Attribute) encoder.encode(attribute);

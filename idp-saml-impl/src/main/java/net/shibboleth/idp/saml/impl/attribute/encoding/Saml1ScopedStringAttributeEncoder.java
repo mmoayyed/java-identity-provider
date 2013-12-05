@@ -23,8 +23,8 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
-import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml1AttributeEncoder;
-import net.shibboleth.idp.saml.attribute.encoding.SamlEncoderSupport;
+import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML1AttributeEncoder;
+import net.shibboleth.idp.saml.attribute.encoding.SAMLEncoderSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces SAML 1 attributes from
  * {@link net.shibboleth.idp.attribute.IdPAttribute} that contains scope string values.
  */
-public class Saml1ScopedStringAttributeEncoder extends AbstractSaml1AttributeEncoder<ScopedStringAttributeValue> {
+public class Saml1ScopedStringAttributeEncoder extends AbstractSAML1AttributeEncoder<ScopedStringAttributeValue> {
 
     /** The log. */
     private final Logger log = LoggerFactory.getLogger(Saml1ScopedStringAttributeEncoder.class);
@@ -153,10 +153,10 @@ public class Saml1ScopedStringAttributeEncoder extends AbstractSaml1AttributeEnc
             throws AttributeEncodingException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         if ("attribute".equals(getScopeType())) {
-            return SamlEncoderSupport.encodeScopedStringValueAttribute(attribute,
+            return SAMLEncoderSupport.encodeScopedStringValueAttribute(attribute,
                     AttributeValue.DEFAULT_ELEMENT_NAME, value, getScopeAttributeName());
         } else {
-            return SamlEncoderSupport.encodeScopedStringValueInline(attribute,
+            return SAMLEncoderSupport.encodeScopedStringValueInline(attribute,
                     AttributeValue.DEFAULT_ELEMENT_NAME, value, getScopeDelimiter());
         }
     }

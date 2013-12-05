@@ -15,18 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.attribute.encoding;
-
-import net.shibboleth.idp.attribute.AttributeEncoder;
-
-import org.opensaml.saml.common.SAMLObject;
-
 /**
- * Base class for attribute encoders that produce SAML name identifiers.
- * 
- * @param <NameIdType> type of name identifier produced by this encoder
+ * Classes related to SAML security extensions.
  */
-public abstract class AbstractSamlNameIdentifierEncoder<NameIdType extends SAMLObject> implements
-        AttributeEncoder<NameIdType> {
-
-}
+package net.shibboleth.idp.saml.security;

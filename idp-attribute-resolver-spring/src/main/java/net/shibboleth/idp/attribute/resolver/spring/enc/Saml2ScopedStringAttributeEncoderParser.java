@@ -60,11 +60,11 @@ public class Saml2ScopedStringAttributeEncoderParser extends
             builder.addPropertyValue("scopeType", "inline");
         }
 
-        String namespace = "urn:oasis:names:tc:SAML:2.0:attrname-format:uri";
+        String nameFormat = "urn:oasis:names:tc:SAML:2.0:attrname-format:uri";
         if (config.hasAttributeNS(null, "nameFormat")) {
-            namespace = StringSupport.trimOrNull(config.getAttributeNS(null, "nameFormat"));
+            nameFormat = StringSupport.trimOrNull(config.getAttributeNS(null, "nameFormat"));
         }
-        builder.addPropertyValue("namespace", namespace);
+        builder.addPropertyValue("nameFormat", nameFormat);
 
         builder.addPropertyValue("friendlyName", config.getAttribute(FRIENDLY_NAME_ATTRIBUTE_NAME));
 

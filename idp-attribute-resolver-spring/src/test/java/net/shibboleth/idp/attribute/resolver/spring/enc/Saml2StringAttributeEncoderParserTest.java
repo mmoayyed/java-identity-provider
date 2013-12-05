@@ -35,7 +35,7 @@ public class Saml2StringAttributeEncoderParserTest extends BaseAttributeDefiniti
 
         Assert.assertEquals(encoder.getName(), "Saml2String_ATTRIBUTE_NAME");
         Assert.assertEquals(encoder.getFriendlyName(),"Saml2String_ATTRIBUTE_FRIENDLY_NAME"); 
-        Assert.assertEquals(encoder.getNamespace(),"Saml2String_ATTRIBUTE_NAME_FORMAT");
+        Assert.assertEquals(encoder.getNameFormat(),"Saml2String_ATTRIBUTE_NAME_FORMAT");
     }
     
     @Test public void defaultCase() {
@@ -44,7 +44,7 @@ public class Saml2StringAttributeEncoderParserTest extends BaseAttributeDefiniti
 
         Assert.assertEquals(encoder.getName(), "Saml2StringName");
         Assert.assertNull(encoder.getFriendlyName()); 
-        Assert.assertEquals(encoder.getNamespace(),"urn:oasis:names:tc:SAML:2.0:attrname-format:uri");
+        Assert.assertEquals(encoder.getNameFormat(),"urn:oasis:names:tc:SAML:2.0:attrname-format:uri");
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {

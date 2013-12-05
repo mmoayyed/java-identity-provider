@@ -33,7 +33,7 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
-import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml2AttributeEncoder;
+import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML2AttributeEncoder;
 import net.shibboleth.idp.saml.profile.SamlEventIds;
 import net.shibboleth.idp.saml.profile.saml2.Saml2ActionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -267,7 +267,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
 
         for (AttributeEncoder<?> encoder : encoders) {
             if (SAMLConstants.SAML20P_NS.equals(encoder.getProtocol())
-                    && encoder instanceof AbstractSaml2AttributeEncoder) {
+                    && encoder instanceof AbstractSAML2AttributeEncoder) {
                 log.debug("Action {}: Encoding attribute {} as a SAML 2 Attribute", getId(), attribute.getId());
                 try {
                     return (Attribute) encoder.encode(attribute);

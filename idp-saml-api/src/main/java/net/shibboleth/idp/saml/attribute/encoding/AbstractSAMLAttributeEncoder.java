@@ -27,7 +27,9 @@ import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -48,79 +50,52 @@ import com.google.common.base.Objects;
  * @param <AttributeType> type of attribute produced
  * @param <EncodedType> the type of data that can be encoded by the encoder
  */
-// TODO display name and description
-public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObject, 
+
+public abstract class AbstractSAMLAttributeEncoder<AttributeType extends SAMLObject,
                                                    EncodedType extends IdPAttributeValue>
         extends AbstractInitializableComponent implements AttributeEncoder<AttributeType>, UnmodifiableComponent {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AbstractSamlAttributeEncoder.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractSAMLAttributeEncoder.class);
 
     /** The name of the attribute. */
-    private String name;
-
-    /** The namespace in which the attribute name is interpreted. */
-    private String namespace;
+    @NonnullAfterInit private String name;
 
     /**
-     * Gets the name of the attribute.
+     * Get the name of the attribute.
      * 
-     * @return name of the attribute, never null after initialization
+     * @return name of the attribute
      */
-    @Nullable public final String getName() {
+    @NonnullAfterInit public final String getName() {
         return name;
     }
 
     /**
-     * Sets the name of the attribute.
+     * Set the name of the attribute.
      * 
      * @param attributeName name of the attribute
      */
-    public final synchronized void setName(@Nullable final String attributeName) {
+    public synchronized void setName(@Nonnull @NotEmpty final String attributeName) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        name = StringSupport.trimOrNull(attributeName);
+        
+        name = Constraint.isNotNull(StringSupport.trimOrNull(attributeName),
+                "Attribute name cannot be null or empty");
     }
 
-    /**
-     * Gets the namespace in which the attribute name is interpreted.
-     * 
-     * @return namespace in which the attribute name is interpreted, never null after initialization
-     */
-    @Nullable public final String getNamespace() {
-        return namespace;
-    }
-
-    /**
-     * Sets the namespace in which the attribute name is interpreted.
-     * 
-     * @param attributeNamespace namespace in which the attribute name is interpreted
-     */
-    public final synchronized void setNamespace(@Nullable final String attributeNamespace) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        namespace = StringSupport.trimOrNull(attributeNamespace);
-    }
-
-    /**
-     * Ensures that the attribute name and namespace are not null.
-     * 
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         if (name == null) {
-            throw new ComponentInitializationException("Attribute name can not be null or empty");
-        }
-
-        if (namespace == null) {
-            throw new ComponentInitializationException("Attribute namespace can not be null or empty");
+            throw new ComponentInitializationException("Attribute name cannot be null or empty");
         }
     }
 
     /** {@inheritDoc} */
     @Nonnull public AttributeType encode(@Nonnull final IdPAttribute attribute) throws AttributeEncodingException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        Constraint.isNotNull(attribute, "attribute passed in to encode must not be null");
+        Constraint.isNotNull(attribute, "Attribute to encode cannot be null");
         final String attributeId = attribute.getId();
         log.debug("Beginning to encode attribute {}", attributeId);
 
@@ -129,7 +104,7 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
                     + " attribute.  It does not contain any values");
         }
 
-        final List<XMLObject> samlAttributeValues = new ArrayList<XMLObject>();
+        final List<XMLObject> samlAttributeValues = new ArrayList<>();
 
         EncodedType attributeValue;
         XMLObject samlAttributeValue;
@@ -141,8 +116,8 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
             }
 
             if (!canEncodeValue(attribute, o)) {
-                log.debug("Skipping value of attribute {}; Type {} can not be encoded by this encoder.", attributeId, o
-                        .getClass().getName());
+                log.debug("Skipping value of attribute {}; Type {} cannot be encoded by this encoder.", attributeId,
+                        o.getClass().getName());
                 continue;
             }
 
@@ -165,6 +140,7 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -174,19 +150,19 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
             return true;
         }
 
-        if (!(obj instanceof AbstractSamlAttributeEncoder)) {
+        if (!(obj instanceof AbstractSAMLAttributeEncoder)) {
             return false;
         }
 
-        AbstractSamlAttributeEncoder other = (AbstractSamlAttributeEncoder) obj;
+        AbstractSAMLAttributeEncoder other = (AbstractSAMLAttributeEncoder) obj;
 
-        return Objects.equal(getName(), other.getName()) && Objects.equal(getNamespace(), other.getNamespace())
-                && Objects.equal(getProtocol(), other.getProtocol());
+        return Objects.equal(getName(), other.getName()) && Objects.equal(getProtocol(), other.getProtocol());
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
-        return Objects.hashCode(getName(), getNamespace(), getProtocol());
+        return Objects.hashCode(getName(), getProtocol());
     }
 
     /**
