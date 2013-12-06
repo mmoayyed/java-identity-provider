@@ -40,6 +40,11 @@ public class SAML1ScopedStringAttributeEncoderParser extends
     /** Local name of namespace attribute. */
     public static final String NAMESPACE_ATTRIBUTE_NAME = "namespace";
 
+    /** Constructor. */
+    public SAML1ScopedStringAttributeEncoderParser() {
+        setNameRequired(true);
+    }
+    
     /** {@inheritDoc} */
     protected Class<SAML1ScopedStringAttributeEncoder> getBeanClass(@Nullable Element element) {
         return SAML1ScopedStringAttributeEncoder.class;

@@ -41,9 +41,9 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Lists;
 
 /**
- * {@link Saml2ScopedStringAttributeEncoder} Unit test. Looks a lot like the SAML1 one
+ * {@link SAML2ScopedStringAttributeEncoder} Unit test. Looks a lot like the SAML1 one
  */
-public class Saml2ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
+public class SAML2ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
     /** The name we give the test attribute. */
     private final static String ATTR_NAME = "foo";
@@ -68,9 +68,9 @@ public class Saml2ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
 
     private final ScopedStringAttributeValue value2 = new ScopedStringAttributeValue(VALUE_2, SCOPE_2);
 
-    public Saml2ScopedStringAttributeEncoder makeEncoder() {
-        Saml2ScopedStringAttributeEncoder encoder;
-        encoder = new Saml2ScopedStringAttributeEncoder();
+    public SAML2ScopedStringAttributeEncoder makeEncoder() {
+        SAML2ScopedStringAttributeEncoder encoder;
+        encoder = new SAML2ScopedStringAttributeEncoder();
         encoder.setName(ATTR_NAME);
         encoder.setScopeDelimiter(DELIMITER);
         encoder.setNameFormat("NameSpace");
@@ -82,7 +82,7 @@ public class Saml2ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
             throws AttributeEncodingException, ComponentInitializationException {
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
 
-        Saml2ScopedStringAttributeEncoder encoder = makeEncoder();
+        SAML2ScopedStringAttributeEncoder encoder = makeEncoder();
         encoder.initialize();
 
         encoder.encode(inputAttribute);
@@ -90,7 +90,7 @@ public class Saml2ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
 
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate()
             throws AttributeEncodingException, ComponentInitializationException {
-        final Saml2ScopedStringAttributeEncoder encoder = makeEncoder();
+        final SAML2ScopedStringAttributeEncoder encoder = makeEncoder();
         final int[] intArray = {1, 2, 3, 4};
         final Collection<? extends IdPAttributeValue<?>> values =
                 Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new StringAttributeValue("dd"),
@@ -114,7 +114,7 @@ public class Saml2ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
     }
 
     @Test public void singleAttribute() throws ComponentInitializationException, AttributeEncodingException {
-        final Saml2ScopedStringAttributeEncoder encoder = makeEncoder();
+        final SAML2ScopedStringAttributeEncoder encoder = makeEncoder();
         encoder.setScopeType("attribute");
         try {
             encoder.setScopeAttributeName(null);
@@ -156,7 +156,7 @@ public class Saml2ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
     }
 
     @Test public void multiAttribute() throws ComponentInitializationException, AttributeEncodingException {
-        final Saml2ScopedStringAttributeEncoder encoder = makeEncoder();
+        final SAML2ScopedStringAttributeEncoder encoder = makeEncoder();
         encoder.setScopeType("attribute");
         encoder.setScopeAttributeName(ATTR_NAME);
         encoder.initialize();
@@ -202,7 +202,7 @@ public class Saml2ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
     }
 
     @Test public void singleInline() throws ComponentInitializationException, AttributeEncodingException {
-        final Saml2ScopedStringAttributeEncoder encoder = makeEncoder();
+        final SAML2ScopedStringAttributeEncoder encoder = makeEncoder();
         encoder.setScopeType("wibble");
         try {
             encoder.initialize();
@@ -249,7 +249,7 @@ public class Saml2ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
     }
 
     @Test public void multiInline() throws Exception {
-        final Saml2ScopedStringAttributeEncoder encoder = makeEncoder();
+        final SAML2ScopedStringAttributeEncoder encoder = makeEncoder();
         encoder.setScopeDelimiter(DELIMITER);
         encoder.setScopeAttributeName(null);
         encoder.initialize();

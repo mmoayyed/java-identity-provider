@@ -21,38 +21,46 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.saml.impl.attribute.encoding.Saml2StringSubjectNameIDEncoder;
+import net.shibboleth.idp.saml.impl.attribute.encoding.SAML2StringNameIDEncoder;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
 /**
- * Spring bean definition parser for {@link SAML2StringNameIDEncoder}s.
+ * Spring bean definition parser for {@link SAML2StringNameIDEncoder}.
  */
-public class Saml2StringNameIDEncoderParser extends AbstractSingleBeanDefinitionParser {
+public class SAML2StringNameIDEncoderParser extends AbstractSingleBeanDefinitionParser {
     
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML2StringNameID");
 
+    /** Local name of name format attribute. */
+    public static final String FORMAT_ATTRIBUTE_NAME = "nameFormat";
+
+    /** Local name of name qualifier attribute. */
+    public static final String NAMEQUALIFIER_ATTRIBUTE_NAME = "nameQualifier";
+    
     /** {@inheritDoc} */
-    protected Class<Saml2StringSubjectNameIDEncoder> getBeanClass(@Nullable Element element) {
-        return Saml2StringSubjectNameIDEncoder.class;
+    protected Class<SAML2StringNameIDEncoder> getBeanClass(@Nullable Element element) {
+        return SAML2StringNameIDEncoder.class;
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
         String namespace = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";
-        if (config.hasAttributeNS(null, "nameFormat")) {
-            namespace = StringSupport.trimOrNull(config.getAttributeNS(null, "nameFormat"));
+        if (config.hasAttributeNS(null, FORMAT_ATTRIBUTE_NAME)) {
+            namespace = StringSupport.trimOrNull(config.getAttributeNS(null, FORMAT_ATTRIBUTE_NAME));
         }
         builder.addPropertyValue("nameFormat", namespace);
         
-        builder.addPropertyValue("nameQualifier", config.getAttributeNS(null, "nameQualifier"));
+        builder.addPropertyValue("nameQualifier", config.getAttributeNS(null, NAMEQUALIFIER_ATTRIBUTE_NAME));
     }
 
     /** {@inheritDoc} */

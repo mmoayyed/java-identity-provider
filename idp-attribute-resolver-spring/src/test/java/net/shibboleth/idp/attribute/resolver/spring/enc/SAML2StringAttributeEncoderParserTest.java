@@ -18,42 +18,36 @@
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.saml.impl.attribute.encoding.Saml2ScopedStringAttributeEncoder;
+import net.shibboleth.idp.saml.impl.attribute.encoding.SAML2StringAttributeEncoder;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Test for {@link Saml2ScopedStringAttributeEncoderParser}.
+ * Test for {@link SAML2StringAttributeEncoderParser}.
  */
-public class Saml2ScopedStringAttributeEncoderParserTest extends BaseAttributeDefinitionParserTest {
+public class SAML2StringAttributeEncoderParserTest extends BaseAttributeDefinitionParserTest {
 
     @Test public void specified() {
-        Saml2ScopedStringAttributeEncoder encoder =
-                getAttributeEncoder("saml2Scoped.xml", Saml2ScopedStringAttributeEncoder.class);
+        SAML2StringAttributeEncoder encoder =
+                getAttributeEncoder("saml2String.xml", SAML2StringAttributeEncoder.class);
 
-        Assert.assertEquals(encoder.getName(), "ATTRIBUTE_NAME");
-        Assert.assertEquals(encoder.getFriendlyName(),"ATTRIBUTE_FRIENDLY_NAME"); 
-        Assert.assertEquals(encoder.getNameFormat(),"ATTRIBUTE_NAME_FORMAT");
-        Assert.assertEquals(encoder.getScopeType(),"attribute");
-        Assert.assertEquals(encoder.getScopeAttributeName(),"scopeAttrib");
-        Assert.assertEquals(encoder.getScopeDelimiter(),"###");
+        Assert.assertEquals(encoder.getName(), "Saml2String_ATTRIBUTE_NAME");
+        Assert.assertEquals(encoder.getFriendlyName(),"Saml2String_ATTRIBUTE_FRIENDLY_NAME"); 
+        Assert.assertEquals(encoder.getNameFormat(),"Saml2String_ATTRIBUTE_NAME_FORMAT");
     }
     
     @Test public void defaultCase() {
-        Saml2ScopedStringAttributeEncoder encoder =
-                getAttributeEncoder("saml2ScopedDefault.xml", Saml2ScopedStringAttributeEncoder.class);
+        SAML2StringAttributeEncoder encoder =
+                getAttributeEncoder("saml2StringDefault.xml", SAML2StringAttributeEncoder.class);
 
-        Assert.assertEquals(encoder.getName(), "name");
+        Assert.assertEquals(encoder.getName(), "Saml2StringName");
         Assert.assertNull(encoder.getFriendlyName()); 
         Assert.assertEquals(encoder.getNameFormat(),"urn:oasis:names:tc:SAML:2.0:attrname-format:uri");
-        Assert.assertEquals(encoder.getScopeType(),"inline");
-        Assert.assertEquals(encoder.getScopeDelimiter(),"@");
-        Assert.assertEquals(encoder.getScopeAttributeName(),"Scope");
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {
-        getAttributeEncoder("saml2ScopedNoName.xml", Saml2ScopedStringAttributeEncoder.class);
+        getAttributeEncoder("saml2StringNoName.xml", SAML2StringAttributeEncoder.class);
     }
 }

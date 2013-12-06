@@ -36,6 +36,11 @@ public class SAML1XMLObjectAttributeEncoderParser extends BaseAttributeEncoderPa
 
     /** Local name of namespace attribute. */
     public static final String NAMESPACE_ATTRIBUTE_NAME = "namespace";
+
+    /** Constructor. */
+    public SAML1XMLObjectAttributeEncoderParser() {
+        setNameRequired(true);
+    }
     
     /** {@inheritDoc} */
     protected Class<SAML1XMLObjectAttributeEncoder> getBeanClass(@Nullable Element element) {

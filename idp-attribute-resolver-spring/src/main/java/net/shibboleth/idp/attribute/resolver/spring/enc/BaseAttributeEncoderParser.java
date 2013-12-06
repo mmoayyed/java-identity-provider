@@ -35,13 +35,30 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
     /** Local name of name attribute. */
     public static final String NAME_ATTRIBUTE_NAME = "name";
     
+    /** Whether the name property is required or not. */
+    private boolean nameRequired;
+    
+    /** Constructor. */
+    public BaseAttributeEncoderParser() {
+        nameRequired = false;
+    }
+    
+    /**
+     * Set whether the name property is required or not.
+     * 
+     * @param flag  flag to set
+     */
+    public void setNameRequired(final boolean flag) {
+        nameRequired = flag;
+    }
+    
     /** {@inheritDoc} */
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
 
         final String attributeName = StringSupport.trimOrNull(config.getAttributeNS(null, NAME_ATTRIBUTE_NAME));
-        if (attributeName == null) {
-            throw new BeanCreationException("SAML 1 attribute encoders must contain a name");
+        if (nameRequired && attributeName == null) {
+            throw new BeanCreationException("Attribute encoder must contain a name property");
         }
         
         builder.addPropertyValue("name", attributeName);

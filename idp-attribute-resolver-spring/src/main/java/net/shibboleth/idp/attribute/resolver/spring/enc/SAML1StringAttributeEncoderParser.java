@@ -39,6 +39,11 @@ public class SAML1StringAttributeEncoderParser extends BaseAttributeEncoderParse
 
     /** Local name of namespace attribute. */
     public static final String NAMESPACE_ATTRIBUTE_NAME = "namespace";
+
+    /** Constructor. */
+    public SAML1StringAttributeEncoderParser() {
+        setNameRequired(true);
+    }
     
     /** {@inheritDoc} */
     protected Class<SAML1StringAttributeEncoder> getBeanClass(@Nullable Element element) {

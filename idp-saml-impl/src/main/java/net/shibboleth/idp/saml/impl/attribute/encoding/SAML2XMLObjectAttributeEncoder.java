@@ -18,14 +18,15 @@
 package net.shibboleth.idp.saml.impl.attribute.encoding;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.attribute.ByteAttributeValue;
-import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
-import net.shibboleth.idp.attribute.mapper.impl.ByteAttributeValueMapper;
 import net.shibboleth.idp.attribute.mapper.impl.RequestedAttributeMapper;
+import net.shibboleth.idp.attribute.mapper.impl.XmlObjectAttributeValueMapper;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML2AttributeEncoder;
 import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperFactory;
 import net.shibboleth.idp.saml.attribute.encoding.SAMLEncoderSupport;
@@ -35,21 +36,23 @@ import org.opensaml.saml.saml2.core.AttributeValue;
 import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 
 /**
- * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces SAML 2 attributes from
- * {@link IdPAttribute} that contains <code>byte[]</code> values.
+ * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces a SAML 2 Attribute from an
+ * {@link IdPAttribute} that contains {@link XMLObject} values.
  */
-public class Saml2ByteAttributeEncoder extends AbstractSAML2AttributeEncoder<ByteAttributeValue> implements
+public class SAML2XMLObjectAttributeEncoder extends AbstractSAML2AttributeEncoder<XMLObjectAttributeValue> implements
         AttributeMapperFactory<RequestedAttribute, IdPRequestedAttribute> {
 
     /** {@inheritDoc} */
-    protected boolean canEncodeValue(IdPAttribute attribute, IdPAttributeValue value) {
-        return value instanceof ByteAttributeValue;
+    @Override
+    protected boolean canEncodeValue(@Nonnull final IdPAttribute attribute, @Nonnull final IdPAttributeValue value) {
+        return value instanceof XMLObjectAttributeValue;
     }
 
     /** {@inheritDoc} */
-    protected XMLObject encodeValue(IdPAttribute attribute, ByteAttributeValue value)
-            throws AttributeEncodingException {
-        return SAMLEncoderSupport.encodeByteArrayValue(attribute,
+    @Override
+    @Nullable protected XMLObject encodeValue(@Nonnull final IdPAttribute attribute,
+            @Nonnull final XMLObjectAttributeValue value) throws AttributeEncodingException {
+        return SAMLEncoderSupport.encodeXMLObjectValue(attribute,
                 AttributeValue.DEFAULT_ELEMENT_NAME, value.getValue());
     }
 
@@ -61,8 +64,9 @@ public class Saml2ByteAttributeEncoder extends AbstractSAML2AttributeEncoder<Byt
         val.setAttributeFormat(getNameFormat());
         val.setId(getFriendlyName());
         val.setSAMLName(getName());
-        val.setValueMapper(new ByteAttributeValueMapper());
+        val.setValueMapper(new XmlObjectAttributeValueMapper());
 
         return val;
     }
+
 }

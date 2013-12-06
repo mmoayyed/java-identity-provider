@@ -26,6 +26,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML2NameIDEncoder;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -37,32 +38,35 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Objects;
 
 /**
- * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces the SAML 1 NameIdentifier used for the Subject
- * from the first non-null {@link NameID} value of an {@link net.shibboleth.idp.attribute.IdPAttribute}.
+ * {@link net.shibboleth.idp.saml.nameid.NameIdentifierAttributeEncoder} that encodes the first String value of an
+ * {@link net.shibboleth.idp.attribute.IdPAttribute} to a SAML 2 {@link NameID}.
  */
-public class Saml2StringSubjectNameIDEncoder extends AbstractSAML2NameIDEncoder {
+public class SAML2StringNameIDEncoder extends AbstractSAML2NameIDEncoder {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(Saml2StringSubjectNameIDEncoder.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(SAML2StringNameIDEncoder.class);
 
     /** Identifier builder. */
-    private final SAMLObjectBuilder<NameID> identifierBuilder;
+    @Nonnull private final SAMLObjectBuilder<NameID> identifierBuilder;
 
     /** The format of the name identifier. */
-    private String format;
+    @Nullable private String format;
 
     /** The security or administrative domain that qualifies the name identifier. */
-    private String qualifier;
+    @Nullable private String qualifier;
 
     /** Constructor. */
-    public Saml2StringSubjectNameIDEncoder() {
+    public SAML2StringNameIDEncoder() {
         identifierBuilder =
                 (SAMLObjectBuilder<NameID>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
                         NameID.DEFAULT_ELEMENT_NAME);
+        if (identifierBuilder == null) {
+            throw new ConstraintViolationException("Builder unavailable for NameID objects");
+        }
     }
 
     /**
-     * Gets the format of the name identifier.
+     * Get the format of the name identifier.
      * 
      * @return format of the name identifier
      */
@@ -71,7 +75,7 @@ public class Saml2StringSubjectNameIDEncoder extends AbstractSAML2NameIDEncoder 
     }
 
     /**
-     * Sets the format of the name identifier.
+     * Set the format of the name identifier.
      * 
      * @param nameFormat format of the name identifier
      */
@@ -80,7 +84,7 @@ public class Saml2StringSubjectNameIDEncoder extends AbstractSAML2NameIDEncoder 
     }
 
     /**
-     * Gets the security or administrative domain that qualifies the name identifier.
+     * Get the security or administrative domain that qualifies the name identifier.
      * 
      * @return security or administrative domain that qualifies the name identifier
      */
@@ -89,7 +93,7 @@ public class Saml2StringSubjectNameIDEncoder extends AbstractSAML2NameIDEncoder 
     }
 
     /**
-     * Sets the security or administrative domain that qualifies the name identifier.
+     * Set the security or administrative domain that qualifies the name identifier.
      * 
      * @param nameQualifier security or administrative domain that qualifies the name identifier
      */
@@ -98,7 +102,7 @@ public class Saml2StringSubjectNameIDEncoder extends AbstractSAML2NameIDEncoder 
     }
 
     /** {@inheritDoc} */
-    @Nonnull public NameID encode(IdPAttribute attribute) throws AttributeEncodingException {
+    @Nonnull public NameID encode(@Nonnull final IdPAttribute attribute) throws AttributeEncodingException {
         final String attributeId = attribute.getId();
 
         final Collection<IdPAttributeValue<?>> attributeValues = attribute.getValues();
@@ -107,15 +111,9 @@ public class Saml2StringSubjectNameIDEncoder extends AbstractSAML2NameIDEncoder 
                     + " does not contain any values to encode");
         }
 
-        NameID nameId = identifierBuilder.buildObject();
-
-        if (format != null) {
-            nameId.setFormat(format);
-        }
-
-        if (qualifier != null) {
-            nameId.setNameQualifier(qualifier);
-        }
+        final NameID nameId = identifierBuilder.buildObject();
+        nameId.setFormat(format);
+        nameId.setNameQualifier(qualifier);
 
         for (IdPAttributeValue attrValue : attributeValues) {
             if (attrValue == null || attrValue.getValue() == null) {
@@ -126,13 +124,11 @@ public class Saml2StringSubjectNameIDEncoder extends AbstractSAML2NameIDEncoder 
             Object value = attrValue.getValue();
 
             if (value instanceof String) {
-                String valueAsString = (String) value;
-
-                nameId.setValue(valueAsString);
-
+                nameId.setValue((String) value);
                 return nameId;
             } else {
-                log.debug("Skipping value of type {} of attribute {}", value.getClass().getName(), attributeId);
+                log.debug("Skipping unsupported value of type {} of attribute {}", value.getClass().getName(),
+                        attributeId);
                 continue;
             }
         }
@@ -140,6 +136,7 @@ public class Saml2StringSubjectNameIDEncoder extends AbstractSAML2NameIDEncoder 
     }
     
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object obj) {
 
         if (obj == null) {
@@ -150,19 +147,21 @@ public class Saml2StringSubjectNameIDEncoder extends AbstractSAML2NameIDEncoder 
             return true;
         }
 
-        if (!(obj instanceof Saml2StringSubjectNameIDEncoder)) {
+        if (!(obj instanceof SAML2StringNameIDEncoder)) {
             return false;
         }
 
-        Saml2StringSubjectNameIDEncoder other = (Saml2StringSubjectNameIDEncoder) obj;
+        SAML2StringNameIDEncoder other = (SAML2StringNameIDEncoder) obj;
 
         return Objects.equal(getNameFormat(), other.getNameFormat())
                 && Objects.equal(getNameQualifier(), other.getNameQualifier());
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return Objects.hashCode(getNameFormat(), getNameQualifier(), getProtocol(),
-                Saml2StringSubjectNameIDEncoder.class);
+                SAML2StringNameIDEncoder.class);
     }
+    
 }

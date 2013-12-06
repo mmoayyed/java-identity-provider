@@ -24,9 +24,7 @@ import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -41,11 +39,11 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Lists;
 
 /**
- * {@link SAML1ByteAttributeEncoder} Unit test.
+ * {@link SAML2StringAttributeEncoder} Unit test.
  * 
- * Identical code to the {@link SAML1ByteAttributeEncoder} except that the type of assertion and encoder is changed.
+ * Identical code to the {@link SAML1StringAttributeEncoder} except that the type of assertion and encoder is changed.
  */
-public class Saml2XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
+public class SAML2StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
     /** The name we give the test attribute. */
     private final static String ATTR_NAME = "foo";
@@ -56,64 +54,14 @@ public class Saml2XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
     /** A second test value. */
     private final static String STRING_2 = "Second string the value is";
 
-    private Saml2XmlObjectAttributeEncoder encoder;
-
-    private SAML1StringAttributeEncoder strEncoder;
+    private SAML2StringAttributeEncoder encoder;
 
     @BeforeClass public void initTest() throws ComponentInitializationException {
-        encoder = new Saml2XmlObjectAttributeEncoder();
+        encoder = new SAML2StringAttributeEncoder();
         encoder.setName(ATTR_NAME);
         encoder.setNameFormat("NameSpace");
         encoder.setFriendlyName("friendly");
         encoder.initialize();
-
-        strEncoder = new SAML1StringAttributeEncoder();
-        strEncoder.setName(ATTR_NAME);
-        strEncoder.setNamespace("NameSpace");
-        strEncoder.initialize();
-    }
-
-    /**
-     * Create an XML object from a string which we can test against later. We use the Saml1StringEncoder to do the work
-     * because it is handy in this package.
-     * 
-     * @param value that we encode
-     * @return an XML object
-     */
-    private XMLObjectAttributeValue ObjectFor(final String value) {
-        final IdPAttribute inputAttribute;
-
-        inputAttribute = new IdPAttribute(ATTR_NAME);
-        inputAttribute.getValues().add(new StringAttributeValue(value));
-        try {
-            return new XMLObjectAttributeValue(strEncoder.encode(inputAttribute));
-        } catch (AttributeEncodingException e) {
-            return null;
-        }
-    }
-
-    /**
-     * Check that the input XML object is what was expected - something created by {@link ObjectFor} with a value taken
-     * from possibles.
-     * 
-     * @param input the objects in question.
-     * @param possibles the strings that they might be encoding.
-     */
-    private static void CheckValues(final XMLObject input, final String... possibles) {
-        Assert.assertTrue(input instanceof org.opensaml.saml.saml1.core.Attribute);
-        final org.opensaml.saml.saml1.core.Attribute attribute = (org.opensaml.saml.saml1.core.Attribute) input;
-
-        final List<XMLObject> children = attribute.getOrderedChildren();
-        Assert.assertEquals(children.size(), 1, "Data must have but one entry");
-        Assert.assertTrue(children.get(0) instanceof XSString, "Data must contain one string");
-        final String s = ((XSString) children.get(0)).getValue();
-
-        for (String possible : possibles) {
-            if (s.equals(possible)) {
-                return;
-            }
-        }
-        Assert.assertTrue(false, "No potential matched matched");
     }
 
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void empty() throws Exception {
@@ -125,8 +73,7 @@ public class Saml2XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
         final Collection<? extends IdPAttributeValue<?>> values =
-                Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new ScopedStringAttributeValue("foo",
-                        "bar"), new IdPAttributeValue<Object>() {
+                Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new IdPAttributeValue<Object>() {
                     public Object getValue() {
                         return intArray;
                     }
@@ -140,53 +87,71 @@ public class Saml2XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
 
     @Test public void single() throws Exception {
         final Collection<? extends IdPAttributeValue<?>> values =
-                Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), ObjectFor(STRING_1));
+                Lists.newArrayList(Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
+                        new StringAttributeValue(STRING_1)));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
         final Attribute outputAttribute = encoder.encode(inputAttribute);
+
         Assert.assertNotNull(outputAttribute);
 
         final List<XMLObject> children = outputAttribute.getOrderedChildren();
-        Assert.assertEquals(children.size(), 1, "Encoding one entry");
-        Assert.assertEquals(children.get(0).getElementQName(),
-                AttributeValue.DEFAULT_ELEMENT_NAME,
-                "Attribute Value not inside <AttributeValue/>");
-        Assert.assertEquals(children.get(0).getOrderedChildren().size(), 1,
-                "Expected exactly one child inside the <AttributeValue/>");
 
-        CheckValues(children.get(0).getOrderedChildren().get(0), STRING_1);
+        Assert.assertEquals(children.size(), 1, "Encoding one entry");
+
+        final XMLObject child = children.get(0);
+
+        Assert.assertEquals(child.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
+                "Attribute Value not inside <AttributeValue/>");
+
+        Assert.assertTrue(child instanceof XSString, "Child of result attribute shoulld be a string");
+
+        final XSString childAsString = (XSString) child;
+
+        Assert.assertEquals(childAsString.getValue(), STRING_1, "Input equals output");
     }
 
     @Test public void multi() throws Exception {
         final Collection<? extends IdPAttributeValue<?>> values =
-                Lists.newArrayList(ObjectFor(STRING_1), ObjectFor(STRING_2));
+                Lists.newArrayList(Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
+                        new StringAttributeValue(STRING_1), new StringAttributeValue(STRING_2)));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
         final Attribute outputAttribute = encoder.encode(inputAttribute);
+
         Assert.assertNotNull(outputAttribute);
 
         final List<XMLObject> children = outputAttribute.getOrderedChildren();
         Assert.assertEquals(children.size(), 2, "Encoding two entries");
 
-        Assert.assertEquals(children.get(0).getElementQName(),
-                AttributeValue.DEFAULT_ELEMENT_NAME,
+        Assert.assertTrue(children.get(0) instanceof XSString && children.get(1) instanceof XSString,
+                "Child of result attribute shoulld be a string");
+
+        final XSString child1 = (XSString) children.get(0);
+        Assert.assertEquals(child1.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
-        Assert.assertEquals(children.get(0).getOrderedChildren().size(), 1,
-                "Expected exactly one child inside the <AttributeValue/> for first Attribute");
 
-        Assert.assertEquals(children.get(1).getElementQName(),
-                AttributeValue.DEFAULT_ELEMENT_NAME,
+        final XSString child2 = (XSString) children.get(1);
+        Assert.assertEquals(child2.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
-        Assert.assertEquals(children.get(1).getOrderedChildren().size(), 1,
-                "Expected exactly one child inside the <AttributeValue/> for second Attribute");
-
-        CheckValues(children.get(0).getOrderedChildren().get(0), STRING_1, STRING_2);
-        CheckValues(children.get(1).getOrderedChildren().get(0), STRING_1, STRING_2);
-
+        //
+        // order of results is not guaranteed so sense the result from the length
+        //
+        if (child1.getValue().length() == STRING_1.length()) {
+            Assert.assertEquals(child1.getValue(), STRING_1, "Input matches output");
+            Assert.assertEquals(child2.getValue(), STRING_2, "Input matches output");
+        } else if (child1.getValue().length() == STRING_2.length()) {
+            Assert.assertEquals(child2.getValue(), STRING_1, "Input matches output");
+            Assert.assertEquals(child1.getValue(), STRING_2, "Input matches output");
+        } else {
+            Assert.assertTrue(
+                    child1.getValue().length() == STRING_1.length() || child1.getValue().length() == STRING_2.length(),
+                    "One of the output's size should match an input size");
+        }
     }
 
 }

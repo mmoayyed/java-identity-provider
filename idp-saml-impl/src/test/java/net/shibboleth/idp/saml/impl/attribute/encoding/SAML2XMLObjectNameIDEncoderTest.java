@@ -39,11 +39,11 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Lists;
 
 /**
- * {@link Saml2XmlObjectSubjectNameIDEncoder} Unit test.
+ * {@link SAML2XMLObjectNameIDEncoder} Unit test.
  * 
  * Identical code to the {@link SAML1StringAttributeEncoderTest} except that the type of result and encoder is changed.
  */
-public class Saml2XmlObjectSubjectNameIDEncoderTest extends OpenSAMLInitBaseTestCase {
+public class SAML2XMLObjectNameIDEncoderTest extends OpenSAMLInitBaseTestCase {
 
     /** The name we give the test attribute. */
     private final static String ATTR_NAME = "foo";
@@ -77,16 +77,16 @@ public class Saml2XmlObjectSubjectNameIDEncoderTest extends OpenSAMLInitBaseTest
         return new XMLObjectAttributeValue(id);
     }
 
-    private Saml2XmlObjectSubjectNameIDEncoder encoder;
+    private SAML2XMLObjectNameIDEncoder encoder;
 
     @BeforeClass public void initTest() throws ComponentInitializationException {
-        encoder = new Saml2XmlObjectSubjectNameIDEncoder();
+        encoder = new SAML2XMLObjectNameIDEncoder();
         saml1Builder = new NameIdentifierBuilder();
         saml2Builder = new NameIDBuilder();
     }
 
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void empty() throws Exception {
-        final Saml2XmlObjectSubjectNameIDEncoder encoder = new Saml2XmlObjectSubjectNameIDEncoder();
+        final SAML2XMLObjectNameIDEncoder encoder = new SAML2XMLObjectNameIDEncoder();
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
 
         encoder.encode(inputAttribute);

@@ -33,17 +33,17 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Objects;
 
 /**
- * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces the SAML 2 NameID used for the Subject from the
- * first non-null {@link NameID} value of an {@link net.shibboleth.idp.attribute.IdPAttribute}.
+ * {@link net.shibboleth.idp.saml.nameid.NameIdentifierAttributeEncoder} that encodes the first {@link NameID}
+ * value of an {@link net.shibboleth.idp.attribute.IdPAttribute} to a SAML 2 {@link NameID}.
  */
 // TODO this class is redundant.
-public class Saml2XmlObjectSubjectNameIDEncoder extends AbstractSAML2NameIDEncoder {
+public class SAML2XMLObjectNameIDEncoder extends AbstractSAML2NameIDEncoder {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(Saml2XmlObjectSubjectNameIDEncoder.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(SAML2XMLObjectNameIDEncoder.class);
 
     /** {@inheritDoc} */
-    @Nonnull public NameID encode(IdPAttribute attribute) throws AttributeEncodingException {
+    @Nonnull public NameID encode(@Nonnull final IdPAttribute attribute) throws AttributeEncodingException {
         final String attributeId = attribute.getId();
 
         final Collection<IdPAttributeValue<?>> attributeValues = attribute.getValues();
@@ -60,37 +60,41 @@ public class Saml2XmlObjectSubjectNameIDEncoder extends AbstractSAML2NameIDEncod
 
             if (value instanceof NameID) {
                 NameID identifier = (NameID) value;
-                log.debug("Chose NameID, with value {}, of attribute {} for subject name identifier encoding",
+                log.debug("Chose NameID, with value {}, of attribute {} for Subject NameID encoding",
                         identifier.getValue(), attributeId);
                 return identifier;
             } else {
-                log.debug("Skipping value of type {} of attribute {}", value.getClass().getName(), attributeId);
+                log.debug("Skipping unsupported value of type {} of attribute {}", value.getClass().getName(),
+                        attributeId);
                 continue;
             }
         }
 
         throw new AttributeEncodingException("Attribute " + attributeId
-                + " did not contain any NameID values, nothing to encode as subject name identifier");
+                + " did not contain any NameID values, nothing to encode as Subject NameID");
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object obj) {
 
         if (obj == this) {
             return true;
         }
 
-        if (!(obj instanceof Saml2XmlObjectSubjectNameIDEncoder)) {
+        if (!(obj instanceof SAML2XMLObjectNameIDEncoder)) {
             return false;
         }
 
-        Saml2XmlObjectSubjectNameIDEncoder other = (Saml2XmlObjectSubjectNameIDEncoder) obj;
+        SAML2XMLObjectNameIDEncoder other = (SAML2XMLObjectNameIDEncoder) obj;
 
         return Objects.equal(getProtocol(), other.getProtocol());
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
-        return Objects.hashCode(getProtocol(), Saml2XmlObjectSubjectNameIDEncoder.class);
+        return Objects.hashCode(getProtocol(), SAML2XMLObjectNameIDEncoder.class);
     }
+    
 }

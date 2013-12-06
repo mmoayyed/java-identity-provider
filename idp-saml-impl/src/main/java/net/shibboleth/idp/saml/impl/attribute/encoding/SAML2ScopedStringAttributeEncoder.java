@@ -41,79 +41,81 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces SAML 2 attributes from
- * {@link net.shibboleth.idp.attribute.IdPAttribute} that contains scope string values.
+ * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces a SAML 2 Attribute from an
+ * {@link net.shibboleth.idp.attribute.IdPAttribute} that contains scoped string values.
  */
-public class Saml2ScopedStringAttributeEncoder extends AbstractSAML2AttributeEncoder<ScopedStringAttributeValue>
-        implements
-        AttributeMapperFactory<RequestedAttribute, IdPRequestedAttribute> {
+public class SAML2ScopedStringAttributeEncoder extends AbstractSAML2AttributeEncoder<ScopedStringAttributeValue>
+        implements AttributeMapperFactory<RequestedAttribute, IdPRequestedAttribute> {
 
-    /** The log. */
-    private final Logger log = LoggerFactory.getLogger(Saml2ScopedStringAttributeEncoder.class);
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(SAML2ScopedStringAttributeEncoder.class);
 
     /** Type of scoping to use. */
-    private String scopeType;
+    @Nullable private String scopeType;
 
     /** Delimiter used for "inline" scopeType. */
-    private String scopeDelimiter;
+    @Nullable private String scopeDelimiter;
 
     /** Attribute name used for "attribute" scopeType. */
-    private String scopeAttributeName;
+    @Nullable private String scopeAttributeName;
 
     /**
-     * Get the scope attribute.
+     * Get the name of the non-inline scope-carrying attribute.
      * 
-     * @return Returns the scopeAttribute.
+     * @return the name of the scope-carrying attribute
      */
-    public String getScopeAttributeName() {
+    @Nullable public String getScopeAttributeName() {
         return scopeAttributeName;
     }
 
     /**
      * Get the scope delimiter.
      * 
-     * @return Returns the scopeDelimiter.
+     * @return the scope delimiter
      */
-    public String getScopeDelimiter() {
+    @Nullable public String getScopeDelimiter() {
         return scopeDelimiter;
     }
 
     /**
-     * Get the scope type.
+     * Get the scope syntax type.
      * 
-     * @return Returns the scopeType.
+     * @return the type of scope syntax to use
      */
-    public String getScopeType() {
+    @Nullable public String getScopeType() {
         return scopeType;
     }
 
     /**
-     * Set the scope attribute.
+     * Set the name of the non-inline scope-carrying attribute.
      * 
-     * @param newScopeAttribute The scopeAttribute to set.
+     * @param newScopeAttribute the name to set
      */
-    public void setScopeAttributeName(String newScopeAttribute) {
+    public void setScopeAttributeName(@Nullable final String newScopeAttribute) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         scopeAttributeName = StringSupport.trimOrNull(newScopeAttribute);
     }
 
     /**
      * Set the scope delimiter.
      * 
-     * @param newScopeDelimiter The scopeDelimiter to set.
+     * @param newScopeDelimiter delimiter to set
      */
-    public void setScopeDelimiter(String newScopeDelimiter) {
+    public void setScopeDelimiter(@Nullable final String newScopeDelimiter) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         scopeDelimiter = StringSupport.trimOrNull(newScopeDelimiter);
     }
 
     /**
-     * Set the scope type.
+     * Set the scope syntax type.
      * 
-     * @param newScopeType The scopeType to set.
+     * @param newScopeType the scope syntax type
      */
-    public void setScopeType(String newScopeType) {
+    public void setScopeType(@Nullable final String newScopeType) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         scopeType = StringSupport.trimOrNull(newScopeType);
     }
 
@@ -122,6 +124,7 @@ public class Saml2ScopedStringAttributeEncoder extends AbstractSAML2AttributeEnc
      * 
      * {@inheritDoc}
      */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
@@ -133,33 +136,37 @@ public class Saml2ScopedStringAttributeEncoder extends AbstractSAML2AttributeEnc
         if ("attribute".equals(getScopeType())) {
             if (null == getScopeAttributeName()) {
                 throw new ComponentInitializationException(
-                        "Encoder of type \"attribute\" must specify a scope AttributeName");
+                        "Encoder of type \"attribute\" must specify a scope attribute name");
             }
             if (null != getScopeDelimiter()) {
                 log.warn("Scope delimiter {} not valid for type \"attribute\"", getScopeDelimiter());
             }
         } else if ("inline".equals(getScopeType())) {
             if (null == getScopeDelimiter()) {
-                throw new ComponentInitializationException("Encoder of type \"inline\" must specify a delimiter");
+                throw new ComponentInitializationException("Encoder of type \"inline\" must specify a scope delimiter");
             }
             if (null != getScopeAttributeName()) {
-                log.warn("Scope Attribute name {} not valid for type \"inline\"", getScopeAttributeName());
+                log.warn("Scope attribute name {} not valid for type \"inline\"", getScopeAttributeName());
             }
         } else {
-            throw new ComponentInitializationException("Encoder type must be set to \"inline\" or \"attribute\"");
+            throw new ComponentInitializationException("Encoder scope type must be set to \"inline\" or \"attribute\"");
         }
     }
 
     /** {@inheritDoc} */
-    protected boolean canEncodeValue(IdPAttribute attribute, IdPAttributeValue value) {
+    @Override
+    protected boolean canEncodeValue(@Nonnull final IdPAttribute attribute, @Nonnull final IdPAttributeValue value) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        
         return value instanceof ScopedStringAttributeValue;
     }
 
     /** {@inheritDoc} */
-    @Nullable protected XMLObject encodeValue(IdPAttribute attribute, ScopedStringAttributeValue value)
-            throws AttributeEncodingException {
+    @Override
+    @Nullable protected XMLObject encodeValue(@Nonnull final IdPAttribute attribute,
+            @Nonnull final ScopedStringAttributeValue value) throws AttributeEncodingException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        
         if ("attribute".equals(getScopeType())) {
             return SAMLEncoderSupport.encodeScopedStringValueAttribute(attribute,
                     AttributeValue.DEFAULT_ELEMENT_NAME, value, getScopeAttributeName());

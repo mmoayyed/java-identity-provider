@@ -21,19 +21,21 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.saml.impl.attribute.encoding.Saml2XmlObjectAttributeEncoder;
+import net.shibboleth.idp.saml.impl.attribute.encoding.SAML2ScopedStringAttributeEncoder;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/** Spring Bean Definition Parser for SAML2 XMLObject attribute encoder. */
-public class Saml2XmlObjectAttributeEncoderParser extends BaseAttributeEncoderParser {
+/**
+ * Spring Bean Definition Parser for {@link SAML2ScopedStringAttributeEncoder}.
+ */
+public class SAML2ScopedStringAttributeEncoderParser extends
+        BaseScopedAttributeEncoderParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML2XMLObject");
+    public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML2ScopedString");
 
     /** Local name of name format attribute. */
     public static final String NAME_FORMAT_ATTRIBUTE_NAME = "nameFormat";
@@ -41,28 +43,35 @@ public class Saml2XmlObjectAttributeEncoderParser extends BaseAttributeEncoderPa
     /** Local name of friendly name attribute. */
     public static final String FRIENDLY_NAME_ATTRIBUTE_NAME = "friendlyName";
 
+    /** Constructor. */
+    public SAML2ScopedStringAttributeEncoderParser() {
+        setNameRequired(true);
+    }
+    
     /** {@inheritDoc} */
-    protected Class<Saml2XmlObjectAttributeEncoder> getBeanClass(@Nullable Element element) {
-        return Saml2XmlObjectAttributeEncoder.class;
+    protected Class<SAML2ScopedStringAttributeEncoder> getBeanClass(@Nullable Element element) {
+        return SAML2ScopedStringAttributeEncoder.class;
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
+        if (config.hasAttributeNS(null, SCOPE_TYPE_ATTRIBUTE_NAME)) {
+            builder.addPropertyValue("scopeType", config.getAttributeNS(null, SCOPE_TYPE_ATTRIBUTE_NAME));
+        } else {
+            builder.addPropertyValue("scopeType", "inline");
+        }
+
         String nameFormat = "urn:oasis:names:tc:SAML:2.0:attrname-format:uri";
-        if (config.hasAttributeNS(null, "nameFormat")) {
-            nameFormat = StringSupport.trimOrNull(config.getAttributeNS(null, "nameFormat"));
+        if (config.hasAttributeNS(null, NAME_FORMAT_ATTRIBUTE_NAME)) {
+            nameFormat = StringSupport.trimOrNull(config.getAttributeNS(null, NAME_FORMAT_ATTRIBUTE_NAME));
         }
         builder.addPropertyValue("nameFormat", nameFormat);
-        
+
         builder.addPropertyValue("friendlyName", config.getAttribute(FRIENDLY_NAME_ATTRIBUTE_NAME));
-
-        String attributeName = StringSupport.trimOrNull(config.getAttributeNS(null, "name"));
-        if (attributeName == null) {
-            throw new BeanCreationException("SAML 2 attribute encoders must contain a name");
-        }
     }
-
+    
 }

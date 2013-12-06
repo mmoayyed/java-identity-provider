@@ -18,20 +18,20 @@
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.saml.impl.attribute.encoding.Saml2ByteAttributeEncoder;
+import net.shibboleth.idp.saml.impl.attribute.encoding.SAML2ByteAttributeEncoder;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Test for {@link Saml2Base64AttributeEncoderParserTest}.
+ * Test for {@link SAML2Base64AttributeEncoderParser}.
  */
-public class Saml2Base64AttributeEncoderParserTest extends BaseAttributeDefinitionParserTest {
+public class SAML2Base64AttributeEncoderParserTest extends BaseAttributeDefinitionParserTest {
 
     @Test public void specified() {
-        Saml2ByteAttributeEncoder encoder =
-                getAttributeEncoder("saml2Base64.xml", Saml2ByteAttributeEncoder.class);
+        SAML2ByteAttributeEncoder encoder =
+                getAttributeEncoder("saml2Base64.xml", SAML2ByteAttributeEncoder.class);
 
         Assert.assertEquals(encoder.getName(), "Saml2Base64_ATTRIBUTE_NAME");
         Assert.assertEquals(encoder.getFriendlyName(),"Saml2Base64_ATTRIBUTE_FRIENDLY_NAME"); 
@@ -39,8 +39,8 @@ public class Saml2Base64AttributeEncoderParserTest extends BaseAttributeDefiniti
     }
     
     @Test public void defaultCase() {
-        Saml2ByteAttributeEncoder encoder =
-                getAttributeEncoder("saml2Base64Default.xml", Saml2ByteAttributeEncoder.class);
+        SAML2ByteAttributeEncoder encoder =
+                getAttributeEncoder("saml2Base64Default.xml", SAML2ByteAttributeEncoder.class);
 
         Assert.assertEquals(encoder.getName(), "Base64Name");
         Assert.assertNull(encoder.getFriendlyName()); 
@@ -48,6 +48,6 @@ public class Saml2Base64AttributeEncoderParserTest extends BaseAttributeDefiniti
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {
-        getAttributeEncoder("saml2Base64NoName.xml", Saml2ByteAttributeEncoder.class);
+        getAttributeEncoder("saml2Base64NoName.xml", SAML2ByteAttributeEncoder.class);
     }
 }

@@ -18,20 +18,20 @@
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.saml.impl.attribute.encoding.Saml2XmlObjectAttributeEncoder;
+import net.shibboleth.idp.saml.impl.attribute.encoding.SAML2XMLObjectAttributeEncoder;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Test for {@link Saml2XmlObjectAttributeEncoderParserTest}.
+ * Test for {@link SAML2XMLObjectAttributeEncoderParser}.
  */
-public class Saml2XmlObjectAttributeEncoderParserTest extends BaseAttributeDefinitionParserTest {
+public class SAML2XMLObjectAttributeEncoderParserTest extends BaseAttributeDefinitionParserTest {
 
     @Test public void specified() {
-        Saml2XmlObjectAttributeEncoder encoder =
-                getAttributeEncoder("saml2XmlObject.xml", Saml2XmlObjectAttributeEncoder.class);
+        SAML2XMLObjectAttributeEncoder encoder =
+                getAttributeEncoder("saml2XmlObject.xml", SAML2XMLObjectAttributeEncoder.class);
 
         Assert.assertEquals(encoder.getName(), "Saml2XmlObject_ATTRIBUTE_NAME");
         Assert.assertEquals(encoder.getFriendlyName(),"Saml2XmlObject_ATTRIBUTE_FRIENDLY_NAME"); 
@@ -39,8 +39,8 @@ public class Saml2XmlObjectAttributeEncoderParserTest extends BaseAttributeDefin
     }
     
     @Test public void defaultCase() {
-        Saml2XmlObjectAttributeEncoder encoder =
-                getAttributeEncoder("saml2XmlObjectDefault.xml", Saml2XmlObjectAttributeEncoder.class);
+        SAML2XMLObjectAttributeEncoder encoder =
+                getAttributeEncoder("saml2XmlObjectDefault.xml", SAML2XMLObjectAttributeEncoder.class);
 
         Assert.assertEquals(encoder.getName(), "XmlObjectName");
         Assert.assertNull(encoder.getFriendlyName()); 
@@ -48,6 +48,6 @@ public class Saml2XmlObjectAttributeEncoderParserTest extends BaseAttributeDefin
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {
-        getAttributeEncoder("saml2XmlObjectNoName.xml", Saml2XmlObjectAttributeEncoder.class);
+        getAttributeEncoder("saml2XmlObjectNoName.xml", SAML2XMLObjectAttributeEncoder.class);
     }
 }
