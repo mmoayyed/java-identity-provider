@@ -96,7 +96,7 @@ public class ReloadableSpringService<T> extends AbstractReloadableService {
      * 
      * @param context context that is the parent to this service's context, may be null
      */
-    public synchronized void setParentContext(@Nullable final ApplicationContext context) {
+    public void setParentContext(@Nullable final ApplicationContext context) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         parentContext = context;
@@ -276,6 +276,7 @@ public class ReloadableSpringService<T> extends AbstractReloadableService {
             oldComponent.unloadComponent();
         }
         lastLoadFailed = false;
+        log.debug("Reload complete");
     }
 
     /** {@inheritDoc} */

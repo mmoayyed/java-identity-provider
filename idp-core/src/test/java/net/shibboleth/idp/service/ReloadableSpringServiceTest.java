@@ -46,6 +46,7 @@ public class ReloadableSpringServiceTest {
     private void createPopulatedFile(String dataPath) throws IOException {
         testFile = File.createTempFile("ReloadableSpringServiceTest", "xml");
         overwriteFileWith(dataPath);
+        testFile.setLastModified(1);
     }
 
     private Resource testFileResource() {
@@ -58,7 +59,7 @@ public class ReloadableSpringServiceTest {
         stream.close();
     }
 
-    @Test public void reloadableService() throws IOException, InterruptedException {
+    @Test(enabled=true) public void reloadableService() throws IOException, InterruptedException {
         final ReloadableSpringService<TestServiceableComponent> service =
                 new ReloadableSpringService<>(TestServiceableComponent.class);
 
@@ -99,7 +100,7 @@ public class ReloadableSpringServiceTest {
         service.stop();
     }
 
-    @Test public void deferedReload() throws IOException, InterruptedException {
+    @Test(enabled=true) public void deferedReload() throws IOException, InterruptedException {
         final ReloadableSpringService<TestServiceableComponent> service =
                 new ReloadableSpringService<>(TestServiceableComponent.class);
 
@@ -166,6 +167,7 @@ public class ReloadableSpringServiceTest {
 
         try {
             service.start();
+            Assert.fail("Expected to fail");
         } catch (BeanInitializationException e) {
             // OK
         }
@@ -190,17 +192,19 @@ public class ReloadableSpringServiceTest {
         service.setReloadCheckDelay(RELOAD_DELAY);
         service.setServiceConfigurations(Collections.singletonList(testFileResource()));
 
-        try {
-            service.start();
-        } catch (BeanInitializationException e) {
-            // OK
-        }
+        service.start();
         Assert.assertNull(service.getServiceableComponent());
 
         overwriteFileWith("net/shibboleth/idp/service/ServiceableBean2.xml");
 
-        Thread.sleep(RELOAD_DELAY * 2);
-        final ServiceableComponent<TestServiceableComponent> serviceableComponent = service.getServiceableComponent();
+        long count = 700;
+        ServiceableComponent<TestServiceableComponent> serviceableComponent = service.getServiceableComponent();
+        while (count > 0 && null == serviceableComponent) {
+            Thread.sleep(RELOAD_DELAY);
+            count--;
+            serviceableComponent = service.getServiceableComponent();
+        }
+        Assert.assertNotNull("After 7 second component has still no initialized", serviceableComponent);
         final TestServiceableComponent component = serviceableComponent.getComponent();
         Assert.assertEquals("Two", component.getTheValue());
 
@@ -208,14 +212,13 @@ public class ReloadableSpringServiceTest {
         component.unpinComponent();
         service.stop();
 
-        long count = 70;
+        count = 70;
         while (count > 0 && !component.isDestroyed()) {
             Thread.sleep(RELOAD_DELAY);
             count--;
         }
-        Assert.assertTrue("After 7 second initial component has still not be destroyed", component.isDestroyed());
+        Assert.assertTrue("After 7 second component has still not be destroyed", component.isDestroyed());
 
-        service.stop();
     }
 
 }

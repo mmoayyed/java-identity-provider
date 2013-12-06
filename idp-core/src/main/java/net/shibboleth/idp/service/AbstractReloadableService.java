@@ -124,7 +124,7 @@ public abstract class AbstractReloadableService extends AbstractDestructableIden
      * 
      * @param timer timer used to schedule configuration reload tasks
      */
-    public synchronized void setReloadTaskTimer(@Nullable final Timer timer) {
+    public void setReloadTaskTimer(@Nullable final Timer timer) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         reloadTaskTimer = timer;
