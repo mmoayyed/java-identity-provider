@@ -27,6 +27,10 @@
             <artifactId>opensaml-profile-api</artifactId>
             <version>${opensaml.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.ldaptive</groupId>
+            <artifactId>ldaptive</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>javax.json</groupId>

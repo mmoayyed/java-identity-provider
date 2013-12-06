@@ -29,6 +29,7 @@ import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
+import net.shibboleth.idp.authn.context.AuthenticationWarningContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -272,14 +273,36 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
     protected void handleError(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext, @Nonnull final Exception e,
             @Nonnull @NotEmpty final String eventId) {
-        
+
         AuthenticationErrorContext errorCtx =
                 authenticationContext.getSubcontext(AuthenticationErrorContext.class, true);
         errorCtx.addException(e);
+
+        handleError(profileRequestContext, authenticationContext, e.getMessage(), eventId);
+    }
+    
+    /**
+     * Adds a message encountered during the action to an {@link AuthenticationErrorContext}, creating one if
+     * necessary, beneath the {@link AuthenticationContext}, and uses the supplied event as the result of the action.
+     * 
+     * <p>The message is matched against the various error message collections to determine whether to also set
+     * one of the {@link AuthenticationErrorContext} flags to indicate a more specific error type.</p>
+     * 
+     * @param profileRequestContext the current profile request context
+     * @param authenticationContext the current authentication context
+     * @param message to process
+     * @param eventId the event to "return" via an {@link org.opensaml.profile.context.EventContext}
+     */
+    protected void handleError(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext, @Nonnull final String message,
+            @Nonnull @NotEmpty final String eventId) {
+        
+        AuthenticationErrorContext errorCtx =
+                authenticationContext.getSubcontext(AuthenticationErrorContext.class, true);
         
         ActionSupport.buildEvent(profileRequestContext, eventId);
 
-        MessageChecker checker = new MessageChecker(e);
+        MessageChecker checker = new MessageChecker(message);
         
         for (Map.Entry<String, Collection<String>> entry : classifiedMessages.entrySet()) {
             if (Iterables.any(entry.getValue(), checker)) {
@@ -289,26 +312,55 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
     }
     
     /**
-     * A predicate that examines an Exception to see if its error message contains
-     * a particular String.
+     * Adds a message encountered during the action to an {@link AuthenticationWarningContext}, creating one if
+     * necessary, beneath the {@link AuthenticationContext}, and uses the supplied event as the result of the action.
+     * 
+     * <p>The message is matched against the various warning message collections to determine whether to also set
+     * one of the {@link AuthenticationWarningContext} flags to indicate a more specific warning type.</p>
+     * 
+     * @param profileRequestContext the current profile request context
+     * @param authenticationContext the current authentication context
+     * @param message to process
+     * @param eventId the event to "return" via an {@link org.opensaml.profile.context.EventContext}
+     */
+    protected void handleWarning(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext, @Nonnull final String message,
+            @Nonnull @NotEmpty final String eventId) {
+        
+        AuthenticationWarningContext warningCtx =
+                authenticationContext.getSubcontext(AuthenticationWarningContext.class, true);
+        
+        ActionSupport.buildEvent(profileRequestContext, eventId);
+
+        MessageChecker checker = new MessageChecker(message);
+
+        for (Map.Entry<String, Collection<String>> entry : classifiedMessages.entrySet()) {
+            if (Iterables.any(entry.getValue(), checker)) {
+                warningCtx.getClassifiedWarnings().add(entry.getKey());
+            }
+        }
+    }
+    
+    /**
+     * A predicate that examines a message to see if it contains a particular String.
      */
     private class MessageChecker implements Predicate<String> {
 
-        /** Exception to operate on. */
-        private Exception e;
+        /** Message to operate on. */
+        private String s;
         
         /**
          * Constructor.
          *
-         * @param ex exception to operate on
+         * @param msg to operate on
          */
-        public MessageChecker(@Nonnull final Exception ex) {
-            e = ex;
+        public MessageChecker(@Nonnull final String msg) {
+            s = msg;
         }
         
         /** {@inheritDoc} */
         public boolean apply(String input) {
-            return e.getMessage().contains(input);
+            return s.contains(input);
         }
     }
     
