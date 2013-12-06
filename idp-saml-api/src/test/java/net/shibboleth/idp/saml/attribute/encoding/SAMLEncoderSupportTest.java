@@ -49,9 +49,9 @@ import org.w3c.dom.Element;
 import com.google.common.base.Strings;
 
 /**
- * Test form {@link SAMLEncoderSupport}.
+ * Test for {@link SAMLEncoderSupport}.
  */
-public class SamlEncoderSupportTest  extends OpenSAMLInitBaseTestCase {
+public class SAMLEncoderSupportTest  extends OpenSAMLInitBaseTestCase {
     
     /** Test values. */
     private final static String QNAME_LOCALPART = "myQName";
