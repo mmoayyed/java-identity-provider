@@ -28,14 +28,23 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
+import net.shibboleth.idp.authn.context.AuthenticationWarningContext;
+import net.shibboleth.idp.authn.context.LDAPResponseContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 
 import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.LdapException;
+import org.ldaptive.ResultCode;
+import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
+import org.ldaptive.auth.AuthenticationResponseHandler;
 import org.ldaptive.auth.AuthenticationResultCode;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.BindAuthenticationHandler;
 import org.ldaptive.auth.SearchDnResolver;
+import org.ldaptive.auth.ext.PasswordPolicyAccountState;
+import org.ldaptive.control.PasswordPolicyControl;
+import org.ldaptive.jaas.LdapPrincipal;
 import org.ldaptive.provider.ConnectionException;
 import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.action.EventIds;
@@ -112,6 +121,8 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends InitializeAuthentic
         Map<String,Collection<String>> mappings = new HashMap<>();
         mappings.put("UnknownUsername", Collections.singleton("DN_RESOLUTION_FAILURE"));
         mappings.put("InvalidPassword", Collections.singleton("INVALID_CREDENTIALS"));
+        mappings.put("ExpiringPassword", Collections.singleton("ACCOUNT_WARNING"));
+        mappings.put("ExpiredPassword", Collections.singleton("PASSWORD_EXPIRED"));
         action.setClassifiedMessages(mappings);
 
         action.setHttpServletRequest(new MockHttpServletRequest());
@@ -160,10 +171,16 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends InitializeAuthentic
 
         action.execute(prc);
         Assert.assertNull(ac.getAuthenticationResult());
-        Assert.assertNull(ac.getSubcontext(AuthenticationErrorContext.class, false));
-        EventContext<AuthenticationResponse> ctx = prc.getSubcontext(EventContext.class);
-        Assert.assertNotNull(ctx);
-        Assert.assertEquals(ctx.getEvent().getAuthenticationResultCode(), AuthenticationResultCode.DN_RESOLUTION_FAILURE);
+        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class, false);
+        Assert.assertNotNull(lrc.getAuthenticationResponse());
+
+        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
+        Assert.assertNotNull(aec);
+        EventContext<String> ec = prc.getSubcontext(EventContext.class);
+        Assert.assertNotNull(ec);
+        Assert.assertEquals(ec.getEvent(), AuthenticationResultCode.DN_RESOLUTION_FAILURE.name());
+        Assert.assertEquals(aec.getClassifiedErrors().size(), 1);
+        Assert.assertTrue(aec.isClassifiedError("UnknownUsername"));
     }
 
     @Test public void testBadConfig2() throws Exception {
@@ -184,8 +201,13 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends InitializeAuthentic
             Assert.assertEquals(e.getCause().getClass(), ConnectionException.class);
         }
         Assert.assertNull(ac.getAuthenticationResult());
-        Assert.assertNull(ac.getSubcontext(AuthenticationErrorContext.class, false));
-        Assert.assertNull(prc.getSubcontext(EventContext.class));
+        Assert.assertNull(ac.getSubcontext(LDAPResponseContext.class, false));
+
+        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
+        Assert.assertNotNull(aec);
+        EventContext<String> ec = prc.getSubcontext(EventContext.class);
+        Assert.assertNotNull(ec);
+        Assert.assertEquals(aec.getClassifiedErrors().size(), 0);
     }
 
     @Test public void testBadUsername() throws Exception {
@@ -201,10 +223,17 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends InitializeAuthentic
 
         action.execute(prc);
         Assert.assertNull(ac.getAuthenticationResult());
-        Assert.assertNull(ac.getSubcontext(AuthenticationErrorContext.class, false));
-        EventContext<AuthenticationResponse> ctx = prc.getSubcontext(EventContext.class);
-        Assert.assertNotNull(ctx);
-        Assert.assertEquals(ctx.getEvent().getAuthenticationResultCode(), AuthenticationResultCode.DN_RESOLUTION_FAILURE);
+        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class, false);
+        Assert.assertNotNull(lrc.getAuthenticationResponse());
+        Assert.assertEquals(lrc.getAuthenticationResponse().getAuthenticationResultCode(), AuthenticationResultCode.DN_RESOLUTION_FAILURE);
+        
+        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
+        Assert.assertNotNull(aec);
+        EventContext<String> ec = prc.getSubcontext(EventContext.class);
+        Assert.assertNotNull(ec);
+        Assert.assertEquals(ec.getEvent(), AuthenticationResultCode.DN_RESOLUTION_FAILURE.name());
+        Assert.assertEquals(aec.getClassifiedErrors().size(), 1);
+        Assert.assertTrue(aec.isClassifiedError("UnknownUsername"));
     }
 
     @Test public void testEmptyPassword() throws Exception {
@@ -237,10 +266,94 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends InitializeAuthentic
 
         action.execute(prc);
         Assert.assertNull(ac.getAuthenticationResult());
-        Assert.assertNull(ac.getSubcontext(AuthenticationErrorContext.class, false));
-        EventContext<AuthenticationResponse> ctx = prc.getSubcontext(EventContext.class);
-        Assert.assertNotNull(ctx);
-        Assert.assertEquals(ctx.getEvent().getAuthenticationResultCode(), AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE);
+        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class, false);
+        Assert.assertNotNull(lrc.getAuthenticationResponse());
+        Assert.assertEquals(lrc.getAuthenticationResponse().getAuthenticationResultCode(), AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE);
+
+        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
+        Assert.assertNotNull(aec);
+        EventContext<String> ec = prc.getSubcontext(EventContext.class);
+        Assert.assertNotNull(ec);
+        Assert.assertEquals(ec.getEvent(), ResultCode.INVALID_CREDENTIALS.name());
+        Assert.assertEquals(aec.getClassifiedErrors().size(), 1);
+        Assert.assertTrue(aec.isClassifiedError("InvalidPassword"));
+    }
+
+    @Test public void testExpiredPassword() throws Exception {
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
+
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        ac.setAttemptedFlow(authenticationFlows.get(0));
+
+        Authenticator errorAuthenticator = new Authenticator(dnResolver, authHandler);
+        errorAuthenticator.setAuthenticationResponseHandlers(new AuthenticationResponseHandler() {            
+            public void handle(AuthenticationResponse response) throws LdapException {
+                response.setAccountState(new PasswordPolicyAccountState(PasswordPolicyControl.Error.PASSWORD_EXPIRED));
+            }
+        });
+        action.setAuthenticator(errorAuthenticator);
+        action.initialize();
+
+        doExtract(prc);
+
+        action.execute(prc);
+        Assert.assertNull(ac.getAuthenticationResult());
+        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class, false);
+        Assert.assertNotNull(lrc.getAuthenticationResponse());
+        Assert.assertEquals(lrc.getAuthenticationResponse().getAuthenticationResultCode(), AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE);
+
+        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
+        Assert.assertNotNull(aec);
+        EventContext<String> ec = prc.getSubcontext(EventContext.class);
+        Assert.assertNotNull(ec);
+        Assert.assertEquals(ec.getEvent(), PasswordPolicyControl.Error.PASSWORD_EXPIRED.name());
+        Assert.assertEquals(aec.getClassifiedErrors().size(), 2);
+        Assert.assertTrue(aec.isClassifiedError("ExpiredPassword"));
+        Assert.assertTrue(aec.isClassifiedError("InvalidPassword"));
+    }
+
+    @Test public void testExpiringPassword() throws Exception {
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
+
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        ac.setAttemptedFlow(authenticationFlows.get(0));
+
+        Authenticator warningAuthenticator = new Authenticator(dnResolver, authHandler);
+        warningAuthenticator.setAuthenticationResponseHandlers(new AuthenticationResponseHandler() {            
+            public void handle(AuthenticationResponse response) throws LdapException {
+                response.setAccountState(new AccountState(new AccountState.DefaultWarning(java.util.Calendar.getInstance(), 10)));
+            }
+        });
+        action.setAuthenticator(warningAuthenticator);
+        action.initialize();
+
+        doExtract(prc);
+
+        action.execute(prc);
+
+        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
+        Assert.assertNull(aec);
+
+        AuthenticationResult result = ac.getAuthenticationResult();
+        Assert.assertNotNull(result);
+        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class, false);
+        Assert.assertNotNull(lrc.getAuthenticationResponse());
+        Assert.assertEquals(lrc.getAuthenticationResponse().getAuthenticationResultCode(), AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
+
+        AuthenticationWarningContext awc = ac.getSubcontext(AuthenticationWarningContext.class, false);
+        Assert.assertNotNull(awc);
+        Assert.assertEquals(awc.getClassifiedWarnings().size(), 1);
+        Assert.assertTrue(awc.isClassifiedWarning("ExpiringPassword"));
+
+        UsernamePrincipal up = result.getSubject().getPrincipals(UsernamePrincipal.class).iterator().next();
+        Assert.assertNotNull(up);
+        Assert.assertEquals(up.getName(), "PETER_THE_PRINCIPAL");
+        LdapPrincipal lp = result.getSubject().getPrincipals(LdapPrincipal.class).iterator().next();
+        Assert.assertNotNull(lp);
+        Assert.assertEquals(lp.getName(), "PETER_THE_PRINCIPAL");
+        Assert.assertNotNull(lp.getLdapEntry());
     }
 
     @Test public void testAuthorized() throws Exception {
@@ -257,9 +370,23 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends InitializeAuthentic
 
         action.execute(prc);
         ActionTestingSupport.assertProceedEvent(prc);
+
+        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
+        Assert.assertNull(aec);
+
         AuthenticationResult result = ac.getAuthenticationResult();
         Assert.assertNotNull(result);
-        Assert.assertEquals(result.getSubject().getPrincipals(UsernamePrincipal.class).iterator().next().getName(), "PETER_THE_PRINCIPAL");
+        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class, false);
+        Assert.assertNotNull(lrc.getAuthenticationResponse());
+        Assert.assertEquals(lrc.getAuthenticationResponse().getAuthenticationResultCode(), AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
+
+        UsernamePrincipal up = result.getSubject().getPrincipals(UsernamePrincipal.class).iterator().next();
+        Assert.assertNotNull(up);
+        Assert.assertEquals(up.getName(), "PETER_THE_PRINCIPAL");
+        LdapPrincipal lp = result.getSubject().getPrincipals(LdapPrincipal.class).iterator().next();
+        Assert.assertNotNull(lp);
+        Assert.assertEquals(lp.getName(), "PETER_THE_PRINCIPAL");
+        Assert.assertNotNull(lp.getLdapEntry());
     }
 
     private void doExtract(ProfileRequestContext prc) throws Exception {

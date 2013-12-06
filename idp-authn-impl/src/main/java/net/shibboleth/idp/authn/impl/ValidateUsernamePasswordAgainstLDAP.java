@@ -26,6 +26,7 @@ import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.LDAPResponseContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -34,12 +35,14 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.ldaptive.Credential;
 import org.ldaptive.LdapException;
+import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
+import org.ldaptive.auth.AuthenticationResultCode;
 import org.ldaptive.auth.Authenticator;
+import org.ldaptive.jaas.LdapPrincipal;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.EventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,11 +55,14 @@ import org.slf4j.LoggerFactory;
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
- * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false).getAttemptedFlow() != null</pre>
- * @post If AuthenticationContext.getSubcontext(UsernamePasswordContext.class, false) != null, then
- * an {@link net.shibboleth.idp.authn.AuthenticationResult} is saved to the {@link AuthenticationContext} on a
- * successful login. On a failed login, the {@link net.shibboleth.idp.authn.AbstractValidationAction#handleError(
- * ProfileRequestContext, AuthenticationContext, Exception, String)} method is called.
+ * @pre <pre>
+ * ProfileRequestContext.getSubcontext(AuthenticationContext.class, false).getAttemptedFlow() != null
+ * </pre>
+ * @post If AuthenticationContext.getSubcontext(UsernamePasswordContext.class, false) != null, then an
+ *       {@link net.shibboleth.idp.authn.AuthenticationResult} is saved to the {@link AuthenticationContext} on a
+ *       successful login. On a failed login, the
+ *       {@link net.shibboleth.idp.authn.AbstractValidationAction#handleError(ProfileRequestContext, AuthenticationContext, String, String)}
+ *       method is called.
  */
 public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationAction {
 
@@ -68,6 +74,12 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
 
     /** LDAP authenticator. */
     @Nonnull private Authenticator authenticator;
+
+    /** Attributes to return from authentication. */
+    @Nullable private String[] returnAttributes;
+
+    /** Authentication response associated with the login. */
+    @Nullable private AuthenticationResponse response;
 
     /**
      * Returns the authenticator.
@@ -87,6 +99,26 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         authenticator = Constraint.isNotNull(auth, "Authenticator cannot be null");
+    }
+
+    /**
+     * Returns the return attributes.
+     * 
+     * @return attribute names
+     */
+    @Nullable public String[] getReturnAttributes() {
+        return returnAttributes;
+    }
+
+    /**
+     * Sets the return attributes.
+     * 
+     * @param attributes attribute names
+     */
+    public void setReturnAttributes(@Nullable final String... attributes) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        returnAttributes = attributes;
     }
 
     /** {@inheritDoc} */
@@ -127,18 +159,44 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
         try {
             log.debug("{} attempting to authenticate user {}", getLogPrefix(), upContext.getUsername());
             final AuthenticationRequest request =
-                    new AuthenticationRequest(upContext.getUsername(), new Credential(upContext.getPassword()));
-            final AuthenticationResponse response = authenticator.authenticate(request);
+                    new AuthenticationRequest(upContext.getUsername(), new Credential(upContext.getPassword()),
+                            returnAttributes);
+            response = authenticator.authenticate(request);
             log.trace("{} authentication response {}", getLogPrefix(), response);
             if (response.getResult()) {
                 log.debug("{} login by '{}' succeeded", getLogPrefix(), upContext.getUsername());
+                authenticationContext.getSubcontext(LDAPResponseContext.class, true)
+                        .setAuthenticationResponse(response);
+                if (response.getAccountState() != null) {
+                    handleWarning(
+                            profileRequestContext,
+                            authenticationContext,
+                            String.format("%s:%s:%s", "ACCOUNT_WARNING", response.getResultCode(),
+                                    response.getMessage()), "ACCOUNT_WARNING");
+                }
                 buildAuthenticationResult(profileRequestContext, authenticationContext);
             } else {
                 log.debug("{} login by '{}' failed", getLogPrefix(), upContext.getUsername());
-                profileRequestContext.getSubcontext(EventContext.class, true).setEvent(response);
+                authenticationContext.getSubcontext(LDAPResponseContext.class, true)
+                        .setAuthenticationResponse(response);
+                if (AuthenticationResultCode.DN_RESOLUTION_FAILURE == response.getAuthenticationResultCode()
+                        || AuthenticationResultCode.INVALID_CREDENTIAL == response.getAuthenticationResultCode()) {
+                    handleError(profileRequestContext, authenticationContext,
+                            String.format("%s:%s", response.getAuthenticationResultCode(), response.getMessage()),
+                            response.getAuthenticationResultCode().name());
+                } else if (response.getAccountState() != null) {
+                    final AccountState state = response.getAccountState();
+                    handleError(profileRequestContext, authenticationContext, String.format("%s:%s:%s",
+                            state.getError(), response.getResultCode(), response.getMessage()), state.getError()
+                            .getMessage());
+                } else {
+                    handleError(profileRequestContext, authenticationContext, String.format("%s:%s",
+                            response.getResultCode(), response.getMessage()), response.getResultCode().name());
+                }
             }
         } catch (LdapException e) {
             log.warn(getLogPrefix() + " login by '" + upContext.getUsername() + "' produced exception", e);
+            handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHENTCATION_EXCEPTION);
             throw new AuthenticationException(e);
         }
     }
@@ -146,6 +204,7 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
     /** {@inheritDoc} */
     @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) throws AuthenticationException {
         subject.getPrincipals().add(new UsernamePrincipal(upContext.getUsername()));
+        subject.getPrincipals().add(new LdapPrincipal(upContext.getUsername(), response.getLdapEntry()));
         return subject;
     }
 
