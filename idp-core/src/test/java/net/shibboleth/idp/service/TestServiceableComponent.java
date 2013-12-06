@@ -44,4 +44,9 @@ public class TestServiceableComponent extends AbstractServicableComponent<TestSe
     public void setTheValue(String theValue) {
         this.theValue = theValue;
     }
+    
+    /** {@inheritDoc} */
+    public void setId(@Nonnull String componentId) {
+        super.setId(componentId);
+    }
 }

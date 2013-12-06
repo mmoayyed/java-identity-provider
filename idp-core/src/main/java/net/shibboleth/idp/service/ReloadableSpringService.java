@@ -138,8 +138,8 @@ public class ReloadableSpringService<T> extends AbstractReloadableService {
                         resourceLastModifiedTimes[i] = -1;
                     }
                 } catch (IOException e) {
-                    log.info("Configuration resource '" + serviceConfig.getDescription()
-                            + "' last modification date could not be determined", e);
+                    log.info("{} Configuration resource '" + serviceConfig.getDescription()
+                            + "' last modification date could not be determined", getLogPrefix(), e);
                     resourceLastModifiedTimes[i] = -1;
                 }
             }
@@ -175,29 +175,32 @@ public class ReloadableSpringService<T> extends AbstractReloadableService {
             try {
                 if (resourceLastModifiedTimes[i] == -1 && !serviceConfig.exists()) {
                     // Resource did not exist and still does not exist.
-                    log.debug("Resource remains unavailable/inaccessible: '{}'", serviceConfig.getDescription());
+                    log.debug("{} Resource remains unavailable/inaccessible: '{}'", getLogPrefix(),
+                            serviceConfig.getDescription());
                 } else if (resourceLastModifiedTimes[i] == -1 && serviceConfig.exists()) {
                     // Resource did not exist, but does now.
-                    log.debug("Resource was unavailable, now present: '{}'", serviceConfig.getDescription());
+                    log.debug("{} Resource was unavailable, now present: '{}'", getLogPrefix(),
+                            serviceConfig.getDescription());
                     configResourceChanged = true;
                     resourceLastModifiedTimes[i] = serviceConfig.lastModified();
                 } else if (resourceLastModifiedTimes[i] > -1 && !serviceConfig.exists()) {
                     // Resource existed, but is now unavailable.
-                    log.debug("Resource was available, now is not: '{}'", serviceConfig.getDescription());
+                    log.debug("{} Resource was available, now is not: '{}'", getLogPrefix(),
+                            serviceConfig.getDescription());
                     configResourceChanged = true;
                     resourceLastModifiedTimes[i] = -1;
                 } else {
                     // Check to see if an existing resource, that still exists, has been modified.
                     serviceConfigLastModified = serviceConfig.lastModified();
                     if (serviceConfigLastModified != resourceLastModifiedTimes[i]) {
-                        log.debug("Resource has changed: '{}'", serviceConfig.getDescription());
+                        log.debug("{} Resource has changed: '{}'", getLogPrefix(), serviceConfig.getDescription());
                         configResourceChanged = true;
                         resourceLastModifiedTimes[i] = serviceConfigLastModified;
                     }
                 }
             } catch (IOException e) {
-                log.info("Configuration resource '" + serviceConfig.getDescription()
-                        + "' last modification date could not be determined", e);
+                log.info("{} Configuration resource '{}' last modification date could not be determined",
+                        getLogPrefix(), serviceConfig.getDescription(), e);
                 configResourceChanged = true;
             }
         }
@@ -219,20 +222,19 @@ public class ReloadableSpringService<T> extends AbstractReloadableService {
             throw new ServiceException(e);
         }
 
-        log.debug("New Application Context created for service '{}'", getId());
+        log.trace("{} New Application Context created.", getLogPrefix());
 
         final Collection<ServiceableComponent> components =
                 appContext.getBeansOfType(ServiceableComponent.class).values();
 
-        log.debug("Context for service {} yiedled {} beans", getId(), components.size());
+        log.debug("{} Context yielded {} beans", getLogPrefix(), components.size());
 
         if (components.size() == 0) {
-            throw new ServiceException("Reload did not produce any ServiceableComponents");
+            appContext.close();
+            throw new ServiceException(getLogPrefix() + "Reload did not produce any ServiceableComponents");
         }
         if (components.size() > 1) {
-            for (ServiceableComponent c : components) {
-                c.unloadComponent();
-            }
+            appContext.close();
             throw new ServiceException("Reload produced too many ServiceableComponents");
         }
 
@@ -244,7 +246,7 @@ public class ReloadableSpringService<T> extends AbstractReloadableService {
         //
         final T theComponent = service.getComponent();
 
-        log.debug("testing that {} is a superclass of {}", theComponent.getClass(), theClaz);
+        log.debug("Testing that {} is a superclass of {}", theComponent.getClass(), theClaz);
 
         if (!theComponent.getClass().isAssignableFrom(theClaz)) {
             //

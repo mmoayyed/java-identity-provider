@@ -4,7 +4,7 @@
     <logger name="net.shibboleth.idp.log" level="DEBUG"/>
     <logger name="net.shibboleth.idp.persistence" level="DEBUG"/>
     <logger name="net.shibboleth.idp.predicate" level="DEBUG"/>
-    <logger name="net.shibboleth.idp.service" level="DEBUG"/>
+    <logger name="net.shibboleth.idp.service" level="TRACE"/>
     <logger name="net.shibboleth.idp.spring" level="DEBUG"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">

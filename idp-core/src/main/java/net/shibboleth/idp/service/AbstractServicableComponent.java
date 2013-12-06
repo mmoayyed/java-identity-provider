@@ -23,8 +23,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -35,7 +40,10 @@ import org.springframework.context.ConfigurableApplicationContext;
  * @param <T> The type of service.
  */
 public abstract class AbstractServicableComponent<T> extends AbstractDestructableIdentifiableInitializableComponent
-        implements ServiceableComponent<T>, ApplicationContextAware, DisposableBean  {
+        implements ServiceableComponent<T>, ApplicationContextAware, DisposableBean, InitializingBean {
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(AbstractServicableComponent.class);
 
     /** The context used to load this bean. */
     private ApplicationContext applicationContext;
@@ -48,6 +56,7 @@ public abstract class AbstractServicableComponent<T> extends AbstractDestructabl
 
     /** {@inheritDoc} */
     public void setApplicationContext(ApplicationContext context) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         applicationContext = context;
     }
 
@@ -63,10 +72,10 @@ public abstract class AbstractServicableComponent<T> extends AbstractDestructabl
     /**
      * {@inheritDoc}.
      */
-     @Nonnull public abstract T getComponent();
+    @Nonnull public abstract T getComponent();
 
-    /**{@inheritDoc}
-     * Grab the service lock shared. This will block unloads until {@link #unpinComponent()} is called.
+    /**
+     * {@inheritDoc} Grab the service lock shared. This will block unloads until {@link #unpinComponent()} is called.
      */
     public void pinComponent() {
         serviceLock.readLock().lock();
@@ -77,15 +86,53 @@ public abstract class AbstractServicableComponent<T> extends AbstractDestructabl
         serviceLock.readLock().unlock();
     }
 
-    /** {@inheritDoc}.  Grab the service lock ex and then call spring to tear everything down. */
+    /** {@inheritDoc}. Grab the service lock ex and then call spring to tear everything down. */
     public void unloadComponent() {
+        if (null == applicationContext) {
+            log.debug("Component '{}': Component already unloaded", getId());
+            return;
+        }
+
+        ConfigurableApplicationContext component = null;
+        log.debug("Component '{}': Component unload called", getId());
         try {
+            log.trace("Component '{}': Queueing for write lock", getId());
             serviceLock.writeLock().lock();
-            ConfigurableApplicationContext c = (ConfigurableApplicationContext) applicationContext;
-            c.close();
+            log.trace("Component '{}': Got write lock", getId());
+            component = (ConfigurableApplicationContext) applicationContext;
+            applicationContext = null;
         } finally {
             serviceLock.writeLock().unlock();
         }
-        destroy();
+
+        if (null != component) {
+            log.debug("Component '{}': Closing the appcontext", getId());
+            component.close();
+        }
+    }
+
+    /**
+     * {@inheritDoc}. Force unload; this will usually be a no-op since the component should have been explicitly
+     * unloaded, but we do the unload here so that error cases also clean up.
+     */
+    public void doDestroy() {
+        unloadComponent();
+    }
+
+    /** {@inheritDoc} */
+    public void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        if (null == applicationContext) {
+            throw new ComponentInitializationException(getId() + ": No application context provided");
+        }
+        if (!(applicationContext instanceof ConfigurableApplicationContext)) {
+            throw new ComponentInitializationException(getId()
+                    + ": Application context did not implement ConfigurableApplicationContext");
+        }
+    }
+
+    /** {@inheritDoc}. Bridges from Spring to Shibboleth components. */
+    public void afterPropertiesSet() throws Exception {
+        initialize();
     }
 }

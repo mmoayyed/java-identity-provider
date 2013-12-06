@@ -7,4 +7,5 @@
 	<bean id="RequestedAttributesMapper"
 		class="net.shibboleth.idp.service.TestServiceableComponent"
 		p:theValue="One"
+		p:id="RequestedAttributesMapper"
 </beans>
