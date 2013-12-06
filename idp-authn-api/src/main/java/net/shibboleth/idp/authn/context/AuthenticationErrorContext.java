@@ -92,7 +92,7 @@ public class AuthenticationErrorContext extends BaseContext {
      * Check for the presence of a particular error condition in the context.
      * 
      * @param error the condition to check for
-     * @return  true iff the context contains the error condition specified
+     * @return  true if the context contains the error condition specified
      */
     public boolean isClassifiedError(@Nonnull @NotEmpty final String error) {
         return classifiedErrors.contains(error);
