@@ -285,7 +285,9 @@ public class ReloadableSpringService<T> extends AbstractReloadableService {
         // And tear down. Note that we are synchronized on this right now
         // and this will grab the lock - but that is OK because the ranking
         // is to lock this object, then the ServicableComponent.
-        oldComponent.unloadComponent();
+        if (null != oldComponent) {
+            oldComponent.unloadComponent();
+        }
     }
 
     /**

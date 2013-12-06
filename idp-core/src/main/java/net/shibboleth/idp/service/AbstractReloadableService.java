@@ -190,7 +190,7 @@ public abstract class AbstractReloadableService extends AbstractDestructableIden
 
         if (reloadCheckDelay > 0) {
             if (null == reloadTaskTimer) {
-                log.info("{} no reload tast timer specified, creating default", getLogPrefix());
+                log.info("{} no reload task timer specified, creating default", getLogPrefix());
                 reloadTaskTimer = new Timer("Timer for " + getId());
             }
             log.info("{} reload time set to: {}, starting refresh thread", getLogPrefix(), reloadCheckDelay);

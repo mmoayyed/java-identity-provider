@@ -65,14 +65,14 @@ public class ReloadableSpringServiceTest {
         createPopulatedFile("net/shibboleth/idp/service/ServiceableBean1.xml");
 
         service.setFailFast(true);
-        service.setId("Id");
+        service.setId("reloadableService");
         service.setReloadCheckDelay(RELOAD_DELAY);
         service.setServiceConfigurations(Collections.singletonList(testFileResource()));
 
         service.start();
 
         ServiceableComponent<TestServiceableComponent> serviceableComponent = service.getServiceableComponent();
-        TestServiceableComponent component  = serviceableComponent.getComponent();
+        TestServiceableComponent component = serviceableComponent.getComponent();
 
         Assert.assertEquals(component.getTheValue(), "One");
         Assert.assertFalse(component.getComponent().isDestroyed());
@@ -96,6 +96,7 @@ public class ReloadableSpringServiceTest {
 
         Assert.assertEquals(serviceableComponent.getComponent().getTheValue(), "Two");
         serviceableComponent.unpinComponent();
+        service.stop();
     }
 
     @Test public void deferedReload() throws IOException, InterruptedException {
@@ -105,7 +106,7 @@ public class ReloadableSpringServiceTest {
         createPopulatedFile("net/shibboleth/idp/service/ServiceableBean1.xml");
 
         service.setFailFast(true);
-        service.setId("Id");
+        service.setId("deferedReload");
         service.setReloadCheckDelay(RELOAD_DELAY);
         service.setServiceConfigurations(Collections.singletonList(testFileResource()));
 
@@ -130,6 +131,7 @@ public class ReloadableSpringServiceTest {
             serviceableComponent = service.getServiceableComponent();
             component2 = serviceableComponent.getComponent();
             if ("Two".equals(component2.getTheValue())) {
+                component2.unpinComponent();
                 break;
             }
             component2.unpinComponent();
@@ -138,7 +140,7 @@ public class ReloadableSpringServiceTest {
             count--;
         }
         Assert.assertNotNull("After 7 second initial component has still not got new value", component2);
-        
+
         component.unpinComponent();
 
         count = 70;
@@ -147,62 +149,61 @@ public class ReloadableSpringServiceTest {
             count--;
         }
         Assert.assertTrue("After 7 second initial component has still not be destroyed", component.isDestroyed());
-        
+
+        service.stop();
     }
-    
-    @Test
-    public void testFailFast() throws IOException, InterruptedException {
+
+    @Test public void testFailFast() throws IOException, InterruptedException {
         final ReloadableSpringService<TestServiceableComponent> service =
                 new ReloadableSpringService<>(TestServiceableComponent.class);
 
         createPopulatedFile("net/shibboleth/idp/service/BrokenBean1.xml");
 
         service.setFailFast(true);
-        service.setId("Id");
+        service.setId("testFailFast");
         service.setReloadCheckDelay(0);
         service.setServiceConfigurations(Collections.singletonList(testFileResource()));
 
         try {
             service.start();
-        }
-        catch (BeanInitializationException e) {
+        } catch (BeanInitializationException e) {
             // OK
         }
         Assert.assertNull(service.getServiceableComponent());
-        
+
         overwriteFileWith("net/shibboleth/idp/service/ServiceableBean2.xml");
 
-        Thread.sleep(RELOAD_DELAY*2);
+        Thread.sleep(RELOAD_DELAY * 2);
         Assert.assertNull(service.getServiceableComponent());
+
+        service.stop();
     }
-    
-    @Test
-    public void testNotFailFast() throws IOException, InterruptedException {
+
+    @Test public void testNotFailFast() throws IOException, InterruptedException {
         final ReloadableSpringService<TestServiceableComponent> service =
                 new ReloadableSpringService<>(TestServiceableComponent.class);
 
         createPopulatedFile("net/shibboleth/idp/service/BrokenBean1.xml");
 
         service.setFailFast(false);
-        service.setId("Id");
+        service.setId("testNotFailFast");
         service.setReloadCheckDelay(RELOAD_DELAY);
         service.setServiceConfigurations(Collections.singletonList(testFileResource()));
 
         try {
             service.start();
-        }
-        catch (BeanInitializationException e) {
+        } catch (BeanInitializationException e) {
             // OK
         }
         Assert.assertNull(service.getServiceableComponent());
-        
+
         overwriteFileWith("net/shibboleth/idp/service/ServiceableBean2.xml");
 
-        Thread.sleep(RELOAD_DELAY*2);
+        Thread.sleep(RELOAD_DELAY * 2);
         final ServiceableComponent<TestServiceableComponent> serviceableComponent = service.getServiceableComponent();
         final TestServiceableComponent component = serviceableComponent.getComponent();
         Assert.assertEquals("Two", component.getTheValue());
-        
+
         Assert.assertFalse(component.isDestroyed());
         component.unpinComponent();
         service.stop();
@@ -213,8 +214,8 @@ public class ReloadableSpringServiceTest {
             count--;
         }
         Assert.assertTrue("After 7 second initial component has still not be destroyed", component.isDestroyed());
-        
-        
+
+        service.stop();
     }
 
 }
