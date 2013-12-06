@@ -41,11 +41,11 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Lists;
 
 /**
- * {@link Saml1ByteAttributeEncoder} Unit test.
+ * {@link SAML1XMLObjectAttributeEncoder} Unit test.
  * 
- * Identical code to the {@link Saml1ByteAttributeEncoder} except that the type of assertion and encoder is changed.
+ * Identical code to the {@link SAML1ByteAttributeEncoder} except that the type of assertion and encoder is changed.
  */
-public class Saml1XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
+public class SAML1XMLObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
     /** The name we give the test attribute. */
     private final static String ATTR_NAME = "foo";
@@ -56,16 +56,16 @@ public class Saml1XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
     /** A second test value. */
     private final static String STRING_2 = "Second string the value is";
 
-    private Saml1XmlObjectAttributeEncoder encoder;
+    private SAML1XMLObjectAttributeEncoder encoder;
 
-    private Saml1StringAttributeEncoder strEncoder;
+    private SAML1StringAttributeEncoder strEncoder;
 
     @BeforeClass public void initTest() throws ComponentInitializationException {
-        encoder = new Saml1XmlObjectAttributeEncoder();
+        encoder = new SAML1XMLObjectAttributeEncoder();
         encoder.setName(ATTR_NAME);
         encoder.setNamespace("NameSpace");
         encoder.initialize();
-        strEncoder = new Saml1StringAttributeEncoder();
+        strEncoder = new SAML1StringAttributeEncoder();
         strEncoder.setName(ATTR_NAME);
         strEncoder.setNamespace("NameSpace");
         strEncoder.initialize();

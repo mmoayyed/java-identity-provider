@@ -32,12 +32,12 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Tests for {@link Saml1StringSubjectNameIdentifierEncoder}.
+ * Tests for {@link SAML1StringNameIdentifierEncoder}.
  */
-public class Saml1StringSubjectNameIdentifierEncoderTest extends OpenSAMLInitBaseTestCase {
+public class SAML1StringNameIdentifierEncoderTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void settersGetters() {
-        final Saml1StringSubjectNameIdentifierEncoder encoder = new Saml1StringSubjectNameIdentifierEncoder();
+        final SAML1StringNameIdentifierEncoder encoder = new SAML1StringNameIdentifierEncoder();
 
         Assert.assertNull(encoder.getNameFormat());
         Assert.assertNull(encoder.getNameQualifier());
@@ -50,15 +50,15 @@ public class Saml1StringSubjectNameIdentifierEncoderTest extends OpenSAMLInitBas
     }
 
     @Test public void equalsHash() {
-        final Saml1StringSubjectNameIdentifierEncoder enc1 = new Saml1StringSubjectNameIdentifierEncoder();
+        final SAML1StringNameIdentifierEncoder enc1 = new SAML1StringNameIdentifierEncoder();
         enc1.setNameFormat("nameFormat");
         enc1.setNameQualifier("nameQualifier");
 
-        final Saml1StringSubjectNameIdentifierEncoder enc2 = new Saml1StringSubjectNameIdentifierEncoder();
+        final SAML1StringNameIdentifierEncoder enc2 = new SAML1StringNameIdentifierEncoder();
         enc2.setNameFormat("nameFormat");
         enc2.setNameQualifier("nameQualifier");
 
-        final Saml1StringSubjectNameIdentifierEncoder enc3 = new Saml1StringSubjectNameIdentifierEncoder();
+        final SAML1StringNameIdentifierEncoder enc3 = new SAML1StringNameIdentifierEncoder();
         enc3.setNameFormat("nameQualifier");
         enc3.setNameQualifier("nameFormat");
 
@@ -76,7 +76,7 @@ public class Saml1StringSubjectNameIdentifierEncoderTest extends OpenSAMLInitBas
         IdPAttribute attribute = new IdPAttribute("id");
         attribute.setValues(Collections.singleton(new StringAttributeValue("value")));
 
-        final Saml1StringSubjectNameIdentifierEncoder enc1 = new Saml1StringSubjectNameIdentifierEncoder();
+        final SAML1StringNameIdentifierEncoder enc1 = new SAML1StringNameIdentifierEncoder();
 
         NameIdentifier nameId = enc1.encode(attribute);
         Assert.assertEquals(nameId.getNameIdentifier(), "value");
@@ -95,7 +95,7 @@ public class Saml1StringSubjectNameIdentifierEncoderTest extends OpenSAMLInitBas
             throws AttributeEncodingException {
         IdPAttribute attribute = new IdPAttribute("id");
 
-        final Saml1StringSubjectNameIdentifierEncoder enc1 = new Saml1StringSubjectNameIdentifierEncoder();
+        final SAML1StringNameIdentifierEncoder enc1 = new SAML1StringNameIdentifierEncoder();
 
         try {
             enc1.encode(attribute);

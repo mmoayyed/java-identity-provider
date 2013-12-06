@@ -18,34 +18,34 @@
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.saml.impl.attribute.encoding.Saml1StringAttributeEncoder;
+import net.shibboleth.idp.saml.impl.attribute.encoding.SAML1ByteAttributeEncoder;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Test for {@link Saml1StringAttributeEncoderParser}.
+ * Test for {@link SAML1Base64AttributeEncoderParser}.
  */
-public class Saml1StringAttributeEncoderParserTest extends BaseAttributeDefinitionParserTest {
+public class SAML1Base64AttributeEncoderParserTest extends BaseAttributeDefinitionParserTest {
 
     @Test public void specified() {
-        Saml1StringAttributeEncoder encoder =
-                getAttributeEncoder("saml1String.xml", Saml1StringAttributeEncoder.class);
+        SAML1ByteAttributeEncoder encoder =
+                getAttributeEncoder("saml1Base64.xml", SAML1ByteAttributeEncoder.class);
 
-        Assert.assertEquals(encoder.getName(), "SAML1_STRING_ATTRIBUTE_NAME");
-        Assert.assertEquals(encoder.getNamespace(),"SAML1_STRING_ATTRIBUTE_NAME_SPACE");
+        Assert.assertEquals(encoder.getName(), "SAML1_BASE64_ATTRIBUTE_NAME");
+        Assert.assertEquals(encoder.getNamespace(),"SAML1_BASE64_ATTRIBUTE_NAME_SPACE");
     }
     
     @Test public void defaultCase() {
-        Saml1StringAttributeEncoder encoder =
-                getAttributeEncoder("saml1StringDefault.xml", Saml1StringAttributeEncoder.class);
+        SAML1ByteAttributeEncoder encoder =
+                getAttributeEncoder("saml1Base64Default.xml", SAML1ByteAttributeEncoder.class);
 
-        Assert.assertEquals(encoder.getName(), "ATTRIBUTE");
+        Assert.assertEquals(encoder.getName(), "Base64_ATTRIBUTE");
         Assert.assertEquals(encoder.getNamespace(),"urn:mace:shibboleth:1.0:attributeNamespace:uri");
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {
-        getAttributeEncoder("saml1StringNoName.xml", Saml1StringAttributeEncoder.class);
+        getAttributeEncoder("saml1Base64NoName.xml", SAML1ByteAttributeEncoder.class);
     }
 }

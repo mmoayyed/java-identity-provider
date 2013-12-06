@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.saml.impl.attribute.encoding.Saml1XmlObjectAttributeEncoder;
+import net.shibboleth.idp.saml.impl.attribute.encoding.SAML1StringAttributeEncoder;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.BeanCreationException;
@@ -29,31 +29,31 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/** Spring Bean Definition Parser for SAML1 XMLObject attribute encoder. */
-public class Saml1XmlObjectAttributeEncoderParser extends BaseAttributeEncoderParser {
+/**
+ * Spring Bean Definition Parser for {@link SAML1StringAttributeEncoder}.
+ */
+public class SAML1StringAttributeEncoderParser extends BaseAttributeEncoderParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML1XMLObject");
+    public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML1String");
 
-    /** Local name of name format attribute. */
-    public static final String NAME_FORMAT_ATTRIBUTE_NAME = "nameFormat";
-
-    /** Local name of friendly name attribute. */
-    public static final String FRIENDLY_NAME_ATTRIBUTE_NAME = "friendlyName";
-
+    /** Local name of namespace attribute. */
+    public static final String NAMESPACE_ATTRIBUTE_NAME = "namespace";
+    
     /** {@inheritDoc} */
-    protected Class<Saml1XmlObjectAttributeEncoder> getBeanClass(@Nullable Element element) {
-        return Saml1XmlObjectAttributeEncoder.class;
+    protected Class<SAML1StringAttributeEncoder> getBeanClass(@Nullable Element element) {
+        return SAML1StringAttributeEncoder.class;
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
         String namespace = "urn:mace:shibboleth:1.0:attributeNamespace:uri";
-        if (config.hasAttributeNS(null, "namespace")) {
-            namespace = StringSupport.trimOrNull(config.getAttributeNS(null, "namespace"));
+        if (config.hasAttributeNS(null, NAMESPACE_ATTRIBUTE_NAME)) {
+            namespace = StringSupport.trimOrNull(config.getAttributeNS(null, NAMESPACE_ATTRIBUTE_NAME));
         }
         builder.addPropertyValue("namespace", namespace);
 

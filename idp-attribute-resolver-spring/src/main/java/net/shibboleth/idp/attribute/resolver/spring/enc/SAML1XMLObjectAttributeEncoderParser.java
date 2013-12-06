@@ -21,51 +21,38 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.saml.impl.attribute.encoding.Saml1ScopedStringAttributeEncoder;
+import net.shibboleth.idp.saml.impl.attribute.encoding.SAML1XMLObjectAttributeEncoder;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/**
- * Spring Bean Definition Parser for SAML1 string attribute encoder.
- */
-public class Saml1ScopedStringAttributeEncoderParser extends
-        BaseScopedAttributeEncoderParser {
+/** Spring Bean Definition Parser for {@link SAML1XMLObjectAttributeEncoder}. */
+public class SAML1XMLObjectAttributeEncoderParser extends BaseAttributeEncoderParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML1ScopedString");
+    public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML1XMLObject");
 
     /** Local name of namespace attribute. */
     public static final String NAMESPACE_ATTRIBUTE_NAME = "namespace";
-
+    
     /** {@inheritDoc} */
-    protected Class<Saml1ScopedStringAttributeEncoder> getBeanClass(@Nullable Element element) {
-        return Saml1ScopedStringAttributeEncoder.class;
+    protected Class<SAML1XMLObjectAttributeEncoder> getBeanClass(@Nullable Element element) {
+        return SAML1XMLObjectAttributeEncoder.class;
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        if (config.hasAttributeNS(null, "scopeType")) {
-            builder.addPropertyValue("scopeType", config.getAttributeNS(null, "scopeType"));
-        } else {
-            builder.addPropertyValue("scopeType", "attribute");
-        }
-
         String namespace = "urn:mace:shibboleth:1.0:attributeNamespace:uri";
-        if (config.hasAttributeNS(null, "namespace")) {
-            namespace = StringSupport.trimOrNull(config.getAttributeNS(null, "namespace"));
+        if (config.hasAttributeNS(null, NAMESPACE_ATTRIBUTE_NAME)) {
+            namespace = StringSupport.trimOrNull(config.getAttributeNS(null, NAMESPACE_ATTRIBUTE_NAME));
         }
         builder.addPropertyValue("namespace", namespace);
-
-        final String attributeName = StringSupport.trimOrNull(config.getAttributeNS(null, "name"));
-        if (attributeName == null) {
-            throw new BeanCreationException("SAML 1 attribute encoders must contain a name");
-        }
     }
+    
 }

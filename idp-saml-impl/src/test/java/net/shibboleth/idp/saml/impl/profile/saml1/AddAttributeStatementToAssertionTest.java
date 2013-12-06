@@ -33,7 +33,7 @@ import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
-import net.shibboleth.idp.saml.impl.attribute.encoding.Saml1StringAttributeEncoder;
+import net.shibboleth.idp.saml.impl.attribute.encoding.SAML1StringAttributeEncoder;
 import net.shibboleth.idp.saml.profile.SamlEventIds;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -331,7 +331,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         IdPAttribute attribute1 = new IdPAttribute(MY_NAME_1);
         attribute1.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
 
-        Saml1StringAttributeEncoder attributeEncoder1 = new Saml1StringAttributeEncoder();
+        SAML1StringAttributeEncoder attributeEncoder1 = new SAML1StringAttributeEncoder();
         attributeEncoder1.setName(MY_NAME_1);
         attributeEncoder1.setNamespace(MY_NAMESPACE);
         attributeEncoder1.initialize();
@@ -342,7 +342,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         IdPAttribute attribute2 = new IdPAttribute(MY_NAME_2);
         attribute2.setValues(Collections.singleton(new StringAttributeValue(MY_VALUE_2)));
 
-        Saml1StringAttributeEncoder attributeEncoder2 = new Saml1StringAttributeEncoder();
+        SAML1StringAttributeEncoder attributeEncoder2 = new SAML1StringAttributeEncoder();
         attributeEncoder2.setName(MY_NAME_2);
         attributeEncoder2.setNamespace(MY_NAMESPACE);
         attributeEncoder2.initialize();
@@ -382,7 +382,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     }
 
     /** A mock SAML1 string attribute encoder which always throws an {@link AttributeEncodingException}. */
-    private class MockSaml1StringAttributeEncoder extends Saml1StringAttributeEncoder {
+    private class MockSaml1StringAttributeEncoder extends SAML1StringAttributeEncoder {
 
         /** {@inheritDoc} */
         @Nullable public Attribute encode(@Nonnull final IdPAttribute attribute) throws AttributeEncodingException {

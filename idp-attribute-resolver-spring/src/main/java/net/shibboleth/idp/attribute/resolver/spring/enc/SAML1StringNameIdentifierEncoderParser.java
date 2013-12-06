@@ -21,41 +21,52 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.saml.impl.attribute.encoding.Saml1StringAttributeEncoder;
+import net.shibboleth.idp.saml.impl.attribute.encoding.SAML1StringNameIdentifierEncoder;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Spring Bean Definition Parser for SAML1 string attribute encoder.
+ * Spring bean definition parser for {@link SAML1StringNameIdentifierEncoder}.
  */
-public class Saml1StringAttributeEncoderParser extends BaseAttributeEncoderParser {
+public class SAML1StringNameIdentifierEncoderParser extends AbstractSingleBeanDefinitionParser {
 
-    /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML1String");
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE = new QName(AttributeEncoderNamespaceHandler.NAMESPACE,
+            "SAML1StringNameIdentifier");
+    
+    /** Local name of name format attribute. */
+    public static final String FORMAT_ATTRIBUTE_NAME = "nameFormat";
 
+    /** Local name of name qualifier attribute. */
+    public static final String NAMEQUALIFIER_ATTRIBUTE_NAME = "nameQualifier";
+    
     /** {@inheritDoc} */
-    protected Class<Saml1StringAttributeEncoder> getBeanClass(@Nullable Element element) {
-        return Saml1StringAttributeEncoder.class;
+    protected Class<SAML1StringNameIdentifierEncoder> getBeanClass(@Nullable Element element) {
+        return SAML1StringNameIdentifierEncoder.class;
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        String namespace = "urn:mace:shibboleth:1.0:attributeNamespace:uri";
-        if (config.hasAttributeNS(null, "namespace")) {
-            namespace = StringSupport.trimOrNull(config.getAttributeNS(null, "namespace"));
+        String format = "urn:oasis:names:tc:SAML:1.0:nameid-format:unspecified";
+        if (config.hasAttributeNS(null, FORMAT_ATTRIBUTE_NAME)) {
+            format = StringSupport.trimOrNull(config.getAttributeNS(null, FORMAT_ATTRIBUTE_NAME));
         }
-        builder.addPropertyValue("namespace", namespace);
+        builder.addPropertyValue("nameFormat", format);
 
-        final String attributeName = StringSupport.trimOrNull(config.getAttributeNS(null, "name"));
-        if (attributeName == null) {
-            throw new BeanCreationException("SAML 1 attribute encoders must contain a name");
-        }
+        builder.addPropertyValue("nameQualifier", config.getAttributeNS(null, NAMEQUALIFIER_ATTRIBUTE_NAME));
     }
+    
+    /** {@inheritDoc} */
+    public boolean shouldGenerateId() {
+        return true;
+    }
+
 }

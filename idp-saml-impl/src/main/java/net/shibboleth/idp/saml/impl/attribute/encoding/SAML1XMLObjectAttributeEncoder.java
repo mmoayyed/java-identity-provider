@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.saml.impl.attribute.encoding;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -28,19 +31,21 @@ import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.saml1.core.AttributeValue;
 
 /**
- * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces SAML 1 attributes from
+ * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces SAML 1 attributes from an
  * {@link net.shibboleth.idp.attribute.IdPAttribute} that contains {@link XMLObjectAttributeValue} values.
  */
-public class Saml1XmlObjectAttributeEncoder extends AbstractSAML1AttributeEncoder<XMLObjectAttributeValue> {
+public class SAML1XMLObjectAttributeEncoder extends AbstractSAML1AttributeEncoder<XMLObjectAttributeValue> {
 
     /** {@inheritDoc} */
-    protected boolean canEncodeValue(IdPAttribute attribute, IdPAttributeValue value) {
+    @Override
+    protected boolean canEncodeValue(@Nonnull final IdPAttribute attribute, @Nonnull final IdPAttributeValue value) {
         return value instanceof XMLObjectAttributeValue;
     }
 
     /** {@inheritDoc} */
-    protected XMLObject encodeValue(IdPAttribute attribute, XMLObjectAttributeValue value)
-            throws AttributeEncodingException {
+    @Override
+    @Nullable protected XMLObject encodeValue(@Nonnull final IdPAttribute attribute,
+            @Nonnull final XMLObjectAttributeValue value) throws AttributeEncodingException {
         return SAMLEncoderSupport.encodeXMLObjectValue(attribute,
                 AttributeValue.DEFAULT_ELEMENT_NAME, value.getValue());
     }

@@ -21,45 +21,40 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.saml.impl.attribute.encoding.Saml1StringSubjectNameIdentifierEncoder;
+import net.shibboleth.idp.saml.impl.attribute.encoding.SAML1ByteAttributeEncoder;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Spring bean definition parser for {@link SAML1StringNameIdentifierEncoder}s.
+ * Spring Bean Definition Parser for {@link SAML1ByteAttributeEncoder}.
  */
-public class Saml1StringNameIdentifierEncoderParser extends AbstractSingleBeanDefinitionParser {
+public class SAML1Base64AttributeEncoderParser extends BaseAttributeEncoderParser {
 
-    /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(AttributeEncoderNamespaceHandler.NAMESPACE,
-            "SAML1StringNameIdentifier");
+    /** Schema type name. */
+    public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML1Base64");
 
+    /** Local name of namespace attribute. */
+    public static final String NAMESPACE_ATTRIBUTE_NAME = "namespace";
+    
     /** {@inheritDoc} */
-    protected Class<Saml1StringSubjectNameIdentifierEncoder> getBeanClass(@Nullable Element element) {
-        return Saml1StringSubjectNameIdentifierEncoder.class;
+    protected Class<SAML1ByteAttributeEncoder> getBeanClass(@Nullable Element element) {
+        return SAML1ByteAttributeEncoder.class;
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        String namespace = "urn:oasis:names:tc:SAML:1.0:nameid-format:unspecified";
-        if (config.hasAttributeNS(null, "nameFormat")) {
-            namespace = StringSupport.trimOrNull(config.getAttributeNS(null, "nameFormat"));
+        String namespace = "urn:mace:shibboleth:1.0:attributeNamespace:uri";
+        if (config.hasAttributeNS(null, NAMESPACE_ATTRIBUTE_NAME)) {
+            namespace = StringSupport.trimOrNull(config.getAttributeNS(null, NAMESPACE_ATTRIBUTE_NAME));
         }
-        builder.addPropertyValue("nameFormat", namespace);
-
-        builder.addPropertyValue("nameQualifier", config.getAttributeNS(null, "nameQualifier"));
+        builder.addPropertyValue("namespace", namespace);
     }
     
-    /** {@inheritDoc} */
-    public boolean shouldGenerateId() {
-        return true;
-    }
-
 }

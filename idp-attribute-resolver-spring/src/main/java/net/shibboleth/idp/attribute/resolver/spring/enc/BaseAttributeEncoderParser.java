@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -31,14 +32,24 @@ import org.w3c.dom.Element;
  */
 public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefinitionParser {
 
+    /** Local name of name attribute. */
+    public static final String NAME_ATTRIBUTE_NAME = "name";
+    
     /** {@inheritDoc} */
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
-        builder.addPropertyValue("name", StringSupport.trimOrNull(config.getAttributeNS(null, "name")));
+
+        final String attributeName = StringSupport.trimOrNull(config.getAttributeNS(null, NAME_ATTRIBUTE_NAME));
+        if (attributeName == null) {
+            throw new BeanCreationException("SAML 1 attribute encoders must contain a name");
+        }
+        
+        builder.addPropertyValue("name", attributeName);
     }
 
     /** {@inheritDoc} */
     public boolean shouldGenerateId() {
         return true;
     }
+    
 }

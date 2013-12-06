@@ -41,9 +41,9 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Lists;
 
 /**
- * {@link Saml1ByteAttributeEncoder} Unit test.
+ * {@link SAML1ByteAttributeEncoder} Unit test.
  * 
- * Identical code to the {@link Saml1ByteAttributeEncoder} except that the type of assertion and encoder is changed.
+ * Identical code to the {@link SAML1ByteAttributeEncoder} except that the type of assertion and encoder is changed.
  */
 public class Saml2XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
@@ -58,7 +58,7 @@ public class Saml2XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
 
     private Saml2XmlObjectAttributeEncoder encoder;
 
-    private Saml1StringAttributeEncoder strEncoder;
+    private SAML1StringAttributeEncoder strEncoder;
 
     @BeforeClass public void initTest() throws ComponentInitializationException {
         encoder = new Saml2XmlObjectAttributeEncoder();
@@ -67,7 +67,7 @@ public class Saml2XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
         encoder.setFriendlyName("friendly");
         encoder.initialize();
 
-        strEncoder = new Saml1StringAttributeEncoder();
+        strEncoder = new SAML1StringAttributeEncoder();
         strEncoder.setName(ATTR_NAME);
         strEncoder.setNamespace("NameSpace");
         strEncoder.initialize();

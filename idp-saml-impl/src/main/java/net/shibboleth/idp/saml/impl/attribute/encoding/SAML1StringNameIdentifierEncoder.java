@@ -26,6 +26,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML1NameIdentifierEncoder;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -37,32 +38,35 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Objects;
 
 /**
- * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces the SAML 1 NameIdentifier used for the Subject
- * from the first non-null {@link NameIdentifier} value of an {@link net.shibboleth.idp.attribute.IdPAttribute}.
+ * {@link net.shibboleth.idp.saml.nameid.NameIdentifierAttributeEncoder} that encodes the first String value of an
+ * {@link net.shibboleth.idp.attribute.IdPAttribute} to a SAML 1 {@link NameIdentifier}.
  */
-public class Saml1StringSubjectNameIdentifierEncoder extends AbstractSAML1NameIdentifierEncoder {
+public class SAML1StringNameIdentifierEncoder extends AbstractSAML1NameIdentifierEncoder {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(Saml1StringSubjectNameIdentifierEncoder.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(SAML1StringNameIdentifierEncoder.class);
 
     /** Identifier builder. */
-    private final SAMLObjectBuilder<NameIdentifier> identifierBuilder;
+    @Nonnull private final SAMLObjectBuilder<NameIdentifier> identifierBuilder;
 
     /** The format of the name identifier. */
-    private String format;
+    @Nullable private String format;
 
     /** The security or administrative domain that qualifies the name identifier. */
-    private String qualifier;
+    @Nullable private String qualifier;
 
     /** Constructor. */
-    public Saml1StringSubjectNameIdentifierEncoder() {
+    public SAML1StringNameIdentifierEncoder() {
         identifierBuilder =
                 (SAMLObjectBuilder<NameIdentifier>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
                         NameIdentifier.DEFAULT_ELEMENT_NAME);
+        if (identifierBuilder == null) {
+            throw new ConstraintViolationException("Builder unavailable for NameIdentifier objects");
+        }
     }
 
     /**
-     * Gets the format of the name identifier.
+     * Get the format of the name identifier.
      * 
      * @return format of the name identifier
      */
@@ -71,7 +75,7 @@ public class Saml1StringSubjectNameIdentifierEncoder extends AbstractSAML1NameId
     }
 
     /**
-     * Sets the format of the name identifier.
+     * Set the format of the name identifier.
      * 
      * @param nameFormat format of the name identifier
      */
@@ -80,7 +84,7 @@ public class Saml1StringSubjectNameIdentifierEncoder extends AbstractSAML1NameId
     }
 
     /**
-     * Gets the security or administrative domain that qualifies the name identifier.
+     * Get the security or administrative domain that qualifies the name identifier.
      * 
      * @return security or administrative domain that qualifies the name identifier
      */
@@ -89,7 +93,7 @@ public class Saml1StringSubjectNameIdentifierEncoder extends AbstractSAML1NameId
     }
 
     /**
-     * Sets the security or administrative domain that qualifies the name identifier.
+     * Set the security or administrative domain that qualifies the name identifier.
      * 
      * @param nameQualifier security or administrative domain that qualifies the name identifier
      */
@@ -98,7 +102,7 @@ public class Saml1StringSubjectNameIdentifierEncoder extends AbstractSAML1NameId
     }
 
     /** {@inheritDoc} */
-    @Nonnull public NameIdentifier encode(IdPAttribute attribute) throws AttributeEncodingException {
+    @Nonnull public NameIdentifier encode(@Nonnull final IdPAttribute attribute) throws AttributeEncodingException {
         final String attributeId = attribute.getId();
 
         final Collection<IdPAttributeValue<?>> attributeValues = attribute.getValues();
@@ -108,14 +112,8 @@ public class Saml1StringSubjectNameIdentifierEncoder extends AbstractSAML1NameId
         }
 
         NameIdentifier nameId = identifierBuilder.buildObject();
-
-        if (format != null) {
-            nameId.setFormat(format);
-        }
-
-        if (qualifier != null) {
-            nameId.setNameQualifier(qualifier);
-        }
+        nameId.setFormat(format);
+        nameId.setNameQualifier(qualifier);
 
         for (IdPAttributeValue attrValue : attributeValues) {
             if (attrValue == null || attrValue.getValue() == null) {
@@ -126,13 +124,11 @@ public class Saml1StringSubjectNameIdentifierEncoder extends AbstractSAML1NameId
             Object value = attrValue.getValue();
 
             if (value instanceof String) {
-                String valueAsString = (String) value;
-
-                nameId.setNameIdentifier(valueAsString);
-
+                nameId.setNameIdentifier((String) value);
                 return nameId;
             } else {
-                log.debug("Skipping value of type {} of attribute {}", value.getClass().getName(), attributeId);
+                log.debug("Skipping unsupported value of type {} of attribute {}", value.getClass().getName(),
+                        attributeId);
                 continue;
             }
         }
@@ -140,6 +136,7 @@ public class Saml1StringSubjectNameIdentifierEncoder extends AbstractSAML1NameId
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object obj) {
 
         if (obj == null) {
@@ -150,19 +147,21 @@ public class Saml1StringSubjectNameIdentifierEncoder extends AbstractSAML1NameId
             return true;
         }
 
-        if (!(obj instanceof Saml1StringSubjectNameIdentifierEncoder)) {
+        if (!(obj instanceof SAML1StringNameIdentifierEncoder)) {
             return false;
         }
 
-        Saml1StringSubjectNameIdentifierEncoder other = (Saml1StringSubjectNameIdentifierEncoder) obj;
+        SAML1StringNameIdentifierEncoder other = (SAML1StringNameIdentifierEncoder) obj;
 
         return Objects.equal(getNameFormat(), other.getNameFormat())
                 && Objects.equal(getNameQualifier(), other.getNameQualifier());
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return Objects.hashCode(getNameFormat(), getNameQualifier(), getProtocol(),
-                Saml1StringSubjectNameIdentifierEncoder.class);
+                SAML1StringNameIdentifierEncoder.class);
     }
+    
 }

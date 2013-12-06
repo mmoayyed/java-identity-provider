@@ -62,7 +62,7 @@ public class Saml2StringSubjectNameIDEncoderTest extends OpenSAMLInitBaseTestCas
         enc3.setNameFormat("nameQualifier");
         enc3.setNameQualifier("nameFormat");
 
-        final Saml1StringSubjectNameIdentifierEncoder enc4 = new Saml1StringSubjectNameIdentifierEncoder();
+        final SAML1StringNameIdentifierEncoder enc4 = new SAML1StringNameIdentifierEncoder();
         enc4.setNameFormat("nameFormat");
         enc4.setNameQualifier("nameQualifier");
 

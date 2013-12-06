@@ -28,20 +28,20 @@ public class AttributeEncoderNamespaceHandler extends BaseSpringNamespaceHandler
 
     /** {@inheritDoc} */
     public void init() {
-        registerBeanDefinitionParser(Saml1StringAttributeEncoderParser.TYPE_NAME,
-                new Saml1StringAttributeEncoderParser());
+        registerBeanDefinitionParser(SAML1StringAttributeEncoderParser.TYPE_NAME,
+                new SAML1StringAttributeEncoderParser());
 
-        registerBeanDefinitionParser(Saml1Base64AttributeEncoderParser.TYPE_NAME,
-                new Saml1Base64AttributeEncoderParser());
+        registerBeanDefinitionParser(SAML1Base64AttributeEncoderParser.TYPE_NAME,
+                new SAML1Base64AttributeEncoderParser());
 
-        registerBeanDefinitionParser(Saml1ScopedStringAttributeEncoderParser.TYPE_NAME,
-                new Saml1ScopedStringAttributeEncoderParser());
+        registerBeanDefinitionParser(SAML1ScopedStringAttributeEncoderParser.TYPE_NAME,
+                new SAML1ScopedStringAttributeEncoderParser());
 
-        registerBeanDefinitionParser(Saml1XmlObjectAttributeEncoderParser.TYPE_NAME,
-                new Saml1XmlObjectAttributeEncoderParser());
+        registerBeanDefinitionParser(SAML1XMLObjectAttributeEncoderParser.TYPE_NAME,
+                new SAML1XMLObjectAttributeEncoderParser());
 
-        registerBeanDefinitionParser(Saml1StringNameIdentifierEncoderParser.SCHEMA_TYPE,
-                new Saml1StringNameIdentifierEncoderParser());
+        registerBeanDefinitionParser(SAML1StringNameIdentifierEncoderParser.SCHEMA_TYPE,
+                new SAML1StringNameIdentifierEncoderParser());
 
         registerBeanDefinitionParser(Saml2StringAttributeEncoderParser.TYPE_NAME,
                 new Saml2StringAttributeEncoderParser());

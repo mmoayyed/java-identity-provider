@@ -18,34 +18,40 @@
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.saml.impl.attribute.encoding.Saml1XmlObjectAttributeEncoder;
+import net.shibboleth.idp.saml.impl.attribute.encoding.SAML1ScopedStringAttributeEncoder;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Test for {@link Saml1XmlObjectAttributeEncoderParser}.
+ * Test for {@link SAML1ScopedStringAttributeEncoderParser}.
  */
-public class Saml1XmlObjectAttributeEncoderParserTest extends BaseAttributeDefinitionParserTest {
+public class SAML1ScopedStringAttributeEncoderParserTest extends BaseAttributeDefinitionParserTest {
 
     @Test public void specified() {
-        Saml1XmlObjectAttributeEncoder encoder =
-                getAttributeEncoder("saml1XmlObject.xml", Saml1XmlObjectAttributeEncoder.class);
+        SAML1ScopedStringAttributeEncoder encoder =
+                getAttributeEncoder("saml1Scoped.xml", SAML1ScopedStringAttributeEncoder.class);
 
-        Assert.assertEquals(encoder.getName(), "SAML1_XMLObject_ATTRIBUTE_NAME");
-        Assert.assertEquals(encoder.getNamespace(),"SAML1_XMLObject_ATTRIBUTE_NAME_SPACE");
+        Assert.assertEquals(encoder.getName(), "SAML1_SCOPED_ATTRIBUTE_NAME");
+        Assert.assertEquals(encoder.getNamespace(),"SAML1_SCOPED_ATTRIBUTE_NAME_FORMAT");
+        Assert.assertEquals(encoder.getScopeType(),"attribute");
+        Assert.assertEquals(encoder.getScopeAttributeName(),"saml1ScopeAttrib");
+        Assert.assertEquals(encoder.getScopeDelimiter(),"#@#");
     }
     
     @Test public void defaultCase() {
-        Saml1XmlObjectAttributeEncoder encoder =
-                getAttributeEncoder("saml1XmlObjectDefault.xml", Saml1XmlObjectAttributeEncoder.class);
+        SAML1ScopedStringAttributeEncoder encoder =
+                getAttributeEncoder("saml1ScopedDefault.xml", SAML1ScopedStringAttributeEncoder.class);
 
-        Assert.assertEquals(encoder.getName(), "XMLObject_ATTRIBUTE");
+        Assert.assertEquals(encoder.getName(), "saml1_scoped_name");
         Assert.assertEquals(encoder.getNamespace(),"urn:mace:shibboleth:1.0:attributeNamespace:uri");
+        Assert.assertEquals(encoder.getScopeType(),"attribute");
+        Assert.assertEquals(encoder.getScopeDelimiter(),"@");
+        Assert.assertEquals(encoder.getScopeAttributeName(),"Scope");
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {
-        getAttributeEncoder("saml1XmlObjectNoName.xml", Saml1XmlObjectAttributeEncoder.class);
+        getAttributeEncoder("saml1ScopedNoName.xml", SAML1ScopedStringAttributeEncoder.class);
     }
 }

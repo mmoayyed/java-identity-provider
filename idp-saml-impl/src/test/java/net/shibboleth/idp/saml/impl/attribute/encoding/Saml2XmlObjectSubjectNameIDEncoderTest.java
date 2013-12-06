@@ -41,7 +41,7 @@ import com.google.common.collect.Lists;
 /**
  * {@link Saml2XmlObjectSubjectNameIDEncoder} Unit test.
  * 
- * Identical code to the {@link Saml1StringAttributeEncoderTest} except that the type of result and encoder is changed.
+ * Identical code to the {@link SAML1StringAttributeEncoderTest} except that the type of result and encoder is changed.
  */
 public class Saml2XmlObjectSubjectNameIDEncoderTest extends OpenSAMLInitBaseTestCase {
 

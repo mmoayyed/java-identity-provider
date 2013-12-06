@@ -18,27 +18,27 @@
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.saml.impl.attribute.encoding.Saml1StringSubjectNameIdentifierEncoder;
+import net.shibboleth.idp.saml.impl.attribute.encoding.SAML1StringNameIdentifierEncoder;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Test for {@link Saml1StringNameIdentifierAttributeEncoderParser}.
+ * Test for {@link SAML1StringNameIdentifierEncoderParser}.
  */
-public class Saml1StringNameIdentifierAttributeEncoderParserTest extends BaseAttributeDefinitionParserTest {
+public class SAML1StringNameIdentifierEncoderParserTest extends BaseAttributeDefinitionParserTest {
 
     @Test public void specified() {
-        Saml1StringSubjectNameIdentifierEncoder encoder =
-                getAttributeEncoder("saml1StringNameIdentifier.xml", Saml1StringSubjectNameIdentifierEncoder.class);
+        SAML1StringNameIdentifierEncoder encoder =
+                getAttributeEncoder("saml1StringNameIdentifier.xml", SAML1StringNameIdentifierEncoder.class);
 
         Assert.assertEquals(encoder.getNameFormat(), "NAMEIDENTIFIER_FORMAT");
         Assert.assertEquals(encoder.getNameQualifier(),"NAMEIDENTIFIER_QUALIFIER");
     }
     
     @Test public void defaultCase() {
-        Saml1StringSubjectNameIdentifierEncoder encoder =
-                getAttributeEncoder("saml1StringNameIdentifierDefault.xml", Saml1StringSubjectNameIdentifierEncoder.class);
+        SAML1StringNameIdentifierEncoder encoder =
+                getAttributeEncoder("saml1StringNameIdentifierDefault.xml", SAML1StringNameIdentifierEncoder.class);
 
         Assert.assertEquals(encoder.getNameFormat(), "urn:oasis:names:tc:SAML:1.0:nameid-format:unspecified");
         Assert.assertNull(encoder.getNameQualifier());;

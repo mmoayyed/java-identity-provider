@@ -39,9 +39,9 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Lists;
 
 /**
- * {@link Saml1ByteAttributeEncoder} Unit test.
+ * {@link SAML1ByteAttributeEncoder} Unit test.
  * 
- * Identical code to the {@link Saml1ByteAttributeEncoder} except that the type of assertion and encoder is changed.
+ * Identical code to the {@link SAML1ByteAttributeEncoder} except that the type of assertion and encoder is changed.
  */
 public class Saml2StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 

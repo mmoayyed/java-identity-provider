@@ -33,17 +33,17 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Objects;
 
 /**
- * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces the SAML 1 NameIdentifier used for the Subject
- * from the first non-null {@link NameIdentifier} value of an {@link net.shibboleth.idp.attribute.IdPAttribute}.
+ * {@link net.shibboleth.idp.saml.nameid.NameIdentifierAttributeEncoder} that encodes the first {@link NameIdentifier}
+ * value of an {@link net.shibboleth.idp.attribute.IdPAttribute} to a SAML 1 {@link NameIdentifier}.
  */
 // TODO Is this class redundant?
-public class Saml1XmlObjectSubjectNameIdentifierEncoder extends AbstractSAML1NameIdentifierEncoder {
+public class SAML1XMLObjectNameIdentifierEncoder extends AbstractSAML1NameIdentifierEncoder {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(Saml1XmlObjectSubjectNameIdentifierEncoder.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(SAML1XMLObjectNameIdentifierEncoder.class);
 
     /** {@inheritDoc} */
-    @Nonnull public NameIdentifier encode(IdPAttribute attribute) throws AttributeEncodingException {
+    @Nonnull public NameIdentifier encode(@Nonnull final IdPAttribute attribute) throws AttributeEncodingException {
         final String attributeId = attribute.getId();
 
         final Collection<IdPAttributeValue<?>> attributeValues = attribute.getValues();
@@ -52,7 +52,7 @@ public class Saml1XmlObjectSubjectNameIdentifierEncoder extends AbstractSAML1Nam
         }
 
         for (IdPAttributeValue attrValue : attributeValues) {
-            if (attrValue == null) {
+            if (attrValue == null || attributeValues.isEmpty()) {
                 // Should not be null, but check anyway
                 log.debug("Skipping null value of attribute {}", attributeId);
                 continue;
@@ -61,37 +61,41 @@ public class Saml1XmlObjectSubjectNameIdentifierEncoder extends AbstractSAML1Nam
 
             if (value instanceof NameIdentifier) {
                 NameIdentifier identifier = (NameIdentifier) value;
-                log.debug("Chose NameIdentifier, with value {}, of attribute {} for subject name identifier encoding",
+                log.debug("Chose NameIdentifier, with value {}, of attribute {} for Subject NameIdentifier encoding",
                         identifier.getNameIdentifier(), attributeId);
                 return identifier;
             } else {
-                log.debug("Skipping value of type {} of attribute {}", value.getClass().getName(), attributeId);
+                log.debug("Skipping unsupported value of type {} of attribute {}", value.getClass().getName(),
+                        attributeId);
                 continue;
             }
         }
 
         throw new AttributeEncodingException("Attribute " + attributeId
-                + " did not contain any NameIdentifier values, nothing to encode as subject name identifier");
+                + " did not contain any NameIdentifier values, nothing to encode as Subject NameIdentifier");
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object obj) {
 
         if (obj == this) {
             return true;
         }
 
-        if (!(obj instanceof Saml1XmlObjectSubjectNameIdentifierEncoder)) {
+        if (!(obj instanceof SAML1XMLObjectNameIdentifierEncoder)) {
             return false;
         }
 
-        Saml1XmlObjectSubjectNameIdentifierEncoder other = (Saml1XmlObjectSubjectNameIdentifierEncoder) obj;
+        SAML1XMLObjectNameIdentifierEncoder other = (SAML1XMLObjectNameIdentifierEncoder) obj;
 
         return Objects.equal(getProtocol(), other.getProtocol());
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
-        return Objects.hashCode(getProtocol(), Saml1XmlObjectSubjectNameIdentifierEncoder.class);
+        return Objects.hashCode(getProtocol(), SAML1XMLObjectNameIdentifierEncoder.class);
     }
+    
 }

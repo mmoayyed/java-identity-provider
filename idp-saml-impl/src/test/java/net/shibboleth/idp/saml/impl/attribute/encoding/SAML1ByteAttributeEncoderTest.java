@@ -24,6 +24,7 @@ import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -32,6 +33,7 @@ import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.saml.saml1.core.Attribute;
 import org.opensaml.saml.saml1.core.AttributeValue;
+import org.owasp.esapi.codecs.Base64;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -39,29 +41,31 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Lists;
 
 /**
- * {@link Saml1StringAttributeEncoder} Unit test.
+ * {@link SAML1ByteAttributeEncoder} Unit test.
+ * 
+ * Identical code to the {@link SAML1ByteAttributeEncoder} except that the type of assertion and encoder is changed.
  */
-public class Saml1StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
+public class SAML1ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
     /** The name we give the test attribute. */
     private final static String ATTR_NAME = "foo";
 
     /** A test value. */
-    private final static String STRING_1 = "Value The First";
+    private final static byte[] BYTE_ARRAY_1 = {1, 2, 3, 4, 5};
 
     /** A second test value. */
-    private final static String STRING_2 = "Second string the value is";
+    private final static byte[] BYTE_ARRAY_2 = {4, 3, 2, 1};
 
-    private Saml1StringAttributeEncoder encoder;
+    private SAML1ByteAttributeEncoder encoder;
 
     @BeforeClass public void initTest() throws ComponentInitializationException {
-        encoder = new Saml1StringAttributeEncoder();
+        encoder = new SAML1ByteAttributeEncoder();
         encoder.setName(ATTR_NAME);
         encoder.setNamespace("NameSpace");
         encoder.initialize();
     }
 
-    @Test(expectedExceptions={AttributeEncodingException.class,})   public void empty() throws Exception {
+    @Test(expectedExceptions = {AttributeEncodingException.class,}) public void empty() throws Exception {
         final IdPAttribute inputAttribute;
 
         inputAttribute = new IdPAttribute(ATTR_NAME);
@@ -70,18 +74,16 @@ public class Saml1StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
-        encoder.initialize();
         final int[] intArray = {1, 2, 3, 4};
         final Collection<IdPAttributeValue<?>> values =
-                Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
-                        new IdPAttributeValue<Object>() {
-                            public Object getValue() {
-                                return intArray;
-                            }
-                        });
+                Lists.newArrayList(new StringAttributeValue("foo"), new ScopedStringAttributeValue(
+                        "foo", "bar"), new IdPAttributeValue<Object>() {
+                    public Object getValue() {
+                        return intArray;
+                    }
+                });
 
-        final IdPAttribute inputAttribute;
-        inputAttribute = new IdPAttribute(ATTR_NAME);
+        IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
         encoder.encode(inputAttribute);
@@ -89,10 +91,9 @@ public class Saml1StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void single() throws Exception {
         final Collection<? extends IdPAttributeValue<?>> values =
-                Lists.newArrayList(Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
-                        new StringAttributeValue(STRING_1)));
-
+                Lists.newArrayList(new StringAttributeValue("foo"), new ByteAttributeValue(BYTE_ARRAY_1));
         final IdPAttribute inputAttribute;
+
         inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
@@ -100,28 +101,29 @@ public class Saml1StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
         Assert.assertNotNull(outputAttribute);
 
-        final List<XMLObject> children = outputAttribute.getOrderedChildren();
+        List<XMLObject> children = outputAttribute.getOrderedChildren();
 
         Assert.assertEquals(children.size(), 1, "Encoding one entry");
 
-        final XMLObject child = children.get(0);
-
-        Assert.assertEquals(child.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
-                "Attribute Value not inside <AttributeValue/>");
+        XMLObject child = children.get(0);
+        Assert.assertEquals(child.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME);
 
         Assert.assertTrue(child instanceof XSString, "Child of result attribute shoulld be a string");
 
-        final XSString childAsString = (XSString) child;
+        XSString childAsString = (XSString) child;
 
-        Assert.assertEquals(childAsString.getValue(), STRING_1, "Input equals output");
+        byte childAsBa[] = Base64.decode(childAsString.getValue());
+
+        Assert.assertEquals(childAsBa, BYTE_ARRAY_1, "Input equals output");
     }
 
     @Test public void multi() throws Exception {
         final Collection<? extends IdPAttributeValue<?>> values =
-                Lists.newArrayList(Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
-                        new StringAttributeValue(STRING_1), new StringAttributeValue(STRING_2)));
+                Lists.newArrayList(new ByteAttributeValue(BYTE_ARRAY_1), new ByteAttributeValue(
+                        BYTE_ARRAY_2));
 
-        final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
+        final IdPAttribute inputAttribute;
+        inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
         final Attribute outputAttribute = encoder.encode(inputAttribute);
@@ -131,28 +133,33 @@ public class Saml1StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         final List<XMLObject> children = outputAttribute.getOrderedChildren();
         Assert.assertEquals(children.size(), 2, "Encoding two entries");
 
-        Assert.assertTrue(children.get(0) instanceof XSString && children.get(1) instanceof XSString,
-                "Child of result attribute shoulld be a string");
-
-        final XSString child1 = (XSString) children.get(0);
-        Assert.assertEquals(child1.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
+        XMLObject child = children.get(0);
+        Assert.assertEquals(child.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
+        Assert.assertTrue(child instanceof XSString, "Child of result attribute shoulld be a string");
 
-        final XSString child2 = (XSString) children.get(1);
-        Assert.assertEquals(child2.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
+        XSString childAsString = (XSString) child;
+        Assert.assertEquals(child.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
+        final byte[] res0 = Base64.decode(childAsString.getValue());
+
+        child = children.get(1);
+        Assert.assertTrue(child instanceof XSString, "Child of result attribute shoulld be a string");
+
+        childAsString = (XSString) child;
+        final byte[] res1 = Base64.decode(childAsString.getValue());
+
         //
         // order of results is not guaranteed so sense the result from the length
         //
-        if (child1.getValue().length() == STRING_1.length()) {
-            Assert.assertEquals(child1.getValue(), STRING_1, "Input matches output");
-            Assert.assertEquals(child2.getValue(), STRING_2, "Input matches output");
-        } else if (child1.getValue().length() == STRING_2.length()) {
-            Assert.assertEquals(child2.getValue(), STRING_1, "Input matches output");
-            Assert.assertEquals(child1.getValue(), STRING_2, "Input matches output");
+        if (BYTE_ARRAY_1.length == res0.length) {
+            Assert.assertEquals(BYTE_ARRAY_1, res0, "Input matches output");
+            Assert.assertEquals(BYTE_ARRAY_2, res1, "Input matches output");
+        } else if (BYTE_ARRAY_1.length == res1.length) {
+            Assert.assertEquals(BYTE_ARRAY_1, res1, "Input matches output");
+            Assert.assertEquals(BYTE_ARRAY_2, res0, "Input matches output");
         } else {
-            Assert.assertTrue(
-                    child1.getValue().length() == STRING_1.length() || child1.getValue().length() == STRING_2.length(),
+            Assert.assertTrue(BYTE_ARRAY_1.length == res1.length || BYTE_ARRAY_2.length == res1.length,
                     "One of the output's size should match an input size");
         }
     }
