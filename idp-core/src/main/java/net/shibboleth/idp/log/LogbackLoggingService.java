@@ -20,8 +20,11 @@ package net.shibboleth.idp.log;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.service.AbstractReloadableService;
 import net.shibboleth.idp.service.ServiceException;
+import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 
@@ -42,7 +45,7 @@ import com.google.common.io.Closeables;
 /**
  * Simple logging service that watches for logback configuration file changes and reloads the file when a change occurs.
  */
-public class LogbackLoggingService extends AbstractReloadableService {
+public class LogbackLoggingService extends AbstractReloadableService<Object> {
 
     /** Logback logger context. */
     private LoggerContext loggerContext;
@@ -193,5 +196,11 @@ public class LogbackLoggingService extends AbstractReloadableService {
         }
         super.doInitialize();
 
+    }
+
+    /** {@inheritDoc}.
+     * This service does not support a ServiceableComponent, so return null. */
+    @Nullable public ServiceableComponent<Object> getServiceableComponent() {
+        return null;
     }
 }

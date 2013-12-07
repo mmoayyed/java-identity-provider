@@ -22,8 +22,9 @@ import javax.annotation.Nullable;
 import org.joda.time.DateTime;
 import org.springframework.context.Lifecycle;
 
-/** A service that supports reloading its configuration. */
-public interface ReloadableService extends Lifecycle {
+/** A service that supports reloading its configuration. 
+ * @param <T> The sort of service that this implements */
+public interface ReloadableService<T> extends Lifecycle {
     
     /**
      * Gets the time when the service was last successfully reloaded.
@@ -54,4 +55,12 @@ public interface ReloadableService extends Lifecycle {
      * @throws ServiceException thrown if there is a problem reloading the service
      */
     public void reload() throws ServiceException;
+    
+    /** Get the serviceable component that this service supports .  If
+     * The component hasn't been successfully loaded yet or if this service
+     * does not support a ServiceableComponent return null
+     * @return the component, if appropriate.
+     */
+    @Nullable public ServiceableComponent<T> getServiceableComponent();
+
 }

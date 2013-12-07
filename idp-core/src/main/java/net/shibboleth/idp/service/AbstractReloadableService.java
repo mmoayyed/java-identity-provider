@@ -49,10 +49,10 @@ import org.springframework.beans.factory.BeanInitializationException;
  * {@link net.shibboleth.utilities.java.support.component.DestructableComponent}
  * 
  * This class does <em>not</em> deal with any synchronization. That is left to implementing classes.
- * 
+ * @param <T> The sort of service this implements.
  */
-public abstract class AbstractReloadableService extends AbstractDestructableIdentifiableInitializableComponent
-        implements ValidatableComponent, ReloadableService, UnmodifiableComponent {
+public abstract class AbstractReloadableService<T> extends AbstractDestructableIdentifiableInitializableComponent
+        implements ValidatableComponent, ReloadableService<T>, UnmodifiableComponent {
 
     /** Class logger. */
     private Logger log = LoggerFactory.getLogger(AbstractReloadableService.class);
