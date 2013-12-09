@@ -10,6 +10,18 @@
     before completing, and must return the result of that subflow as their
     result, barring an error of some other kind earlier.
     -->
+
+    <action-state id="ExtractUsernamePasswordFromBasicAuth">
+        <evaluate expression="ExtractUsernamePasswordFromBasicAuth" />
+        
+        <transition on="proceed" to="ValidateUsernamePasswordAgainstJAAS" />
+        
+        <!-- Fall through to a different flow if basic-auth extract fails on a passive request. -->
+        <transition on="#{ flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext').getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext), false).isPassive() }" to="ReselectFlow" />
+        
+        <transition on="NoCredentials" to="DisplayUsernamePasswordPage" />
+        <transition on="InvalidCredentials" to="DisplayUsernamePasswordPage" />
+    </action-state>
     
     <view-state id="DisplayUsernamePasswordPage" view="login">
         <on-render>
@@ -34,8 +46,7 @@
         <transition on="#{ getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext').getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext), false).getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationErrorContext), true).isClassifiedError('ExpiredPassword') }" to="CallExpiredPassword" />
         <transition on="#{ getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext').getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext), false).getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationErrorContext), true).isClassifiedError('AccountLocked') }" to="CallAccountLocked" />
         
-        <transition on="NoCredentials" to="DisplayUsernamePasswordPage" />
-        <transition on="InvalidCredentials" to="DisplayUsernamePasswordPage" />
+        <transition on="#{true}" to="DisplayUsernamePasswordPage" />
     </action-state>
 
     <subflow-state id="CallExpiredPassword" subflow="Authentication.ExpiredPassword">
@@ -46,6 +57,6 @@
         <transition on="proceed" to="DisplayUsernamePasswordPage" />
     </subflow-state>
 
-    <bean-import resource="jaas-form-authn-beans.xml" />
+    <bean-import resource="jaas-authn-beans.xml" />
 
 </flow>

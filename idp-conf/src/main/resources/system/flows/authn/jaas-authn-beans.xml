@@ -15,6 +15,13 @@
     <import resource="../../../conf/jaas-authn-config.xml" />
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+
+    <bean id="ExtractUsernamePasswordFromBasicAuth" class="net.shibboleth.idp.authn.impl.ExtractUsernamePasswordFromBasicAuth" scope="prototype"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:lowercase-ref="shibboleth.authn.JAAS.Lowercase"
+        p:uppercase-ref="shibboleth.authn.JAAS.Uppercase"
+        p:trim-ref="shibboleth.authn.JAAS.Trim"
+        p:transforms-ref="shibboleth.authn.JAAS.Transforms" />
     
     <bean id="ExtractUsernamePasswordFromFormRequest" class="net.shibboleth.idp.authn.impl.ExtractUsernamePasswordFromFormRequest" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"

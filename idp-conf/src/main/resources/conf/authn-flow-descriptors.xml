@@ -48,25 +48,10 @@
             </property>
         </bean>
 
-        <bean c:id="AuthenticationFlow/JAASForm" class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
-                p:resultSerializer-ref="shibboleth.DefaultAuthenticationResultSerializer"
-                p:passiveAuthenticationSupported="false"
-                p:forcedAuthenticationSupported="true"
-                p:lifetime="${idp.authn.defaultLifetime}" p:inactivityTimeout="${idp.authn.defaultTimeout}">
-            <property name="supportedPrincipals">
-                <list>
-                    <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
-                        c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" />
-                    <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
-                        c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:Password" />
-                </list>
-            </property>
-        </bean>
-
-        <bean c:id="AuthenticationFlow/JAASBasic" class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
+        <bean c:id="AuthenticationFlow/JAAS" class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
                 p:resultSerializer-ref="shibboleth.DefaultAuthenticationResultSerializer"
                 p:passiveAuthenticationSupported="true"
-                p:forcedAuthenticationSupported="false"
+                p:forcedAuthenticationSupported="true"
                 p:lifetime="${idp.authn.defaultLifetime}" p:inactivityTimeout="${idp.authn.defaultTimeout}">
             <property name="supportedPrincipals">
                 <list>
@@ -82,7 +67,7 @@
 
     <!--
     Define entries here to map error messages thrown by authentication plugins like JAAS modules
-    and classify them as particular kinds of errors for use in your templates.
+    and classify them as particular kinds of errors for use in your templates and as events in flows.
     -->
     <util:map id="shibboleth.ClassifiedMessageMap">
         <entry key="UnknownUsername">

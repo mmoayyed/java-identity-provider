@@ -8,7 +8,8 @@
     <!-- Successful completion of subflow. -->
     <end-state id="proceed" />
 
-    <!-- Error events to reflect back from this subflow. -->    
+    <!-- Error events to reflect back from this subflow. -->
+    <end-state id="AuthenticationException" />
     <end-state id="InputOutputError" />
     <end-state id="InvalidCredentials" />
     <end-state id="InvalidProfileContext" />
