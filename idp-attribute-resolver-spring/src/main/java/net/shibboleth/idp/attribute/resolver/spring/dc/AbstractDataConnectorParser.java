@@ -42,9 +42,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.context.support.GenericApplicationContext;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
@@ -112,22 +112,17 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
      * @return bean factory
      */
     @Nonnull protected BeanFactory createBeanFactory(@Nonnull final Element springBeans) {
-        final DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
-        final XmlBeanDefinitionReader definitionReader = new XmlBeanDefinitionReader(beanFactory);
+        
+        GenericApplicationContext ctx = new GenericApplicationContext();
+        final XmlBeanDefinitionReader definitionReader = new XmlBeanDefinitionReader(ctx);
         // TODO why does validation need to be turned off?
         definitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_NONE);
         definitionReader.setNamespaceAware(true);
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         SerializeSupport.writeNode(springBeans, outputStream);
         definitionReader.loadBeanDefinitions(new InputSource(new ByteArrayInputStream(outputStream.toByteArray())));
-        
-        //
-        // Needed to work around https://jira.springsource.org/browse/SPR-11112
-        // See https://issues.shibboleth.net/jira/browse/IDP-338
-        //
-        @SuppressWarnings("unused")
-        final Object l = beanFactory.getBean("IDP338");
-        return beanFactory;
+        ctx.refresh();
+        return ctx.getBeanFactory();
     }
 
     /**

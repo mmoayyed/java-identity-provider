@@ -139,16 +139,12 @@ public class LdapDataConnectorParserTest {
         XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
 
         configReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/dc/IdP338.xml");
+        context.refresh();
         
         Object cbc,cc=null,cb,c;
         
         cbc = context.getBean(CacheBuilder.class);
-        try {
-            cc = context.getBean(Cache.class);
-            Assert.fail("The Spring bug described in https://issues.shibboleth.net/jira/browse/IDP-338 has been fixed");
-        } catch (Exception e) {
-            // OK - the bug is that this throws.  The fix is when it doesn't.
-        }
+        cc = context.getBean(Cache.class);
         cb = context.getBean("cacheBuilder");
         c = context.getBean("cache");
         Object ccc = context.getBean(Cache.class);
@@ -157,7 +153,7 @@ public class LdapDataConnectorParserTest {
         Assert.assertNotNull(c);        
         Assert.assertNotNull(cbc);        
         Assert.assertNotNull(ccc);        
-        Assert.assertNull(cc, "The Spring bug described in https://issues.shibboleth.net/jira/browse/IDP-338 has been fixed"); 
+        Assert.assertNotNull(cc, "The Spring bug described in https://issues.shibboleth.net/jira/browse/IDP-338 has come back"); 
 
     }
 
