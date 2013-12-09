@@ -58,9 +58,10 @@ import com.google.common.net.HttpHeaders;
 public class ExtractUsernamePasswordFromBasicAuth extends AbstractExtractionAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ExtractUsernamePasswordFromBasicAuth.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractUsernamePasswordFromBasicAuth.class);
     
     /** {@inheritDoc} */
+    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 

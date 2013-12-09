@@ -43,9 +43,10 @@ import org.slf4j.LoggerFactory;
 public class FilterFlowsByForcedAuthn extends AbstractAuthenticationAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(FilterFlowsByForcedAuthn.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(FilterFlowsByForcedAuthn.class);
 
     /** {@inheritDoc} */
+    @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         
@@ -55,10 +56,11 @@ public class FilterFlowsByForcedAuthn extends AbstractAuthenticationAction {
             return false;
         }
         
-        return true;
+        return super.doPreExecute(profileRequestContext, authenticationContext);
     }
     
     /** {@inheritDoc} */
+    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 

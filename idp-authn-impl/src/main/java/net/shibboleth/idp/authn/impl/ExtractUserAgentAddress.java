@@ -46,9 +46,10 @@ import com.google.common.net.InetAddresses;
 public class ExtractUserAgentAddress extends AbstractExtractionAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ExtractUserAgentAddress.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractUserAgentAddress.class);
     
     /** {@inheritDoc} */
+    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 

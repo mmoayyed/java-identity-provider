@@ -52,12 +52,13 @@ import org.slf4j.LoggerFactory;
 public class ValidateUsernamePasswordAgainstKerberos extends AbstractValidationAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ValidateUsernamePasswordAgainstKerberos.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateUsernamePasswordAgainstKerberos.class);
 
     /** UsernamePasswordContext containing the credentials to validate. */
     @Nullable private UsernamePasswordContext upContext;
 
     /** {@inheritDoc} */
+    @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         if (authenticationContext.getAttemptedFlow() == null) {
@@ -83,12 +84,14 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractValidationA
     }
     
     /** {@inheritDoc} */
+    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         // TODO Auto-generated method stub
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) throws AuthenticationException {
         subject.getPrincipals().add(new UsernamePrincipal(upContext.getUsername()));
         return subject;

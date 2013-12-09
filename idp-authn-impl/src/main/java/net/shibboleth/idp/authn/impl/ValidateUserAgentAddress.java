@@ -99,6 +99,7 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
     }
     
     /** {@inheritDoc} */
+    @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         if (authenticationContext.getAttemptedFlow() == null) {
@@ -124,6 +125,7 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
     }
     
     /** {@inheritDoc} */
+    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
@@ -163,6 +165,7 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) throws AuthenticationException {
         subject.getPrincipals().add(new UsernamePrincipal(principalName));
         return subject;

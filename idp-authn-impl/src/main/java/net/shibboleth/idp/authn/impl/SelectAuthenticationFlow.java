@@ -74,7 +74,7 @@ import org.slf4j.LoggerFactory;
 public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(SelectAuthenticationFlow.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(SelectAuthenticationFlow.class);
 
     /** Whether SSO trumps explicit relying party flow preference. */
     private boolean favorSSO;
@@ -101,6 +101,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         
@@ -115,10 +116,11 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                     authenticationContext.getAttemptedFlow().getId(), authenticationContext.getAttemptedFlow());
         }
         
-        return true;
+        return super.doPreExecute(profileRequestContext, authenticationContext);
     }
     
     /** {@inheritDoc} */
+    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 

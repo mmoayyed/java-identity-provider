@@ -67,7 +67,7 @@ import org.slf4j.LoggerFactory;
 public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ValidateUsernamePasswordAgainstLDAP.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateUsernamePasswordAgainstLDAP.class);
 
     /** UsernamePasswordContext containing the credentials to validate. */
     @Nullable private UsernamePasswordContext upContext;
@@ -122,13 +122,17 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
         if (authenticator == null) {
             throw new ComponentInitializationException("Authenticator cannot be null");
         }
     }
 
     /** {@inheritDoc} */
+    @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         if (authenticationContext.getAttemptedFlow() == null) {
@@ -154,6 +158,7 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         try {
@@ -202,6 +207,7 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) throws AuthenticationException {
         subject.getPrincipals().add(new UsernamePrincipal(upContext.getUsername()));
         subject.getPrincipals().add(new LdapPrincipal(upContext.getUsername(), response.getLdapEntry()));

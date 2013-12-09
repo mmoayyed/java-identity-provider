@@ -63,7 +63,7 @@ import com.google.common.collect.Sets;
 public class ValidateRemoteUser extends AbstractValidationAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ValidateRemoteUser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateRemoteUser.class);
 
     /** Username context identifying identity to validate. */
     @Nullable private UsernameContext usernameContext;
@@ -119,6 +119,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         if (authenticationContext.getAttemptedFlow() == null) {
@@ -144,6 +145,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
     }
     
     /** {@inheritDoc} */
+    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
                 
@@ -181,6 +183,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) throws AuthenticationException {
         subject.getPrincipals().add(new UsernamePrincipal(usernameContext.getUsername()));
         return subject;

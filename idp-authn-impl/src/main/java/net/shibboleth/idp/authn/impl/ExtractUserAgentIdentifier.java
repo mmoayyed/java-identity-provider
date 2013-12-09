@@ -46,9 +46,10 @@ import com.google.common.net.HttpHeaders;
 public class ExtractUserAgentIdentifier extends AbstractExtractionAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ExtractUserAgentIdentifier.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractUserAgentIdentifier.class);
     
     /** {@inheritDoc} */
+    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 

@@ -31,6 +31,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 public class ValidateX509Certificate extends AbstractAuthenticationAction {
 
     /** {@inheritDoc} */
+    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         throw new AuthenticationException("Not implemented.");

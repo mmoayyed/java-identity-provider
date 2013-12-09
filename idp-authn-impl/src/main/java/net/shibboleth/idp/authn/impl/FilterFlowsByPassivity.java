@@ -43,9 +43,10 @@ import org.slf4j.LoggerFactory;
 public class FilterFlowsByPassivity extends AbstractAuthenticationAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(FilterFlowsByPassivity.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(FilterFlowsByPassivity.class);
 
     /** {@inheritDoc} */
+    @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         
@@ -54,10 +55,11 @@ public class FilterFlowsByPassivity extends AbstractAuthenticationAction {
             return false;
         }
         
-        return true;
+        return super.doPreExecute(profileRequestContext, authenticationContext);
     }
     
     /** {@inheritDoc} */
+    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 

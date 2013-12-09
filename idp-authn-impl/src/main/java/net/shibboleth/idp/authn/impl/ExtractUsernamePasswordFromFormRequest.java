@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 public class ExtractUsernamePasswordFromFormRequest extends AbstractExtractionAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ExtractUsernamePasswordFromFormRequest.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractUsernamePasswordFromFormRequest.class);
 
     /** Parameter name for username. */
     @Nonnull @NotEmpty  private String usernameFieldName;
@@ -103,6 +103,7 @@ public class ExtractUsernamePasswordFromFormRequest extends AbstractExtractionAc
     }
     
     /** {@inheritDoc} */
+    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 

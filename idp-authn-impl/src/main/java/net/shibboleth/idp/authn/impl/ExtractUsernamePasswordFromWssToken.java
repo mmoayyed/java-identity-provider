@@ -60,6 +60,7 @@ public class ExtractUsernamePasswordFromWssToken extends AbstractExtractionActio
     @Nullable private Envelope inboundMessage;
 
     /** {@inheritDoc} */
+    @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         
@@ -71,10 +72,11 @@ public class ExtractUsernamePasswordFromWssToken extends AbstractExtractionActio
         }
         
         inboundMessage = (Envelope) inCtx.getMessage();
-        return true;
+        return super.doPreExecute(profileRequestContext, authenticationContext);
     }
-    
+
     /** {@inheritDoc} */
+    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         

@@ -45,6 +45,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 public class SimpleSubjectCanonicalization extends AbstractSubjectCanonicalizationAction {
     
     /** {@inheritDoc} */
+    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext, 
             @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
         

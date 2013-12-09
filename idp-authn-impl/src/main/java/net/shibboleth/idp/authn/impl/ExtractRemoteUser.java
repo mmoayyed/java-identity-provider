@@ -54,7 +54,7 @@ import com.google.common.collect.Lists;
 public class ExtractRemoteUser extends AbstractExtractionAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ExtractRemoteUser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractRemoteUser.class);
     
     /** Whether to check REMOTE_USER for an identity. Defaults to true. */
     private boolean checkRemoteUser;
@@ -67,8 +67,6 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
     
     /** Constructor. */
     public ExtractRemoteUser() {
-        super();
-        
         checkRemoteUser = true;
         checkAttributes = Collections.emptyList();
         checkHeaders = Collections.emptyList();
@@ -108,7 +106,9 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
     }
     
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
         
         if (!checkRemoteUser && checkAttributes.isEmpty() && checkHeaders.isEmpty()) {
             log.debug("{} configuration contains no headers or attributes to check", getLogPrefix());
@@ -119,6 +119,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
     // Checkstyle: CyclomaticComplexity OFF
     
     /** {@inheritDoc} */
+    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 

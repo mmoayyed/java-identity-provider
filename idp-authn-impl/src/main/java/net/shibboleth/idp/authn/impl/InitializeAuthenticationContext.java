@@ -52,7 +52,7 @@ import com.google.common.collect.ImmutableList;
 public class InitializeAuthenticationContext extends AbstractAuthenticationAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(InitializeAuthenticationContext.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(InitializeAuthenticationContext.class);
     
     /** The flows to make available for possible use. */
     @Nonnull @NonnullElements private Collection<AuthenticationFlowDescriptor> availableFlows;
@@ -62,7 +62,7 @@ public class InitializeAuthenticationContext extends AbstractAuthenticationActio
 
     /** Constructor. */
     InitializeAuthenticationContext() {
-        availableFlows = new ArrayList();
+        availableFlows = new ArrayList<>();
     }
     
     /**
@@ -109,6 +109,7 @@ public class InitializeAuthenticationContext extends AbstractAuthenticationActio
     }
         
     /** {@inheritDoc} */
+    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
