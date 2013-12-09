@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -285,16 +286,13 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * Adds a message encountered during the action to an {@link AuthenticationErrorContext}, creating one if
      * necessary, beneath the {@link AuthenticationContext}, and uses the supplied event as the result of the action.
      * 
-     * <p>The message is matched against the various error message collections to determine whether to also set
-     * one of the {@link AuthenticationErrorContext} flags to indicate a more specific error type.</p>
-     * 
      * @param profileRequestContext the current profile request context
      * @param authenticationContext the current authentication context
      * @param message to process
      * @param eventId the event to "return" via an {@link org.opensaml.profile.context.EventContext}
      */
     protected void handleError(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext, @Nonnull final String message,
+            @Nonnull final AuthenticationContext authenticationContext, @Nonnull @NotEmpty final String message,
             @Nonnull @NotEmpty final String eventId) {
         
         AuthenticationErrorContext errorCtx =
@@ -315,16 +313,13 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * Adds a message encountered during the action to an {@link AuthenticationWarningContext}, creating one if
      * necessary, beneath the {@link AuthenticationContext}, and uses the supplied event as the result of the action.
      * 
-     * <p>The message is matched against the various warning message collections to determine whether to also set
-     * one of the {@link AuthenticationWarningContext} flags to indicate a more specific warning type.</p>
-     * 
      * @param profileRequestContext the current profile request context
      * @param authenticationContext the current authentication context
      * @param message to process
      * @param eventId the event to "return" via an {@link org.opensaml.profile.context.EventContext}
      */
     protected void handleWarning(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext, @Nonnull final String message,
+            @Nonnull final AuthenticationContext authenticationContext, @Nonnull @NotEmpty final String message,
             @Nonnull @NotEmpty final String eventId) {
         
         AuthenticationWarningContext warningCtx =
@@ -347,14 +342,15 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
     private class MessageChecker implements Predicate<String> {
 
         /** Message to operate on. */
-        private String s;
+        @Nonnull @NotEmpty private final String s;
         
         /**
          * Constructor.
          *
          * @param msg to operate on
          */
-        public MessageChecker(@Nonnull final String msg) {
+        public MessageChecker(@Nonnull @NotEmpty final String msg) {
+            Constraint.isNotNull(Strings.isNullOrEmpty(msg), "Message cannot be null or empty");
             s = msg;
         }
         
