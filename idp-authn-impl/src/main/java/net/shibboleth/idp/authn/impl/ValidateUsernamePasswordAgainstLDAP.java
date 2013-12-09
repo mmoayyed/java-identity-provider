@@ -177,7 +177,7 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
                             profileRequestContext,
                             authenticationContext,
                             String.format("%s:%s:%s", "ACCOUNT_WARNING", response.getResultCode(),
-                                    response.getMessage()), "ACCOUNT_WARNING");
+                                    response.getMessage()), AuthnEventIds.ACCOUNT_WARNING);
                 }
                 buildAuthenticationResult(profileRequestContext, authenticationContext);
             } else {
@@ -188,21 +188,20 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
                         || AuthenticationResultCode.INVALID_CREDENTIAL == response.getAuthenticationResultCode()) {
                     handleError(profileRequestContext, authenticationContext,
                             String.format("%s:%s", response.getAuthenticationResultCode(), response.getMessage()),
-                            response.getAuthenticationResultCode().name());
+                            AuthnEventIds.INVALID_CREDENTIALS);
                 } else if (response.getAccountState() != null) {
                     final AccountState state = response.getAccountState();
                     handleError(profileRequestContext, authenticationContext, String.format("%s:%s:%s",
-                            state.getError(), response.getResultCode(), response.getMessage()), state.getError()
-                            .getMessage());
+                            state.getError(), response.getResultCode(), response.getMessage()),
+                            AuthnEventIds.ACCOUNT_ERROR);
                 } else {
                     handleError(profileRequestContext, authenticationContext, String.format("%s:%s",
-                            response.getResultCode(), response.getMessage()), response.getResultCode().name());
+                            response.getResultCode(), response.getMessage()), AuthnEventIds.INVALID_CREDENTIALS);
                 }
             }
         } catch (LdapException e) {
             log.warn(getLogPrefix() + " login by '" + upContext.getUsername() + "' produced exception", e);
-            handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHENTCATION_EXCEPTION);
-            throw new AuthenticationException(e);
+            handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
         }
     }
 

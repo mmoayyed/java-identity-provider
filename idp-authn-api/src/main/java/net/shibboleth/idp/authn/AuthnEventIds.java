@@ -19,7 +19,7 @@ package net.shibboleth.idp.authn;
 
 /**
  * Constants to use for {@link org.opensaml.profile.action.ProfileAction}
- * {@link org.opensaml.profile.context.EventContext}s.
+ * {@link org.opensaml.profile.context.EventContext} results.
  */
 public final class AuthnEventIds {
 
@@ -35,6 +35,12 @@ public final class AuthnEventIds {
     /** ID of event returned if the given credentials are invalid. */
     public static final String INVALID_CREDENTIALS = "InvalidCredentials";
 
+    /** ID of event returned if the subject's account is in an invalid state. */
+    public static final String ACCOUNT_ERROR = "AccountError";
+
+    /** ID of event returned if the subject's account has non-fatal but potentially useful state to report. */
+    public static final String ACCOUNT_WARNING = "AccountWarning";
+    
     /** ID of event returned if a flow wishes to indicate that another flow should be selected instead. */
     public static final String RESELECT_FLOW = "ReselectFlow";
     
@@ -42,7 +48,7 @@ public final class AuthnEventIds {
     public static final String SUBJECT_C14N_ERROR = "SubjectCanonicalizationError";
     
     /** ID of event returned if authentication throws an exception unrelated to credential validation. */
-    public static final String AUTHENTCATION_EXCEPTION = "AuthenticationException";
+    public static final String AUTHN_EXCEPTION = "AuthenticationException";
 
     /** Constructor. */
     private AuthnEventIds() {

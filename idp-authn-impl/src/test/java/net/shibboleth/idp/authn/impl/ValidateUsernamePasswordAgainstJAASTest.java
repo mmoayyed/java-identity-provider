@@ -150,7 +150,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
         doExtract(prc);
 
         action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
+        ActionTestingSupport.assertEvent(prc, "UnknownUsername");
         AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class, false);
         Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
         Assert.assertTrue(errorCtx.isClassifiedError("UnknownUsername"));
@@ -172,7 +172,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends InitializeAuthentic
         doExtract(prc);
 
         action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
+        ActionTestingSupport.assertEvent(prc, "InvalidPassword");
         AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class, false);
         Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
         Assert.assertFalse(errorCtx.isClassifiedError("UnknownUsername"));

@@ -176,9 +176,7 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends InitializeAuthentic
 
         AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
         Assert.assertNotNull(aec);
-        EventContext<String> ec = prc.getSubcontext(EventContext.class);
-        Assert.assertNotNull(ec);
-        Assert.assertEquals(ec.getEvent(), AuthenticationResultCode.DN_RESOLUTION_FAILURE.name());
+        ActionTestingSupport.assertEvent(prc, "UnknownUsername");
         Assert.assertEquals(aec.getClassifiedErrors().size(), 1);
         Assert.assertTrue(aec.isClassifiedError("UnknownUsername"));
     }
@@ -194,19 +192,15 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends InitializeAuthentic
 
         doExtract(prc);
 
-        try {
-            action.execute(prc);
-            Assert.fail("Should have thrown exception");
-        } catch (AuthenticationException e){ 
-            Assert.assertEquals(e.getCause().getClass(), ConnectionException.class);
-        }
+        action.execute(prc);
+        
         Assert.assertNull(ac.getAuthenticationResult());
         Assert.assertNull(ac.getSubcontext(LDAPResponseContext.class, false));
 
         AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
         Assert.assertNotNull(aec);
-        EventContext<String> ec = prc.getSubcontext(EventContext.class);
-        Assert.assertNotNull(ec);
+        ActionTestingSupport.assertEvent(prc, AuthnEventIds.AUTHN_EXCEPTION);
+        Assert.assertTrue(aec.getExceptions().get(0) instanceof ConnectionException);
         Assert.assertEquals(aec.getClassifiedErrors().size(), 0);
     }
 
@@ -229,9 +223,7 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends InitializeAuthentic
         
         AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
         Assert.assertNotNull(aec);
-        EventContext<String> ec = prc.getSubcontext(EventContext.class);
-        Assert.assertNotNull(ec);
-        Assert.assertEquals(ec.getEvent(), AuthenticationResultCode.DN_RESOLUTION_FAILURE.name());
+        ActionTestingSupport.assertEvent(prc, "UnknownUsername");
         Assert.assertEquals(aec.getClassifiedErrors().size(), 1);
         Assert.assertTrue(aec.isClassifiedError("UnknownUsername"));
     }
@@ -272,9 +264,7 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends InitializeAuthentic
 
         AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
         Assert.assertNotNull(aec);
-        EventContext<String> ec = prc.getSubcontext(EventContext.class);
-        Assert.assertNotNull(ec);
-        Assert.assertEquals(ec.getEvent(), ResultCode.INVALID_CREDENTIALS.name());
+        ActionTestingSupport.assertEvent(prc, "InvalidPassword");
         Assert.assertEquals(aec.getClassifiedErrors().size(), 1);
         Assert.assertTrue(aec.isClassifiedError("InvalidPassword"));
     }
@@ -305,9 +295,7 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends InitializeAuthentic
 
         AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
         Assert.assertNotNull(aec);
-        EventContext<String> ec = prc.getSubcontext(EventContext.class);
-        Assert.assertNotNull(ec);
-        Assert.assertEquals(ec.getEvent(), PasswordPolicyControl.Error.PASSWORD_EXPIRED.name());
+        ActionTestingSupport.assertEvent(prc, "ExpiredPassword");
         Assert.assertEquals(aec.getClassifiedErrors().size(), 2);
         Assert.assertTrue(aec.isClassifiedError("ExpiredPassword"));
         Assert.assertTrue(aec.isClassifiedError("InvalidPassword"));
@@ -342,6 +330,8 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends InitializeAuthentic
         Assert.assertNotNull(lrc.getAuthenticationResponse());
         Assert.assertEquals(lrc.getAuthenticationResponse().getAuthenticationResultCode(), AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
 
+        ActionTestingSupport.assertEvent(prc, "ExpiringPassword");
+        
         AuthenticationWarningContext awc = ac.getSubcontext(AuthenticationWarningContext.class, false);
         Assert.assertNotNull(awc);
         Assert.assertEquals(awc.getClassifiedWarnings().size(), 1);

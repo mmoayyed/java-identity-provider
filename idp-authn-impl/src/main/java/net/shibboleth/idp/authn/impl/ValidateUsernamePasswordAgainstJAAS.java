@@ -196,8 +196,7 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractValidationActio
                 handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.INVALID_CREDENTIALS);
             } catch (Exception e) {
                 log.warn(getLogPrefix() + " login by '" + upContext.getUsername() + "' produced exception", e);
-                handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHENTCATION_EXCEPTION);
-                throw new AuthenticationException(e);
+                handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
             }
         }
     }
