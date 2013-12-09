@@ -88,14 +88,6 @@
 				p:velocityEngine-ref="shibboleth.VelocityEngine" init-method="initialize" />
 			<import
 				resource="classpath:/net/shibboleth/idp/attribute/resolver/spring/velocity.xml" />
-			<!--  This bean is needed until such time as https://issues.shibboleth.net/jira/browse/IDP-338 is resolved -->
-			<bean id="IDP338" class="net.shibboleth.idp.attribute.resolver.spring.dc.IdP338">
-				<constructor-arg>
-					<list>
-						<ref bean="cache" />
-					</list>
-				</constructor-arg>
-			</bean>
 		</beans>
 	</resolver:DataConnector>
 </resolver:AttributeResolver>
