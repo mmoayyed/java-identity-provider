@@ -55,8 +55,8 @@ public class AuthenticationErrorContext extends BaseContext {
     public AuthenticationErrorContext() {
         super();
         
-        exceptions = new ArrayList();
-        classifiedErrors = new HashSet();
+        exceptions = new ArrayList<>();
+        classifiedErrors = new HashSet<>();
     }
 
     /**

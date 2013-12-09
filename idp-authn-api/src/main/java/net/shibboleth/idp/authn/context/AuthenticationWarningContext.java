@@ -46,7 +46,7 @@ public class AuthenticationWarningContext extends BaseContext {
     public AuthenticationWarningContext() {
         super();
         
-        classifiedWarnings = new HashSet();
+        classifiedWarnings = new HashSet<>();
     }
 
     /**
