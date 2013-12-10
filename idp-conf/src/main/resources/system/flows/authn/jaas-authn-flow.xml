@@ -43,11 +43,20 @@
         
         <transition on="proceed" to="CallSubjectCanonicalization" />
         
-        <transition on="#{ getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext').getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext), false).getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationErrorContext), true).isClassifiedError('ExpiredPassword') }" to="CallExpiredPassword" />
-        <transition on="#{ getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext').getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext), false).getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationErrorContext), true).isClassifiedError('AccountLocked') }" to="CallAccountLocked" />
+        <!-- Fall through to a different flow if login fails on a passive request. -->
+        <transition on="#{ flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext').getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext), false).isPassive() }" to="ReselectFlow" />
+        
+        <!-- Call outs for exceptional conditions. -->
+        <transition on="ExpiringPassword" to="CallExpiringPassword" />
+        <transition on="ExpiredPassword" to="CallExpiredPassword" />
+        <transition on="AccountLocked" to="CallAccountLocked" />
         
         <transition on="#{true}" to="DisplayUsernamePasswordPage" />
     </action-state>
+
+    <subflow-state id="CallExpiringPassword" subflow="Authentication.ExpiringPassword">
+        <transition on="proceed" to="CallSubjectCanonicalization" />
+    </subflow-state>
 
     <subflow-state id="CallExpiredPassword" subflow="Authentication.ExpiredPassword">
         <transition on="proceed" to="DisplayUsernamePasswordPage" />
