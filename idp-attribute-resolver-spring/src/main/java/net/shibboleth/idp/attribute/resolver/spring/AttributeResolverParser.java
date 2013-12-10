@@ -34,8 +34,10 @@ import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-// TODO incomplete port from v2
-/** Bean definition parser for an {@link net.shibboleth.idp.attribute.resolver.AttributeResolver}. */
+/**
+ * Bean definition parser for an {@link net.shibboleth.idp.attribute.resolver.AttributeResolver}. <br/>
+ * This creates a {@link AttributeResolverImpl} from a &lt;resolver:AttributeResolver&gt; definition.
+ */
 public class AttributeResolverParser extends AbstractSingleBeanDefinitionParser {
 
     /** Element name. */
@@ -45,7 +47,7 @@ public class AttributeResolverParser extends AbstractSingleBeanDefinitionParser 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
             "AttributeResolverType");
-    
+
     /** {@inheritDoc} */
     protected Class<AttributeResolverImpl> getBeanClass(@Nullable Element element) {
         return AttributeResolverImpl.class;
@@ -60,7 +62,7 @@ public class AttributeResolverParser extends AbstractSingleBeanDefinitionParser 
         // TODO principal connector
         // children = configChildren.get(new QName(AttributeResolverNamespaceHandler.NAMESPACE, "PrincipalConnector"));
         // SpringSupport.parseCustomElements(children, context);
-        
+
         builder.addConstructorArgValue("Shibboleth.Resolver");
 
         children = configChildren.get(BaseAttributeDefinitionParser.ELEMENT_NAME);
@@ -69,7 +71,7 @@ public class AttributeResolverParser extends AbstractSingleBeanDefinitionParser 
         children = configChildren.get(AbstractDataConnectorParser.ELEMENT_NAME);
         builder.addConstructorArgValue(SpringSupport.parseCustomElements(children, context));
     }
-    
+
     /** {@inheritDoc} */
     protected boolean shouldGenerateId() {
         return true;
