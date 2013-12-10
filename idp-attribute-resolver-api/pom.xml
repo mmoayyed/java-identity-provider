@@ -24,6 +24,12 @@
         </dependency>
 
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-api</artifactId>
             <version>${opensaml.version}</version>

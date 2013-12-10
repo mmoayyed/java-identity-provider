@@ -20,17 +20,22 @@ package net.shibboleth.idp.profile.impl;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.MockAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
+import net.shibboleth.idp.service.AbstractReloadableService;
+import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 
 import org.opensaml.profile.action.ActionTestingSupport;
@@ -54,7 +59,7 @@ public class ResolveAttributesTest {
         final AttributeResolverImpl resolver = new AttributeResolverImpl("resolver", definitions, null);
         resolver.initialize();
 
-        final ResolveAttributes action = new ResolveAttributes(resolver);
+        final ResolveAttributes action = new ResolveAttributes(new AttributeService(resolver));
         action.setId("test");
         action.initialize();
 
@@ -75,7 +80,7 @@ public class ResolveAttributesTest {
         final AttributeResolverImpl resolver = new AttributeResolverImpl("resolver", definitions, null);
         resolver.initialize();
 
-        final ResolveAttributes action = new ResolveAttributes(resolver);
+        final ResolveAttributes action = new ResolveAttributes(new AttributeService(resolver));
         action.setId("test");
         action.initialize();
 
@@ -112,7 +117,7 @@ public class ResolveAttributesTest {
         attributeResolutionCtx.setRequestedIdPAttributes(Collections.singleton(new IdPAttribute("ad1")));
         profileCtx.addSubcontext(attributeResolutionCtx);
 
-        final ResolveAttributes action = new ResolveAttributes(resolver);
+        final ResolveAttributes action = new ResolveAttributes(new AttributeService(resolver));
         action.setId("test");
         action.initialize();
 
@@ -164,12 +169,55 @@ public class ResolveAttributesTest {
         final AttributeResolverImpl resolver = new AttributeResolverImpl("resolver", definitions, null);
         resolver.initialize();
 
-        final ResolveAttributes action = new ResolveAttributes(resolver);
+        final ResolveAttributes action = new ResolveAttributes(new AttributeService(resolver));
         action.setId("test");
         action.initialize();
 
         action.execute(profileCtx);
         ActionTestingSupport.assertEvent(profileCtx, EventIds.UNABLE_RESOLVE_ATTRIBS);
+    }
+    
+    /** Test that action returns the proper event if the attributes are not able to be resolved. */
+    @Test public void testUnableToFindResolver() throws Exception {
+        final ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
+
+        final IdPAttribute attribute = new IdPAttribute("ad1");
+        attribute.getValues().add(new StringAttributeValue("value1"));
+
+        final LazySet<AttributeDefinition> definitions = new LazySet<>();
+        definitions.add(new MockAttributeDefinition("ad1", new ResolutionException()));
+
+        final ResolveAttributes action = new ResolveAttributes(new AttributeService(null));
+        action.setId("test");
+        action.initialize();
+
+        action.execute(profileCtx);
+        ActionTestingSupport.assertEvent(profileCtx, EventIds.UNABLE_RESOLVE_ATTRIBS);
+    }
+
+    
+    private static class AttributeService extends AbstractReloadableService<AttributeResolver> {
+        
+        private ServiceableComponent<AttributeResolver> component;
+        
+        protected AttributeService(ServiceableComponent<AttributeResolver> what) {
+            component = what;
+        }
+
+        /** {@inheritDoc} */
+        @Nullable public ServiceableComponent<AttributeResolver> getServiceableComponent() {
+            if (null == component) {
+                return null;
+            }
+            component.pinComponent();
+            return component;
+        }
+
+        /** {@inheritDoc} */
+        protected boolean shouldReload() {
+            return false;
+        }
+        
     }
     
 }

@@ -30,9 +30,6 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
 
     /** {@inheritDoc} */
     public void init() {
-        registerBeanDefinitionParser(AttributeResolverServiceParser.SCHEMA_TYPE,
-                new AttributeResolverServiceParser());
-
         BeanDefinitionParser parser = new AttributeResolverParser();
         registerBeanDefinitionParser(AttributeResolverParser.SCHEMA_TYPE, parser);
         registerBeanDefinitionParser(AttributeResolverParser.ELEMENT_NAME, parser);

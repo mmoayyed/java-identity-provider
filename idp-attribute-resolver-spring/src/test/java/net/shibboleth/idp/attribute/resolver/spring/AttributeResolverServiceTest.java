@@ -26,17 +26,19 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.impl.DatabaseTestingSupport;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
+import net.shibboleth.idp.service.ReloadableService;
 import net.shibboleth.idp.service.ServiceException;
+import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.AfterTest;
@@ -99,26 +101,31 @@ public class AttributeResolverServiceTest extends OpenSAMLInitBaseTestCase {
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + AttributeResolverServiceTest.class);
         
-        XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
-
-        configReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/ad/velocity.xml");
-
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
         beanDefinitionReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/service.xml");
+        context.refresh();
 
-        AttributeResolverService attributeResolverService =
-                (AttributeResolverService) context.getBean("shibboleth.AttributeResolver");
-        Assert.assertNotNull(attributeResolverService);
-
-        // not sure
-        attributeResolverService.initialize();
+        final ReloadableService<AttributeResolver> attributeResolverService = context.getBean(ReloadableService.class);
+        
         attributeResolverService.start();
 
-        // try to resolve some attributes
+        ServiceableComponent<AttributeResolver> serviceableComponent = null;
         final AttributeResolutionContext resolutionContext = TestSources.createResolutionContext("PETER_THE_PRINCIPAL", "issuer", "recipient");
-        attributeResolverService.resolveAttributes(resolutionContext);
+
+        try {
+            serviceableComponent = attributeResolverService.getServiceableComponent();
+        
+            
+            final AttributeResolver resolver = serviceableComponent.getComponent();
+            resolver.resolveAttributes(resolutionContext);
+        } finally {
+            if (null != serviceableComponent) {
+                serviceableComponent.unpinComponent();
+            }
+        }
+
         Map<String, IdPAttribute> resolvedAttributes = resolutionContext.getResolvedIdPAttributes();
         log.debug("resolved attributes '{}'", resolvedAttributes);
 
@@ -144,7 +151,7 @@ public class AttributeResolverServiceTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(values.size(), 2);
         Assert.assertTrue(values.contains(new StringAttributeValue("peterprincipal@shibboleth.net")));
         Assert.assertTrue(values.contains(new StringAttributeValue("peter.principal@shibboleth.net")));
-        
+
         attribute = resolvedAttributes.get("surname");
         Assert.assertNotNull(attribute);
         values = attribute.getValues();
@@ -164,14 +171,14 @@ public class AttributeResolverServiceTest extends OpenSAMLInitBaseTestCase {
         values = attribute.getValues();
         Assert.assertEquals(values.size(), 1);
         Assert.assertTrue(values.contains(new StringAttributeValue("555-111-2222")));
-        
+
         // Computed
         attribute = resolvedAttributes.get("eduPersonTargetedID");
         Assert.assertNotNull(attribute);
         values = attribute.getValues();
         Assert.assertEquals(values.size(), 1);
 
-        // RDBMS  TODO wire in the template
+        // RDBMS TODO wire in the template
         attribute = resolvedAttributes.get("pagerNumber");
         Assert.assertNotNull(attribute);
         values = attribute.getValues();
@@ -183,13 +190,13 @@ public class AttributeResolverServiceTest extends OpenSAMLInitBaseTestCase {
         values = attribute.getValues();
         Assert.assertEquals(values.size(), 1);
         Assert.assertTrue(values.contains(new StringAttributeValue("444-123-4567")));
-        
+
         attribute = resolvedAttributes.get("street");
         Assert.assertNotNull(attribute);
         values = attribute.getValues();
         Assert.assertEquals(values.size(), 1);
         Assert.assertTrue(values.contains(new StringAttributeValue("TheStreet")));
-        
+
         attribute = resolvedAttributes.get("title");
         Assert.assertNotNull(attribute);
         values = attribute.getValues();

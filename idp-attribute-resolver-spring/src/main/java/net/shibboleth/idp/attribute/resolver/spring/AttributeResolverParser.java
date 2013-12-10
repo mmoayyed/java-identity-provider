@@ -20,22 +20,23 @@ package net.shibboleth.idp.attribute.resolver.spring;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.idp.attribute.resolver.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.xml.BeanDefinitionParser;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 // TODO incomplete port from v2
 /** Bean definition parser for an {@link net.shibboleth.idp.attribute.resolver.AttributeResolver}. */
-public class AttributeResolverParser implements BeanDefinitionParser {
+public class AttributeResolverParser extends AbstractSingleBeanDefinitionParser {
 
     /** Element name. */
     public static final QName ELEMENT_NAME =
@@ -44,22 +45,33 @@ public class AttributeResolverParser implements BeanDefinitionParser {
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
             "AttributeResolverType");
+    
+    /** {@inheritDoc} */
+    protected Class<AttributeResolverImpl> getBeanClass(@Nullable Element element) {
+        return AttributeResolverImpl.class;
+    }
 
     /** {@inheritDoc} */
-    public BeanDefinition parse(@Nonnull final Element config, @Nonnull final ParserContext context) {
+    protected void doParse(Element config, ParserContext context, BeanDefinitionBuilder builder) {
+
         Map<QName, List<Element>> configChildren = ElementSupport.getIndexedChildElements(config);
         List<Element> children;
 
         // TODO principal connector
         // children = configChildren.get(new QName(AttributeResolverNamespaceHandler.NAMESPACE, "PrincipalConnector"));
         // SpringSupport.parseCustomElements(children, context);
-
-        children = configChildren.get(AbstractDataConnectorParser.ELEMENT_NAME);
-        SpringSupport.parseCustomElements(children, context);
+        
+        builder.addConstructorArgValue("Shibboleth.Resolver");
 
         children = configChildren.get(BaseAttributeDefinitionParser.ELEMENT_NAME);
-        SpringSupport.parseCustomElements(children, context);
+        builder.addConstructorArgValue(SpringSupport.parseCustomElements(children, context));
 
-        return null;
+        children = configChildren.get(AbstractDataConnectorParser.ELEMENT_NAME);
+        builder.addConstructorArgValue(SpringSupport.parseCustomElements(children, context));
+    }
+    
+    /** {@inheritDoc} */
+    protected boolean shouldGenerateId() {
+        return true;
     }
 }

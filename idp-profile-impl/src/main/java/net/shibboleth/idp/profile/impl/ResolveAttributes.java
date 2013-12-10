@@ -22,20 +22,20 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-
-import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.AbstractProfileAction;
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.context.ProfileRequestContext;
-
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
+import net.shibboleth.idp.service.ReloadableService;
+import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.action.AbstractProfileAction;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +57,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
     @Nonnull private final Logger log = LoggerFactory.getLogger(ResolveAttributes.class);
 
     /** Resolver used to fetch attributes. */
-    @Nonnull private final AttributeResolver attributeResolver;
+    @Nonnull private final ReloadableService<AttributeResolver> attributeResolverService;
 
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
@@ -70,10 +70,10 @@ public final class ResolveAttributes extends AbstractProfileAction {
     /**
      * Constructor. Initializes {@link #relyingPartyContextLookupStrategy} to {@link ChildContextLookup}.
      * 
-     * @param resolver resolver used to fetch attributes
+     * @param resolverService resolver used to fetch attributes
      */
-    public ResolveAttributes(@Nonnull final AttributeResolver resolver) {
-        attributeResolver = Constraint.isNotNull(resolver, "AttributeResolver cannot be null");
+    public ResolveAttributes(@Nonnull final ReloadableService<AttributeResolver> resolverService) {
+        attributeResolverService = Constraint.isNotNull(resolverService, "AttributeResolver cannot be null");
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
     }
 
@@ -114,17 +114,29 @@ public final class ResolveAttributes extends AbstractProfileAction {
         final AttributeResolutionContext resolutionContext =
                 profileRequestContext.getSubcontext(AttributeResolutionContext.class, true);
 
+        ServiceableComponent<AttributeResolver> component = null;
         try {
-            attributeResolver.resolveAttributes(resolutionContext);
-            profileRequestContext.removeSubcontext(resolutionContext);
-
-            final AttributeContext attributeCtx = new AttributeContext();
-            attributeCtx.setIdPAttributes(resolutionContext.getResolvedIdPAttributes().values());
-
-            rpContext.addSubcontext(attributeCtx);
+            component = attributeResolverService.getServiceableComponent();
+            if (null == component) {
+                log.error("{} Error resolving attributes: Invalid Attribute resolver configuration.", getLogPrefix());
+                ActionSupport.buildEvent(profileRequestContext, EventIds.UNABLE_RESOLVE_ATTRIBS);
+            } else {
+                final AttributeResolver attributeResolver = component.getComponent(); 
+                attributeResolver.resolveAttributes(resolutionContext);
+                profileRequestContext.removeSubcontext(resolutionContext);
+    
+                final AttributeContext attributeCtx = new AttributeContext();
+                attributeCtx.setIdPAttributes(resolutionContext.getResolvedIdPAttributes().values());
+    
+                rpContext.addSubcontext(attributeCtx);
+            }
         } catch (ResolutionException e) {
-            log.error(getLogPrefix() + "{} Error resolving attributes", e);
+            log.error("{} Error resolving attributes", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.UNABLE_RESOLVE_ATTRIBS);
+        } finally {
+            if (null != component) {
+                component.unpinComponent();
+            }
         }
     }
     

@@ -29,13 +29,13 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.service.AbstractServicableComponent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.LazyList;
 import net.shibboleth.utilities.java.support.collection.LazySet;
-import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
@@ -61,7 +61,7 @@ import com.google.common.collect.ImmutableMap;
  * {@link net.shibboleth.utilities.java.support.resolver.Criterion}s.
  * */
 @ThreadSafe
-public class AttributeResolverImpl extends AbstractDestructableIdentifiableInitializableComponent implements
+public class AttributeResolverImpl extends AbstractServicableComponent<AttributeResolver> implements
         AttributeResolver {
 
     /** Class logger. */
@@ -550,5 +550,10 @@ public class AttributeResolverImpl extends AbstractDestructableIdentifiableIniti
             checkPlugInDependencies(circularCheckPluginId, dependencyPlugin, checkedPlugins);
             checkedPlugins.add(pluginId);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Nonnull public AttributeResolver getComponent() {
+        return this;
     }
 }
