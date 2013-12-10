@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.service.AbstractServicableComponent;
+import net.shibboleth.idp.service.AbstractServiceableComponent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
@@ -61,7 +61,7 @@ import com.google.common.collect.ImmutableMap;
  * {@link net.shibboleth.utilities.java.support.resolver.Criterion}s.
  * */
 @ThreadSafe
-public class AttributeResolverImpl extends AbstractServicableComponent<AttributeResolver> implements
+public class AttributeResolverImpl extends AbstractServiceableComponent<AttributeResolver> implements
         AttributeResolver {
 
     /** Class logger. */

@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 /**
  *
  */
-public class TestServiceableComponent extends AbstractServicableComponent<TestServiceableComponent> {
+public class TestServiceableComponent extends AbstractServiceableComponent<TestServiceableComponent> {
 
     private String theValue;
     

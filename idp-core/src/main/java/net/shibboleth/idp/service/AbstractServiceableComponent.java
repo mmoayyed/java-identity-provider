@@ -39,11 +39,11 @@ import org.springframework.context.ConfigurableApplicationContext;
  * 
  * @param <T> The type of service.
  */
-public abstract class AbstractServicableComponent<T> extends AbstractDestructableIdentifiableInitializableComponent
+public abstract class AbstractServiceableComponent<T> extends AbstractDestructableIdentifiableInitializableComponent
         implements ServiceableComponent<T>, ApplicationContextAware, DisposableBean, InitializingBean {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AbstractServicableComponent.class);
+    private final Logger log = LoggerFactory.getLogger(AbstractServiceableComponent.class);
 
     /** The context used to load this bean. */
     private ApplicationContext applicationContext;
