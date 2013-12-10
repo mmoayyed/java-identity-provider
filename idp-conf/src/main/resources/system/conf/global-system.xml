@@ -26,15 +26,16 @@
 
     <import resource="session-manager.xml" />
     
-    <bean id="shibboleth.LogbackLogging" class="net.shibboleth.idp.log.LogbackLoggingService" init-method="start" destroy-method="stop">
-        <property name="id" value="shibboleth.LogbackLogging" />
-        <property name="loggingConfiguration">
-            <bean class="net.shibboleth.utilities.java.support.resource.FilesystemResource" c:resourcePath="${idp.home}/conf/logback.xml" />
-        </property>
-        <property name="reloadCheckDelay" value="0" />
-    </bean>
+    <bean id="shibboleth.TaskTimer" class="java.util.Timer" destroy-method="cancel"/> <!--  only needed if you do reloading -->
     
-    <bean id="shibboleth.OpensamlConfig" class="net.shibboleth.idp.conf.OpensamlConfigBean"
+    <bean id="shibboleth.LogbackLogging" class="net.shibboleth.idp.log.LogbackLoggingService" init-method="start" destroy-method="stop"
+          p:id="shibboleth.LogbackLogging"
+          p:loggingConfiguration="file:${idp.home}/conf/logback.xml"
+          p:reloadCheckDelay="${idp.service.logging.checkInterval}"
+          p:reloadTaskTimer-ref="shibboleth.TaskTimer"
+          p:failFast="${idp.service.logging.failFast}"/>
+    
+    <bean id="shibboleth.OpensamlConfig" class="common.OpensamlConfigBean"
         depends-on="shibboleth.LogbackLogging" p:parserPool-ref="shibboleth.ParserPool" />
 
     <bean id="shibboleth.VelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean" depends-on="shibboleth.LogbackLogging">
@@ -104,8 +105,9 @@
     <bean id="shibboleth.UnmarshallerFactory" factory-method="getUnmarshallerFactory" class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpensamlConfig" />
 
     <bean id="shibboleth.CookieManager" class="net.shibboleth.utilities.java.support.net.CookieManager"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest" p:httpServletResponse-ref="shibboleth.HttpServletResponse" />
-        
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest" p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+        p:secure="false" />
+    
     <bean id="shibboleth.DataSealer" class="net.shibboleth.utilities.java.support.security.DataSealer"
         p:keystoreType="${idp.sealer.storeType}"
         p:keystorePath="${idp.home}/${idp.sealer.storePath}"
@@ -119,8 +121,36 @@
         p:httpServletRequest-ref="shibboleth.HttpServletRequest" p:httpServletResponse-ref="shibboleth.HttpServletResponse"
         p:cookieManager-ref="shibboleth.CookieManager"
         p:dataSealer-ref="shibboleth.DataSealer" />
-
+    
     <bean id="shibboleth.ReplayCache" class="org.opensaml.storage.ReplayCache" depends-on="shibboleth.LogbackLogging"
         p:storage-ref="shibboleth.StorageService" p:strict="true" />
 
-</beans>
+    <bean id="shibboleth.AttributeFilterService" class="net.shibboleth.idp.service.ReloadableSpringService"> 
+        <constructor-arg value="net.shibboleth.idp.attribute.filter.AttributeFilter"/>
+
+        <property name="id" value="shibboleth.AttributeFilterService" />
+        <property name="serviceConfigurations">
+            <util:list>
+                <value>file://${idp.home}/conf/attribute-filter.xml</value>
+            </util:list>
+        </property>
+        <property name="failFast" value="${idp.service.attribute.filter.failFast}" />
+        <property name="reloadCheckDelay" value="${idp.service.attribute.filter.checkInterval}" />
+        <property name="reloadTaskTimer" ref="shibboleth.TaskTimer" />
+    </bean>
+
+    <bean id="shibboleth.AttributeResolverService" class="net.shibboleth.idp.service.ReloadableSpringService" init-method="start" destroy-method="stop"
+        depends-on="shibboleth.VelocityEngine">
+        <constructor-arg value="net.shibboleth.idp.attribute.resolver.AttributeResolver"/>
+        <property name="id" value="shibboleth.AttributeResolverService" />
+        <property name="serviceConfigurations">
+            <util:list>
+                <value>file://${idp.home}/conf/attribute-resolver.xml</value>
+            </util:list>
+        </property>
+        <property name="failFast" value="${idp.service.attribute.resolver.failFast}" />
+        <property name="reloadCheckDelay" value="${idp.service.attribute.resolver.checkInterval}" />
+        <property name="reloadTaskTimer" ref="shibboleth.TaskTimer" />
+    </bean>
+
+ </beans>
