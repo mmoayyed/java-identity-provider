@@ -177,7 +177,7 @@ public class ResolveAttributesTest {
         ActionTestingSupport.assertEvent(profileCtx, EventIds.UNABLE_RESOLVE_ATTRIBS);
     }
     
-    /** Test that action returns the proper event if the attributes are not able to be resolved. */
+    /** Test that action returns the proper event if the attribute configuration is broken */
     @Test public void testUnableToFindResolver() throws Exception {
         final ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
 

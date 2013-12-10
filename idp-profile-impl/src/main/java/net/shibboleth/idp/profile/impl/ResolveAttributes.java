@@ -48,15 +48,15 @@ import com.google.common.base.Function;
  * @event {@link EventIds#INVALID_RELYING_PARTY_CTX}
  * @event {@link EventIds#UNABLE_RESOLVE_ATTRIBS}
  * 
- * @post If resolution is successful, the relevant
- * RelyingPartyContext.getSubcontext(AttributeContext.class, false) != null
+ * @post If resolution is successful, the relevant RelyingPartyContext.getSubcontext(AttributeContext.class, false) !=
+ *       null
  */
 public final class ResolveAttributes extends AbstractProfileAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ResolveAttributes.class);
 
-    /** Resolver used to fetch attributes. */
+    /** Service used to get the resolver used to fetch attributes. */
     @Nonnull private final ReloadableService<AttributeResolver> attributeResolverService;
 
     /**
@@ -66,7 +66,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
 
     /** RelyingPartyContext to operate on. */
     @Nullable private RelyingPartyContext rpContext;
-    
+
     /**
      * Constructor. Initializes {@link #relyingPartyContextLookupStrategy} to {@link ChildContextLookup}.
      * 
@@ -88,26 +88,26 @@ public final class ResolveAttributes extends AbstractProfileAction {
             @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        relyingPartyContextLookupStrategy = Constraint.isNotNull(strategy,
-                "RelyingPartyContext lookup strategy cannot be null");
+        relyingPartyContextLookupStrategy =
+                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext)
+            throws ProfileException {
         rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (rpContext == null) {
             log.debug("{} No relying party context available.", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_RELYING_PARTY_CTX);
             return false;
         }
-        
+
         return true;
     }
-    
+
     /** {@inheritDoc} */
-    @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext)
+            throws ProfileException {
 
         // Get the resolution context from the profile request
         // this may already exist but if not, auto-create it
@@ -121,13 +121,13 @@ public final class ResolveAttributes extends AbstractProfileAction {
                 log.error("{} Error resolving attributes: Invalid Attribute resolver configuration.", getLogPrefix());
                 ActionSupport.buildEvent(profileRequestContext, EventIds.UNABLE_RESOLVE_ATTRIBS);
             } else {
-                final AttributeResolver attributeResolver = component.getComponent(); 
+                final AttributeResolver attributeResolver = component.getComponent();
                 attributeResolver.resolveAttributes(resolutionContext);
                 profileRequestContext.removeSubcontext(resolutionContext);
-    
+
                 final AttributeContext attributeCtx = new AttributeContext();
                 attributeCtx.setIdPAttributes(resolutionContext.getResolvedIdPAttributes().values());
-    
+
                 rpContext.addSubcontext(attributeCtx);
             }
         } catch (ResolutionException e) {
@@ -139,5 +139,5 @@ public final class ResolveAttributes extends AbstractProfileAction {
             }
         }
     }
-    
+
 }

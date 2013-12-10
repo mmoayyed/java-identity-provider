@@ -27,13 +27,13 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.service.AbstractServiceableComponent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.collection.LazyList;
-import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
@@ -51,7 +51,7 @@ import com.google.common.collect.Iterables;
 
 /** Service that filters out attributes and values based upon loaded policies. */
 @ThreadSafe
-public class AttributeFilterImpl extends AbstractDestructableIdentifiableInitializableComponent implements
+public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeFilter> implements
         AttributeFilter {
 
     /** Class logger. */
@@ -223,5 +223,10 @@ public class AttributeFilterImpl extends AbstractDestructableIdentifiableInitial
             logPrefix = result;
         }
         return result;
+    }
+
+    /** {@inheritDoc} */
+    @Nonnull public AttributeFilter getComponent() {
+        return this;
     }
 }
