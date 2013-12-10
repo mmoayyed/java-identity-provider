@@ -21,21 +21,21 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.AttributeContext;
-import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
+import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.profile.EventIds;
-
-import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.AbstractProfileAction;
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.context.ProfileRequestContext;
-
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
+import net.shibboleth.idp.service.ReloadableService;
+import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.action.AbstractProfileAction;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,16 +49,16 @@ import com.google.common.base.Function;
  * @event {@link EventIds#INVALID_ATTRIBUTE_CTX}
  * @event {@link EventIds#UNABLE_FILTER_ATTRIBS}
  * 
- * @post If resolution is successful, the relevant
- * RelyingPartyContext.getSubcontext(AttributeContext.class, false) != null
+ * @post If resolution is successful, the relevant RelyingPartyContext.getSubcontext(AttributeContext.class, false) !=
+ *       null
  */
 public class FilterAttributes extends AbstractProfileAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(FilterAttributes.class);
 
-    /** Engine used to fetch attributes. */
-    @Nonnull private final AttributeFilter filterEngine;
+    /** Service used to get the engine used to fetch attributes. */
+    @Nonnull private final ReloadableService<AttributeFilter> filterService;
 
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
@@ -67,17 +67,17 @@ public class FilterAttributes extends AbstractProfileAction {
 
     /** RelyingPartyContext to operate on. */
     @Nullable private RelyingPartyContext rpContext;
-    
+
     /** AttributeContext to filter. */
     @Nullable private AttributeContext attributeContext;
-    
+
     /**
      * Constructor. Initializes {@link #relyingPartyContextLookupStrategy} to {@link ChildContextLookup}.
      * 
-     * @param engine engine used to filter attributes
+     * @param service engine used to filter attributes
      */
-    public FilterAttributes(@Nonnull final AttributeFilter engine) {
-        filterEngine = Constraint.isNotNull(engine, "AttributeFilter cannot be null");
+    public FilterAttributes(@Nonnull final ReloadableService<AttributeFilter> service) {
+        filterService = Constraint.isNotNull(service, "Service cannot be null");
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
     }
 
@@ -92,13 +92,13 @@ public class FilterAttributes extends AbstractProfileAction {
             @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        relyingPartyContextLookupStrategy = Constraint.isNotNull(strategy,
-                "RelyingPartyContext lookup strategy cannot be null");
+        relyingPartyContextLookupStrategy =
+                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext)
+            throws ProfileException {
         rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (rpContext == null) {
             log.debug("{} No relying party context available", getLogPrefix());
@@ -117,13 +117,13 @@ public class FilterAttributes extends AbstractProfileAction {
             log.debug("{} No attributes to filter", getLogPrefix());
             return false;
         }
-        
+
         return true;
     }
-    
+
     /** {@inheritDoc} */
-    @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext)
+            throws ProfileException {
 
         // Get the filer context from the profile request
         // this may already exist but if not, auto-create it.
@@ -135,15 +135,27 @@ public class FilterAttributes extends AbstractProfileAction {
             filterContext.setPrefilteredIdPAttributes(attributeContext.getIdPAttributes().values());
         }
 
-        try {
-            filterEngine.filterAttributes(filterContext);
-            rpContext.removeSubcontext(filterContext);
+        ServiceableComponent<AttributeFilter> component = null;
 
-            attributeContext.setIdPAttributes(filterContext.getFilteredIdPAttributes().values());
+        try {
+            component = filterService.getServiceableComponent();
+            if (null == component) {
+                log.error("{} Error encountered while filtering attributes : Invalid Attribute Filter configuration",
+                        getLogPrefix());
+                ActionSupport.buildEvent(profileRequestContext, EventIds.UNABLE_FILTER_ATTRIBS);
+            } else {
+                AttributeFilter filter = component.getComponent();
+                filter.filterAttributes(filterContext);
+                rpContext.removeSubcontext(filterContext);
+                attributeContext.setIdPAttributes(filterContext.getFilteredIdPAttributes().values());
+            }
         } catch (AttributeFilterException e) {
-            log.error(getLogPrefix() + " Error encountered while filtering attributes", e);
+            log.error("{} Error encountered while filtering attributes", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.UNABLE_FILTER_ATTRIBS);
+        } finally {
+            if (null != component) {
+                component.unpinComponent();
+            }
         }
     }
-    
 }

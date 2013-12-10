@@ -22,10 +22,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterImpl;
 import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
@@ -35,6 +38,8 @@ import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
+import net.shibboleth.idp.service.AbstractReloadableService;
+import net.shibboleth.idp.service.ServiceableComponent;
 
 import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -53,7 +58,7 @@ public class FilterAttributesTest {
         final AttributeFilterImpl engine = new AttributeFilterImpl("test", null);
         engine.initialize();
 
-        final FilterAttributes action = new FilterAttributes(engine);
+        final FilterAttributes action = new FilterAttributes(new FilterService(engine));
         action.setId("test");
         action.initialize();
 
@@ -68,7 +73,7 @@ public class FilterAttributesTest {
         final AttributeFilterImpl engine = new AttributeFilterImpl("test", null);
         engine.initialize();
 
-        final FilterAttributes action = new FilterAttributes(engine);
+        final FilterAttributes action = new FilterAttributes(new FilterService(engine));
         action.setId("test");
         action.initialize();
 
@@ -86,7 +91,7 @@ public class FilterAttributesTest {
         final AttributeFilterImpl engine = new AttributeFilterImpl("test", null);
         engine.initialize();
         
-        final FilterAttributes action = new FilterAttributes(engine);
+        final FilterAttributes action = new FilterAttributes(new FilterService(engine));
         action.setId("test");
         action.initialize();
 
@@ -127,7 +132,7 @@ public class FilterAttributesTest {
         attributeCtx.setIdPAttributes(attributes);
         profileCtx.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
 
-        final FilterAttributes action = new FilterAttributes(engine);
+        final FilterAttributes action = new FilterAttributes(new FilterService(engine));
         action.setId("test");
         action.initialize();
 
@@ -187,7 +192,7 @@ public class FilterAttributesTest {
         final AttributeFilterContext attributeFilterCtx = new AttributeFilterContext();
         profileCtx.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeFilterCtx);
 
-        final FilterAttributes action = new FilterAttributes(engine);
+        final FilterAttributes action = new FilterAttributes(new FilterService(engine));
         action.setId("test");
         action.initialize();
 
@@ -244,13 +249,39 @@ public class FilterAttributesTest {
         final AttributeFilterContext attributeFilterCtx = new AttributeFilterContext();
         profileCtx.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeFilterCtx);
 
-        final FilterAttributes action = new FilterAttributes(engine);
+        final FilterAttributes action = new FilterAttributes(new FilterService(engine));
         action.setId("test");
         action.initialize();
 
         action.execute(profileCtx);
         ActionTestingSupport.assertEvent(profileCtx, EventIds.UNABLE_FILTER_ATTRIBS);
     }
+    
+    /** Test that action returns the proper event if the attribute configuration is broken */
+    @Test public void testUnableToFindFilter() throws Exception {
+        final ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
+
+        final IdPAttribute attribute1 = new MockUncloneableAttribute("attribute1");
+        attribute1.setValues(Lists.newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
+
+        final List<IdPAttribute> attributes = Arrays.asList(attribute1);
+
+
+        final AttributeContext attributeCtx = new AttributeContext();
+        attributeCtx.setIdPAttributes(attributes);
+        profileCtx.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
+
+        final AttributeFilterContext attributeFilterCtx = new AttributeFilterContext();
+        profileCtx.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeFilterCtx);
+
+        final FilterAttributes action = new FilterAttributes(new FilterService(null));
+        action.setId("test");
+        action.initialize();
+
+        action.execute(profileCtx);
+        ActionTestingSupport.assertEvent(profileCtx, EventIds.UNABLE_FILTER_ATTRIBS);
+    }
+
 
     /** {@link IdPAttribute} which always throws a {@link CloneNotSupportedException}. */
     private class MockUncloneableAttribute extends IdPAttribute {
@@ -270,4 +301,28 @@ public class FilterAttributesTest {
         }
     }
     
+
+    private static class FilterService extends AbstractReloadableService<AttributeFilter> {
+
+        private ServiceableComponent<AttributeFilter> component;
+
+        protected FilterService(ServiceableComponent<AttributeFilter> what) {
+            component = what;
+        }
+
+        /** {@inheritDoc} */
+        @Nullable public ServiceableComponent<AttributeFilter> getServiceableComponent() {
+            if (null == component) {
+                return null;
+            }
+            component.pinComponent();
+            return component;
+        }
+
+        /** {@inheritDoc} */
+        protected boolean shouldReload() {
+            return false;
+        }
+    }
+
 }

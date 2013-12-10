@@ -17,15 +17,15 @@
 
 package net.shibboleth.idp.attribute.filter.spring;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
-import net.shibboleth.idp.attribute.filter.spring.AttributeFilterService;
 import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.idp.spring.SpringSupport;
 
@@ -40,11 +40,11 @@ import org.testng.annotations.Test;
 // TODO incomplete
 public class AttributeFilterServiceTest {
 
-    /** The service configuration file. */
-    private final static String SERVICE_CONFIG_FILE = "net/shibboleth/idp/attribute/filter/spring/service.xml";
-
     /** The attributes to be filtered. */
     private Map<String, IdPAttribute> attributesToBeFiltered;
+
+    /** The service configuration dir. */
+    private final static String SERVICE_CONFIG_DIR = "net/shibboleth/idp/attribute/filter/spring/";
 
     /**
      * Instantiate a new service.
@@ -54,11 +54,10 @@ public class AttributeFilterServiceTest {
      * @return the service
      * @throws ServiceException if an error occurs loading the service
      */
-    public static AttributeFilterService newService(String name, Resource... resources) throws ServiceException {
-        GenericApplicationContext context = SpringSupport.newContext(name, Arrays.asList(resources), null);
-        AttributeFilterService service = context.getBean(name, AttributeFilterService.class);
-        service.start();
-        return service;
+    public static AttributeFilter getFilter(String name) throws ServiceException {
+        final Resource resource = new ClassPathResource(SERVICE_CONFIG_DIR + name); 
+        GenericApplicationContext context = SpringSupport.newContext(name, Collections.singletonList(resource), null);
+        return context.getBean(AttributeFilter.class);
     }
 
     @BeforeClass protected void setUp() throws Exception {
@@ -85,19 +84,14 @@ public class AttributeFilterServiceTest {
         attributesToBeFiltered.put(affiliation.getId(), affiliation);
     }
 
-    @Test public void testPolicy1() {
-        // TODO
-    }
-// TODO
     @Test public void testPolicy2() throws ServiceException, AttributeFilterException {
 
-        AttributeFilterService service =
-                AttributeFilterServiceTest.newService("policy2", new ClassPathResource(SERVICE_CONFIG_FILE));
+        final AttributeFilter filter = getFilter("policy2.xml");
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());
 
-        service.filterAttributes(filterContext);
+        filter.filterAttributes(filterContext);
 
         Map<String, IdPAttribute> filteredAttributes = filterContext.getFilteredIdPAttributes();
 
@@ -120,12 +114,11 @@ public class AttributeFilterServiceTest {
 
     @Test public void testPolicy3() throws ServiceException, AttributeFilterException {
 
-        AttributeFilterService service =
-                AttributeFilterServiceTest.newService("policy3", new ClassPathResource(SERVICE_CONFIG_FILE));
+        final AttributeFilter filter = getFilter("policy3.xml");
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());
-        service.filterAttributes(filterContext);
+        filter.filterAttributes(filterContext);
 
         Map<String, IdPAttribute> filteredAttributes = filterContext.getFilteredIdPAttributes();
 
@@ -145,17 +138,16 @@ public class AttributeFilterServiceTest {
 
         Assert.assertNull(filteredAttributes.get("affiliation"));
     }
-    
+
     @Test public void testPolicy4() throws ServiceException, AttributeFilterException {
 
+        final AttributeFilter filter = getFilter("policy4.xml");
 
-        AttributeFilterService service =
-                AttributeFilterServiceTest.newService("policy4", new ClassPathResource(SERVICE_CONFIG_FILE));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());
 
-        service.filterAttributes(filterContext);
+        filter.filterAttributes(filterContext);
 
         Map<String, IdPAttribute> filteredAttributes = filterContext.getFilteredIdPAttributes();
 

@@ -29,9 +29,6 @@ public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler 
 
     /** {@inheritDoc} */
     public void init() {
-        registerBeanDefinitionParser(AttributeFilterServiceParser.SCHEMA_TYPE,
-                new AttributeFilterServiceParser());
-
         BeanDefinitionParser parser = new AttributeFilterPolicyGroupParser();
         registerBeanDefinitionParser(AttributeFilterPolicyGroupParser.ELEMENT_NAME, parser);
         registerBeanDefinitionParser(AttributeFilterPolicyGroupParser.TYPE_NAME, parser);
