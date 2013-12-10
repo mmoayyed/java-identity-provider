@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.2.xsd
+                           http://www.springframework.org/schema/context classpath:/org/springframework/context/config/spring-context-3.2.xsd
+                           http://www.springframework.org/schema/util classpath:/org/springframework/beans/factory/xml/spring-util-3.2.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+       
+    <context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
+    
+    <!-- Names of form fields to pull username and password from. -->
+    <bean id="shibboleth.authn.LDAP.UsernameFieldName" class="java.lang.String" c:_0="username" />
+    <bean id="shibboleth.authn.LDAP.PasswordFieldName" class="java.lang.String" c:_0="password" />
+    <bean id="shibboleth.authn.LDAP.SSOBypassFieldName" class="java.lang.String" c:_0="donotcache" />
+
+    <!-- Simple transforms to apply to username before validation. -->
+    <bean id="shibboleth.authn.LDAP.Lowercase" class="java.lang.Boolean">
+        <constructor-arg type="boolean" value="false" />
+    </bean>
+    <bean id="shibboleth.authn.LDAP.Uppercase" class="java.lang.Boolean">
+        <constructor-arg type="boolean" value="false" />
+    </bean>
+    <bean id="shibboleth.authn.LDAP.Trim" class="java.lang.Boolean">
+        <constructor-arg type="boolean" value="true" />
+    </bean>
+
+    <!-- Apply any regular expression replacement pairs before validation. -->
+    <util:list id="shibboleth.authn.LDAP.Transforms">
+        <!--
+        <bean class="net.shibboleth.utilities.java.support.collection.Pair" p:first="^(.+)@example\.edu$" p:second="$1" />
+        -->
+    </util:list>
+    
+    <!-- LDAP configuration (uses the in-memory directory by default, see src/test/config/ldap.ldif). -->
+    
+    <bean id="shibboleth.authn.LDAP.ldapUrl" class="java.lang.String" c:_0="ldap://localhost:10389" />
+    <bean id="shibboleth.authn.LDAP.baseDn" class="java.lang.String" c:_0="ou=people,dc=shibboleth,dc=net" />
+    <bean id="shibboleth.authn.LDAP.userFilter" class="java.lang.String" c:_0="(uid={user})" />
+
+    <bean id="shibboleth.authn.LDAP.subtreeSearch" class="java.lang.Boolean">
+        <constructor-arg type="boolean" value="false" />
+    </bean>
+
+    <util:list id="shibboleth.authn.LDAP.returnAttributes">
+        <value>cn</value>
+        <value>businessCategory</value>
+        <value>mail</value>
+    </util:list>
+    
+</beans>

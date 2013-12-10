@@ -27,6 +27,7 @@
         <webflow:flow-location id="AuthenticationFlow/IPAddress" path="/authn/ipaddress-authn-flow.xml" />
         <webflow:flow-location id="AuthenticationFlow/RemoteUser" path="/authn/remoteuser-authn-flow.xml" />
         <webflow:flow-location id="AuthenticationFlow/JAAS" path="/authn/jaas-authn-flow.xml" />
+        <webflow:flow-location id="AuthenticationFlow/LDAP" path="/authn/ldap-authn-flow.xml" />
         
         <!-- C14N methods. -->
         <webflow:flow-location id="SubjectC14N/Simple" path="/authn/simple-subject-c14n-flow.xml" />

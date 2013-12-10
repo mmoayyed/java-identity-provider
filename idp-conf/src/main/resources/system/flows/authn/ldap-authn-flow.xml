@@ -1,0 +1,74 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow classpath:/org/springframework/webflow/engine/model/builder/spring-webflow-2.0.xsd"
+      parent="Authentication.Abstract, Authentication.Subflow.Abstract">
+
+    <!--
+    This is a login flow for form-based LDAP-backed authentication.
+    
+    All login flows are required to invoke a Subject Canonicalization subflow
+    before completing, and must return the result of that subflow as their
+    result, barring an error of some other kind earlier.
+    -->
+
+    <action-state id="ExtractUsernamePasswordFromBasicAuth">
+        <evaluate expression="ExtractUsernamePasswordFromBasicAuth" />
+        
+        <transition on="proceed" to="ValidateUsernamePasswordAgainstLDAP" />
+        
+        <!-- Fall through to a different flow if basic-auth extract fails on a passive request. -->
+        <transition on="#{ flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext').getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext), false).isPassive() }" to="ReselectFlow" />
+        
+        <transition on="NoCredentials" to="DisplayUsernamePasswordPage" />
+        <transition on="InvalidCredentials" to="DisplayUsernamePasswordPage" />
+    </action-state>
+    
+    <view-state id="DisplayUsernamePasswordPage" view="login">
+        <on-render>
+            <evaluate expression="flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext')" result="viewScope.profileRequestContext" />
+            <evaluate expression="profileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext), false)" result="viewScope.authenticationContext" />
+            <evaluate expression="authenticationContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationErrorContext), false)" result="viewScope.authenticationErrorContext" />
+            <evaluate expression="authenticationContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationWarningContext), false)" result="viewScope.authenticationWarningContext" />
+            <evaluate expression="authenticationContext.getSubcontext(T(net.shibboleth.idp.authn.context.LDAPResponseContext), false)" result="viewScope.ldapResponseContext" />
+            <evaluate expression="T(org.owasp.esapi.ESAPI).encoder()" result="viewScope.esapiEncoder" />
+        </on-render>
+        <transition on="proceed" to="ExtractUsernamePasswordFromFormRequest" />
+    </view-state>
+    
+    <action-state id="ExtractUsernamePasswordFromFormRequest">
+        <evaluate expression="ExtractUsernamePasswordFromFormRequest" />
+        <transition on="proceed" to="ValidateUsernamePasswordAgainstLDAP" />
+    </action-state>
+    
+    <action-state id="ValidateUsernamePasswordAgainstLDAP">
+        <evaluate expression="ValidateUsernamePasswordAgainstLDAP" />
+        
+        <transition on="proceed" to="CallSubjectCanonicalization" />
+        
+        <!-- Fall through to a different flow if login fails on a passive request. -->
+        <transition on="#{ flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext').getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext), false).isPassive() }" to="ReselectFlow" />
+        
+        <!-- Call outs for exceptional conditions. -->
+        <transition on="AccountWarning" to="CallExpiringPassword" />
+        <transition on="ExpiringPassword" to="CallExpiringPassword" />
+        <transition on="ExpiredPassword" to="CallExpiredPassword" />
+        <transition on="AccountLocked" to="CallAccountLocked" />
+        
+        <transition on="#{true}" to="DisplayUsernamePasswordPage" />
+    </action-state>
+
+    <subflow-state id="CallExpiringPassword" subflow="Authentication.ExpiringPassword">
+        <transition on="proceed" to="CallSubjectCanonicalization" />
+    </subflow-state>
+
+    <subflow-state id="CallExpiredPassword" subflow="Authentication.ExpiredPassword">
+        <transition on="proceed" to="DisplayUsernamePasswordPage" />
+    </subflow-state>
+
+    <subflow-state id="CallAccountLocked" subflow="Authentication.AccountLocked">
+        <transition on="proceed" to="DisplayUsernamePasswordPage" />
+    </subflow-state>
+
+    <bean-import resource="ldap-authn-beans.xml" />
+
+</flow>
