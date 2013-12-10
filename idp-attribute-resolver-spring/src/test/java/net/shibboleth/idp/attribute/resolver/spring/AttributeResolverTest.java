@@ -52,10 +52,10 @@ import com.unboundid.ldap.sdk.LDAPException;
 
 /** A work in progress to test the attribute resolver service. */
 // TODO incomplete
-public class AttributeResolverServiceTest extends OpenSAMLInitBaseTestCase {
+public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AttributeResolverServiceTest.class);
+    private final Logger log = LoggerFactory.getLogger(AttributeResolverTest.class);
     
     /* LDAP */
     private InMemoryDirectoryServer directoryServer;
@@ -99,7 +99,7 @@ public class AttributeResolverServiceTest extends OpenSAMLInitBaseTestCase {
     @Test public void one() throws ComponentInitializationException, ServiceException, ResolutionException {
 
         GenericApplicationContext context = new GenericApplicationContext();
-        context.setDisplayName("ApplicationContext: " + AttributeResolverServiceTest.class);
+        context.setDisplayName("ApplicationContext: " + AttributeResolverTest.class);
         
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);

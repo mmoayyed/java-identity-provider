@@ -48,7 +48,7 @@ public class AttributeMapperTest extends OpenSAMLInitBaseTestCase {
     @Test public void mapper() throws ComponentInitializationException, ServiceException, ResolutionException {
 
         GenericApplicationContext context = new GenericApplicationContext();
-        context.setDisplayName("ApplicationContext: " + AttributeResolverServiceTest.class);
+        context.setDisplayName("ApplicationContext: " + AttributeMapperTest.class);
 
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
