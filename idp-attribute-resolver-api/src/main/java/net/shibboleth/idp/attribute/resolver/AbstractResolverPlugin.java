@@ -37,6 +37,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
@@ -50,7 +51,7 @@ import com.google.common.collect.ImmutableSet;
  */
 @ThreadSafe
 public abstract class AbstractResolverPlugin<ResolvedType> extends
-        AbstractDestructableIdentifiableInitializableComponent implements ResolverPlugin<ResolvedType> {
+        AbstractDestructableIdentifiableInitializableComponent implements ResolverPlugin<ResolvedType>, DisposableBean {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractResolverPlugin.class);

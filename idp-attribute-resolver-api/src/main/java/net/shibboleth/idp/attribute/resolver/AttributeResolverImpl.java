@@ -412,20 +412,20 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
             // remove nulls
             if (null == resolvedAttribute) {
-                log.debug("{} removing result of attribute definition {}, it's null", logPrefix, definition.getId());
+                log.debug("{} removing result of attribute definition {}, its null", logPrefix, definition.getId());
                 continue;
             }
 
             // remove dependency-only attributes
             if (definition.isDependencyOnly()) {
-                log.debug("{} removing result of attribute definition {}, it's marked as depdency only", logPrefix,
+                log.debug("{} removing result of attribute definition {}, its marked as depdency only", logPrefix,
                         definition.getId());
                 continue;
             }
 
             // remove value-less attributes
             if (resolvedAttribute.getValues().size() == 0) {
-                log.debug("{} removing result of attribute definition {}, it's attribute contains no values",
+                log.debug("{} removing result of attribute definition {}, its attribute contains no values",
                         logPrefix, definition.getId());
                 continue;
             }
