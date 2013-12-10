@@ -248,7 +248,7 @@ public class ReloadableSpringService<T> extends AbstractReloadableService {
 
         log.debug("Testing that {} is a superclass of {}", theComponent.getClass(), theClaz);
 
-        if (!theComponent.getClass().isAssignableFrom(theClaz)) {
+        if (!theClaz.isAssignableFrom(theComponent.getClass())) {
             //
             // tear it down
             //

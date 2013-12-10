@@ -115,17 +115,14 @@ public abstract class AbstractServicableComponent<T> extends AbstractDestructabl
      * {@inheritDoc}. Force unload; this will usually be a no-op since the component should have been explicitly
      * unloaded, but we do the unload here so that error cases also clean up.
      */
-    public void doDestroy() {
+    protected void doDestroy() {
         unloadComponent();
     }
 
     /** {@inheritDoc} */
-    public void doInitialize() throws ComponentInitializationException {
+    protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        if (null == applicationContext) {
-            throw new ComponentInitializationException(getId() + ": No application context provided");
-        }
-        if (!(applicationContext instanceof ConfigurableApplicationContext)) {
+        if (applicationContext != null &&  !(applicationContext instanceof ConfigurableApplicationContext)) {
             throw new ComponentInitializationException(getId()
                     + ": Application context did not implement ConfigurableApplicationContext");
         }
