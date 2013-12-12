@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+    <bean id="shibboleth.VelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+        <property name="velocityProperties">
+            <props>
+                <prop key="resource.loader">classpath, string</prop>
+                <prop key="classpath.resource.loader.class">
+                    org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+                </prop>
+                <prop key="string.resource.loader.class">
+                    org.apache.velocity.runtime.resource.loader.StringResourceLoader
+                </prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="shibboleth.AttributeResolverService" class="net.shibboleth.idp.service.ReloadableSpringService" init-method="start" destroy-method="stop"
+        depends-on="shibboleth.VelocityEngine">
+        <constructor-arg><value>net.shibboleth.idp.attribute.resolver.AttributeResolver</value></constructor-arg>
+        <property name="id" value="shibboleth.AttributeResolverService" />
+        <property name="serviceConfigurations">
+            <util:list>
+                <value>net/shibboleth/idp/attribute/resolver/spring/attribute-resolver2.xml</value>
+            </util:list>
+        </property>
+    </bean>
+</beans>

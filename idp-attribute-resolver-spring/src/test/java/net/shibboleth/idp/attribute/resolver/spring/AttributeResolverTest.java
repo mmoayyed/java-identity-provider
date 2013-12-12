@@ -119,6 +119,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         
             
             final AttributeResolver resolver = serviceableComponent.getComponent();
+            Assert.assertEquals(resolver.getId(), "Shibboleth.Resolver");
             resolver.resolveAttributes(resolutionContext);
         } finally {
             if (null != serviceableComponent) {
@@ -209,5 +210,35 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(values.size(), 1);
         Assert.assertTrue(values.contains(new StringAttributeValue("#4321")));
 
+    }
+    
+    @Test public void id() throws ComponentInitializationException, ServiceException, ResolutionException {
+
+        GenericApplicationContext context = new GenericApplicationContext();
+        context.setDisplayName("ApplicationContext: " + AttributeResolverTest.class);
+        
+        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+                new SchemaTypeAwareXMLBeanDefinitionReader(context);
+
+        beanDefinitionReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/service2.xml");
+        context.refresh();
+
+        final ReloadableService<AttributeResolver> attributeResolverService = context.getBean(ReloadableService.class);
+        
+        attributeResolverService.start();
+
+        ServiceableComponent<AttributeResolver> serviceableComponent = null;
+
+        try {
+            serviceableComponent = attributeResolverService.getServiceableComponent();
+        
+            
+            final AttributeResolver resolver = serviceableComponent.getComponent();
+            Assert.assertEquals(resolver.getId(), "TestID");
+        } finally {
+            if (null != serviceableComponent) {
+                serviceableComponent.unpinComponent();
+            }
+        }
     }
 }

@@ -36,7 +36,7 @@
         </keyref>
         <key name="PluginDependencyKey">
             <selector xpath="./resolver:AttributeDefinition|./resolver:DataConnector"/>
-            <field xpath="@id"/>
+            <field xpath="@id" />
         </key>
     </element>
     <complexType name="AttributeResolverType">
@@ -45,6 +45,11 @@
             <element ref="resolver:DataConnector"/>
             <element ref="resolver:PrincipalConnector"/>
         </choice>
+        <attribute name="id" type="string">
+            <annotation>
+                <documentation>A unique identifier for this Resolver.</documentation>
+            </annotation>
+        </attribute>
     </complexType>
 
     <element name="AttributeDefinition" type="resolver:BaseAttributeDefinitionType">

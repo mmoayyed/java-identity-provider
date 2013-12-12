@@ -27,6 +27,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.spring.SpringSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -56,14 +57,20 @@ public class AttributeResolverParser extends AbstractSingleBeanDefinitionParser 
     /** {@inheritDoc} */
     protected void doParse(Element config, ParserContext context, BeanDefinitionBuilder builder) {
 
-        Map<QName, List<Element>> configChildren = ElementSupport.getIndexedChildElements(config);
+        final Map<QName, List<Element>> configChildren = ElementSupport.getIndexedChildElements(config);
         List<Element> children;
 
         // TODO principal connector
         // children = configChildren.get(new QName(AttributeResolverNamespaceHandler.NAMESPACE, "PrincipalConnector"));
         // SpringSupport.parseCustomElements(children, context);
+        String id = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
+        
+        if (null == id) {
+            // Compatibility with V2
+            id = "Shibboleth.Resolver";
+        }
 
-        builder.addConstructorArgValue("Shibboleth.Resolver");
+        builder.addConstructorArgValue(id);
 
         children = configChildren.get(BaseAttributeDefinitionParser.ELEMENT_NAME);
         builder.addConstructorArgValue(SpringSupport.parseCustomElements(children, context));
