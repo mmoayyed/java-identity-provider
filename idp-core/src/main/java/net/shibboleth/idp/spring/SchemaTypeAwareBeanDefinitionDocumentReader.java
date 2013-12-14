@@ -30,7 +30,8 @@ import org.w3c.dom.Element;
 public class SchemaTypeAwareBeanDefinitionDocumentReader extends DefaultBeanDefinitionDocumentReader {
 
     /** {@inheritDoc} */
-    protected BeanDefinitionParserDelegate createHelper(XmlReaderContext readerContext, Element root,
+    @Override
+    protected BeanDefinitionParserDelegate createDelegate(XmlReaderContext readerContext, Element root,
             BeanDefinitionParserDelegate parentDelegate) {
         BeanDefinitionParserDelegate delegate =
                 new SchemaTypeAwareBeanDefinitionParserDelegate(readerContext, new StandardEnvironment());
