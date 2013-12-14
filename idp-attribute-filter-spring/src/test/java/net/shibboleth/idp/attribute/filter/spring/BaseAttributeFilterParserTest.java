@@ -94,6 +94,8 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
             beanDefinitionReader.setValidating(false);
         }
         beanDefinitionReader.loadBeanDefinitions(fileName);
+        
+        context.refresh();
 
         Collection<Type> beans = context.getBeansOfType(claz).values();
         Assert.assertEquals(beans.size(), 1);

@@ -53,6 +53,8 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         }
         beanDefinitionReader.loadBeanDefinitions(fileName);
 
+        context.refresh();
+        
         Collection<Type> beans = context.getBeansOfType(claz).values();
         Assert.assertEquals(beans.size(), 1);
 
