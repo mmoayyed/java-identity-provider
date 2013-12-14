@@ -54,8 +54,12 @@
             <artifactId>spring-webflow</artifactId>
         </dependency>
         <dependency>
-          <groupId>${spring.groupId}</groupId>
-          <artifactId>spring-context</artifactId>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-context</artifactId>
         </dependency>
         <dependency>
             <groupId>com.beust</groupId>
