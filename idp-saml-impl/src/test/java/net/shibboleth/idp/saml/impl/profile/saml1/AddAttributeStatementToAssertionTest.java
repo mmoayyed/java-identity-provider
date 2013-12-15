@@ -34,7 +34,7 @@ import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.impl.attribute.encoding.SAML1StringAttributeEncoder;
-import net.shibboleth.idp.saml.profile.SamlEventIds;
+import net.shibboleth.idp.saml.profile.SAMLEventIds;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -95,7 +95,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
-        ActionTestingSupport.assertEvent(result, SamlEventIds.NO_RESPONSE);
+        ActionTestingSupport.assertEvent(result, SAMLEventIds.NO_RESPONSE);
     }
 
     /** Test that the action errors out properly if there is no attribute context. */
@@ -185,7 +185,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
-        ActionTestingSupport.assertEvent(result, SamlEventIds.UNABLE_ENCODE_ATTRIBUTE);
+        ActionTestingSupport.assertEvent(result, SAMLEventIds.UNABLE_ENCODE_ATTRIBUTE);
     }
 
     @Test public void testNonResponseOutboundMessage() throws Exception {

@@ -27,7 +27,7 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
-import net.shibboleth.idp.saml.profile.SamlEventIds;
+import net.shibboleth.idp.saml.profile.SAMLEventIds;
 import net.shibboleth.idp.saml.profile.config.AbstractSamlProfileConfiguration;
 import net.shibboleth.idp.saml.profile.saml2.Saml2ActionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -54,8 +54,8 @@ import com.google.common.base.Function;
         @Event(id = org.opensaml.profile.action.EventIds.PROCEED_EVENT_ID),
         @Event(id = IdPEventIds.INVALID_RELYING_PARTY_CTX,
                 description = "No relying party information is associated with the current request"),
-        @Event(id = SamlEventIds.NO_ASSERTION, description = "Outbound response does not contain an assertion"),
-        @Event(id = SamlEventIds.NO_RESPONSE,
+        @Event(id = SAMLEventIds.NO_ASSERTION, description = "Outbound response does not contain an assertion"),
+        @Event(id = SAMLEventIds.NO_RESPONSE,
                 description = "No SAML response object is associated with the current request")})
 public class AddAudienceRestrictionToAssertions extends AbstractProfileAction<Object, Response> {
 
@@ -149,14 +149,14 @@ public class AddAudienceRestrictionToAssertions extends AbstractProfileAction<Ob
         final Response response = profileRequestContext.getOutboundMessageContext().getMessage();
         if (response == null) {
             log.error("Action {}: No SAML response located in current profile request context", getId());
-            return ActionSupport.buildEvent(this, SamlEventIds.NO_RESPONSE);
+            return ActionSupport.buildEvent(this, SAMLEventIds.NO_RESPONSE);
         }
 
         final List<Assertion> assertions = response.getAssertions();
         if (assertions.isEmpty()) {
             log.debug("Action {}: Unable to add AudienceRestrictionCondition, Response does not contain an Asertion",
                     getId());
-            return ActionSupport.buildEvent(this, SamlEventIds.NO_ASSERTION);
+            return ActionSupport.buildEvent(this, SAMLEventIds.NO_ASSERTION);
         }
 
         Conditions conditions;

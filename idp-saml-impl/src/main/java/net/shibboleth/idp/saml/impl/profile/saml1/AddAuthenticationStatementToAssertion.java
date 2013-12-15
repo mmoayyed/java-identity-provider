@@ -30,7 +30,7 @@ import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
-import net.shibboleth.idp.saml.profile.SamlEventIds;
+import net.shibboleth.idp.saml.profile.SAMLEventIds;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -65,7 +65,7 @@ import com.google.common.base.Function;
         @Event(id = org.opensaml.profile.action.EventIds.PROCEED_EVENT_ID),
         @Event(id = IdPEventIds.INVALID_RELYING_PARTY_CTX,
                 description = "Returned if no relying party information is associated with the current request"),
-        @Event(id = SamlEventIds.NO_RESPONSE,
+        @Event(id = SAMLEventIds.NO_RESPONSE,
                 description = "No SAML response object is associated with the current request")})
 public class AddAuthenticationStatementToAssertion extends AbstractProfileAction<Object, Response> {
 
@@ -158,7 +158,7 @@ public class AddAuthenticationStatementToAssertion extends AbstractProfileAction
         final Response response = profileRequestContext.getOutboundMessageContext().getMessage();
         if (response == null) {
             log.error("Action {}: No SAML response located in current profile request context", getId());
-            return ActionSupport.buildEvent(this, SamlEventIds.NO_RESPONSE);
+            return ActionSupport.buildEvent(this, SAMLEventIds.NO_RESPONSE);
         }
 
         final AuthenticationStatement statement = buildAuthenticationStatement(profileRequestContext);

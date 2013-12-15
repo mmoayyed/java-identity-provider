@@ -17,13 +17,16 @@
 
 package net.shibboleth.idp.saml.profile;
 
-/** Constants to use for {@link org.springframework.webflow.execution.Event} IDs. */
-public final class SamlEventIds {
+/**
+ * SAML-specific constants to use for {@link org.opensaml.profile.action.ProfileAction}
+ * {@link org.opensaml.profile.context.EventContext}s.
+ */
+public final class SAMLEventIds {
 
     /** Is the SAML message version is incorrect (e.g., received a SAML 1.1 but expected SAML 2 message). */
     public static final String INVALID_MESSAGE_VERSION = "InvalidMessageVersion";
 
-    /** ID of the transition returned if some attributes can not be encoded. */
+    /** ID of the event returned if some attributes cannot be encoded. */
     public static final String UNABLE_ENCODE_ATTRIBUTE = "UnableToEncodeAttribute";
 
     /**
@@ -32,18 +35,16 @@ public final class SamlEventIds {
      */
     public static final String NO_RESPONSE = "NoResponse";
 
-    /** The outbound message context already contains a SAML response. */
+    /** ID of the event returned if the outbound message context already contains a SAML response. */
     public static final String RESPONSE_EXISTS = "ResponseExists";
 
-    /**
-     * ID of the event returned if the outbound response does not contain an assertion to which audiences can be added.
-     */
+    /** ID of the event returned if the outbound response does not contain an assertion. */
     public static final String NO_ASSERTION = "NoAssertion";
 
-    /** The inbound message did not contain an ID. */
+    /** ID of the event returned if the inbound message did not contain an ID. */
     public static final String NO_IN_MSG_ID = "NoInboundMessageId";
 
     /** Constructor. */
-    private SamlEventIds() {
+    private SAMLEventIds() {
     }
 }

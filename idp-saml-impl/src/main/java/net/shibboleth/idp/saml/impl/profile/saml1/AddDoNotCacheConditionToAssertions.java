@@ -28,7 +28,7 @@ import net.shibboleth.idp.profile.ActionSupport;
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
-import net.shibboleth.idp.saml.profile.SamlEventIds;
+import net.shibboleth.idp.saml.profile.SAMLEventIds;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -51,8 +51,8 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Events({
         @Event(id = EventIds.PROCEED_EVENT_ID),
-        @Event(id = SamlEventIds.NO_ASSERTION, description = "Outbound response does not contain an assertion"),
-        @Event(id = SamlEventIds.NO_RESPONSE,
+        @Event(id = SAMLEventIds.NO_ASSERTION, description = "Outbound response does not contain an assertion"),
+        @Event(id = SAMLEventIds.NO_RESPONSE,
                 description = "No SAML response object is associated with the current request")})
 public class AddDoNotCacheConditionToAssertions extends AbstractProfileAction<Object, Response> {
 
@@ -68,13 +68,13 @@ public class AddDoNotCacheConditionToAssertions extends AbstractProfileAction<Ob
         final Response response = profileRequestContext.getOutboundMessageContext().getMessage();
         if (response == null) {
             log.error("Action {}: No SAML response located in current profile request context", getId());
-            return ActionSupport.buildEvent(this, SamlEventIds.NO_RESPONSE);
+            return ActionSupport.buildEvent(this, SAMLEventIds.NO_RESPONSE);
         }
 
         final List<Assertion> assertions = response.getAssertions();
         if (assertions.isEmpty()) {
             log.debug("Action {}: Unable to add DoNotCacheCondition, Response does not contain an Asertion", getId());
-            return ActionSupport.buildEvent(this, SamlEventIds.NO_ASSERTION);
+            return ActionSupport.buildEvent(this, SAMLEventIds.NO_ASSERTION);
         }
 
         final SAMLObjectBuilder<DoNotCacheCondition> dncConditionBuilder =

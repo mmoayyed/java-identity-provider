@@ -19,7 +19,7 @@ package net.shibboleth.idp.saml.impl.profile.saml2;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
-import net.shibboleth.idp.saml.profile.SamlEventIds;
+import net.shibboleth.idp.saml.profile.SAMLEventIds;
 import net.shibboleth.idp.saml.profile.saml2.Saml2ActionTestingSupport;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -53,7 +53,7 @@ public class CheckRequestVersionTest extends OpenSAMLInitBaseTestCase {
 
         Event result = action.execute(springRequestContext);
         
-        ActionTestingSupport.assertEvent(result, SamlEventIds.INVALID_MESSAGE_VERSION);
+        ActionTestingSupport.assertEvent(result, SAMLEventIds.INVALID_MESSAGE_VERSION);
     }
 
     /** Test that the action errors out on SAML 2 messages. */

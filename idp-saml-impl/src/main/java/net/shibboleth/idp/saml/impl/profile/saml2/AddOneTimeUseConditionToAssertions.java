@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.saml.profile.SamlEventIds;
+import net.shibboleth.idp.saml.profile.SAMLEventIds;
 import net.shibboleth.idp.saml.profile.saml2.Saml2ActionSupport;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -60,13 +60,13 @@ public class AddOneTimeUseConditionToAssertions extends AbstractProfileAction<Ob
         final Response response = profileRequestContext.getOutboundMessageContext().getMessage();
         if (response == null) {
             log.error("Action {}: No SAML response located in current profile request context", getId());
-            return ActionSupport.buildEvent(this, SamlEventIds.NO_RESPONSE);
+            return ActionSupport.buildEvent(this, SAMLEventIds.NO_RESPONSE);
         }
 
         final List<Assertion> assertions = response.getAssertions();
         if (assertions.isEmpty()) {
             log.error("Action {}: Unable to add DoNotCacheCondition, Response does not contain an Asertion", getId());
-            return ActionSupport.buildEvent(this, SamlEventIds.NO_ASSERTION);
+            return ActionSupport.buildEvent(this, SAMLEventIds.NO_ASSERTION);
         }
 
         final SAMLObjectBuilder<OneTimeUse> conditionBuilder =

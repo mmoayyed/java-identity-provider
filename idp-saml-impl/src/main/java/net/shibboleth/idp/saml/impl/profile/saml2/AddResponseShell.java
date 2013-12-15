@@ -26,7 +26,7 @@ import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
-import net.shibboleth.idp.saml.profile.SamlEventIds;
+import net.shibboleth.idp.saml.profile.SAMLEventIds;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -56,7 +56,7 @@ import com.google.common.base.Function;
 @Events({
         @Event(id = org.opensaml.profile.action.EventIds.PROCEED_EVENT_ID),
         @Event(id = IdPEventIds.INVALID_RELYING_PARTY_CTX, description = "No relying party context available"),
-        @Event(id = SamlEventIds.RESPONSE_EXISTS,
+        @Event(id = SAMLEventIds.RESPONSE_EXISTS,
                 description = "If the outgoing message context already contains a message")})
 public class AddResponseShell extends AbstractProfileAction<Object, Response> {
 
@@ -109,7 +109,7 @@ public class AddResponseShell extends AbstractProfileAction<Object, Response> {
         final MessageContext<Response> outboundMessageCtx = profileRequestContext.getOutboundMessageContext();
         if (outboundMessageCtx.getMessage() != null) {
             log.error("Action {}: Outbound message context already contains a Response", getId());
-            return ActionSupport.buildEvent(this, SamlEventIds.RESPONSE_EXISTS);
+            return ActionSupport.buildEvent(this, SAMLEventIds.RESPONSE_EXISTS);
         }
 
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);

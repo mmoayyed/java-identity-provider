@@ -19,7 +19,7 @@ package net.shibboleth.idp.saml.impl.profile.saml2;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
-import net.shibboleth.idp.saml.profile.SamlEventIds;
+import net.shibboleth.idp.saml.profile.SAMLEventIds;
 import net.shibboleth.idp.saml.profile.saml2.Saml2ActionTestingSupport;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -46,7 +46,7 @@ public class AddOneTimeUseConditionToAssertionsTest  extends OpenSAMLInitBaseTes
 
         Event result = action.execute(new RequestContextBuilder().buildRequestContext());
 
-        ActionTestingSupport.assertEvent(result, SamlEventIds.NO_RESPONSE);
+        ActionTestingSupport.assertEvent(result, SAMLEventIds.NO_RESPONSE);
     }
 
     /** Test that action errors out properly if there is no assertion in the response. */
@@ -63,7 +63,7 @@ public class AddOneTimeUseConditionToAssertionsTest  extends OpenSAMLInitBaseTes
 
         Event result = action.execute(springRequestContext);
 
-        ActionTestingSupport.assertEvent(result, SamlEventIds.NO_ASSERTION);
+        ActionTestingSupport.assertEvent(result, SAMLEventIds.NO_ASSERTION);
     }
 
     /**

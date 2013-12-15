@@ -34,7 +34,7 @@ import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML2AttributeEncoder;
-import net.shibboleth.idp.saml.profile.SamlEventIds;
+import net.shibboleth.idp.saml.profile.SAMLEventIds;
 import net.shibboleth.idp.saml.profile.saml2.Saml2ActionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -67,7 +67,7 @@ import com.google.common.base.Function;
                 description = "Returned if no relying party information is associated with the current request"),
         @Event(id = IdPEventIds.INVALID_ATTRIBUTE_CTX,
                 description = "Returned if no attribute context is associated with the relying party context"),
-        @Event(id = SamlEventIds.UNABLE_ENCODE_ATTRIBUTE,
+        @Event(id = SAMLEventIds.UNABLE_ENCODE_ATTRIBUTE,
                 description = "Returned if there was a problem encoding an attribute")})
 public class AddAttributeStatementToAssertion extends AbstractProfileAction<Object, Response> {
 
@@ -181,7 +181,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
             log.debug("Action {}: Adding constructed AttributeStatement to Assertion {} ", getId(), assertion.getID());
             return ActionSupport.buildProceedEvent(this);
         } catch (AttributeEncodingException e) {
-            return ActionSupport.buildEvent(this, SamlEventIds.UNABLE_ENCODE_ATTRIBUTE);
+            return ActionSupport.buildEvent(this, SAMLEventIds.UNABLE_ENCODE_ATTRIBUTE);
         }
     }
 
