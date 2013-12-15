@@ -32,7 +32,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.SAMLEventIds;
-import net.shibboleth.idp.saml.profile.config.AbstractSamlProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -175,7 +175,7 @@ public class AddAudienceRestrictionToAssertions extends AbstractProfileAction<Ob
 
     /**
      * Adds the {@link RelyingPartyContext#getRelyingPartyId()} and any additional audiences configured in the active
-     * {@link AbstractSamlProfileConfiguration} as {@link Audience} to the {@link AudienceRestrictionCondition}. If no
+     * {@link AbstractSAMLProfileConfiguration} as {@link Audience} to the {@link AudienceRestrictionCondition}. If no
      * {@link AudienceRestrictionCondition} exists on the given {@link Conditions} one is created and added.
      * 
      * @param conditions condition that has, or will received the created, {@link AudienceRestrictionCondition}
@@ -194,9 +194,9 @@ public class AddAudienceRestrictionToAssertions extends AbstractProfileAction<Ob
         audience.setUri(relyingPartyCtx.getRelyingPartyId());
         condition.getAudiences().add(audience);
 
-        if (relyingPartyCtx.getProfileConfig() instanceof AbstractSamlProfileConfiguration) {
-            final AbstractSamlProfileConfiguration profileConfig =
-                    (AbstractSamlProfileConfiguration) relyingPartyCtx.getProfileConfig();
+        if (relyingPartyCtx.getProfileConfig() instanceof SAMLProfileConfiguration) {
+            final SAMLProfileConfiguration profileConfig =
+                    (SAMLProfileConfiguration) relyingPartyCtx.getProfileConfig();
             for (String audienceId : profileConfig.getAdditionalAudiencesForAssertion()) {
                 log.debug("Action {}: Adding {} as an Audience of the AudienceRestrictionCondition", getId(),
                         audienceId);

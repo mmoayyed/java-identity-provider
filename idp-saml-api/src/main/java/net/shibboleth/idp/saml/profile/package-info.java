@@ -15,6 +15,6 @@
  * limitations under the License.
  */
 
-/** SAML profile actions and state information. */
+/** Common APIs for SAML profile actions. */
 
 package net.shibboleth.idp.saml.profile;

@@ -32,7 +32,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.SAMLEventIds;
-import net.shibboleth.idp.saml.profile.config.AbstractSamlProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -132,8 +132,7 @@ public class AddNotOnOrAfterConditionToAssertions extends AbstractProfileAction<
             return ActionSupport.buildEvent(this, SAMLEventIds.NO_ASSERTION);
         }
 
-        final AbstractSamlProfileConfiguration profileConfig =
-                (AbstractSamlProfileConfiguration) relyingPartyCtx.getProfileConfig();
+        final SAMLProfileConfiguration profileConfig = (SAMLProfileConfiguration) relyingPartyCtx.getProfileConfig();
 
         Conditions conditions;
         DateTime expiration = new DateTime(response.getIssueInstant()).plus(profileConfig.getAssertionLifetime());

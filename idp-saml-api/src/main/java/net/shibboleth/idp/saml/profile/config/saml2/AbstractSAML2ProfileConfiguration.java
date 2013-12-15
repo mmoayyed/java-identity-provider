@@ -24,7 +24,7 @@ import java.util.Set;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import net.shibboleth.idp.saml.profile.config.AbstractSamlProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -32,7 +32,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 /** Base class for SAML 2 profile configurations. */
-public abstract class AbstractSAML2ProfileConfiguration extends AbstractSamlProfileConfiguration {
+public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProfileConfiguration {
 
     /** Criteria used to determine name identifiers should be encrypted. */
     private Predicate<ProfileRequestContext> encryptNameIDsCriteria;

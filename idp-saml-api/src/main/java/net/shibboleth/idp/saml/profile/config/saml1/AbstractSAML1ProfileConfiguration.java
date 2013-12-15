@@ -17,10 +17,10 @@
 
 package net.shibboleth.idp.saml.profile.config.saml1;
 
-import net.shibboleth.idp.saml.profile.config.AbstractSamlProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
 
 /** Base class for SAML 1 profile configurations. */
-public abstract class AbstractSAML1ProfileConfiguration extends AbstractSamlProfileConfiguration {
+public abstract class AbstractSAML1ProfileConfiguration extends AbstractSAMLProfileConfiguration {
 
     /**
      * Constructor.

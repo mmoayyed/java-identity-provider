@@ -29,18 +29,18 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 
-/** Unit test for {@link AbstractSamlProfileConfiguration}. */
+/** Unit test for {@link AbstractSAMLProfileConfiguration}. */
 public class AbstractSamlProfileConfigurationTest {
 
     @Test public void testSignAssertionsCriteria() {
         MockSamlProfileConfiguration config = new MockSamlProfileConfiguration();
-        Assert.assertNotNull(config.getSignAssertionsCriteria());
+        Assert.assertNotNull(config.getSignAssertionsPredicate());
 
-        config.setSignAssertionsCriteria(Predicates.<ProfileRequestContext> alwaysFalse());
-        Assert.assertSame(config.getSignAssertionsCriteria(), Predicates.<ProfileRequestContext> alwaysFalse());
+        config.setSignAssertionsPredicate(Predicates.<ProfileRequestContext> alwaysFalse());
+        Assert.assertSame(config.getSignAssertionsPredicate(), Predicates.<ProfileRequestContext> alwaysFalse());
 
         try {
-            config.setSignAssertionsCriteria(null);
+            config.setSignAssertionsPredicate(null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // excepted this
@@ -49,13 +49,13 @@ public class AbstractSamlProfileConfigurationTest {
 
     @Test public void testSignResponsesCriteria() {
         MockSamlProfileConfiguration config = new MockSamlProfileConfiguration();
-        Assert.assertNotNull(config.getSignResponsesCriteria());
+        Assert.assertNotNull(config.getSignResponsesPredicate());
 
-        config.setSignResponsesCriteria(Predicates.<ProfileRequestContext> alwaysFalse());
-        Assert.assertSame(config.getSignResponsesCriteria(), Predicates.<ProfileRequestContext> alwaysFalse());
+        config.setSignResponsesPredicate(Predicates.<ProfileRequestContext> alwaysFalse());
+        Assert.assertSame(config.getSignResponsesPredicate(), Predicates.<ProfileRequestContext> alwaysFalse());
 
         try {
-            config.setSignResponsesCriteria(null);
+            config.setSignResponsesPredicate(null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // excepted this
@@ -64,13 +64,13 @@ public class AbstractSamlProfileConfigurationTest {
 
     @Test public void testSignRequestsCriteria() {
         MockSamlProfileConfiguration config = new MockSamlProfileConfiguration();
-        Assert.assertNotNull(config.getSignedRequestsCriteria());
+        Assert.assertNotNull(config.getSignedRequestsPredicate());
 
-        config.setSignedRequestsCriteria(Predicates.<ProfileRequestContext> alwaysFalse());
-        Assert.assertSame(config.getSignedRequestsCriteria(), Predicates.<ProfileRequestContext> alwaysFalse());
+        config.setSignedRequestsPredicate(Predicates.<ProfileRequestContext> alwaysFalse());
+        Assert.assertSame(config.getSignedRequestsPredicate(), Predicates.<ProfileRequestContext> alwaysFalse());
 
         try {
-            config.setSignedRequestsCriteria(null);
+            config.setSignedRequestsPredicate(null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // excepted this
@@ -128,7 +128,7 @@ public class AbstractSamlProfileConfigurationTest {
     }
 
     /** Mock class for test {@link AbstractSAMLProfileConfiguration}. */
-    private static class MockSamlProfileConfiguration extends AbstractSamlProfileConfiguration {
+    private static class MockSamlProfileConfiguration extends AbstractSAMLProfileConfiguration {
 
         /** Constructor. */
         public MockSamlProfileConfiguration() {
