@@ -28,7 +28,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.EventIds;
+import net.shibboleth.idp.profile.IdPEventIds;
 
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -42,8 +42,8 @@ import org.springframework.webflow.execution.RequestContext;
  * A Spring-aware action to write the attribute context information to the external output sink.
  * This is for use in command line scenarios where there is no servlet environment for output.
  * 
- * @event {@link org.opensaml.profile.action.EventIds.PROCEED_EVENT_ID}
- * @event {@link EventIds#INVALID_ATTRIBUTE_CTX}
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
+ * @event {@link IdPEventIds#INVALID_ATTRIBUTE_CTX}
  */
 public final class OutputAttributes extends AbstractProfileAction {
 
@@ -58,7 +58,7 @@ public final class OutputAttributes extends AbstractProfileAction {
         AttributeContext attributeContext = profileRequestContext.getSubcontext(AttributeContext.class, false);
         if (attributeContext == null) {
             log.debug("{} No attribute context, no attributes to filter", getLogPrefix());
-            return ActionSupport.buildEvent(this, EventIds.INVALID_ATTRIBUTE_CTX);
+            return ActionSupport.buildEvent(this, IdPEventIds.INVALID_ATTRIBUTE_CTX);
         }
         
         try {

@@ -23,7 +23,7 @@ package net.shibboleth.idp.profile;
  * IdP-specific constants to use for {@link org.opensaml.profile.action.ProfileAction}
  * {@link org.opensaml.profile.context.EventContext}s.
  */
-public final class EventIds {
+public final class IdPEventIds {
 
     /**
      * ID of the event returned if a {@link net.shibboleth.idp.relyingparty.RelyingPartyContext} is missing or corrupt
@@ -56,7 +56,7 @@ public final class EventIds {
     public static final String UNABLE_FILTER_ATTRIBS = "UnableToFilterAttributes";
     
     /** Constructor. */
-    private EventIds() {
+    private IdPEventIds() {
         
     }
     

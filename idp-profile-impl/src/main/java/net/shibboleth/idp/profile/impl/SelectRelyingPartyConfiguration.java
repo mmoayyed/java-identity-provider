@@ -25,7 +25,7 @@ import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import net.shibboleth.idp.profile.EventIds;
+import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -44,8 +44,8 @@ import com.google.common.base.Function;
  * that was looked up.
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @event {@link EventIds#INVALID_RELYING_PARTY_CTX}
- * @event {@link EventIds#INVALID_RELYING_PARTY_CONFIG}
+ * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
+ * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CONFIG}
  * 
  * @post If a {@link ReplyingPartyContext} is located, it will be populated with a non-null result of applying
  * the suppled relying party config {@link Resolver} to to the {@link ProfileRequestContext}.
@@ -119,7 +119,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
         relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyCtx == null) {
             log.debug("{} No relying party context available for this request", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_RELYING_PARTY_CTX);
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
             return false;
         }
         
@@ -134,7 +134,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
             final RelyingPartyConfiguration config = rpConfigResolver.resolveSingle(profileRequestContext);
             if (config == null) {
                 log.debug("{} No relying party configuration applies to this request", getLogPrefix());
-                ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_RELYING_PARTY_CONFIG);
+                ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);
                 return;
             }
 
@@ -142,7 +142,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
             relyingPartyCtx.setRelyingPartyConfiguration(config);
         } catch (ResolverException e) {
             log.error(getLogPrefix() + " Error trying to resolve relying party configuration", e);
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_RELYING_PARTY_CONFIG);
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);
         }
     }
 }

@@ -24,7 +24,7 @@ import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.profile.EventIds;
+import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.service.ReloadableService;
 import net.shibboleth.idp.service.ServiceableComponent;
@@ -45,8 +45,8 @@ import com.google.common.base.Function;
  * Action that invokes the {@link AttributeResolver} for the current request.
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @event {@link EventIds#INVALID_RELYING_PARTY_CTX}
- * @event {@link EventIds#UNABLE_RESOLVE_ATTRIBS}
+ * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
+ * @event {@link IdPEventIds#UNABLE_RESOLVE_ATTRIBS}
  * 
  * @post If resolution is successful, the relevant RelyingPartyContext.getSubcontext(AttributeContext.class, false) !=
  *       null
@@ -98,7 +98,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
         rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (rpContext == null) {
             log.debug("{} No relying party context available.", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_RELYING_PARTY_CTX);
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
             return false;
         }
 
@@ -119,7 +119,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
             component = attributeResolverService.getServiceableComponent();
             if (null == component) {
                 log.error("{} Error resolving attributes: Invalid Attribute resolver configuration.", getLogPrefix());
-                ActionSupport.buildEvent(profileRequestContext, EventIds.UNABLE_RESOLVE_ATTRIBS);
+                ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
             } else {
                 final AttributeResolver attributeResolver = component.getComponent();
                 attributeResolver.resolveAttributes(resolutionContext);
@@ -132,7 +132,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
             }
         } catch (ResolutionException e) {
             log.error("{} Error resolving attributes", getLogPrefix(), e);
-            ActionSupport.buildEvent(profileRequestContext, EventIds.UNABLE_RESOLVE_ATTRIBS);
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
         } finally {
             if (null != component) {
                 component.unpinComponent();

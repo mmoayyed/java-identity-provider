@@ -20,7 +20,7 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
-import net.shibboleth.idp.profile.EventIds;
+import net.shibboleth.idp.profile.IdPEventIds;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -50,7 +50,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
 
         Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
-        ActionTestingSupport.assertEvent(result, EventIds.INVALID_RELYING_PARTY_CTX);
+        ActionTestingSupport.assertEvent(result, IdPEventIds.INVALID_RELYING_PARTY_CTX);
     }
 
     /** Test that the action errors out properly if there is no response. */

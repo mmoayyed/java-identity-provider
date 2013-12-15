@@ -23,7 +23,7 @@ import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.EventIds;
+import net.shibboleth.idp.profile.IdPEventIds;
 
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -45,11 +45,11 @@ import com.google.common.base.Function;
  */
 @Events({
         @Event(id = org.opensaml.profile.action.EventIds.PROCEED_EVENT_ID),
-        @Event(id = EventIds.INVALID_RELYING_PARTY_CTX,
+        @Event(id = IdPEventIds.INVALID_RELYING_PARTY_CTX,
                 description = "No relying party context associated with the request"),
-        @Event(id = EventIds.INVALID_RELYING_PARTY_CONFIG,
+        @Event(id = IdPEventIds.INVALID_RELYING_PARTY_CONFIG,
                 description = "Relying party context didn't contain a relying party configuration"),
-        @Event(id = EventIds.INVALID_PROFILE_CONFIG, description = "Profile is not configured for the relying party")})
+        @Event(id = IdPEventIds.INVALID_PROFILE_CONFIG, description = "Profile is not configured for the relying party")})
 public class SelectProfileConfiguration extends AbstractProfileAction {
 
     /** Class logger. */
@@ -86,13 +86,13 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
         final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (rpCtx == null) {
             log.debug("Action {}: No relying party context associated with this profile request", getId());
-            return ActionSupport.buildEvent(this, EventIds.INVALID_RELYING_PARTY_CTX);
+            return ActionSupport.buildEvent(this, IdPEventIds.INVALID_RELYING_PARTY_CTX);
         }
 
         final RelyingPartyConfiguration rpConfig = rpCtx.getConfiguration();
         if (rpConfig == null) {
             log.debug("Action {}: No relying party configuration associated with this profile request", getId());
-            return ActionSupport.buildEvent(this, EventIds.INVALID_RELYING_PARTY_CONFIG);
+            return ActionSupport.buildEvent(this, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);
         }
 
         final String profileId = profileRequestContext.getProfileId();
@@ -101,7 +101,7 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
         if (profileConfiguration == null) {
             log.debug("Action {}: Profile {} is not configured for relying party configuration {}", new Object[] {
                     getId(), profileId, rpConfig.getId(),});
-            return ActionSupport.buildEvent(this, EventIds.INVALID_PROFILE_CONFIG);
+            return ActionSupport.buildEvent(this, IdPEventIds.INVALID_PROFILE_CONFIG);
         }
 
         rpCtx.setProfileConfiguration(profileConfiguration);

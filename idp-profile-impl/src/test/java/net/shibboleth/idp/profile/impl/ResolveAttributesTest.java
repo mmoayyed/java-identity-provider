@@ -31,7 +31,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.MockAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.profile.EventIds;
+import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.service.AbstractReloadableService;
@@ -64,7 +64,7 @@ public class ResolveAttributesTest {
         action.initialize();
 
         action.execute(profileCtx);
-        ActionTestingSupport.assertEvent(profileCtx, EventIds.INVALID_RELYING_PARTY_CTX);
+        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_RELYING_PARTY_CTX);
     }
 
     /** Test that the action resolves attributes and proceeds properly. */
@@ -174,7 +174,7 @@ public class ResolveAttributesTest {
         action.initialize();
 
         action.execute(profileCtx);
-        ActionTestingSupport.assertEvent(profileCtx, EventIds.UNABLE_RESOLVE_ATTRIBS);
+        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
     }
     
     /** Test that action returns the proper event if the attribute configuration is broken */
@@ -192,7 +192,7 @@ public class ResolveAttributesTest {
         action.initialize();
 
         action.execute(profileCtx);
-        ActionTestingSupport.assertEvent(profileCtx, EventIds.UNABLE_RESOLVE_ATTRIBS);
+        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
     }
 
     

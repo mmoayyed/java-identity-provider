@@ -30,7 +30,7 @@ import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.profile.ActionTestingSupport;
-import net.shibboleth.idp.profile.EventIds;
+import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.impl.attribute.encoding.SAML1StringAttributeEncoder;
@@ -79,7 +79,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
-        ActionTestingSupport.assertEvent(result, EventIds.INVALID_RELYING_PARTY_CTX);
+        ActionTestingSupport.assertEvent(result, IdPEventIds.INVALID_RELYING_PARTY_CTX);
     }
 
     /** Test that the action errors out properly if there is no response. */
@@ -110,7 +110,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
-        ActionTestingSupport.assertEvent(result, EventIds.INVALID_ATTRIBUTE_CTX);
+        ActionTestingSupport.assertEvent(result, IdPEventIds.INVALID_ATTRIBUTE_CTX);
     }
 
     /** Test that the action errors out properly if the attribute context does not contain attributes. */

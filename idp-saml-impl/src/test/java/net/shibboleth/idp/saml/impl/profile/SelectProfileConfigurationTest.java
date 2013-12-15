@@ -18,7 +18,7 @@
 package net.shibboleth.idp.saml.impl.profile;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
-import net.shibboleth.idp.profile.EventIds;
+import net.shibboleth.idp.profile.IdPEventIds;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -45,7 +45,7 @@ public class SelectProfileConfigurationTest {
 
         Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
-        ActionTestingSupport.assertEvent(result, EventIds.INVALID_RELYING_PARTY_CTX);
+        ActionTestingSupport.assertEvent(result, IdPEventIds.INVALID_RELYING_PARTY_CTX);
     }
 
     /** Test that the action errors out properly if there is no relying party configuration. */
@@ -60,7 +60,7 @@ public class SelectProfileConfigurationTest {
 
         Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
-        ActionTestingSupport.assertEvent(result, EventIds.INVALID_RELYING_PARTY_CONFIG);
+        ActionTestingSupport.assertEvent(result, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);
     }
 
     /** Test that the action errors out properly if the desired profile configuration is not configured. */
@@ -75,7 +75,7 @@ public class SelectProfileConfigurationTest {
 
         Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
-        ActionTestingSupport.assertEvent(result, EventIds.INVALID_PROFILE_CONFIG);
+        ActionTestingSupport.assertEvent(result, IdPEventIds.INVALID_PROFILE_CONFIG);
     }
 
     /** Test that the action selects the appropriate profile configuration and proceeds properly. */

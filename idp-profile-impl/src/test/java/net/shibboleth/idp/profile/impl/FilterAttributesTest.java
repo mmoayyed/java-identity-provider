@@ -35,7 +35,7 @@ import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filter.AttributeRule;
 import net.shibboleth.idp.attribute.filter.MockMatcher;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
-import net.shibboleth.idp.profile.EventIds;
+import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.service.AbstractReloadableService;
@@ -63,7 +63,7 @@ public class FilterAttributesTest {
         action.initialize();
 
         action.execute(profileCtx);
-        ActionTestingSupport.assertEvent(profileCtx, EventIds.INVALID_RELYING_PARTY_CTX);
+        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_RELYING_PARTY_CTX);
     }
 
     /** Test that the action errors out properly if there is no attribute context. */
@@ -78,7 +78,7 @@ public class FilterAttributesTest {
         action.initialize();
 
         action.execute(profileCtx);
-        ActionTestingSupport.assertEvent(profileCtx, EventIds.INVALID_ATTRIBUTE_CTX);
+        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_ATTRIBUTE_CTX);
     }
 
     /** Test that the action proceeds properly if there are no attributes to filter . */
@@ -254,7 +254,7 @@ public class FilterAttributesTest {
         action.initialize();
 
         action.execute(profileCtx);
-        ActionTestingSupport.assertEvent(profileCtx, EventIds.UNABLE_FILTER_ATTRIBS);
+        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.UNABLE_FILTER_ATTRIBS);
     }
     
     /** Test that action returns the proper event if the attribute configuration is broken */
@@ -279,7 +279,7 @@ public class FilterAttributesTest {
         action.initialize();
 
         action.execute(profileCtx);
-        ActionTestingSupport.assertEvent(profileCtx, EventIds.UNABLE_FILTER_ATTRIBS);
+        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.UNABLE_FILTER_ATTRIBS);
     }
 
 

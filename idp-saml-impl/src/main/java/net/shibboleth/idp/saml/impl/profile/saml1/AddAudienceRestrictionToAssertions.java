@@ -25,7 +25,7 @@ import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.EventIds;
+import net.shibboleth.idp.profile.IdPEventIds;
 
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -54,7 +54,7 @@ import com.google.common.base.Function;
 /** Adds an {@link AudienceRestrictionCondition} to every {@link Assertion} contained on the {@link Response}. */
 @Events({
         @Event(id = org.opensaml.profile.action.EventIds.PROCEED_EVENT_ID),
-        @Event(id = EventIds.INVALID_RELYING_PARTY_CTX,
+        @Event(id = IdPEventIds.INVALID_RELYING_PARTY_CTX,
                 description = "No relying party information is associated with the current request"),
         @Event(id = SamlEventIds.NO_ASSERTION, description = "Outbound response does not contain an assertion"),
         @Event(id = SamlEventIds.NO_RESPONSE,
@@ -147,7 +147,7 @@ public class AddAudienceRestrictionToAssertions extends AbstractProfileAction<Ob
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyCtx == null) {
             log.error("Action {}: No relying party context located in current profile request context", getId());
-            return ActionSupport.buildEvent(this, EventIds.INVALID_RELYING_PARTY_CTX);
+            return ActionSupport.buildEvent(this, IdPEventIds.INVALID_RELYING_PARTY_CTX);
         }
 
         final Response response = profileRequestContext.getOutboundMessageContext().getMessage();

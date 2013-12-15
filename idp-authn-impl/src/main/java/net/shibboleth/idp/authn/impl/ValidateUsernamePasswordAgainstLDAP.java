@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
  * @post If AuthenticationContext.getSubcontext(UsernamePasswordContext.class, false) != null, then an
  *       {@link net.shibboleth.idp.authn.AuthenticationResult} is saved to the {@link AuthenticationContext} on a
  *       successful login. On a failed login, the
- *       {@link net.shibboleth.idp.authn.AbstractValidationAction#handleError(ProfileRequestContext, AuthenticationContext, String, String)}
+ *       {@link AbstractValidationAction#handleError(ProfileRequestContext, AuthenticationContext, String, String)}
  *       method is called.
  */
 public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationAction {

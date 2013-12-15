@@ -24,7 +24,7 @@ import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.EventIds;
+import net.shibboleth.idp.profile.IdPEventIds;
 
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -63,7 +63,7 @@ import com.google.common.base.Function;
  */
 @Events({
         @Event(id = org.opensaml.profile.action.EventIds.PROCEED_EVENT_ID),
-        @Event(id = EventIds.INVALID_RELYING_PARTY_CTX,
+        @Event(id = IdPEventIds.INVALID_RELYING_PARTY_CTX,
                 description = "Returned if no relying party information is associated with the current request"),
         @Event(id = SamlEventIds.NO_RESPONSE,
                 description = "No SAML response object is associated with the current request")})
@@ -152,7 +152,7 @@ public class AddAuthenticationStatementToAssertion extends AbstractProfileAction
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyCtx == null) {
             log.error("Action {}: No relying party context located in current profile request context", getId());
-            return ActionSupport.buildEvent(this, EventIds.INVALID_RELYING_PARTY_CTX);
+            return ActionSupport.buildEvent(this, IdPEventIds.INVALID_RELYING_PARTY_CTX);
         }
         
         final Response response = profileRequestContext.getOutboundMessageContext().getMessage();

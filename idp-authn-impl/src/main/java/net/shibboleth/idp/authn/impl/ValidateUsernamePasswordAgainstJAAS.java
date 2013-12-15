@@ -66,8 +66,9 @@ import com.google.common.collect.Lists;
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false).getAttemptedFlow() != null</pre>
  * @post If AuthenticationContext.getSubcontext(UsernamePasswordContext.class, false) != null, then
  * an {@link net.shibboleth.idp.authn.AuthenticationResult} is saved to the {@link AuthenticationContext} on a
- * successful login. On a failed login, the {@link net.shibboleth.idp.authn.AbstractValidationAction#handleError(
- * ProfileRequestContext, AuthenticationContext, Exception, String)} method is called.
+ * successful login. On a failed login, the
+ * {@link AbstractValidationAction#handleError(ProfileRequestContext, AuthenticationContext, Exception, String)}
+ * method is called.
  */
 public class ValidateUsernamePasswordAgainstJAAS extends AbstractValidationAction {
 

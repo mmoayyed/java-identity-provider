@@ -24,7 +24,7 @@ import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
-import net.shibboleth.idp.profile.EventIds;
+import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.service.ReloadableService;
 import net.shibboleth.idp.service.ServiceableComponent;
@@ -45,9 +45,9 @@ import com.google.common.base.Function;
  * Action that invokes the {@link AttributeFilter} for the current request.
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @event {@link EventIds#INVALID_RELYING_PARTY_CTX}
- * @event {@link EventIds#INVALID_ATTRIBUTE_CTX}
- * @event {@link EventIds#UNABLE_FILTER_ATTRIBS}
+ * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
+ * @event {@link IdPEventIds#INVALID_ATTRIBUTE_CTX}
+ * @event {@link IdPEventIds#UNABLE_FILTER_ATTRIBS}
  * 
  * @post If resolution is successful, the relevant RelyingPartyContext.getSubcontext(AttributeContext.class, false) !=
  *       null
@@ -102,14 +102,14 @@ public class FilterAttributes extends AbstractProfileAction {
         rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (rpContext == null) {
             log.debug("{} No relying party context available", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_RELYING_PARTY_CTX);
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
             return false;
         }
 
         attributeContext = rpContext.getSubcontext(AttributeContext.class, false);
         if (attributeContext == null) {
             log.debug("{} No attribute context, no attributes to filter", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_ATTRIBUTE_CTX);
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_ATTRIBUTE_CTX);
             return false;
         }
 
@@ -142,7 +142,7 @@ public class FilterAttributes extends AbstractProfileAction {
             if (null == component) {
                 log.error("{} Error encountered while filtering attributes : Invalid Attribute Filter configuration",
                         getLogPrefix());
-                ActionSupport.buildEvent(profileRequestContext, EventIds.UNABLE_FILTER_ATTRIBS);
+                ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
             } else {
                 AttributeFilter filter = component.getComponent();
                 filter.filterAttributes(filterContext);
@@ -151,7 +151,7 @@ public class FilterAttributes extends AbstractProfileAction {
             }
         } catch (AttributeFilterException e) {
             log.error("{} Error encountered while filtering attributes", getLogPrefix(), e);
-            ActionSupport.buildEvent(profileRequestContext, EventIds.UNABLE_FILTER_ATTRIBS);
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
         } finally {
             if (null != component) {
                 component.unpinComponent();

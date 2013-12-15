@@ -21,7 +21,7 @@ import java.util.Collections;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.EventIds;
+import net.shibboleth.idp.profile.IdPEventIds;
 
 import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -51,7 +51,7 @@ public class SelectRelyingPartyConfigurationTest {
 
         action.execute(profileCtx);
 
-        ActionTestingSupport.assertEvent(profileCtx, EventIds.INVALID_RELYING_PARTY_CTX);
+        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_RELYING_PARTY_CTX);
     }
 
     /** Test that the action errors out properly if there is no relying party configuration. */
@@ -66,7 +66,7 @@ public class SelectRelyingPartyConfigurationTest {
 
         action.execute(profileCtx);
 
-        ActionTestingSupport.assertEvent(profileCtx, EventIds.INVALID_RELYING_PARTY_CONFIG);
+        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);
     }
 
     /** Test that the action errors out properly if the relying party configuration can not be resolved. */
@@ -85,7 +85,7 @@ public class SelectRelyingPartyConfigurationTest {
 
         action.execute(profileCtx);
 
-        ActionTestingSupport.assertEvent(profileCtx, EventIds.INVALID_RELYING_PARTY_CONFIG);
+        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);
     }
 
     /** Test that the action resolves the relying party and proceeds properly. */
