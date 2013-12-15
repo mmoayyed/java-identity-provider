@@ -35,7 +35,7 @@
         
     <bean id="ValidateUsernamePasswordAgainstLDAP" class="net.shibboleth.idp.authn.impl.ValidateUsernamePasswordAgainstLDAP" scope="prototype"
             p:authenticator-ref="authenticator"
-            p:classifiedMessages-ref="shibboleth.ClassifiedMessageMap"
+            p:classifiedMessages-ref="shibboleth.authn.LDAP.ClassifiedMessageMap"
             p:resultCachingPredicate="#{getObject('shibboleth.authn.LDAP.resultCachingPredicate')}"
             p:returnAttributes-ref="shibboleth.authn.LDAP.returnAttributes" />
 
