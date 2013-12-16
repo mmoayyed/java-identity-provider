@@ -150,12 +150,12 @@ public abstract class AbstractSAMLProfileConfiguration
             return;
         }
 
-        final HashSet<String> newAudiences = new HashSet<>();
+        assertionAudiences = new HashSet<>();
         String trimmedAudience;
         for (String audience : audiences) {
             trimmedAudience = StringSupport.trimOrNull(audience);
             if (trimmedAudience != null) {
-                newAudiences.add(trimmedAudience);
+                assertionAudiences.add(trimmedAudience);
             }
         }
     }
