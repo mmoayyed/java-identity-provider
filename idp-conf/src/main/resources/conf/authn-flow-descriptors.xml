@@ -44,6 +44,8 @@
                         c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" />
                     <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
                         c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:Password" />
+                    <bean class="net.shibboleth.idp.saml.authn.AuthenticationMethodPrincipal"
+                        c:classRef="urn:oasis:names:tc:SAML:1.0:am:password" />
                 </list>
             </property>
         </bean>
@@ -59,6 +61,8 @@
                         c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" />
                     <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
                         c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:Password" />
+                    <bean class="net.shibboleth.idp.saml.authn.AuthenticationMethodPrincipal"
+                        c:classRef="urn:oasis:names:tc:SAML:1.0:am:password" />
                 </list>
             </property>
         </bean>
@@ -74,6 +78,8 @@
                         c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" />
                     <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
                         c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:Password" />
+                    <bean class="net.shibboleth.idp.saml.authn.AuthenticationMethodPrincipal"
+                        c:classRef="urn:oasis:names:tc:SAML:1.0:am:password" />
                 </list>
             </property>
         </bean>
@@ -90,11 +96,14 @@
             <map>
                 <entry key="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal" value="1" />
                 <entry key="net.shibboleth.idp.saml.authn.AuthnContextDeclRefPrincipal" value="2" />
-                <entry key="javax.security.auth.kerberos.KerberosPrincipal" value="3" />
+                <entry key="net.shibboleth.idp.saml.authn.AuthenticationMethodPrincipal" value="3" />
+                <entry key="javax.security.auth.kerberos.KerberosPrincipal" value="4" />
                 
                 <entry key="urn:oasis:names:tc:SAML:2.0:ac:classes:Password" value="10" />
                 <entry key="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" value="11" />
                 <entry key="urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocol" value="12" />
+
+                <entry key="urn:oasis:names:tc:SAML:1.0:am:password" value="20" />
             </map>
         </property>
     </bean>
