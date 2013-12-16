@@ -30,10 +30,10 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 
 /** Unit test for {@link AbstractSAMLProfileConfiguration}. */
-public class AbstractSamlProfileConfigurationTest {
+public class AbstractSAMLProfileConfigurationTest {
 
     @Test public void testSignAssertionsCriteria() {
-        MockSamlProfileConfiguration config = new MockSamlProfileConfiguration();
+        MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
         Assert.assertNotNull(config.getSignAssertionsPredicate());
 
         config.setSignAssertionsPredicate(Predicates.<ProfileRequestContext> alwaysFalse());
@@ -48,7 +48,7 @@ public class AbstractSamlProfileConfigurationTest {
     }
 
     @Test public void testSignResponsesCriteria() {
-        MockSamlProfileConfiguration config = new MockSamlProfileConfiguration();
+        MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
         Assert.assertNotNull(config.getSignResponsesPredicate());
 
         config.setSignResponsesPredicate(Predicates.<ProfileRequestContext> alwaysFalse());
@@ -63,7 +63,7 @@ public class AbstractSamlProfileConfigurationTest {
     }
 
     @Test public void testSignRequestsCriteria() {
-        MockSamlProfileConfiguration config = new MockSamlProfileConfiguration();
+        MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
         Assert.assertNotNull(config.getSignedRequestsPredicate());
 
         config.setSignedRequestsPredicate(Predicates.<ProfileRequestContext> alwaysFalse());
@@ -78,7 +78,7 @@ public class AbstractSamlProfileConfigurationTest {
     }
 
     @Test public void testAssertionLifetime() {
-        MockSamlProfileConfiguration config = new MockSamlProfileConfiguration();
+        MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
         Assert.assertTrue(config.getAssertionLifetime() > 0);
 
         config.setAssertionLifetime(100);
@@ -100,11 +100,7 @@ public class AbstractSamlProfileConfigurationTest {
     }
 
     @Test public void testAdditionalAudiencesForAssertion() {
-        MockSamlProfileConfiguration config = new MockSamlProfileConfiguration();
-        Assert.assertNotNull(config.getAdditionalAudiencesForAssertion());
-        Assert.assertTrue(config.getAdditionalAudiencesForAssertion().isEmpty());
-
-        config.setAdditionalAudienceForAssertion(null);
+        MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
         Assert.assertNotNull(config.getAdditionalAudiencesForAssertion());
         Assert.assertTrue(config.getAdditionalAudiencesForAssertion().isEmpty());
 
@@ -122,16 +118,16 @@ public class AbstractSamlProfileConfigurationTest {
             // expected this
         }
 
-        config.setAdditionalAudienceForAssertion(Collections.EMPTY_LIST);
+        config.setAdditionalAudienceForAssertion(Collections.<String>emptyList());
         Assert.assertNotNull(config.getAdditionalAudiencesForAssertion());
         Assert.assertTrue(config.getAdditionalAudiencesForAssertion().isEmpty());
     }
 
     /** Mock class for test {@link AbstractSAMLProfileConfiguration}. */
-    private static class MockSamlProfileConfiguration extends AbstractSAMLProfileConfiguration {
+    private static class MockSAMLProfileConfiguration extends AbstractSAMLProfileConfiguration {
 
         /** Constructor. */
-        public MockSamlProfileConfiguration() {
+        public MockSAMLProfileConfiguration() {
             super("mock");
         }
     }
