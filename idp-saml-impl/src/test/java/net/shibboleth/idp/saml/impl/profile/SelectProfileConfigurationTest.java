@@ -24,7 +24,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
-import net.shibboleth.idp.saml.profile.config.saml1.SsoProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.saml1.BrowserSSOProfileConfiguration;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionTestingSupport;
 
 import org.springframework.webflow.execution.Event;
@@ -84,7 +84,7 @@ public class SelectProfileConfigurationTest {
                 new RequestContextBuilder().setRelyingPartyProfileConfigurations(
                         Saml1ActionTestingSupport.buildProfileConfigurations()).buildProfileRequestContext();
 
-        profileCtx.setProfileId(SsoProfileConfiguration.PROFILE_ID);
+        profileCtx.setProfileId(BrowserSSOProfileConfiguration.PROFILE_ID);
 
         SelectProfileConfiguration action = new SelectProfileConfiguration();
         action.setId("test");
@@ -96,6 +96,6 @@ public class SelectProfileConfigurationTest {
 
         Assert.assertNotNull(profileCtx.getSubcontext(RelyingPartyContext.class).getProfileConfig());
         Assert.assertEquals(profileCtx.getSubcontext(RelyingPartyContext.class).getProfileConfig().getId(),
-                SsoProfileConfiguration.PROFILE_ID);
+                BrowserSSOProfileConfiguration.PROFILE_ID);
     }
 }
