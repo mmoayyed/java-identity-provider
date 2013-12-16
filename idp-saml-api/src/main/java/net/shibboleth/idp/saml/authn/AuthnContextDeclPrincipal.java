@@ -69,11 +69,13 @@ public final class AuthnContextDeclPrincipal implements CloneablePrincipal {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return authnContextDecl.hashCode();
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object other) {
         if (other == null) {
             return false;
@@ -91,6 +93,7 @@ public final class AuthnContextDeclPrincipal implements CloneablePrincipal {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return Objects.toStringHelper(this).add("authnContextDecl", name).toString();
     }

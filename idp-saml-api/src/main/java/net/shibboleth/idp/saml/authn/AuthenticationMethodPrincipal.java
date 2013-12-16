@@ -20,9 +20,6 @@ package net.shibboleth.idp.saml.authn;
 
 import javax.annotation.Nonnull;
 
-import org.opensaml.core.xml.util.XMLObjectSupport;
-import org.opensaml.saml.saml2.core.AuthnContextClassRef;
-
 import net.shibboleth.idp.authn.CloneablePrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -30,44 +27,31 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Objects;
 
-/** Principal based on a SAML AuthnContextClassRef. */
-public final class AuthnContextClassRefPrincipal implements CloneablePrincipal {
+/** Principal based on a SAML 1.x AuthenticationMethod. */
+public final class AuthenticationMethodPrincipal implements CloneablePrincipal {
 
-    /** The class ref. */
-    @Nonnull @NotEmpty private String authnContextClassRef;
+    /** The method. */
+    @Nonnull @NotEmpty private String authnMethod;
 
     /**
      * Constructor.
      * 
-     * @param classRef the class reference URI
+     * @param method the method URI
      */
-    public AuthnContextClassRefPrincipal(@Nonnull @NotEmpty final String classRef) {
-        authnContextClassRef = Constraint.isNotNull(
-                StringSupport.trimOrNull(classRef), "AuthnContextClassRef cannot be null or empty");
+    public AuthenticationMethodPrincipal(@Nonnull @NotEmpty final String method) {
+        authnMethod = Constraint.isNotNull(
+                StringSupport.trimOrNull(method), "AuthenticationMethod cannot be null or empty");
     }
 
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String getName() {
-        return authnContextClassRef;
-    }
-    
-    /**
-     * Returns the value as a SAML {@link AuthnContextClassRef}.
-     * 
-     * @return  the principal value in the form of an {@link AuthnContextClassRef}
-     */
-    @Nonnull public AuthnContextClassRef getAuthnContextClassRef() {
-        AuthnContextClassRef ref = (AuthnContextClassRef) Constraint.isNotNull(
-                XMLObjectSupport.getBuilder(AuthnContextClassRef.DEFAULT_ELEMENT_NAME),
-                    "No builder for AuthnContextClassRef").buildObject(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
-        ref.setAuthnContextClassRef(getName());
-        return ref;
+        return authnMethod;
     }
 
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        return authnContextClassRef.hashCode();
+        return authnMethod.hashCode();
     }
 
     /** {@inheritDoc} */
@@ -81,8 +65,8 @@ public final class AuthnContextClassRefPrincipal implements CloneablePrincipal {
             return true;
         }
 
-        if (other instanceof AuthnContextClassRefPrincipal) {
-            return authnContextClassRef.equals(((AuthnContextClassRefPrincipal) other).getName());
+        if (other instanceof AuthenticationMethodPrincipal) {
+            return authnMethod.equals(((AuthenticationMethodPrincipal) other).getName());
         }
 
         return false;
@@ -91,13 +75,13 @@ public final class AuthnContextClassRefPrincipal implements CloneablePrincipal {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("authnContextClassRef", authnContextClassRef).toString();
+        return Objects.toStringHelper(this).add("authnContextClassRef", authnMethod).toString();
     }
 
     /** {@inheritDoc} */
-    public AuthnContextClassRefPrincipal clone() throws CloneNotSupportedException {
-        AuthnContextClassRefPrincipal copy = (AuthnContextClassRefPrincipal) super.clone();
-        copy.authnContextClassRef = authnContextClassRef;
+    public AuthenticationMethodPrincipal clone() throws CloneNotSupportedException {
+        AuthenticationMethodPrincipal copy = (AuthenticationMethodPrincipal) super.clone();
+        copy.authnMethod = authnMethod;
         return copy;
     }
 }

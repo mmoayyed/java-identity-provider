@@ -38,7 +38,7 @@ public final class AuthnContextDeclRefPrincipal implements CloneablePrincipal {
     /**
      * Constructor.
      * 
-     * @param declRef the decl ref URI, cannot be null or empty
+     * @param declRef the decl ref URI
      */
     public AuthnContextDeclRefPrincipal(@Nonnull @NotEmpty final String declRef) {
         authnContextDeclRef = Constraint.isNotNull(
@@ -64,11 +64,13 @@ public final class AuthnContextDeclRefPrincipal implements CloneablePrincipal {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return authnContextDeclRef.hashCode();
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object other) {
         if (other == null) {
             return false;
@@ -86,6 +88,7 @@ public final class AuthnContextDeclRefPrincipal implements CloneablePrincipal {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return Objects.toStringHelper(this).add("authnContextDeclRef", authnContextDeclRef).toString();
     }
