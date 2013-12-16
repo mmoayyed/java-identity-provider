@@ -30,7 +30,7 @@ import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.config.saml1.ArtifactResolutionProfileConfiguration;
 import net.shibboleth.idp.saml.profile.config.saml1.AttributeQueryProfileConfiguration;
-import net.shibboleth.idp.saml.profile.config.saml1.SsoProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.saml1.BrowserSSOProfileConfiguration;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.joda.time.DateTime;
@@ -66,7 +66,7 @@ public final class Saml1ActionTestingSupport {
      * <li>a {@link RelyingPartyConfiguration} whose ID is the given relying party ID or
      * {@link SamlActionTestingSupport#INBOUND_MSG_ISSUER} if none is given</li>
      * <li>the set of {@link ProfileConfiguration} created by {@link #buildProfileConfigurations()}</li>
-     * <li>the {@link SsoProfileConfiguration} set as the active profile configuration</li>
+     * <li>the {@link BrowserSSOProfileConfiguration} set as the active profile configuration</li>
      * </ul>
      * 
      * @param parent the parent of the created subcontext
@@ -89,7 +89,7 @@ public final class Saml1ActionTestingSupport {
 
         RelyingPartyContext subcontext = parent.getSubcontext(RelyingPartyContext.class, true);
         subcontext.setRelyingPartyId(id);
-        subcontext.setProfileConfiguration(rpConfig.getProfileConfiguration(SsoProfileConfiguration.PROFILE_ID));
+        subcontext.setProfileConfiguration(rpConfig.getProfileConfiguration(BrowserSSOProfileConfiguration.PROFILE_ID));
         subcontext.setRelyingPartyConfiguration(rpConfig);
 
         return subcontext;
@@ -114,7 +114,7 @@ public final class Saml1ActionTestingSupport {
         attributeConfig.setSecurityConfiguration(securityConfig);
         profileConfigs.add(attributeConfig);
 
-        SsoProfileConfiguration ssoConfig = new SsoProfileConfiguration();
+        BrowserSSOProfileConfiguration ssoConfig = new BrowserSSOProfileConfiguration();
         ssoConfig.setSecurityConfiguration(securityConfig);
         profileConfigs.add(ssoConfig);
 

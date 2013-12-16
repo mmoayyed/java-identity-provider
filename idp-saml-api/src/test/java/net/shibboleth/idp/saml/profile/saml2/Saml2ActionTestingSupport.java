@@ -28,9 +28,9 @@ import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
-import net.shibboleth.idp.saml.profile.config.saml1.ArtifactResolutionProfileConfiguration;
-import net.shibboleth.idp.saml.profile.config.saml1.AttributeQueryProfileConfiguration;
-import net.shibboleth.idp.saml.profile.config.saml1.SsoProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.saml2.ArtifactResolutionProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.saml2.AttributeQueryProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.saml2.SsoProfileConfiguration;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.joda.time.DateTime;
@@ -46,7 +46,7 @@ import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Subject;
 
 /**
- * Helper methods for creating/testing SAML 1 objects within profile action tests. When methods herein refer to mock
+ * Helper methods for creating/testing SAML 2 objects within profile action tests. When methods herein refer to mock
  * objects they are always objects that have been created via Mockito unless otherwise noted.
  */
 public final class Saml2ActionTestingSupport {

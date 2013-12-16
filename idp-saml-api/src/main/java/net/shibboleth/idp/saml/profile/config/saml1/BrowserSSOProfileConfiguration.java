@@ -19,18 +19,22 @@ package net.shibboleth.idp.saml.profile.config.saml1;
 
 import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
 
-/** SAMLConfigurationSupport for SAML 1 SSO requests. */
-public class SsoProfileConfiguration
+/** Configuration for SAML 1 Browser SSO profile requests. */
+public class BrowserSSOProfileConfiguration
         extends AbstractSAMLProfileConfiguration implements SAML1ProfileConfiguration {
 
     /** ID for this profile configuration. */
-    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml1/sso";
+    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml1/browser/sso";
 
-    /** Whether responses to the authentication request should include an attribute statement. Default value: false */
+    /**
+     * Whether responses to the authentication request should include an attribute statement.
+     * 
+     * <p>Default value: false</p>
+     */
     private boolean includeAttributeStatement;
 
     /** Constructor. */
-    public SsoProfileConfiguration() {
+    public BrowserSSOProfileConfiguration() {
         this(PROFILE_ID);
     }
 
@@ -39,13 +43,13 @@ public class SsoProfileConfiguration
      * 
      * @param profileId unique ID for this profile
      */
-    protected SsoProfileConfiguration(String profileId) {
+    protected BrowserSSOProfileConfiguration(String profileId) {
         super(profileId);
         includeAttributeStatement = false;
     }
 
     /**
-     * Gets whether responses to the authentication request should include an attribute statement.
+     * Get whether responses to the authentication request should include an attribute statement.
      * 
      * @return whether responses to the authentication request should include an attribute statement
      */
@@ -54,11 +58,12 @@ public class SsoProfileConfiguration
     }
 
     /**
-     * Sets whether responses to the authentication request should include an attribute statement.
+     * Set whether responses to the authentication request should include an attribute statement.
      * 
      * @param include whether responses to the authentication request should include an attribute statement
      */
     public void setIncludeAttributeStatement(boolean include) {
         includeAttributeStatement = include;
     }
+    
 }

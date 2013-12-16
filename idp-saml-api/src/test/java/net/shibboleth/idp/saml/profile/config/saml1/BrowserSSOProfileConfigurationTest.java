@@ -20,23 +20,24 @@ package net.shibboleth.idp.saml.profile.config.saml1;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** Unit test for {@link SsoProfileConfiguration}. */
-public class SsoProfileConfigurationTest {
+/** Unit test for {@link BrowserSSOProfileConfiguration}. */
+public class BrowserSSOProfileConfigurationTest {
 
     @Test
     public void testProfileId() {
-        Assert.assertEquals(SsoProfileConfiguration.PROFILE_ID, "http://shibboleth.net/ns/profiles/saml1/sso");
+        Assert.assertEquals(BrowserSSOProfileConfiguration.PROFILE_ID, "http://shibboleth.net/ns/profiles/saml1/browser/sso");
 
-        SsoProfileConfiguration config = new SsoProfileConfiguration();
-        Assert.assertEquals(config.getId(), SsoProfileConfiguration.PROFILE_ID);
+        BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
+        Assert.assertEquals(config.getId(), BrowserSSOProfileConfiguration.PROFILE_ID);
     }
     
     @Test
     public void testIncludeAttributeStatement(){
-        SsoProfileConfiguration config = new SsoProfileConfiguration();
+        BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
         Assert.assertFalse(config.includeAttributeStatement());
         
         config.setIncludeAttributeStatement(true);
         Assert.assertTrue(config.includeAttributeStatement());
     }
+    
 }
