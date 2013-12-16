@@ -17,11 +17,18 @@
 
 package net.shibboleth.idp.saml.profile.config.saml2;
 
-/** SAMLConfigurationSupport for SAML 2 SSO requests. */
-public class SsoProfileConfiguration extends AbstractSAML2ProfileConfiguration {
+import javax.annotation.Nonnull;
+
+import net.shibboleth.utilities.java.support.annotation.Duration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+
+/** Configuration support for SAML 2 Browser SSO. */
+public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfiguration {
 
     /** ID for this profile configuration. */
-    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/sso";
+    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/sso/browser";
 
     /** Whether responses to the authentication request should include an attribute statement. Default value: true */
     private boolean includeAttributeStatement;
@@ -30,13 +37,13 @@ public class SsoProfileConfiguration extends AbstractSAML2ProfileConfiguration {
      * The maximum amount of time, in milliseconds, the service provider should maintain a session for the user. A value
      * of 0 or less indicates no cap is put on the SP's session lifetime. Default value: 0
      */
-    private long maximumSPSessionLifetime;
+    @Duration @NonNegative private long maximumSPSessionLifetime;
 
     /** Whether produced assertions may be delegated. Default value: false */
     private boolean allowingDelegation;
 
     /** Constructor. */
-    public SsoProfileConfiguration() {
+    public BrowserSSOProfileConfiguration() {
         this(PROFILE_ID);
     }
 
@@ -45,15 +52,16 @@ public class SsoProfileConfiguration extends AbstractSAML2ProfileConfiguration {
      * 
      * @param profileId unique ID for this profile
      */
-    protected SsoProfileConfiguration(String profileId) {
+    protected BrowserSSOProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
+        
         includeAttributeStatement = true;
         maximumSPSessionLifetime = 0;
         allowingDelegation = false;
     }
 
     /**
-     * Gets whether responses to the authentication request should include an attribute statement.
+     * Get whether responses to the authentication request should include an attribute statement.
      * 
      * @return whether responses to the authentication request should include an attribute statement
      */
@@ -62,40 +70,37 @@ public class SsoProfileConfiguration extends AbstractSAML2ProfileConfiguration {
     }
 
     /**
-     * Sets whether responses to the authentication request should include an attribute statement.
+     * Set whether responses to the authentication request should include an attribute statement.
      * 
      * @param include whether responses to the authentication request should include an attribute statement
      */
-    public void setIncludeAttributeStatement(boolean include) {
+    public void setIncludeAttributeStatement(final boolean include) {
         includeAttributeStatement = include;
     }
 
     /**
-     * Gets the maximum amount of time, in milliseconds, the service provider should maintain a session for the user
-     * based on the authentication assertion. A value less than or equal to 0 is interpreted as an unlimited lifetime.
+     * Get the maximum amount of time, in milliseconds, the service provider should maintain a session for the user
+     * based on the authentication assertion. A value of 0 is interpreted as an unlimited lifetime.
      * 
      * @return max lifetime of service provider should maintain a session
      */
-    public long getMaximumSPSessionLifetime() {
+    @NonNegative public long getMaximumSPSessionLifetime() {
         return maximumSPSessionLifetime;
     }
 
     /**
-     * Sets the maximum amount of time, in milliseconds, the service provider should maintain a session for the user
-     * based on the authentication assertion. A value less than or equal to 0 is interpreted as an unlimited lifetime.
+     * Set the maximum amount of time, in milliseconds, the service provider should maintain a session for the user
+     * based on the authentication assertion. A value of 0 is interpreted as an unlimited lifetime.
      * 
      * @param lifetime max lifetime of service provider should maintain a session
      */
-    public void setMaximumSPSessionLifetime(long lifetime) {
-        if (lifetime < 1) {
-            maximumSPSessionLifetime = 0;
-        } else {
-            maximumSPSessionLifetime = lifetime;
-        }
+    public void setMaximumSPSessionLifetime(@Duration @NonNegative final long lifetime) {
+            maximumSPSessionLifetime = Constraint.isGreaterThanOrEqual(0, lifetime,
+                    "Maximum SP session lifetime must be greater than or equal to 0");
     }
 
     /**
-     * Gets whether produced assertions may be delegated.
+     * Get whether produced assertions may be delegated.
      * 
      * @return whether produced assertions may be delegated
      */
@@ -104,11 +109,12 @@ public class SsoProfileConfiguration extends AbstractSAML2ProfileConfiguration {
     }
 
     /**
-     * Sets whether produced assertions may be delegated.
+     * Set whether produced assertions may be delegated.
      * 
      * @param isAllowed whether produced assertions may be delegated
      */
-    public void setAllowingDelegation(boolean isAllowed) {
+    public void setAllowingDelegation(final boolean isAllowed) {
         allowingDelegation = isAllowed;
     }
+    
 }

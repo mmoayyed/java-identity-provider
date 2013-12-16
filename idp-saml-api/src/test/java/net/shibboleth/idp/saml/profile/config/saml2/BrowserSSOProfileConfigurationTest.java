@@ -20,20 +20,20 @@ package net.shibboleth.idp.saml.profile.config.saml2;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** Unit test for {@link SsoProfileConfiguration}. */
-public class SsoProfileConfigurationTest {
+/** Unit test for {@link BrowserSSOProfileConfiguration}. */
+public class BrowserSSOProfileConfigurationTest {
 
     @Test
     public void testProfileId() {
-        Assert.assertEquals(SsoProfileConfiguration.PROFILE_ID, "http://shibboleth.net/ns/profiles/saml2/sso");
+        Assert.assertEquals(BrowserSSOProfileConfiguration.PROFILE_ID, "http://shibboleth.net/ns/profiles/saml2/sso/browser");
 
-        SsoProfileConfiguration config = new SsoProfileConfiguration();
-        Assert.assertEquals(config.getId(), SsoProfileConfiguration.PROFILE_ID);
+        BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
+        Assert.assertEquals(config.getId(), BrowserSSOProfileConfiguration.PROFILE_ID);
     }
 
     @Test
     public void testIncludeAttributeStatement() {
-        SsoProfileConfiguration config = new SsoProfileConfiguration();
+        BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
         Assert.assertTrue(config.includeAttributeStatement());
 
         config.setIncludeAttributeStatement(false);
@@ -42,7 +42,7 @@ public class SsoProfileConfigurationTest {
 
     @Test
     public void testMaximumSpSessionLifeTime() {
-        SsoProfileConfiguration config = new SsoProfileConfiguration();
+        BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
         Assert.assertEquals(config.getMaximumSPSessionLifetime(), 0);
 
         config.setMaximumSPSessionLifetime(1000);
@@ -51,7 +51,7 @@ public class SsoProfileConfigurationTest {
 
     @Test
     public void testAllowingDelegation() {
-        SsoProfileConfiguration config = new SsoProfileConfiguration();
+        BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
         Assert.assertFalse(config.isAllowingDelegation());
 
         config.setAllowingDelegation(true);

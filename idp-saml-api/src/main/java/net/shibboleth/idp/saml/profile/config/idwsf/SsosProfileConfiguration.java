@@ -19,7 +19,7 @@ package net.shibboleth.idp.saml.profile.config.idwsf;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.saml.profile.config.saml2.SsoProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.saml2.BrowserSSOProfileConfiguration;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -30,7 +30,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 /** SAMLConfigurationSupport for constrained Liberty IDWSF SSOS requests. */
-public class SsosProfileConfiguration extends SsoProfileConfiguration {
+public class SsosProfileConfiguration extends BrowserSSOProfileConfiguration {
 
     /** ID for this profile configuration. */
     public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/liberty/ssos";

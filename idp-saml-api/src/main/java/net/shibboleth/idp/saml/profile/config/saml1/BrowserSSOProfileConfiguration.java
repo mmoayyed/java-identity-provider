@@ -17,14 +17,17 @@
 
 package net.shibboleth.idp.saml.profile.config.saml1;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /** Configuration for SAML 1 Browser SSO profile requests. */
 public class BrowserSSOProfileConfiguration
         extends AbstractSAMLProfileConfiguration implements SAML1ProfileConfiguration {
 
     /** ID for this profile configuration. */
-    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml1/browser/sso";
+    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml1/sso/browser";
 
     /**
      * Whether responses to the authentication request should include an attribute statement.
@@ -43,7 +46,7 @@ public class BrowserSSOProfileConfiguration
      * 
      * @param profileId unique ID for this profile
      */
-    protected BrowserSSOProfileConfiguration(String profileId) {
+    protected BrowserSSOProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
         includeAttributeStatement = false;
     }
@@ -62,7 +65,7 @@ public class BrowserSSOProfileConfiguration
      * 
      * @param include whether responses to the authentication request should include an attribute statement
      */
-    public void setIncludeAttributeStatement(boolean include) {
+    public void setIncludeAttributeStatement(final boolean include) {
         includeAttributeStatement = include;
     }
     

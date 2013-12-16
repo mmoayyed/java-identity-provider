@@ -17,7 +17,10 @@
 
 package net.shibboleth.idp.saml.profile.config.saml1;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /** Configuration support for SAML 1 artifact resolution requests. */
 public class ArtifactResolutionProfileConfiguration
@@ -36,7 +39,7 @@ public class ArtifactResolutionProfileConfiguration
      * 
      * @param profileId unique ID for this profile
      */
-    protected ArtifactResolutionProfileConfiguration(String profileId) {
+    protected ArtifactResolutionProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
     }
     

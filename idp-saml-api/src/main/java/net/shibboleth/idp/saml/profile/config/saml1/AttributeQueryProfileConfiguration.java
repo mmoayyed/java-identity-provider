@@ -17,7 +17,10 @@
 
 package net.shibboleth.idp.saml.profile.config.saml1;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /** Configuration support for SAML 1 attribute query requests. */
 public class AttributeQueryProfileConfiguration
@@ -36,7 +39,7 @@ public class AttributeQueryProfileConfiguration
      * 
      * @param profileId unique ID for this profile
      */
-    protected AttributeQueryProfileConfiguration(String profileId) {
+    protected AttributeQueryProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
     }
     

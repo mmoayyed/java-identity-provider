@@ -15,6 +15,6 @@
  * limitations under the License.
  */
 
-/** Profile configurations for SAML 2 requests. */
+/** Profile configurations for SAML 2 profiles. */
 
 package net.shibboleth.idp.saml.profile.config.saml2;

@@ -22,134 +22,141 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
 
 /** Base class for SAML 2 profile configurations. */
-public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProfileConfiguration {
+public abstract class AbstractSAML2ProfileConfiguration
+        extends AbstractSAMLProfileConfiguration implements SAML2ProfileConfiguration {
 
-    /** Criteria used to determine name identifiers should be encrypted. */
-    private Predicate<ProfileRequestContext> encryptNameIDsCriteria;
+    /** Predicate used to determine if assertions should be encrypted. */
+    @Nonnull private Predicate<ProfileRequestContext> encryptAssertionsPredicate;
 
-    /** Criteria used to determine assertions should be encrypted. */
-    private Predicate<ProfileRequestContext> encryptAssertionsCriteria;
+    /** Predicate used to determine if name identifiers should be encrypted. */
+    @Nonnull private Predicate<ProfileRequestContext> encryptNameIDsPredicate;
 
+    /** Predicate used to determine if attributes should be encrypted. */
+    @Nonnull private Predicate<ProfileRequestContext> encryptAttributesPredicate;
+    
     /** Maximum proxy count for an assertion. Default value: 0 */
-    private int proxyCount;
+    private long proxyCount;
 
     /** Audiences for the proxy. */
-    private Set<String> proxyAudiences;
+    @Nonnull @NonnullElements private Set<String> proxyAudiences;
 
     /**
      * Constructor.
      * 
      * @param profileId ID of the the communication profile, never null or empty
      */
-    public AbstractSAML2ProfileConfiguration(String profileId) {
+    public AbstractSAML2ProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
-        encryptNameIDsCriteria = Predicates.alwaysFalse();
-        encryptAssertionsCriteria = Predicates.alwaysTrue();
+        
+        encryptAssertionsPredicate = Predicates.alwaysTrue();
+        encryptNameIDsPredicate = Predicates.alwaysFalse();
+        encryptAttributesPredicate = Predicates.alwaysFalse();
         proxyCount = 0;
         proxyAudiences = Collections.emptySet();
     }
 
-    /**
-     * Gets the maximum number of times an assertion may be proxied.
-     * 
-     * @return maximum number of times an assertion may be proxied
-     */
-    public int getProxyCount() {
+    /** {@inheritDoc} */
+    public long getProxyCount() {
         return proxyCount;
     }
 
     /**
-     * Gets the maximum number of times an assertion may be proxied.
+     * Set the maximum number of times an assertion may be proxied.
      * 
      * @param count maximum number of times an assertion may be proxied
      */
-    public void setProxyCount(int count) {
-        proxyCount = count;
+    public void setProxyCount(@NonNegative final long count) {
+        proxyCount = Constraint.isGreaterThanOrEqual(0, count, "Proxy count must be greater than or equal to 0");
     }
 
-    /**
-     * Gets the unmodified collection of audiences for a proxied assertion.
-     * 
-     * @return audiences for a proxied assertion, never null nor containing null entries
-     */
+    /** {@inheritDoc} */
     public Collection<String> getProxyAudiences() {
-        return proxyAudiences;
+        return ImmutableList.copyOf(proxyAudiences);
     }
 
     /**
-     * Gets the criteria used to determine name identifiers should be encrypted.
+     * Set the proxy audiences to be added to responses.
      * 
-     * @return criteria used to determine name identifiers should be encrypted, never null
+     * @param audiences proxy audiences to be added to responses
      */
-    public Predicate<ProfileRequestContext> getEncryptNameIDsCriteria() {
-        return encryptNameIDsCriteria;
-    }
-
-    /**
-     * Sets the criteria used to determine name identifiers should be encrypted.
-     * 
-     * @param criteria criteria used to determine name identifiers should be encrypted, never null
-     */
-    public void setEncryptNameIDsCriteria(Predicate<ProfileRequestContext> criteria) {
-        encryptNameIDsCriteria =
-                Constraint.isNotNull(criteria,
-                        "Criteria to determine if name identifiers should be encrypted can not be null");
-    }
-
-    /**
-     * Gets the criteria used to determine assertions should be encrypted.
-     * 
-     * @return criteria used to determine assertions should be encrypted, never null
-     */
-    public Predicate<ProfileRequestContext> getEncryptAssertionsCriteria() {
-        return encryptAssertionsCriteria;
-    }
-
-    /**
-     * Sets the criteria used to determine assertions should be encrypted.
-     * 
-     * @param criteria criteria used to determine assertions should be encrypted, never null
-     */
-    public void setEncryptAssertionsCriteria(Predicate<ProfileRequestContext> criteria) {
-        encryptAssertionsCriteria =
-                Constraint.isNotNull(criteria,
-                        "Criteria to determine if assertions should be enecrypted can not be null");
-    }
-
-    /**
-     * Sets the proxy audiences to be added to responses.
-     * 
-     * @param audiences proxy audiences to be added to responses, may be null or contain null elements
-     */
-    public void setProxyAudiences(Collection<String> audiences) {
+    public void setProxyAudiences(@Nonnull @NonnullElements final Collection<String> audiences) {
         if (audiences == null || audiences.isEmpty()) {
             proxyAudiences = Collections.emptySet();
             return;
         }
-
-        HashSet<String> newAudiences = new HashSet<String>();
+    
+        proxyAudiences = new HashSet<>();
         String trimmedAudience;
         for (String audience : audiences) {
             trimmedAudience = StringSupport.trimOrNull(audience);
             if (trimmedAudience != null) {
-                newAudiences.add(trimmedAudience);
+                proxyAudiences.add(trimmedAudience);
             }
         }
-
-        if (newAudiences.isEmpty()) {
-            proxyAudiences = Collections.emptySet();
-        } else {
-            proxyAudiences = Collections.unmodifiableSet(newAudiences);
-        }
     }
+
+    /** {@inheritDoc} */
+    public Predicate<ProfileRequestContext> getEncryptAssertionsPredicate() {
+        return encryptAssertionsPredicate;
+    }
+
+    /**
+     * Set the predicate used to determine if assertions should be encrypted.
+     * 
+     * @param predicate predicate used to determine if assertions should be encrypted
+     */
+    public void setEncryptAssertionsPredicate(Predicate<ProfileRequestContext> predicate) {
+        encryptAssertionsPredicate =
+                Constraint.isNotNull(predicate,
+                        "Predicate to determine if assertions should be enecrypted cannot be null");
+    }
+
+    /** {@inheritDoc} */
+    public Predicate<ProfileRequestContext> getEncryptNameIDsPredicate() {
+        return encryptNameIDsPredicate;
+    }
+
+    /**
+     * Set the predicate used to determine if name identifiers should be encrypted.
+     * 
+     * @param predicate predicate used to determine if name identifiers should be encrypted
+     */
+    public void setEncryptNameIDsPredicate(Predicate<ProfileRequestContext> predicate) {
+        encryptNameIDsPredicate =
+                Constraint.isNotNull(predicate,
+                        "Predicate to determine if name identifiers should be encrypted cannot be null");
+    }
+
+    /** {@inheritDoc} */
+    public Predicate<ProfileRequestContext> getEncryptAttributesPredicate() {
+        return encryptAttributesPredicate;
+    }
+
+    /**
+     * Set the predicate used to determine if attributes should be encrypted.
+     * 
+     * @param predicate predicate used to determine if attributes should be encrypted
+     */
+    public void setEncryptAttributesPredicate(Predicate<ProfileRequestContext> predicate) {
+        encryptAttributesPredicate =
+                Constraint.isNotNull(predicate,
+                        "Predicate to determine if attributes should be encrypted cannot be null");
+    }
+
 }

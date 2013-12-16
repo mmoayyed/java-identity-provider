@@ -17,23 +17,28 @@
 
 package net.shibboleth.idp.saml.profile.config.saml2;
 
-/** SAMLConfigurationSupport for SAML 2 ECP requests. */
-public class EcpProfileConfiguration extends SsoProfileConfiguration {
+import javax.annotation.Nonnull;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+
+/** Configuration support for SAML 2 Single Logout. */
+public class SingleLogoutProfileConfiguration extends AbstractSAML2ProfileConfiguration {
 
     /** ID for this profile configuration. */
-    public static final String PROFILE_ID = "urn:mace:shibboleth:2.0:profiles:saml2:ecp";
+    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/logout";
 
     /** Constructor. */
-    public EcpProfileConfiguration() {
-        this(PROFILE_ID);
+    public SingleLogoutProfileConfiguration() {
+        super(PROFILE_ID);
     }
-
+    
     /**
      * Constructor.
      * 
      * @param profileId unique ID for this profile
      */
-    protected EcpProfileConfiguration(String profileId) {
+    protected SingleLogoutProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
     }
+    
 }

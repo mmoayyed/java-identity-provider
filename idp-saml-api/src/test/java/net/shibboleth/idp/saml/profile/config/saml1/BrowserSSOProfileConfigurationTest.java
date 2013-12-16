@@ -25,7 +25,7 @@ public class BrowserSSOProfileConfigurationTest {
 
     @Test
     public void testProfileId() {
-        Assert.assertEquals(BrowserSSOProfileConfiguration.PROFILE_ID, "http://shibboleth.net/ns/profiles/saml1/browser/sso");
+        Assert.assertEquals(BrowserSSOProfileConfiguration.PROFILE_ID, "http://shibboleth.net/ns/profiles/saml1/sso/browser");
 
         BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
         Assert.assertEquals(config.getId(), BrowserSSOProfileConfiguration.PROFILE_ID);

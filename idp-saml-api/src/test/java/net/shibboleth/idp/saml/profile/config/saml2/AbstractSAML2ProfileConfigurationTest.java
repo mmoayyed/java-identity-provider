@@ -30,36 +30,51 @@ import com.google.common.base.Predicates;
 /** Unit test for {@link AbstractSAML2ProfileConfiguration}. */
 public class AbstractSAML2ProfileConfigurationTest {
 
-    @Test public void testEncryptNameIDsCriteria() {
+    @Test public void testEncryptNameIDsPredicate() {
         MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
-        Assert.assertNotNull(config.getEncryptNameIDsCriteria());
+        Assert.assertNotNull(config.getEncryptNameIDsPredicate());
 
-        config.setEncryptNameIDsCriteria(Predicates.<ProfileRequestContext> alwaysFalse());
-        Assert.assertSame(config.getEncryptNameIDsCriteria(), Predicates.<ProfileRequestContext> alwaysFalse());
+        config.setEncryptNameIDsPredicate(Predicates.<ProfileRequestContext> alwaysFalse());
+        Assert.assertSame(config.getEncryptNameIDsPredicate(), Predicates.<ProfileRequestContext> alwaysFalse());
 
         try {
-            config.setEncryptNameIDsCriteria(null);
+            config.setEncryptNameIDsPredicate(null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // excepted this
         }
     }
 
-    @Test public void testEncryptAssertionsCriteria() {
+    @Test public void testEncryptAssertionsPredicate() {
         MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
-        Assert.assertNotNull(config.getEncryptAssertionsCriteria());
+        Assert.assertNotNull(config.getEncryptAssertionsPredicate());
 
-        config.setEncryptAssertionsCriteria(Predicates.<ProfileRequestContext> alwaysFalse());
-        Assert.assertSame(config.getEncryptAssertionsCriteria(), Predicates.<ProfileRequestContext> alwaysFalse());
+        config.setEncryptAssertionsPredicate(Predicates.<ProfileRequestContext> alwaysFalse());
+        Assert.assertSame(config.getEncryptAssertionsPredicate(), Predicates.<ProfileRequestContext> alwaysFalse());
 
         try {
-            config.setEncryptAssertionsCriteria(null);
+            config.setEncryptAssertionsPredicate(null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // excepted this
         }
     }
 
+    @Test public void testEncryptAttributesPredicate() {
+        MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
+        Assert.assertNotNull(config.getEncryptAttributesPredicate());
+
+        config.setEncryptAttributesPredicate(Predicates.<ProfileRequestContext> alwaysFalse());
+        Assert.assertSame(config.getEncryptAttributesPredicate(), Predicates.<ProfileRequestContext> alwaysFalse());
+
+        try {
+            config.setEncryptAttributesPredicate(null);
+            Assert.fail();
+        } catch (ConstraintViolationException e) {
+            // excepted this
+        }
+    }
+    
     @Test public void testProxyCount() {
         MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
         Assert.assertEquals(config.getProxyCount(), 0);
@@ -73,14 +88,8 @@ public class AbstractSAML2ProfileConfigurationTest {
         Assert.assertNotNull(config.getProxyAudiences());
         Assert.assertTrue(config.getProxyAudiences().isEmpty());
 
-        config.setProxyAudiences(null);
-        Assert.assertNotNull(config.getProxyAudiences());
-        Assert.assertTrue(config.getProxyAudiences().isEmpty());
-
-        ArrayList<String> audiences = new ArrayList<String>();
+        ArrayList<String> audiences = new ArrayList<>();
         audiences.add("foo");
-        audiences.add(null);
-        audiences.add("");
         audiences.add("foo");
         audiences.add("bar");
 
