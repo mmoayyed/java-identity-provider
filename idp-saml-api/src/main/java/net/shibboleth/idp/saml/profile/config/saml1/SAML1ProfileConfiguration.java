@@ -17,17 +17,9 @@
 
 package net.shibboleth.idp.saml.profile.config.saml1;
 
-import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
+/**
+ * Marker interface for SAML 1.x profile configuration interfaces, currently empty.
+ */
+public interface SAML1ProfileConfiguration {
 
-/** Base class for SAML 1 profile configurations. */
-public abstract class AbstractSAML1ProfileConfiguration extends AbstractSAMLProfileConfiguration {
-
-    /**
-     * Constructor.
-     * 
-     * @param profileId ID of the the communication profile, never null or empty
-     */
-    public AbstractSAML1ProfileConfiguration(String profileId) {
-        super(profileId);
-    }
 }

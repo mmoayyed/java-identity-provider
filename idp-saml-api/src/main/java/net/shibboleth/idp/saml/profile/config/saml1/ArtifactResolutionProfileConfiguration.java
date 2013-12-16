@@ -17,8 +17,11 @@
 
 package net.shibboleth.idp.saml.profile.config.saml1;
 
+import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
+
 /** SAMLConfigurationSupport for SAML 1 artifact resolution requests. */
-public class ArtifactResolutionProfileConfiguration extends AbstractSAML1ProfileConfiguration {
+public class ArtifactResolutionProfileConfiguration
+        extends AbstractSAMLProfileConfiguration implements SAML1ProfileConfiguration {
 
     /** ID for this profile configuration. */
     public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml1/query/artifact";

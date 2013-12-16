@@ -17,8 +17,11 @@
 
 package net.shibboleth.idp.saml.profile.config.saml1;
 
+import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
+
 /** SAMLConfigurationSupport for SAML 1 SSO requests. */
-public class SsoProfileConfiguration extends AbstractSAML1ProfileConfiguration {
+public class SsoProfileConfiguration
+        extends AbstractSAMLProfileConfiguration implements SAML1ProfileConfiguration {
 
     /** ID for this profile configuration. */
     public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml1/sso";
