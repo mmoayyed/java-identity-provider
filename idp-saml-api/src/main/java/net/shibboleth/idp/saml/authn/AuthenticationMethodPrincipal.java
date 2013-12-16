@@ -75,7 +75,7 @@ public final class AuthenticationMethodPrincipal implements CloneablePrincipal {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("authnContextClassRef", authnMethod).toString();
+        return Objects.toStringHelper(this).add("authnMethod", authnMethod).toString();
     }
 
     /** {@inheritDoc} */
