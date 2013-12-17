@@ -45,7 +45,7 @@
                     <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
                         c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:Password" />
                     <bean class="net.shibboleth.idp.saml.authn.AuthenticationMethodPrincipal"
-                        c:classRef="urn:oasis:names:tc:SAML:1.0:am:password" />
+                        c:method="urn:oasis:names:tc:SAML:1.0:am:password" />
                 </list>
             </property>
         </bean>
@@ -62,7 +62,7 @@
                     <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
                         c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:Password" />
                     <bean class="net.shibboleth.idp.saml.authn.AuthenticationMethodPrincipal"
-                        c:classRef="urn:oasis:names:tc:SAML:1.0:am:password" />
+                        c:method="urn:oasis:names:tc:SAML:1.0:am:password" />
                 </list>
             </property>
         </bean>
@@ -79,7 +79,7 @@
                     <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
                         c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:Password" />
                     <bean class="net.shibboleth.idp.saml.authn.AuthenticationMethodPrincipal"
-                        c:classRef="urn:oasis:names:tc:SAML:1.0:am:password" />
+                        c:method="urn:oasis:names:tc:SAML:1.0:am:password" />
                 </list>
             </property>
         </bean>
