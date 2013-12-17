@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.profile.config;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -30,34 +31,34 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 
 import com.google.common.base.Predicate;
 
-/** Base class for SAML profile configurations. */
+/** Common interface for SAML profile configurations. */
 public interface SAMLProfileConfiguration extends ProfileConfiguration {
 
     /**
-     * Get the predicate used to determine if the generated assertion should be signed.
+     * Get the predicate used to determine if generated assertions should be signed.
      * 
-     * @return predicate used to determine if the generated assertion should be signed
+     * @return predicate used to determine if generated assertions should be signed
      */
     @Nonnull public Predicate<ProfileRequestContext> getSignAssertionsPredicate();
 
     /**
-     * Get the predicate used to determine if the received request should be signed.
+     * Get the predicate used to determine if generated requests should be signed.
      * 
-     * @return predicate used to determine if the received request should be signed
+     * @return predicate used to determine if generated requests should be signed
      */
-    @Nonnull public Predicate<ProfileRequestContext> getSignedRequestsPredicate();
+    @Nonnull public Predicate<ProfileRequestContext> getSignRequestsPredicate();
 
     /**
-     * Get the predicate used to determine if the generated response should be signed.
+     * Get the predicate used to determine if generated responses should be signed.
      * 
-     * @return predicate used to determine if the generated response should be signed
+     * @return predicate used to determine if generated responses should be signed
      */
     public Predicate<ProfileRequestContext> getSignResponsesPredicate();
 
     /**
-     * Get the lifetime of an assertion in milliseconds.
+     * Get the lifetime of generated assertions in milliseconds.
      * 
-     * @return lifetime of an assertion in milliseconds
+     * @return lifetime of generated assertions in milliseconds
      */
     @Positive public long getAssertionLifetime();
 
@@ -68,5 +69,19 @@ public interface SAMLProfileConfiguration extends ProfileConfiguration {
      * @return additional audiences to which an assertion may be shared
      */
     @Nonnull @NonnullElements @NotLive public Set<String> getAdditionalAudiencesForAssertion();
-
+    
+    /**
+     * Get whether to include a NotBefore attribute in the Conditions of generated assertions.
+     * 
+     * @return  whether to include a NotBefore attribute in the Conditions of generated assertions
+     */
+    public boolean isIncludeConditionsNotBefore();
+    
+    /**
+     * Get the associated {@link SAMLArtifactConfiguration} for the profile, if any.
+     * 
+     * @return  an associated artifact configuration, or null
+     */
+    @Nullable public SAMLArtifactConfiguration getArtifactConfiguration(); 
+    
 }

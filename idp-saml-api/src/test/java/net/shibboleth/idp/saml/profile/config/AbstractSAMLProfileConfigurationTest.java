@@ -64,13 +64,13 @@ public class AbstractSAMLProfileConfigurationTest {
 
     @Test public void testSignRequestsCriteria() {
         MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
-        Assert.assertNotNull(config.getSignedRequestsPredicate());
+        Assert.assertNotNull(config.getSignRequestsPredicate());
 
-        config.setSignedRequestsPredicate(Predicates.<ProfileRequestContext> alwaysFalse());
-        Assert.assertSame(config.getSignedRequestsPredicate(), Predicates.<ProfileRequestContext> alwaysFalse());
+        config.setSignRequestsPredicate(Predicates.<ProfileRequestContext> alwaysFalse());
+        Assert.assertSame(config.getSignRequestsPredicate(), Predicates.<ProfileRequestContext> alwaysFalse());
 
         try {
-            config.setSignedRequestsPredicate(null);
+            config.setSignRequestsPredicate(null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // excepted this
@@ -99,6 +99,14 @@ public class AbstractSAMLProfileConfigurationTest {
         }
     }
 
+    @Test public void testIncludeNotBefore() {
+        MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
+        Assert.assertFalse(config.isIncludeConditionsNotBefore());
+
+        config.setIncludeConditionsNotBefore(true);
+        Assert.assertTrue(config.isIncludeConditionsNotBefore());
+    }
+    
     @Test public void testAdditionalAudiencesForAssertion() {
         MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
         Assert.assertNotNull(config.getAdditionalAudiencesForAssertion());

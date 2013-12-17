@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -55,8 +56,14 @@ public abstract class AbstractSAMLProfileConfiguration
     /** Lifetime of an assertion in milliseconds. Default value: 5 minutes */
     @Positive @Duration private long assertionLifetime;
 
+    /** Whether to include a NotBefore attribute in the Conditions of generated assertions. */
+    private boolean includeConditionsNotBefore;
+    
     /** Additional audiences to which an assertion may be released. Default value: empty */
     @Nonnull @NonnullElements private Set<String> assertionAudiences;
+        
+    /** SAML artifact configuration. */
+    @Nullable private SAMLArtifactConfiguration artifactConfig;
 
     /**
      * Constructor.
@@ -79,9 +86,9 @@ public abstract class AbstractSAMLProfileConfiguration
     }
 
     /**
-     * Set the predicate used to determine if the generated assertion should be signed.
+     * Set the predicate used to determine if generated assertions should be signed.
      * 
-     * @param predicate predicate used to determine if the generated assertion should be signed
+     * @param predicate predicate used to determine if generated assertions should be signed
      */
     public void setSignAssertionsPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
         signAssertionsPredicate =
@@ -89,16 +96,16 @@ public abstract class AbstractSAMLProfileConfiguration
     }
 
     /** {@inheritDoc} */
-    @Nonnull public Predicate<ProfileRequestContext> getSignedRequestsPredicate() {
+    @Nonnull public Predicate<ProfileRequestContext> getSignRequestsPredicate() {
         return signedRequestsPredicate;
     }
 
     /**
-     * Set the predicate used to determine if the received request should be signed.
+     * Set the predicate used to determine if generated requests should be signed.
      * 
-     * @param predicate predicate used to determine if the received request should be signed
+     * @param predicate predicate used to determine if generated requests should be signed
      */
-    public void setSignedRequestsPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
+    public void setSignRequestsPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
         signedRequestsPredicate =
                 Constraint.isNotNull(predicate,
                         "Predicate to determine if received requests should be signed cannot be null");
@@ -110,9 +117,9 @@ public abstract class AbstractSAMLProfileConfiguration
     }
 
     /**
-     * Set the predicate used to determine if the generated response should be signed.
+     * Set the predicate used to determine if generated responses should be signed.
      * 
-     * @param predicate predicate used to determine if the generated response should be signed
+     * @param predicate predicate used to determine if generated responses should be signed
      */
     public void setSignResponsesPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
         signResponsesPredicate =
@@ -131,6 +138,20 @@ public abstract class AbstractSAMLProfileConfiguration
      */
     public void setAssertionLifetime(@Positive @Duration final long lifetime) {
         assertionLifetime = Constraint.isGreaterThan(0, lifetime, "Assertion lifetime must be greater than 0");
+    }
+    
+    /** {@inheritDoc} */
+    public boolean isIncludeConditionsNotBefore() {
+        return includeConditionsNotBefore;
+    }
+    
+    /**
+     * Set whether to include a NotBefore attribute in the Conditions of generated assertions.
+     * 
+     * @param include  whether to include a NotBefore attribute in the Conditions of generated assertions
+     */
+    public void setIncludeConditionsNotBefore(final boolean include) {
+        includeConditionsNotBefore = include;
     }
 
     /** {@inheritDoc} */
@@ -158,6 +179,20 @@ public abstract class AbstractSAMLProfileConfiguration
                 assertionAudiences.add(trimmedAudience);
             }
         }
+    }
+    
+    /** {@inheritDoc} */
+    @Nullable public SAMLArtifactConfiguration getArtifactConfiguration() {
+        return artifactConfig;
+    }
+    
+    /**
+     * Set the SAML artifact configuration, if any.
+     * 
+     * @param config    configuration to set
+     */
+    public void setArtifactConfiguration(@Nullable final SAMLArtifactConfiguration config) {
+        artifactConfig = config;
     }
     
 }
