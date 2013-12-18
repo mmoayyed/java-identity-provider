@@ -26,7 +26,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.saml.profile.SAMLEventIds;
-import net.shibboleth.idp.saml.profile.saml1.Saml1ActionTestingSupport;
+import net.shibboleth.idp.saml.profile.saml1.SAML1ActionTestingSupport;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.saml.saml1.core.Assertion;
@@ -69,7 +69,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
     /** Test that the action proceeds properly returning no assertions if there is no authentication context. */
     @Test public void testNoAuthenticationStatement() throws Exception {
         ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setOutboundMessage(Saml1ActionTestingSupport.buildResponse())
+                new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
                         .buildProfileRequestContext();
 
         AddAuthenticationStatementToAssertion action = new AddAuthenticationStatementToAssertion();
@@ -90,7 +90,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
     /** Test that the action throws an exception if the authentication context lacks an attempted workflow. */
     @Test public void testNoAttemptedWorkflow() throws Exception {
         ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setOutboundMessage(Saml1ActionTestingSupport.buildResponse())
+                new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
                         .buildProfileRequestContext();
 
         AuthenticationContext authCtx = new AuthenticationContext();
@@ -111,7 +111,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
     /** Test that the authentication statement is properly added. */
     @Test public void testAddAuthenticationStatement() throws Exception {
         ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setOutboundMessage(Saml1ActionTestingSupport.buildResponse())
+                new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
                         .buildProfileRequestContext();
 
         AuthenticationContext authCtx = new AuthenticationContext();

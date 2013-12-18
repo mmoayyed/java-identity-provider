@@ -35,7 +35,7 @@ import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.impl.attribute.encoding.SAML1StringAttributeEncoder;
 import net.shibboleth.idp.saml.profile.SAMLEventIds;
-import net.shibboleth.idp.saml.profile.saml1.Saml1ActionTestingSupport;
+import net.shibboleth.idp.saml.profile.saml1.SAML1ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -101,7 +101,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     /** Test that the action errors out properly if there is no attribute context. */
     @Test public void testNoAttributeContext() throws Exception {
         ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setOutboundMessage(Saml1ActionTestingSupport.buildResponse())
+                new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
                         .buildProfileRequestContext();
 
         AddAttributeStatementToAssertion action = new AddAttributeStatementToAssertion();
@@ -116,7 +116,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     /** Test that the action errors out properly if the attribute context does not contain attributes. */
     @Test public void testNoAttributes() throws Exception {
         ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setOutboundMessage(Saml1ActionTestingSupport.buildResponse())
+                new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
                         .buildProfileRequestContext();
 
         AttributeContext attribCtx = new AttributeContext();
@@ -134,7 +134,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     /** Test that the action ignores attribute encoding errors. */
     @Test public void testIgnoreAttributeEncodingErrors() throws Exception {
         ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setOutboundMessage(Saml1ActionTestingSupport.buildResponse())
+                new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
                         .buildProfileRequestContext();
 
         MockSaml1StringAttributeEncoder attributeEncoder = new MockSaml1StringAttributeEncoder();
@@ -163,7 +163,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     /** Test that the action returns the correct transition when an attribute encoding error occurs. */
     @Test public void failOnAttributeEncodingErrors() throws Exception {
         ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setOutboundMessage(Saml1ActionTestingSupport.buildResponse())
+                new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
                         .buildProfileRequestContext();
 
         MockSaml1StringAttributeEncoder attributeEncoder = new MockSaml1StringAttributeEncoder();
@@ -215,11 +215,11 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     @Test public void testAddedAttributeStatement() throws Exception {
 
         ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setOutboundMessage(Saml1ActionTestingSupport.buildResponse())
+                new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
                         .buildProfileRequestContext();
 
         ((Response) profileCtx.getOutboundMessageContext().getMessage()).getAssertions().add(
-                Saml1ActionTestingSupport.buildAssertion());
+                SAML1ActionTestingSupport.buildAssertion());
 
         AttributeContext attribCtx = buildAttributeContext();
         ((RelyingPartyContext) profileCtx.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
@@ -254,11 +254,11 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     @Test public void testAssertionInResponse() throws Exception {
 
         ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setOutboundMessage(Saml1ActionTestingSupport.buildResponse())
+                new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
                         .buildProfileRequestContext();
 
         ((Response) profileCtx.getOutboundMessageContext().getMessage()).getAssertions().add(
-                Saml1ActionTestingSupport.buildAssertion());
+                SAML1ActionTestingSupport.buildAssertion());
 
         AttributeContext attribCtx = buildAttributeContext();
         ((RelyingPartyContext) profileCtx.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
@@ -292,7 +292,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
      */
     @Test public void testNoAssertionInResponse() throws Exception {
         ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setOutboundMessage(Saml1ActionTestingSupport.buildResponse())
+                new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
                         .buildProfileRequestContext();
 
         AttributeContext attribCtx = buildAttributeContext();

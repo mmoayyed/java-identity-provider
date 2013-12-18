@@ -15,29 +15,28 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.profile.saml2;
+package net.shibboleth.idp.saml.profile.saml1;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.SAMLVersion;
-import org.opensaml.saml.saml2.core.Assertion;
-import org.opensaml.saml.saml2.core.Conditions;
-import org.opensaml.saml.saml2.core.Issuer;
-import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml1.core.Assertion;
+import org.opensaml.saml.saml1.core.Conditions;
+import org.opensaml.saml.saml1.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Helper methods for SAML 2 IdP actions. */
-public final class Saml2ActionSupport {
+/** Helper methods for SAML 1 IdP actions. */
+public final class SAML1ActionSupport {
 
     /** Constructor. */
-    private Saml2ActionSupport() {
+    private SAML1ActionSupport() {
 
     }
 
@@ -68,23 +67,16 @@ public final class Saml2ActionSupport {
                 (SAMLObjectBuilder<Assertion>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
                         Assertion.TYPE_NAME);
 
-        final SAMLObjectBuilder<Issuer> issuerBuilder =
-                (SAMLObjectBuilder<Issuer>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
-                        Issuer.DEFAULT_ELEMENT_NAME);
-
         final SecurityConfiguration securityConfig = relyingPartyContext.getProfileConfig().getSecurityConfiguration();
-
-        final Issuer issuer = issuerBuilder.buildObject();
-        issuer.setValue(relyingPartyContext.getConfiguration().getResponderEntityId());
 
         final Assertion assertion = assertionBuilder.buildObject();
         assertion.setID(securityConfig.getIdGenerator().generateIdentifier());
         assertion.setIssueInstant(response.getIssueInstant());
-        assertion.setIssuer(issuer);
+        assertion.setIssuer(relyingPartyContext.getConfiguration().getResponderEntityId());
         assertion.setVersion(SAMLVersion.VERSION_11);
-
-        getLogger().debug("Action {}: Added Assertion {} to Response {}",
-                new Object[] {action, assertion.getID(), response.getID(),});
+        
+        getLogger().debug("Profile Action {}: Added Assertion {} to Response {}",
+                new Object[] {action.getId(), assertion.getID(), response.getID(),});
         response.getAssertions().add(assertion);
 
         return assertion;
@@ -108,11 +100,11 @@ public final class Saml2ActionSupport {
                             Conditions.TYPE_NAME);
             conditions = conditionsBuilder.buildObject();
             assertion.setConditions(conditions);
-            getLogger().debug("Action {}: Assertion {} did not already contain a Conditions, one was added",
+            getLogger().debug("Profile Action {}: Assertion {} did not already contain Conditions, added",
                     action.getId(), assertion.getID());
         } else {
-            getLogger().debug("Action {}: Assertion {} already contain a Conditions, nothing was done", action.getId(),
-                    assertion.getID());
+            getLogger().debug("Profile Action {}: Assertion {} already contains Conditions, nothing was done",
+                    action.getId(), assertion.getID());
         }
 
         return conditions;
@@ -123,7 +115,7 @@ public final class Saml2ActionSupport {
      * 
      * @return logger for this class, never null
      */
-    private static Logger getLogger() {
-        return LoggerFactory.getLogger(Saml2ActionSupport.class);
+    @Nonnull private static Logger getLogger() {
+        return LoggerFactory.getLogger(SAML1ActionSupport.class);
     }
 }

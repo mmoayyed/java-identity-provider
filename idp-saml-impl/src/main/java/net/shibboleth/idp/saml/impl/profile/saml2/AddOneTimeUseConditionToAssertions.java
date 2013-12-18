@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.saml.profile.SAMLEventIds;
-import net.shibboleth.idp.saml.profile.saml2.Saml2ActionSupport;
+import net.shibboleth.idp.saml.profile.saml2.SAML2ActionSupport;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.profile.ProfileException;
@@ -75,7 +75,7 @@ public class AddOneTimeUseConditionToAssertions extends AbstractProfileAction<Ob
 
         Conditions conditions;
         for (Assertion assertion : assertions) {
-            conditions = Saml2ActionSupport.addConditionsToAssertion(this, assertion);
+            conditions = SAML2ActionSupport.addConditionsToAssertion(this, assertion);
             if (conditions.getOneTimeUse() == null) {
                 conditions.getConditions().add(conditionBuilder.buildObject());
                 log.debug("Action {}: Added OneTimeUser condition to Assertion {}", getId(), assertion.getID());

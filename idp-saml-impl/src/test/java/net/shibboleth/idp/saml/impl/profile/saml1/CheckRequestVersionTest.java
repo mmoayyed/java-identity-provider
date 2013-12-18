@@ -20,7 +20,7 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.saml.profile.SAMLEventIds;
-import net.shibboleth.idp.saml.profile.saml1.Saml1ActionTestingSupport;
+import net.shibboleth.idp.saml.profile.saml1.SAML1ActionTestingSupport;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.saml.common.SAMLVersion;
@@ -41,8 +41,8 @@ public class CheckRequestVersionTest extends OpenSAMLInitBaseTestCase {
     @Test public void testSaml1Message() throws Exception {
         RequestContext springRequestContext =
                 new RequestContextBuilder()
-                        .setInboundMessage(Saml1ActionTestingSupport.buildAttributeQueryRequest(null))
-                        .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
+                        .setInboundMessage(SAML1ActionTestingSupport.buildAttributeQueryRequest(null))
+                        .setRelyingPartyProfileConfigurations(SAML1ActionTestingSupport.buildProfileConfigurations())
                         .buildRequestContext();
 
         CheckRequestVersion action = new CheckRequestVersion();
@@ -56,12 +56,12 @@ public class CheckRequestVersionTest extends OpenSAMLInitBaseTestCase {
 
     /** Test that the action errors out on SAML 2 messages. */
     @Test public void testSaml2Message() throws Exception {
-        Request request = Saml1ActionTestingSupport.buildAttributeQueryRequest(null);
+        Request request = SAML1ActionTestingSupport.buildAttributeQueryRequest(null);
         request.setVersion(SAMLVersion.VERSION_20);
 
         RequestContext springRequestContext =
                 new RequestContextBuilder().setInboundMessage(request)
-                        .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
+                        .setRelyingPartyProfileConfigurations(SAML1ActionTestingSupport.buildProfileConfigurations())
                         .buildRequestContext();
 
         CheckRequestVersion action = new CheckRequestVersion();

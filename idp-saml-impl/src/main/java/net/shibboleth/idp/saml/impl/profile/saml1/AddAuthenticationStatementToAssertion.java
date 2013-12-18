@@ -31,7 +31,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.SAMLEventIds;
-import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
+import net.shibboleth.idp.saml.profile.saml1.SAML1ActionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -186,7 +186,7 @@ public class AddAuthenticationStatementToAssertion extends AbstractProfileAction
     private Assertion getStatementAssertion(RelyingPartyContext relyingPartyContext, Response response) {
         final Assertion assertion;
         if (statementInOwnAssertion || response.getAssertions().isEmpty()) {
-            assertion = Saml1ActionSupport.addAssertionToResponse(this, relyingPartyContext, response);
+            assertion = SAML1ActionSupport.addAssertionToResponse(this, relyingPartyContext, response);
         } else {
             assertion = response.getAssertions().get(0);
         }

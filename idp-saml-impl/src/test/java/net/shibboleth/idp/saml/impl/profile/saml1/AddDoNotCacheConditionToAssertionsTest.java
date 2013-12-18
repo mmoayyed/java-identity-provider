@@ -20,7 +20,7 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.saml.profile.SAMLEventIds;
-import net.shibboleth.idp.saml.profile.saml1.Saml1ActionTestingSupport;
+import net.shibboleth.idp.saml.profile.saml1.SAML1ActionTestingSupport;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -51,8 +51,8 @@ public class AddDoNotCacheConditionToAssertionsTest extends OpenSAMLInitBaseTest
     /** Test that action errors out properly if there is no assertion in the response. */
     @Test public void testNoAssertion() throws Exception {
         RequestContext springRequestContext =
-                new RequestContextBuilder().setOutboundMessage(Saml1ActionTestingSupport.buildResponse())
-                        .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
+                new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
+                        .setRelyingPartyProfileConfigurations(SAML1ActionTestingSupport.buildProfileConfigurations())
                         .buildRequestContext();
 
         AddDoNotCacheConditionToAssertions action = new AddDoNotCacheConditionToAssertions();
@@ -69,14 +69,14 @@ public class AddDoNotCacheConditionToAssertionsTest extends OpenSAMLInitBaseTest
      * response.
      */
     @Test public void testSingleAssertion() throws Exception {
-        Assertion assertion = Saml1ActionTestingSupport.buildAssertion();
+        Assertion assertion = SAML1ActionTestingSupport.buildAssertion();
 
-        Response response = Saml1ActionTestingSupport.buildResponse();
+        Response response = SAML1ActionTestingSupport.buildResponse();
         response.getAssertions().add(assertion);
 
         RequestContext springRequestContext =
                 new RequestContextBuilder().setOutboundMessage(response)
-                        .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
+                        .setRelyingPartyProfileConfigurations(SAML1ActionTestingSupport.buildProfileConfigurations())
                         .buildRequestContext();
 
         AddDoNotCacheConditionToAssertions action = new AddDoNotCacheConditionToAssertions();
@@ -110,15 +110,15 @@ public class AddDoNotCacheConditionToAssertionsTest extends OpenSAMLInitBaseTest
         Conditions conditions = conditionsBuilder.buildObject();
         conditions.getDoNotCacheConditions().add(dncCondition);
 
-        Assertion assertion = Saml1ActionTestingSupport.buildAssertion();
+        Assertion assertion = SAML1ActionTestingSupport.buildAssertion();
         assertion.setConditions(conditions);
 
-        Response response = Saml1ActionTestingSupport.buildResponse();
+        Response response = SAML1ActionTestingSupport.buildResponse();
         response.getAssertions().add(assertion);
 
         RequestContext springRequestContext =
                 new RequestContextBuilder().setOutboundMessage(response)
-                        .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
+                        .setRelyingPartyProfileConfigurations(SAML1ActionTestingSupport.buildProfileConfigurations())
                         .buildRequestContext();
 
         AddDoNotCacheConditionToAssertions action = new AddDoNotCacheConditionToAssertions();
@@ -146,15 +146,15 @@ public class AddDoNotCacheConditionToAssertionsTest extends OpenSAMLInitBaseTest
         Conditions conditions = conditionsBuilder.buildObject();
         conditions.getDoNotCacheConditions().add(dncCondition);
 
-        Assertion assertion = Saml1ActionTestingSupport.buildAssertion();
+        Assertion assertion = SAML1ActionTestingSupport.buildAssertion();
         assertion.setConditions(conditions);
 
-        Response response = Saml1ActionTestingSupport.buildResponse();
+        Response response = SAML1ActionTestingSupport.buildResponse();
         response.getAssertions().add(assertion);
 
         RequestContext springRequestContext =
                 new RequestContextBuilder().setOutboundMessage(response)
-                        .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
+                        .setRelyingPartyProfileConfigurations(SAML1ActionTestingSupport.buildProfileConfigurations())
                         .buildRequestContext();
 
         AddDoNotCacheConditionToAssertions action = new AddDoNotCacheConditionToAssertions();
@@ -171,14 +171,14 @@ public class AddDoNotCacheConditionToAssertionsTest extends OpenSAMLInitBaseTest
 
     /** Test that the condition is properly added if there are multiple assertions in the response. */
     @Test public void testMultipleAssertion() throws Exception {
-        Response response = Saml1ActionTestingSupport.buildResponse();
-        response.getAssertions().add(Saml1ActionTestingSupport.buildAssertion());
-        response.getAssertions().add(Saml1ActionTestingSupport.buildAssertion());
-        response.getAssertions().add(Saml1ActionTestingSupport.buildAssertion());
+        Response response = SAML1ActionTestingSupport.buildResponse();
+        response.getAssertions().add(SAML1ActionTestingSupport.buildAssertion());
+        response.getAssertions().add(SAML1ActionTestingSupport.buildAssertion());
+        response.getAssertions().add(SAML1ActionTestingSupport.buildAssertion());
 
         RequestContext springRequestContext =
                 new RequestContextBuilder().setOutboundMessage(response)
-                        .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
+                        .setRelyingPartyProfileConfigurations(SAML1ActionTestingSupport.buildProfileConfigurations())
                         .buildRequestContext();
 
         AddDoNotCacheConditionToAssertions action = new AddDoNotCacheConditionToAssertions();

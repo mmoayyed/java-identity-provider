@@ -26,7 +26,7 @@ import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.saml.profile.SAMLEventIds;
-import net.shibboleth.idp.saml.profile.saml2.Saml2ActionSupport;
+import net.shibboleth.idp.saml.profile.saml2.SAML2ActionSupport;
 
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.EventIds;
@@ -72,7 +72,7 @@ public class AddNotBeforeConditionToAssertions extends AbstractProfileAction<Obj
 
         Conditions conditions;
         for (Assertion assertion : assertions) {
-            conditions = Saml2ActionSupport.addConditionsToAssertion(this, assertion);
+            conditions = SAML2ActionSupport.addConditionsToAssertion(this, assertion);
             log.debug("Action {}: Added NotBefore condition to Assertion {}", getId(), assertion.getID());
             conditions.setNotBefore(response.getIssueInstant());
         }

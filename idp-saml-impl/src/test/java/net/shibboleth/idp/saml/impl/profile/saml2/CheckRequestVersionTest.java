@@ -20,7 +20,7 @@ package net.shibboleth.idp.saml.impl.profile.saml2;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.saml.profile.SAMLEventIds;
-import net.shibboleth.idp.saml.profile.saml2.Saml2ActionTestingSupport;
+import net.shibboleth.idp.saml.profile.saml2.SAML2ActionTestingSupport;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.saml.common.SAMLVersion;
@@ -39,12 +39,12 @@ public class CheckRequestVersionTest extends OpenSAMLInitBaseTestCase {
 
     /** Test that the action accepts SAML 1.0 and 1.1 messages. */
     @Test public void testSaml1Message() throws Exception {
-        AttributeQuery request = Saml2ActionTestingSupport.buildAttributeQueryRequest(null);
+        AttributeQuery request = SAML2ActionTestingSupport.buildAttributeQueryRequest(null);
         request.setVersion(SAMLVersion.VERSION_11);
 
         RequestContext springRequestContext =
                 new RequestContextBuilder().setInboundMessage(request)
-                        .setRelyingPartyProfileConfigurations(Saml2ActionTestingSupport.buildProfileConfigurations())
+                        .setRelyingPartyProfileConfigurations(SAML2ActionTestingSupport.buildProfileConfigurations())
                         .buildRequestContext();
 
         CheckRequestVersion action = new CheckRequestVersion();
@@ -60,8 +60,8 @@ public class CheckRequestVersionTest extends OpenSAMLInitBaseTestCase {
     @Test public void testSaml2Message() throws Exception {
         RequestContext springRequestContext =
                 new RequestContextBuilder()
-                        .setInboundMessage(Saml2ActionTestingSupport.buildAttributeQueryRequest(null))
-                        .setRelyingPartyProfileConfigurations(Saml2ActionTestingSupport.buildProfileConfigurations())
+                        .setInboundMessage(SAML2ActionTestingSupport.buildAttributeQueryRequest(null))
+                        .setRelyingPartyProfileConfigurations(SAML2ActionTestingSupport.buildProfileConfigurations())
                         .buildRequestContext();
 
         CheckRequestVersion action = new CheckRequestVersion();

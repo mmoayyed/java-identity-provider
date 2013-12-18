@@ -29,7 +29,7 @@ import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.saml.profile.SAMLEventIds;
-import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
+import net.shibboleth.idp.saml.profile.saml1.SAML1ActionSupport;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.common.SAMLObjectBuilder;
@@ -84,7 +84,7 @@ public class AddDoNotCacheConditionToAssertions extends AbstractProfileAction<Ob
         Conditions conditions;
         List<DoNotCacheCondition> dncConditions;
         for (Assertion assertion : assertions) {
-            conditions = Saml1ActionSupport.addConditionsToAssertion(this, assertion);
+            conditions = SAML1ActionSupport.addConditionsToAssertion(this, assertion);
             dncConditions = conditions.getDoNotCacheConditions();
             if (dncConditions.isEmpty()) {
                 dncConditions.add(dncConditionBuilder.buildObject());

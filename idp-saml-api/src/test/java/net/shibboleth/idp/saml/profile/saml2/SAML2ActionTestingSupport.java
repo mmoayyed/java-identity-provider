@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.profile.saml1;
+package net.shibboleth.idp.saml.profile.saml2;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,9 +28,9 @@ import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
-import net.shibboleth.idp.saml.profile.config.saml1.ArtifactResolutionProfileConfiguration;
-import net.shibboleth.idp.saml.profile.config.saml1.AttributeQueryProfileConfiguration;
-import net.shibboleth.idp.saml.profile.config.saml1.BrowserSSOProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.saml2.ArtifactResolutionProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.saml2.AttributeQueryProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.saml2.BrowserSSOProfileConfiguration;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.joda.time.DateTime;
@@ -38,18 +38,18 @@ import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.SAMLVersion;
-import org.opensaml.saml.saml1.core.Assertion;
-import org.opensaml.saml.saml1.core.AttributeQuery;
-import org.opensaml.saml.saml1.core.NameIdentifier;
-import org.opensaml.saml.saml1.core.Request;
-import org.opensaml.saml.saml1.core.Response;
-import org.opensaml.saml.saml1.core.Subject;
+import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.AttributeQuery;
+import org.opensaml.saml.saml2.core.Issuer;
+import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.Subject;
 
 /**
- * Helper methods for creating/testing SAML 1 objects within profile action tests. When methods herein refer to mock
+ * Helper methods for creating/testing SAML 2 objects within profile action tests. When methods herein refer to mock
  * objects they are always objects that have been created via Mockito unless otherwise noted.
  */
-public final class Saml1ActionTestingSupport {
+public final class SAML2ActionTestingSupport {
 
     /** ID used for all generated {@link Response} objects. */
     public final static String REQUEST_ID = "request";
@@ -135,7 +135,7 @@ public final class Saml1ActionTestingSupport {
         final Response response = responseBuilder.buildObject();
         response.setID(ActionTestingSupport.OUTBOUND_MSG_ID);
         response.setIssueInstant(new DateTime(0));
-        response.setVersion(SAMLVersion.VERSION_11);
+        response.setVersion(SAMLVersion.VERSION_20);
 
         return response;
     }
@@ -154,14 +154,14 @@ public final class Saml1ActionTestingSupport {
         final Assertion assertion = assertionBuilder.buildObject();
         assertion.setID(ASSERTION_ID);
         assertion.setIssueInstant(new DateTime(0));
-        assertion.setVersion(SAMLVersion.VERSION_11);
+        assertion.setVersion(SAMLVersion.VERSION_20);
 
         return assertion;
     }
 
     /**
-     * Builds a {@link Subject}. If a principal name is given a {@link NameIdentifier}, whose value is the given
-     * principal name, will be created and added to the {@link Subject}.
+     * Builds a {@link Subject}. If a principal name is given a {@link NameID}, whose value is the given principal name,
+     * will be created and added to the {@link Subject}.
      * 
      * @param principalName the principal name to add to the subject
      * 
@@ -174,44 +174,47 @@ public final class Saml1ActionTestingSupport {
         final Subject subject = subjectBuilder.buildObject();
 
         if (principalName != null) {
-            final SAMLObjectBuilder<NameIdentifier> nameIdBuilder =
-                    (SAMLObjectBuilder<NameIdentifier>) XMLObjectProviderRegistrySupport.getBuilderFactory()
-                            .getBuilder(NameIdentifier.TYPE_NAME);
-            final NameIdentifier nameId = nameIdBuilder.buildObject();
-            nameId.setNameIdentifier(principalName);
-            subject.setNameIdentifier(nameId);
+            final SAMLObjectBuilder<NameID> nameIdBuilder =
+                    (SAMLObjectBuilder<NameID>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
+                            NameID.TYPE_NAME);
+            final NameID nameId = nameIdBuilder.buildObject();
+            nameId.setValue(principalName);
+            subject.setNameID(nameId);
         }
 
         return subject;
     }
 
     /**
-     * Builds a {@link Request} containing an {@link AttributeQuery}. If a {@link Subject} is given, it will be added to
-     * the constructed {@link AttributeQuery}.
+     * Builds an {@link AttributeQuery}. If a {@link Subject} is given, it will be added to the constructed
+     * {@link AttributeQuery}.
      * 
      * @param subject the subject to add to the query
      * 
      * @return the built query
      */
-    public static Request buildAttributeQueryRequest(final @Nullable Subject subject) {
+    public static AttributeQuery buildAttributeQueryRequest(final @Nullable Subject subject) {
+        final SAMLObjectBuilder<Issuer> issuerBuilder =
+                (SAMLObjectBuilder<Issuer>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
+                        Issuer.DEFAULT_ELEMENT_NAME);
+
         final SAMLObjectBuilder<AttributeQuery> queryBuilder =
                 (SAMLObjectBuilder<AttributeQuery>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
                         AttributeQuery.TYPE_NAME);
+
+        final Issuer issuer = issuerBuilder.buildObject();
+        issuer.setValue(ActionTestingSupport.INBOUND_MSG_ISSUER);
+
         final AttributeQuery query = queryBuilder.buildObject();
+        query.setID(REQUEST_ID);
+        query.setIssueInstant(new DateTime(0));
+        query.setIssuer(issuer);
+        query.setVersion(SAMLVersion.VERSION_20);
 
         if (subject != null) {
             query.setSubject(subject);
         }
 
-        SAMLObjectBuilder<Request> requestBuilder =
-                (SAMLObjectBuilder<Request>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
-                        Request.DEFAULT_ELEMENT_NAME);
-        Request request = requestBuilder.buildObject();
-        request.setID(REQUEST_ID);
-        request.setIssueInstant(new DateTime(0));
-        request.setQuery(query);
-        request.setVersion(SAMLVersion.VERSION_11);
-
-        return request;
+        return query;
     }
 }

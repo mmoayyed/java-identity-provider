@@ -35,7 +35,7 @@ import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML2AttributeEncoder;
 import net.shibboleth.idp.saml.profile.SAMLEventIds;
-import net.shibboleth.idp.saml.profile.saml2.Saml2ActionSupport;
+import net.shibboleth.idp.saml.profile.saml2.SAML2ActionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -196,7 +196,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
     private Assertion getStatementAssertion(RelyingPartyContext relyingPartyContext, Response response) {
         final Assertion assertion;
         if (statementInOwnAssertion || response.getAssertions().isEmpty()) {
-            assertion = Saml2ActionSupport.addAssertionToResponse(this, relyingPartyContext, response);
+            assertion = SAML2ActionSupport.addAssertionToResponse(this, relyingPartyContext, response);
         } else {
             assertion = response.getAssertions().get(0);
         }

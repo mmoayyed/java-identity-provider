@@ -20,7 +20,7 @@ package net.shibboleth.idp.saml.impl.profile.saml2;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.saml.profile.SAMLEventIds;
-import net.shibboleth.idp.saml.profile.saml2.Saml2ActionTestingSupport;
+import net.shibboleth.idp.saml.profile.saml2.SAML2ActionTestingSupport;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -53,8 +53,8 @@ public class AddOneTimeUseConditionToAssertionsTest  extends OpenSAMLInitBaseTes
     @Test
     public void testNoAssertion() throws Exception {
         RequestContext springRequestContext =
-                new RequestContextBuilder().setOutboundMessage(Saml2ActionTestingSupport.buildResponse())
-                        .setRelyingPartyProfileConfigurations(Saml2ActionTestingSupport.buildProfileConfigurations())
+                new RequestContextBuilder().setOutboundMessage(SAML2ActionTestingSupport.buildResponse())
+                        .setRelyingPartyProfileConfigurations(SAML2ActionTestingSupport.buildProfileConfigurations())
                         .buildRequestContext();
 
         AddOneTimeUseConditionToAssertions action = new AddOneTimeUseConditionToAssertions();
@@ -72,14 +72,14 @@ public class AddOneTimeUseConditionToAssertionsTest  extends OpenSAMLInitBaseTes
      */
     @Test
     public void testSingleAssertion() throws Exception {
-        Assertion assertion = Saml2ActionTestingSupport.buildAssertion();
+        Assertion assertion = SAML2ActionTestingSupport.buildAssertion();
 
-        Response response = Saml2ActionTestingSupport.buildResponse();
+        Response response = SAML2ActionTestingSupport.buildResponse();
         response.getAssertions().add(assertion);
 
         RequestContext springRequestContext =
                 new RequestContextBuilder().setOutboundMessage(response)
-                        .setRelyingPartyProfileConfigurations(Saml2ActionTestingSupport.buildProfileConfigurations())
+                        .setRelyingPartyProfileConfigurations(SAML2ActionTestingSupport.buildProfileConfigurations())
                         .buildRequestContext();
 
         AddOneTimeUseConditionToAssertions action = new AddOneTimeUseConditionToAssertions();
@@ -111,15 +111,15 @@ public class AddOneTimeUseConditionToAssertionsTest  extends OpenSAMLInitBaseTes
         Conditions conditions = conditionsBuilder.buildObject();
         conditions.getConditions().add(condition);
 
-        Assertion assertion = Saml2ActionTestingSupport.buildAssertion();
+        Assertion assertion = SAML2ActionTestingSupport.buildAssertion();
         assertion.setConditions(conditions);
 
-        Response response = Saml2ActionTestingSupport.buildResponse();
+        Response response = SAML2ActionTestingSupport.buildResponse();
         response.getAssertions().add(assertion);
 
         RequestContext springRequestContext =
                 new RequestContextBuilder().setOutboundMessage(response)
-                        .setRelyingPartyProfileConfigurations(Saml2ActionTestingSupport.buildProfileConfigurations())
+                        .setRelyingPartyProfileConfigurations(SAML2ActionTestingSupport.buildProfileConfigurations())
                         .buildRequestContext();
 
         AddOneTimeUseConditionToAssertions action = new AddOneTimeUseConditionToAssertions();
@@ -136,14 +136,14 @@ public class AddOneTimeUseConditionToAssertionsTest  extends OpenSAMLInitBaseTes
     /** Test that the condition is properly added if there are multiple assertions in the response. */
     @Test
     public void testMultipleAssertion() throws Exception {
-        Response response = Saml2ActionTestingSupport.buildResponse();
-        response.getAssertions().add(Saml2ActionTestingSupport.buildAssertion());
-        response.getAssertions().add(Saml2ActionTestingSupport.buildAssertion());
-        response.getAssertions().add(Saml2ActionTestingSupport.buildAssertion());
+        Response response = SAML2ActionTestingSupport.buildResponse();
+        response.getAssertions().add(SAML2ActionTestingSupport.buildAssertion());
+        response.getAssertions().add(SAML2ActionTestingSupport.buildAssertion());
+        response.getAssertions().add(SAML2ActionTestingSupport.buildAssertion());
 
         RequestContext springRequestContext =
                 new RequestContextBuilder().setOutboundMessage(response)
-                        .setRelyingPartyProfileConfigurations(Saml2ActionTestingSupport.buildProfileConfigurations())
+                        .setRelyingPartyProfileConfigurations(SAML2ActionTestingSupport.buildProfileConfigurations())
                         .buildRequestContext();
 
         AddOneTimeUseConditionToAssertions action = new AddOneTimeUseConditionToAssertions();

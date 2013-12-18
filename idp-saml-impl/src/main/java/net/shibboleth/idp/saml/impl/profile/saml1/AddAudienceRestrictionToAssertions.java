@@ -33,7 +33,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.SAMLEventIds;
 import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
-import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
+import net.shibboleth.idp.saml.profile.saml1.SAML1ActionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -165,7 +165,7 @@ public class AddAudienceRestrictionToAssertions extends AbstractProfileAction<Ob
 
         Conditions conditions;
         for (Assertion assertion : assertions) {
-            conditions = Saml1ActionSupport.addConditionsToAssertion(this, assertion);
+            conditions = SAML1ActionSupport.addConditionsToAssertion(this, assertion);
             addAudienceRestriction(conditions, relyingPartyCtx);
             log.debug("Action {}: Added AudienceRestrictionCondition to Assertion {}", getId(), assertion.getID());
         }

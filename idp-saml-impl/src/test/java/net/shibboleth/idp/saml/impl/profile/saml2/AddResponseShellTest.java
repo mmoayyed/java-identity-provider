@@ -21,7 +21,7 @@ import net.shibboleth.idp.profile.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.saml.profile.SAMLEventIds;
-import net.shibboleth.idp.saml.profile.saml2.Saml2ActionTestingSupport;
+import net.shibboleth.idp.saml.profile.saml2.SAML2ActionTestingSupport;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
@@ -41,7 +41,7 @@ public class AddResponseShellTest extends OpenSAMLInitBaseTestCase {
     @Test public void testAddResponse() throws Exception {
         RequestContext springRequestContext =
                 new RequestContextBuilder().setRelyingPartyProfileConfigurations(
-                        Saml2ActionTestingSupport.buildProfileConfigurations()).buildRequestContext();
+                        SAML2ActionTestingSupport.buildProfileConfigurations()).buildRequestContext();
 
         AddResponseShell action = new AddResponseShell();
         action.setId("test");
@@ -73,8 +73,8 @@ public class AddResponseShellTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void testAddResponseWhenResponseAlreadyExist() throws Exception {
         RequestContext springRequestContext =
-                new RequestContextBuilder().setOutboundMessage(Saml2ActionTestingSupport.buildResponse())
-                        .setRelyingPartyProfileConfigurations(Saml2ActionTestingSupport.buildProfileConfigurations())
+                new RequestContextBuilder().setOutboundMessage(SAML2ActionTestingSupport.buildResponse())
+                        .setRelyingPartyProfileConfigurations(SAML2ActionTestingSupport.buildProfileConfigurations())
                         .buildRequestContext();
 
         AddResponseShell action = new AddResponseShell();

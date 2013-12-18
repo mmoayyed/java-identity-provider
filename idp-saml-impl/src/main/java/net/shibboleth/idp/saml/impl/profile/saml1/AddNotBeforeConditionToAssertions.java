@@ -29,7 +29,7 @@ import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.saml.profile.SAMLEventIds;
-import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
+import net.shibboleth.idp.saml.profile.saml1.SAML1ActionSupport;
 
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.Conditions;
@@ -72,7 +72,7 @@ public class AddNotBeforeConditionToAssertions extends AbstractProfileAction<Obj
 
         Conditions conditions;
         for (Assertion assertion : assertions) {
-            conditions = Saml1ActionSupport.addConditionsToAssertion(this, assertion);
+            conditions = SAML1ActionSupport.addConditionsToAssertion(this, assertion);
             log.debug("Action {}: Added NotBefore condition to Assertion {}", getId(), assertion.getID());
             conditions.setNotBefore(response.getIssueInstant());
         }

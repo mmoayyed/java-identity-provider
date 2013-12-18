@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.profile.saml1;
+package net.shibboleth.idp.saml.profile.saml2;
 
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
@@ -25,9 +25,9 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.saml1.core.Assertion;
-import org.opensaml.saml.saml1.core.Conditions;
-import org.opensaml.saml.saml1.core.Response;
+import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.Conditions;
+import org.opensaml.saml.saml2.core.Response;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -35,9 +35,9 @@ import org.testng.annotations.Test;
 import com.google.common.base.Function;
 
 /**
- * @link Saml1ActionSupport} unit test.
+ * {@link SAML2ActionSupport} unit test.
  */
-public class Saml1ActionSupportTest extends OpenSAMLInitBaseTestCase {
+public class SAML2ActionSupportTest extends OpenSAMLInitBaseTestCase {
 
     /** Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}. */
     private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy =
@@ -50,11 +50,11 @@ public class Saml1ActionSupportTest extends OpenSAMLInitBaseTestCase {
      */
     @Test public void testAddAssertionToResponse() throws ComponentInitializationException {
 
-        final Response response = Saml1ActionTestingSupport.buildResponse();
+        final Response response = SAML2ActionTestingSupport.buildResponse();
 
         RequestContext springRequestContext =
                 new RequestContextBuilder().setOutboundMessage(response)
-                        .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
+                        .setRelyingPartyProfileConfigurations(SAML2ActionTestingSupport.buildProfileConfigurations())
                         .buildRequestContext();
 
         final ProfileRequestContext<Object, Response> profileRequestContext =
@@ -65,10 +65,10 @@ public class Saml1ActionSupportTest extends OpenSAMLInitBaseTestCase {
         RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
 
         Assert.assertEquals(response.getAssertions().size(), 0, "Expected zarro assertions before insert");
-        Assertion assertion = Saml1ActionSupport.addAssertionToResponse(action, relyingPartyCtx, response);
+        Assertion assertion = SAML2ActionSupport.addAssertionToResponse(action, relyingPartyCtx, response);
         Assert.assertEquals(response.getAssertions().size(), 1, "Expected but one assertion after insert");
         Assert.assertTrue(response.getAssertions().contains(assertion), "Inserted assertion should be there");
-        Assertion second = Saml1ActionSupport.addAssertionToResponse(action, relyingPartyCtx, response);
+        Assertion second = SAML2ActionSupport.addAssertionToResponse(action, relyingPartyCtx, response);
         Assert.assertEquals(response.getAssertions().size(), 2, "Expected two assertions after two inserts");
         Assert.assertTrue(response.getAssertions().contains(assertion), "Inserted assertion should be there");
         Assert.assertNotSame(second, assertion, "Two separate assertions should have been added");
@@ -81,13 +81,13 @@ public class Saml1ActionSupportTest extends OpenSAMLInitBaseTestCase {
      */
     @Test public void testAddConditionsToAssertion() throws ComponentInitializationException {
         ActionTestSupportAction action = new ActionTestSupportAction();
-        Assertion assertion = Saml1ActionTestingSupport.buildAssertion();
+        Assertion assertion = SAML2ActionTestingSupport.buildAssertion();
 
         Assert.assertNull(assertion.getConditions(), "No conditions on empty assertion");
-        Conditions conditions = Saml1ActionSupport.addConditionsToAssertion(action, assertion);
+        Conditions conditions = SAML2ActionSupport.addConditionsToAssertion(action, assertion);
         Assert.assertEquals(assertion.getConditions(), conditions, "Added conditions - should be what we got back");
-        Conditions second = Saml1ActionSupport.addConditionsToAssertion(action, assertion);
+        Conditions second = SAML2ActionSupport.addConditionsToAssertion(action, assertion);
         Assert.assertEquals(conditions, second, "Added conditions twice - should return the same value twice");
-
     }
+    
 }

@@ -29,7 +29,7 @@ import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.SAMLEventIds;
 import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
-import net.shibboleth.idp.saml.profile.saml2.Saml2ActionSupport;
+import net.shibboleth.idp.saml.profile.saml2.SAML2ActionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -161,7 +161,7 @@ public class AddAudienceRestrictionToAssertions extends AbstractProfileAction<Ob
 
         Conditions conditions;
         for (Assertion assertion : assertions) {
-            conditions = Saml2ActionSupport.addConditionsToAssertion(this, assertion);
+            conditions = SAML2ActionSupport.addConditionsToAssertion(this, assertion);
             addAudienceRestriction(conditions, relyingPartyCtx);
             log.debug("Action {}: Added AudienceRestrictionCondition to Assertion {}", getId(), assertion.getID());
         }

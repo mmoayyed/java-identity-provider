@@ -29,7 +29,7 @@ import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.SAMLEventIds;
 import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
-import net.shibboleth.idp.saml.profile.saml2.Saml2ActionSupport;
+import net.shibboleth.idp.saml.profile.saml2.SAML2ActionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -135,7 +135,7 @@ public class AddNotOnOrAfterConditionToAssertions extends AbstractProfileAction<
         Conditions conditions;
         DateTime expiration = new DateTime(response.getIssueInstant()).plus(profileConfig.getAssertionLifetime());
         for (Assertion assertion : assertions) {
-            conditions = Saml2ActionSupport.addConditionsToAssertion(this, assertion);
+            conditions = SAML2ActionSupport.addConditionsToAssertion(this, assertion);
             log.debug(
                     "Action {}: Added NotOnOrAfter condition, indicating an expiration instant of {}, to Assertion {}",
                     new Object[] {getId(), expiration, assertion.getID()});

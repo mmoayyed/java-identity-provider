@@ -25,7 +25,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.config.saml1.BrowserSSOProfileConfiguration;
-import net.shibboleth.idp.saml.profile.saml1.Saml1ActionTestingSupport;
+import net.shibboleth.idp.saml.profile.saml1.SAML1ActionTestingSupport;
 
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
@@ -67,7 +67,7 @@ public class SelectProfileConfigurationTest {
     @Test public void testInvalidProfileConfiguration() throws Exception {
         ProfileRequestContext profileCtx =
                 new RequestContextBuilder().setRelyingPartyProfileConfigurations(
-                        Saml1ActionTestingSupport.buildProfileConfigurations()).buildProfileRequestContext();
+                        SAML1ActionTestingSupport.buildProfileConfigurations()).buildProfileRequestContext();
 
         SelectProfileConfiguration action = new SelectProfileConfiguration();
         action.setId("test");
@@ -82,7 +82,7 @@ public class SelectProfileConfigurationTest {
     @Test public void testSelectProfileConfiguration() throws Exception {
         ProfileRequestContext profileCtx =
                 new RequestContextBuilder().setRelyingPartyProfileConfigurations(
-                        Saml1ActionTestingSupport.buildProfileConfigurations()).buildProfileRequestContext();
+                        SAML1ActionTestingSupport.buildProfileConfigurations()).buildProfileRequestContext();
 
         profileCtx.setProfileId(BrowserSSOProfileConfiguration.PROFILE_ID);
 
