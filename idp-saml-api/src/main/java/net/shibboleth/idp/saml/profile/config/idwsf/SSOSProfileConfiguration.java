@@ -20,6 +20,8 @@ package net.shibboleth.idp.saml.profile.config.idwsf;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.saml.profile.config.saml2.BrowserSSOProfileConfiguration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -29,22 +31,21 @@ import org.opensaml.saml.saml2.core.Response;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
-/** SAMLConfigurationSupport for constrained Liberty IDWSF SSOS requests. */
-public class SsosProfileConfiguration extends BrowserSSOProfileConfiguration {
+/** Configuration support for the Liberty ID-WSF SSOS profile. */
+public class SSOSProfileConfiguration extends BrowserSSOProfileConfiguration {
 
     /** ID for this profile configuration. */
-    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/liberty/ssos";
+    @Nonnull @NotEmpty public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/liberty/ssos";
 
     /** Maximum number of times a given token is allowed to have been delegated. Default value: 0 */
-    private int maximumTokenDelegationChainLength;
+    @NonNegative private long maximumTokenDelegationChainLength;
 
-    /** Criterion used to determine if a token may be delegated to a relying party. */
-    private Predicate<ProfileRequestContext<RequestAbstractType, Response>> delegationCriterion;
+    /** Predicate used to determine if a token may be delegated to a relying party. */
+    @Nonnull private Predicate<ProfileRequestContext<RequestAbstractType, Response>> delegationPredicate;
 
     /** Constructor. */
-    public SsosProfileConfiguration() {
+    public SSOSProfileConfiguration() {
         this(PROFILE_ID);
-        delegationCriterion = Predicates.alwaysFalse();
     }
 
     /**
@@ -52,9 +53,11 @@ public class SsosProfileConfiguration extends BrowserSSOProfileConfiguration {
      * 
      * @param profileId unique ID for this profile
      */
-    protected SsosProfileConfiguration(final String profileId) {
+    protected SSOSProfileConfiguration(final String profileId) {
         super(profileId);
+        
         maximumTokenDelegationChainLength = 0;
+        delegationPredicate = Predicates.alwaysFalse();
     }
 
     /**
@@ -62,7 +65,7 @@ public class SsosProfileConfiguration extends BrowserSSOProfileConfiguration {
      * 
      * @return maximum number of times a given token is allowed to have been delegated
      */
-    public int getMaximumTokenDelegationChainLength() {
+    public long getMaximumTokenDelegationChainLength() {
         return maximumTokenDelegationChainLength;
     }
 
@@ -71,26 +74,28 @@ public class SsosProfileConfiguration extends BrowserSSOProfileConfiguration {
      * 
      * @param length maximum number of times a given token is allowed to have been delegated
      */
-    public void setMaximumTokenDelegationChainLength(final int length) {
-        maximumTokenDelegationChainLength = length;
+    public void setMaximumTokenDelegationChainLength(final long length) {
+        maximumTokenDelegationChainLength = Constraint.isGreaterThanOrEqual(0, length,
+                "Delegation chain length must be greater than or equal to 0");
     }
 
     /**
-     * Gets criterion used to determine if a token may be delegated to a relying party.
+     * Gets predicate used to determine if a token may be delegated to a relying party.
      * 
-     * @return criterion used to determine if a token may be delegated to a relying party, never null
+     * @return predicate used to determine if a token may be delegated to a relying party
      */
-    public Predicate<ProfileRequestContext<RequestAbstractType, Response>> getDelegationCriterion() {
-        return delegationCriterion;
+    @Nonnull public Predicate<ProfileRequestContext<RequestAbstractType, Response>> getDelegationPredicate() {
+        return delegationPredicate;
     }
 
     /**
-     * Sets the criterion used to determine if a token may be delegated to a relying party.
+     * Sets the predicate used to determine if a token may be delegated to a relying party.
      * 
-     * @param criterion criterion used to determine if a token may be delegated to a relying party, never null
+     * @param predicate predicate used to determine if a token may be delegated to a relying party
      */
-    public void setDelegationCriterion(
-            @Nonnull final Predicate<ProfileRequestContext<RequestAbstractType, Response>> criterion) {
-        delegationCriterion = Constraint.isNotNull(criterion, "Delegation criterion can not be null");
+    public void setDelegationPredicate(
+            @Nonnull final Predicate<ProfileRequestContext<RequestAbstractType, Response>> predicate) {
+        delegationPredicate = Constraint.isNotNull(predicate, "Delegation predicate cannot be null");
     }
+    
 }

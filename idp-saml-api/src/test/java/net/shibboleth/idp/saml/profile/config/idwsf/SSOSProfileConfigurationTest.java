@@ -20,23 +20,24 @@ package net.shibboleth.idp.saml.profile.config.idwsf;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** Unit test for {@link SsosProfileConfiguration}. */
-public class SsosProfileConfigurationTest {
+/** Unit test for {@link SSOSProfileConfiguration}. */
+public class SSOSProfileConfigurationTest {
 
     @Test
     public void testProfileId() {
-        Assert.assertEquals(SsosProfileConfiguration.PROFILE_ID, "http://shibboleth.net/ns/profiles/liberty/ssos");
+        Assert.assertEquals(SSOSProfileConfiguration.PROFILE_ID, "http://shibboleth.net/ns/profiles/liberty/ssos");
 
-        SsosProfileConfiguration config = new SsosProfileConfiguration();
-        Assert.assertEquals(config.getId(), SsosProfileConfiguration.PROFILE_ID);
+        SSOSProfileConfiguration config = new SSOSProfileConfiguration();
+        Assert.assertEquals(config.getId(), SSOSProfileConfiguration.PROFILE_ID);
     }
     
     @Test
     public void testMaximumTokenDelegationChainLength(){
-        SsosProfileConfiguration config = new SsosProfileConfiguration();
+        SSOSProfileConfiguration config = new SSOSProfileConfiguration();
         Assert.assertEquals(config.getMaximumTokenDelegationChainLength(), 0);
         
         config.setMaximumTokenDelegationChainLength(10);
         Assert.assertEquals(config.getMaximumTokenDelegationChainLength(), 10);
     }
+    
 }

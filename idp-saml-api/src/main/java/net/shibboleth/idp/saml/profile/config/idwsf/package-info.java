@@ -15,6 +15,6 @@
  * limitations under the License.
  */
 
-/** Profile configurations for Liberty IDWSF requests. */
+/** Profile configurations for Liberty ID-WSF profiles. */
 
 package net.shibboleth.idp.saml.profile.config.idwsf;
