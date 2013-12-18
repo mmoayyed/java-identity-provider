@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.saml.impl.profile;
 
-import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.IdPEventIds;
 
+import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.profile.RequestContextBuilder;
@@ -27,8 +27,6 @@ import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.config.saml1.BrowserSSOProfileConfiguration;
 import net.shibboleth.idp.saml.profile.saml1.SAML1ActionTestingSupport;
 
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.test.MockRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -43,9 +41,9 @@ public class SelectProfileConfigurationTest {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
+        action.execute(profileCtx);
 
-        ActionTestingSupport.assertEvent(result, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_RELYING_PARTY_CTX);
     }
 
     /** Test that the action errors out properly if there is no relying party configuration. */
@@ -58,9 +56,9 @@ public class SelectProfileConfigurationTest {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
+        action.execute(profileCtx);
 
-        ActionTestingSupport.assertEvent(result, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);
+        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);
     }
 
     /** Test that the action errors out properly if the desired profile configuration is not configured. */
@@ -73,9 +71,9 @@ public class SelectProfileConfigurationTest {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
+        action.execute(profileCtx);
 
-        ActionTestingSupport.assertEvent(result, IdPEventIds.INVALID_PROFILE_CONFIG);
+        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_PROFILE_CONFIG);
     }
 
     /** Test that the action selects the appropriate profile configuration and proceeds properly. */
@@ -90,12 +88,13 @@ public class SelectProfileConfigurationTest {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
+        action.execute(profileCtx);
 
-        ActionTestingSupport.assertProceedEvent(result);
+        ActionTestingSupport.assertProceedEvent(profileCtx);
 
         Assert.assertNotNull(profileCtx.getSubcontext(RelyingPartyContext.class).getProfileConfig());
         Assert.assertEquals(profileCtx.getSubcontext(RelyingPartyContext.class).getProfileConfig().getId(),
                 BrowserSSOProfileConfiguration.PROFILE_ID);
     }
+    
 }
