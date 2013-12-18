@@ -1,0 +1,31 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow classpath:/org/springframework/webflow/engine/model/builder/spring-webflow-2.0.xsd"
+      abstract="true">
+
+    <action-state id="ValidateUsernamePassword">
+        
+        <!-- Call outs for exceptional conditions. -->
+        <transition on="AccountWarning" to="CallExpiringPassword" />
+        <transition on="ExpiringPassword" to="CallExpiringPassword" />
+        <transition on="ExpiredPassword" to="CallExpiredPassword" />
+        <transition on="AccountLocked" to="CallAccountLocked" />
+        
+        <transition on="InvalidPassword" to="CallExpiredPassword" />
+        
+        <transition on="#{true}" to="DisplayUsernamePasswordPage" />
+    </action-state>
+
+    <subflow-state id="CallExpiringPassword" subflow="Authentication.ExpiringPassword">
+        <transition on="proceed" to="CallSubjectCanonicalization" />
+    </subflow-state>
+
+    <subflow-state id="CallExpiredPassword" subflow="Authentication.ExpiredPassword">
+        <transition on="proceed" to="DisplayUsernamePasswordPage" />
+    </subflow-state>
+
+    <subflow-state id="CallAccountLocked" subflow="Authentication.AccountLocked">
+        <transition on="proceed" to="DisplayUsernamePasswordPage" />
+    </subflow-state>
+
+</flow>

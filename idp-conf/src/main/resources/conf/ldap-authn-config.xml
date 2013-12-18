@@ -37,10 +37,10 @@
         -->
     </util:list>
     
-    <!-- LDAP configuration (uses the in-memory directory by default, see src/test/config/ldap.ldif). -->
+    <!-- LDAP configuration (uses the in-memory directory by default, see src/main/config/test/ldap.ldif). -->
     
     <bean id="shibboleth.authn.LDAP.ldapUrl" class="java.lang.String" c:_0="ldap://localhost:10389" />
-    <bean id="shibboleth.authn.LDAP.baseDn" class="java.lang.String" c:_0="ou=people,dc=shibboleth,dc=net" />
+    <bean id="shibboleth.authn.LDAP.baseDn" class="java.lang.String" c:_0="ou=people,dc=example,dc=org" />
     <bean id="shibboleth.authn.LDAP.userFilter" class="java.lang.String" c:_0="(uid={user})" />
 
     <bean id="shibboleth.authn.LDAP.subtreeSearch" class="java.lang.Boolean">

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context    http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/util  http://www.springframework.org/schema/util/spring-util.xsd
+       "
+       default-init-method="initialize">
+       
+    <!-- Note: Don't define DecodeMessage action here, that is defined in beans definition for concrete flow. -->
+
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    
+    <!--
+    <bean class="idp.LoggingBeanPostProcessor" />
+    -->
+    
+    <!--
+    <bean id="LogSpringContextInfo" class="idp.LogSpringContextInfo" />
+    -->
+
+    <bean id="InitializeProfileRequestContext" class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" />
+    
+    <bean id="inboundMessageHandlerChain" class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
+        <property name="handlers">
+            <util:list>
+            
+                <bean class="idp.TestMessageHandler" scope="prototype" />
+                
+                <bean class="common.MockPopulateContextData">
+                    <property name="samlProtocol">
+                        <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML20P_NS" />
+                    </property>
+                    <property name="peerSamlRole">
+                        <util:constant static-field="org.opensaml.saml.saml2.metadata.SPSSODescriptor.DEFAULT_ELEMENT_NAME" />
+                    </property>
+                </bean>
+                
+                <bean class="org.opensaml.saml.common.binding.security.ReceivedEndpointSecurityHandler" scope="prototype">
+                    <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
+                </bean>
+                
+                <bean class="org.opensaml.saml.common.binding.security.MessageReplaySecurityHandler" >
+                    <property name="replayCache" ref="shibboleth.ReplayCache" />
+                </bean>
+                
+                <bean class="org.opensaml.saml.common.binding.security.MessageLifetimeSecurityHandler" />
+                
+                <bean class="org.opensaml.saml.saml2.binding.security.SAML2AuthnRequestsSignedSecurityHandler" />
+                
+                <bean class="org.opensaml.saml.common.binding.security.SAMLProtocolMessageXMLSignatureSecurityHandler">
+                    <property name="trustEngine" ref="idp.SignatureTrustEngine" />
+                </bean>
+                
+                <bean class="org.opensaml.saml.saml2.binding.security.SAML2HTTPRedirectDeflateSignatureSecurityHandler" scope="prototype">
+                    <property name="trustEngine" ref="idp.SignatureTrustEngine" />
+                    <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
+                </bean>
+                
+                <bean class="org.opensaml.saml.saml2.binding.security.SAML2HTTPPostSimpleSignSecurityHandler" scope="prototype">
+                    <property name="trustEngine" ref="idp.SignatureTrustEngine" />
+                    <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
+                    <property name="parser" ref="shibboleth.ParserPool" />
+                    <property name="keyInfoResolver" ref="testbed.KeyInfoCredentialResolver" />
+                </bean>
+                
+            </util:list>
+        </property>
+    </bean>
+    
+    <bean id="HandleInboundMessage" class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype">
+        <constructor-arg ref="inboundMessageHandlerChain"/>
+        <constructor-arg value="INBOUND" />
+    </bean>
+    
+    <bean id="BuildAuthenticationContext" class="idp.BuildAuthenticationContext" />
+    
+    <bean id="BuildResponse" class="idp.BuildMockSaml2Response" />
+    
+    <bean id="PrepareOutboundMessageContext" class="idp.PrepareOutboundMessageContext" />
+    
+    <bean id="outboundMessageHandlerChain" class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
+        <property name="handlers">
+            <util:list>
+            
+                <bean class="idp.TestMessageHandler" scope="prototype" />
+                
+                <bean class="org.opensaml.saml.common.binding.SAMLOutboundDestinationHandler" />
+                
+                <bean class="org.opensaml.saml.common.binding.security.EndpointUrlSchemeSecurityHandler" />
+                
+                <bean class="org.opensaml.saml.common.binding.security.SAMLOutboundProtocolMessageSigningHandler" />
+                
+            </util:list>
+        </property>
+    </bean>
+    
+    <bean id="HandleOutboundMessage" class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype">
+        <constructor-arg ref="outboundMessageHandlerChain"/>
+        <constructor-arg value="OUTBOUND" />
+    </bean>
+    
+    <!-- This is used with the "encoder selected via lookup component" style. -->
+    <bean id="EncodeMessage" class="idp.EncodeSAMLMessageFromBindingURI" scope="prototype">
+        <!-- The type of constructor arg determines lookup style. Use one or the other but not both -->
+        <constructor-arg ref="SAMLEncoderLookupViaMap" />
+        <!--
+        <constructor-arg ref="SAMLEncoderLookupViaURITranslation" />
+        -->
+    </bean>
+    
+    <!-- This is used with the "encoder selected in WebFlow" style. -->
+    <bean id="EncodeMessageSAML2Post" class="org.opensaml.profile.action.impl.EncodeMessage" scope="prototype">
+        <constructor-arg ref="encoders.saml.SAML2PostEncoder" />
+    </bean>
+    
+    <!-- Various message encoder-related classes, including the encoders themselves. -->
+    
+    <bean id="SAMLEncoderLookupViaURITranslation" class="idp.SpringAwareEncoderLookup">
+        <!-- This arg is a prefix used to construct the bean name.
+             Effective bean name will be: "<prefix>.<binding URI>".
+             See 'name' attribute of SAML post encoder below. -->
+        <constructor-arg value="encoders.saml" />
+    </bean>
+    
+    <bean id="SAMLEncoderLookupViaMap" class="idp.SpringAwareEncoderLookup">
+        <constructor-arg>
+            <util:map id="SAMLEncoderMap" >
+                <entry>
+                    <key>
+                        <value>urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST</value>
+                    </key>
+                    <idref bean="encoders.saml.SAML2PostEncoder" />
+                </entry>
+            </util:map>
+        </constructor-arg>
+    </bean>    
+    
+    <!-- SAML encoders -->
+    
+    <!-- Note: can't init the encoder beans yet b/c the action needs to supply the MessageContext -->
+    
+    <!-- The 'name' alias is only used with the "translate URI to bean name" approach. -->
+    <bean id="encoders.saml.SAML2PostEncoder" name="encoders.saml.urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+          class="org.opensaml.saml.saml2.binding.encoding.HTTPPostEncoder" scope="prototype" init-method="">
+        <property name="httpServletResponse" ref="shibboleth.HttpServletResponse" />
+        <property name="velocityEngine" ref="shibboleth.VelocityEngine" />
+    </bean>
+    
+    <bean id="AddBasicMessageMetadataContext" class="idp.AddBasicMessageMetadataContext" />
+    
+    <bean id="AddProfileConfiguration" class="idp.AddProfileConfiguration" />
+            
+    <bean id="CheckMandatoryIssuer" class="org.opensaml.profile.action.impl.CheckMandatoryIssuer" />
+    
+    <bean id="InitializeRelyingPartyContext" class="net.shibboleth.idp.saml.impl.profile.InitializeRelyingPartyContext" />
+    
+    <bean id="ResolveAttributes" class="net.shibboleth.idp.profile.impl.ResolveAttributes" >
+       <constructor-arg ref="shibboleth.AttributeResolverService"/>
+    </bean>
+    
+    <bean id="FilterAttributes" class="net.shibboleth.idp.profile.impl.FilterAttributes" >
+       <constructor-arg ref="shibboleth.AttributeFilterService"/>
+    </bean>
+
+    <!-- TODO replace responderId "https://idp.example.org" with something else -->
+    <bean id="ConditionalRelyingPartyConfiguration" class="net.shibboleth.idp.relyingparty.impl.ConditionalRelyingPartyConfiguration">
+        <constructor-arg value="ActivatedRelyingPartyConfiguration" />
+        <constructor-arg value="https://idp.example.org" />
+        <constructor-arg>
+            <null />
+        </constructor-arg>
+        <constructor-arg>
+            <bean id="AlwaysTrueRelyingPartyPredicate" class="idp.AlwaysTrueActivatedRelyingPartyPredicate" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="ConditionalRelyingPartyConfigurationResolver" p:id="ConditionalRelyingPartyConfigurationResolver" class="net.shibboleth.idp.relyingparty.impl.ConditionalRelyingPartyConfigurationResolver">
+        <property name="relyingPartyConfigurations">
+            <util:list>
+                <ref bean="ConditionalRelyingPartyConfiguration" />
+            </util:list>
+        </property>
+    </bean>
+
+    <bean id="SelectRelyingPartyConfiguration" class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration">
+        <constructor-arg ref="ConditionalRelyingPartyConfigurationResolver" />
+    </bean>
+
+    <bean id="AddAttributeStatementToAssertion" class="net.shibboleth.idp.saml.impl.profile.saml2.AddAttributeStatementToAssertion" />
+    
+    <bean id="AddAttributeRecipientContext" class="idp.AddAttributeRecipientContext" />
+
+</beans>

@@ -1,0 +1,132 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+      abstract="true">
+
+    <on-start>
+        <evaluate expression="InitializeProfileRequestContext" />
+    </on-start>
+    
+    <!--
+    <action-state id="LogSpringContextInfo">
+        <evaluate expression="LogSpringContextInfo" />
+        <transition on="proceed" to="DecodeMessage" />
+    </action-state>
+    -->
+    
+    <action-state id="DecodeMessage">
+        <evaluate expression="DecodeMessage" />
+        <transition on="proceed" to="HandleInboundMessage" />
+    </action-state>
+    
+    <action-state id="HandleInboundMessage">
+        <evaluate expression="HandleInboundMessage" />
+        <transition on="proceed" to="AddBasicMessageMetadataContext" />
+    </action-state>
+
+    <action-state id="AddBasicMessageMetadataContext">
+        <evaluate expression="AddBasicMessageMetadataContext" />
+        <transition on="proceed" to="InitializeRelyingPartyContext" />
+    </action-state>
+    
+    <action-state id="InitializeRelyingPartyContext">
+        <evaluate expression="InitializeRelyingPartyContext" />
+        <transition on="proceed" to="CheckMandatoryIssuer"/>
+    </action-state>
+          
+    <action-state id="CheckMandatoryIssuer">
+        <evaluate expression="CheckMandatoryIssuer" />
+        <transition on="proceed" to="AddProfileConfiguration" />
+    </action-state>
+    
+    <action-state id="AddProfileConfiguration">
+        <evaluate expression="AddProfileConfiguration" />
+        <transition on="proceed" to="SelectRelyingPartyConfiguration"/>
+    </action-state>
+    
+   <action-state id="SelectRelyingPartyConfiguration">
+        <evaluate expression="SelectRelyingPartyConfiguration" />
+        <transition on="proceed" to="BuildAuthenticationContext"/>
+    </action-state>
+    
+    <action-state id="BuildAuthenticationContext">
+        <evaluate expression="BuildAuthenticationContext" />
+        <transition on="proceed" to="DoAuthenticationSubflow" />
+    </action-state>
+    
+    <subflow-state id="DoAuthenticationSubflow" subflow="Authentication">
+        <transition on="proceed" to="AddAttributeRecipientContext" />
+        <transition on="#{true}" to="BuildResponse" />
+    </subflow-state>
+        
+    <action-state id="AddAttributeRecipientContext">
+        <evaluate expression="AddAttributeRecipientContext" />
+        <transition on="proceed" to="ResolveAttributes"/>
+    </action-state>
+    
+    <action-state id="ResolveAttributes">
+        <evaluate expression="ResolveAttributes" />
+        <transition on="proceed" to="FilterAttributes"/>
+    </action-state>
+    
+    <action-state id="FilterAttributes">
+        <evaluate expression="FilterAttributes" />
+        <transition on="proceed" to="BuildResponse"/>
+    </action-state>
+    
+    <!-- TODO filter attributes -->
+       
+    <action-state id="BuildResponse">
+        <evaluate expression="BuildResponse" />
+        <transition on="proceed" to="PrepareOutboundMessageContext" />
+    </action-state>
+    
+    <action-state id="PrepareOutboundMessageContext">
+        <evaluate expression="PrepareOutboundMessageContext" />
+        <transition on="proceed" to="AddAttributeStatementToAssertion" />
+    </action-state>
+    
+    <action-state id="AddAttributeStatementToAssertion">
+        <evaluate expression="AddAttributeStatementToAssertion" />
+        <transition on="#{true}" to="HandleOutboundMessage"/>
+    </action-state>
+    
+    <action-state id="HandleOutboundMessage">
+        <evaluate expression="HandleOutboundMessage" />
+        <transition on="proceed" to="EncodeMessage" />
+        <!--
+        <transition on="#{currentEvent.id == 'proceed' &amp;&amp; flowScope.bindingURI == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'}" 
+                    to="EncodeMessageSAML2Post" />
+        -->
+    </action-state>
+    
+    <!-- This is used with the "encoder selected via lookup component" style. -->
+    <action-state id="EncodeMessage">
+        <evaluate expression="EncodeMessage" />
+        <transition on="proceed" to="end" />
+    </action-state>
+    
+   <!-- This is used with the "encoder selected in WebFlow" style. --> 
+    <action-state id="EncodeMessageSAML2Post">
+        <evaluate expression="EncodeMessageSAML2Post" />
+        <transition on="proceed" to="end" />
+    </action-state>
+
+    <end-state id="end" >
+        <!-- Note: Now currently doing this in the EncodeMessage action
+        <on-entry>
+            <evaluate expression="externalContext.recordResponseComplete()" />
+        </on-entry>
+        -->
+    </end-state>
+    
+    <global-transitions>
+        <transition on="NoPotentialFlow" to="error" />
+        <transition on="#{currentEvent.id.startsWith('Unable')}" to="error" />
+        <transition on="#{currentEvent.id.startsWith('Invalid')}" to="error" />
+    </global-transitions>
+
+    <bean-import resource="sso-abstract-beans.xml" />
+
+</flow>

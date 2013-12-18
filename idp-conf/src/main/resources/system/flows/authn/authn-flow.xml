@@ -55,7 +55,8 @@
 
     <!--
     This invokes an authentication flow to attempt a login. Anything but proceed
-    is an error, otherwise control passes to the wrap-up actions.
+    is an error, otherwise control passes to the wrap-up actions, except for a
+    ReselectFlow signal to loop back up and try another.
     -->
     <subflow-state id="CallAuthenticationFlow" subflow="#{currentEvent.id}">
         <transition on="ReselectFlow" to="SelectAuthenticationFlow" />

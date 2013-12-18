@@ -7,28 +7,41 @@
                            http://www.springframework.org/schema/webflow-config classpath:/org/springframework/webflow/config/spring-webflow-config-2.3.xsd">
     
     <context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
-    
+
     <!-- Define custom flows, or override system flows, inside here. -->
-    <webflow:flow-registry id="flowRegistry" parent="systemFlowRegistry" base-path="file://${idp.home}/flows" flow-builder-services="flowBuilderServices">
+    <webflow:flow-registry id="userFlowRegistry" base-path="file://${idp.home}/flows" flow-builder-services="flowBuilderServices">
+    
+        <!-- Directs event handling during the login process to custom flows like those below. -->
+        <webflow:flow-location id="Authentication.Conditions" path="/authn/authn-conditions-flow.xml" />
+
+        <!-- Login error/warning subflows that can be customized. -->
+        <webflow:flow-location id="Authentication.ExpiringPassword" path="/authn/expiring-password-flow.xml" />
+        <webflow:flow-location id="Authentication.ExpiredPassword" path="/authn/expired-password-flow.xml" />
+        <webflow:flow-location id="Authentication.AccountLocked" path="/authn/account-locked-flow.xml" />
     </webflow:flow-registry>
 
     <!-- System-supplied flows, do not modify. -->
-    <webflow:flow-registry id="systemflowRegistry" base-path="file://${idp.home}/system/flows" flow-builder-services="flowBuilderServices">
+    <webflow:flow-registry id="flowRegistry" parent="userFlowRegistry" base-path="file://${idp.home}/system/flows" flow-builder-services="flowBuilderServices">
 
+        <!-- Use dot-separated convention for abstract flows. -->
+        <webflow:flow-location id="SAML2.SSO.Abstract" path="/saml2/sso-abstract-flow.xml" />
+        
+        <!-- Use slash-separated convention for web-executable flows. -->
+        <webflow:flow-location id="SAML2/Redirect/SSO" path="/saml2/sso-redirect-flow.xml" />
+        <webflow:flow-location id="SAML2/POST/SSO" path="/saml2/sso-post-flow.xml"  />
+        <webflow:flow-location id="SAML2/Unsolicited/SSO" path="/saml2/sso-unsolicited-flow.xml"  />
+    
         <webflow:flow-location id="Authentication.Abstract" path="/authn/authn-abstract-flow.xml" />
         <webflow:flow-location id="Authentication.Subflow.Abstract" path="/authn/authn-subflow-abstract-flow.xml" />
-        <webflow:flow-location id="Authentication" path="/authn/authn-flow.xml" />
 
-        <!-- Login error subflows. -->
-        <webflow:flow-location id="Authentication.ExpiredPassword" path="/authn/placeholder-flow.xml" />
-        <webflow:flow-location id="Authentication.AccountLocked" path="/authn/placeholder-flow.xml" />
+        <webflow:flow-location id="Authentication" path="/authn/authn-flow.xml" />
         
         <!-- Login methods. -->
         <webflow:flow-location id="AuthenticationFlow/IPAddress" path="/authn/ipaddress-authn-flow.xml" />
         <webflow:flow-location id="AuthenticationFlow/RemoteUser" path="/authn/remoteuser-authn-flow.xml" />
         <webflow:flow-location id="AuthenticationFlow/JAAS" path="/authn/jaas-authn-flow.xml" />
         <webflow:flow-location id="AuthenticationFlow/LDAP" path="/authn/ldap-authn-flow.xml" />
-        
+                
         <!-- C14N methods. -->
         <webflow:flow-location id="SubjectC14N/Simple" path="/authn/simple-subject-c14n-flow.xml" />
                 
