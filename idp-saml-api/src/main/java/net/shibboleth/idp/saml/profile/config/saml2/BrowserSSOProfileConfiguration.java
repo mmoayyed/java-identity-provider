@@ -33,6 +33,9 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
     /** Whether responses to the authentication request should include an attribute statement. Default value: true */
     private boolean includeAttributeStatement;
 
+    /** Whether the response endpoint should be validated if the request is signed. */
+    private boolean skipEndpointValidationWhenSigned;
+    
     /**
      * The maximum amount of time, in milliseconds, the service provider should maintain a session for the user. A value
      * of 0 or less indicates no cap is put on the SP's session lifetime. Default value: 0
@@ -56,6 +59,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
         super(profileId);
         
         includeAttributeStatement = true;
+        skipEndpointValidationWhenSigned = false;
         maximumSPSessionLifetime = 0;
         allowingDelegation = false;
     }
@@ -78,6 +82,24 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
         includeAttributeStatement = include;
     }
 
+    /**
+     * Get whether the response endpoint should be validated if the request is signed.
+     * 
+     * @return whether the response endpoint should be validated if the request is signed
+     */
+    public boolean skipEndpointValidationWhenSigned() {
+        return skipEndpointValidationWhenSigned;
+    }
+
+    /**
+     * Set whether the response endpoint should be validated if the request is signed.
+     * 
+     * @param skip whether the response endpoint should be validated if the request is signed
+     */
+    public void setSkipEndpointValidationWhenSigned(final boolean skip) {
+        skipEndpointValidationWhenSigned = skip;
+    }
+    
     /**
      * Get the maximum amount of time, in milliseconds, the service provider should maintain a session for the user
      * based on the authentication assertion. A value of 0 is interpreted as an unlimited lifetime.

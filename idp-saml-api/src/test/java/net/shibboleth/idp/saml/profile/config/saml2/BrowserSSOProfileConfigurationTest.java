@@ -41,6 +41,15 @@ public class BrowserSSOProfileConfigurationTest {
     }
 
     @Test
+    public void testSkipEndpointValidationWhenSigned() {
+        BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
+        Assert.assertFalse(config.skipEndpointValidationWhenSigned());
+
+        config.setSkipEndpointValidationWhenSigned(true);
+        Assert.assertTrue(config.skipEndpointValidationWhenSigned());
+    }
+    
+    @Test
     public void testMaximumSpSessionLifeTime() {
         BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
         Assert.assertEquals(config.getMaximumSPSessionLifetime(), 0);

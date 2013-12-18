@@ -141,7 +141,7 @@ public abstract class AbstractSAMLProfileConfiguration
     }
     
     /** {@inheritDoc} */
-    public boolean isIncludeConditionsNotBefore() {
+    public boolean includeConditionsNotBefore() {
         return includeConditionsNotBefore;
     }
     

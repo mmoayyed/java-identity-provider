@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
-/** Configurations support for SAML 2 ECP. */
+/** Configuration support for SAML 2 ECP. */
 public class ECPProfileConfiguration extends BrowserSSOProfileConfiguration {
 
     /** ID for this profile configuration. */
@@ -40,4 +40,5 @@ public class ECPProfileConfiguration extends BrowserSSOProfileConfiguration {
     protected ECPProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
     }
+    
 }

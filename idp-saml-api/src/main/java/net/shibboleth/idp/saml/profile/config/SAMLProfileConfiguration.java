@@ -75,7 +75,7 @@ public interface SAMLProfileConfiguration extends ProfileConfiguration {
      * 
      * @return  whether to include a NotBefore attribute in the Conditions of generated assertions
      */
-    public boolean isIncludeConditionsNotBefore();
+    public boolean includeConditionsNotBefore();
     
     /**
      * Get the associated {@link SAMLArtifactConfiguration} for the profile, if any.
