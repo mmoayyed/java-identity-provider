@@ -17,8 +17,12 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
-import net.shibboleth.idp.saml.impl.profile.BaseIdpInitiatedSsoRequestMessageDecoder;
-import net.shibboleth.idp.saml.impl.profile.IdpInitatedSsoRequest;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import net.shibboleth.idp.saml.impl.profile.BaseIdPInitiatedSSORequestMessageDecoder;
+import net.shibboleth.idp.saml.impl.profile.IdPInitatedSSORequest;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
@@ -31,36 +35,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** Decodes an incoming Shibboleth Authentication Request message. */
-public class IdpInitiatedSsoRequestMessageDecoder extends 
-        BaseIdpInitiatedSsoRequestMessageDecoder<IdpInitatedSsoRequest> {
+public class IdPInitiatedSSORequestMessageDecoder extends 
+        BaseIdPInitiatedSSORequestMessageDecoder<IdPInitatedSSORequest> {
+    
+    /** Protocol binding implemented by this decoder. */
+    @Nonnull @NotEmpty private static final String BINDING_URI = "urn:mace:shibboleth:1.0:profiles:AuthnRequest";
     
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(IdpInitiatedSsoRequestMessageDecoder.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(IdPInitiatedSSORequestMessageDecoder.class);
     
     /**
-     * Gets the SAML binding URI supported by this decoder.
+     * Get the SAML binding URI supported by this decoder.
      * 
      * @return SAML binding URI supported by this decoder
      */
-    public String getBindingURI() {
-        return "urn:mace:shibboleth:1.0:profiles:AuthnRequest";
+    @Nonnull @NotEmpty public String getBindingURI() {
+        return BINDING_URI;
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doDecode() throws MessageDecodingException {
-        IdpInitatedSsoRequest ssoRequest = buildIdpInitiatedSsoRequest();
+        IdPInitatedSSORequest ssoRequest = buildIdPInitiatedSSORequest();
 
-        MessageContext<IdpInitatedSsoRequest> messageContext = new MessageContext<IdpInitatedSsoRequest>();
+        MessageContext<IdPInitatedSSORequest> messageContext = new MessageContext<>();
         messageContext.setMessage(ssoRequest);
         
         messageContext.getSubcontext(SamlPeerEntityContext.class, true).setEntityId(ssoRequest.getEntityId());
         
         SamlMessageInfoContext msgInfoContext = messageContext.getSubcontext(SamlMessageInfoContext.class, true);
-        if (ssoRequest.getTime() > 0) {
-            msgInfoContext.setMessageIssueInstant(new DateTime(ssoRequest.getTime(), ISOChronology.getInstanceUTC()));
-        } else {
-            msgInfoContext.setMessageIssueInstant(new DateTime(ISOChronology.getInstanceUTC()));
-        }
+        msgInfoContext.setMessageIssueInstant(new DateTime(ssoRequest.getTime(), ISOChronology.getInstanceUTC()));
         msgInfoContext.setMessageId(getMessageID());
         
         populateBindingContext(messageContext);
@@ -73,20 +77,21 @@ public class IdpInitiatedSsoRequestMessageDecoder extends
      * 
      * @param messageContext the current message context
      */
-    protected void populateBindingContext(MessageContext<IdpInitatedSsoRequest> messageContext) {
-        String relayState = messageContext.getMessage().getRelayState();
-        log.debug("Decoded SAML relay state of: {}", relayState);
+    protected void populateBindingContext(@Nonnull final MessageContext<IdPInitatedSSORequest> messageContext) {
+        final String relayState = messageContext.getMessage().getRelayState();
+        log.debug("Decoded SAML relay state: {}", relayState);
         
         SamlBindingContext bindingContext = messageContext.getSubcontext(SamlBindingContext.class, true);
         bindingContext.setRelayState(relayState);
-
         bindingContext.setBindingUri(getBindingURI());
         bindingContext.setHasBindingSignature(false);
         bindingContext.setIntendedDestinationEndpointUriRequired(false);
     }
 
     /** {@inheritDoc} */
-    protected String getMessageToLog() {
+    @Override
+    @Nullable protected String getMessageToLog() {
         return "SAML 1 IdP-initiated request was: " + getMessageContext().getMessage().toString();
     }
+    
 }

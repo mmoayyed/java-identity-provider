@@ -17,8 +17,8 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
-import net.shibboleth.idp.saml.impl.profile.BaseIdpInitiatedSsoRequestMessageDecoder;
-import net.shibboleth.idp.saml.impl.profile.IdpInitatedSsoRequest;
+import net.shibboleth.idp.saml.impl.profile.BaseIdPInitiatedSSORequestMessageDecoder;
+import net.shibboleth.idp.saml.impl.profile.IdPInitatedSSORequest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.joda.time.DateTime;
@@ -34,11 +34,11 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
- * Test the {@link IdpInitiatedSsoRequestMessageDecoder}.
+ * Test the {@link IdPInitiatedSSORequestMessageDecoder}.
  */
-public class IdpInitiatedSsoRequestMessageDecoderTest {
+public class IdPInitiatedSSORequestMessageDecoderTest {
     
-    private IdpInitiatedSsoRequestMessageDecoder decoder;
+    private IdPInitiatedSSORequestMessageDecoder decoder;
     
     private MockHttpServletRequest request;
     
@@ -65,27 +65,27 @@ public class IdpInitiatedSsoRequestMessageDecoderTest {
         request = new MockHttpServletRequest();
         request.setRequestedSessionId(sessionID);
         
-        decoder = new IdpInitiatedSsoRequestMessageDecoder();
+        decoder = new IdPInitiatedSSORequestMessageDecoder();
         decoder.setHttpServletRequest(request);
         decoder.initialize();
     }
     
     @Test
-    public void testOldStyleParams() throws MessageDecodingException {
-        request.addParameter(BaseIdpInitiatedSsoRequestMessageDecoder.PROVIDER_ID_PARAM,  entityId);
-        request.addParameter(BaseIdpInitiatedSsoRequestMessageDecoder.SHIRE_PARAM,  acsUrl);
-        request.addParameter(BaseIdpInitiatedSsoRequestMessageDecoder.TARGET_PARAM,  relayState);
-        request.addParameter(BaseIdpInitiatedSsoRequestMessageDecoder.TIME_PARAM,  time.toString());
+    public void testDecoder() throws MessageDecodingException {
+        request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.PROVIDER_ID_PARAM,  entityId);
+        request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.SHIRE_PARAM,  acsUrl);
+        request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.TARGET_PARAM,  relayState);
+        request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.TIME_PARAM,  time.toString());
         
         decoder.decode();
         
-        MessageContext<IdpInitatedSsoRequest> messageContext = decoder.getMessageContext();
+        MessageContext<IdPInitatedSSORequest> messageContext = decoder.getMessageContext();
         Assert.assertNotNull(messageContext);
-        IdpInitatedSsoRequest ssoRequest = messageContext.getMessage();
+        IdPInitatedSSORequest ssoRequest = messageContext.getMessage();
         Assert.assertNotNull(ssoRequest);
         
         Assert.assertEquals(ssoRequest.getEntityId(), entityId, "Incorrect decoded entityId value");
-        Assert.assertEquals(ssoRequest.getAcsUrl(), acsUrl, "Incorrect decoded ACS URL value");
+        Assert.assertEquals(ssoRequest.getAssertionConsumerServiceURL(), acsUrl, "Incorrect decoded ACS URL value");
         Assert.assertEquals(ssoRequest.getRelayState(), relayState, "Incorrect decoded relay state value");
         Assert.assertEquals(Long.valueOf(ssoRequest.getTime()/1000), time, "Incorrect decoded time value");
         
@@ -101,40 +101,6 @@ public class IdpInitiatedSsoRequestMessageDecoderTest {
         Assert.assertEquals(msgInfoContext.getMessageIssueInstant(), new DateTime(time*1000, ISOChronology.getInstanceUTC()),
                 "Incorrect decoded issue instant value in message info context");
         Assert.assertEquals(msgInfoContext.getMessageId(), messageID, "Incorrect decoded message ID value in message info context");
-    }
-    
-    @Test
-    public void testNewStyleParams() throws MessageDecodingException {
-        request.addParameter(BaseIdpInitiatedSsoRequestMessageDecoder.ENTITY_ID_PARAM,  entityId);
-        request.addParameter(BaseIdpInitiatedSsoRequestMessageDecoder.ACS_URL_PARAM,  acsUrl);
-        request.addParameter(BaseIdpInitiatedSsoRequestMessageDecoder.RELAY_STATE_PARAM,  relayState);
-        request.addParameter(BaseIdpInitiatedSsoRequestMessageDecoder.TIME_PARAM,  time.toString());
-        
-        decoder.decode();
-        
-        MessageContext<IdpInitatedSsoRequest> messageContext = decoder.getMessageContext();
-        Assert.assertNotNull(messageContext);
-        IdpInitatedSsoRequest ssoRequest = messageContext.getMessage();
-        Assert.assertNotNull(ssoRequest);
-        
-        Assert.assertEquals(ssoRequest.getEntityId(), entityId, "Incorrect decoded entityId value");
-        Assert.assertEquals(ssoRequest.getAcsUrl(), acsUrl, "Incorrect decoded ACS URL value");
-        Assert.assertEquals(ssoRequest.getRelayState(), relayState, "Incorrect decoded relay state value");
-        Assert.assertEquals(Long.valueOf(ssoRequest.getTime()/1000), time, "Incorrect decoded time value");
-        
-        Assert.assertEquals(messageContext.getSubcontext(SamlPeerEntityContext.class, true).getEntityId(), entityId,
-                "Incorrect decoded entityId value in peer context");
-        
-        SamlBindingContext bindingContext = messageContext.getSubcontext(SamlBindingContext.class, true);
-        Assert.assertEquals(bindingContext.getRelayState(), relayState, "Incorrect decoded relay state value in binding context");
-        Assert.assertEquals(bindingContext.getBindingUri(), "urn:mace:shibboleth:1.0:profiles:AuthnRequest",
-                "Incorrect binding URI in binding context");
-        
-        SamlMessageInfoContext msgInfoContext = messageContext.getSubcontext(SamlMessageInfoContext.class, true);
-        Assert.assertEquals(msgInfoContext.getMessageIssueInstant(), new DateTime(time*1000, ISOChronology.getInstanceUTC()),
-                "Incorrect decoded issue instant value in message info context");
-        Assert.assertEquals(msgInfoContext.getMessageId(), messageID, "Incorrect decoded message ID value in message info context");
-        
     }
 
 }

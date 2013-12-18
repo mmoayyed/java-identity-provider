@@ -17,8 +17,15 @@
 
 package net.shibboleth.idp.saml.impl.profile;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import org.joda.time.DateTime;
+import org.joda.time.chrono.ISOChronology;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -34,110 +41,106 @@ import com.google.common.base.Objects;
  * authentication request should be used by SAML 2 service providers wishing to initiate authentication.
  */
 @ThreadSafe
-public class IdpInitatedSsoRequest {
+public class IdPInitatedSSORequest {
     
-    /** The entity ID of the requesting service provider. */
-    private final String entityId;
+    /** The entityID of the requesting service provider. */
+    @Nonnull @NotEmpty private final String entityId;
 
     /**
      * The assertion consumer service endpoint, at the service provider, to which to deliver the authentication
      * response.
      */
-    private final String acsUrl;
+    @Nullable private final String acsURL;
     
     /** An opaque value to be returned to the service provider with the authentication response. */
-    private final String relayState;
+    @Nullable private final String relayState;
 
     /** The current time, at the service provider, in milliseconds since the epoch. */
-    private final long time;
+    @Positive private final long time;
 
     /**
      * Constructor.
      * 
-     * @param newEntityId entity ID of the requesting service provider, never null or empty
-     * @param newAcsUrl assertion consumer service endpoint, at the service provider, to which to deliver the
-     *            authentication response, may be null or empty
-     * @param newTarget opaque value to be returned to the service provider with the authentication response, maybe
-     *            null or empty
-     * @param newTime Current time, at the service provider, in milliseconds since the epoch. Must be 0 or greater.
-     *            0 indicates not time was given by the service provider.
+     * <p>If no message time is supplied, then the current time at the IdP is used.</p>
+     * 
+     * @param newEntityId entity ID of the requesting SP
+     * @param url assertion consumer service endpoint at the SP to which to deliver the response
+     * @param target opaque value to be returned to the SP with the response
+     * @param newTime current time at the SP, in milliseconds since the epoch, must be greater than zero
      */
-    public IdpInitatedSsoRequest(String newEntityId, String newAcsUrl, String newTarget, long newTime) {
-        entityId =
-                Constraint.isNotNull(StringSupport.trimOrNull(newEntityId),
-                        "Service provider ID can not be null or empty");
+    public IdPInitatedSSORequest(@Nonnull @NotEmpty final String newEntityId, @Nullable final String url,
+            @Nullable final String target, @Nullable @Positive final Long newTime) {
+        
+        entityId = Constraint.isNotNull(StringSupport.trimOrNull(newEntityId),
+                "Service provider ID cannot be null or empty");
 
-        acsUrl = StringSupport.trimOrNull(newAcsUrl);
-
-        relayState = StringSupport.trimOrNull(newTarget);
-
-        time = Constraint.isGreaterThanOrEqual(0, newTime, "Time must be greater than or equal to 0");
+        acsURL = StringSupport.trimOrNull(url);
+        relayState = StringSupport.trimOrNull(target);
+        
+        if (newTime != null) {
+            time = Constraint.isGreaterThan(0, newTime, "Time must be greater than 0");
+        } else {
+            time = System.currentTimeMillis();
+        }
     }
 
     /**
-     * Gets the entity ID of the requesting relying party.
+     * Get the entityID of the requesting relying party.
      * 
-     * @return entity ID of the requesting relying party, never null or empty
+     * @return entityID of the requesting relying party
      */
-    public String getEntityId() {
+    @Nonnull @NotEmpty public String getEntityId() {
         return entityId;
     }
 
     /**
-     * Gets the assertion consumer service endpoint, at the service provider, to which to deliver the authentication
-     * response.
+     * Get the assertion consumer service endpoint at the SP to which to deliver the response.
      * 
-     * @return assertion consumer service endpoint, at the service provider, to which to deliver the authentication
-     *         response, may be null, never empty
+     * @return assertion consumer service endpoint at the SP to which to deliver the response
      */
-    public String getAcsUrl() {
-        return acsUrl;
+    @Nullable public String getAssertionConsumerServiceURL() {
+        return acsURL;
     }
 
     /**
-     * Gets the opaque value to be returned to the service provider with the authentication response.
+     * Get the opaque value to be returned to the SP with the response.
      * 
-     * @return opaque value to be returned to the service provider with the authentication response, may be null,
-     *         never empty
+     * @return opaque value to be returned to the SP with the response
      */
-    public String getRelayState() {
+    @Nullable public String getRelayState() {
         return relayState;
     }
 
     /**
-     * Gets the current time, at the service provider, in milliseconds since the epoch.
+     * Get the current time at the SP, in milliseconds since the epoch.
      * 
-     * @return current time in milliseconds since the epoch or 0 if no time was given by the service provider
+     * @return current time at the SP, in milliseconds since the epoch 
      */
     public long getTime() {
         return time;
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(IdpInitatedSsoRequest.class.getName());
-        builder.append(" [entityId=");
-        builder.append(entityId);
-        builder.append(", acsUrl=");
-        builder.append(acsUrl);
-        builder.append(", relayState=");
-        builder.append(relayState);
-        builder.append(", time=");
-        builder.append(time);
-        builder.append("]");
-        return builder.toString();
+        return Objects.toStringHelper(this)
+            .add("entityId", entityId)
+            .add("acsURL", acsURL)
+            .add("relayState", relayState)
+            .add("time", new DateTime(time, ISOChronology.getInstanceUTC()))
+            .toString();
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
 
         result = prime * result + entityId.hashCode();
 
-        if (acsUrl != null) {
-            result = prime * result + acsUrl.hashCode();
+        if (acsURL != null) {
+            result = prime * result + acsURL.hashCode();
         } else {
             result = prime * result + 0;
         }
@@ -154,6 +157,7 @@ public class IdpInitatedSsoRequest {
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -163,12 +167,13 @@ public class IdpInitatedSsoRequest {
             return false;
         }
 
-        if (!(obj instanceof IdpInitatedSsoRequest)) {
+        if (!(obj instanceof IdPInitatedSSORequest)) {
             return false;
         }
 
-        IdpInitatedSsoRequest other = (IdpInitatedSsoRequest) obj;
-        return Objects.equal(entityId, other.entityId) && Objects.equal(acsUrl, other.acsUrl)
+        IdPInitatedSSORequest other = (IdPInitatedSSORequest) obj;
+        return Objects.equal(entityId, other.entityId) && Objects.equal(acsURL, other.acsURL)
                 && Objects.equal(relayState, other.relayState) && time == other.time;
     }
+    
 }

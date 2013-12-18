@@ -18,7 +18,7 @@
 package net.shibboleth.idp.saml.impl.saml1;
 
 
-import net.shibboleth.idp.saml.impl.profile.BaseIdpInitiatedSsoRequestMessageDecoder;
+import net.shibboleth.idp.saml.impl.profile.BaseIdPInitiatedSSORequestMessageDecoder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +52,7 @@ public class ExampleFlowTest extends AbstractXmlFlowExecutionTests {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         context.setNativeRequest(mockRequest);
 
-        mockRequest.setParameter(BaseIdpInitiatedSsoRequestMessageDecoder.ENTITY_ID_PARAM, "entityId");
+        mockRequest.setParameter(BaseIdPInitiatedSSORequestMessageDecoder.PROVIDER_ID_PARAM, "entityId");
 
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         context.setNativeResponse(mockResponse);      

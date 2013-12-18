@@ -17,9 +17,12 @@
 
 package net.shibboleth.idp.saml.impl.profile;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.servlet.http.HttpServletRequest;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.Type4UuidIdentifierGenerationStrategy;
@@ -35,53 +38,36 @@ import org.slf4j.LoggerFactory;
  * @param <RequestType> type of decoded message
  */
 @NotThreadSafe
-public abstract class BaseIdpInitiatedSsoRequestMessageDecoder<RequestType> extends
+public abstract class BaseIdPInitiatedSSORequestMessageDecoder<RequestType> extends
         AbstractHttpServletRequestMessageDecoder<RequestType> {
-    
-    /**
-     * Deprecated name of the query parameter carrying the service provider entity ID: {@value} . Use of
-     * {@link #ENTITY_ID_PARAM} is preferred.
-     */
-    public static final String PROVIDER_ID_PARAM = "providerId";
 
     /** Name of the query parameter carrying the service provider entity ID: {@value} . */
-    public static final String ENTITY_ID_PARAM = "entityId";
-
-    /**
-     * Deprecated name of the query parameter carrying the service provider's assertion consumer service URL: {@value} .
-     * Use of {@link #ACS_URL_PARAM} is preferred.
-     */
-    public static final String SHIRE_PARAM = "shire";
+    @Nonnull @NotEmpty public static final String PROVIDER_ID_PARAM = "providerId";
 
     /** Name of the query parameter carrying the service provider's assertion consumer service URL: {@value} . */
-    public static final String ACS_URL_PARAM = "acs";
+    @Nonnull @NotEmpty public static final String SHIRE_PARAM = "shire";
 
-    /** Deprecated name of the query parameter carrying the service provider's target information: {@value} . */
-    public static final String TARGET_PARAM = "target";
+    /** Name of the query parameter carrying the service provider's target/RelayState information: {@value} . */
+    @Nonnull @NotEmpty public static final String TARGET_PARAM = "target";
 
-    /** Name of the query parameter carrying the service provider's relay state information: {@value} . */
-    public static final String RELAY_STATE_PARAM = "relayState";
-
-    /** Name of the query parameter carrying the current time at the service provider: {@value. } */
-    public static final String TIME_PARAM = "time";
+    /** Name of the query parameter carrying the current time at the service provider: {@value} . */
+    @Nonnull @NotEmpty public static final String TIME_PARAM = "time";
     
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(BaseIdpInitiatedSsoRequestMessageDecoder.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(BaseIdPInitiatedSSORequestMessageDecoder.class);
     
     /** Used to log protocol messages. */
-    private final Logger protocolMessageLog = LoggerFactory.getLogger("PROTOCOL_MESSAGE");
+    @Nonnull private final Logger protocolMessageLog = LoggerFactory.getLogger("PROTOCOL_MESSAGE");
     
     /** ID generator. */
-    private final IdentifierGenerationStrategy idGenerator = new Type4UuidIdentifierGenerationStrategy();
+    @Nonnull private final IdentifierGenerationStrategy idGenerator = new Type4UuidIdentifierGenerationStrategy();
     
     /** {@inheritDoc} */
-    public void decode() throws MessageDecodingException {
+    @Override
+    public void decode() throws MessageDecodingException {        
         log.debug("Beginning to decode message from HttpServletRequest");
-        
         super.decode();
-        
         logDecodedMessage();
-
         log.debug("Successfully decoded message from HttpServletRequest.");
     }
     
@@ -91,10 +77,11 @@ public abstract class BaseIdpInitiatedSsoRequestMessageDecoder<RequestType> exte
      * @return the new SSO request structure
      * @throws MessageDecodingException if the request doesn't contain an entityID
      */
-    protected IdpInitatedSsoRequest buildIdpInitiatedSsoRequest() throws MessageDecodingException {
+    @Nonnull protected IdPInitatedSSORequest buildIdPInitiatedSSORequest() throws MessageDecodingException {
         final HttpServletRequest request = getHttpServletRequest();
-        return new IdpInitatedSsoRequest(getEntityId(request), getAcsUrl(request),
-                        getTarget(request), getTime(request)); 
+        
+        return new IdPInitatedSSORequest(getEntityId(request), getAcsUrl(request), getTarget(request),
+                getTime(request));
     }
 
     /**
@@ -106,15 +93,13 @@ public abstract class BaseIdpInitiatedSsoRequestMessageDecoder<RequestType> exte
      * 
      * @throws MessageDecodingException thrown if the request does not contain a service provider entity ID
      */
-    protected String getEntityId(HttpServletRequest request) throws MessageDecodingException {
-        String entityId = StringSupport.trimOrNull(request.getParameter(ENTITY_ID_PARAM));
-        if (entityId == null) {
-            entityId = StringSupport.trimOrNull(request.getParameter(PROVIDER_ID_PARAM));
-        }
+    @Nonnull @NotEmpty protected String getEntityId(@Nonnull final HttpServletRequest request)
+            throws MessageDecodingException {
+        String entityId = StringSupport.trimOrNull(request.getParameter(PROVIDER_ID_PARAM));
 
         if (entityId == null) {
-            throw new MessageDecodingException("Shibboleth Authentication Request message did not contain either the "
-                    + ENTITY_ID_PARAM + " (preferred) or " + PROVIDER_ID_PARAM + " query parameter.");
+            throw new MessageDecodingException("Shibboleth Authentication Request message did not contain the "
+                    + PROVIDER_ID_PARAM + " query parameter.");
         }
         return entityId;
     }
@@ -126,13 +111,8 @@ public abstract class BaseIdpInitiatedSsoRequestMessageDecoder<RequestType> exte
      * 
      * @return the assertion consumer service URL, may be null if none is given in the request
      */
-    protected String getAcsUrl(HttpServletRequest request) {
-        String acsUrl = StringSupport.trimOrNull(request.getParameter(ACS_URL_PARAM));
-        if (acsUrl == null) {
-            acsUrl = StringSupport.trimOrNull(request.getParameter(SHIRE_PARAM));
-        }
-
-        return acsUrl;
+    @Nullable protected String getAcsUrl(@Nonnull final HttpServletRequest request) {
+        return StringSupport.trimOrNull(request.getParameter(SHIRE_PARAM));
     }
 
     /**
@@ -142,29 +122,23 @@ public abstract class BaseIdpInitiatedSsoRequestMessageDecoder<RequestType> exte
      * 
      * @return the relay state, or null if the service provider did not send one
      */
-    protected String getTarget(HttpServletRequest request) {
-        String relayState = StringSupport.trimOrNull(request.getParameter(RELAY_STATE_PARAM));
-        if (relayState == null) {
-            relayState = StringSupport.trimOrNull(request.getParameter(TARGET_PARAM));
-        }
-
-        return relayState;
+    @Nullable protected String getTarget(@Nonnull final HttpServletRequest request) {
+        return StringSupport.trimOrNull(request.getParameter(TARGET_PARAM));
     }
 
     /**
-     * Gets the current time, in milliseconds since the epoch, at the service provider, if the service provider sent it.
+     * Gets the current time, in milliseconds since the epoch, at the SP, if set.
      * 
      * @param request current HTTP request
      * 
-     * @return the time sent by the service provider or 0 if not time was provided
-     * 
+     * @return the time sent by the service provider, or null
      * @throws MessageDecodingException thrown if the time parameter given by the service provider is non-numeric or a
      *             negative time
      */
-    protected long getTime(HttpServletRequest request) throws MessageDecodingException {
+    @Nullable protected Long getTime(@Nonnull final HttpServletRequest request) throws MessageDecodingException {
         String timeString = StringSupport.trimOrNull(request.getParameter(TIME_PARAM));
         if (timeString == null) {
-            return 0;
+            return null;
         }
 
         try {
@@ -183,7 +157,7 @@ public abstract class BaseIdpInitiatedSsoRequestMessageDecoder<RequestType> exte
      */
     protected void logDecodedMessage() {
         if (protocolMessageLog.isDebugEnabled() ){
-            String message = getMessageToLog();
+            final String message = getMessageToLog();
             if (message == null) {
                 log.warn("Decoded message was null, nothing to log");
                 return;
@@ -198,7 +172,7 @@ public abstract class BaseIdpInitiatedSsoRequestMessageDecoder<RequestType> exte
      * 
      * @return the message ID to use
      */
-    protected String getMessageID() {
+    @Nonnull protected String getMessageID() {
         HttpServletRequest request = getHttpServletRequest();
         String timeString = StringSupport.trimOrNull(request.getParameter(TIME_PARAM));
         
@@ -221,6 +195,6 @@ public abstract class BaseIdpInitiatedSsoRequestMessageDecoder<RequestType> exte
      * 
      * @return the string representing the protocol message for logging purposes
      */
-    protected abstract String getMessageToLog();
+    @Nullable protected abstract String getMessageToLog();
     
 }

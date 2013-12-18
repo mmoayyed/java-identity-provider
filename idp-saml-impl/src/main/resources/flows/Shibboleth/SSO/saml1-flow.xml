@@ -20,11 +20,11 @@
 
     <action-state id="CheckMandatoryIssuer">
         <evaluate expression="CheckMandatoryIssuer" />
-        <transition on="proceed" to="InitializeRelyingPartyContextBasedOnInboundMessageIssuer" />
+        <transition on="proceed" to="InitializeRelyingPartyContext" />
     </action-state>
 
-    <action-state id="InitializeRelyingPartyContextBasedOnInboundMessageIssuer">
-        <evaluate expression="InitializeRelyingPartyContextBasedOnInboundMessageIssuer" />
+    <action-state id="InitializeRelyingPartyContext">
+        <evaluate expression="InitializeRelyingPartyContext" />
         <transition on="proceed" to="CheckMessageLifetime" />
     </action-state>
 

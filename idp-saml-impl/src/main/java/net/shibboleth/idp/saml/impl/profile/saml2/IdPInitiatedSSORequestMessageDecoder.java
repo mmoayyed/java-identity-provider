@@ -17,12 +17,17 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml2;
 
-import net.shibboleth.idp.saml.impl.profile.BaseIdpInitiatedSsoRequestMessageDecoder;
-import net.shibboleth.idp.saml.impl.profile.IdpInitatedSsoRequest;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import net.shibboleth.idp.saml.impl.profile.BaseIdPInitiatedSSORequestMessageDecoder;
+import net.shibboleth.idp.saml.impl.profile.IdPInitatedSSORequest;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
+import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.util.XMLObjectSupport;
@@ -41,47 +46,58 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 /** Decodes an incoming Shibboleth Authentication Request message. */
-public class IdpInitiatedSsoRequestMessageDecoder extends BaseIdpInitiatedSsoRequestMessageDecoder<SAMLObject> 
+public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSORequestMessageDecoder<SAMLObject> 
     implements SAMLMessageDecoder {
+
+    /** Protocol binding implemented by this decoder. */
+    @Nonnull @NotEmpty private static final String BINDING_URI = "urn:mace:shibboleth:2.0:profiles:AuthnRequest";
     
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(IdpInitiatedSsoRequestMessageDecoder.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(IdPInitiatedSSORequestMessageDecoder.class);
 
     /** Builder of SAML 2 {@link AuthnRequest} objects. */
-    private final SAMLObjectBuilder<AuthnRequest> requestBuilder =
-            (SAMLObjectBuilder<AuthnRequest>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
-                    AuthnRequest.DEFAULT_ELEMENT_NAME);
+    private final SAMLObjectBuilder<AuthnRequest> requestBuilder;
 
     /** Builder of SAML 2 {@link Issuer} objects. */
-    private final SAMLObjectBuilder<Issuer> issuerBuilder =
-            (SAMLObjectBuilder<Issuer>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
-                    Issuer.DEFAULT_ELEMENT_NAME);
+    private final SAMLObjectBuilder<Issuer> issuerBuilder;
     
     /** Builder of SAML 2 {@link NameIDPolicy} objects. */
-    private final SAMLObjectBuilder<NameIDPolicy> nipBuilder = 
-            (SAMLObjectBuilder<NameIDPolicy>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
-                    NameIDPolicy.DEFAULT_ELEMENT_NAME);
+    private final SAMLObjectBuilder<NameIDPolicy> nipBuilder;
     
     /** The IdP-initiated request structure parsed from the inbound request. */
-    private IdpInitatedSsoRequest ssoRequest;
+    @Nullable private IdPInitatedSSORequest ssoRequest;
 
+    /** Constructor. */
+    public IdPInitiatedSSORequestMessageDecoder() {
+        final XMLObjectBuilderFactory factory = XMLObjectProviderRegistrySupport.getBuilderFactory(); 
+        
+        requestBuilder = (SAMLObjectBuilder<AuthnRequest>)
+                factory.<AuthnRequest>getBuilderOrThrow(AuthnRequest.DEFAULT_ELEMENT_NAME);
+        issuerBuilder = (SAMLObjectBuilder<Issuer>)
+                factory.<Issuer>getBuilderOrThrow(Issuer.DEFAULT_ELEMENT_NAME);
+        nipBuilder = (SAMLObjectBuilder<NameIDPolicy>)
+                factory.<NameIDPolicy>getBuilderOrThrow(NameIDPolicy.DEFAULT_ELEMENT_NAME);
+    }
+    
     /** {@inheritDoc} */
-    public String getBindingURI() {
-        return "urn:mace:shibboleth:2.0:profiles:AuthnRequest";
+    @Override
+    @Nonnull @NotEmpty public String getBindingURI() {
+        return BINDING_URI;
     }
     
     /**
-     * Get the internally constructed instance of {@link IdpInitatedSsoRequest}.
+     * Get the internally constructed instance of {@link IdPInitatedSSORequest}.
      * 
      * @return the internal SSO request instance
      */
-    protected IdpInitatedSsoRequest getIdPInitiatedSsoRequest() {
+    @Nullable protected IdPInitatedSSORequest getIdPInitiatedSSORequest() {
        return ssoRequest; 
     }
     
     /** {@inheritDoc} */
+    @Override
     protected void doDecode() throws MessageDecodingException {
-        ssoRequest = buildIdpInitiatedSsoRequest();
+        ssoRequest = buildIdPInitiatedSSORequest();
         
         final MessageContext<SAMLObject> messageContext = new MessageContext<SAMLObject>();
         messageContext.setMessage(buildAuthnRequest());
@@ -98,7 +114,7 @@ public class IdpInitiatedSsoRequestMessageDecoder extends BaseIdpInitiatedSsoReq
      * 
      * @throws MessageDecodingException if the inbound request does not contain an entityID value
      */
-    protected  AuthnRequest buildAuthnRequest() throws MessageDecodingException {
+    @Nonnull protected AuthnRequest buildAuthnRequest() throws MessageDecodingException {
         final AuthnRequest authnRequest = requestBuilder.buildObject();
         
         final Issuer requestIssuer = issuerBuilder.buildObject();
@@ -112,12 +128,8 @@ public class IdpInitiatedSsoRequestMessageDecoder extends BaseIdpInitiatedSsoReq
         // TODO see UnsolicitedSSODecoder in v2. Do we need to support adding a statically configured ProtocolBinding,
         // and dynamically resolved ACS URL if not in the request? The latter we might not do in the decoder.
         
-        authnRequest.setAssertionConsumerServiceURL(ssoRequest.getAcsUrl());
-        if (ssoRequest.getTime() > 0) {
-            authnRequest.setIssueInstant(new DateTime(ssoRequest.getTime(), ISOChronology.getInstanceUTC()));
-        } else {
-            authnRequest.setIssueInstant(new DateTime(ISOChronology.getInstanceUTC()));
-        }
+        authnRequest.setAssertionConsumerServiceURL(ssoRequest.getAssertionConsumerServiceURL());
+        authnRequest.setIssueInstant(new DateTime(ssoRequest.getTime(), ISOChronology.getInstanceUTC()));
         authnRequest.setVersion(SAMLVersion.VERSION_20);
         authnRequest.setID(getMessageID());
         
@@ -129,9 +141,9 @@ public class IdpInitiatedSsoRequestMessageDecoder extends BaseIdpInitiatedSsoReq
      * 
      * @param messageContext the current message context
      */
-    protected void populateBindingContext(MessageContext<SAMLObject> messageContext) {
+    protected void populateBindingContext(@Nonnull final MessageContext<SAMLObject> messageContext) {
         String relayState = ssoRequest.getRelayState();
-        log.debug("Decoded SAML relay state of: {}", relayState);
+        log.debug("Decoded SAML RelayState of: {}", relayState);
         
         SamlBindingContext bindingContext = messageContext.getSubcontext(SamlBindingContext.class, true);
         bindingContext.setRelayState(relayState);
@@ -142,19 +154,20 @@ public class IdpInitiatedSsoRequestMessageDecoder extends BaseIdpInitiatedSsoReq
     }
 
     /** {@inheritDoc} */
-    protected String getMessageToLog() {
-        SAMLObject message = getMessageContext().getMessage();
+    @Override
+    @Nullable protected String getMessageToLog() {
+        final SAMLObject message = getMessageContext().getMessage();
         if (message == null) {
             log.warn("Decoded message was null, nothing to log");
             return null;
         }
         
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("SAML 2 IdP-initiated request was: " + ssoRequest.toString());
         builder.append("\nSynthetically constructed SAML 2 AuthnRequest was: \n");
         
         try {
-            Element dom = XMLObjectSupport.marshall(message);
+            final Element dom = XMLObjectSupport.marshall(message);
             builder.append(SerializeSupport.prettyPrintXML(dom));
             return builder.toString();
         } catch (MarshallingException e) {
