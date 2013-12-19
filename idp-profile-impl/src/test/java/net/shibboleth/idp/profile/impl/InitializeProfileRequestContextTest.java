@@ -33,10 +33,15 @@ public class InitializeProfileRequestContextTest {
         springRequestContext.setExternalContext(new RequestContextBuilder().buildServletExternalContext());
 
         InitializeProfileRequestContext action = new InitializeProfileRequestContext();
+        action.setProfileId("test");
         action.initialize();
 
         action.execute(springRequestContext);
 
-        Assert.assertNotNull(springRequestContext.getConversationScope().get(ProfileRequestContext.BINDING_KEY));
+        ProfileRequestContext prc =
+                (ProfileRequestContext) springRequestContext.getConversationScope().get(ProfileRequestContext.BINDING_KEY);
+        Assert.assertNotNull(prc);
+        Assert.assertEquals(prc.getProfileId(), "test");
     }
+    
 }

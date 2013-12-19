@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.impl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
@@ -27,6 +28,7 @@ import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -43,6 +45,20 @@ import org.springframework.webflow.execution.RequestContext;
 @ThreadSafe
 public final class InitializeProfileRequestContext extends AbstractProfileAction {
 
+    /** The profile ID to initialize the context to. */
+    @Nullable private String profileId;
+    
+    /**
+     * Set the profile ID to populate into the context.
+     * 
+     * @param id    profile ID to populate into the context
+     */
+    public void setProfileId(@Nullable final String id) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        profileId = StringSupport.trimOrNull(id);
+    }
+    
     /** {@inheritDoc} */
     @Override
     @Nonnull public Event execute(@Nonnull final RequestContext springRequestContext) throws ProfileException {
@@ -50,8 +66,13 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
         // We have to override execute() because the profile request context doesn't exist yet.
         
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        
+        ProfileRequestContext prc = new ProfileRequestContext();
+        if (profileId != null) {
+            prc.setProfileId(profileId);
+        }
 
-        springRequestContext.getConversationScope().put(ProfileRequestContext.BINDING_KEY, new ProfileRequestContext());
+        springRequestContext.getConversationScope().put(ProfileRequestContext.BINDING_KEY, prc);
 
         return ActionSupport.buildProceedEvent(this);
     }
