@@ -23,6 +23,7 @@ import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -38,7 +39,7 @@ public class TheBeanTest {
 
         beanDefinitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
         beanDefinitionReader.loadBeanDefinitions(fileName);
-        context.refresh(); // Gotta have this line or the proprty replacement won't work.
+        context.refresh(); // Gotta have this line or the property replacement won't work.
         
         Collection<TheBean> beans = context.getBeansOfType(TheBean.class).values();
         Assert.assertEquals(beans.size(), 1);
@@ -98,4 +99,22 @@ public class TheBeanTest {
         Assert.assertEquals(bean.getMessage(), "REPLACE_CUSTOM_2");
     }
     
+    @Test public void testReplaceCustomBean3() {
+        final GenericApplicationContext context = new GenericApplicationContext();
+        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+                new SchemaTypeAwareXMLBeanDefinitionReader(context);
+
+        beanDefinitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
+        beanDefinitionReader.loadBeanDefinitions(new ClassPathResource("net/shibboleth/idp/spring/naturestudy/CustomBeanReplace3.xml"),
+                new ClassPathResource("net/shibboleth/idp/spring/naturestudy/PropertyPlaceholder.xml"));
+        context.refresh(); 
+        
+        Collection<TheBean> beans = context.getBeansOfType(TheBean.class).values();
+        Assert.assertEquals(beans.size(), 1);
+
+        TheBean bean = beans.iterator().next();
+        
+        Assert.assertEquals(bean.getMessage(), "REPLACE_CUSTOM_2");
+    }
+
 }
