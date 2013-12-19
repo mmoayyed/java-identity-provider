@@ -24,7 +24,11 @@
     <bean id="LogSpringContextInfo" class="idp.LogSpringContextInfo" />
     -->
 
-    <bean id="InitializeProfileRequestContext" class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" />
+    <bean id="InitializeProfileRequestContext" class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext">
+        <property name="profileId">
+            <util:constant static-field="net.shibboleth.idp.saml.profile.config.saml2.BrowserSSOProfileConfiguration.PROFILE_ID" />
+        </property>
+    </bean>
     
     <bean id="inboundMessageHandlerChain" class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
         <property name="handlers">
@@ -154,7 +158,7 @@
     
     <bean id="AddBasicMessageMetadataContext" class="idp.AddBasicMessageMetadataContext" />
     
-    <bean id="AddProfileConfiguration" class="idp.AddProfileConfiguration" />
+    <bean id="InitializeRelyingPartyContext" class="net.shibboleth.idp.profile.impl.InitializeRelyingPartyContext" />
             
     <bean id="CheckMandatoryIssuer" class="org.opensaml.profile.action.impl.CheckMandatoryIssuer" />
     
@@ -173,7 +177,13 @@
         <constructor-arg value="ActivatedRelyingPartyConfiguration" />
         <constructor-arg value="https://idp.example.org" />
         <constructor-arg>
-            <null />
+            <util:list>
+                <bean class="net.shibboleth.idp.saml.profile.config.saml2.BrowserSSOProfileConfiguration">
+                    <property name="securityConfiguration">
+                        <bean class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
+                    </property>
+                </bean>
+            </util:list>
         </constructor-arg>
         <constructor-arg>
             <bean id="AlwaysTrueRelyingPartyPredicate" class="com.google.common.base.Predicates" factory-method="alwaysTrue" />
@@ -188,9 +198,11 @@
         </property>
     </bean>
 
-    <bean id="SelectRelyingPartyConfiguration" class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration">
+    <bean id="SelectRelyingPartyConfiguration" class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration" scope="prototype">
         <constructor-arg ref="ConditionalRelyingPartyConfigurationResolver" />
     </bean>
+
+    <bean id="SelectProfileConfiguration" class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration" scope="prototype"/>
 
     <bean id="AddAttributeStatementToAssertion" class="net.shibboleth.idp.saml.impl.profile.saml2.AddAttributeStatementToAssertion" />
     

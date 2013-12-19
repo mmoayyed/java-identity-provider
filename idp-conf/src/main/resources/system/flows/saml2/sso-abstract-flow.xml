@@ -37,19 +37,19 @@
           
     <action-state id="CheckMandatoryIssuer">
         <evaluate expression="CheckMandatoryIssuer" />
-        <transition on="proceed" to="AddProfileConfiguration" />
+        <transition on="proceed" to="SelectRelyingPartyConfiguration" />
     </action-state>
     
-    <action-state id="AddProfileConfiguration">
-        <evaluate expression="AddProfileConfiguration" />
-        <transition on="proceed" to="SelectRelyingPartyConfiguration"/>
-    </action-state>
-    
-   <action-state id="SelectRelyingPartyConfiguration">
+    <action-state id="SelectRelyingPartyConfiguration">
         <evaluate expression="SelectRelyingPartyConfiguration" />
+        <transition on="proceed" to="SelectProfileConfiguration"/>
+    </action-state>
+    
+    <action-state id="SelectProfileConfiguration">
+        <evaluate expression="SelectProfileConfiguration" />
         <transition on="proceed" to="BuildAuthenticationContext"/>
     </action-state>
-    
+        
     <action-state id="BuildAuthenticationContext">
         <evaluate expression="BuildAuthenticationContext" />
         <transition on="proceed" to="DoAuthenticationSubflow" />
