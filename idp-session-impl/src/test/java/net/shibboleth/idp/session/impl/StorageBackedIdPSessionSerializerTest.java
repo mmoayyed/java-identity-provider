@@ -25,6 +25,7 @@ import java.net.URISyntaxException;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.session.BasicSPSession;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -45,10 +46,11 @@ public class StorageBackedIdPSessionSerializerTest {
     
     private StorageBackedIdPSessionSerializer serializer;
     
-    @BeforeMethod public void setUp() {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         manager = new StorageBackedSessionManager();
         manager.setTrackSPSessions(true);
         serializer = new StorageBackedIdPSessionSerializer(manager, null);
+        serializer.initialize();
     }
 
     @Test public void testInvalid() throws Exception {

@@ -63,9 +63,11 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         action.initialize();
     }
     
-    /** {@inheritDoc} */
-    protected void adjustProperties() {
+    /** {@inheritDoc} 
+     * @throws ComponentInitializationException */
+    protected void adjustProperties() throws ComponentInitializationException {
         flowDescriptor = new AuthenticationFlowDescriptor("test1");
+        flowDescriptor.initialize();
         sessionManager.setAuthenticationFlowDescriptors(Arrays.asList(flowDescriptor));
     }
 

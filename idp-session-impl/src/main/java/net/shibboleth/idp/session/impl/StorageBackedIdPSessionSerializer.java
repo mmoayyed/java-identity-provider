@@ -38,6 +38,7 @@ import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.session.AbstractIdPSession;
 import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.storage.StorageSerializer;
@@ -51,25 +52,26 @@ import com.google.common.base.Optional;
  * {@link StorageService}-backed {@link SessionManager} implementation.
  */
 @ThreadSafe
-public class StorageBackedIdPSessionSerializer implements StorageSerializer<StorageBackedIdPSession> {
+public class StorageBackedIdPSessionSerializer extends AbstractInitializableComponent
+        implements StorageSerializer<StorageBackedIdPSession> {
 
     /** Field name of creation instant. */
-    private static final String CREATION_INSTANT_FIELD = "ts";
+    @Nonnull @NotEmpty private static final String CREATION_INSTANT_FIELD = "ts";
 
     /** Field name of principal name. */
-    private static final String PRINCIPAL_NAME_FIELD = "nam";
+    @Nonnull @NotEmpty private static final String PRINCIPAL_NAME_FIELD = "nam";
     
     /** Field name of IPv4 address. */
-    private static final String IPV4_ADDRESS_FIELD = "v4";
+    @Nonnull @NotEmpty private static final String IPV4_ADDRESS_FIELD = "v4";
 
     /** Field name of IPv6 address. */
-    private static final String IPV6_ADDRESS_FIELD = "v6";
+    @Nonnull @NotEmpty private static final String IPV6_ADDRESS_FIELD = "v6";
     
     /** Field name of flow ID array. */
-    private static final String FLOW_ID_ARRAY_FIELD = "flows";
+    @Nonnull @NotEmpty private static final String FLOW_ID_ARRAY_FIELD = "flows";
 
     /** Field name of service ID array. */
-    private static final String SERVICE_ID_ARRAY_FIELD = "svcs";
+    @Nonnull @NotEmpty private static final String SERVICE_ID_ARRAY_FIELD = "svcs";
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(StorageBackedIdPSessionSerializer.class);

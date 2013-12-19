@@ -461,6 +461,9 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
             throw new ComponentInitializationException(
                     "Tracking SPSessions requires a spSessionSerializerRegistry");
         }
+        
+        // This is our private instance, so we initialize it.
+        serializer.initialize();
     }
 
     /** {@inheritDoc} */

@@ -24,6 +24,7 @@ import java.net.URISyntaxException;
 
 import net.shibboleth.idp.session.BasicSPSession;
 import net.shibboleth.idp.session.SPSession;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -42,8 +43,9 @@ public class BasicSPSessionSerializerTest {
     
     private BasicSPSessionSerializer serializer;
     
-    @BeforeMethod public void setUp() {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         serializer = new BasicSPSessionSerializer(0);
+        serializer.initialize();
     }
 
     @Test public void testInvalid() throws Exception {

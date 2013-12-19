@@ -37,10 +37,11 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 public final class SPSessionSerializerRegistry {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(SPSessionSerializerRegistry.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(SPSessionSerializerRegistry.class);
     
     /** Storage for the registry mappings. */
-    private Map<Class<? extends SPSession>, StorageSerializer<? extends SPSession>> registry;
+    @Nonnull @NonnullElements
+    private final Map<Class<? extends SPSession>, StorageSerializer<? extends SPSession>> registry;
 
     /** Constructor. */
     public SPSessionSerializerRegistry() {

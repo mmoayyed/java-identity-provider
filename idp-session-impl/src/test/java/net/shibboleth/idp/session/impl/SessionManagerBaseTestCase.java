@@ -72,8 +72,10 @@ public class SessionManagerBaseTestCase {
     
     /**
      * Allows override of component properties before initializing them.
+     * 
+     * @throws ComponentInitializationException 
      */
-    protected void adjustProperties() {
+    protected void adjustProperties() throws ComponentInitializationException {
         
     }
     

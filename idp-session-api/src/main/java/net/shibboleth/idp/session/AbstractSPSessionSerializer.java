@@ -34,6 +34,7 @@ import javax.json.stream.JsonGenerator;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.storage.StorageSerializer;
@@ -44,16 +45,17 @@ import org.slf4j.LoggerFactory;
  * Base class for {@link SPSession} serializers that handles data common to all such objects.
  */
 @ThreadSafe
-public abstract class AbstractSPSessionSerializer implements StorageSerializer<SPSession> {
+public abstract class AbstractSPSessionSerializer extends AbstractInitializableComponent
+        implements StorageSerializer<SPSession> {
 
     /** Field name of service ID. */
-    private static final String SERVICE_ID_FIELD = "id";
+    @Nonnull @NotEmpty private static final String SERVICE_ID_FIELD = "id";
 
     /** Field name of creation instant. */
-    private static final String CREATION_INSTANT_FIELD = "ts";
+    @Nonnull @NotEmpty private static final String CREATION_INSTANT_FIELD = "ts";
 
     /** Field name of Flow ID. */
-    private static final String FLOW_ID_FIELD = "flow";
+    @Nonnull @NotEmpty private static final String FLOW_ID_FIELD = "flow";
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractSPSessionSerializer.class);
@@ -72,7 +74,6 @@ public abstract class AbstractSPSessionSerializer implements StorageSerializer<S
 
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String serialize(@Nonnull final SPSession instance) throws IOException {
-        
         try {
             final StringWriter sink = new StringWriter(128);
             final JsonGenerator gen = Json.createGenerator(sink);

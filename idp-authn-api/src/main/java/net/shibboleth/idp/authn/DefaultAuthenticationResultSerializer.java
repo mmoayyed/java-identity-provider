@@ -21,9 +21,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.security.Principal;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,60 +38,71 @@ import javax.json.stream.JsonGenerator;
 import javax.json.stream.JsonGeneratorFactory;
 import javax.security.auth.Subject;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+
 /**
- * Handles serialization of results that carry only custom {@link Principal} objects of a simple nature that can be
- * reconstructed via a String-argument constructor.
- * 
- * <p>
- * The expiration of the resulting record <strong>MUST</strong> be set to the last activity instant of the object plus
- * an optional offset value supplied to the constructor.
- * </p>
+ * Handles serialization of results, delegating handling of {@link Principal} objects to one or more
+ * {@link PrincipalSerializer} plugins.
  */
-public class DefaultAuthenticationResultSerializer implements StorageSerializer<AuthenticationResult> {
+public class DefaultAuthenticationResultSerializer extends AbstractInitializableComponent
+        implements StorageSerializer<AuthenticationResult> {
 
     /** Field name of Flow ID. */
-    private static final String FLOW_ID_FIELD = "id";
+    @Nonnull @NotEmpty private static final String FLOW_ID_FIELD = "id";
 
     /** Field name of authentication instant. */
-    private static final String AUTHN_INSTANT_FIELD = "ts";
+    @Nonnull @NotEmpty private static final String AUTHN_INSTANT_FIELD = "ts";
 
     /** Field name of principal array. */
-    private static final String PRINCIPAL_ARRAY_FIELD = "princ";
+    @Nonnull @NotEmpty private static final String PRINCIPAL_ARRAY_FIELD = "princ";
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(DefaultAuthenticationResultSerializer.class);
 
     /** JSON generator factory. */
-    @Nonnull private final JsonGeneratorFactory generatorFactory = Json.createGeneratorFactory(null);
+    @Nonnull private final JsonGeneratorFactory generatorFactory;
 
     /** JSON reader factory. */
-    @Nonnull private final JsonReaderFactory readerFactory = Json.createReaderFactory(null);
+    @Nonnull private final JsonReaderFactory readerFactory;
 
     /** Principal serializers. */
-    @Nonnull private final Set<PrincipalSerializer<String>> principalSerializers;
+    @Nonnull @NonnullElements private Collection<PrincipalSerializer<String>> principalSerializers;
 
     /** Generic principal serializer for any unsupported principals. */
-    @Nonnull private final GenericPrincipalSerializer genericSerializer = new GenericPrincipalSerializer();
+    @Nonnull private final GenericPrincipalSerializer genericSerializer;
 
     /** Constructor. */
     public DefaultAuthenticationResultSerializer() {
-        principalSerializers = Collections.synchronizedSet(new HashSet<PrincipalSerializer<String>>());
-        principalSerializers.add(new UsernamePrincipalSerializer());
+        generatorFactory = Json.createGeneratorFactory(null);
+        readerFactory = Json.createReaderFactory(null);
+        
+        principalSerializers =
+                Collections.<PrincipalSerializer<String>>singletonList(new UsernamePrincipalSerializer());
+        
+        genericSerializer = new GenericPrincipalSerializer();
     }
 
     /**
-     * Returns the principal serializers used for principals found in the {@link AuthenticationResult}.
+     * Set the principal serializers used for principals found in the {@link AuthenticationResult}.
      * 
-     * @return principal serializers
+     * @param serializers principal serializers to use
      */
-    @Nonnull public Set<PrincipalSerializer<String>> getPrincipalSerializers() {
-        return principalSerializers;
+    public void setPrincipalSerializers(
+            @Nonnull @NonnullElements Collection<PrincipalSerializer<String>> serializers) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        principalSerializers = Lists.newArrayList(Collections2.filter(serializers, Predicates.notNull()));
     }
 
     /**

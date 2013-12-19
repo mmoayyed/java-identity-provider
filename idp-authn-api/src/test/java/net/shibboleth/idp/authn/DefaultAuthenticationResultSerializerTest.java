@@ -79,6 +79,8 @@ public class DefaultAuthenticationResultSerializerTest {
     }
     
     @Test public void testSimple() throws Exception {
+        serializer.initialize();
+        
         AuthenticationResult result = createResult("test", new Subject());
         result.getSubject().getPrincipals().add(new UsernamePrincipal("bob"));
         
@@ -95,6 +97,8 @@ public class DefaultAuthenticationResultSerializerTest {
     }
 
     @Test public void testComplex() throws Exception {
+        serializer.initialize();
+        
         AuthenticationResult result = createResult("test", new Subject());
         result.getSubject().getPrincipals().add(new UsernamePrincipal("bob"));
         result.getSubject().getPrincipals().add(new TestPrincipal("foo"));
@@ -114,6 +118,7 @@ public class DefaultAuthenticationResultSerializerTest {
 
     @Test public void testSymbolic() throws Exception {
         serializer.getGenericPrincipalSerializer().setSymbolics(Collections.singletonMap(TestPrincipal.class.getName(), 1));
+        serializer.initialize();
         
         AuthenticationResult result = createResult("test", new Subject());
         result.getSubject().getPrincipals().add(new UsernamePrincipal("bob"));
@@ -135,7 +140,9 @@ public class DefaultAuthenticationResultSerializerTest {
 
     @Test public void testLdap() throws Exception {
         LdapPrincipalSerializer lpSerializer = new LdapPrincipalSerializer();
-        serializer.getPrincipalSerializers().add(lpSerializer);
+        serializer.setPrincipalSerializers(Collections.<PrincipalSerializer<String>>singletonList(lpSerializer));
+        serializer.initialize();
+        
         AuthenticationResult result = createResult("test", new Subject());
         LdapEntry entry = new LdapEntry(SortBehavior.SORTED);
         entry.setDn("uid=1234,ou=people,dc=shibboleth,dc=net");
@@ -162,7 +169,6 @@ public class DefaultAuthenticationResultSerializerTest {
         Assert.assertEquals(
                 ((LdapPrincipal) result.getSubject().getPrincipals().iterator().next()).getLdapEntry(),
                 ((LdapPrincipal) result2.getSubject().getPrincipals().iterator().next()).getLdapEntry());
-        serializer.getPrincipalSerializers().remove(lpSerializer);
     }
 
     private AuthenticationResult createResult(String flowId, Subject subject) {

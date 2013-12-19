@@ -54,13 +54,13 @@ import net.shibboleth.utilities.java.support.xml.XMLParserException;
 public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
 
     /** Field name of NameID. */
-    private static final String NAMEID_FIELD = "nam";
+    @Nonnull @NotEmpty private static final String NAMEID_FIELD = "nam";
 
     /** Field name of SessionIndex. */
-    private static final String SESSION_INDEX_FIELD = "ix";
+    @Nonnull @NotEmpty private static final String SESSION_INDEX_FIELD = "ix";
 
     /** DOM configuration parameters used by LSSerializer to exclude XML declaration. */
-    private static Map<String, Object> noXMLDeclParams;
+    @Nonnull private static final Map<String, Object> NO_XML_DECL_PARAMS;
     
     /** Parser for NameID fields. */
     @Nonnull private final ParserPool parserPool;
@@ -83,7 +83,7 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
         
         try {
             generator.write(NAMEID_FIELD, SerializeSupport.nodeToString(
-                    XMLObjectSupport.marshall(saml2Session.getNameID()), noXMLDeclParams));
+                    XMLObjectSupport.marshall(saml2Session.getNameID()), NO_XML_DECL_PARAMS));
             generator.write(SESSION_INDEX_FIELD, saml2Session.getSessionIndex());
         } catch (MarshallingException e) {
             throw new XMLRuntimeException("Error marshalling and serializing NameID", e);
@@ -111,7 +111,7 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
     }
 
     static {
-        noXMLDeclParams = Collections.<String,Object>singletonMap("xml-declaration", Boolean.FALSE);
+        NO_XML_DECL_PARAMS = Collections.<String,Object>singletonMap("xml-declaration", Boolean.FALSE);
     }
     
 }

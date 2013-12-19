@@ -58,10 +58,10 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 public class LdapPrincipalSerializer implements PrincipalSerializer<String> {
 
     /** Field name of principal name. */
-    private static final String PRINCIPAL_NAME_FIELD = "LDAPN";
+    @Nonnull @NotEmpty private static final String PRINCIPAL_NAME_FIELD = "LDAPN";
 
     /** Field name of principal entry. */
-    private static final String PRINCIPAL_ENTRY_FIELD = "LDAPE";
+    @Nonnull @NotEmpty private static final String PRINCIPAL_ENTRY_FIELD = "LDAPE";
 
     /** Pattern used to determine if input is supported. */
     private static final Pattern JSON_PATTERN = Pattern.compile("^\\{\"LDAPN\":.*,\"LDAPE\":.*\\}$");
@@ -70,14 +70,21 @@ public class LdapPrincipalSerializer implements PrincipalSerializer<String> {
     @Nonnull private final Logger log = LoggerFactory.getLogger(LdapPrincipalSerializer.class);
     
     /** JSON generator factory. */
-    @Nonnull private final JsonGeneratorFactory generatorFactory = Json.createGeneratorFactory(null);
+    @Nonnull private final JsonGeneratorFactory generatorFactory;
 
     /** JSON object bulder factory. */
-    @Nonnull private final JsonBuilderFactory objectBuilderFactory = Json.createBuilderFactory(null);
+    @Nonnull private final JsonBuilderFactory objectBuilderFactory;
 
     /** JSON reader factory. */
-    @Nonnull private final JsonReaderFactory readerFactory = Json.createReaderFactory(null);
+    @Nonnull private final JsonReaderFactory readerFactory;
 
+    /** Constructor. */
+    public LdapPrincipalSerializer() {
+        generatorFactory = Json.createGeneratorFactory(null);
+        objectBuilderFactory = Json.createBuilderFactory(null);
+        readerFactory = Json.createReaderFactory(null);
+    }
+    
     /** {@inheritDoc} */
     @Override
     public boolean supports(@Nonnull final Principal principal) {
@@ -85,7 +92,6 @@ public class LdapPrincipalSerializer implements PrincipalSerializer<String> {
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String serialize(@Nonnull final Principal principal) throws IOException {
         final StringWriter sink = new StringWriter(32);
         final JsonGenerator gen = generatorFactory.createGenerator(sink);
@@ -110,13 +116,11 @@ public class LdapPrincipalSerializer implements PrincipalSerializer<String> {
     }
 
     /** {@inheritDoc} */
-    @Override
     public boolean supports(@Nonnull @NotEmpty final String value) {
         return JSON_PATTERN.matcher(value).matches();
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public LdapPrincipal deserialize(@Nonnull @NotEmpty final String value) throws IOException {
         final JsonReader reader = readerFactory.createReader(new StringReader(value));
         JsonStructure st = null;

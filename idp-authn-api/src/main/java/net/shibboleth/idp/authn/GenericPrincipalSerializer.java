@@ -62,33 +62,36 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 public class GenericPrincipalSerializer implements PrincipalSerializer<String> {
 
     /** Field name of principal type. */
-    private static final String PRINCIPAL_TYPE_FIELD = "typ";
+    @Nonnull @NotEmpty private static final String PRINCIPAL_TYPE_FIELD = "typ";
 
     /** Field name of principal name. */
-    private static final String PRINCIPAL_NAME_FIELD = "nam";
+    @Nonnull @NotEmpty private static final String PRINCIPAL_NAME_FIELD = "nam";
 
     /** Pattern used to determine if input is supported. */
-    private static final Pattern JSON_PATTERN = Pattern.compile("^\\{\"typ\":.*,\"nam\":.*\\}$");
+    @Nonnull private static final Pattern JSON_PATTERN = Pattern.compile("^\\{\"typ\":.*,\"nam\":.*\\}$");
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(GenericPrincipalSerializer.class);
     
     /** JSON generator factory. */
-    @Nonnull private final JsonGeneratorFactory generatorFactory = Json.createGeneratorFactory(null);
+    @Nonnull private final JsonGeneratorFactory generatorFactory;
 
     /** JSON reader factory. */
-    @Nonnull private final JsonReaderFactory readerFactory = Json.createReaderFactory(null);
+    @Nonnull private final JsonReaderFactory readerFactory;
 
     /** Shrinkage of long constants into symbolic numbers. */
-    @Nonnull private BiMap<String,Integer> symbolics;
+    @Nonnull @NonnullElements private BiMap<String,Integer> symbolics;
     
     /** A cache of Principal types that support string-based construction. */
-    @Nonnull private final Set<Class<? extends Principal>> compatiblePrincipalTypes;
+    @Nonnull @NonnullElements private final Set<Class<? extends Principal>> compatiblePrincipalTypes;
 
     /**
      * Constructor.
      */
     public GenericPrincipalSerializer() {
+        generatorFactory = Json.createGeneratorFactory(null);
+        readerFactory = Json.createReaderFactory(null);
+        
         symbolics = ImmutableBiMap.of();
         compatiblePrincipalTypes = Collections.synchronizedSet(new HashSet<Class<? extends Principal>>());
     }
@@ -122,7 +125,6 @@ public class GenericPrincipalSerializer implements PrincipalSerializer<String> {
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String serialize(@Nonnull final Principal principal) throws IOException {
         final StringWriter sink = new StringWriter(32);
         final JsonGenerator gen = generatorFactory.createGenerator(sink);
@@ -148,7 +150,6 @@ public class GenericPrincipalSerializer implements PrincipalSerializer<String> {
     }
 
     /** {@inheritDoc} */
-    @Override
     public boolean supports(@Nonnull @NotEmpty final String value) {
         return JSON_PATTERN.matcher(value).matches();
     }
