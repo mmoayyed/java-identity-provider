@@ -92,7 +92,7 @@
     -->
     <bean id="shibboleth.DefaultAuthenticationResultSerializer"
             class="net.shibboleth.idp.authn.DefaultAuthenticationResultSerializer">
-        <property name="symbolics">
+        <property name="genericPrincipalSerializer.symbolics">
             <map>
                 <entry key="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal" value="1" />
                 <entry key="net.shibboleth.idp.saml.authn.AuthnContextDeclRefPrincipal" value="2" />
