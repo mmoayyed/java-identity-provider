@@ -176,7 +176,7 @@
             <null />
         </constructor-arg>
         <constructor-arg>
-            <bean id="AlwaysTrueRelyingPartyPredicate" class="idp.AlwaysTrueActivatedRelyingPartyPredicate" />
+            <bean id="AlwaysTrueRelyingPartyPredicate" class="com.google.common.base.Predicates" factory-method="alwaysTrue" />
         </constructor-arg>
     </bean>
 
