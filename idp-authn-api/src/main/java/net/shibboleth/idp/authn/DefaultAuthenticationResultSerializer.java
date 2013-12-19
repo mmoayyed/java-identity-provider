@@ -20,12 +20,9 @@ package net.shibboleth.idp.authn;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -33,34 +30,29 @@ import javax.annotation.Nullable;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonException;
-import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.json.JsonString;
+import javax.json.JsonReaderFactory;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import javax.json.stream.JsonGenerator;
+import javax.json.stream.JsonGeneratorFactory;
 import javax.security.auth.Subject;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.ImmutableBiMap;
-
 /**
- * Handles serialization of results that carry only custom {@link Principal} objects of a simple
- * nature that can be reconstructed via a String-argument constructor.
+ * Handles serialization of results that carry only custom {@link Principal} objects of a simple nature that can be
+ * reconstructed via a String-argument constructor.
  * 
- * <p>The expiration of the resulting record <strong>MUST</strong> be set to the last activity
- * instant of the object plus an optional offset value supplied to the constructor.</p>
+ * <p>
+ * The expiration of the resulting record <strong>MUST</strong> be set to the last activity instant of the object plus
+ * an optional offset value supplied to the constructor.
+ * </p>
  */
 public class DefaultAuthenticationResultSerializer implements StorageSerializer<AuthenticationResult> {
 
@@ -73,58 +65,84 @@ public class DefaultAuthenticationResultSerializer implements StorageSerializer<
     /** Field name of principal array. */
     private static final String PRINCIPAL_ARRAY_FIELD = "princ";
 
-    /** Field name of principal type. */
-    private static final String PRINCIPAL_TYPE_FIELD = "typ";
-
-    /** Field name of principal name. */
-    private static final String PRINCIPAL_NAME_FIELD = "nam";
-
-    /** Field name of {@link UsernamePrincipal}. */
-    private static final String USERNAME_FIELD = "U";
-    
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(DefaultAuthenticationResultSerializer.class);
-    
-    /** Shrinkage of long constants into symbolic numbers. */
-    @Nonnull private BiMap<String,Integer> symbolics;
-    
-    /** A cache of Principal types that support string-based construction. */
-    @Nonnull private final Set<Class<? extends Principal>> compatiblePrincipalTypes;
-    
+
+    /** JSON generator factory. */
+    @Nonnull private final JsonGeneratorFactory generatorFactory = Json.createGeneratorFactory(null);
+
+    /** JSON reader factory. */
+    @Nonnull private final JsonReaderFactory readerFactory = Json.createReaderFactory(null);
+
+    /** Principal serializers. */
+    @Nonnull private final Set<PrincipalSerializer<String>> principalSerializers;
+
+    /** Generic principal serializer for any unsupported principals. */
+    @Nonnull private final GenericPrincipalSerializer genericSerializer = new GenericPrincipalSerializer();
+
     /** Constructor. */
     public DefaultAuthenticationResultSerializer() {
-        symbolics = ImmutableBiMap.of();
-        compatiblePrincipalTypes = Collections.synchronizedSet(new HashSet<Class<? extends Principal>>());
+        principalSerializers = Collections.synchronizedSet(new HashSet<PrincipalSerializer<String>>());
+        principalSerializers.add(new UsernamePrincipalSerializer());
     }
 
     /**
-     * Sets mappings of string constants to symbolic constants.
+     * Returns the principal serializers used for principals found in the {@link AuthenticationResult}.
      * 
-     * @param mappings  string to symbolic mappings
+     * @return principal serializers
      */
-    public void setSymbolics(@Nonnull @NonnullElements final Map<String,Integer> mappings) {
-        symbolics = HashBiMap.create(Constraint.isNotNull(mappings, "Mappings cannot be null"));
+    @Nonnull public Set<PrincipalSerializer<String>> getPrincipalSerializers() {
+        return principalSerializers;
     }
-    
+
+    /**
+     * Returns the {@GenericPrincipalSerializer} used for any unsupported principals found
+     * in the {@link AuthenticationResult}.
+     * 
+     * @return generic principal serializer
+     */
+    @Nonnull public GenericPrincipalSerializer getGenericPrincipalSerializer() {
+        return genericSerializer;
+    }
+
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String serialize(@Nonnull final AuthenticationResult instance) throws IOException {
-        
+
         try {
             final StringWriter sink = new StringWriter(128);
-            final JsonGenerator gen = Json.createGenerator(sink);
-            gen.writeStartObject()
-                .write(FLOW_ID_FIELD, instance.getAuthenticationFlowId())
-                .write(AUTHN_INSTANT_FIELD, instance.getAuthenticationInstant())
-                .writeStartArray(PRINCIPAL_ARRAY_FIELD);
-            
+            final JsonGenerator gen = generatorFactory.createGenerator(sink);
+            gen.writeStartObject().write(FLOW_ID_FIELD, instance.getAuthenticationFlowId())
+                    .write(AUTHN_INSTANT_FIELD, instance.getAuthenticationInstant())
+                    .writeStartArray(PRINCIPAL_ARRAY_FIELD);
+
             for (Principal p : instance.getSubject().getPrincipals()) {
-                doSerializePrincipal(gen, p);
+                boolean serialized = false;
+                for (PrincipalSerializer<String> serializer : principalSerializers) {
+                    if (serializer.supports(p)) {
+                        final JsonReader reader = readerFactory.createReader(new StringReader(serializer.serialize(p)));
+                        try {
+                            gen.write(reader.readObject());
+                        } finally {
+                            reader.close();
+                        }
+                        serialized = true;
+                    }
+                }
+                if (!serialized && genericSerializer.supports(p)) {
+                    final JsonReader reader =
+                            readerFactory.createReader(new StringReader(genericSerializer.serialize(p)));
+                    try {
+                        gen.write(reader.readObject());
+                    } finally {
+                        reader.close();
+                    }
+                }
             }
-            
+
             // TODO handle custom creds
-            
+
             gen.writeEnd().writeEnd().close();
-            
+
             return sink.toString();
         } catch (JsonException e) {
             log.error("Exception while serializing AuthenticationResult", e);
@@ -133,166 +151,62 @@ public class DefaultAuthenticationResultSerializer implements StorageSerializer<
     }
 
     /** {@inheritDoc} */
-    @Nonnull public AuthenticationResult deserialize(final int version, @Nonnull @NotEmpty final String context,
-            @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value, @Nullable final Long expiration)
-                    throws IOException {
-        
+    @Nonnull public AuthenticationResult
+            deserialize(final int version, @Nonnull @NotEmpty final String context,
+                    @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value,
+                    @Nullable final Long expiration) throws IOException {
+
         try {
-            JsonReader reader = Json.createReader(new StringReader(value));
-            JsonStructure st = reader.read();
+            final JsonReader reader = readerFactory.createReader(new StringReader(value));
+            JsonStructure st = null;
+            try {
+                st = reader.read();
+            } finally {
+                reader.close();
+            }
             if (!(st instanceof JsonObject)) {
                 throw new IOException("Found invalid data structure while parsing AuthenticationResult");
             }
-            JsonObject obj = (JsonObject) st;
-            
-            String flowId = obj.getString(FLOW_ID_FIELD);
-            long authnInstant = obj.getJsonNumber(AUTHN_INSTANT_FIELD).longValueExact();
-            JsonArray principals = obj.getJsonArray(PRINCIPAL_ARRAY_FIELD);
+            final JsonObject obj = (JsonObject) st;
 
-            AuthenticationResult result = new AuthenticationResult(flowId, new Subject());
+            final String flowId = obj.getString(FLOW_ID_FIELD);
+            long authnInstant = obj.getJsonNumber(AUTHN_INSTANT_FIELD).longValueExact();
+            final JsonArray principals = obj.getJsonArray(PRINCIPAL_ARRAY_FIELD);
+
+            final AuthenticationResult result = new AuthenticationResult(flowId, new Subject());
             result.setAuthenticationInstant(authnInstant);
             result.setLastActivityInstant(expiration != null ? expiration : authnInstant);
-            
+
             for (JsonValue p : principals) {
                 if (p instanceof JsonObject) {
-                    doDeserializePrincipal((JsonObject) p, result.getSubject());
+                    final String json = ((JsonObject) p).toString();
+                    boolean deserialized = false;
+                    for (PrincipalSerializer serializer : principalSerializers) {
+                        if (serializer.supports(json)) {
+                            final Principal principal = serializer.deserialize(json);
+                            if (principal != null) {
+                                result.getSubject().getPrincipals().add(principal);
+                                deserialized = true;
+                            }
+                        }
+                    }
+                    if (!deserialized && genericSerializer.supports(json)) {
+                        final Principal principal = genericSerializer.deserialize(json);
+                        if (principal != null) {
+                            result.getSubject().getPrincipals().add(principal);
+                        }
+                    }
                 }
             }
-            
+
             // TODO handle custom creds
-            
+
             return result;
-            
+
         } catch (NullPointerException | ClassCastException | ArithmeticException | JsonException e) {
             log.error("Exception while parsing AuthenticationResult", e);
             throw new IOException("Found invalid data structure while parsing AuthenticationResult", e);
         }
     }
 
-    /**
-     * Override this method to handle serialization of additional Principal types, and invoke the base class
-     * version for anything else.
-     * 
-     * <p>Anything serialized should be in a subobject created by and ended by this method.</p>
-     * 
-     * @param generator JSON generator to write to
-     * @param principal the principal to serialize
-     */
-    protected void doSerializePrincipal(@Nonnull final JsonGenerator generator, @Nonnull final Principal principal) {
-        
-        if (principal instanceof UsernamePrincipal) {
-            generator.writeStartObject()
-                .write(USERNAME_FIELD, principal.getName())
-                .writeEnd();
-        } else if (isCompatible(principal.getClass())) {
-            generator.writeStartObject();
-            
-            Integer symbol = symbolics.get(principal.getClass().getName());
-            if (symbol != null) {
-                generator.write(PRINCIPAL_TYPE_FIELD, symbol);
-            } else {
-                generator.write(PRINCIPAL_TYPE_FIELD, principal.getClass().getName());
-            }
-            
-            symbol = symbolics.get(principal.getName());
-            if (symbol != null) {
-                generator.write(PRINCIPAL_NAME_FIELD, symbol);
-            } else {
-                generator.write(PRINCIPAL_NAME_FIELD, principal.getName());
-            }
-                
-            generator.writeEnd();
-        }
-    }
-    
-    /**
-     * Override this method to handle deserialization of additional Principal types, and invoke the base class
-     * version for anything else.
-     * 
-     * @param obj JSON structure to parse
-     * @param subject the subject to add any results to
-     */
-    protected void doDeserializePrincipal(@Nonnull final JsonObject obj, @Nonnull final Subject subject) {
-        
-        try {
-            JsonString str = obj.getJsonString(USERNAME_FIELD);
-            if (str != null) {
-                String username = str.getString();
-                if (!Strings.isNullOrEmpty(username)) {
-                    subject.getPrincipals().add(new UsernamePrincipal(username));
-                } else {
-                    log.warn("Skipping null/empty UsernamePrincipal");
-                }
-            } else {
-                JsonValue typefield = obj.get(PRINCIPAL_TYPE_FIELD);
-                JsonValue namefield = obj.get(PRINCIPAL_NAME_FIELD);
-                if (typefield != null && namefield != null) {
-                    String type = desymbolize(typefield);
-                    String name = desymbolize(namefield);
-                    if (!Strings.isNullOrEmpty(type) && !Strings.isNullOrEmpty(name)) {
-                        try {
-                            Class<? extends Principal> pclass = Class.forName(type).asSubclass(Principal.class);
-                            Constructor<? extends Principal> ctor = pclass.getConstructor(String.class);
-                            subject.getPrincipals().add(ctor.newInstance(name));
-                        } catch (ClassNotFoundException | NoSuchMethodException | SecurityException
-                                    | InstantiationException | IllegalAccessException | IllegalArgumentException
-                                    | InvocationTargetException e) {
-                            log.warn("Exception instantiating custom Principal type " + type + " with name " + name, e);
-                        }
-                    } else {
-                        log.warn("Unparseable Principal type or name in structure");
-                    }
-                } else {
-                    log.warn("Missing Principal type or name in structure");
-                }
-            }
-        } catch (NullPointerException | ClassCastException | ArithmeticException e) {
-            log.warn("Exception parsing Principal structure", e);
-        }
-    }
-    
-    /**
-     * Map the field value to a string, either directly or via the symbolic map.
-     * 
-     * @param field the object field to examine
-     * 
-     * @return the resulting string, or null if invalid
-     */
-    private String desymbolize(@Nonnull final JsonValue field) {
-       switch (field.getValueType()) {
-           case STRING:
-               return ((JsonString) field).getString();
-           
-           case NUMBER:
-               return symbolics.inverse().get(((JsonNumber) field).intValueExact());
-               
-           default:
-               return null;
-       }
-    }
-    
-    
-    /**
-     * Determines whether the specified Principal type can be handled by this class, through the presence
-     * of a single-argument String-based constructor. 
-     * 
-     * @param principalType the type to check
-     * @return  true iff the class supports a String-based constructor
-     */
-    private boolean isCompatible(@Nonnull final Class<? extends Principal> principalType) {
-        
-        if (compatiblePrincipalTypes.contains(principalType)) {
-            return true;
-        }
-        
-        try {
-            principalType.getConstructor(String.class);
-            compatiblePrincipalTypes.add(principalType);
-            return true;
-        } catch (NoSuchMethodException | SecurityException e) {
-            log.warn("Unsupported Principal type will be omitted: {}", principalType.getClass().getName());
-        }
-        
-        return false;
-    }
 }

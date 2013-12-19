@@ -28,6 +28,10 @@ import javax.security.auth.Subject;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 
+import org.ldaptive.LdapAttribute;
+import org.ldaptive.LdapEntry;
+import org.ldaptive.SortBehavior;
+import org.ldaptive.jaas.LdapPrincipal;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -109,7 +113,7 @@ public class DefaultAuthenticationResultSerializerTest {
     }
 
     @Test public void testSymbolic() throws Exception {
-        serializer.setSymbolics(Collections.singletonMap(TestPrincipal.class.getName(), 1));
+        serializer.getGenericPrincipalSerializer().setSymbolics(Collections.singletonMap(TestPrincipal.class.getName(), 1));
         
         AuthenticationResult result = createResult("test", new Subject());
         result.getSubject().getPrincipals().add(new UsernamePrincipal("bob"));
@@ -128,6 +132,39 @@ public class DefaultAuthenticationResultSerializerTest {
         Assert.assertEquals(result.getSubject(), result2.getSubject());
     }
     
+
+    @Test public void testLdap() throws Exception {
+        LdapPrincipalSerializer lpSerializer = new LdapPrincipalSerializer();
+        serializer.getPrincipalSerializers().add(lpSerializer);
+        AuthenticationResult result = createResult("test", new Subject());
+        LdapEntry entry = new LdapEntry(SortBehavior.SORTED);
+        entry.setDn("uid=1234,ou=people,dc=shibboleth,dc=net");
+        LdapAttribute givenName = new LdapAttribute(SortBehavior.SORTED);
+        givenName.setName("givenName");
+        givenName.addStringValue("Bob", "Robert");
+        entry.addAttribute(
+                new LdapAttribute("cn", "Bob Cobb"),
+                givenName,
+                new LdapAttribute("sn", "Cobb"),
+                new LdapAttribute("mail", "bob@shibboleth.net"));
+        result.getSubject().getPrincipals().add(new LdapPrincipal("bob", entry));
+
+        String s = serializer.serialize(result);
+        String s2 = fileToString(DATAPATH + "LDAPAuthenticationResult.json");
+        Assert.assertEquals(s, s2);
+
+        AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
+
+        Assert.assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
+        Assert.assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
+        Assert.assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
+        Assert.assertEquals(result.getSubject(), result2.getSubject());
+        Assert.assertEquals(
+                ((LdapPrincipal) result.getSubject().getPrincipals().iterator().next()).getLdapEntry(),
+                ((LdapPrincipal) result2.getSubject().getPrincipals().iterator().next()).getLdapEntry());
+        serializer.getPrincipalSerializers().remove(lpSerializer);
+    }
+
     private AuthenticationResult createResult(String flowId, Subject subject) {
         AuthenticationResult result = new AuthenticationResult(flowId, subject);
         result.setAuthenticationInstant(INSTANT);
@@ -154,7 +191,7 @@ public class DefaultAuthenticationResultSerializerTest {
               }
               avail = stream.available();
             } while (avail > 0 && numRead >= 0);
-            return new String(data, 0, pos, "UTF-8");
+            return new String(data, 0, pos, "UTF-8").trim();
         }
     }
 }
