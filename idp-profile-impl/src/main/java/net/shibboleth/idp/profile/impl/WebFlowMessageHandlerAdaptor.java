@@ -56,6 +56,10 @@ import com.google.common.base.Function;
  * 
  * @param <InboundMessageType> type of inbound message
  * @param <OutboundMessageType> type of outbound message
+ * 
+ * @event {@link EventIds#PROCEED_EVENT_ID}
+ * @event {@link EventIds#INVALID_PROFILE_CTX}
+ * @event {@link EventIds#INVALID_MSG_CTX}
  */
 public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageType> 
         extends AbstractIdentifiableInitializableComponent implements Action {
@@ -73,16 +77,16 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
         };
     
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger(WebFlowMessageHandlerAdaptor.class);
+    @Nonnull private Logger log = LoggerFactory.getLogger(WebFlowMessageHandlerAdaptor.class);
     
     /** The message handler being adapted. */
-    private MessageHandler handler;
+    @Nonnull private final MessageHandler handler;
     
     /** The direction of execution for this action instance. */
-    private Direction direction;
+    private final Direction direction;
     
     /** Strategy used to lookup the {@link ProfileRequestContext} from a given WebFlow {@link RequestContext}. */
-    private Function<RequestContext, ProfileRequestContext> profileContextLookupStrategy;
+    @Nonnull private final Function<RequestContext, ProfileRequestContext> profileContextLookupStrategy;
 
     /**
      * Constructor.
@@ -90,8 +94,8 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
      * @param messageHandler the adapted message handler
      * @param executionDirection the direction of execution
      */
-    public WebFlowMessageHandlerAdaptor(MessageHandler messageHandler, Direction executionDirection) {
-        super();
+    public WebFlowMessageHandlerAdaptor(@Nonnull final MessageHandler messageHandler,
+            final Direction executionDirection) {
         handler = Constraint.isNotNull(messageHandler, "MessageHandler may not be null");
         direction = Constraint.isNotNull(executionDirection, "Execution direction may not be null");
         
@@ -129,9 +133,8 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
         } 
         
         if (target == null) {
-            log.warn("Target message context was null, can not invoke handler");
-            //TODO What to do?: 1) return an error event id 2) throw an exception 3) treat as non-fatal
-            return null;
+            log.warn("Target message context was null, cannot invoke handler");
+            return ActionSupport.buildEvent(handler, EventIds.INVALID_MSG_CTX);
         }
         
         log.debug("Action {}: Invoking message handler on message context containing a message of type '{}'", getId(), 
