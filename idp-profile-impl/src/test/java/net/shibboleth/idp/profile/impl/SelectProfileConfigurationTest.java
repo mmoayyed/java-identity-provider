@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.impl.profile;
+package net.shibboleth.idp.profile.impl;
+
+import java.util.Collections;
 
 import net.shibboleth.idp.profile.IdPEventIds;
 
@@ -23,9 +25,10 @@ import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.idp.profile.impl.SelectProfileConfiguration;
+import net.shibboleth.idp.relyingparty.MockProfileConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
-import net.shibboleth.idp.saml.profile.config.saml1.BrowserSSOProfileConfiguration;
-import net.shibboleth.idp.saml.profile.saml1.SAML1ActionTestingSupport;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -65,7 +68,8 @@ public class SelectProfileConfigurationTest {
     @Test public void testInvalidProfileConfiguration() throws Exception {
         ProfileRequestContext profileCtx =
                 new RequestContextBuilder().setRelyingPartyProfileConfigurations(
-                        SAML1ActionTestingSupport.buildProfileConfigurations()).buildProfileRequestContext();
+                        Collections.<ProfileConfiguration>singleton(new MockProfileConfiguration("mock"))
+                            ).buildProfileRequestContext();
 
         SelectProfileConfiguration action = new SelectProfileConfiguration();
         action.setId("test");
@@ -80,9 +84,10 @@ public class SelectProfileConfigurationTest {
     @Test public void testSelectProfileConfiguration() throws Exception {
         ProfileRequestContext profileCtx =
                 new RequestContextBuilder().setRelyingPartyProfileConfigurations(
-                        SAML1ActionTestingSupport.buildProfileConfigurations()).buildProfileRequestContext();
+                        Collections.<ProfileConfiguration>singleton(new MockProfileConfiguration("mock"))
+                            ).buildProfileRequestContext();
 
-        profileCtx.setProfileId(BrowserSSOProfileConfiguration.PROFILE_ID);
+        profileCtx.setProfileId("mock");
 
         SelectProfileConfiguration action = new SelectProfileConfiguration();
         action.setId("test");
@@ -93,8 +98,7 @@ public class SelectProfileConfigurationTest {
         ActionTestingSupport.assertProceedEvent(profileCtx);
 
         Assert.assertNotNull(profileCtx.getSubcontext(RelyingPartyContext.class).getProfileConfig());
-        Assert.assertEquals(profileCtx.getSubcontext(RelyingPartyContext.class).getProfileConfig().getId(),
-                BrowserSSOProfileConfiguration.PROFILE_ID);
+        Assert.assertEquals(profileCtx.getSubcontext(RelyingPartyContext.class).getProfileConfig().getId(), "mock");
     }
     
 }
