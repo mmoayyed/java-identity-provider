@@ -30,7 +30,7 @@
                 p:lifetime="PT60S" p:inactivityTimeout="PT60S">
             <property name="supportedPrincipals">
                 <list>
-                    <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
+                    <bean class="net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal"
                         c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocol" />
                 </list>
             </property>
@@ -43,11 +43,11 @@
                 p:lifetime="${idp.authn.defaultLifetime}" p:inactivityTimeout="${idp.authn.defaultTimeout}">
             <property name="supportedPrincipals">
                 <list>
-                    <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
+                    <bean class="net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal"
                         c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" />
-                    <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
+                    <bean class="net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal"
                         c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:Password" />
-                    <bean class="net.shibboleth.idp.saml.authn.AuthenticationMethodPrincipal"
+                    <bean class="net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal"
                         c:method="urn:oasis:names:tc:SAML:1.0:am:password" />
                 </list>
             </property>
@@ -60,11 +60,11 @@
                 p:lifetime="${idp.authn.defaultLifetime}" p:inactivityTimeout="${idp.authn.defaultTimeout}">
             <property name="supportedPrincipals">
                 <list>
-                    <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
+                    <bean class="net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal"
                         c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" />
-                    <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
+                    <bean class="net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal"
                         c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:Password" />
-                    <bean class="net.shibboleth.idp.saml.authn.AuthenticationMethodPrincipal"
+                    <bean class="net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal"
                         c:method="urn:oasis:names:tc:SAML:1.0:am:password" />
                 </list>
             </property>
@@ -77,11 +77,11 @@
                 p:lifetime="${idp.authn.defaultLifetime}" p:inactivityTimeout="${idp.authn.defaultTimeout}">
             <property name="supportedPrincipals">
                 <list>
-                    <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
+                    <bean class="net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal"
                         c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" />
-                    <bean class="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal"
+                    <bean class="net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal"
                         c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:Password" />
-                    <bean class="net.shibboleth.idp.saml.authn.AuthenticationMethodPrincipal"
+                    <bean class="net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal"
                         c:method="urn:oasis:names:tc:SAML:1.0:am:password" />
                 </list>
             </property>
@@ -93,13 +93,12 @@
     Defining this allows us to specify symbolic text replacements that shrink the size of results
     saved to client-side storage such as cookies.
     -->
-    <bean id="shibboleth.DefaultAuthenticationResultSerializer"
-            class="net.shibboleth.idp.authn.DefaultAuthenticationResultSerializer">
+    <bean id="shibboleth.DefaultAuthenticationResultSerializer" class="net.shibboleth.idp.authn.DefaultAuthenticationResultSerializer">
         <property name="genericPrincipalSerializer.symbolics">
             <map>
-                <entry key="net.shibboleth.idp.saml.authn.AuthnContextClassRefPrincipal" value="1" />
-                <entry key="net.shibboleth.idp.saml.authn.AuthnContextDeclRefPrincipal" value="2" />
-                <entry key="net.shibboleth.idp.saml.authn.AuthenticationMethodPrincipal" value="3" />
+                <entry key="net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal" value="1" />
+                <entry key="net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal" value="2" />
+                <entry key="net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal" value="3" />
                 <entry key="javax.security.auth.kerberos.KerberosPrincipal" value="4" />
                 
                 <entry key="urn:oasis:names:tc:SAML:2.0:ac:classes:Password" value="10" />
