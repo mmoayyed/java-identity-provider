@@ -47,14 +47,14 @@ public interface AttributeResolver extends DestructableComponent, IdentifiableCo
      * 
      * @return attribute definitions loaded in to this resolver
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, AttributeDefinition> getAttributeDefinitions();
+    @Nonnull @NonnullElements @Unmodifiable Map<String, AttributeDefinition> getAttributeDefinitions();
 
     /**
      * Gets the unmodifiable collection of data connectors for this resolver.
      * 
      * @return data connectors loaded in to this resolver
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, DataConnector> getDataConnectors();
+    @Nonnull @NonnullElements @Unmodifiable Map<String, DataConnector> getDataConnectors();
 
     /**
      * Resolves the attribute for the give request. Note, if attributes are requested,
@@ -67,7 +67,6 @@ public interface AttributeResolver extends DestructableComponent, IdentifiableCo
      * 
      * @throws ResolutionException thrown if there is a problem resolving the attributes for the subject
      */
-    public void resolveAttributes(@Nonnull final AttributeResolutionContext resolutionContext)
-            throws ResolutionException;
+    void resolveAttributes(@Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException;
 
 }

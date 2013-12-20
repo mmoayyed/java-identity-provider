@@ -39,21 +39,21 @@ public interface AttributeDefinition extends ResolverPlugin<IdPAttribute> {
      * 
      * @return true if this attribute is only used as a dependency, false otherwise
      */
-    public boolean isDependencyOnly();
+    boolean isDependencyOnly();
 
     /**
      * Gets the localized human readable descriptions of attribute.
      * 
      * @return human readable descriptions of attribute
      */
-    @NonnullAfterInit @NonnullElements @Unmodifiable public Map<Locale, String> getDisplayDescriptions();
+    @NonnullAfterInit @NonnullElements @Unmodifiable Map<Locale, String> getDisplayDescriptions();
 
     /**
      * Gets the localized human readable names of the attribute.
      * 
      * @return human readable names of the attribute
      */
-    @NonnullAfterInit @NonnullElements @Unmodifiable public Map<Locale, String> getDisplayNames();
+    @NonnullAfterInit @NonnullElements @Unmodifiable Map<Locale, String> getDisplayNames();
 
     /**
      * Gets the unmodifiable encoders used to encode the values of this attribute in to protocol specific formats. The
@@ -61,7 +61,6 @@ public interface AttributeDefinition extends ResolverPlugin<IdPAttribute> {
      * 
      * @return encoders used to encode the values of this attribute in to protocol specific formats, never null
      */
-    @NonnullAfterInit @NonnullElements @Unmodifiable public Set<AttributeEncoder<?>> getAttributeEncoders();
-
+    @NonnullAfterInit @NonnullElements @Unmodifiable Set<AttributeEncoder<?>> getAttributeEncoders();
 
 }

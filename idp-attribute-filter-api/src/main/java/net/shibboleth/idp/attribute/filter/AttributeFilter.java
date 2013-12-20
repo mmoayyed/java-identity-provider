@@ -39,7 +39,7 @@ public interface AttributeFilter extends
      * 
      * @return immutable collection of filter policies
      */
-    @Nonnull @NonnullElements @Unmodifiable public List<AttributeFilterPolicy> getFilterPolicies();
+    @Nonnull @NonnullElements @Unmodifiable List<AttributeFilterPolicy> getFilterPolicies();
 
     /**
      * Filters attributes and values. This filtering process may remove attributes and values but must never add them.
@@ -49,5 +49,5 @@ public interface AttributeFilter extends
      * 
      * @throws AttributeFilterException thrown if there is a problem retrieving or applying the attribute filter policy
      */
-    public void filterAttributes(@Nonnull final AttributeFilterContext filterContext) throws AttributeFilterException;
+    void filterAttributes(@Nonnull final AttributeFilterContext filterContext) throws AttributeFilterException;
 }

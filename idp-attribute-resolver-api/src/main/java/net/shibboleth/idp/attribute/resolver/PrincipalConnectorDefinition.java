@@ -42,6 +42,6 @@ public interface PrincipalConnectorDefinition<ConsumedContext extends BaseContex
      * @return the IdP principal, or null if this definition wasn't applicable
      * @throws ResolutionException if we encountered a fatal processing error.
      */
-    @Nullable public String resolve(@Nonnull final ConsumedContext context) throws ResolutionException;
+    @Nullable String resolve(@Nonnull final ConsumedContext context) throws ResolutionException;
 
 }

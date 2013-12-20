@@ -49,21 +49,21 @@ public interface ResolverPlugin<ResolvedType> extends ValidatableComponent, Unmo
      * 
      * @return true if {@link ResolutionException}s are propagated, false if not
      */
-    public boolean isPropagateResolutionExceptions();
+    boolean isPropagateResolutionExceptions();
 
     /**
      * Get the criteria that must be met for this plugin to be active for a given request.
      * 
      * @return criteria that must be met for this plugin to be active for a given request, never null
      */
-    @NonnullAfterInit public Predicate<AttributeResolutionContext> getActivationCriteria();
+    @NonnullAfterInit Predicate<AttributeResolutionContext> getActivationCriteria();
 
     /**
      * Get the unmodifiable list of dependencies for this plugin.
      * 
      * @return unmodifiable list of dependencies for this plugin, never null
      */
-    @NonnullAfterInit @NonnullElements @Unmodifiable public Set<ResolverPluginDependency> getDependencies();
+    @NonnullAfterInit @NonnullElements @Unmodifiable Set<ResolverPluginDependency> getDependencies();
 
     /**
      * Perform the attribute resolution for this plugin.
@@ -74,7 +74,7 @@ public interface ResolverPlugin<ResolvedType> extends ValidatableComponent, Unmo
      * 
      * @throws ResolutionException thrown if there was a problem resolving the attributes
      */
-    @Nullable public ResolvedType resolve(@Nonnull final AttributeResolutionContext resolutionContext)
+    @Nullable ResolvedType resolve(@Nonnull final AttributeResolutionContext resolutionContext)
             throws ResolutionException;
 
 }

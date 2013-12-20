@@ -30,10 +30,10 @@ import org.opensaml.saml.common.SAMLObject;
 import com.google.common.base.Function;
 
 /**
- * The definition of the API for all SAML Subject Name Connectors.<b/> 
- * TODO This is highly liklyl to change, or even become irrelevant.
+ * The definition of the API for all SAML Subject Name Connectors.<b/> TODO This is highly liklyl to change, or even
+ * become irrelevant.
  */
-public interface SubjectNamePrincipalConnectorDefinition  extends ResolverPlugin<String>,
+public interface SubjectNamePrincipalConnectorDefinition extends ResolverPlugin<String>,
         PrincipalConnectorDefinition<AttributeResolutionContext> {
 
     /**
@@ -41,28 +41,28 @@ public interface SubjectNamePrincipalConnectorDefinition  extends ResolverPlugin
      * 
      * @return the NameID format
      */
-    @Nullable public String getFormat();
+    @Nullable String getFormat();
 
     /**
      * Set NameID format.
      * 
      * @param format the NameID format
      */
-    public void setFormat(@Nonnull final String format);
+    void setFormat(@Nonnull final String format);
 
     /**
      * Get relying parties this connector is valid for.
      * 
      * @return set of relying parties
      */
-    @Unmodifiable @Nonnull public Set<String> getRelyingParties();
+    @Unmodifiable @Nonnull Set<String> getRelyingParties();
 
     /**
      * Set relying parties this connector is valid for.
      * 
      * @param parties set of relying parties.
      */
-    public void setRelyingParties(@Nonnull final Set<String> parties);
+    void setRelyingParties(@Nonnull final Set<String> parties);
 
     /**
      * Function to set up the context navigation mechanism. This is used to go from a {@link AttributeResolutionContext}
@@ -70,8 +70,7 @@ public interface SubjectNamePrincipalConnectorDefinition  extends ResolverPlugin
      * 
      * @param function the navigation function.
      */
-    public void
-            setContextFinderStrategy(Function<AttributeResolutionContext, MessageContext<SAMLObject>> function);
+    void setContextFinderStrategy(Function<AttributeResolutionContext, MessageContext<SAMLObject>> function);
 
     /**
      * Helper function to find the IssuerId ("entityID of SP") for this message. This allow the attribute resolver to
@@ -80,10 +79,10 @@ public interface SubjectNamePrincipalConnectorDefinition  extends ResolverPlugin
      * @param context the resolution context.
      * @return the IssuerID never null
      * @throws ResolutionException if we could not navigate the structures directly.
-     *
-    @Nonnull public String issuerIdOf(final AttributeResolutionContext context) throws ResolutionException {
-        return locateSamlMessageContext(context).getSubcontext(SamlPeerEntityContext.class, true).getEntityId();
-    }*/
+     * 
+     @Nonnull public String issuerIdOf(final AttributeResolutionContext context) throws ResolutionException { return
+     *          locateSamlMessageContext(context).getSubcontext(SamlPeerEntityContext.class, true).getEntityId(); }
+     */
 
     /**
      * Helper function to find the format (from the {@link NameID} or {@link NameIdentifier}) for this message. This
@@ -92,21 +91,16 @@ public interface SubjectNamePrincipalConnectorDefinition  extends ResolverPlugin
      * @param context the resolution context.
      * @return the format never null
      * @throws ResolutionException if we could not navigate the structures directly.
-     *
-    @Nonnull public String formatOf(final AttributeResolutionContext context) throws ResolutionException {
-        final SAMLObject object =
-                locateSamlMessageContext(context).getSubcontext(SamlSubjectNameIdentifierContext.class, true)
-                        .getSubjectNameIdentifier();
-
-        if (object instanceof NameID) {
-            final NameID nameId = (NameID) object;
-            return nameId.getFormat();
-        } else if (object instanceof NameIdentifier) {
-            final NameIdentifier nameIdentifier = (NameIdentifier) object;
-            return nameIdentifier.getFormat();
-        }
-        throw new ResolutionException(getLogPrefix() + " message was a "
-                + (object == null ? "null" : object.getClass().toString()) + ", not a NameId or a NameIdentifier");
-    }*/
+     * 
+     @Nonnull public String formatOf(final AttributeResolutionContext context) throws ResolutionException { final
+     *          SAMLObject object =
+     *          locateSamlMessageContext(context).getSubcontext(SamlSubjectNameIdentifierContext.class, true)
+     *          .getSubjectNameIdentifier();
+     * 
+     *          if (object instanceof NameID) { final NameID nameId = (NameID) object; return nameId.getFormat(); } else
+     *          if (object instanceof NameIdentifier) { final NameIdentifier nameIdentifier = (NameIdentifier) object;
+     *          return nameIdentifier.getFormat(); } throw new ResolutionException(getLogPrefix() + " message was a " +
+     *          (object == null ? "null" : object.getClass().toString()) + ", not a NameId or a NameIdentifier"); }
+     */
 
 }

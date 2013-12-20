@@ -35,6 +35,6 @@ public interface DataConnector extends ResolverPlugin<Map<String, IdPAttribute>>
      * @return ID of the {@link DataConnector} whose values will be used in the event that this data connector
      *         experiences an error
      */
-    @Nullable public String getFailoverDataConnectorId();
+    @Nullable String getFailoverDataConnectorId();
 
 }
