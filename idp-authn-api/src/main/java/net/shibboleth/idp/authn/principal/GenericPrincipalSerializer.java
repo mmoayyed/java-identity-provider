@@ -31,17 +31,13 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
-import javax.json.Json;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.json.JsonReaderFactory;
 import javax.json.JsonString;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import javax.json.stream.JsonGenerator;
-import javax.json.stream.JsonGeneratorFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,13 +49,15 @@ import com.google.common.collect.ImmutableBiMap;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Principal serializer for arbitrary principal types.
  */
-@NotThreadSafe
-public class GenericPrincipalSerializer implements PrincipalSerializer<String> {
+@ThreadSafeAfterInit
+public class GenericPrincipalSerializer extends AbstractPrincipalSerializer<String> {
 
     /** Field name of principal type. */
     @Nonnull @NotEmpty private static final String PRINCIPAL_TYPE_FIELD = "typ";
@@ -72,12 +70,6 @@ public class GenericPrincipalSerializer implements PrincipalSerializer<String> {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(GenericPrincipalSerializer.class);
-    
-    /** JSON generator factory. */
-    @Nonnull private final JsonGeneratorFactory generatorFactory;
-
-    /** JSON reader factory. */
-    @Nonnull private final JsonReaderFactory readerFactory;
 
     /** Shrinkage of long constants into symbolic numbers. */
     @Nonnull @NonnullElements private BiMap<String,Integer> symbolics;
@@ -89,9 +81,6 @@ public class GenericPrincipalSerializer implements PrincipalSerializer<String> {
      * Constructor.
      */
     public GenericPrincipalSerializer() {
-        generatorFactory = Json.createGeneratorFactory(null);
-        readerFactory = Json.createReaderFactory(null);
-        
         symbolics = ImmutableBiMap.of();
         compatiblePrincipalTypes = Collections.synchronizedSet(new HashSet<Class<? extends Principal>>());
     }
@@ -102,11 +91,12 @@ public class GenericPrincipalSerializer implements PrincipalSerializer<String> {
      * @param mappings  string to symbolic mappings
      */
     public void setSymbolics(@Nonnull @NonnullElements final Map<String,Integer> mappings) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         symbolics = HashBiMap.create(Constraint.isNotNull(mappings, "Mappings cannot be null"));
     }
-    
+        
     /** {@inheritDoc} */
-    @Override
     public boolean supports(@Nonnull final Principal principal) {
         final Class<? extends Principal> principalType = principal.getClass();
         if (compatiblePrincipalTypes.contains(principalType)) {
@@ -126,8 +116,10 @@ public class GenericPrincipalSerializer implements PrincipalSerializer<String> {
 
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String serialize(@Nonnull final Principal principal) throws IOException {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        
         final StringWriter sink = new StringWriter(32);
-        final JsonGenerator gen = generatorFactory.createGenerator(sink);
+        final JsonGenerator gen = getJsonGenerator(sink);
         gen.writeStartObject();
         
         Integer symbol = symbolics.get(principal.getClass().getName());
@@ -156,7 +148,9 @@ public class GenericPrincipalSerializer implements PrincipalSerializer<String> {
 
     /** {@inheritDoc} */
     @Nullable public Principal deserialize(@Nonnull @NotEmpty final String value) throws IOException {
-        final JsonReader reader = readerFactory.createReader(new StringReader(value));
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        
+        final JsonReader reader = getJsonReader(new StringReader(value));
         JsonStructure st = null;
         try {
             st = reader.read();
@@ -190,15 +184,16 @@ public class GenericPrincipalSerializer implements PrincipalSerializer<String> {
         }
         return null;
     }
+
     
     /**
-     * Map the field value to a string, either directly or via the symbolic map.
+     * Map a field value to a string, either directly or via the symbolic map.
      * 
      * @param field the object field to examine
      * 
      * @return the resulting string, or null if invalid
      */
-    private String desymbolize(@Nonnull final JsonValue field) {
+    @Nullable protected String desymbolize(@Nonnull final JsonValue field) {
        switch (field.getValueType()) {
            case STRING:
                return ((JsonString) field).getString();
@@ -210,5 +205,5 @@ public class GenericPrincipalSerializer implements PrincipalSerializer<String> {
                return null;
        }
     }
-
+    
 }

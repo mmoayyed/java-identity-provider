@@ -40,6 +40,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -345,5 +346,10 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
         STORAGE_EXPIRATION_OFFSET = 10 * 60 * 1000;
         DEFAULT_SUBJECT_C14N_FLOWID = "SubjectC14N/Simple";
         DEFAULT_SERIALIZER = new DefaultAuthenticationResultSerializer();
+        try {
+            DEFAULT_SERIALIZER.initialize();
+        } catch (ComponentInitializationException e) {
+            // TODO: not sure how to handle 
+        }
     }
 }

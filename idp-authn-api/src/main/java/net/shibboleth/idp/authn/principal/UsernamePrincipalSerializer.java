@@ -26,14 +26,11 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
-import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.json.JsonReaderFactory;
 import javax.json.JsonString;
 import javax.json.JsonStructure;
 import javax.json.stream.JsonGenerator;
-import javax.json.stream.JsonGeneratorFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,34 +43,26 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
  * Principal serializer for {@link UsernamePrincipal}.
  */
 @ThreadSafe
-public class UsernamePrincipalSerializer implements PrincipalSerializer<String> {
+public class UsernamePrincipalSerializer extends AbstractPrincipalSerializer<String> {
 
     /** Field name of {@link UsernamePrincipal}. */
-    private static final String USERNAME_FIELD = "U";
+    @Nonnull @NotEmpty private static final String USERNAME_FIELD = "U";
 
     /** Pattern used to determine if input is supported. */
-    private static final Pattern JSON_PATTERN = Pattern.compile("^\\{\"U\":.*\\}$");
+    @Nonnull private static final Pattern JSON_PATTERN = Pattern.compile("^\\{\"U\":.*\\}$");
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(UsernamePrincipalSerializer.class);
-    
-    /** JSON generator factory. */
-    @Nonnull private final JsonGeneratorFactory generatorFactory = Json.createGeneratorFactory(null);
-
-    /** JSON reader factory. */
-    @Nonnull private final JsonReaderFactory readerFactory = Json.createReaderFactory(null);
 
     /** {@inheritDoc} */
-    @Override
     public boolean supports(@Nonnull final Principal principal) {
         return principal instanceof UsernamePrincipal;
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String serialize(@Nonnull final Principal principal) throws IOException {
         final StringWriter sink = new StringWriter(32);
-        final JsonGenerator gen = generatorFactory.createGenerator(sink);
+        final JsonGenerator gen = getJsonGenerator(sink);
         gen.writeStartObject()
             .write(USERNAME_FIELD, principal.getName())
             .writeEnd();
@@ -82,15 +71,13 @@ public class UsernamePrincipalSerializer implements PrincipalSerializer<String> 
     }
 
     /** {@inheritDoc} */
-    @Override
     public boolean supports(@Nonnull @NotEmpty final String value) {
         return JSON_PATTERN.matcher(value).matches();
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public UsernamePrincipal deserialize(@Nonnull @NotEmpty final String value) throws IOException {
-        final JsonReader reader = readerFactory.createReader(new StringReader(value));
+        final JsonReader reader = getJsonReader(new StringReader(value));
         JsonStructure st = null;
         try {
             st = reader.read();

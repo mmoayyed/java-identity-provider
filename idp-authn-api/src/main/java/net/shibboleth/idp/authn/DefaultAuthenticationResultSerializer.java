@@ -44,6 +44,7 @@ import net.shibboleth.idp.authn.principal.UsernamePrincipalSerializer;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.opensaml.storage.StorageSerializer;
@@ -90,9 +91,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
         generatorFactory = Json.createGeneratorFactory(null);
         readerFactory = Json.createReaderFactory(null);
         
-        principalSerializers =
-                Collections.<PrincipalSerializer<String>>singletonList(new UsernamePrincipalSerializer());
-        
+        principalSerializers = Collections.emptyList();
         genericSerializer = new GenericPrincipalSerializer();
     }
 
@@ -117,10 +116,26 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
     @Nonnull public GenericPrincipalSerializer getGenericPrincipalSerializer() {
         return genericSerializer;
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        genericSerializer.initialize();
+        
+        if (principalSerializers.isEmpty()) {
+            PrincipalSerializer<String> ups = new UsernamePrincipalSerializer();
+            ups.initialize();
+            principalSerializers = Collections.singletonList(ups);
+        }
+    }
 
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String serialize(@Nonnull final AuthenticationResult instance) throws IOException {
-
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        
         try {
             final StringWriter sink = new StringWriter(128);
             final JsonGenerator gen = generatorFactory.createGenerator(sink);
@@ -164,11 +179,11 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
     }
 
     /** {@inheritDoc} */
-    @Nonnull public AuthenticationResult
-            deserialize(final int version, @Nonnull @NotEmpty final String context,
+    @Nonnull public AuthenticationResult deserialize(final int version, @Nonnull @NotEmpty final String context,
                     @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value,
                     @Nullable final Long expiration) throws IOException {
-
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        
         try {
             final JsonReader reader = readerFactory.createReader(new StringReader(value));
             JsonStructure st = null;

@@ -34,12 +34,10 @@ import javax.json.JsonBuilderFactory;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
-import javax.json.JsonReaderFactory;
 import javax.json.JsonString;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import javax.json.stream.JsonGenerator;
-import javax.json.stream.JsonGeneratorFactory;
 
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -49,14 +47,14 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
-import net.shibboleth.idp.authn.principal.PrincipalSerializer;
+import net.shibboleth.idp.authn.principal.AbstractPrincipalSerializer;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /**
  * Principal serializer for {@link LdapPrincipal}.
  */
 @ThreadSafe
-public class LdapPrincipalSerializer implements PrincipalSerializer<String> {
+public class LdapPrincipalSerializer extends AbstractPrincipalSerializer<String> {
 
     /** Field name of principal name. */
     @Nonnull @NotEmpty private static final String PRINCIPAL_NAME_FIELD = "LDAPN";
@@ -70,24 +68,15 @@ public class LdapPrincipalSerializer implements PrincipalSerializer<String> {
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(LdapPrincipalSerializer.class);
     
-    /** JSON generator factory. */
-    @Nonnull private final JsonGeneratorFactory generatorFactory;
-
     /** JSON object bulder factory. */
     @Nonnull private final JsonBuilderFactory objectBuilderFactory;
 
-    /** JSON reader factory. */
-    @Nonnull private final JsonReaderFactory readerFactory;
-
     /** Constructor. */
     public LdapPrincipalSerializer() {
-        generatorFactory = Json.createGeneratorFactory(null);
         objectBuilderFactory = Json.createBuilderFactory(null);
-        readerFactory = Json.createReaderFactory(null);
     }
     
     /** {@inheritDoc} */
-    @Override
     public boolean supports(@Nonnull final Principal principal) {
         return principal instanceof LdapPrincipal;
     }
@@ -95,15 +84,15 @@ public class LdapPrincipalSerializer implements PrincipalSerializer<String> {
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String serialize(@Nonnull final Principal principal) throws IOException {
         final StringWriter sink = new StringWriter(32);
-        final JsonGenerator gen = generatorFactory.createGenerator(sink);
+        final JsonGenerator gen = getJsonGenerator(sink);
         gen.writeStartObject()
            .write(PRINCIPAL_NAME_FIELD, principal.getName());
         final LdapEntry entry = ((LdapPrincipal) principal).getLdapEntry();
         if (entry != null) {
-            final JsonObjectBuilder objectBuilder = objectBuilderFactory.createObjectBuilder();
+            final JsonObjectBuilder objectBuilder = getJsonObjectBuilder();
             objectBuilder.add("dn", entry.getDn());
             for (LdapAttribute attr : entry.getAttributes()) {
-                final JsonArrayBuilder arrayBuilder = objectBuilderFactory.createArrayBuilder();
+                final JsonArrayBuilder arrayBuilder = getJsonArrayBuilder();
                 for (String value : attr.getStringValues()) {
                     arrayBuilder.add(value);
                 }
@@ -115,7 +104,7 @@ public class LdapPrincipalSerializer implements PrincipalSerializer<String> {
         gen.close();
         return sink.toString();
     }
-
+    
     /** {@inheritDoc} */
     public boolean supports(@Nonnull @NotEmpty final String value) {
         return JSON_PATTERN.matcher(value).matches();
@@ -123,7 +112,7 @@ public class LdapPrincipalSerializer implements PrincipalSerializer<String> {
 
     /** {@inheritDoc} */
     @Nullable public LdapPrincipal deserialize(@Nonnull @NotEmpty final String value) throws IOException {
-        final JsonReader reader = readerFactory.createReader(new StringReader(value));
+        final JsonReader reader = getJsonReader(new StringReader(value));
         JsonStructure st = null;
         try {
             st = reader.read();
@@ -159,6 +148,24 @@ public class LdapPrincipalSerializer implements PrincipalSerializer<String> {
             }
         }
         return null;
-      }
+    }
 
+    /**
+     * Get a {@link JsonObjectBuilder} in a thread-safe manner.
+     * 
+     * @return  an object builder
+     */
+    @Nonnull private synchronized JsonObjectBuilder getJsonObjectBuilder() {
+        return objectBuilderFactory.createObjectBuilder();
+    }
+
+    /**
+     * Get a {@link JsonArrayBuilder} in a thread-safe manner.
+     * 
+     * @return  an array builder
+     */
+    @Nonnull private synchronized JsonArrayBuilder getJsonArrayBuilder() {
+        return objectBuilderFactory.createArrayBuilder();
+    }
+    
 }

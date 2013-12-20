@@ -24,13 +24,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.InitializableComponent;
 
 /**
  * Interface for the serialization/deserialization of principals.
  *
  * @param <Type> the type of object handled
  */
-public interface PrincipalSerializer<Type> {
+public interface PrincipalSerializer<Type> extends InitializableComponent {
 
     /**
      * Whether the supplied principal can be serialized.
@@ -38,7 +39,7 @@ public interface PrincipalSerializer<Type> {
      * @param principal to examine
      * @return whether principal can be serialized
      */
-    boolean supports(@Nonnull Principal principal);
+    public boolean supports(@Nonnull final Principal principal);
 
     /**
      * Serialize the supplied principal.
@@ -47,7 +48,7 @@ public interface PrincipalSerializer<Type> {
      * @return serialized value
      * @throws IOException if an error occurs during serialization
      */
-    @Nonnull @NotEmpty Type serialize(@Nonnull Principal principal) throws IOException;
+    @Nonnull @NotEmpty public Type serialize(@Nonnull final Principal principal) throws IOException;
 
     /**
      * Whether the supplied value can be deserialized.
@@ -55,7 +56,7 @@ public interface PrincipalSerializer<Type> {
      * @param value to examine
      * @return whether value can be deserialized
      */
-    boolean supports(@Nonnull Type value);
+    public boolean supports(@Nonnull final Type value);
 
     /**
      * Deserialize the supplied value.
@@ -64,5 +65,5 @@ public interface PrincipalSerializer<Type> {
      * @return principal
      * @throws IOException if an error occurs during deserialization
      */
-    @Nullable Principal deserialize(@Nonnull Type value) throws IOException;
+    @Nullable public Principal deserialize(@Nonnull final Type value) throws IOException;
 }
