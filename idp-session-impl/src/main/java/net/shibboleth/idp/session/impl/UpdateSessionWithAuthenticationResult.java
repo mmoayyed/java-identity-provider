@@ -40,9 +40,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An authentication action that establishes a record of the {@link AuthenticationResult} in an
- * {@link IdPSession} for the client, either by updating an existing session or creating a new
- * one.
+ * An authentication action that establishes a record of the {@link net.shibboleth.idp.authn.AuthenticationResult}
+ * in an {@link IdPSession} for the client, either by updating an existing session or creating a new one.
  * 
  * <p>A new {@link AuthenticationResult} may be added to the session, or the last activity time
  * of an existing one updated. A new one will only be added if the authentication context indicates

@@ -49,7 +49,8 @@ import com.google.common.base.Optional;
 
 /**
  * A serializer for instances of {@link StorageBackedIdPSession} designed in conjunction with the
- * {@link StorageService}-backed {@link SessionManager} implementation.
+ * {@link org.opensaml.storage.StorageService}-backed {@link net.shibboleth.idp.session.SessionManager}
+ * implementation.
  */
 @ThreadSafe
 public class StorageBackedIdPSessionSerializer extends AbstractInitializableComponent

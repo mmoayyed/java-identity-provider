@@ -22,7 +22,7 @@ import java.security.Principal;
 import javax.annotation.Nonnull;
 
 /**
- * Generates a {@link Predicate} to evaluate a {@link PrincipalSupportingComponent}
+ * Generates a {@link com.google.common.base.Predicate.Predicate} to evaluate a {@link PrincipalSupportingComponent}
  * against a requested form of authentication expressed in terms of a {@link Principal}.
  * 
  * <p>The predicate is constructed around a {@link Principal} to compare in an

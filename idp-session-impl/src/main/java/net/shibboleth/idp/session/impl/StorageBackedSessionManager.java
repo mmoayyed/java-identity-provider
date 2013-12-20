@@ -76,8 +76,8 @@ import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrate
  * with an expiration based on the session timeout value plus a configurable amount of "slop" to
  * prevent premature disappearance in case of logout.</p>
  * 
- * <p>Each {@link AuthenticationResult} is stored in a record keyed by the flow ID. The expiration
- * is set based on the underlying flow's timeout.</p>
+ * <p>Each {@link net.shibboleth.idp.authn.AuthenticationResult} is stored in a record keyed by the flow ID.
+ * The expiration is set based on the underlying flow's timeout.</p>
  * 
  * <p>Each {@link SPSession} is stored in a record keyed by the service ID. The expiration
  * is set based on the SPSession's own expiration plus the "slop" value.</p>
@@ -395,7 +395,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     }
 
     /**
-     * Get a matching {@link AuthenticatonFlowDescriptor}.
+     * Get a matching {@link AuthenticationFlowDescriptor}.
      * 
      * @param flowId the ID of the flow to return
      * 
@@ -432,7 +432,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     }
     
     /**
-     * Set the {@link spSessionSerializerRegistry} to use.
+     * Set the {@link SPSessionSerializerRegistry} to use.
      * 
      * @param registry  a registry of SPSession class to serializer mappings
      */

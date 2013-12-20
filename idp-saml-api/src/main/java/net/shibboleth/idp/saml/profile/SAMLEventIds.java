@@ -31,7 +31,7 @@ public final class SAMLEventIds {
 
     /**
      * ID of the event returned if no SAML response is associated with the
-     * {@link net.shibboleth.idp.profile.ProfileRequestContext}.
+     * {@link org.opensaml.profile.context.ProfileRequestContext}.
      */
     public static final String NO_RESPONSE = "NoResponse";
 

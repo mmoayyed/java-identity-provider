@@ -51,7 +51,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
- * Implementation of {@link IdPSession} for use with {@link StorageBackedSessionManager}.
+ * Implementation of {@link net.shibboleth.idp.session.IdPSession} for use with {@link StorageBackedSessionManager}.
  */
 public class StorageBackedIdPSession extends AbstractIdPSession {
     

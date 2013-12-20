@@ -109,7 +109,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
     }
 
     /**
-     * Returns the {@GenericPrincipalSerializer} used for any unsupported principals found
+     * Returns the {@link GenericPrincipalSerializer} used for any unsupported principals found
      * in the {@link AuthenticationResult}.
      * 
      * @return generic principal serializer
