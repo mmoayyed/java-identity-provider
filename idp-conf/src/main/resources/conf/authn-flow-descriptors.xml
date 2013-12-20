@@ -93,7 +93,7 @@
     Defining this allows us to specify symbolic text replacements that shrink the size of results
     saved to client-side storage such as cookies.
     -->
-    <bean id="shibboleth.DefaultAuthenticationResultSerializer" class="net.shibboleth.idp.authn.DefaultAuthenticationResultSerializer">
+    <bean id="shibboleth.DefaultAuthenticationResultSerializer" class="net.shibboleth.idp.authn.impl.DefaultAuthenticationResultSerializer">
         <property name="genericPrincipalSerializer.symbolics">
             <map>
                 <entry key="net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal" value="1" />
