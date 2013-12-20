@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.idp.authn.UsernamePrincipal;
+import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.session.BasicSPSession;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 

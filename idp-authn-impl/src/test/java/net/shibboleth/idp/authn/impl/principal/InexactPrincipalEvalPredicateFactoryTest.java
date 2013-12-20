@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn.impl;
+package net.shibboleth.idp.authn.impl.principal;
 
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.idp.authn.UsernamePrincipal;
+import net.shibboleth.idp.authn.impl.principal.InexactPrincipalEvalPredicateFactory;
+import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;

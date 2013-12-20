@@ -22,8 +22,8 @@ import java.util.Arrays;
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.collection.Pair;
 
 import org.opensaml.profile.ProfileException;

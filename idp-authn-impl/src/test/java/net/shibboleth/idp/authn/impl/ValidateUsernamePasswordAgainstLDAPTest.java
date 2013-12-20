@@ -25,12 +25,12 @@ import java.util.Map;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
 import net.shibboleth.idp.authn.context.AuthenticationWarningContext;
 import net.shibboleth.idp.authn.context.LDAPResponseContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
+import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapException;

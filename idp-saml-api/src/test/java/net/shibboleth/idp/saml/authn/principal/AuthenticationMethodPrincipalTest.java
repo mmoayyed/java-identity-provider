@@ -15,40 +15,52 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn;
+package net.shibboleth.idp.saml.authn.principal;
 
+import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
+import org.opensaml.saml.saml1.core.AuthenticationStatement;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** {@link UsernamePrincipal} unit test. */
-public class UsernamePrincipalTest {
+/** {@link AuthenticationMethodPrincipal} unit test. */
+public class AuthenticationMethodPrincipalTest {
 
-    /** Tests that everything is properly initialized during object construction. */
-    @Test public void testInstantiation() {
-        UsernamePrincipal principal = new UsernamePrincipal("bob");
-        Assert.assertEquals(principal.getName(), "bob");
+    /**
+     * Tests that everything is properly initialized during object construction.
+     *  
+     * @throws MarshallingException
+     * @throws CloneNotSupportedException 
+     */
+    @Test public void testInstantiation() throws CloneNotSupportedException {
+        AuthenticationMethodPrincipal principal =
+                new AuthenticationMethodPrincipal(AuthenticationStatement.KERBEROS_AUTHN_METHOD);
+        Assert.assertEquals(principal.getName(), AuthenticationStatement.KERBEROS_AUTHN_METHOD);
 
+        AuthenticationMethodPrincipal principal2 = principal.clone();
+        Assert.assertEquals(principal.getName(), principal2.getName());
+        
         try {
-            new UsernamePrincipal(null);
+            new AuthenticationMethodPrincipal(null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new UsernamePrincipal("");
+            new AuthenticationMethodPrincipal("");
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new UsernamePrincipal("   ");
+            new AuthenticationMethodPrincipal("   ");
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
+        
     }
 }

@@ -32,6 +32,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 
+import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;

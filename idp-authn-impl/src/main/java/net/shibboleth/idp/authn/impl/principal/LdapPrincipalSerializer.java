@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn;
+package net.shibboleth.idp.authn.impl.principal;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -49,6 +49,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
+import net.shibboleth.idp.authn.principal.PrincipalSerializer;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /**

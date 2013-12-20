@@ -15,59 +15,58 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.authn;
-
+package net.shibboleth.idp.saml.authn.principal;
 
 import javax.annotation.Nonnull;
 
 import org.opensaml.core.xml.util.XMLObjectSupport;
-import org.opensaml.saml.saml2.core.AuthnContextClassRef;
+import org.opensaml.saml.saml2.core.AuthnContextDeclRef;
 
-import net.shibboleth.idp.authn.CloneablePrincipal;
+import net.shibboleth.idp.authn.principal.CloneablePrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Objects;
 
-/** Principal based on a SAML AuthnContextClassRef. */
-public final class AuthnContextClassRefPrincipal implements CloneablePrincipal {
+/** Principal based on a SAML AuthnContextDeclRef. */
+public final class AuthnContextDeclRefPrincipal implements CloneablePrincipal {
 
-    /** The class ref. */
-    @Nonnull @NotEmpty private String authnContextClassRef;
+    /** The decl ref. */
+    @Nonnull @NotEmpty private String authnContextDeclRef;
 
     /**
      * Constructor.
      * 
-     * @param classRef the class reference URI
+     * @param declRef the decl ref URI
      */
-    public AuthnContextClassRefPrincipal(@Nonnull @NotEmpty final String classRef) {
-        authnContextClassRef = Constraint.isNotNull(
-                StringSupport.trimOrNull(classRef), "AuthnContextClassRef cannot be null or empty");
+    public AuthnContextDeclRefPrincipal(@Nonnull @NotEmpty final String declRef) {
+        authnContextDeclRef = Constraint.isNotNull(
+                StringSupport.trimOrNull(declRef), "AuthnContextDeclRef cannot be null or empty");
     }
 
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String getName() {
-        return authnContextClassRef;
+        return authnContextDeclRef;
     }
     
     /**
-     * Returns the value as a SAML {@link AuthnContextClassRef}.
+     * Returns the value as a SAML {@link AuthnContextDeclRef}.
      * 
-     * @return  the principal value in the form of an {@link AuthnContextClassRef}
+     * @return  the principal value in the form of an {@link AuthnContextDeclRef}
      */
-    @Nonnull public AuthnContextClassRef getAuthnContextClassRef() {
-        AuthnContextClassRef ref = (AuthnContextClassRef) Constraint.isNotNull(
-                XMLObjectSupport.getBuilder(AuthnContextClassRef.DEFAULT_ELEMENT_NAME),
-                    "No builder for AuthnContextClassRef").buildObject(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
-        ref.setAuthnContextClassRef(getName());
+    @Nonnull public AuthnContextDeclRef getAuthnContextDeclRef() {
+        AuthnContextDeclRef ref = (AuthnContextDeclRef) Constraint.isNotNull(
+                XMLObjectSupport.getBuilder(AuthnContextDeclRef.DEFAULT_ELEMENT_NAME),
+                    "No builder for AuthnContextDeclRef").buildObject(AuthnContextDeclRef.DEFAULT_ELEMENT_NAME);
+        ref.setAuthnContextDeclRef(getName());
         return ref;
     }
 
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        return authnContextClassRef.hashCode();
+        return authnContextDeclRef.hashCode();
     }
 
     /** {@inheritDoc} */
@@ -81,8 +80,8 @@ public final class AuthnContextClassRefPrincipal implements CloneablePrincipal {
             return true;
         }
 
-        if (other instanceof AuthnContextClassRefPrincipal) {
-            return authnContextClassRef.equals(((AuthnContextClassRefPrincipal) other).getName());
+        if (other instanceof AuthnContextDeclRefPrincipal) {
+            return authnContextDeclRef.equals(((AuthnContextDeclRefPrincipal) other).getName());
         }
 
         return false;
@@ -91,13 +90,13 @@ public final class AuthnContextClassRefPrincipal implements CloneablePrincipal {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("authnContextClassRef", authnContextClassRef).toString();
+        return Objects.toStringHelper(this).add("authnContextDeclRef", authnContextDeclRef).toString();
     }
 
     /** {@inheritDoc} */
-    public AuthnContextClassRefPrincipal clone() throws CloneNotSupportedException {
-        AuthnContextClassRefPrincipal copy = (AuthnContextClassRefPrincipal) super.clone();
-        copy.authnContextClassRef = authnContextClassRef;
+    public AuthnContextDeclRefPrincipal clone() throws CloneNotSupportedException {
+        AuthnContextDeclRefPrincipal copy = (AuthnContextDeclRefPrincipal) super.clone();
+        copy.authnContextDeclRef = authnContextDeclRef;
         return copy;
     }
 }

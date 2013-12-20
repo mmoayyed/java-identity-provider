@@ -20,9 +20,9 @@ package net.shibboleth.idp.session.impl;
 import java.util.Collections;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;

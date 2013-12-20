@@ -15,16 +15,21 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.authn;
+package net.shibboleth.idp.saml.authn.principal;
 
+import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
-import org.opensaml.saml.saml1.core.AuthenticationStatement;
+import org.opensaml.core.xml.XMLObjectBaseTestCase;
+import org.opensaml.core.xml.io.MarshallingException;
+import org.opensaml.saml.saml2.core.AuthnContext;
+import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.w3c.dom.Element;
 
-/** {@link AuthenticationMethodPrincipal} unit test. */
-public class AuthenticationMethodPrincipalTest {
+/** {@link AuthnContextClassRefPrincipal} unit test. */
+public class AuthnContextClassRefPrincipalTest extends XMLObjectBaseTestCase {
 
     /**
      * Tests that everything is properly initialized during object construction.
@@ -32,30 +37,34 @@ public class AuthenticationMethodPrincipalTest {
      * @throws MarshallingException
      * @throws CloneNotSupportedException 
      */
-    @Test public void testInstantiation() throws CloneNotSupportedException {
-        AuthenticationMethodPrincipal principal =
-                new AuthenticationMethodPrincipal(AuthenticationStatement.KERBEROS_AUTHN_METHOD);
-        Assert.assertEquals(principal.getName(), AuthenticationStatement.KERBEROS_AUTHN_METHOD);
+    @Test public void testInstantiation() throws MarshallingException, CloneNotSupportedException {
+        AuthnContextClassRefPrincipal principal = new AuthnContextClassRefPrincipal(AuthnContext.KERBEROS_AUTHN_CTX);
+        Assert.assertEquals(principal.getName(), AuthnContext.KERBEROS_AUTHN_CTX);
 
-        AuthenticationMethodPrincipal principal2 = principal.clone();
-        Assert.assertEquals(principal.getName(), principal2.getName());
+        AuthnContextClassRef ref = buildXMLObject(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
+        ref.setAuthnContextClassRef(AuthnContext.KERBEROS_AUTHN_CTX);
+        Element xml = getMarshaller(AuthnContextClassRef.DEFAULT_ELEMENT_NAME).marshall(ref);
+        assertXMLEquals(xml.getOwnerDocument(), principal.getAuthnContextClassRef());
+        
+        AuthnContextClassRefPrincipal principal2 = principal.clone();
+        assertXMLEquals(xml.getOwnerDocument(), principal2.getAuthnContextClassRef());
         
         try {
-            new AuthenticationMethodPrincipal(null);
+            new AuthnContextClassRefPrincipal(null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new AuthenticationMethodPrincipal("");
+            new AuthnContextClassRefPrincipal("");
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new AuthenticationMethodPrincipal("   ");
+            new AuthnContextClassRefPrincipal("   ");
             Assert.fail();
         } catch (ConstraintViolationException e) {
 

@@ -24,9 +24,9 @@ import javax.security.auth.Subject;
 import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
+import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;

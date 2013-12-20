@@ -18,4 +18,4 @@
 /**
  * SAML-specific classes for integration with idp-authn-api packages.
  */
-package net.shibboleth.idp.saml.authn;
+package net.shibboleth.idp.saml.authn.principal;

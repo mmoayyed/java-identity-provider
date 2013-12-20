@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn.impl;
+package net.shibboleth.idp.authn.impl.principal;
 
 import java.security.Principal;
 import java.util.Collection;
@@ -26,9 +26,9 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.PrincipalEvalPredicate;
-import net.shibboleth.idp.authn.PrincipalEvalPredicateFactory;
-import net.shibboleth.idp.authn.PrincipalSupportingComponent;
+import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
+import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
+import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 

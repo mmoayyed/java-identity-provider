@@ -22,8 +22,8 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionTestingSupport;

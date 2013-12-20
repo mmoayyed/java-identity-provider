@@ -32,6 +32,9 @@ import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
 import net.shibboleth.idp.authn.context.AuthenticationWarningContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
+import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
+import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
@@ -251,8 +254,8 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * Subclasses must override this method to complete the population of the {@link Subject} with
      * {@link Principal} and credential information based on the validation they perform.
      * 
-     * <p>Typically this will include attaching a {@link UsernamePrincipal}, but this is not a requirement
-     * if other components are suitably overridden.</p>
+     * <p>Typically this will include attaching a {@link net.shibboleth.idp.authn.principal.UsernamePrincipal},
+     * but this is not a requirement if other components are suitably overridden.</p>
      * 
      * @param subject subject to populate
      * @return  the input subject

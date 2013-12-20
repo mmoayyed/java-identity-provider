@@ -25,9 +25,10 @@ import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.TestPrincipal;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
+import net.shibboleth.idp.authn.impl.principal.ExactPrincipalEvalPredicateFactory;
+import net.shibboleth.idp.authn.principal.TestPrincipal;
 
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionTestingSupport;

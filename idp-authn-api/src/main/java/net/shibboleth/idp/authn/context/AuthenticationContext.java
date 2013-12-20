@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
-import net.shibboleth.idp.authn.PrincipalEvalPredicateFactoryRegistry;
+import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;

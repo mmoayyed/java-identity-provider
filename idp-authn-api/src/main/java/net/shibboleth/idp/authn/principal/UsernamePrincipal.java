@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn;
+package net.shibboleth.idp.authn.principal;
 
 import javax.annotation.Nonnull;
 

@@ -24,8 +24,8 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.authn.AbstractSubjectCanonicalizationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
-import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;

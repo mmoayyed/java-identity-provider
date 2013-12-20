@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.authn;
+package net.shibboleth.idp.saml.authn.principal;
 
+import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.opensaml.core.xml.XMLObjectBaseTestCase;

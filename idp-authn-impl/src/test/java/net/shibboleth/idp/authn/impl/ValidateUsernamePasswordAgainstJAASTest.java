@@ -28,10 +28,10 @@ import java.util.Map;
 import javax.security.auth.login.LoginException;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
+import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.net.UriSupport;
 
 import org.opensaml.profile.action.ActionTestingSupport;

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.authn;
+package net.shibboleth.idp.saml.authn.principal;
 
 import javax.annotation.Nonnull;
 
@@ -25,7 +25,7 @@ import org.opensaml.core.xml.io.UnmarshallingException;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.saml2.core.AuthnContextDecl;
 
-import net.shibboleth.idp.authn.CloneablePrincipal;
+import net.shibboleth.idp.authn.principal.CloneablePrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;

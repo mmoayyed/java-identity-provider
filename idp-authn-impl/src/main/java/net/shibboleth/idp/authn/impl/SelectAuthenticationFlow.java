@@ -28,10 +28,10 @@ import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.PrincipalEvalPredicate;
-import net.shibboleth.idp.authn.PrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
+import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
+import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -53,8 +53,8 @@ import org.slf4j.LoggerFactory;
  * authentication. If not possible, then a potential flow will be selected and its ID
  * returned as the result of the action.</p>
  * 
- * <p>If there are requested principals, then the results or flows chosen must "match"
- * the request information according to the {@link net.shibboleth.idp.authn.PrincipalEvalPredicateFactoryRegistry}
+ * <p>If there are requested principals, then the results or flows chosen must "match" the
+ * request information according to the {@link net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry}
  * attached to the context. The "favorSSO" option determines whether to select a flow
  * specifically in the order specified by the {@link RequestedPrincipalContext}, or to favor
  * an active but matching result, over a new flow. Forced authentication trumps the

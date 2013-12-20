@@ -38,6 +38,9 @@ import javax.json.stream.JsonGenerator;
 import javax.json.stream.JsonGeneratorFactory;
 import javax.security.auth.Subject;
 
+import net.shibboleth.idp.authn.principal.GenericPrincipalSerializer;
+import net.shibboleth.idp.authn.principal.PrincipalSerializer;
+import net.shibboleth.idp.authn.principal.UsernamePrincipalSerializer;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;

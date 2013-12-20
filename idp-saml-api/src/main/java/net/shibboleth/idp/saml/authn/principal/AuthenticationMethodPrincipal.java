@@ -15,45 +15,47 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn;
+package net.shibboleth.idp.saml.authn.principal;
 
-
-import java.security.Principal;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.authn.principal.CloneablePrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Objects;
 
-/** Test Principal for testing requested authentication behavior. */
-public final class TestPrincipal implements Principal {
+/** Principal based on a SAML 1.x AuthenticationMethod. */
+public final class AuthenticationMethodPrincipal implements CloneablePrincipal {
 
-    /** The class ref. */
-    @Nonnull @NotEmpty private String value;
+    /** The method. */
+    @Nonnull @NotEmpty private String authnMethod;
 
     /**
      * Constructor.
      * 
-     * @param newValue the principal name
+     * @param method the method URI
      */
-    public TestPrincipal(@Nonnull @NotEmpty final String newValue) {
-        value = Constraint.isNotNull(StringSupport.trimOrNull(newValue), "Value cannot be null or empty");
+    public AuthenticationMethodPrincipal(@Nonnull @NotEmpty final String method) {
+        authnMethod = Constraint.isNotNull(
+                StringSupport.trimOrNull(method), "AuthenticationMethod cannot be null or empty");
     }
 
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String getName() {
-        return value;
-    }
-    
-    /** {@inheritDoc} */
-    public int hashCode() {
-        return value.hashCode();
+        return authnMethod;
     }
 
     /** {@inheritDoc} */
+    @Override
+    public int hashCode() {
+        return authnMethod.hashCode();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public boolean equals(Object other) {
         if (other == null) {
             return false;
@@ -63,16 +65,23 @@ public final class TestPrincipal implements Principal {
             return true;
         }
 
-        if (other instanceof TestPrincipal) {
-            return value.equals(((TestPrincipal) other).getName());
+        if (other instanceof AuthenticationMethodPrincipal) {
+            return authnMethod.equals(((AuthenticationMethodPrincipal) other).getName());
         }
 
         return false;
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("value", value).toString();
+        return Objects.toStringHelper(this).add("authnMethod", authnMethod).toString();
     }
 
+    /** {@inheritDoc} */
+    public AuthenticationMethodPrincipal clone() throws CloneNotSupportedException {
+        AuthenticationMethodPrincipal copy = (AuthenticationMethodPrincipal) super.clone();
+        copy.authnMethod = authnMethod;
+        return copy;
+    }
 }

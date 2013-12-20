@@ -21,9 +21,9 @@ import java.util.Arrays;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.context.SessionContext;

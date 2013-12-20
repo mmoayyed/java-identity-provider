@@ -18,7 +18,7 @@
 package net.shibboleth.idp.session;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.idp.authn.UsernamePrincipal;
+import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;

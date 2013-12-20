@@ -15,47 +15,45 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.authn;
+package net.shibboleth.idp.authn.principal;
 
+
+import java.security.Principal;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.authn.CloneablePrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Objects;
 
-/** Principal based on a SAML 1.x AuthenticationMethod. */
-public final class AuthenticationMethodPrincipal implements CloneablePrincipal {
+/** Test Principal for testing requested authentication behavior. */
+public final class TestPrincipal implements Principal {
 
-    /** The method. */
-    @Nonnull @NotEmpty private String authnMethod;
+    /** The class ref. */
+    @Nonnull @NotEmpty private String value;
 
     /**
      * Constructor.
      * 
-     * @param method the method URI
+     * @param newValue the principal name
      */
-    public AuthenticationMethodPrincipal(@Nonnull @NotEmpty final String method) {
-        authnMethod = Constraint.isNotNull(
-                StringSupport.trimOrNull(method), "AuthenticationMethod cannot be null or empty");
+    public TestPrincipal(@Nonnull @NotEmpty final String newValue) {
+        value = Constraint.isNotNull(StringSupport.trimOrNull(newValue), "Value cannot be null or empty");
     }
 
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String getName() {
-        return authnMethod;
+        return value;
     }
-
+    
     /** {@inheritDoc} */
-    @Override
     public int hashCode() {
-        return authnMethod.hashCode();
+        return value.hashCode();
     }
 
     /** {@inheritDoc} */
-    @Override
     public boolean equals(Object other) {
         if (other == null) {
             return false;
@@ -65,23 +63,16 @@ public final class AuthenticationMethodPrincipal implements CloneablePrincipal {
             return true;
         }
 
-        if (other instanceof AuthenticationMethodPrincipal) {
-            return authnMethod.equals(((AuthenticationMethodPrincipal) other).getName());
+        if (other instanceof TestPrincipal) {
+            return value.equals(((TestPrincipal) other).getName());
         }
 
         return false;
     }
 
     /** {@inheritDoc} */
-    @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("authnMethod", authnMethod).toString();
+        return Objects.toStringHelper(this).add("value", value).toString();
     }
 
-    /** {@inheritDoc} */
-    public AuthenticationMethodPrincipal clone() throws CloneNotSupportedException {
-        AuthenticationMethodPrincipal copy = (AuthenticationMethodPrincipal) super.clone();
-        copy.authnMethod = authnMethod;
-        return copy;
-    }
 }

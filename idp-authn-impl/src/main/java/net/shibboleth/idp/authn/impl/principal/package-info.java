@@ -15,13 +15,5 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn;
-
-import java.security.Principal;
-
-/** Principal that can be cloned without knowledge of the underlying type. */
-public interface CloneablePrincipal extends Principal, Cloneable {
-
-    /** {@inheritDoc} */
-    public abstract CloneablePrincipal clone() throws CloneNotSupportedException;
-}
+/** Implementation of functionality related to Java Principals. */
+package net.shibboleth.idp.authn.impl.principal;

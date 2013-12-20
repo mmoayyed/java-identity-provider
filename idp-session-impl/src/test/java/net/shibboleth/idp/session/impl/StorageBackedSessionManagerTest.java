@@ -27,8 +27,8 @@ import javax.json.stream.JsonGenerator;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.idp.authn.TestPrincipal;
-import net.shibboleth.idp.authn.UsernamePrincipal;
+import net.shibboleth.idp.authn.principal.TestPrincipal;
+import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.session.BasicSPSession;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SPSession;
