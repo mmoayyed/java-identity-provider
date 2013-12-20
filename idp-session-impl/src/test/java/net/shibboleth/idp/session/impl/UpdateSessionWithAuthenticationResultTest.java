@@ -23,6 +23,7 @@ import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.authn.impl.DefaultAuthenticationResultSerializer;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
@@ -37,6 +38,7 @@ import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.storage.StorageSerializer;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.testng.Assert;
@@ -63,10 +65,13 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         action.initialize();
     }
     
-    /** {@inheritDoc} 
-     * @throws ComponentInitializationException */
+    /** {@inheritDoc} */
     protected void adjustProperties() throws ComponentInitializationException {
+        StorageSerializer<AuthenticationResult> resultSerializer = new DefaultAuthenticationResultSerializer();
+        resultSerializer.initialize();
+
         flowDescriptor = new AuthenticationFlowDescriptor("test1");
+        flowDescriptor.setResultSerializer(resultSerializer);
         flowDescriptor.initialize();
         sessionManager.setAuthenticationFlowDescriptors(Arrays.asList(flowDescriptor));
     }

@@ -27,6 +27,7 @@ import javax.json.stream.JsonGenerator;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.impl.DefaultAuthenticationResultSerializer;
 import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.session.BasicSPSession;
@@ -42,6 +43,7 @@ import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseConte
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
+import org.opensaml.storage.StorageSerializer;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.testng.Assert;
@@ -64,14 +66,19 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
         serializerRegistry.register(BasicSPSession.class, new BasicSPSessionSerializer(sessionSlop));
         serializerRegistry.register(ExtendedSPSession.class, new ExtendedSPSessionSerializer(sessionSlop));
         
+        StorageSerializer<AuthenticationResult> resultSerializer = new DefaultAuthenticationResultSerializer();
+        resultSerializer.initialize();
+        
         AuthenticationFlowDescriptor foo = new AuthenticationFlowDescriptor("AuthenticationFlow/Foo");
         foo.setLifetime(60 * 1000);
         foo.setInactivityTimeout(60 * 1000);
+        foo.setResultSerializer(resultSerializer);
         foo.initialize();
         
         AuthenticationFlowDescriptor bar = new AuthenticationFlowDescriptor("AuthenticationFlow/Bar");
         bar.setLifetime(60 * 1000);
         bar.setInactivityTimeout(60 * 1000);
+        bar.setResultSerializer(resultSerializer);
         bar.initialize();
         
         flowDescriptors = Arrays.asList(foo, bar);
