@@ -39,7 +39,7 @@ public interface PrincipalSerializer<Type> extends InitializableComponent {
      * @param principal to examine
      * @return whether principal can be serialized
      */
-    public boolean supports(@Nonnull final Principal principal);
+    boolean supports(@Nonnull final Principal principal);
 
     /**
      * Serialize the supplied principal.
@@ -48,7 +48,7 @@ public interface PrincipalSerializer<Type> extends InitializableComponent {
      * @return serialized value
      * @throws IOException if an error occurs during serialization
      */
-    @Nonnull @NotEmpty public Type serialize(@Nonnull final Principal principal) throws IOException;
+    @Nonnull @NotEmpty Type serialize(@Nonnull final Principal principal) throws IOException;
 
     /**
      * Whether the supplied value can be deserialized.
@@ -56,7 +56,7 @@ public interface PrincipalSerializer<Type> extends InitializableComponent {
      * @param value to examine
      * @return whether value can be deserialized
      */
-    public boolean supports(@Nonnull final Type value);
+    boolean supports(@Nonnull final Type value);
 
     /**
      * Deserialize the supplied value.
@@ -65,5 +65,5 @@ public interface PrincipalSerializer<Type> extends InitializableComponent {
      * @return principal
      * @throws IOException if an error occurs during deserialization
      */
-    @Nullable public Principal deserialize(@Nonnull final Type value) throws IOException;
+    @Nullable Principal deserialize(@Nonnull final Type value) throws IOException;
 }

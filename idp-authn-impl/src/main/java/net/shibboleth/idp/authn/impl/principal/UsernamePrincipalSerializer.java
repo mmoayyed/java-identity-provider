@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn.principal;
+package net.shibboleth.idp.authn.impl.principal;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -37,6 +37,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
+import net.shibboleth.idp.authn.principal.AbstractPrincipalSerializer;
+import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /**
@@ -55,11 +57,13 @@ public class UsernamePrincipalSerializer extends AbstractPrincipalSerializer<Str
     @Nonnull private final Logger log = LoggerFactory.getLogger(UsernamePrincipalSerializer.class);
 
     /** {@inheritDoc} */
+    @Override
     public boolean supports(@Nonnull final Principal principal) {
         return principal instanceof UsernamePrincipal;
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty public String serialize(@Nonnull final Principal principal) throws IOException {
         final StringWriter sink = new StringWriter(32);
         final JsonGenerator gen = getJsonGenerator(sink);
@@ -71,11 +75,13 @@ public class UsernamePrincipalSerializer extends AbstractPrincipalSerializer<Str
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean supports(@Nonnull @NotEmpty final String value) {
         return JSON_PATTERN.matcher(value).matches();
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nullable public UsernamePrincipal deserialize(@Nonnull @NotEmpty final String value) throws IOException {
         final JsonReader reader = getJsonReader(new StringReader(value));
         JsonStructure st = null;

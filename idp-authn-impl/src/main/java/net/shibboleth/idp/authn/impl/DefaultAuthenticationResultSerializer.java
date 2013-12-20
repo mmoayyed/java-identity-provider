@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn;
+package net.shibboleth.idp.authn.impl;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -38,9 +38,10 @@ import javax.json.stream.JsonGenerator;
 import javax.json.stream.JsonGeneratorFactory;
 import javax.security.auth.Subject;
 
-import net.shibboleth.idp.authn.principal.GenericPrincipalSerializer;
+import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.impl.principal.GenericPrincipalSerializer;
+import net.shibboleth.idp.authn.impl.principal.UsernamePrincipalSerializer;
 import net.shibboleth.idp.authn.principal.PrincipalSerializer;
-import net.shibboleth.idp.authn.principal.UsernamePrincipalSerializer;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
@@ -133,6 +134,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty public String serialize(@Nonnull final AuthenticationResult instance) throws IOException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
@@ -179,6 +181,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull public AuthenticationResult deserialize(final int version, @Nonnull @NotEmpty final String context,
                     @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value,
                     @Nullable final Long expiration) throws IOException {

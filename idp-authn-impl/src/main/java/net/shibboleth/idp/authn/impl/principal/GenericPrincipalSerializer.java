@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn.principal;
+package net.shibboleth.idp.authn.impl.principal;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -47,6 +47,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
 
+import net.shibboleth.idp.authn.principal.AbstractPrincipalSerializer;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
@@ -97,6 +98,7 @@ public class GenericPrincipalSerializer extends AbstractPrincipalSerializer<Stri
     }
         
     /** {@inheritDoc} */
+    @Override
     public boolean supports(@Nonnull final Principal principal) {
         final Class<? extends Principal> principalType = principal.getClass();
         if (compatiblePrincipalTypes.contains(principalType)) {
@@ -115,6 +117,7 @@ public class GenericPrincipalSerializer extends AbstractPrincipalSerializer<Stri
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty public String serialize(@Nonnull final Principal principal) throws IOException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
@@ -142,11 +145,13 @@ public class GenericPrincipalSerializer extends AbstractPrincipalSerializer<Stri
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean supports(@Nonnull @NotEmpty final String value) {
         return JSON_PATTERN.matcher(value).matches();
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nullable public Principal deserialize(@Nonnull @NotEmpty final String value) throws IOException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         

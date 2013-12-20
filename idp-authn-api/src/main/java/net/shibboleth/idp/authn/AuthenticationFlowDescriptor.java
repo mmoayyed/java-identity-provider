@@ -62,9 +62,6 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
 
     /** Default subflow for subject canonicalization. */
     @Nonnull @NotEmpty public static final String DEFAULT_SUBJECT_C14N_FLOWID;
-
-    /** Default serializer for result objects. */
-    @Nonnull private static final StorageSerializer<AuthenticationResult> DEFAULT_SERIALIZER;
         
     /** Whether this flow supports passive authentication. */
     private boolean supportsPassive;
@@ -280,15 +277,23 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
                 "Subject Canonicalization Flow ID cannot be null or empty");
     }
     
+    
+    
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (resultSerializer == null) {
+            throw new ComponentInitializationException("AuthenticationResult serializer cannot be null");
+        }
+    }
+
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String serialize(@Nonnull final AuthenticationResult instance) throws IOException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
-        if (resultSerializer != null) {
-            return resultSerializer.serialize(instance);
-        } else {
-            return DEFAULT_SERIALIZER.serialize(instance);
-        }
+        return resultSerializer.serialize(instance);
     }
 
     /** {@inheritDoc} */
@@ -298,13 +303,8 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         // Back the expiration off by the inactivity timeout to recover the last activity time.
-        if (resultSerializer != null) {
-            return resultSerializer.deserialize(version, context, key, value,
-                    (expiration != null) ? expiration - inactivityTimeout - STORAGE_EXPIRATION_OFFSET : null);
-        } else {
-            return DEFAULT_SERIALIZER.deserialize(version, context, key, value,
-                    (expiration != null) ? expiration - inactivityTimeout - STORAGE_EXPIRATION_OFFSET : null);
-        }
+        return resultSerializer.deserialize(version, context, key, value,
+                (expiration != null) ? expiration - inactivityTimeout - STORAGE_EXPIRATION_OFFSET : null);
     }
 
     /** {@inheritDoc} */
@@ -345,11 +345,5 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     static {
         STORAGE_EXPIRATION_OFFSET = 10 * 60 * 1000;
         DEFAULT_SUBJECT_C14N_FLOWID = "SubjectC14N/Simple";
-        DEFAULT_SERIALIZER = new DefaultAuthenticationResultSerializer();
-        try {
-            DEFAULT_SERIALIZER.initialize();
-        } catch (ComponentInitializationException e) {
-            // TODO: not sure how to handle 
-        }
     }
 }

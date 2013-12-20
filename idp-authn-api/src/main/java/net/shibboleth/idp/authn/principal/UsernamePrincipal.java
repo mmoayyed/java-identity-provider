@@ -41,16 +41,19 @@ public class UsernamePrincipal implements CloneablePrincipal {
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty public String getName() {
         return username;
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return username.hashCode();
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object other) {
         if (other == null) {
             return false;
@@ -68,11 +71,13 @@ public class UsernamePrincipal implements CloneablePrincipal {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return Objects.toStringHelper(this).add("username", username).toString();
     }
     
     /** {@inheritDoc} */
+    @Override
     public UsernamePrincipal clone() throws CloneNotSupportedException {
         UsernamePrincipal copy = (UsernamePrincipal) super.clone();
         copy.username = username;

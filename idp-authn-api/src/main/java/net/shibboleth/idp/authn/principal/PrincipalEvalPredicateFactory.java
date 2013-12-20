@@ -41,5 +41,5 @@ public interface PrincipalEvalPredicateFactory {
      * 
      * @return a {@link Predicate} implementing custom matching rules
      */
-    @Nonnull public PrincipalEvalPredicate getPredicate(@Nonnull final Principal candidate);
+    @Nonnull PrincipalEvalPredicate getPredicate(@Nonnull final Principal candidate);
 }

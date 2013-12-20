@@ -77,11 +77,13 @@ public class LdapPrincipalSerializer extends AbstractPrincipalSerializer<String>
     }
     
     /** {@inheritDoc} */
+    @Override
     public boolean supports(@Nonnull final Principal principal) {
         return principal instanceof LdapPrincipal;
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty public String serialize(@Nonnull final Principal principal) throws IOException {
         final StringWriter sink = new StringWriter(32);
         final JsonGenerator gen = getJsonGenerator(sink);
@@ -106,11 +108,13 @@ public class LdapPrincipalSerializer extends AbstractPrincipalSerializer<String>
     }
     
     /** {@inheritDoc} */
+    @Override
     public boolean supports(@Nonnull @NotEmpty final String value) {
         return JSON_PATTERN.matcher(value).matches();
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nullable public LdapPrincipal deserialize(@Nonnull @NotEmpty final String value) throws IOException {
         final JsonReader reader = getJsonReader(new StringReader(value));
         JsonStructure st = null;

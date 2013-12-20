@@ -97,6 +97,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NonnullElements @Unmodifiable public <T extends Principal> Set<T> getSupportedPrincipals(
             @Nonnull final Class<T> c) {
         return subject.getPrincipals(c);
@@ -155,11 +156,13 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return authenticationFlowId.hashCode();
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -178,6 +181,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return Objects.toStringHelper(this).add("authenticationFlowId", authenticationFlowId)
                 .add("authenticatedPrincipal", getSubjectName())

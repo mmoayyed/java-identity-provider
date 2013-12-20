@@ -39,5 +39,5 @@ public interface PrincipalEvalPredicate extends Predicate<PrincipalSupportingCom
      * 
      * @return  a custom principal, or null
      */
-    @Nullable public Principal getMatchingPrincipal(); 
+    @Nullable Principal getMatchingPrincipal(); 
 }

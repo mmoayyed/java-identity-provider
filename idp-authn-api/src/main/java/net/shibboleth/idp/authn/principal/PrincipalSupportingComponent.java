@@ -43,6 +43,6 @@ public interface PrincipalSupportingComponent {
      * 
      * @return a set of matching principals
      */
-    @Nonnull @NonnullElements @Unmodifiable public <T extends Principal> Set<T> getSupportedPrincipals(
+    @Nonnull @NonnullElements @Unmodifiable <T extends Principal> Set<T> getSupportedPrincipals(
             @Nonnull final Class<T> c);
 }

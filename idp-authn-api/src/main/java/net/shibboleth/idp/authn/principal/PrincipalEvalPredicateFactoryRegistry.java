@@ -41,9 +41,10 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 public final class PrincipalEvalPredicateFactoryRegistry {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(PrincipalEvalPredicateFactoryRegistry.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(PrincipalEvalPredicateFactoryRegistry.class);
     
     /** Storage for the registry mappings. */
+    @Nonnull @NonnullElements
     private Map<Pair<Class<? extends Principal>, String>, PrincipalEvalPredicateFactory> registry;
 
     /** Constructor. */
