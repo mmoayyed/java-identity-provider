@@ -23,9 +23,6 @@ package net.shibboleth.idp.saml.profile;
  */
 public final class SAMLEventIds {
 
-    /** Is the SAML message version is incorrect (e.g., received a SAML 1.1 but expected SAML 2 message). */
-    public static final String INVALID_MESSAGE_VERSION = "InvalidMessageVersion";
-
     /** ID of the event returned if some attributes cannot be encoded. */
     public static final String UNABLE_ENCODE_ATTRIBUTE = "UnableToEncodeAttribute";
 
