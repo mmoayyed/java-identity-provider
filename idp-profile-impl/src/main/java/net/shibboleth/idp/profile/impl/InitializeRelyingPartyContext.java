@@ -78,14 +78,14 @@ public class InitializeRelyingPartyContext extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
+        final RelyingPartyContext rpContext = profileRequestContext.getSubcontext(RelyingPartyContext.class, true);
         final BasicMessageMetadataContext messageSubcontext =
                 messageMetadataContextLookupStrategy.apply(profileRequestContext.getInboundMessageContext());
         if (messageSubcontext != null) {
             log.debug("{} Attaching RelyingPartyContext with relying party ID {} to ProfileRequestContext",
                     getLogPrefix(), messageSubcontext.getMessageIssuer());
     
-            profileRequestContext.getSubcontext(RelyingPartyContext.class, true).setRelyingPartyId(
-                    messageSubcontext.getMessageIssuer());
+            rpContext.setRelyingPartyId(messageSubcontext.getMessageIssuer());
         }
     }
     
