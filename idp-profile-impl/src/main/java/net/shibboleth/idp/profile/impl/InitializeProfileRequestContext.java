@@ -35,7 +35,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Action that creates a new {@link ProfileRequestContext} and binds it to the current conversation under the
- * {@link ProfileRequestContext#BINDING_KEY} key.
+ * {@link ProfileRequestContext#BINDING_KEY} key, and sets the profile ID, if provided.
  * 
  * <p>This is a native SWF action in order to access conversation scope.</p>
  * 
