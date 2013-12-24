@@ -162,8 +162,6 @@
             
     <bean id="CheckMandatoryIssuer" class="org.opensaml.profile.action.impl.CheckMandatoryIssuer" />
     
-    <bean id="InitializeRelyingPartyContext" class="net.shibboleth.idp.profile.impl.InitializeRelyingPartyContext" />
-    
     <bean id="ResolveAttributes" class="net.shibboleth.idp.profile.impl.ResolveAttributes" >
        <constructor-arg ref="shibboleth.AttributeResolverService"/>
     </bean>
