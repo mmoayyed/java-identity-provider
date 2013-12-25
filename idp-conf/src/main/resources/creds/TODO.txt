@@ -1,0 +1,2 @@
+2013-12-24 tz
+The keystores in creds/ were copied from java-idp-testbed and are placeholders which will be removed later. Hopefully they will be created during installation.
