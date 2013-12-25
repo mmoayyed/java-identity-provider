@@ -114,12 +114,9 @@
     <!-- Configure a TLS (SSL) Context Factory                         -->
     <!-- ============================================================= -->
     <New id="sslContextFactory" class="org.eclipse.jetty.util.ssl.SslContextFactory">
-        <Set name="KeyStorePath"><SystemProperty name="idp.home" />/creds/localhost.p12</Set>
-        <Set name="KeyStoreType">PKCS12</Set>
-        <Set name="KeyStorePassword">changeit</Set>
-        <Set name="TrustStorePath"><SystemProperty name="idp.home" />/creds/localhost.p12</Set>
-        <Set name="TrustStorePassword">changeit</Set>
-        <Set name="TrustStoreType">PKCS12</Set>
+        <Set name="KeyStorePath"><SystemProperty name="idp.home" />/<SystemProperty name="jetty.keystore.path" /></Set>
+        <Set name="KeyStoreType"><SystemProperty name="jetty.keystore.type" /></Set>
+        <Set name="KeyStorePassword"><SystemProperty name="jetty.keystore.password" /></Set>
         <Set name="EndpointIdentificationAlgorithm">HTTPS</Set>
         <Set name="ExcludeCipherSuites">
             <Array type="String">
