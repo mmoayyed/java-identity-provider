@@ -173,7 +173,7 @@ public abstract class AbstractReloadableService<T> extends AbstractDestructableI
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        log.info("{} Performing a initial load", getLogPrefix());
+        log.info("{} Performing initial load", getLogPrefix());
         try {
             doReload();
         } catch (ServiceException e) {
