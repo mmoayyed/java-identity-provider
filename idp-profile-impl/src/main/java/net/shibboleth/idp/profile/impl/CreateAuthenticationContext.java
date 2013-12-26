@@ -60,6 +60,8 @@ public class CreateAuthenticationContext extends AbstractProfileAction {
             return ActionSupport.buildEvent(this, EventIds.INVALID_MSG_CTX);
         }
 
+        // TODO tz This action should be profile generic, not SAML 2 specific.
+        
         if (!(message instanceof AuthnRequest)) {
             log.debug("{} Inbound message was not a SAML 2 AuthnRequest", getLogPrefix());
             return ActionSupport.buildEvent(this, EventIds.INVALID_MSG_CTX);
