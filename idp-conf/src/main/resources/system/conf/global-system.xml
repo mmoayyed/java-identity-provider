@@ -30,7 +30,7 @@
     
     <bean id="shibboleth.LogbackLogging" class="net.shibboleth.idp.log.LogbackLoggingService" init-method="start" destroy-method="stop"
           p:id="shibboleth.LogbackLogging"
-          p:loggingConfiguration="file:${idp.home}/conf/logback.xml"
+          p:loggingConfiguration="file://${idp.home}/conf/logback.xml"
           p:reloadCheckDelay="${idp.service.logging.checkInterval}"
           p:reloadTaskTimer-ref="shibboleth.TaskTimer"
           p:failFast="${idp.service.logging.failFast}"/>
