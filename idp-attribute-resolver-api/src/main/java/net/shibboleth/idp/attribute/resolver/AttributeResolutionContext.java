@@ -86,6 +86,8 @@ public class AttributeResolutionContext extends BaseContext {
      * @param attributes attributes requested to be resolved
      */
     public void setRequestedIdPAttributes(@Nonnull @NonnullElements final Collection<IdPAttribute> attributes) {
+        Constraint.isNotNull(attributes, "Requested IdPAttribute collection cannot be null");
+        
         requestedAttributes = Sets.newHashSet(Collections2.filter(attributes, Predicates.notNull()));
     }
 
