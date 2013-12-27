@@ -87,8 +87,6 @@ public final class AuthenticationContext extends BaseContext {
 
     /** Constructor. */
     public AuthenticationContext() {
-        super();
-
         initiationInstant = System.currentTimeMillis();
         
         potentialFlows = new LinkedHashMap<>();
