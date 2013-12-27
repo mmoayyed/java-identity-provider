@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.conf;
+package net.shibboleth.idp.spring;
 
 
 import javax.annotation.Nonnull;
