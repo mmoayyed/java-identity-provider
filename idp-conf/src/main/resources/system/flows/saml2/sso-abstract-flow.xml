@@ -47,11 +47,11 @@
     
     <action-state id="SelectProfileConfiguration">
         <evaluate expression="SelectProfileConfiguration" />
-        <transition on="proceed" to="CreateAuthenticationContext"/>
+        <transition on="proceed" to="InitializeAuthenticationContext"/>
     </action-state>
         
-    <action-state id="CreateAuthenticationContext">
-        <evaluate expression="CreateAuthenticationContext" />
+    <action-state id="InitializeAuthenticationContext">
+        <evaluate expression="InitializeAuthenticationContext" />
         <transition on="proceed" to="DoAuthenticationSubflow" />
     </action-state>
     

@@ -82,7 +82,7 @@
         <constructor-arg value="INBOUND" />
     </bean>
     
-    <bean id="CreateAuthenticationContext" class="net.shibboleth.idp.profile.impl.CreateAuthenticationContext" />
+    <bean id="InitializeAuthenticationContext" class="net.shibboleth.idp.saml.impl.profile.InitializeAuthenticationContext" scope="prototype" />
     
     <bean id="BuildResponse" class="idp.BuildMockSaml2Response" />
     

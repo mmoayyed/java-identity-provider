@@ -12,6 +12,8 @@
   <logger name="net.shibboleth.idp.authn" level="DEBUG"/>
   
   <logger name="net.shibboleth.idp.session" level="DEBUG"/>
+
+  <logger name="net.shibboleth.idp.saml" level="DEBUG"/>
   
   <logger name="org.springframework.web" level="WARN"/>
   
