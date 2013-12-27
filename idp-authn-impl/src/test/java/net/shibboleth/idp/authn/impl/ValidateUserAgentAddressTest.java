@@ -41,7 +41,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link ValidateUserAgentAddress} unit test. */
-public class ValidateUserAgentAddressTest extends InitializeAuthenticationContextTest {
+public class ValidateUserAgentAddressTest extends PopulateAuthenticationContextTest {
     
     private ValidateUserAgentAddress action; 
     

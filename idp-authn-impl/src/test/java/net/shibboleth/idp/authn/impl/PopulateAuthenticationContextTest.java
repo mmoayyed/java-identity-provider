@@ -28,8 +28,8 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 
-/** {@link InitializeAuthenticationContext} unit test and base class for further action tests. */
-public class InitializeAuthenticationContextTest {
+/** {@link PopulateAuthenticationContext} unit test and base class for further action tests. */
+public class PopulateAuthenticationContextTest {
 
     protected ProfileRequestContext prc;
     protected ImmutableList<AuthenticationFlowDescriptor> authenticationFlows;
@@ -41,7 +41,7 @@ public class InitializeAuthenticationContextTest {
         authenticationFlows = ImmutableList.of(new AuthenticationFlowDescriptor("test1"),
                 new AuthenticationFlowDescriptor("test2"), new AuthenticationFlowDescriptor("test3"));
 
-        InitializeAuthenticationContext action = new InitializeAuthenticationContext();
+        PopulateAuthenticationContext action = new PopulateAuthenticationContext();
         action.setAvailableFlows(authenticationFlows);
         action.initialize();
 

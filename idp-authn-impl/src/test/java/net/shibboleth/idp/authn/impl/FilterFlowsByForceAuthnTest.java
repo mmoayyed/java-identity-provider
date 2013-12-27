@@ -27,7 +27,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link FilterFlowsByForcedAuthn} unit test. */
-public class FilterFlowsByForceAuthnTest extends InitializeAuthenticationContextTest {
+public class FilterFlowsByForceAuthnTest extends PopulateAuthenticationContextTest {
     
     private FilterFlowsByForcedAuthn action; 
     

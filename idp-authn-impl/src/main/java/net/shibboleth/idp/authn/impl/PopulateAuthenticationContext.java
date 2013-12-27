@@ -49,10 +49,10 @@ import com.google.common.collect.ImmutableList;
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
  * @post The AuthenticationContext is modified as above.
  */
-public class InitializeAuthenticationContext extends AbstractAuthenticationAction {
+public class PopulateAuthenticationContext extends AbstractAuthenticationAction {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(InitializeAuthenticationContext.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateAuthenticationContext.class);
     
     /** The flows to make available for possible use. */
     @Nonnull @NonnullElements private Collection<AuthenticationFlowDescriptor> availableFlows;
@@ -61,7 +61,7 @@ public class InitializeAuthenticationContext extends AbstractAuthenticationActio
     @Nullable private PrincipalEvalPredicateFactoryRegistry evalRegistry;
 
     /** Constructor. */
-    InitializeAuthenticationContext() {
+    PopulateAuthenticationContext() {
         availableFlows = new ArrayList<>();
     }
     

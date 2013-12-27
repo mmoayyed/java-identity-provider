@@ -33,7 +33,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link FinalizeAuthentication} unit test. */
-public class FinalizeAuthenticationTest extends InitializeAuthenticationContextTest {
+public class FinalizeAuthenticationTest extends PopulateAuthenticationContextTest {
     
     private FinalizeAuthentication action; 
     

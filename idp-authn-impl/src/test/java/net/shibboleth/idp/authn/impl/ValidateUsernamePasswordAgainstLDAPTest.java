@@ -63,7 +63,7 @@ import com.unboundid.ldap.listener.InMemoryListenerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
 
 /** {@link ValidateUsernamePasswordAgainstLDAP} unit test. */
-public class ValidateUsernamePasswordAgainstLDAPTest extends InitializeAuthenticationContextTest {
+public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticationContextTest {
 
     private static final String DATA_PATH = "src/test/resources/data/net/shibboleth/idp/authn/impl/";
     

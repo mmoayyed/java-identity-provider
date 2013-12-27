@@ -35,7 +35,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link ValidateRemoteUser} unit test. */
-public class ValidateRemoteUserTest extends InitializeAuthenticationContextTest {
+public class ValidateRemoteUserTest extends PopulateAuthenticationContextTest {
     
     private ValidateRemoteUser action; 
     

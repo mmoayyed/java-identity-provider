@@ -11,8 +11,8 @@
     -->
     
     <!-- START FLOW SETUP -->
-    <action-state id="InitializeAuthenticationContext">
-        <evaluate expression="InitializeAuthenticationContext" />
+    <action-state id="PopulateAuthenticationContext">
+        <evaluate expression="PopulateAuthenticationContext" />
         <transition on="proceed" to="PopulateSessionContext" />
     </action-state>
     

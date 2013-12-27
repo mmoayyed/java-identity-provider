@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
 import com.google.common.net.HttpHeaders;
 
 /** {@link ExtractUsernamePasswordFromBasicAuth} unit test. */
-public class ExtractUsernamePasswordFromBasicAuthTest extends InitializeAuthenticationContextTest {
+public class ExtractUsernamePasswordFromBasicAuthTest extends PopulateAuthenticationContextTest {
     
     private ExtractUsernamePasswordFromBasicAuth action; 
     

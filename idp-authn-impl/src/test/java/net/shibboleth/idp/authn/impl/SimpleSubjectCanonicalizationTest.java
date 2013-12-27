@@ -34,7 +34,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link SimpleSubjectCanonicalization} unit test. */
-public class SimpleSubjectCanonicalizationTest extends InitializeAuthenticationContextTest {
+public class SimpleSubjectCanonicalizationTest extends PopulateAuthenticationContextTest {
     
     private SimpleSubjectCanonicalization action; 
     
