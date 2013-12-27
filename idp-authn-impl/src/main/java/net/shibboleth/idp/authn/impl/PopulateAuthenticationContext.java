@@ -29,7 +29,6 @@ import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -39,7 +38,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
 
 /**
  * An action that populates an {@link AuthenticationContext} with the {@link AuthenticationFlowDescriptor}
@@ -63,15 +61,6 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
     /** Constructor. */
     PopulateAuthenticationContext() {
         availableFlows = new ArrayList<>();
-    }
-    
-    /**
-     * Get the flows available for possible use.
-     * 
-     * @return  flows available for possible use
-     */
-    @Nonnull @NonnullElements @Unmodifiable public Collection<AuthenticationFlowDescriptor> getAvailableFlows() {
-        return ImmutableList.copyOf(availableFlows);
     }
     
     /**
