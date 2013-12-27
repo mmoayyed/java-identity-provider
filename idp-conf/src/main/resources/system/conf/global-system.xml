@@ -35,7 +35,7 @@
           p:reloadTaskTimer-ref="shibboleth.TaskTimer"
           p:failFast="${idp.service.logging.failFast}"/>
     
-    <bean id="shibboleth.OpensamlConfig" class="net.shibboleth.idp.spring.OpensamlConfigBean"
+    <bean id="shibboleth.OpenSAMLConfig" class="net.shibboleth.idp.spring.OpenSAMLConfigBean"
         depends-on="shibboleth.LogbackLogging" p:parserPool-ref="shibboleth.ParserPool" />
 
     <bean id="shibboleth.VelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean" depends-on="shibboleth.LogbackLogging">
