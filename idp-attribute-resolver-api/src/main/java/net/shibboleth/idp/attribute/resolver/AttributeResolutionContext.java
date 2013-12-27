@@ -20,7 +20,6 @@ package net.shibboleth.idp.attribute.resolver;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,33 +31,34 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 
 import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.MapConstraints;
+import com.google.common.collect.Sets;
 
 /** A context which carries and collects information through an attribute resolution. */
 @NotThreadSafe
 public class AttributeResolutionContext extends BaseContext {
 
     /** Attributes that have been requested to be resolved. */
-    private Set<IdPAttribute> requestedAttributes;
+    @Nonnull @NonnullElements private Set<IdPAttribute> requestedAttributes;
 
     /** Attributes which were resolved and released by the attribute resolver. */
-    private Map<String, IdPAttribute> resolvedAttributes;
+    @Nonnull @NonnullElements private Map<String, IdPAttribute> resolvedAttributes;
 
     /** Attribute definitions that have been resolved and the resultant attribute. */
-    private final Map<String, ResolvedAttributeDefinition> resolvedAttributeDefinitions;
+    @Nonnull @NonnullElements private final Map<String, ResolvedAttributeDefinition> resolvedAttributeDefinitions;
 
     /** Data connectors that have been resolved and the resultant attributes. */
-    private final Map<String, ResolvedDataConnector> resolvedDataConnectors;
+    @Nonnull @NonnullElements private final Map<String, ResolvedDataConnector> resolvedDataConnectors;
 
     /** Constructor. */
     public AttributeResolutionContext() {
-        requestedAttributes = new HashSet<IdPAttribute>();
+        requestedAttributes = Collections.emptySet();
 
         resolvedAttributes =
                 MapConstraints.constrainedMap(new HashMap<String, IdPAttribute>(), MapConstraints.notNull());
@@ -85,10 +85,8 @@ public class AttributeResolutionContext extends BaseContext {
      * 
      * @param attributes attributes requested to be resolved
      */
-    public void setRequestedIdPAttributes(@Nullable @NullableElements final Set<IdPAttribute> attributes) {
-        Set<IdPAttribute> checkedAttributes = new HashSet<IdPAttribute>();
-        CollectionSupport.addIf(checkedAttributes, attributes, Predicates.notNull());
-        requestedAttributes = checkedAttributes;
+    public void setRequestedIdPAttributes(@Nonnull @NonnullElements final Collection<IdPAttribute> attributes) {
+        requestedAttributes = Sets.newHashSet(Collections2.filter(attributes, Predicates.notNull()));
     }
 
     /**
@@ -141,7 +139,7 @@ public class AttributeResolutionContext extends BaseContext {
      */
     public void recordAttributeDefinitionResolution(@Nonnull final AttributeDefinition definition,
             @Nullable final IdPAttribute attribute) throws ResolutionException {
-        Constraint.isNotNull(definition, "Resolver attribute definition can not be null");
+        Constraint.isNotNull(definition, "Resolver attribute definition cannot be null");
 
         if (resolvedAttributeDefinitions.containsKey(definition.getId())) {
             throw new ResolutionException("The resolution of attribute definition " + definition.getId()
@@ -172,7 +170,7 @@ public class AttributeResolutionContext extends BaseContext {
      */
     public void recordDataConnectorResolution(@Nonnull final DataConnector connector,
             @Nullable final Map<String, IdPAttribute> attributes) throws ResolutionException {
-        Constraint.isNotNull(connector, "Resolver data connector can not be null");
+        Constraint.isNotNull(connector, "Resolver data connector cannot be null");
 
         if (resolvedDataConnectors.containsKey(connector.getId())) {
             throw new ResolutionException("The resolution of data connector " + connector.getId()
