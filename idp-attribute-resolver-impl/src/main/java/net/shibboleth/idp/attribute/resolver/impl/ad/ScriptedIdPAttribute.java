@@ -69,7 +69,7 @@ public class ScriptedIdPAttribute {
      * @param attribute the attribute we are encapsulating.
      * @param prefix the log path from the definition.
      */
-    public ScriptedIdPAttribute(@Nonnull IdPAttribute attribute, String prefix) {
+    public ScriptedIdPAttribute(@Nonnull final IdPAttribute attribute, final String prefix) {
         encapsulatedAttribute = attribute;
 
         logPrefix =
@@ -96,8 +96,8 @@ public class ScriptedIdPAttribute {
         log.debug("{} values being prepared", getLogPrefix());
 
         // NOTE. This has to be a List - the examples use get(0)
-        ArrayList<Object> newValues = new ArrayList<Object>(encapsulatedAttribute.getValues().size());
-        for (IdPAttributeValue value : encapsulatedAttribute.getValues()) {
+        final ArrayList<Object> newValues = new ArrayList<Object>(encapsulatedAttribute.getValues().size());
+        for (final IdPAttributeValue value : encapsulatedAttribute.getValues()) {
             if ((value instanceof StringAttributeValue) && !(value instanceof ScopedStringAttributeValue)) {
                 newValues.add(((StringAttributeValue) value).getValue());
             } else {
@@ -139,7 +139,7 @@ public class ScriptedIdPAttribute {
      * @param values the set to add to.
      * @param value the value to add. Known to be a {@link String} or an {@link IdPAttributeValue}
      */
-    private void addValue(@Nonnull Set<IdPAttributeValue<?>> values, @Nonnull Object value) {
+    private void addValue(@Nonnull final Set<IdPAttributeValue<?>> values, @Nonnull final Object value) {
         if (value instanceof String) {
             values.add(new StringAttributeValue((String) value));
         } else {
@@ -153,7 +153,7 @@ public class ScriptedIdPAttribute {
      * @param what value to check
      * @throws ResolutionException if there is a type conflict.
      */
-    private void policeValueType(@Nullable Object what) throws ResolutionException {
+    private void policeValueType(@Nullable final Object what) throws ResolutionException {
         if (null == what) {
             throw new ResolutionException(getLogPrefix() + " added element was null");
 
@@ -169,7 +169,7 @@ public class ScriptedIdPAttribute {
      * @param what a {@link String} or a {@link IdPAttributeValue} to add.
      * @throws ResolutionException if the provided value is of the wrong type
      */
-    public void addValue(@Nullable Object what) throws ResolutionException {
+    public void addValue(@Nullable final Object what) throws ResolutionException {
         policeValueType(what);
 
         if (null != attributeValues) {
@@ -195,10 +195,10 @@ public class ScriptedIdPAttribute {
         }
 
         // Otherwise re-marshall the {@link #attributeValues}
-        Set<IdPAttributeValue<?>> values = new HashSet<>(attributeValues.size());
+        final Set<IdPAttributeValue<?>> values = new HashSet<>(attributeValues.size());
 
         log.debug("{} recreating attribute contents from {}", getLogPrefix(), attributeValues);
-        for (Object object : attributeValues) {
+        for (final Object object : attributeValues) {
             policeValueType(object);
             addValue(values, object);
         }

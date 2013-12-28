@@ -28,8 +28,8 @@ import javax.script.ScriptContext;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
-import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
@@ -57,8 +57,8 @@ import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfi
  * <li>A script attribute whose name is <code>context</code> and whose value is the current
  * {@link AttributeResolutionContext}</li>
  * <li>A script attribute for every attribute produced by the dependencies of this attribute definition. The name of the
- * script attribute is the ID of the {@link IdPAttribute} and its value is the {@link Set} of 
- * {@link IdPAttributeValue} for the attribute.</li>
+ * script attribute is the ID of the {@link IdPAttribute} and its value is the {@link Set} of {@link IdPAttributeValue}
+ * for the attribute.</li>
  * </ul>
  * </p>
  * <p>
@@ -89,7 +89,7 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @param definitionScript the script to be evaluated
      */
-    public synchronized void setScript(@Nonnull EvaluableScript definitionScript) {
+    public synchronized void setScript(@Nonnull final EvaluableScript definitionScript) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -97,7 +97,7 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Nullable protected IdPAttribute doAttributeDefinitionResolve(
+    @Override @Nullable protected IdPAttribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
@@ -105,10 +105,10 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
 
         try {
             script.eval(context);
-        } catch (ScriptException e) {
+        } catch (final ScriptException e) {
             throw new ResolutionException(getLogPrefix() + " unable to execute script", e);
         }
-        Object result = context.getAttribute(getId());
+        final Object result = context.getAttribute(getId());
 
         if (null == result) {
             log.info("{} no value returned", getLogPrefix());
@@ -117,7 +117,7 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
 
         if (result instanceof ScriptedIdPAttribute) {
 
-            ScriptedIdPAttribute scriptedAttribute = (ScriptedIdPAttribute) result;
+            final ScriptedIdPAttribute scriptedAttribute = (ScriptedIdPAttribute) result;
             return scriptedAttribute.getResultingAttribute();
 
         } else {
@@ -129,7 +129,7 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         if (null == script) {
@@ -170,7 +170,7 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
         scriptContext.setAttribute("requestContext", new V2SAMLProfileRequestContext(resolutionContext, getId()),
                 ScriptContext.ENGINE_SCOPE);
 
-        for (Entry<String, Set<IdPAttributeValue<?>>> dependencyAttribute : dependencyAttributes.entrySet()) {
+        for (final Entry<String, Set<IdPAttributeValue<?>>> dependencyAttribute : dependencyAttributes.entrySet()) {
             log.debug("{} adding dependant attribute '{}' with the following values to the script context: {}",
                     new Object[] {getLogPrefix(), dependencyAttribute.getKey(), dependencyAttribute.getValue(),});
             final IdPAttribute pseudoAttribute = new IdPAttribute(dependencyAttribute.getKey());

@@ -37,15 +37,15 @@ import org.slf4j.LoggerFactory;
 /**
  * An attribute definition which returns an attribute with a single value - the AuthenticationMethod.
  */
-public class PrincipalAuthenticationMethodAttributeDefinition extends AbstractAttributeDefinition    {
+public class PrincipalAuthenticationMethodAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Log. */
     private final Logger log = LoggerFactory.getLogger(PrincipalAuthenticationMethodAttributeDefinition.class);
 
     /** {@inheritDoc} */
-    @Nullable protected IdPAttribute doAttributeDefinitionResolve(
-            @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
-        
+    @Override @Nullable protected IdPAttribute doAttributeDefinitionResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
+
         final AttributeRecipientContext attributeRecipientContext =
                 resolutionContext.getSubcontext(AttributeRecipientContext.class);
 
@@ -53,7 +53,6 @@ public class PrincipalAuthenticationMethodAttributeDefinition extends AbstractAt
             throw new ResolutionException(getLogPrefix() + " no attribute recipient context provided ");
         }
 
-        
         final String method = StringSupport.trimOrNull(attributeRecipientContext.getPrincipalAuthenticationMethod());
 
         if (null == method) {
@@ -67,7 +66,7 @@ public class PrincipalAuthenticationMethodAttributeDefinition extends AbstractAt
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
     }
 }

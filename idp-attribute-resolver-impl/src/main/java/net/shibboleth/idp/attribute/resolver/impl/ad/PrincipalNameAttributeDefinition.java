@@ -34,9 +34,8 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  */
 public class PrincipalNameAttributeDefinition extends AbstractAttributeDefinition {
 
-    /** {@inheritDoc} */
-    @Nonnull protected IdPAttribute doAttributeDefinitionResolve(@Nonnull AttributeResolutionContext resolutionContext)
-            throws ResolutionException {
+    @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         final AttributeRecipientContext attributeRecipientContext =
                 resolutionContext.getSubcontext(AttributeRecipientContext.class);
 

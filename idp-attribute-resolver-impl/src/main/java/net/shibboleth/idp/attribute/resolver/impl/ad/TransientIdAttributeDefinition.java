@@ -43,11 +43,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An attribute definition that generates random identifiers useful for transient subject IDs.
- * <br/>
- * Information about the created IDs are stored within a provided {@link StorageService}.
- * The identifier itself is the record key, and the value combines the principal name
- * with the identifier of the recipient.
+ * An attribute definition that generates random identifiers useful for transient subject IDs. <br/>
+ * Information about the created IDs are stored within a provided {@link StorageService}. The identifier itself is the
+ * record key, and the value combines the principal name with the identifier of the recipient.
  */
 public class TransientIdAttributeDefinition extends AbstractAttributeDefinition {
 
@@ -110,7 +108,7 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
      * 
      * @param size size, in bytes, of the id
      */
-    public void setIdSize(int size) {
+    public void setIdSize(final int size) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         idSize = size;
     }
@@ -129,13 +127,13 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
      * 
      * @param lifetime time, in milliseconds, ids are valid
      */
-    public void setIdLifetime(long lifetime) {
+    public void setIdLifetime(final long lifetime) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         idLifetime = lifetime;
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         idGenerator = new RandomIdentifierGenerationStrategy(idSize);
@@ -176,12 +174,13 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
         if (null == principalName) {
             throw new ResolutionException(getLogPrefix() + " provided prinicipal name was empty");
         }
+
         return principalName;
     }
-    
+
     /** {@inheritDoc} */
-    @Nonnull protected IdPAttribute doAttributeDefinitionResolve(@Nonnull AttributeResolutionContext resolutionContext)
-            throws ResolutionException {
+    @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
@@ -202,10 +201,10 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
         final String principalTokenId;
         try {
             principalTokenId = new TransientIdParameters(attributeRecipientID, principalName).encode();
-        } catch (IOException except) {
+        } catch (final IOException except) {
             throw new ResolutionException(except);
-        } 
-                
+        }
+
         // This code used to store the entries keyed by the ID *and* the value, which I think
         // was used to prevent generation of multiple IDs if the resolver runs multiple times.
         // This is the source of the current V2 bug that causes the same transient to be reused
@@ -213,14 +212,14 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
         // suggest we do that by storing transactional state for resolver plugins in the context
         // tree. But in practice, I'm not sure it matters much how many times this runs, that's
         // the point of a transient. So this version never reads the store, it just writes to it.
-        
-        String id = idGenerator.generateIdentifier();
-        
+
+        final String id = idGenerator.generateIdentifier();
+
         log.debug("{} creating new transient ID '{}' for request '{}'", new Object[] {getLogPrefix(), id,
                 resolutionContext.getId(),});
-        
-        long expiration = System.currentTimeMillis() + idLifetime;
-        
+
+        final long expiration = System.currentTimeMillis() + idLifetime;
+
         int collisions = 0;
         while (collisions < 5) {
             try {
@@ -233,12 +232,12 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
                 } else {
                     ++collisions;
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new ResolutionException(getLogPrefix() + " error saving transient ID to storage service", e);
             }
         }
-        
+
         throw new ResolutionException(getLogPrefix() + " exceeded allowable number of collisions");
     }
-    
+
 }

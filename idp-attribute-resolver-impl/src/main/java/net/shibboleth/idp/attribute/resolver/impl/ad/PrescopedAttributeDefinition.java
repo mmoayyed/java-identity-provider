@@ -22,8 +22,8 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
@@ -77,7 +77,7 @@ public class PrescopedAttributeDefinition extends AbstractAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
+    @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(resolutionContext, getLogPrefix() + " Attribute resolution context can not be null");
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
@@ -90,7 +90,7 @@ public class PrescopedAttributeDefinition extends AbstractAttributeDefinition {
         log.debug("{} Dependencies {} provided unmapped values of {}", new Object[] {getLogPrefix(), getDependencies(),
                 dependencyValues,});
 
-        for (IdPAttributeValue<?> dependencyValue : dependencyValues) {
+        for (final IdPAttributeValue<?> dependencyValue : dependencyValues) {
             if (!(dependencyValue instanceof StringAttributeValue)) {
                 throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
                         + "This attribute definition only supports attribute value types of "
@@ -114,8 +114,8 @@ public class PrescopedAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @throws ResolutionException thrown if the given attribute value does not contain a delimited value
      */
-    @Nonnull private ScopedStringAttributeValue buildScopedStringAttributeValue(@Nonnull StringAttributeValue value)
-            throws ResolutionException {
+    @Nonnull private ScopedStringAttributeValue buildScopedStringAttributeValue(
+            @Nonnull final StringAttributeValue value) throws ResolutionException {
         Constraint.isNotNull(value, getLogPrefix() + " Attribute value can not be null");
 
         final String[] stringValues = value.getValue().split(scopeDelimiter);
@@ -131,7 +131,7 @@ public class PrescopedAttributeDefinition extends AbstractAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         if (getDependencies().isEmpty()) {

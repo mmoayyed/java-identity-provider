@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 public class CryptoTransientIdAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Class logger. */
-    private Logger log = LoggerFactory.getLogger(CryptoTransientIdAttributeDefinition.class);
+    private final Logger log = LoggerFactory.getLogger(CryptoTransientIdAttributeDefinition.class);
 
     /** Object used to protect and encrypt the data. */
     private DataSealer dataSealer;
@@ -56,7 +56,7 @@ public class CryptoTransientIdAttributeDefinition extends AbstractAttributeDefin
     @Duration private long idLifetime;
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         if (0 == idLifetime) {
             log.debug("set default lifetime of 4 hours.", getLogPrefix());
             idLifetime = 1000 * 60 * 60 * 4;
@@ -64,12 +64,11 @@ public class CryptoTransientIdAttributeDefinition extends AbstractAttributeDefin
         if (null == dataSealer) {
             throw new ComponentInitializationException(getLogPrefix() + " data sealer was null or unspecified");
         }
-
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected IdPAttribute doAttributeDefinitionResolve(@Nonnull AttributeResolutionContext resolutionContext)
-            throws ResolutionException {
+    @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
 
         Constraint.isNotNull(resolutionContext, "resolution context was null");
 
@@ -100,17 +99,16 @@ public class CryptoTransientIdAttributeDefinition extends AbstractAttributeDefin
         log.debug("{} Building crypto transient ID for recipient: '{}', issuer: {}, principal identifer: {}",
                 new Object[] {getLogPrefix(), attributeRecipientID, attributeIssuerID, principalName,});
 
-        StringBuilder principalTokenIdBuilder = new StringBuilder();
+        final StringBuilder principalTokenIdBuilder = new StringBuilder();
         principalTokenIdBuilder.append(attributeIssuerID).append("!").append(attributeRecipientID).append("!")
                 .append(principalName);
 
         try {
             final String transientId =
                     dataSealer.wrap(principalTokenIdBuilder.toString(), System.currentTimeMillis() + idLifetime);
-            final Set<StringAttributeValue> vals =
-                    Collections.singleton(new StringAttributeValue(transientId));
+            final Set<StringAttributeValue> vals = Collections.singleton(new StringAttributeValue(transientId));
             result.setValues(vals);
-        } catch (DataSealerException e) {
+        } catch (final DataSealerException e) {
             throw new ResolutionException(getLogPrefix() + " Caught exception wrapping principal identifier. {}", e);
         }
 
@@ -131,7 +129,7 @@ public class CryptoTransientIdAttributeDefinition extends AbstractAttributeDefin
      * 
      * @param lifetime time, in milliseconds, that ids are valid for.
      */
-    public void setIdLifetime(@Duration long lifetime) {
+    public void setIdLifetime(@Duration final long lifetime) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         idLifetime = lifetime;
     }
@@ -141,7 +139,7 @@ public class CryptoTransientIdAttributeDefinition extends AbstractAttributeDefin
      * 
      * @param sealer object used to protect and encrypt the data
      */
-    public void setDataSealer(@Nonnull DataSealer sealer) {
+    public void setDataSealer(@Nonnull final DataSealer sealer) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         dataSealer = Constraint.isNotNull(sealer, "DataSealer may not be null");
     }

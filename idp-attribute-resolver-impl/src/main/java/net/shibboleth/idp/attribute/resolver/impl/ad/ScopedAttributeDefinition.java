@@ -23,8 +23,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
@@ -71,7 +71,7 @@ public class ScopedAttributeDefinition extends AbstractAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
+    @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
 
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
@@ -82,7 +82,7 @@ public class ScopedAttributeDefinition extends AbstractAttributeDefinition {
         final Set<IdPAttributeValue<?>> dependencyValues =
                 PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
 
-        for (IdPAttributeValue dependencyValue : dependencyValues) {
+        for (final IdPAttributeValue dependencyValue : dependencyValues) {
             if (!(dependencyValue instanceof StringAttributeValue)) {
                 throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
                         + "This attribute definition only supports attribute value types of "
@@ -98,7 +98,7 @@ public class ScopedAttributeDefinition extends AbstractAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         if (null == scope) {

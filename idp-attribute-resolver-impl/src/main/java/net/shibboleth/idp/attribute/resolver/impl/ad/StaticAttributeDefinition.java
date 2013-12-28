@@ -46,7 +46,7 @@ public class StaticAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @param newAttribute what to set.
      */
-    public synchronized void setValue(@Nullable IdPAttribute newAttribute) {
+    public synchronized void setValue(@Nullable final IdPAttribute newAttribute) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -63,16 +63,17 @@ public class StaticAttributeDefinition extends AbstractAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected IdPAttribute doAttributeDefinitionResolve(final AttributeResolutionContext resolutionContext)
-            throws ResolutionException {
+    @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
+            final AttributeResolutionContext resolutionContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         log.debug("{} resolving static attribute {}", getLogPrefix(), value);
+
         return value;
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         if (null == value) {

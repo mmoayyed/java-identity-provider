@@ -63,23 +63,23 @@ public class TransientIdParameters {
      * @param recipient the SP
      * @param thePrincipal the user
      */
-    public TransientIdParameters(@Nullable String recipient, @Nullable String thePrincipal) {
+    public TransientIdParameters(@Nullable final String recipient, @Nullable final String thePrincipal) {
         attributeRecipient = recipient;
         principal = thePrincipal;
     }
 
     /**
      * Constructor for the decoding definitions.
-     *
+     * 
      * @param encoded the JSON encoded data
      * @throws IOException if decoding failed
      */
-    public TransientIdParameters(@Nonnull @NotEmpty String encoded) throws IOException {
+    public TransientIdParameters(@Nonnull @NotEmpty final String encoded) throws IOException {
         Constraint.isNotNull(StringSupport.trimOrNull(encoded), "encoded data must not be null or empty");
-        
+
         final JsonReader reader = Json.createReader(new StringReader(encoded));
         final JsonStructure st = reader.read();
-        
+
         if (!(st instanceof JsonObject)) {
             throw new IOException("Found invalid data structure while parsing IdPSession");
         }
@@ -122,7 +122,8 @@ public class TransientIdParameters {
             gen.writeEnd().close();
 
             return sink.toString();
-        } catch (JsonException e) {
+        } catch (final JsonException e) {
+
             log.error("Exception while serializing IdPSession", e);
             throw new IOException("Exception while serializing IdPSession", e);
         }

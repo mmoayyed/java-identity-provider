@@ -28,8 +28,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
-import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
@@ -59,11 +59,9 @@ import com.google.common.base.Predicates;
  * An attribute definition that constructs its values based on the values of its dependencies using the Velocity
  * Template Language. Dependencies may have multiple values, however multiples dependencies must have the same number of
  * values. In the case of multi-valued dependencies, the template will be evaluated multiples times, iterating over each
- * dependency.
- * <br/>
+ * dependency. <br/>
  * The template is inserted into the engine with a unique name derived from this class and from the id supplied for this
- * attribute.
- * <br/>
+ * attribute. <br/>
  * This is marked not thread safe since the constructor cannot do a safe check & insert of the template into the
  * repository.
  */
@@ -99,11 +97,11 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @param newSourceAttributes the source attribute IDs
      */
-    public void setSourceAttributes(@Nonnull @NullableElements List<String> newSourceAttributes) {
+    public void setSourceAttributes(@Nonnull @NullableElements final List<String> newSourceAttributes) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        ArrayList<String> checkedSourceAttrs = new ArrayList<String>(newSourceAttributes.size());
+        final ArrayList<String> checkedSourceAttrs = new ArrayList<String>(newSourceAttributes.size());
         CollectionSupport.addIf(checkedSourceAttrs, newSourceAttributes, Predicates.notNull());
         sourceAttributes = Collections.unmodifiableList(checkedSourceAttrs);
     }
@@ -131,7 +129,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @param velocityTemplate template to be evaluated
      */
-    public synchronized void setTemplateText(@Nullable String velocityTemplate) {
+    public synchronized void setTemplateText(@Nullable final String velocityTemplate) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -152,7 +150,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @param velocityEngine engine to be used
      */
-    public synchronized void setVelocityEngine(VelocityEngine velocityEngine) {
+    public synchronized void setVelocityEngine(final VelocityEngine velocityEngine) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -160,8 +158,8 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected IdPAttribute doAttributeDefinitionResolve(final AttributeResolutionContext resolutionContext)
-            throws ResolutionException {
+    @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
+            final AttributeResolutionContext resolutionContext) throws ResolutionException {
 
         final IdPAttribute resultantAttribute = new IdPAttribute(getId());
 
@@ -176,7 +174,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
             log.debug("{} determing value {}", getLogPrefix(), i + 1);
             velocityContext = new VelocityContext();
 
-            for (String attributeId : sourceValues.keySet()) {
+            for (final String attributeId : sourceValues.keySet()) {
                 final IdPAttributeValue value = sourceValues.get(attributeId).next();
                 if (!(value instanceof StringAttributeValue)) {
                     throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
@@ -195,7 +193,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
                 templateResult = template.merge(velocityContext);
                 log.debug("{} result of template evaluating was '{}'", getLogPrefix(), templateResult);
                 resultantAttribute.getValues().add(new StringAttributeValue(templateResult));
-            } catch (VelocityException e) {
+            } catch (final VelocityException e) {
                 // uncovered path
                 log.error(getLogPrefix() + " unable to evaluate velocity template", e);
                 throw new ResolutionException("Unable to evaluate template", e);
@@ -206,7 +204,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         if (getDependencies().isEmpty()) {
@@ -225,8 +223,8 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
 
         if (null == templateText) {
             // V2 compatibility - define our own template
-            StringBuffer defaultTemplate = new StringBuffer();
-            for (String id : sourceAttributes) {
+            final StringBuffer defaultTemplate = new StringBuffer();
+            for (final String id : sourceAttributes) {
                 defaultTemplate.append("${").append(id).append("} ");
             }
             if (defaultTemplate.length() > 0) {
@@ -239,24 +237,22 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
         }
 
         template = Template.fromTemplate(engine, templateText);
-
     }
 
     /**
      * Set up a map which can be used to populate the template. The key is the attribute name and the value is the
      * iterator to give all the names. We also return how deep the iteration will be and throw an exception if there is
-     * a mismatch in number of elements in any attribute.
-     * <br/>
+     * a mismatch in number of elements in any attribute. <br/>
      * Finally, the names of the source attributes is checked against the dependency attributes and if there is a
      * mismatch then a warning is emitted.
-     *
+     * 
      * @param resolutionContext to look for dependencies in.
      * @param sourceValues to populate with the attribute iterators
      * @return how many values in the attributes
      * @throws ResolutionException if there is a mismatched count of attributes
      */
     private int setupSourceValues(final AttributeResolutionContext resolutionContext,
-            Map<String, Iterator<IdPAttributeValue<?>>> sourceValues) throws ResolutionException {
+            final Map<String, Iterator<IdPAttributeValue<?>>> sourceValues) throws ResolutionException {
 
         final Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes =
                 PluginDependencySupport.getAllAttributeValues(resolutionContext, getDependencies());
@@ -264,7 +260,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
         int valueCount = 0;
         boolean valueCountSet = false;
 
-        for (String attributeName : sourceAttributes) {
+        for (final String attributeName : sourceAttributes) {
 
             final Set<IdPAttributeValue<?>> attributeValues = dependencyAttributes.get(attributeName);
             if (null == attributeValues) {
@@ -276,7 +272,8 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
                 valueCount = attributeValues.size();
                 valueCountSet = true;
             } else if (attributeValues.size() != valueCount) {
-                final String msg = getLogPrefix() + " all attributes used in"
+                final String msg =
+                        getLogPrefix() + " all attributes used in"
                                 + " TemplateAttributeDefinition must have the same number of values.";
                 log.error(msg);
                 throw new ResolutionException(msg);

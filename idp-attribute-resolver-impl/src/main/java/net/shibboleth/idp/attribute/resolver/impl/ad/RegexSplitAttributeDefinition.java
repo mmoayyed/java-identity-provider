@@ -25,8 +25,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
@@ -42,8 +42,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition} that produces its attribute values by taking
- * the first group match of a regular expression evaluating against the values of this definition's dependencies.
+ * An {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition} that produces its attribute values by taking the
+ * first group match of a regular expression evaluating against the values of this definition's dependencies.
  */
 @ThreadSafe
 public class RegexSplitAttributeDefinition extends AbstractAttributeDefinition {
@@ -68,7 +68,7 @@ public class RegexSplitAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @param expression regular expression used to split input values
      */
-    public synchronized void setRegularExpression(@Nonnull Pattern expression) {
+    public synchronized void setRegularExpression(@Nonnull final Pattern expression) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -76,7 +76,7 @@ public class RegexSplitAttributeDefinition extends AbstractAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
+    @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
@@ -88,11 +88,12 @@ public class RegexSplitAttributeDefinition extends AbstractAttributeDefinition {
         final Set<IdPAttributeValue<?>> dependencyValues =
                 PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
 
-        for (IdPAttributeValue dependencyValue : dependencyValues) {
+        for (final IdPAttributeValue dependencyValue : dependencyValues) {
             if (!(dependencyValue instanceof StringAttributeValue)) {
                 throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
-                       + "This attribute definition only operates on attribute values of type "
-                       + StringAttributeValue.class.getName() + "; was given " + dependencyValue.getClass().getName()));
+                        + "This attribute definition only operates on attribute values of type "
+                        + StringAttributeValue.class.getName() + "; was given " + 
+                        dependencyValue.getClass().getName()));
             }
 
             log.debug("{} applying regexp '{}' to input value '{}'", new Object[] {getLogPrefix(), regexp.pattern(),
@@ -107,12 +108,11 @@ public class RegexSplitAttributeDefinition extends AbstractAttributeDefinition {
                         regexp.pattern(), dependencyValue.getValue(),});
             }
         }
-
         return resultantAttribute;
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         if (null == regexp) {

@@ -29,24 +29,25 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * A {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition} that creates an attribute whose values are
- * the values the values of all its dependencies.
+ * A {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition} that creates an attribute whose values are the
+ * values the values of all its dependencies.
  */
 @ThreadSafe
 public class SimpleAttributeDefinition extends AbstractAttributeDefinition {
 
     /** {@inheritDoc} */
-    @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
+    @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
         final IdPAttribute result = new IdPAttribute(getId());
         result.setValues(PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies()));
+
         return result;
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         if (getDependencies().isEmpty()) {
