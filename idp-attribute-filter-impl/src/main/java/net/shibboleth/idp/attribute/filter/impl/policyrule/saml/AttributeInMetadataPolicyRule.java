@@ -94,11 +94,13 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
     }
 
     /** {@inheritDoc} */
-    public void setId(@Nullable String id) {
+    @Override
+    public void setId(@Nullable final String id) {
         super.setId(id);
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull final IdPAttribute attribute,
             @Nonnull final AttributeFilterContext filterContext) {
 
@@ -126,11 +128,11 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
 
         final Set<IdPAttributeValue<?>> values = new HashSet<>();
 
-        for (IdPRequestedAttribute requestedAttribute : requestedAttributeList) {
+        for (final IdPRequestedAttribute requestedAttribute : requestedAttributeList) {
 
             if (null == requestedAttribute) {
                 log.info("{} Attribute {} found in metadata but with no values that"
-                        + " could be decoded, values not matched");
+                        + " could be decoded, values not matched", getLogPrefix(), attribute.getId());
                 continue;
             }
 
@@ -162,7 +164,7 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
 
         final Set<IdPAttributeValue<?>> result = new HashSet<>(attribute.getValues().size());
 
-        for (IdPAttributeValue attributeValue : attribute.getValues()) {
+        for (final IdPAttributeValue attributeValue : attribute.getValues()) {
             if (requestedValues.contains(attributeValue)) {
                 result.add(attributeValue);
             }
@@ -180,7 +182,7 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
         // local cache of cached entry to allow unsynchronised clearing.
         String prefix = logPrefix;
         if (null == prefix) {
-            StringBuilder builder = new StringBuilder("Attribute Filter '").append(getId()).append("':");
+            final StringBuilder builder = new StringBuilder("Attribute Filter '").append(getId()).append("':");
             prefix = builder.toString();
             if (null == logPrefix) {
                 logPrefix = prefix;
