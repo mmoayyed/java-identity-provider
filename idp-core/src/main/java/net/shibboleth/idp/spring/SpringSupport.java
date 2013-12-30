@@ -65,30 +65,6 @@ public final class SpringSupport {
     }
 
     /**
-     * Creates a new, started, application context from the given configuration resources.
-     * 
-     * @param name name of the application context
-     * @param configurationResources configuration resources
-     * @param parentContext parent context, or null if there is no parent
-     * 
-     * @return the created context
-     */
-    public static GenericApplicationContext newContextSpring(String name,
-            List<org.springframework.core.io.Resource> configurationResources, ApplicationContext parentContext) {
-        GenericApplicationContext context = new GenericApplicationContext(parentContext);
-        context.setDisplayName("ApplicationContext:" + name);
-
-        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
-                new SchemaTypeAwareXMLBeanDefinitionReader(context);
-
-        beanDefinitionReader.loadBeanDefinitions(configurationResources
-                .toArray(new org.springframework.core.io.Resource[] {}));
-
-        context.refresh();
-        return context;
-    }
-
-    /**
      * Parse list of elements into bean definitions.
      * 
      * @param elements list of elements to parse

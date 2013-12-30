@@ -128,7 +128,7 @@ public final class Main {
             configs.add(r);
         }
                 
-        return SpringSupport.newContextSpring(Main.class.getName(), configs, null);
+        return SpringSupport.newContext(Main.class.getName(), configs, null);
     }
     
     /**
