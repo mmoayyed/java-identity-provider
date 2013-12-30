@@ -25,11 +25,11 @@ import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
-import net.shibboleth.idp.attribute.mapper.impl.RequestedAttributeMapper;
-import net.shibboleth.idp.attribute.mapper.impl.XmlObjectAttributeValueMapper;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML2AttributeEncoder;
 import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperFactory;
 import net.shibboleth.idp.saml.attribute.encoding.SAMLEncoderSupport;
+import net.shibboleth.idp.saml.impl.attribute.mapping.RequestedAttributeMapper;
+import net.shibboleth.idp.saml.impl.attribute.mapping.XmlObjectAttributeValueMapper;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.saml2.core.AttributeValue;

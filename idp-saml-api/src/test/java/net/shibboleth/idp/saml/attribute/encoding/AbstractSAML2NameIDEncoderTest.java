@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
-import net.shibboleth.idp.attribute.mapper.AttributeMapper;
+import net.shibboleth.idp.saml.attribute.mapping.AttributeMapper;
 
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.metadata.RequestedAttribute;

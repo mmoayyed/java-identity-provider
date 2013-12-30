@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 import org.opensaml.saml.saml2.core.Attribute;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.mapper.AbstractSAMLAttributeMapper;
+import net.shibboleth.idp.saml.attribute.mapping.AbstractSAMLAttributeMapper;
 
 /**
  * An interface which is implemented by encoders which encode attributes which can be reverse mapped.
