@@ -25,10 +25,10 @@ import java.util.Map.Entry;
 import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 
 import net.shibboleth.idp.attribute.AttributeEncoder;
+import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.mapper.AbstractSAMLAttributeMapper;
 import net.shibboleth.idp.attribute.mapper.AbstractSAMLAttributesMapper;
 import net.shibboleth.idp.attribute.mapper.AttributeMapper;
-import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperFactory;

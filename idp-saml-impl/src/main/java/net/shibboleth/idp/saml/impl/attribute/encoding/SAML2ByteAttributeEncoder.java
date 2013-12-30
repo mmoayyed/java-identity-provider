@@ -24,7 +24,7 @@ import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
+import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.mapper.impl.ByteAttributeValueMapper;
 import net.shibboleth.idp.attribute.mapper.impl.RequestedAttributeMapper;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML2AttributeEncoder;

@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
+import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.mapper.impl.RequestedAttributeMapper;
 import net.shibboleth.idp.attribute.mapper.impl.ScopedStringAttributeValueMapper;
 import net.shibboleth.idp.attribute.mapper.impl.StringAttributeValueMapper;
@@ -142,7 +142,7 @@ public class RequestedAttributeMapperTest extends MappingTests {
         mapper.setValueMapper(new StringAttributeValueMapper());
         mapper.initialize();
 
-        Map<String, net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute> result =
+        Map<String, net.shibboleth.idp.attribute.IdPRequestedAttribute> result =
                 mapper.mapAttribute(getAttr(SAML_NAME_TWO));
 
         Assert.assertEquals(result.size(), 1);

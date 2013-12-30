@@ -21,9 +21,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
+import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.mapper.AbstractSAMLAttributeValueMapper;
 import net.shibboleth.idp.attribute.mapper.AttributeMapper;
-import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.saml.saml2.metadata.RequestedAttribute;

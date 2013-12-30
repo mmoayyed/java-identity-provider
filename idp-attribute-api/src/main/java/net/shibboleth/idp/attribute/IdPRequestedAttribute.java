@@ -15,9 +15,8 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.mapper;
+package net.shibboleth.idp.attribute;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
 
 /**
  * IdP Representation of the SAML2 RequestedAttribute.

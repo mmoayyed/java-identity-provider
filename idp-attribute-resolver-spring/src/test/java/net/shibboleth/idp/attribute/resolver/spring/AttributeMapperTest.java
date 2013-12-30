@@ -19,9 +19,9 @@ package net.shibboleth.idp.attribute.resolver.spring;
 
 import java.util.Collection;
 
+import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.mapper.AbstractSAMLAttributeMapper;
 import net.shibboleth.idp.attribute.mapper.AttributeMapper;
-import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.mapper.impl.RequestedAttributesMapper;
 import net.shibboleth.idp.attribute.mapper.impl.ScopedStringAttributeValueMapper;
 import net.shibboleth.idp.attribute.mapper.impl.StringAttributeValueMapper;

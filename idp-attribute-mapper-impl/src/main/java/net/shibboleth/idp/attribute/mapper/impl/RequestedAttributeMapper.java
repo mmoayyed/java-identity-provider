@@ -19,8 +19,8 @@ package net.shibboleth.idp.attribute.mapper.impl;
 
 import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 
+import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.mapper.AbstractSAMLAttributeMapper;
-import net.shibboleth.idp.attribute.mapper.IdPRequestedAttribute;
 
 /**
  * A class that maps a SAML2 {@link RequestedAttribute} into an IdP {@link IdPRequestedAttribute}.
