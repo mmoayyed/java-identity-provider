@@ -48,8 +48,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableMap;
 
 //TODO(lajoie) perf metrics
-//TODO(lajoie) need to deal with thread safety issue 
-//             where attribute definitions/data connectors might change in the midst of a resolution
 
 /**
  * A component that resolves the attributes for a particular subject.
@@ -61,8 +59,8 @@ import com.google.common.collect.ImmutableMap;
  * {@link net.shibboleth.utilities.java.support.resolver.Criterion}s.
  * */
 @ThreadSafe
-public class AttributeResolverImpl extends AbstractServiceableComponent<AttributeResolver> implements
-        AttributeResolver {
+public class AttributeResolverImpl extends AbstractServiceableComponent<AttributeResolver> 
+    implements AttributeResolver {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeResolverImpl.class);
@@ -130,7 +128,8 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * 
      * @return attribute definitions loaded in to this resolver
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, AttributeDefinition> getAttributeDefinitions() {
+    @Override @Nonnull @NonnullElements @Unmodifiable public Map<String, AttributeDefinition> 
+                    getAttributeDefinitions() {
         return attributeDefinitions;
     }
 
@@ -139,7 +138,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * 
      * @return data connectors loaded in to this resolver
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, DataConnector> getDataConnectors() {
+    @Override @Nonnull @NonnullElements @Unmodifiable public Map<String, DataConnector> getDataConnectors() {
         return dataConnectors;
     }
 
@@ -150,7 +149,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * 
      * {@inheritDoc}
      */
-    public void validate() throws ComponentValidationException {
+    @Override public void validate() throws ComponentValidationException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -183,7 +182,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     }
 
     /** {@inheritDoc} */
-    protected void doDestroy() {
+    @Override protected void doDestroy() {
         for (ResolverPlugin plugin : attributeDefinitions.values()) {
             plugin.destroy();
         }
@@ -204,7 +203,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * 
      * @throws ResolutionException thrown if there is a problem resolving the attributes for the subject
      */
-    public void resolveAttributes(@Nonnull final AttributeResolutionContext resolutionContext)
+    @Override public void resolveAttributes(@Nonnull final AttributeResolutionContext resolutionContext)
             throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
@@ -425,8 +424,8 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
             // remove value-less attributes
             if (resolvedAttribute.getValues().size() == 0) {
-                log.debug("{} removing result of attribute definition {}, its attribute contains no values",
-                        logPrefix, definition.getId());
+                log.debug("{} removing result of attribute definition {}, its attribute contains no values", logPrefix,
+                        definition.getId());
                 continue;
             }
 
@@ -491,7 +490,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         HashSet<String> dependencyVerifiedPlugins = new HashSet<String>();
@@ -553,7 +552,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     }
 
     /** {@inheritDoc} */
-    @Nonnull public AttributeResolver getComponent() {
+    @Override @Nonnull public AttributeResolver getComponent() {
         return this;
     }
 }
