@@ -25,8 +25,8 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
-import org.opensaml.saml.common.messaging.context.SamlPeerEntityContext;
-import org.opensaml.saml.common.messaging.context.SamlSubjectNameIdentifierContext;
+import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
+import org.opensaml.saml.common.messaging.context.SAMLSubjectNameIdentifierContext;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml1.core.impl.NameIdentifierBuilder;
 import org.opensaml.saml.saml2.core.NameID;
@@ -91,8 +91,8 @@ public class AbstractSubjectNamePrincipalConnectorDefinitionTest extends OpenSAM
         nameId.setFormat(FORMAT);
         nameId.setNameIdentifier(IDENTIFIER);
         final MessageContext<SAMLObject> context = new MessageContext<>();
-        context.getSubcontext(SamlPeerEntityContext.class, true).setEntityId(ISSUER);
-        context.getSubcontext(SamlSubjectNameIdentifierContext.class, true).setSubjectNameIdentifier(nameId);
+        context.getSubcontext(SAMLPeerEntityContext.class, true).setEntityId(ISSUER);
+        context.getSubcontext(SAMLSubjectNameIdentifierContext.class, true).setSubjectNameIdentifier(nameId);
         
         final AbstractSubjectNamePrincipalConnectorDefinition defn = new MockSubjectNamePrincipalConnector();
         defn.setContextFinderStrategy(new SamlContextFinder(context)); 
@@ -111,8 +111,8 @@ public class AbstractSubjectNamePrincipalConnectorDefinitionTest extends OpenSAM
         nameId.setFormat(FORMAT);
         nameId.setValue(IDENTIFIER);
         final MessageContext<SAMLObject> context = new MessageContext<>();
-        context.getSubcontext(SamlPeerEntityContext.class, true).setEntityId(ISSUER);
-        context.getSubcontext(SamlSubjectNameIdentifierContext.class, true).setSubjectNameIdentifier(nameId);
+        context.getSubcontext(SAMLPeerEntityContext.class, true).setEntityId(ISSUER);
+        context.getSubcontext(SAMLSubjectNameIdentifierContext.class, true).setSubjectNameIdentifier(nameId);
         
         final AbstractSubjectNamePrincipalConnectorDefinition defn = new MockSubjectNamePrincipalConnector();
         defn.setContextFinderStrategy(new SamlContextFinder(context)); 
@@ -128,8 +128,8 @@ public class AbstractSubjectNamePrincipalConnectorDefinitionTest extends OpenSAM
     @Test public void badNavigation() throws ResolutionException, ComponentInitializationException {
 
         final MessageContext<SAMLObject> context = new MessageContext<>();
-        context.getSubcontext(SamlPeerEntityContext.class, true).setEntityId(ISSUER);
-        context.getSubcontext(SamlSubjectNameIdentifierContext.class, true).setSubjectNameIdentifier(null);
+        context.getSubcontext(SAMLPeerEntityContext.class, true).setEntityId(ISSUER);
+        context.getSubcontext(SAMLSubjectNameIdentifierContext.class, true).setSubjectNameIdentifier(null);
         
         AbstractSubjectNamePrincipalConnectorDefinition defn = new MockSubjectNamePrincipalConnector();
         defn.setContextFinderStrategy(new SamlContextFinder(context)); 

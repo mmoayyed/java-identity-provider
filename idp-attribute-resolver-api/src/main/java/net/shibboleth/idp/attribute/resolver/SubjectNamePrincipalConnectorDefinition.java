@@ -81,7 +81,7 @@ public interface SubjectNamePrincipalConnectorDefinition extends ResolverPlugin<
      * @throws ResolutionException if we could not navigate the structures directly.
      * 
      @Nonnull public String issuerIdOf(final AttributeResolutionContext context) throws ResolutionException { return
-     *          locateSamlMessageContext(context).getSubcontext(SamlPeerEntityContext.class, true).getEntityId(); }
+     *          locateSamlMessageContext(context).getSubcontext(SAMLPeerEntityContext.class, true).getEntityId(); }
      */
 
     /**
@@ -94,7 +94,7 @@ public interface SubjectNamePrincipalConnectorDefinition extends ResolverPlugin<
      * 
      @Nonnull public String formatOf(final AttributeResolutionContext context) throws ResolutionException { final
      *          SAMLObject object =
-     *          locateSamlMessageContext(context).getSubcontext(SamlSubjectNameIdentifierContext.class, true)
+     *          locateSamlMessageContext(context).getSubcontext(SAMLSubjectNameIdentifierContext.class, true)
      *          .getSubjectNameIdentifier();
      * 
      *          if (object instanceof NameID) { final NameID nameId = (NameID) object; return nameId.getFormat(); } else

@@ -35,8 +35,8 @@ import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.saml.common.messaging.context.SamlMetadataContext;
-import org.opensaml.saml.common.messaging.context.SamlProtocolContext;
+import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
+import org.opensaml.saml.common.messaging.context.SAMLProtocolContext;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.criterion.ProtocolCriterion;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
@@ -46,7 +46,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
-/** Action that creates and adds a {@link SamlMetadataContext} to a {@link MessageContext}. */
+/** Action that creates and adds a {@link SAMLMetadataContext} to a {@link MessageContext}. */
 @Events({@Event(id = EventIds.INVALID_MSG_CTX, description = "No message context was available in the request"),
         @Event(id = EventIds.INVALID_MSG_MD, description = "No message metadata available in message context")})
 public class AddSamlMetadataToMessageContext extends AbstractProfileAction {
@@ -123,7 +123,7 @@ public class AddSamlMetadataToMessageContext extends AbstractProfileAction {
 
         final EntityIdCriterion entityIdCriterion = new EntityIdCriterion(msgMetadataCtx.getMessageIssuer());
 
-        final SamlProtocolContext protocolCtx = messageCtx.getSubcontext(SamlProtocolContext.class, false);
+        final SAMLProtocolContext protocolCtx = messageCtx.getSubcontext(SAMLProtocolContext.class, false);
         ProtocolCriterion protocolCriterion = null;
         EntityRoleCriterion roleCriterion = null;
         if (protocolCtx != null) {
@@ -141,14 +141,14 @@ public class AddSamlMetadataToMessageContext extends AbstractProfileAction {
         try {
             final EntityDescriptor entityMetadata = metadataResolver.resolveSingle(criteria);
 
-            final SamlMetadataContext metadataCtx = new SamlMetadataContext();
+            final SAMLMetadataContext metadataCtx = new SAMLMetadataContext();
             metadataCtx.setEntityDescriptor(entityMetadata);
             // TODO need to look up role descriptor
             // metadataCtx.setRoleDescriptor(descriptor);
 
             messageCtx.addSubcontext(metadataCtx);
 
-            log.debug("Action {}: populated {} added to MessageContext.", getId(), SamlMetadataContext.class.getName());
+            log.debug("Action {}: populated {} added to MessageContext.", getId(), SAMLMetadataContext.class.getName());
             return ActionSupport.buildProceedEvent(this);
         } catch (ResolverException e) {
             // TODO should this error out the request or continue on?

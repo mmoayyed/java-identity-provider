@@ -28,9 +28,9 @@ import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
-import org.opensaml.saml.common.messaging.context.SamlBindingContext;
-import org.opensaml.saml.common.messaging.context.SamlMessageInfoContext;
-import org.opensaml.saml.common.messaging.context.SamlPeerEntityContext;
+import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
+import org.opensaml.saml.common.messaging.context.SAMLMessageInfoContext;
+import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,9 +61,9 @@ public class IdPInitiatedSSORequestMessageDecoder extends
         MessageContext<IdPInitatedSSORequest> messageContext = new MessageContext<>();
         messageContext.setMessage(ssoRequest);
         
-        messageContext.getSubcontext(SamlPeerEntityContext.class, true).setEntityId(ssoRequest.getEntityId());
+        messageContext.getSubcontext(SAMLPeerEntityContext.class, true).setEntityId(ssoRequest.getEntityId());
         
-        SamlMessageInfoContext msgInfoContext = messageContext.getSubcontext(SamlMessageInfoContext.class, true);
+        SAMLMessageInfoContext msgInfoContext = messageContext.getSubcontext(SAMLMessageInfoContext.class, true);
         msgInfoContext.setMessageIssueInstant(new DateTime(ssoRequest.getTime(), ISOChronology.getInstanceUTC()));
         msgInfoContext.setMessageId(getMessageID());
         
@@ -81,11 +81,11 @@ public class IdPInitiatedSSORequestMessageDecoder extends
         final String relayState = messageContext.getMessage().getRelayState();
         log.debug("Decoded SAML relay state: {}", relayState);
         
-        SamlBindingContext bindingContext = messageContext.getSubcontext(SamlBindingContext.class, true);
+        SAMLBindingContext bindingContext = messageContext.getSubcontext(SAMLBindingContext.class, true);
         bindingContext.setRelayState(relayState);
         bindingContext.setBindingUri(getBindingURI());
         bindingContext.setHasBindingSignature(false);
-        bindingContext.setIntendedDestinationEndpointUriRequired(false);
+        bindingContext.setIntendedDestinationEndpointURIRequired(false);
     }
 
     /** {@inheritDoc} */

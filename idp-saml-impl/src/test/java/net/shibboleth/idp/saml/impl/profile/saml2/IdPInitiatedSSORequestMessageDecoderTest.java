@@ -26,9 +26,9 @@ import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.saml.common.SAMLObject;
-import org.opensaml.saml.common.messaging.context.SamlBindingContext;
-import org.opensaml.saml.common.messaging.context.SamlMessageInfoContext;
-import org.opensaml.saml.common.messaging.context.SamlPeerEntityContext;
+import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
+import org.opensaml.saml.common.messaging.context.SAMLMessageInfoContext;
+import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.Assert;
@@ -92,15 +92,15 @@ public class IdPInitiatedSSORequestMessageDecoderTest extends XMLObjectBaseTestC
                 "Incorrect decoded message issue instant value");
         Assert.assertEquals(authnRequest.getID(), messageID, "Incorrect decoded message ID value");
         
-        Assert.assertEquals(messageContext.getSubcontext(SamlPeerEntityContext.class, true).getEntityId(), entityId,
+        Assert.assertEquals(messageContext.getSubcontext(SAMLPeerEntityContext.class, true).getEntityId(), entityId,
                 "Incorrect decoded entityId value in peer context");
         
-        SamlBindingContext bindingContext = messageContext.getSubcontext(SamlBindingContext.class, true);
+        SAMLBindingContext bindingContext = messageContext.getSubcontext(SAMLBindingContext.class, true);
         Assert.assertEquals(bindingContext.getRelayState(), relayState, "Incorrect decoded relay state value in binding context");
         Assert.assertEquals(bindingContext.getBindingUri(), "urn:mace:shibboleth:2.0:profiles:AuthnRequest",
                 "Incorrect binding URI in binding context");
         
-        SamlMessageInfoContext msgInfoContext = messageContext.getSubcontext(SamlMessageInfoContext.class, true);
+        SAMLMessageInfoContext msgInfoContext = messageContext.getSubcontext(SAMLMessageInfoContext.class, true);
         Assert.assertEquals(msgInfoContext.getMessageIssueInstant(), new DateTime(time*1000, ISOChronology.getInstanceUTC()),
                 "Incorrect decoded issue instant value in message info context");
         Assert.assertEquals(msgInfoContext.getMessageId(), messageID, "Incorrect decoded message ID value in message info context");

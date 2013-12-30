@@ -32,8 +32,8 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
-import org.opensaml.saml.common.messaging.context.SamlPeerEntityContext;
-import org.opensaml.saml.common.messaging.context.SamlSubjectNameIdentifierContext;
+import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
+import org.opensaml.saml.common.messaging.context.SAMLSubjectNameIdentifierContext;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml2.core.NameID;
 
@@ -157,7 +157,7 @@ public abstract class AbstractSubjectNamePrincipalConnectorDefinition extends Ab
      * @throws ResolutionException if we could not navigate the structures directly.
      */
     @Nonnull public String issuerIdOf(final AttributeResolutionContext context) throws ResolutionException {
-        return locateSamlMessageContext(context).getSubcontext(SamlPeerEntityContext.class, true).getEntityId();
+        return locateSamlMessageContext(context).getSubcontext(SAMLPeerEntityContext.class, true).getEntityId();
     }
 
     /**
@@ -170,7 +170,7 @@ public abstract class AbstractSubjectNamePrincipalConnectorDefinition extends Ab
      */
     @Nonnull public String formatOf(final AttributeResolutionContext context) throws ResolutionException {
         final SAMLObject object =
-                locateSamlMessageContext(context).getSubcontext(SamlSubjectNameIdentifierContext.class, true)
+                locateSamlMessageContext(context).getSubcontext(SAMLSubjectNameIdentifierContext.class, true)
                         .getSubjectNameIdentifier();
 
         if (object instanceof NameID) {
@@ -194,7 +194,7 @@ public abstract class AbstractSubjectNamePrincipalConnectorDefinition extends Ab
      */
     @Nonnull protected String contentOf(final AttributeResolutionContext context) throws ResolutionException {
         final SAMLObject object =
-                locateSamlMessageContext(context).getSubcontext(SamlSubjectNameIdentifierContext.class, true)
+                locateSamlMessageContext(context).getSubcontext(SAMLSubjectNameIdentifierContext.class, true)
                         .getSubjectNameIdentifier();
 
         if (object instanceof NameID) {

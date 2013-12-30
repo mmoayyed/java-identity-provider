@@ -37,7 +37,7 @@ import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.common.binding.decoding.SAMLMessageDecoder;
-import org.opensaml.saml.common.messaging.context.SamlBindingContext;
+import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
@@ -145,12 +145,12 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
         String relayState = ssoRequest.getRelayState();
         log.debug("Decoded SAML RelayState of: {}", relayState);
         
-        SamlBindingContext bindingContext = messageContext.getSubcontext(SamlBindingContext.class, true);
+        SAMLBindingContext bindingContext = messageContext.getSubcontext(SAMLBindingContext.class, true);
         bindingContext.setRelayState(relayState);
         
         bindingContext.setBindingUri(getBindingURI());
         bindingContext.setHasBindingSignature(false);
-        bindingContext.setIntendedDestinationEndpointUriRequired(false);
+        bindingContext.setIntendedDestinationEndpointURIRequired(false);
     }
 
     /** {@inheritDoc} */
