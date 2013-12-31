@@ -72,10 +72,15 @@
     
     <action-state id="FilterAttributes">
         <evaluate expression="FilterAttributes" />
-        <transition on="proceed" to="BuildResponse"/>
+        <transition on="proceed" to="UpdateSessionWithSPSession"/>
     </action-state>
-    
-    <!-- TODO filter attributes -->
+
+    <action-state id="UpdateSessionWithSPSession">
+        <evaluate expression="UpdateSessionWithSPSession" />
+        <transition on="proceed" to="BuildResponse"/>
+        <!-- Mask storage failure. -->
+        <transition on="IOError" to="BuildResponse"/>
+    </action-state>
        
     <action-state id="BuildResponse">
         <evaluate expression="BuildResponse" />
