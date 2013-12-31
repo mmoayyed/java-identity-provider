@@ -51,6 +51,7 @@ public class SessionManagerBaseTestCase {
         responseProxy = new ThreadLocalHttpServletResponseProxy();
         
         storageService = new MemoryStorageService();
+        storageService.setId("TestStorageService");
 
         CookieManager cookieManager = new CookieManager();
         cookieManager.setHttpServletRequest(requestProxy);
@@ -63,6 +64,8 @@ public class SessionManagerBaseTestCase {
         sessionManager.setHttpServletRequest(requestProxy);
         sessionManager.setHttpServletResponse(responseProxy);
         sessionManager.setCookieManager(cookieManager);
+        sessionManager.setId("Test Session Manager");
+
 
         adjustProperties();
         

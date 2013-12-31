@@ -28,18 +28,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.opensaml.storage.RequestScopedStorageService;
-import org.opensaml.storage.StorageRecord;
-import org.opensaml.storage.StorageSerializer;
-import org.opensaml.storage.StorageService;
-import org.opensaml.storage.VersionMismatchException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SPSession;
@@ -66,6 +54,18 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
+
+import org.opensaml.storage.RequestScopedStorageService;
+import org.opensaml.storage.StorageRecord;
+import org.opensaml.storage.StorageSerializer;
+import org.opensaml.storage.StorageService;
+import org.opensaml.storage.VersionMismatchException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 /**
  * Implementation of {@link SessionManager} and {@link SessionResolver} interfaces that relies on
@@ -167,6 +167,13 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         consistentAddress = true;
         cookieName = DEFAULT_COOKIE_NAME;
     }
+    
+    /** Make setId visible.
+     * @param componentId the id */
+    @Override public void setId(@Nonnull @NotEmpty String componentId) {
+        super.setId(componentId);
+    }
+    
 
     /**
      * Get the servlet request to read from.
