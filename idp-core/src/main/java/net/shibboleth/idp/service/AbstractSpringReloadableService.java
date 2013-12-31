@@ -48,6 +48,7 @@ import com.google.common.collect.Iterables;
  */
 // TODO Do not use - being rewritten
 @ThreadSafe
+@Deprecated
 public abstract class AbstractSpringReloadableService extends AbstractReloadableService implements
         ApplicationContextAware {
 
