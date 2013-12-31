@@ -15,6 +15,21 @@
     <bean id="shibboleth.SessionIDGenerator" class="net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy"
         c:identifierSize="${idp.session.idSize}" />
 
+    <bean id="shibboleth.SPSessionSerializerRegistry" class="net.shibboleth.idp.session.SPSessionSerializerRegistry"
+            depends-on="shibboleth.OpenSAMLConfig">
+        <constructor-arg>
+            <map>
+                <entry key="#{ T(net.shibboleth.idp.session.BasicSPSession) }">
+                    <bean class="net.shibboleth.idp.session.impl.BasicSPSessionSerializer" c:offset="PT30M" />
+                </entry>
+                <entry key="#{ T(net.shibboleth.idp.saml.session.SAML2SPSession) }">
+                    <bean class="net.shibboleth.idp.saml.impl.session.SAML2SPSessionSerializer" c:offset="PT30M"
+                        p:parserPool-ref="shibboleth.ParserPool" />
+                </entry>
+            </map>
+        </constructor-arg>
+    </bean>
+
     <bean id="shibboleth.SessionManager" class="net.shibboleth.idp.session.impl.StorageBackedSessionManager"
             p:httpServletRequest-ref="shibboleth.HttpServletRequest" p:httpServletResponse-ref="shibboleth.HttpServletResponse"
             p:authenticationFlowDescriptors="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'AuthenticationFlow/(${idp.authn.flows})']}"
@@ -26,6 +41,7 @@
             p:maskStorageFailure="${idp.session.maskStorageFailure}"
             p:trackSPSessions="${idp.session.trackSPSessions}"
             p:secondaryServiceIndex="${idp.session.secondaryServiceIndex}"
-            p:IDGenerator-ref="shibboleth.SessionIDGenerator" />
+            p:IDGenerator-ref="shibboleth.SessionIDGenerator"
+            p:SPSessionSerializerRegistry-ref="shibboleth.SPSessionSerializerRegistry" />
 
 </beans>
