@@ -83,6 +83,7 @@ public class InvalidateSessionOnIdentitySwitch extends AbstractAuthenticationAct
     }
     
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         
@@ -92,6 +93,7 @@ public class InvalidateSessionOnIdentitySwitch extends AbstractAuthenticationAct
     }
     
     /** {@inheritDoc} */
+    @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
@@ -113,6 +115,7 @@ public class InvalidateSessionOnIdentitySwitch extends AbstractAuthenticationAct
     }
     
     /** {@inheritDoc} */
+    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 

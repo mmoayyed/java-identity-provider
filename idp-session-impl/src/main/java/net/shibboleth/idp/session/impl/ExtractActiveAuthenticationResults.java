@@ -54,6 +54,7 @@ public class ExtractActiveAuthenticationResults extends AbstractAuthenticationAc
     @Nullable private IdPSession session;
     
     /** {@inheritDoc} */
+    @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
@@ -69,6 +70,7 @@ public class ExtractActiveAuthenticationResults extends AbstractAuthenticationAc
     }
     
     /** {@inheritDoc} */
+    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 

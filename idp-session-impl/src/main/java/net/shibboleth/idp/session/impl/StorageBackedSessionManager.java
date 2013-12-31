@@ -443,7 +443,10 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     }
     
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
         if (storageService == null) {
             throw new ComponentInitializationException(
                     "Initialization of StorageBackedSessionManager requires non-null StorageService");
@@ -467,6 +470,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     }
 
     /** {@inheritDoc} */
+    @Override
     public void validate() throws ComponentValidationException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
@@ -474,6 +478,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull public IdPSession createSession(@Nonnull @NotEmpty final String principalName) throws SessionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
@@ -515,6 +520,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     }
     
     /** {@inheritDoc} */
+    @Override
     public void destroySession(@Nonnull @NotEmpty final String sessionId) throws SessionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
@@ -533,6 +539,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NonnullElements public Iterable<IdPSession> resolve(@Nullable final CriteriaSet criteria)
             throws ResolverException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -585,6 +592,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nullable public IdPSession resolveSingle(@Nullable final CriteriaSet criteria) throws ResolverException {
         Iterator<IdPSession> i = resolve(criteria).iterator();
         if (i != null && i.hasNext()) {

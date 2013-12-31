@@ -108,6 +108,7 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
     }
     
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         
@@ -117,6 +118,7 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
     }
     
     /** {@inheritDoc} */
+    @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
@@ -132,6 +134,7 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
     }
     
     /** {@inheritDoc} */
+    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 

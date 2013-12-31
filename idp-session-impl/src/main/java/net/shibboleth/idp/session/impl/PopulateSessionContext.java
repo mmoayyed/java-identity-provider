@@ -83,6 +83,7 @@ public class PopulateSessionContext extends AbstractProfileAction {
     }
     
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         
@@ -92,11 +93,13 @@ public class PopulateSessionContext extends AbstractProfileAction {
     }
     
     /** {@inheritDoc} */
+    @Override
     protected boolean doPreExecute(ProfileRequestContext profileRequestContext) throws ProfileException {
         return enabled;
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
         IdPSession session = null;
         try {

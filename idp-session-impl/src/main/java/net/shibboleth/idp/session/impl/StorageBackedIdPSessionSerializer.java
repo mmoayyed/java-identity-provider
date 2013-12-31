@@ -96,6 +96,7 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
     }
     
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty public String serialize(@Nonnull final StorageBackedIdPSession instance) throws IOException {
         
         try {
@@ -143,6 +144,7 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
     }
 
     /** {@inheritDoc} */
+    @Override
     // Checkstyle: CyclomaticComplexity OFF
     @Nonnull public StorageBackedIdPSession deserialize(final int version, @Nonnull @NotEmpty final String context,
             @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value, @Nullable final Long expiration)
