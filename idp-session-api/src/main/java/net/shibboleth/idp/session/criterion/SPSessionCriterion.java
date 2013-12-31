@@ -67,6 +67,7 @@ public final class SPSessionCriterion implements Criterion {
     }
     
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return Objects.toStringHelper(this).add("serviceId", id)
                 .add("SPSessionKey", key)
@@ -74,11 +75,13 @@ public final class SPSessionCriterion implements Criterion {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return id.hashCode();
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;

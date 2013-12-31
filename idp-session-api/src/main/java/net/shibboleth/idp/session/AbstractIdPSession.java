@@ -120,21 +120,25 @@ public abstract class AbstractIdPSession implements IdPSession {
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty public String getId() {
         return id;
     }
     
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty public String getPrincipalName() {
         return principalName;
     }
 
     /** {@inheritDoc} */
+    @Override
     public long getCreationInstant() {
         return creationInstant;
     }
 
     /** {@inheritDoc} */
+    @Override
     public long getLastActivityInstant() {
         return lastActivityInstant;
     }
@@ -214,23 +218,27 @@ public abstract class AbstractIdPSession implements IdPSession {
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<AuthenticationResult> getAuthenticationResults() {
         return ImmutableSet.copyOf(Optional.presentInstances(authenticationResults.values()));
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nullable public AuthenticationResult getAuthenticationResult(@Nonnull @NotEmpty final String flowId) {
         Optional<AuthenticationResult> mapped = authenticationResults.get(StringSupport.trimOrNull(flowId));
         return (mapped != null) ? mapped.orNull() : null;
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nullable public AuthenticationResult addAuthenticationResult(@Nonnull final AuthenticationResult result)
             throws SessionException {
         return doAddAuthenticationResult(result);
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean removeAuthenticationResult(@Nonnull final AuthenticationResult result) throws SessionException {
         return doRemoveAuthenticationResult(result);
     }
@@ -283,23 +291,27 @@ public abstract class AbstractIdPSession implements IdPSession {
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<SPSession> getSPSessions() {
         return ImmutableSet.copyOf(Optional.presentInstances(spSessions.values()));
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nullable public SPSession getSPSession(@Nonnull @NotEmpty final String serviceId) {
         Optional<SPSession> mapped = spSessions.get(StringSupport.trimOrNull(serviceId));
         return (mapped != null) ? mapped.orNull() : null;
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nullable public SPSession addSPSession(@Nonnull final SPSession spSession)
             throws SessionException {
         return doAddSPSession(spSession);
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean removeSPSession(@Nonnull final SPSession spSession) throws SessionException {
         return doRemoveSPSession(spSession);
     }
@@ -348,6 +360,7 @@ public abstract class AbstractIdPSession implements IdPSession {
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean checkAddress(@Nonnull @NotEmpty final String address) throws SessionException {
         AddressFamily family = getAddressFamily(address);
         if (family == AddressFamily.UNKNOWN) {
@@ -374,12 +387,14 @@ public abstract class AbstractIdPSession implements IdPSession {
     }
     
     /** {@inheritDoc} */
+    @Override
     public boolean checkTimeout() throws SessionException {
         setLastActivityInstant(System.currentTimeMillis());
         return true;
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -397,11 +412,13 @@ public abstract class AbstractIdPSession implements IdPSession {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return id.hashCode();
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return Objects.toStringHelper(this).add("sessionId", id).add("principalName", principalName)
                 .add("IPv4", ipV4Address).add("IPv6", ipV6Address)

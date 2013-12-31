@@ -32,7 +32,7 @@ public class SessionContext extends BaseContext {
 
     /** Constructor. */
     public SessionContext() {
-        super();
+        
     }
 
     /**

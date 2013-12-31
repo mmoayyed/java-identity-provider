@@ -73,6 +73,7 @@ public abstract class AbstractSPSessionSerializer extends AbstractInitializableC
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty public String serialize(@Nonnull final SPSession instance) throws IOException {
         try {
             final StringWriter sink = new StringWriter(128);
@@ -94,6 +95,7 @@ public abstract class AbstractSPSessionSerializer extends AbstractInitializableC
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull public SPSession deserialize(final int version, @Nonnull @NotEmpty final String context,
             @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value, @Nullable final Long expiration)
                     throws IOException {

@@ -27,7 +27,7 @@ public class SessionException extends Exception {
 
     /** Constructor. */
     public SessionException() {
-        super();
+        
     }
 
     /**

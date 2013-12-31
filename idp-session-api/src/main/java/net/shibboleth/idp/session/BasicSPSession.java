@@ -67,37 +67,44 @@ public class BasicSPSession implements SPSession {
     }
     
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty public String getId() {
         return serviceId;
     }
     
     /** {@inheritDoc} */
+    @Override
     @Positive public long getCreationInstant() {
         return creationInstant;
     }
 
-    /** {@inheritDoc} */ 
+    /** {@inheritDoc} */
+    @Override
     @Positive  public long getExpirationInstant() {
         return expirationInstant;
     }
     
-    /** {@inheritDoc} */ 
+    /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty public String getAuthenticationFlowId() {
         return authenticationFlowId;
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getSPSessionKey() {
         // A basic session doesn't have a secondary lookup key.
         return null;
     }
     
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return serviceId.hashCode();
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(@Nullable final Object obj) {
         if (obj == null) {
             return false;
@@ -115,6 +122,7 @@ public class BasicSPSession implements SPSession {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return Objects.toStringHelper(this).add("id", serviceId)
                 .add("creationInstant", new DateTime(creationInstant))
