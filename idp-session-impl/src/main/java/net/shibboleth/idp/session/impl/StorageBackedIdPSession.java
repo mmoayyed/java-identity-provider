@@ -425,6 +425,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                 return null;
             }
         } else {
+            log.warn("Ignoring SPSession add, session manager is not configured to track them");
             return null;
         }
     }
