@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -166,11 +167,13 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         flowDescriptorMap = new HashMap();
         consistentAddress = true;
         cookieName = DEFAULT_COOKIE_NAME;
+        
+        setId(UUID.randomUUID().toString());
     }
     
-    /** Make setId visible.
-     * @param componentId the id */
-    @Override public void setId(@Nonnull @NotEmpty String componentId) {
+    /** {@inheritDoc} */
+    @Override
+    public void setId(@Nonnull @NotEmpty final String componentId) {
         super.setId(componentId);
     }
     
