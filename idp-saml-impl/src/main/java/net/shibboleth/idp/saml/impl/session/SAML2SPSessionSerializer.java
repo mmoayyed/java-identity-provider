@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.json.JsonObject;
 import javax.json.stream.JsonGenerator;
 
@@ -42,6 +41,8 @@ import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
+import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
@@ -50,7 +51,7 @@ import net.shibboleth.utilities.java.support.xml.XMLParserException;
 /**
  * A serializer for {@link SAML2SPSession} objects.
  */
-@ThreadSafe
+@ThreadSafeAfterInit
 public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
 
     /** Field name of NameID. */
@@ -63,21 +64,33 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
     @Nonnull private static final Map<String, Object> NO_XML_DECL_PARAMS;
     
     /** Parser for NameID fields. */
-    @Nonnull private final ParserPool parserPool;
+    @Nonnull private ParserPool parserPool;
     
     /**
      * Constructor.
      * 
      * @param offset milliseconds to substract from record expiration to establish session expiration value
      */
-    protected SAML2SPSessionSerializer(@Duration @NonNegative long offset) {
+    public SAML2SPSessionSerializer(@Duration @NonNegative long offset) {
         super(offset);
         
         parserPool = Constraint.isNotNull(XMLObjectProviderRegistrySupport.getParserPool(),
                 "ParserPool cannot be null");
     }
-
+    
+    /**
+     * Set the {@link ParserPool} to use.
+     * 
+     * @param pool  parser source
+     */
+    public void setParserPool(@Nonnull final ParserPool pool) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        parserPool = Constraint.isNotNull(pool, "ParserPool cannot be null");
+    }
+   
     /** {@inheritDoc} */
+    @Override
     protected void doSerializeAdditional(@Nonnull final SPSession instance, @Nonnull final JsonGenerator generator) {
         SAML2SPSession saml2Session = (SAML2SPSession) instance;
         
@@ -91,6 +104,7 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull protected SPSession doDeserialize(@Nonnull final JsonObject obj,
             @Nonnull @NotEmpty final String id, @Nonnull @NotEmpty final String flowId,
             @Duration @Positive final long creation, @Duration @Positive final long expiration) throws IOException {
