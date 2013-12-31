@@ -11,7 +11,9 @@
             http://www.springframework.org/schema/util  http://www.springframework.org/schema/util/spring-util.xsd
        "
        default-init-method="initialize">
-       
+
+    <context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
+    
     <!-- Note: Don't define DecodeMessage action here, that is defined in beans definition for concrete flow. -->
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
@@ -29,6 +31,9 @@
             <util:constant static-field="net.shibboleth.idp.saml.profile.config.saml2.BrowserSSOProfileConfiguration.PROFILE_ID" />
         </property>
     </bean>
+
+    <!-- TODO: remove once we get real metadata config in place -->
+    <bean id="ExampleMetadata" class="org.springframework.core.io.FileSystemResource" c:path="${idp.home}/metadata/example-metadata.xml" />
     
     <bean id="inboundMessageHandlerChain" class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
         <property name="handlers">
@@ -45,6 +50,22 @@
                     </property>
                 </bean>
                 
+                <!-- TODO: need to poke metadata source in from relying party config later -->
+                <bean class="org.opensaml.saml.common.binding.SAMLMetadataLookupHandler">
+                    <property name="roleDescriptorResolver">
+                        <bean class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver">
+                            <constructor-arg>
+                                <bean class="org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolver"
+                                        p:parserPool-ref="shibboleth.ParserPool">
+                                    <constructor-arg>
+                                        <util:property-path path="ExampleMetadata.File" />
+                                    </constructor-arg>
+                                </bean>
+                            </constructor-arg>
+                        </bean>
+                    </property>
+                </bean>
+
                 <bean class="org.opensaml.saml.common.binding.security.ReceivedEndpointSecurityHandler" scope="prototype">
                     <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
                 </bean>
