@@ -24,8 +24,10 @@ import java.io.OutputStream;
 import java.util.Collections;
 
 import junit.framework.Assert;
+import net.shibboleth.idp.spring.SpringSupport;
 
 import org.springframework.beans.factory.BeanInitializationException;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -33,10 +35,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.io.ByteStreams;
 
-/**
- * Test to exercise the {@link ReloadableSpringService}.
- * 
- */
+/** {@link ReloadableSpringService} unit test. */
 public class ReloadableSpringServiceTest {
 
     private static final long RELOAD_DELAY = 100;
@@ -219,6 +218,18 @@ public class ReloadableSpringServiceTest {
         }
         Assert.assertTrue("After 7 second component has still not be destroyed", component.isDestroyed());
 
+    }
+
+    @Test public void testApplicationContextAware() {
+
+        Resource parentResource = new ClassPathResource("net/shibboleth/idp/service/ReloadableSpringService.xml");
+
+        GenericApplicationContext appCtx =
+                SpringSupport.newContext("appCtx", Collections.singletonList(parentResource), null);
+                
+        ReloadableSpringService service = appCtx.getBean(ReloadableSpringService.class);
+
+        Assert.assertNotNull("Parent context should not be null", service.getParentContext());
     }
 
 }

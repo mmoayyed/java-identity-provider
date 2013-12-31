@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.2.xsd                           
+                           http://www.springframework.org/schema/util classpath:/org/springframework/beans/factory/xml/spring-util-3.2.xsd"
+
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <bean id="testReloadableSpringService" class="net.shibboleth.idp.service.ReloadableSpringService">
+        <constructor-arg value="net.shibboleth.idp.service.TestServiceableComponent" />
+        <property name="id" value="testReloadableSpringService" />
+        <property name="serviceConfigurations">
+            <util:list>
+                <value>classpath:/net/shibboleth/idp/service/ServiceableBean1.xml</value>
+            </util:list>
+        </property>
+    </bean>
+
+</beans>
