@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.Resource;
 
@@ -45,7 +46,7 @@ import com.google.common.collect.Iterables;
  * @param <T> The precise service being implemented.
  */
 @ThreadSafe
-public class ReloadableSpringService<T> extends AbstractReloadableService {
+public class ReloadableSpringService<T> extends AbstractReloadableService implements ApplicationContextAware {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ReloadableSpringService.class);
@@ -304,4 +305,8 @@ public class ReloadableSpringService<T> extends AbstractReloadableService {
         return cachedComponent;
     }
 
+    /** {@inheritDoc} */
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        setParentContext(applicationContext);
+    }
 }
