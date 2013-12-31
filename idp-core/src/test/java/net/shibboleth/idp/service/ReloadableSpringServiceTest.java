@@ -43,7 +43,7 @@ public class ReloadableSpringServiceTest {
     private File testFile;
 
     private void createPopulatedFile(String dataPath) throws IOException {
-        testFile = File.createTempFile("ReloadableSpringServiceTest", "xml");
+        testFile = File.createTempFile("ReloadableSpringServiceTest", ".xml");
         overwriteFileWith(dataPath);
         testFile.setLastModified(1);
     }
@@ -97,6 +97,8 @@ public class ReloadableSpringServiceTest {
         Assert.assertEquals(serviceableComponent.getComponent().getTheValue(), "Two");
         serviceableComponent.unpinComponent();
         service.stop();
+        
+        testFile.delete();
     }
 
     @Test(enabled=true) public void deferedReload() throws IOException, InterruptedException {
@@ -151,6 +153,7 @@ public class ReloadableSpringServiceTest {
         Assert.assertTrue("After 7 second initial component has still not be destroyed", component.isDestroyed());
 
         service.stop();
+        testFile.delete();
     }
 
     @Test public void testFailFast() throws IOException, InterruptedException {
@@ -178,6 +181,7 @@ public class ReloadableSpringServiceTest {
         Assert.assertNull(service.getServiceableComponent());
 
         service.stop();
+        testFile.delete();
     }
 
     @Test public void testNotFailFast() throws IOException, InterruptedException {
@@ -217,6 +221,8 @@ public class ReloadableSpringServiceTest {
             count--;
         }
         Assert.assertTrue("After 7 second component has still not be destroyed", component.isDestroyed());
+
+        testFile.delete();
 
     }
 
