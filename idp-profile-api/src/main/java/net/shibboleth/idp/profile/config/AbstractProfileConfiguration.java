@@ -49,11 +49,13 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty public String getId() {
         return id;
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
@@ -68,6 +70,7 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nullable public SecurityConfiguration getSecurityConfiguration() {
         return securityConfiguration;
     }
@@ -105,4 +108,5 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
         AbstractProfileConfiguration other = (AbstractProfileConfiguration) obj;
         return Objects.equal(id, other.getId());
     }
+    
 }

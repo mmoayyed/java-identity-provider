@@ -81,6 +81,7 @@ public class RelyingPartyConfiguration implements IdentifiableComponent {
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty public String getId() {
         return id;
     }
@@ -122,4 +123,5 @@ public class RelyingPartyConfiguration implements IdentifiableComponent {
 
         return profileConfigurations.get(trimmedId);
     }
+    
 }
