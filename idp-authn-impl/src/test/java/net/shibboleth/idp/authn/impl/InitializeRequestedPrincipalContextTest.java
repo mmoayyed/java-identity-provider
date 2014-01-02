@@ -1,0 +1,120 @@
+/*
+ * Licensed to the University Corporation for Advanced Internet Development, 
+ * Inc. (UCAID) under one or more contributor license agreements.  See the 
+ * NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The UCAID licenses this file to You under the Apache 
+ * License, Version 2.0 (the "License"); you may not use this file except in 
+ * compliance with the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package net.shibboleth.idp.authn.impl;
+
+import java.security.Principal;
+import java.util.Collections;
+
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
+import net.shibboleth.idp.authn.principal.TestPrincipal;
+import net.shibboleth.idp.profile.IdPEventIds;
+
+import org.opensaml.profile.action.ActionTestingSupport;
+import org.opensaml.profile.context.ProfileRequestContext;
+
+import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.idp.relyingparty.MockAuthenticationProfileConfiguration;
+import net.shibboleth.idp.relyingparty.MockProfileConfiguration;
+import net.shibboleth.idp.relyingparty.RelyingPartyContext;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+/** {@link InitializeRequestedPrincipalContext} unit test. */
+public class InitializeRequestedPrincipalContextTest {
+
+    InitializeRequestedPrincipalContext action;
+    
+    @BeforeMethod
+    public void setUp() throws ComponentInitializationException {
+        action = new InitializeRequestedPrincipalContext();
+        action.initialize();
+    }
+    
+    /** Test that the action errors out properly if there is no relying party context. */
+    @Test public void testNoRelyingPartyContext() throws Exception {
+        ProfileRequestContext profileCtx = new ProfileRequestContext();
+        AuthenticationContext authCtx = profileCtx.getSubcontext(AuthenticationContext.class, true);
+
+        action.execute(profileCtx);
+        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+        Assert.assertNull(authCtx.getSubcontext(RequestedPrincipalContext.class, false));
+    }
+
+    /** Test that the action errors out properly if there is no relying party configuration. */
+    @Test public void testNoProfileConfiguration() throws Exception {
+        ProfileRequestContext profileCtx = new ProfileRequestContext();
+        AuthenticationContext authCtx = profileCtx.getSubcontext(AuthenticationContext.class, true);
+        profileCtx.getSubcontext(RelyingPartyContext.class, true);
+
+        action.execute(profileCtx);
+        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_PROFILE_CONFIG);
+        Assert.assertNull(authCtx.getSubcontext(RequestedPrincipalContext.class, false));
+    }
+
+    /** Test that the action errors out properly if the desired profile configuration is not configured. */
+    @Test public void testInvalidProfileConfiguration() throws Exception {
+        ProfileRequestContext profileCtx =
+                new RequestContextBuilder().setRelyingPartyProfileConfigurations(
+                        Collections.<ProfileConfiguration>singleton(new MockProfileConfiguration("mock"))
+                            ).buildProfileRequestContext();
+        AuthenticationContext authCtx = profileCtx.getSubcontext(AuthenticationContext.class, true);
+
+        action.execute(profileCtx);
+        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_PROFILE_CONFIG);
+        Assert.assertNull(authCtx.getSubcontext(RequestedPrincipalContext.class, false));
+    }
+
+    /** Test that the action works with no methods supplied. */
+    @Test public void testNoMethods() throws Exception {
+        MockAuthenticationProfileConfiguration mock =
+                new MockAuthenticationProfileConfiguration("mock", Collections.<Principal>emptyList());
+        ProfileRequestContext profileCtx =
+                new RequestContextBuilder().setRelyingPartyProfileConfigurations(
+                        Collections.<ProfileConfiguration>singleton(mock)).buildProfileRequestContext();
+        AuthenticationContext authCtx = profileCtx.getSubcontext(AuthenticationContext.class, true);
+
+        action.execute(profileCtx);
+        ActionTestingSupport.assertProceedEvent(profileCtx);
+        Assert.assertNull(authCtx.getSubcontext(RequestedPrincipalContext.class, false));
+    }
+    
+    /** Test that the action works with methods supplied. */
+    @Test public void testWithMethods() throws Exception {
+        Principal method = new TestPrincipal("test");
+        MockAuthenticationProfileConfiguration mock =
+                new MockAuthenticationProfileConfiguration("mock", Collections.singletonList(method));
+        ProfileRequestContext profileCtx =
+                new RequestContextBuilder().setRelyingPartyProfileConfigurations(
+                        Collections.<ProfileConfiguration>singleton(mock)).buildProfileRequestContext();
+        AuthenticationContext authCtx = profileCtx.getSubcontext(AuthenticationContext.class, true);
+
+        action.execute(profileCtx);
+        ActionTestingSupport.assertProceedEvent(profileCtx);
+        RequestedPrincipalContext rpCtx = authCtx.getSubcontext(RequestedPrincipalContext.class, false);
+        Assert.assertNotNull(rpCtx);
+        Assert.assertEquals(rpCtx.getOperator(), "exact");
+        Assert.assertEquals(rpCtx.getRequestedPrincipals().size(), 1);
+        Assert.assertSame(method, rpCtx.getRequestedPrincipals().get(0));
+    }
+    
+}

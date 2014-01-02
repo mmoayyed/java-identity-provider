@@ -29,23 +29,28 @@ import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.impl.SelectProfileConfiguration;
 import net.shibboleth.idp.relyingparty.MockProfileConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link SelectProfileConfiguration} unit test. */
 public class SelectProfileConfigurationTest {
 
+    SelectProfileConfiguration action;
+    
+    @BeforeMethod
+    public void setUp() throws ComponentInitializationException {
+        action = new SelectProfileConfiguration();
+        action.initialize();
+    }
+    
     /** Test that the action errors out properly if there is no relying party context. */
     @Test public void testNoRelyingPartyContext() throws Exception {
         ProfileRequestContext profileCtx = new ProfileRequestContext();
 
-        SelectProfileConfiguration action = new SelectProfileConfiguration();
-        action.setId("test");
-        action.initialize();
-
         action.execute(profileCtx);
-
         ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_RELYING_PARTY_CTX);
     }
 
@@ -55,12 +60,7 @@ public class SelectProfileConfigurationTest {
 
         profileCtx.getSubcontext(RelyingPartyContext.class).setRelyingPartyConfiguration(null);
 
-        SelectProfileConfiguration action = new SelectProfileConfiguration();
-        action.setId("test");
-        action.initialize();
-
         action.execute(profileCtx);
-
         ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);
     }
 
@@ -71,12 +71,7 @@ public class SelectProfileConfigurationTest {
                         Collections.<ProfileConfiguration>singleton(new MockProfileConfiguration("mock"))
                             ).buildProfileRequestContext();
 
-        SelectProfileConfiguration action = new SelectProfileConfiguration();
-        action.setId("test");
-        action.initialize();
-
         action.execute(profileCtx);
-
         ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_PROFILE_CONFIG);
     }
 
@@ -89,12 +84,7 @@ public class SelectProfileConfigurationTest {
 
         profileCtx.setProfileId("mock");
 
-        SelectProfileConfiguration action = new SelectProfileConfiguration();
-        action.setId("test");
-        action.initialize();
-
         action.execute(profileCtx);
-
         ActionTestingSupport.assertProceedEvent(profileCtx);
 
         Assert.assertNotNull(profileCtx.getSubcontext(RelyingPartyContext.class).getProfileConfig());

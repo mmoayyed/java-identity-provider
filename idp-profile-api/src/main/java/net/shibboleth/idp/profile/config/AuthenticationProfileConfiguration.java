@@ -15,26 +15,25 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.relyingparty;
+package net.shibboleth.idp.profile.config;
+
+import java.security.Principal;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.profile.config.SecurityConfiguration;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
-/** Mock implementation of {@link ProfileConfiguration}. */
-public class MockProfileConfiguration extends AbstractProfileConfiguration {
-
-    /**
-     * Constructor.
-     * 
-     * @param id ID of this profile
-     */
-    public MockProfileConfiguration(@Nonnull @NotEmpty final String id) {
-        super(id);
-        setSecurityConfiguration(new SecurityConfiguration());
-    }
+/** Configuration of profiles for authentication. */
+public interface AuthenticationProfileConfiguration extends ProfileConfiguration {
     
+    /**
+     * Get the default authentication methods to use, expressed as custom principals.
+     * 
+     * @return  default authentication methods to use
+     */
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods();
+
 }

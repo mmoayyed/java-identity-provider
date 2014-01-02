@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.profile.config.saml1;
+package net.shibboleth.idp.relyingparty;
 
 import java.security.Principal;
 import java.util.List;
@@ -27,70 +27,39 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
 import net.shibboleth.idp.profile.config.AuthenticationProfileConfiguration;
-import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
-import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
+import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-/** Configuration for SAML 1 Browser SSO profile requests. */
-public class BrowserSSOProfileConfiguration
-        extends AbstractSAMLProfileConfiguration
-        implements SAML1ProfileConfiguration, AuthenticationProfileConfiguration {
-
-    /** ID for this profile configuration. */
-    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml1/sso/browser";
-
-    /**
-     * Whether responses to the authentication request should include an attribute statement.
-     * 
-     * <p>Default value: false</p>
-     */
-    private boolean includeAttributeStatement;
+/** Mock implementation of {@link AuthenticationProfileConfiguration}. */
+public class MockAuthenticationProfileConfiguration extends AbstractProfileConfiguration
+        implements AuthenticationProfileConfiguration {
 
     /** Selects, and limits, the authentication methods to use for requests. */
-    @Nonnull @NonnullElements private List<AuthenticationMethodPrincipal> defaultAuthenticationMethods;
+    @Nonnull @NonnullElements private List<Principal> defaultAuthenticationMethods;
     
-    /** Constructor. */
-    public BrowserSSOProfileConfiguration() {
-        this(PROFILE_ID);
-    }
-
     /**
      * Constructor.
      * 
-     * @param profileId unique ID for this profile
+     * @param id ID of this profile
+     * @param methods default authentication methods to use
      */
-    protected BrowserSSOProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
-        super(profileId);
-        includeAttributeStatement = false;
-    }
-
-    /**
-     * Get whether responses to the authentication request should include an attribute statement.
-     * 
-     * @return whether responses to the authentication request should include an attribute statement
-     */
-    public boolean includeAttributeStatement() {
-        return includeAttributeStatement;
-    }
-
-    /**
-     * Set whether responses to the authentication request should include an attribute statement.
-     * 
-     * @param include whether responses to the authentication request should include an attribute statement
-     */
-    public void setIncludeAttributeStatement(final boolean include) {
-        includeAttributeStatement = include;
+    public MockAuthenticationProfileConfiguration(@Nonnull @NotEmpty final String id,
+            @Nonnull @NonnullElements final List<Principal> methods) {
+        super(id);
+        setSecurityConfiguration(new SecurityConfiguration());
+        setDefaultAuthenticationMethods(methods);
     }
 
     /** {@inheritDoc} */
     @Override
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods() {
-        return ImmutableList.<Principal>copyOf(defaultAuthenticationMethods);
+        return ImmutableList.copyOf(defaultAuthenticationMethods);
     }
     
     /**
@@ -98,8 +67,7 @@ public class BrowserSSOProfileConfiguration
      * 
      * @param methods   default authentication methods to use
      */
-    public void setDefaultAuthenticationMethods(
-            @Nonnull @NonnullElements final List<AuthenticationMethodPrincipal> methods) {
+    public void setDefaultAuthenticationMethods(@Nonnull @NonnullElements final List<Principal> methods) {
         Constraint.isNotNull(methods, "List of methods cannot be null");
         
         defaultAuthenticationMethods = Lists.newArrayList(Collections2.filter(methods, Predicates.notNull()));
