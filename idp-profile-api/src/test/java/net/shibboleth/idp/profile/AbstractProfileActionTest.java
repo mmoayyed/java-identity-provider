@@ -23,6 +23,7 @@ import net.shibboleth.utilities.java.support.component.UnmodifiableComponentExce
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.context.PreviousEventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -33,8 +34,8 @@ import org.testng.annotations.Test;
 public class AbstractProfileActionTest {
 
     @Test public void testActionId() {
-        MockIdentityProviderAction action = new MockIdentityProviderAction(null);
-        Assert.assertEquals(action.getId(), MockIdentityProviderAction.class.getName());
+        MockProfileAction action = new MockProfileAction();
+        Assert.assertEquals(action.getId(), MockProfileAction.class.getName());
 
         action.setId(" mock");
         Assert.assertEquals(action.getId(), "mock");
@@ -55,7 +56,7 @@ public class AbstractProfileActionTest {
     }
 
     @Test public void testActionInitialization() {
-        MockIdentityProviderAction action = new MockIdentityProviderAction(null);
+        MockProfileAction action = new MockProfileAction();
         Assert.assertFalse(action.isInitialized());
         action.setId("mock");
 
@@ -74,20 +75,17 @@ public class AbstractProfileActionTest {
         Assert.assertEquals(action.getId(), "mock");
     }
 
-    // TODO reactivate test once refactoring is done
-    public void testActionExecution() throws Exception {
+    @Test public void testActionExecution() throws Exception {
         RequestContext springRequestContext = new RequestContextBuilder().buildRequestContext();
 
-        MockIdentityProviderAction action = new MockIdentityProviderAction(null);
-        action.setId("mock");
+        MockProfileAction action = new MockProfileAction();
         action.initialize();
 
         Event result = action.execute(springRequestContext);
         Assert.assertTrue(action.isExecuted());
         ActionTestingSupport.assertProceedEvent(result);
 
-        action = new MockIdentityProviderAction(new ProfileException());
-        action.setId("mock");
+        action = new MockProfileAction(new ProfileException());
         action.initialize();
 
         try {
@@ -97,8 +95,7 @@ public class AbstractProfileActionTest {
             // expected this
         }
 
-        action = new MockIdentityProviderAction(new ProfileException());
-        action.setId("mock");
+        action = new MockProfileAction(new ProfileException());
 
         try {
             action.execute(springRequestContext);
@@ -107,33 +104,83 @@ public class AbstractProfileActionTest {
             // expected this
         }
     }
+    
+    @Test public void testActionEvent() throws Exception {
+        RequestContext springRequestContext = new RequestContextBuilder().buildRequestContext();
+
+        MockProfileAction action = new MockProfileAction("Event1", "Event2");
+        action.initialize();
+        Event result = action.execute(springRequestContext);
+        ActionTestingSupport.assertEvent(result, "InvalidPreviousEvent");
+        
+        action = new MockProfileAction("Event1", "InvalidPreviousEvent");
+        action.initialize();
+        result = action.execute(springRequestContext);
+        ActionTestingSupport.assertEvent(result, "Event1");
+
+        action = new MockProfileAction("Event2", "Event1");
+        action.initialize();
+        result = action.execute(springRequestContext);
+        ActionTestingSupport.assertEvent(result, "Event2");
+
+        action = new MockProfileAction("Event3", "Event1");
+        action.initialize();
+        result = action.execute(springRequestContext);
+        ActionTestingSupport.assertEvent(result, "InvalidPreviousEvent");
+    }
 
     /** Mock {@link AbstractProfileAction}. */
-    private class MockIdentityProviderAction extends AbstractProfileAction {
+    private class MockProfileAction extends AbstractProfileAction {
 
-        private ProfileException thrownException;
-
+        private final String newEvent;
+        private final String prevEvent;
+        private final ProfileException thrownException;
         private boolean executed;
 
-        public MockIdentityProviderAction(ProfileException exception) {
+        public MockProfileAction() {
+            thrownException = null;
+            newEvent = null;
+            prevEvent = null;
+        }
+        
+        public MockProfileAction(ProfileException exception) {
             thrownException = exception;
+            newEvent = null;
+            prevEvent = null;
         }
 
+        public MockProfileAction(String newEvent, String prevEvent) {
+            this.newEvent = newEvent;
+            this.prevEvent = prevEvent;
+            thrownException = null;
+        }
+        
         public boolean isExecuted() {
             return executed;
         }
 
         /** {@inheritDoc} */
-        protected Event doExecute(RequestContext springRequestContext, ProfileRequestContext profileRequestContext)
-                throws ProfileException {
+        @Override
+        protected void doExecute(ProfileRequestContext profileRequestContext) throws ProfileException {
 
             executed = true;
+            
+            final PreviousEventContext prevCtx = profileRequestContext.getSubcontext(PreviousEventContext.class, false);
+            if (prevEvent != null) {
+                if (prevCtx == null || !prevCtx.getEvent().equals(prevEvent)) {
+                    org.opensaml.profile.action.ActionSupport.buildEvent(profileRequestContext, "InvalidPreviousEvent");
+                    return;
+                }
+            } else if (prevCtx != null) {
+                org.opensaml.profile.action.ActionSupport.buildEvent(profileRequestContext, "InvalidPreviousEvent");
+                return;
+            }
 
             if (thrownException != null) {
                 throw thrownException;
+            } else if (newEvent != null) {
+                org.opensaml.profile.action.ActionSupport.buildEvent(profileRequestContext, newEvent);
             }
-
-            return super.doExecute(springRequestContext, profileRequestContext);
         }
     }
 }

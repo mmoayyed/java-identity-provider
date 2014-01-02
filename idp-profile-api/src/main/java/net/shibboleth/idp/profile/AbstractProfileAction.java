@@ -62,10 +62,10 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
     org.opensaml.profile.action.AbstractProfileAction<InboundMessageType, OutboundMessageType> implements Action {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AbstractProfileAction.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractProfileAction.class);
 
     /** Strategy used to lookup the {@link ProfileRequestContext} from a given WebFlow {@link RequestContext}. */
-    private Function<RequestContext, ProfileRequestContext> profileContextLookupStrategy;
+    @Nonnull private Function<RequestContext, ProfileRequestContext> profileContextLookupStrategy;
 
     /**
      * Constructor.
@@ -74,10 +74,6 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
      * {@link WebflowRequestContextProfileRequestContextLookup}.
      */
     public AbstractProfileAction() {
-        super();
-
-        setId(getClass().getName());
-
         profileContextLookupStrategy = new WebflowRequestContextProfileRequestContextLookup();
     }
 
@@ -105,6 +101,7 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull public Event execute(@Nonnull final RequestContext springRequestContext) throws ProfileException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
@@ -168,16 +165,17 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
     @Nonnull protected Event getResult(@Nonnull final ProfileAction action,
             @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext) {
         
-        // Check for an EventContext on output. Do not autocreate it.
-        EventContext eventCtx = profileRequestContext.getSubcontext(EventContext.class, false);
+        // Check for an EventContext on output.
+        final EventContext eventCtx = profileRequestContext.getSubcontext(EventContext.class, false);
         if (eventCtx != null) {
-            profileRequestContext.removeSubcontext(eventCtx);
-            if (eventCtx.getEvent() instanceof Event) {
+            final Object event = eventCtx.getEvent();
+            
+            if (event instanceof Event) {
                 return (Event) eventCtx.getEvent();
-            } else if (eventCtx.getEvent() instanceof String) {
+            } else if (event instanceof String) {
                 return ActionSupport.buildEvent(action, (String) eventCtx.getEvent());
-            } else if (eventCtx.getEvent() instanceof AttributeMap) {
-                AttributeMap map = (AttributeMap) eventCtx.getEvent();
+            } else if (event instanceof AttributeMap) {
+                final AttributeMap map = (AttributeMap) eventCtx.getEvent();
                 return ActionSupport.buildEvent(action, map.getString("eventId", EventIds.PROCEED_EVENT_ID), map); 
             } else {
                 return null;
@@ -187,4 +185,5 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
             return ActionSupport.buildProceedEvent(action);
         }
     }
+    
 }
