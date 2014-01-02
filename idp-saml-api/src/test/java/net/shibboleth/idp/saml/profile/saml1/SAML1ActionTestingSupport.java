@@ -65,7 +65,7 @@ public final class SAML1ActionTestingSupport extends org.opensaml.saml.saml1.pro
         }
 
         final RelyingPartyConfiguration rpConfig =
-                new RelyingPartyConfiguration(id, ActionTestingSupport.OUTBOUND_MSG_ISSUER,
+                new RelyingPartyConfiguration(id, ActionTestingSupport.OUTBOUND_MSG_ISSUER, true,
                         buildProfileConfigurations());
 
         RelyingPartyContext subcontext = parent.getSubcontext(RelyingPartyContext.class, true);
