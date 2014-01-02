@@ -195,6 +195,7 @@
     <bean id="ConditionalRelyingPartyConfiguration" class="net.shibboleth.idp.relyingparty.impl.ConditionalRelyingPartyConfiguration">
         <constructor-arg value="ActivatedRelyingPartyConfiguration" />
         <constructor-arg value="https://idp.example.org" />
+        <constructor-arg value="true" />
         <constructor-arg>
             <util:list>
                 <bean class="net.shibboleth.idp.saml.profile.config.saml2.BrowserSSOProfileConfiguration">
