@@ -32,14 +32,16 @@ public class RelyingPartyConfigurationTest {
     @Test public void testConstruction() {
         RelyingPartyConfiguration config;
 
-        config = new RelyingPartyConfiguration("foo", "http://idp.example.org", Collections.EMPTY_LIST);
+        config = new RelyingPartyConfiguration("foo", "http://idp.example.org", true, Collections.EMPTY_LIST);
         Assert.assertEquals(config.getId(), "foo");
         Assert.assertEquals(config.getResponderEntityId(), "http://idp.example.org");
+        Assert.assertTrue(config.isDetailedErrors());
         Assert.assertTrue(config.getProfileConfigurations().isEmpty());
 
-        config = new RelyingPartyConfiguration("foo", "http://idp.example.org", null);
+        config = new RelyingPartyConfiguration("foo", "http://idp.example.org", false, null);
         Assert.assertEquals(config.getId(), "foo");
         Assert.assertEquals(config.getResponderEntityId(), "http://idp.example.org");
+        Assert.assertFalse(config.isDetailedErrors());
         Assert.assertTrue(config.getProfileConfigurations().isEmpty());
 
         ArrayList<ProfileConfiguration> profileConfigs = new ArrayList<ProfileConfiguration>();
@@ -47,40 +49,40 @@ public class RelyingPartyConfigurationTest {
         profileConfigs.add(null);
         profileConfigs.add(new MockProfileConfiguration("bar"));
 
-        config = new RelyingPartyConfiguration("foo", "http://idp.example.org", profileConfigs);
+        config = new RelyingPartyConfiguration("foo", "http://idp.example.org", true, profileConfigs);
         Assert.assertEquals(config.getId(), "foo");
         Assert.assertEquals(config.getResponderEntityId(), "http://idp.example.org");
         Assert.assertEquals(config.getProfileConfigurations().size(), 2);
 
         try {
-            config = new RelyingPartyConfiguration(null, "http://idp.example.org", Collections.EMPTY_LIST);
+            config = new RelyingPartyConfiguration(null, "http://idp.example.org", true, Collections.EMPTY_LIST);
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
-            config = new RelyingPartyConfiguration("", "http://idp.example.org", Collections.EMPTY_LIST);
+            config = new RelyingPartyConfiguration("", "http://idp.example.org", true, Collections.EMPTY_LIST);
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
-            config = new RelyingPartyConfiguration("foo", null, Collections.EMPTY_LIST);
+            config = new RelyingPartyConfiguration("foo", null, true, Collections.EMPTY_LIST);
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
-            config = new RelyingPartyConfiguration("foo", null, Collections.EMPTY_LIST);
+            config = new RelyingPartyConfiguration("foo", null, true, Collections.EMPTY_LIST);
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this
         }
         
-        config = new RelyingPartyConfiguration("foo", "http://idp.example.org", Collections.EMPTY_LIST);
+        config = new RelyingPartyConfiguration("foo", "http://idp.example.org", true, Collections.EMPTY_LIST);
         Assert.assertTrue(config.getProfileConfigurations().isEmpty());     
     }
 
@@ -90,7 +92,7 @@ public class RelyingPartyConfigurationTest {
         profileConfigs.add(new MockProfileConfiguration("bar"));
 
         RelyingPartyConfiguration config =
-                new RelyingPartyConfiguration("foo", "http://idp.example.org", profileConfigs);
+                new RelyingPartyConfiguration("foo", "http://idp.example.org", true, profileConfigs);
         Assert.assertNotNull(config.getProfileConfiguration("foo"));
         Assert.assertNotNull(config.getProfileConfiguration("bar"));
         Assert.assertNull(config.getProfileConfiguration("baz"));

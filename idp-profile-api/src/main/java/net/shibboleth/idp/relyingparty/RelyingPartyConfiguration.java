@@ -46,6 +46,9 @@ public class RelyingPartyConfiguration implements IdentifiableComponent {
 
     /** The entity ID of the IdP. */
     @Nonnull @NotEmpty private final String responderEntityId;
+    
+    /** Controls whether detailed information about errors should be exposed. */
+    private final boolean detailedErrors; 
 
     /** Registered and usable communication profile configurations for this relying party. */
     @Nonnull @NonnullElements private final Map<String, ProfileConfiguration> profileConfigurations;
@@ -55,16 +58,19 @@ public class RelyingPartyConfiguration implements IdentifiableComponent {
      * 
      * @param configurationId unique ID for this configuration
      * @param responderId the ID by which the responder is known by this relying party
+     * @param detailedErrorsFlag whether detailed information about errors should be exposed
      * @param configurations communication profile configurations for this relying party
      */
     public RelyingPartyConfiguration(@Nonnull @NotEmpty final String configurationId,
-            @Nonnull @NotEmpty final String responderId,
+            @Nonnull @NotEmpty final String responderId, final boolean detailedErrorsFlag,
             @Nonnull @NonnullElements final Collection<? extends ProfileConfiguration> configurations) {
         id = Constraint.isNotNull(StringSupport.trimOrNull(configurationId),
                 "Relying party configuration ID cannot be null or empty");
 
         responderEntityId = Constraint.isNotNull(StringSupport.trimOrNull(responderId),
                 "Responder entity ID cannot be null or empty");
+        
+        detailedErrors = detailedErrorsFlag;
 
         if (configurations == null || configurations.isEmpty()) {
             profileConfigurations = Collections.emptyMap();
@@ -87,16 +93,25 @@ public class RelyingPartyConfiguration implements IdentifiableComponent {
     }
 
     /**
-     * Gets the ID of the entity responding to requests.
+     * Get the ID of the entity responding to requests.
      * 
      * @return ID of the entity responding to requests
      */
     @Nonnull @NotEmpty public String getResponderEntityId() {
         return responderEntityId;
     }
+    
+    /**
+     * Get whether detailed information about errors should be exposed.
+     * 
+     * @return true iff it is acceptable to expose detailed error information
+     */
+    public boolean isDetailedErrors() {
+        return detailedErrors;
+    }
 
     /**
-     * Gets the unmodifiable set of profile configurations for this relying party.
+     * Get the unmodifiable set of profile configurations for this relying party.
      * 
      * @return unmodifiable set of profile configurations for this relying party, never null
      */
@@ -106,7 +121,7 @@ public class RelyingPartyConfiguration implements IdentifiableComponent {
     }
 
     /**
-     * Gets the profile configuration, for the relying party, for the given profile. This is a convenience method and is
+     * Get the profile configuration, for the relying party, for the given profile. This is a convenience method and is
      * equivalent to calling {@link Map#get(Object)} on the return of {@link #getProfileConfigurations()}. This map
      * contains no null entries, keys, or values.
      * 

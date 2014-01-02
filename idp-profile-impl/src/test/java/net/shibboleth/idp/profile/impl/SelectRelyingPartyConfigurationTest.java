@@ -74,7 +74,7 @@ public class SelectRelyingPartyConfigurationTest {
         ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
 
         RelyingPartyConfiguration config =
-                new RelyingPartyConfiguration("foo", "http://idp.example.org", Collections.EMPTY_LIST);
+                new RelyingPartyConfiguration("foo", "http://idp.example.org", true, Collections.EMPTY_LIST);
 
         Resolver<RelyingPartyConfiguration, ProfileRequestContext> resolver =
                 new MockResolver(config, new ResolverException());
@@ -93,7 +93,7 @@ public class SelectRelyingPartyConfigurationTest {
         ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
 
         RelyingPartyConfiguration config =
-                new RelyingPartyConfiguration("foo", "http://idp.example.org", Collections.EMPTY_LIST);
+                new RelyingPartyConfiguration("foo", "http://idp.example.org", true, Collections.EMPTY_LIST);
 
         Resolver<RelyingPartyConfiguration, ProfileRequestContext> resolver = new MockResolver(config, null);
 

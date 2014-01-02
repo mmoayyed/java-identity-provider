@@ -45,15 +45,16 @@ public class ConditionalRelyingPartyConfiguration extends RelyingPartyConfigurat
      * 
      * @param configurationId unique ID for this configuration
      * @param responderId the ID by which the responder is known by this relying party
+     * @param detailedErrorsFlag whether detailed information about errors should be exposed
      * @param configurations communication profile configurations for this relying party
      * @param condition criteria that must be met in order for this relying party configuration to apply to a given
      *            profile request
      */
     public ConditionalRelyingPartyConfiguration(@Nonnull @NotEmpty final String configurationId,
-            @Nonnull @NotEmpty final String responderId,
+            @Nonnull @NotEmpty final String responderId, final boolean detailedErrorsFlag,
             @Nonnull @NonnullElements final Collection<? extends ProfileConfiguration> configurations,
             @Nonnull final Predicate<ProfileRequestContext> condition) {
-        super(configurationId, responderId, configurations);
+        super(configurationId, responderId, detailedErrorsFlag, configurations);
 
         activationCondition = Constraint.isNotNull(condition,
                 "Relying partying configuration activation condition cannot be null");
@@ -67,4 +68,5 @@ public class ConditionalRelyingPartyConfiguration extends RelyingPartyConfigurat
     @Nonnull public Predicate<ProfileRequestContext> getActivationCondition() {
         return activationCondition;
     }
+    
 }

@@ -20,6 +20,8 @@ package net.shibboleth.idp.relyingparty.impl;
 import java.util.Collections;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+
+import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
@@ -32,7 +34,8 @@ public class ConditionalRelyingPartyConfigurationTest {
 
     @Test public void testConstruction() {
         ConditionalRelyingPartyConfiguration config =
-                new ConditionalRelyingPartyConfiguration("foo", "http://idp.example.org", Collections.EMPTY_LIST,
+                new ConditionalRelyingPartyConfiguration("foo", "http://idp.example.org", true,
+                        Collections.<ProfileConfiguration>emptyList(),
                         Predicates.<ProfileRequestContext> alwaysFalse());
         Assert.assertEquals(config.getId(), "foo");
         Assert.assertEquals(config.getResponderEntityId(), "http://idp.example.org");
@@ -41,8 +44,8 @@ public class ConditionalRelyingPartyConfigurationTest {
 
         try {
             config =
-                    new ConditionalRelyingPartyConfiguration("foo", "http://idp.example.org", Collections.EMPTY_LIST,
-                            null);
+                    new ConditionalRelyingPartyConfiguration("foo", "http://idp.example.org", true,
+                            Collections.<ProfileConfiguration>emptyList(), null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this

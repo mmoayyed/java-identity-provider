@@ -530,7 +530,7 @@ public class RequestContextBuilder {
             profileConfigs.add(new MockProfileConfiguration("mock"));
         }
 
-        return new RelyingPartyConfiguration("mock", responderId, profileConfigs);
+        return new RelyingPartyConfiguration("mock", responderId, true, profileConfigs);
     }
 
     /**

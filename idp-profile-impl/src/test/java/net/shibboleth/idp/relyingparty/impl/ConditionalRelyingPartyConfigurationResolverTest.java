@@ -34,11 +34,11 @@ public class ConditionalRelyingPartyConfigurationResolverTest {
         ConditionalRelyingPartyConfigurationResolver resolver;
 
         ArrayList<ConditionalRelyingPartyConfiguration> rpConfigs = new ArrayList<>();
-        rpConfigs.add(new ConditionalRelyingPartyConfiguration("one", "foo", null, Predicates
+        rpConfigs.add(new ConditionalRelyingPartyConfiguration("one", "foo", true, null, Predicates
                 .<ProfileRequestContext> alwaysTrue()));
-        rpConfigs.add(new ConditionalRelyingPartyConfiguration("two", "foo", null, Predicates
+        rpConfigs.add(new ConditionalRelyingPartyConfiguration("two", "foo", true, null, Predicates
                 .<ProfileRequestContext> alwaysFalse()));
-        rpConfigs.add(new ConditionalRelyingPartyConfiguration("three", "foo", null, Predicates
+        rpConfigs.add(new ConditionalRelyingPartyConfiguration("three", "foo", true, null, Predicates
                 .<ProfileRequestContext> alwaysTrue()));
 
         resolver = new ConditionalRelyingPartyConfigurationResolver();
@@ -62,13 +62,13 @@ public class ConditionalRelyingPartyConfigurationResolverTest {
         ProfileRequestContext requestContext = new ProfileRequestContext();
 
         ConditionalRelyingPartyConfiguration config1 =
-                new ConditionalRelyingPartyConfiguration("one", "foo", null,
+                new ConditionalRelyingPartyConfiguration("one", "foo", true, null,
                         Predicates.<ProfileRequestContext> alwaysTrue());
         ConditionalRelyingPartyConfiguration config2 =
-                new ConditionalRelyingPartyConfiguration("two", "foo", null,
+                new ConditionalRelyingPartyConfiguration("two", "foo", true, null,
                         Predicates.<ProfileRequestContext> alwaysFalse());
         ConditionalRelyingPartyConfiguration config3 =
-                new ConditionalRelyingPartyConfiguration("three", "foo", null,
+                new ConditionalRelyingPartyConfiguration("three", "foo", true, null,
                         Predicates.<ProfileRequestContext> alwaysTrue());
 
         ArrayList<ConditionalRelyingPartyConfiguration> rpConfigs = new ArrayList<>();
