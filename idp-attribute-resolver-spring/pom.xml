@@ -41,7 +41,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-saml-impl</artifactId>
             <version>${project.version}</version>
-        </dependency>        
+        </dependency>
 
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
@@ -59,19 +59,19 @@
             <artifactId>c3p0</artifactId>
             <version>0.9.2.1</version> <!-- TODO Move version to parent? -->
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.ldaptive</groupId>
             <artifactId>ldaptive</artifactId>
         </dependency>
         <dependency>
-          <groupId>${spring.groupId}</groupId>
-          <artifactId>spring-beans</artifactId>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-beans</artifactId>
         </dependency>
         <dependency>
-          <groupId>${spring.groupId}</groupId>
-          <artifactId>spring-context</artifactId>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-context</artifactId>
         </dependency>
-                
+
         <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->
@@ -94,7 +94,7 @@
             <artifactId>idp-attribute-mapper-api</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-attribute-mapper-impl</artifactId>
@@ -115,7 +115,7 @@
             <version>${opensaml.version}</version>
             <scope>test</scope>
         </dependency>
-       <dependency>
+        <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-storage-impl</artifactId>
             <version>${opensaml.version}</version>
@@ -132,14 +132,13 @@
             <artifactId>hsqldb</artifactId>
             <scope>test</scope>
         </dependency>
-        
+
         <dependency>
-             <groupId>org.tmatesoft.svnkit</groupId>
-             <artifactId>svnkit</artifactId>
-             <version>1.7.8</version>
-             <scope>test</scope>
-         </dependency>
-        
+            <groupId>org.tmatesoft.svnkit</groupId>
+            <artifactId>svnkit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Managed Dependencies -->
     </dependencies>
 
