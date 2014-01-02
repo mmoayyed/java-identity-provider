@@ -93,9 +93,6 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         directoryServer.shutDown(true);
     }
 
-
-
-    // stub test
     @Test public void one() throws ComponentInitializationException, ServiceException, ResolutionException {
 
         GenericApplicationContext context = new GenericApplicationContext();

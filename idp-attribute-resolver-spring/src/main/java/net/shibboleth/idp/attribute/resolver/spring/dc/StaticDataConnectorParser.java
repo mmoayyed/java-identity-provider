@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -30,7 +29,9 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
@@ -47,31 +48,40 @@ public class StaticDataConnectorParser extends AbstractDataConnectorParser {
     private final Logger log = LoggerFactory.getLogger(StaticDataConnectorParser.class);
 
     /** {@inheritDoc} */
+    @Override
     protected Class<StaticDataConnector> getBeanClass(Element element) {
         return StaticDataConnector.class;
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
         List<Element> children = ElementSupport.getChildElements(config, ATTRIBUTE_ELEMENT_NAME);
-        List<IdPAttribute> attributes = new ArrayList<IdPAttribute>();
+        ManagedList<BeanDefinition> attributes = new ManagedList<BeanDefinition>(children.size());
+        
         for (Element child : children) {
+            
             String attrId = child.getAttributeNS(null, "id");
-            IdPAttribute attribute = new IdPAttribute(attrId);
+            BeanDefinitionBuilder attributeDefn = BeanDefinitionBuilder.rootBeanDefinition(IdPAttribute.class);
+            attributeDefn.addConstructorArgValue(attrId);
+            
             List<Element> values =
                     ElementSupport.getChildElementsByTagNameNS(child, DataConnectorNamespaceHandler.NAMESPACE, "Value");
+            ManagedList<BeanDefinition> inValues = new ManagedList<BeanDefinition>(values.size());
             for (Element val : values) {
-                StringAttributeValue av = new StringAttributeValue(val.getTextContent());
+                BeanDefinitionBuilder value = BeanDefinitionBuilder.genericBeanDefinition(StringAttributeValue.class);
+                value.addConstructorArgValue(val.getTextContent());
                 log.trace("{} Attribute: {}, adding value {} ", new Object[] {getLogPrefix(), attrId,
-                        av.getValue(),});
-                attribute.getValues().add(av);
+                        val.getTextContent(),});
+                inValues.add(value.getBeanDefinition());
             }
+            attributeDefn.addPropertyValue("values", inValues);
             log.debug("{} Adding Attribute: {} with {} values", new Object[] {getLogPrefix(), attrId,
-                    attribute.getValues().size(),});
-            attributes.add(attribute);
+                   values.size(),});
+            attributes.add(attributeDefn.getBeanDefinition());
         }
 
         builder.addPropertyValue("values", attributes);
