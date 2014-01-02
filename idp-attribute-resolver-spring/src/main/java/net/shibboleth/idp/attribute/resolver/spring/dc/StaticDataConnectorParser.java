@@ -60,12 +60,12 @@ public class StaticDataConnectorParser extends AbstractDataConnectorParser {
         super.doParse(config, parserContext, builder);
 
         List<Element> children = ElementSupport.getChildElements(config, ATTRIBUTE_ELEMENT_NAME);
-        ManagedList<BeanDefinition> attributes = new ManagedList<BeanDefinition>(children.size());
+        List<BeanDefinition> attributes = new ManagedList<BeanDefinition>(children.size());
         
         for (Element child : children) {
             
             String attrId = child.getAttributeNS(null, "id");
-            BeanDefinitionBuilder attributeDefn = BeanDefinitionBuilder.rootBeanDefinition(IdPAttribute.class);
+            BeanDefinitionBuilder attributeDefn = BeanDefinitionBuilder.genericBeanDefinition(IdPAttribute.class);
             attributeDefn.addConstructorArgValue(attrId);
             
             List<Element> values =
