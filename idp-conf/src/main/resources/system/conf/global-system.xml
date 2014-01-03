@@ -24,6 +24,9 @@
         </property>
     </bean>
 
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
+            p:cacheSeconds="300" p:basename="file://${idp.home}/conf/messages" />
+
     <import resource="session-manager.xml" />
     
     <bean id="shibboleth.TaskTimer" class="java.util.Timer" destroy-method="cancel"/> <!--  only needed if you do reloading -->
