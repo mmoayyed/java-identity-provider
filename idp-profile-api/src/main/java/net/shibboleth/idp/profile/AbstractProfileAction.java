@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.profile;
 
+import java.text.MessageFormat;
+import java.util.Locale;
+
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -32,6 +35,10 @@ import org.opensaml.profile.context.EventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
+import org.springframework.context.MessageSourceResolvable;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
@@ -58,8 +65,9 @@ import com.google.common.base.Function;
  * @param <OutboundMessageType> type of out-bound message
  */
 @ThreadSafe
-public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageType> extends
-    org.opensaml.profile.action.AbstractProfileAction<InboundMessageType, OutboundMessageType> implements Action {
+public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageType>
+        extends org.opensaml.profile.action.AbstractProfileAction<InboundMessageType, OutboundMessageType>
+        implements Action, MessageSource, MessageSourceAware {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractProfileAction.class);
@@ -67,6 +75,9 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
     /** Strategy used to lookup the {@link ProfileRequestContext} from a given WebFlow {@link RequestContext}. */
     @Nonnull private Function<RequestContext, ProfileRequestContext> profileContextLookupStrategy;
 
+    /** MessageSource injected by Spring, typically the parent ApplicationContext itself. */
+    @Nonnull private MessageSource messageSource;
+    
     /**
      * Constructor.
      * 
@@ -184,6 +195,39 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
             // Assume the result is to proceed.
             return ActionSupport.buildProceedEvent(action);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setMessageSource(MessageSource source) {
+        messageSource = source;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getMessage(String code, Object[] args, String defaultMessage, Locale locale) {
+        if (messageSource != null) {
+            return messageSource.getMessage(code, args, defaultMessage, locale);
+        }
+        return MessageFormat.format(defaultMessage, args);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getMessage(String code, Object[] args, Locale locale) {
+        if (messageSource != null) {
+            return messageSource.getMessage(code, args, locale);
+        }
+        throw new NoSuchMessageException("MessageSource was not set");
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getMessage(MessageSourceResolvable resolvable, Locale locale) {
+        if (messageSource != null) {
+            return messageSource.getMessage(resolvable, locale);
+        }
+        throw new NoSuchMessageException("MessageSource was not set");
     }
     
 }
