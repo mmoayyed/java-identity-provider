@@ -18,7 +18,6 @@
 package edu.internet2.middleware.shibboleth.common.attribute.provider;
 
 import java.util.Collection;
-
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -48,9 +47,14 @@ import com.google.common.base.Objects;
 public class V2SAMLProfileRequestContext implements IdentifiableComponent {
 
     /**
-     * The recipient Context, used for locating the Principal, the recipientEntity and the sourceEntity.
+     * The recipient Context, used for locating the the recipientEntity and the sourceEntity.
      */
     private final AttributeRecipientContext recipientContext;
+    
+    /**
+     * The Attribute Resolution Context, used to local the Principal.
+     */
+    private final AttributeResolutionContext resolutionContext;
 
     /** log. */
     private final Logger log = LoggerFactory.getLogger(V2SAMLProfileRequestContext.class);
@@ -66,7 +70,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      */
     public V2SAMLProfileRequestContext(@Nonnull final AttributeResolutionContext attributeResolutionContext,
             final String attributeId) {
-        Constraint.isNotNull(attributeResolutionContext, "Attribute Resolution Context was null");
+        resolutionContext = Constraint.isNotNull(attributeResolutionContext, "Attribute Resolution Context was null");
         recipientContext =
                 Constraint.isNotNull(attributeResolutionContext.getSubcontext(AttributeRecipientContext.class),
                         "Could not locate RecipientContext");
@@ -74,6 +78,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull public String getId() {
         return id;
     }
@@ -84,7 +89,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * @return the Principal.
      */
     public String getPrincipalName() {
-        return recipientContext.getPrincipal();
+        return resolutionContext.getPrincipal();
     }
 
     /**
@@ -932,6 +937,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
     }
 
     /** {@inheritDoc}. */
+    @Override
     public String toString() {
         return Objects.toStringHelper(V2SAMLProfileRequestContext.class).
                                       add("Id", getId()).

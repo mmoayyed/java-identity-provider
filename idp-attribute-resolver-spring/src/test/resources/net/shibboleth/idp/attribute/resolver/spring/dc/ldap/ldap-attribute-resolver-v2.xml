@@ -15,7 +15,7 @@
         useStartTLS="true">
         <dc:FilterTemplate>
             <![CDATA[
-                (uid=${requestContext.principalName})
+                (uid=${resolutionContext.principal})
             ]]>
         </dc:FilterTemplate>
         <dc:StartTLSTrustCredential xsi:type="security:X509Inline" xmlns:security="urn:mace:shibboleth:2.0:security" id="LDAPtoIdPCredential">

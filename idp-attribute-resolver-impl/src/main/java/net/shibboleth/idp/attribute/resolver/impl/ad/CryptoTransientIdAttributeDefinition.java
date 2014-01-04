@@ -89,7 +89,7 @@ public class CryptoTransientIdAttributeDefinition extends AbstractAttributeDefin
             throw new ResolutionException(getLogPrefix() + " provided attribute recipient ID was empty");
         }
 
-        final String principalName = attributeRecipientContext.getPrincipal();
+        final String principalName = resolutionContext.getPrincipal();
         if (null == principalName) {
             throw new ResolutionException(getLogPrefix() + " provided prinicipal name was empty");
         }

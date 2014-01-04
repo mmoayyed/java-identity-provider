@@ -34,9 +34,6 @@ import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 @NotThreadSafe
 public class AttributeRecipientContext extends BaseContext {
 
-    /** The unique principal. This is required by some resolvers and filters and injected during setup. */
-    private String principal;
-    
     /** The local entityID. This is required by some resolvers and filters and injected during setup. */
     private String attributeIssuerID;
     
@@ -59,22 +56,6 @@ public class AttributeRecipientContext extends BaseContext {
     private RoleDescriptor attributeRequesterRoleDescriptor;
     
 
-    /** Gets the principal associated with this resolution. 
-     * 
-     * @return the principal associated with this resolution. 
-     */
-    @Nullable public String getPrincipal() {
-        return principal;
-    }
-    
-    /** Sets the principal associated with this resolution. 
-     * 
-     * @param value the principal associated with this resolution. 
-     */
-    @Nullable public void setPrincipal(@Nullable String value) {
-        principal = value;
-    }
-    
     /** Gets the attribute issuer (me) associated with this resolution. 
      * 
      * @return the attribute issuer associated with this resolution. 

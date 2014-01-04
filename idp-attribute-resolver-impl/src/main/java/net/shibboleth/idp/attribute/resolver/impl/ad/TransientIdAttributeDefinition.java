@@ -164,13 +164,13 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
     /**
      * Police and get the Principal.
      * 
-     * @param attributeRecipientContext where to look
+     * @param context where to look
      * @return the Principal
      * @throws ResolutionException if it was non null
      */
-    @Nonnull @NotEmpty private String getPrincipal(@Nonnull final AttributeRecipientContext attributeRecipientContext)
+    @Nonnull @NotEmpty private String getPrincipal(@Nonnull final AttributeResolutionContext context)
             throws ResolutionException {
-        final String principalName = StringSupport.trimOrNull(attributeRecipientContext.getPrincipal());
+        final String principalName = StringSupport.trimOrNull(context.getPrincipal());
         if (null == principalName) {
             throw new ResolutionException(getLogPrefix() + " provided prinicipal name was empty");
         }
@@ -194,7 +194,7 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
 
         final String attributeRecipientID = getAttributeRecipientID(attributeRecipientContext);
 
-        final String principalName = getPrincipal(attributeRecipientContext);
+        final String principalName = getPrincipal(resolutionContext);
 
         final IdPAttribute result = new IdPAttribute(getId());
 

@@ -19,7 +19,6 @@ package net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext;
 
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.NavigationSupport;
 import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
@@ -51,6 +50,6 @@ public class NavigationHelperTest {
 
         Assert.assertEquals(recipient.getAttributeIssuerID(), TestSources.IDP_ENTITY_ID);
         Assert.assertEquals(recipient.getAttributeRecipientID(), TestSources.SP_ENTITY_ID);
-        Assert.assertEquals(recipient.getPrincipal(), TestSources.PRINCIPAL_ID);
+        Assert.assertEquals(filterContext.getPrincipal(), TestSources.PRINCIPAL_ID);
     }
 }

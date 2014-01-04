@@ -25,16 +25,9 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 
-import org.hsqldb.jdbc.JDBCDataSource;
-import org.opensaml.core.OpenSAMLInitBaseTestCase;
-import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.DatabaseTestingSupport;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
@@ -43,6 +36,12 @@ import net.shibboleth.idp.attribute.resolver.impl.dc.TestCache;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+
+import org.hsqldb.jdbc.JDBCDataSource;
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 /**
  * Tests for {@link RdbmsDataConnector}
@@ -62,21 +61,19 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
     private class TestExecutableStatementBuilder implements ExecutableSearchBuilder<ExecutableStatement> {
 
         /** {@inheritDoc} */
-        @Nonnull public ExecutableStatement build(@Nonnull AttributeResolutionContext resolutionContext)
-                throws ResolutionException {
-            final AttributeRecipientContext subContext =
-                    resolutionContext.getSubcontext(AttributeRecipientContext.class);
+        @Override @Nonnull public ExecutableStatement
+                build(@Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
             return new ExecutableStatement() {
 
-                private final String query = String
-                        .format("SELECT userid, name, homephone, mail FROM people WHERE userid='%s'",
-                                subContext.getPrincipal());
+                private final String query = String.format(
+                        "SELECT userid, name, homephone, mail FROM people WHERE userid='%s'",
+                        resolutionContext.getPrincipal());
 
-                @Nonnull public String getResultCacheKey() {
+                @Override @Nonnull public String getResultCacheKey() {
                     return query;
                 }
 
-                @Nonnull public ResultSet execute(@Nonnull Connection connection) throws SQLException {
+                @Override @Nonnull public ResultSet execute(@Nonnull Connection connection) throws SQLException {
                     return connection.createStatement().executeQuery(query);
                 }
             };
@@ -199,7 +196,7 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
             throws ComponentInitializationException, ResolutionException {
         RdbmsDataConnector connector = createRdbmsDataConnector(new ExecutableSearchBuilder<ExecutableStatement>() {
 
-            @Nonnull public ExecutableStatement build(@Nonnull AttributeResolutionContext resolutionContext)
+            @Override @Nonnull public ExecutableStatement build(@Nonnull AttributeResolutionContext resolutionContext)
                     throws ResolutionException {
                 return null;
             }

@@ -84,7 +84,7 @@
 				factory-bean="cacheBuilder" factory-method="build" />
 			<bean
 				class="net.shibboleth.idp.attribute.resolver.impl.dc.ldap.TemplatedExecutableSearchFilterBuilder"
-				p:templateText="(uid=${recipientContext.principal})"
+				p:templateText="(uid=${resolutionContext.principal})"
 				p:velocityEngine-ref="shibboleth.VelocityEngine" init-method="initialize" />
 			<import
 				resource="classpath:/net/shibboleth/idp/attribute/resolver/spring/velocity.xml" />

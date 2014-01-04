@@ -203,7 +203,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void resolveTemplate() throws ComponentInitializationException, ResolutionException {
         TemplatedExecutableSearchFilterBuilder builder = new TemplatedExecutableSearchFilterBuilder();
-        builder.setTemplateText("(uid=${recipientContext.principal})");
+        builder.setTemplateText("(uid=${resolutionContext.principal})");
         builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
         builder.initialize();
         resolve(builder);
@@ -211,7 +211,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void escapeTemplate() throws ComponentInitializationException, ResolutionException {
         TemplatedExecutableSearchFilterBuilder builder = new TemplatedExecutableSearchFilterBuilder();
-        builder.setTemplateText("(cn=${recipientContext.principal})");
+        builder.setTemplateText("(cn=${resolutionContext.principal})");
         builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
         builder.initialize();
         AttributeResolutionContext context =
@@ -259,6 +259,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
             throws ComponentInitializationException, ResolutionException {
         LdapDataConnector connector = createLdapDataConnector(new ExecutableSearchBuilder() {
 
+            @Override
             @Nonnull public ExecutableSearch build(@Nonnull AttributeResolutionContext resolutionContext)
                     throws ResolutionException {
                 return null;

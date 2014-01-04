@@ -19,14 +19,11 @@ package net.shibboleth.idp.attribute.resolver.impl.dc.ldap;
 
 import javax.annotation.Nonnull;
 
-import org.ldaptive.SearchFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+
+import org.ldaptive.SearchFilter;
 
 /**
  * An {@link net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder} that generates the search
@@ -34,9 +31,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  * {@link AttributeResolutionContext}.
  */
 public class ParameterizedExecutableSearchFilterBuilder extends AbstractExecutableSearchFilterBuilder {
-
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ParameterizedExecutableSearchFilterBuilder.class);
 
     /** LDAP search filter. */
     private final String searchFilter;
@@ -51,12 +45,11 @@ public class ParameterizedExecutableSearchFilterBuilder extends AbstractExecutab
     }
 
     /** {@inheritDoc} */
+    @Override
     public ExecutableSearchFilter build(@Nonnull final AttributeResolutionContext resolutionContext)
             throws ResolutionException {
-        final AttributeRecipientContext subContext = resolutionContext.getSubcontext(AttributeRecipientContext.class);
-        log.trace("Creating search filter using context {}", subContext);
         final SearchFilter sf = new SearchFilter(searchFilter);
-        sf.setParameter("principalName", subContext.getPrincipal());
+        sf.setParameter("principalName", resolutionContext.getPrincipal());
         return super.build(sf);
     }
 }

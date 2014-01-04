@@ -112,6 +112,7 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         if (null == dataSource) {
@@ -227,6 +228,7 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(
             @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
 
@@ -240,7 +242,7 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
             return null;
         }
 
-        final String principal = StringSupport.trimOrNull(attributeRecipientContext.getPrincipal());
+        final String principal = StringSupport.trimOrNull(resolutionContext.getPrincipal());
 
         if (null == principal) {
             log.warn("{} No principal available, skipping ID creation", getLogPrefix());

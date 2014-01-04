@@ -178,7 +178,6 @@ public final class TestSources {
         
         AttributeRecipientContext recipientContext = new AttributeRecipientContext();
         
-        recipientContext.setPrincipal(principal);
         recipientContext.setAttributeIssuerID(issuerID);
         recipientContext.setAttributeRecipientID(recipientId);
         retVal.addSubcontext(recipientContext);

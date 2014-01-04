@@ -43,7 +43,7 @@ public class PrincipalNameAttributeDefinition extends AbstractAttributeDefinitio
             throw new ResolutionException(getLogPrefix() + " no attribute recipient context provided ");
         }
 
-        final String principalName = StringSupport.trimOrNull(attributeRecipientContext.getPrincipal());
+        final String principalName = StringSupport.trimOrNull(resolutionContext.getPrincipal());
         if (null == principalName) {
             throw new ResolutionException(getLogPrefix() + " provided prinicipal name was empty");
         }

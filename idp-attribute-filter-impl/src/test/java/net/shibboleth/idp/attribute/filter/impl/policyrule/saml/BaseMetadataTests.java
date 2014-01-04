@@ -18,7 +18,6 @@
 package net.shibboleth.idp.attribute.filter.impl.policyrule.saml;
 
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeRequesterEntityAttributeExactPolicyRule;
 import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 
@@ -74,7 +73,7 @@ public class BaseMetadataTests extends XMLObjectBaseTestCase {
         AttributeRecipientContext recipientContext = new AttributeRecipientContext();
         AttributeResolutionContext resolutionContext = new AttributeResolutionContext();
 
-        recipientContext.setPrincipal(principal);
+        resolutionContext.setPrincipal(principal);
         if (null != idp) {
             recipientContext.setAttributeIssuerID(idp.getEntityID());
             recipientContext.setAttributeIssuerRoleDescriptor(idp.getIDPSSODescriptor("urn:oasis:names:tc:SAML:2.0:protocol"));
@@ -88,6 +87,8 @@ public class BaseMetadataTests extends XMLObjectBaseTestCase {
         resolutionContext.addSubcontext(recipientContext);
 
         parent.addSubcontext(resolutionContext);
-        return parent.getSubcontext(AttributeFilterContext.class, true);
+        AttributeFilterContext filterContext = parent.getSubcontext(AttributeFilterContext.class, true);
+        filterContext.setPrincipal(principal);
+        return filterContext;
     }
 }

@@ -27,13 +27,10 @@ public class AttributeRecipientContextTest {
 
     @Test public void injectedValues() {
         AttributeRecipientContext context = new AttributeRecipientContext();
-        Assert.assertNull(context.getPrincipal());
         Assert.assertNull(context.getAttributeIssuerID());
         Assert.assertNull(context.getAttributeRecipientID());
-        context.setPrincipal("Principal");
         context.setAttributeIssuerID("AttributeIssuerID");
         context.setAttributeRecipientID("AttributeRecipientID");
-        Assert.assertEquals(context.getPrincipal(),"Principal");
         Assert.assertEquals(context.getAttributeIssuerID(),"AttributeIssuerID");
         Assert.assertEquals(context.getAttributeRecipientID(),"AttributeRecipientID");
     }
