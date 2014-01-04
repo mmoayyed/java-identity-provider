@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

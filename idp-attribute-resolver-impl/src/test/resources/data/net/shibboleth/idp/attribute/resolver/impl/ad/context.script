@@ -1,7 +1,7 @@
 importPackage(Packages.net.shibboleth.idp.attribute.resolver.impl.ad);
 
 clazloader = resolutionContext.getClass().getClassLoader();
-claz = clazloader.loadClass("net.shibboleth.idp.attribute.resolver.AttributeResolutionContext");
+claz = clazloader.loadClass("net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext");
 child = resolutionContext.getParent().getSubcontext(claz);
 
 Scripted.addValue(child.getParent().getId());

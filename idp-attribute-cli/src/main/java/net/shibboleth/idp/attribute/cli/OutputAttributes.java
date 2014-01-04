@@ -23,9 +23,9 @@ import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.IdPEventIds;

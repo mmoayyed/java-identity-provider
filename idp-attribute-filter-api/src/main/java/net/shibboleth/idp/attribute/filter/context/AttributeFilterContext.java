@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter;
+package net.shibboleth.idp.attribute.filter.context;
 
 import java.util.ArrayList;
 import java.util.Collection;

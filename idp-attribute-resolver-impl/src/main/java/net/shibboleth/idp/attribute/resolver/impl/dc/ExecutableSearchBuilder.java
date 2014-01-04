@@ -19,8 +19,8 @@ package net.shibboleth.idp.attribute.resolver.impl.dc;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 
 /** Builder used to created {@link ExecutableSearch} instances.
  * 

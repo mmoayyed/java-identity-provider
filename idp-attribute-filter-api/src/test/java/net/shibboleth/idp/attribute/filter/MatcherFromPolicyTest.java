@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.filter;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;

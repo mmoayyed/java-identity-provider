@@ -19,10 +19,10 @@ package net.shibboleth.idp.attribute.filter.impl.policyrule.saml;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.NavigationSupport;
-import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.slf4j.Logger;

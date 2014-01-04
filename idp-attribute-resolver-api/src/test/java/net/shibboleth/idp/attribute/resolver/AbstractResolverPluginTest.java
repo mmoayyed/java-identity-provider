@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.HashSet;
 
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;

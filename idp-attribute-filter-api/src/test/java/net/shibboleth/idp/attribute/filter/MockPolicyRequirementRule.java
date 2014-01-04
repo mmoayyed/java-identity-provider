@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.filter;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;

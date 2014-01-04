@@ -19,6 +19,8 @@ package net.shibboleth.idp.attribute.resolver;
 
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 

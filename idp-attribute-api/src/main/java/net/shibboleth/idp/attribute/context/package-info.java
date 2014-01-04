@@ -14,22 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package net.shibboleth.idp.attribute.resolver;
-
-import javax.annotation.Nonnull;
-
-import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-
 /**
- * A principal connector which just pulls the value from the 
+ * Context to do with Attribute Manipulation.
  */
-public class MockSubjectNamePrincipalConnector extends AbstractSubjectNamePrincipalConnectorDefinition {
 
-    /** {@inheritDoc} */
-    @Nonnull protected String doResolve(AttributeResolutionContext resolutionContext)
-            throws ResolutionException {
-        return contentOf(resolutionContext);
-    }
-
-}
+package net.shibboleth.idp.attribute.context;

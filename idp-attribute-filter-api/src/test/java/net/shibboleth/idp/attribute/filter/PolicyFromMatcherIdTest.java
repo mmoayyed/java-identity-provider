@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.filter;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
+import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;

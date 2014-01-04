@@ -19,10 +19,10 @@ package net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.impl.policyrule.AbstractRegexpPolicyRule;
-import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.slf4j.Logger;

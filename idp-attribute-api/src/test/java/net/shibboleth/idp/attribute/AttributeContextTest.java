@@ -20,6 +20,8 @@ package net.shibboleth.idp.attribute;
 import java.util.Arrays;
 import java.util.Collections;
 
+import net.shibboleth.idp.attribute.context.AttributeContext;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

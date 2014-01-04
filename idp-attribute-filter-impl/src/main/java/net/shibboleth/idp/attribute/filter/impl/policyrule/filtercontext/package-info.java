@@ -19,7 +19,7 @@
  * Implementation of the filter context matchers Matchers.  
  * 
  * The classes in this package perform testing against 
- * {@link net.shibboleth.idp.attribute.filter.AttributeFilterContext} and
+ * {@link net.shibboleth.idp.attribute.filter.context.AttributeFilterContext} and
  * implement {@link net.shibboleth.idp.attribute.filter.Matcher}. 
  */
 

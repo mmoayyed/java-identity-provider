@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;

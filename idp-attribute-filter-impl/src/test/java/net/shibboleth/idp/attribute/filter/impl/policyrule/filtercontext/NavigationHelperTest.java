@@ -17,11 +17,11 @@
 
 package net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext;
 
-import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
 import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.NavigationSupport;
-import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 
 import org.opensaml.messaging.context.BaseContext;
