@@ -68,6 +68,15 @@ public final class AttributeFilterContext extends BaseContext {
     /** The principal associated with the filtering. */
     private String principal;
 
+    /** The local entityID. */
+    @Nullable private String attributeIssuerID;
+
+    /** The other entityID. */
+    @Nullable private String attributeRecipientID;
+
+    /** How was the principal Authenticated? */
+    @Nullable private String principalAuthenticationMethod;
+
     /** Constructor. */
     public AttributeFilterContext() {
         prefilteredAttributes =
@@ -113,7 +122,7 @@ public final class AttributeFilterContext extends BaseContext {
      * @return collection of attribute values, indexed by ID, that are permitted to be released,
      */
     @Nonnull @NonnullElements @Unmodifiable public Map<String, Set<IdPAttributeValue>> 
-            getPermittedIdPAttributeValues() {
+                       getPermittedIdPAttributeValues() {
         return Collections.unmodifiableMap(permittedValues);
     }
 
@@ -274,4 +283,57 @@ public final class AttributeFilterContext extends BaseContext {
         principal = who;
     }
 
+    /**
+     * Gets the attribute issuer (me) associated with this resolution.
+     * 
+     * @return the attribute issuer associated with this resolution.
+     */
+    @Nullable public String getAttributeIssuerID() {
+        return attributeIssuerID;
+    }
+
+    /**
+     * Sets the attribute issuer (me) associated with this resolution.
+     * 
+     * @param value the attribute issuer associated with this resolution.
+     */
+    @Nullable public void setAttributeIssuerID(@Nullable String value) {
+        attributeIssuerID = value;
+    }
+
+    /**
+     * Gets the attribute recipient (her) associated with this resolution.
+     * 
+     * @return the attribute recipient associated with this resolution.
+     */
+    @Nullable public String getAttributeRecipientID() {
+        return attributeRecipientID;
+    }
+
+    /**
+     * Sets the attribute recipient (her) associated with this resolution.
+     * 
+     * @param value the attribute recipient associated with this resolution.
+     */
+    @Nullable public void setAttributeRecipientID(@Nullable String value) {
+        attributeRecipientID = value;
+    }
+
+    /**
+     * Sets how the principal was authenticated.
+     * 
+     * @return Returns the principalAuthenticationMethod.
+     */
+    @Nullable public String getPrincipalAuthenticationMethod() {
+        return principalAuthenticationMethod;
+    }
+
+    /**
+     * Gets how the principal was authenticated.
+     * 
+     * @param method The principalAuthenticationMethod to set.
+     */
+    public void setPrincipalAuthenticationMethod(@Nullable String method) {
+        principalAuthenticationMethod = method;
+    }
 }

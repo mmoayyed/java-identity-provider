@@ -20,12 +20,9 @@ package net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
-import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 
-import org.opensaml.messaging.context.BaseContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -41,19 +38,12 @@ public class AuthenticationMethodPolicyRuleTest {
     }
     
     protected static AttributeFilterContext filterContextWithAuthn(String authn) {
-        BaseContext parent = new BaseContext() {};
         
-        AttributeRecipientContext recipientContext = new AttributeRecipientContext();
-        AttributeResolutionContext resolutionContext = new AttributeResolutionContext();
-        
-        recipientContext.setPrincipalAuthenticationMethod(authn);
-        resolutionContext.addSubcontext(recipientContext);
-
-        parent.addSubcontext(resolutionContext);
-        return parent.getSubcontext(AttributeFilterContext.class, true);
+        AttributeFilterContext context = new AttributeFilterContext();
+        context.setPrincipalAuthenticationMethod(authn);
+        return context;
     }
     
-
     private AuthenticationMethodPolicyRule getMatcher(boolean caseSensitive) throws ComponentInitializationException {
         final AuthenticationMethodPolicyRule matcher = new AuthenticationMethodPolicyRule();
         matcher.setMatchString(METHOD);

@@ -31,7 +31,6 @@ import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -148,17 +147,10 @@ public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition 
 
         log.debug("{} building a SAML2 NameID with value of '{}'", getLogPrefix(), nameIdValue);
 
-        final AttributeRecipientContext attributeRecipientContext =
-                resolutionContext.getSubcontext(AttributeRecipientContext.class);
-
-        if (null == attributeRecipientContext) {
-            throw new ResolutionException(getLogPrefix() + " no attribute recipient context provided ");
-        }
-
         final String attributeRecipientID =
-                StringSupport.trimOrNull(attributeRecipientContext.getAttributeRecipientID());
+                StringSupport.trimOrNull(resolutionContext.getAttributeRecipientID());
 
-        final String attributeIssuerID = StringSupport.trimOrNull(attributeRecipientContext.getAttributeIssuerID());
+        final String attributeIssuerID = StringSupport.trimOrNull(resolutionContext.getAttributeIssuerID());
 
         final NameID nameId = nameIDBuilder.buildObject();
         nameId.setValue(nameIdValue);

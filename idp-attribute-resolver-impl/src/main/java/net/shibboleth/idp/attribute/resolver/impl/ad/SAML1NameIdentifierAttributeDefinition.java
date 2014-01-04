@@ -31,7 +31,6 @@ import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -126,13 +125,6 @@ public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDef
 
         log.debug("{} building a SAML1 NameIdentifier with value of '{}'", getLogPrefix(), nameIdValue);
 
-        final AttributeRecipientContext attributeRecipientContext =
-                resolutionContext.getSubcontext(AttributeRecipientContext.class);
-
-        if (null == attributeRecipientContext) {
-            throw new ResolutionException(getLogPrefix() + " no attribute recipient context provided ");
-        }
-
         final NameIdentifier nameIdentifier = nameIdentifierBuilder.buildObject();
         nameIdentifier.setNameIdentifier(nameIdValue);
 
@@ -140,7 +132,7 @@ public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDef
             log.debug("{} Format set to '{}'", getLogPrefix(), nameIdFormat);
             nameIdentifier.setFormat(nameIdFormat);
         }
-        final String attributeIssuerID = StringSupport.trimOrNull(attributeRecipientContext.getAttributeIssuerID());
+        final String attributeIssuerID = StringSupport.trimOrNull(resolutionContext.getAttributeIssuerID());
 
         if (nameIdQualifier != null) {
             nameIdentifier.setNameQualifier(nameIdQualifier);

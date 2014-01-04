@@ -27,7 +27,6 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.ad.SAML2NameIDAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.impl.ad.StaticAttributeDefinition;
@@ -176,11 +175,8 @@ public final class TestSources {
     public static AttributeResolutionContext createResolutionContext(String principal, String issuerID, String recipientId) {
         AttributeResolutionContext retVal = new AttributeResolutionContext();
         
-        AttributeRecipientContext recipientContext = new AttributeRecipientContext();
-        
-        recipientContext.setAttributeIssuerID(issuerID);
-        recipientContext.setAttributeRecipientID(recipientId);
-        retVal.addSubcontext(recipientContext);
+        retVal.setAttributeIssuerID(issuerID);
+        retVal.setAttributeRecipientID(recipientId);
         retVal.setPrincipal(principal);
         return retVal;
     }

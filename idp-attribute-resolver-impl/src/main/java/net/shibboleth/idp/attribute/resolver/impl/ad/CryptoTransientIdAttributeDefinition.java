@@ -27,7 +27,6 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -72,19 +71,12 @@ public class CryptoTransientIdAttributeDefinition extends AbstractAttributeDefin
 
         Constraint.isNotNull(resolutionContext, "resolution context was null");
 
-        final AttributeRecipientContext attributeRecipientContext =
-                resolutionContext.getSubcontext(AttributeRecipientContext.class);
-
-        if (null == attributeRecipientContext) {
-            throw new ResolutionException(getLogPrefix() + " no attribute recipient context provided ");
-        }
-
-        final String attributeIssuerID = attributeRecipientContext.getAttributeIssuerID();
+        final String attributeIssuerID = resolutionContext.getAttributeIssuerID();
         if (null == attributeIssuerID) {
             throw new ResolutionException(getLogPrefix() + " provided attribute issuer ID was empty");
         }
 
-        final String attributeRecipientID = attributeRecipientContext.getAttributeRecipientID();
+        final String attributeRecipientID = resolutionContext.getAttributeRecipientID();
         if (null == attributeRecipientID) {
             throw new ResolutionException(getLogPrefix() + " provided attribute recipient ID was empty");
         }

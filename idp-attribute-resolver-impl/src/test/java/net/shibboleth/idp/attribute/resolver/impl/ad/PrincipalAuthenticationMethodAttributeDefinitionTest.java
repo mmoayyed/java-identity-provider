@@ -20,7 +20,6 @@ package net.shibboleth.idp.attribute.resolver.impl.ad;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -47,7 +46,9 @@ public class PrincipalAuthenticationMethodAttributeDefinitionTest {
         defn.setId("id");
         defn.initialize();
         AttributeResolutionContext arc = TestSources.createResolutionContext("princ", "issuer", "recipient");
-        arc.getSubcontext(AttributeRecipientContext.class).setPrincipalAuthenticationMethod("Method");
+        arc.setPrincipalAuthenticationMethod("Method");
+
+        arc.setPrincipalAuthenticationMethod("Method");
         IdPAttribute result = defn.doAttributeDefinitionResolve(arc);
         
         Assert.assertEquals(result.getValues().size(), 1);

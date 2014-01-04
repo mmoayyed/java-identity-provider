@@ -21,8 +21,6 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.impl.policyrule.AbstractRegexpPolicyRule;
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
-import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.slf4j.Logger;
@@ -40,29 +38,15 @@ public class AttributeIssuerRegexpPolicyRule extends AbstractRegexpPolicyRule {
      * Compare the issuer from the context with the provided regexp.
      * 
      * @param filterContext the context
-     * @return whether it matches 
+     * @return whether it matches
      * 
-     * {@inheritDoc}
+     *         {@inheritDoc}
      */
-    public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
+    @Override public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
-        final AttributeResolutionContext resolver = NavigationSupport.locateResolverContext(filterContext);
-        if (null == resolver) {
-            log.warn("{} Could not locate resolver context", getLogPrefix());
-            return Tristate.FAIL;
-        }
-        
-        final AttributeRecipientContext recipient =
-                NavigationSupport.locateRecipientContext(resolver);
-
-        if (null == recipient) {
-            log.warn("{} Could not locate recipient context", getLogPrefix());
-            return Tristate.FAIL;
-        }
-
-        final String issuer = recipient.getAttributeIssuerID();
+        final String issuer = filterContext.getAttributeIssuerID();
         if (null == issuer) {
             log.warn("{} No attribute issuer found for comparison", getLogPrefix());
             return Tristate.FAIL;

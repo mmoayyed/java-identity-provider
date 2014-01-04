@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -42,6 +41,7 @@ public class ComputedIDDataConnector extends BaseComputedIDDataConnector {
     private final Logger log = LoggerFactory.getLogger(ComputedIDDataConnector.class);
 
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
@@ -56,20 +56,13 @@ public class ComputedIDDataConnector extends BaseComputedIDDataConnector {
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(
             @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
-        final AttributeRecipientContext attributeRecipientContext =
-                resolutionContext.getSubcontext(AttributeRecipientContext.class);
-
-        if (null == attributeRecipientContext) {
-            log.warn("{} No attribute recipient context provided ", getLogPrefix());
-            return null;
-        }
-
-        String attributeRecipientID = attributeRecipientContext.getAttributeRecipientID();
+        String attributeRecipientID = resolutionContext.getAttributeRecipientID();
         
         if (attributeRecipientID == null) {
             log.warn(" No Attribute Recipient ID located, unable to compute ID", getLogPrefix());

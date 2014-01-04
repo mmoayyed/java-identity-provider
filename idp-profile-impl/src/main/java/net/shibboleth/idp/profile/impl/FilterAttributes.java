@@ -24,8 +24,11 @@ import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.IdPEventIds;
+import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.service.ReloadableService;
 import net.shibboleth.idp.service.ServiceableComponent;
@@ -72,18 +75,26 @@ public class FilterAttributes extends AbstractProfileAction {
      */
     @Nonnull private Function<ProfileRequestContext, SubjectContext> subjectContextLookupStrategy;
 
+    /**
+     * Strategy used to locate the {@link AuthenticationContext} associated with a given {@link ProfileRequestContext}.
+     */
+    @Nonnull private Function<ProfileRequestContext, AuthenticationContext> authnContextLookupStrategy;
+
     /** RelyingPartyContext to operate on. */
     @Nullable private RelyingPartyContext rpContext;
 
     /** SubjectContext to work from. */
     @Nullable private SubjectContext subjectContext;
 
+    /** AuthenticationContext to work from (if any). */
+    @Nullable private AuthenticationContext authenticationContext;
+
     /** AttributeContext to filter. */
     @Nullable private AttributeContext attributeContext;
 
     /**
-     * Constructor. Initializes {@link #relyingPartyContextLookupStrategy} and {@link #subjectContextLookupStrategy} to
-     * {@link ChildContextLookup}.
+     * Constructor. Initializes {@link #relyingPartyContextLookupStrategy}, {@link #authnContextLookupStrategy} and
+     * {@link #subjectContextLookupStrategy} to {@link ChildContextLookup}.
      * 
      * @param service engine used to filter attributes
      */
@@ -91,6 +102,7 @@ public class FilterAttributes extends AbstractProfileAction {
         filterService = Constraint.isNotNull(service, "Service cannot be null");
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
         subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class, false);
+        authnContextLookupStrategy = new ChildContextLookup<>(AuthenticationContext.class, false);
     }
 
     /**
@@ -121,6 +133,21 @@ public class FilterAttributes extends AbstractProfileAction {
         subjectContextLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
     }
 
+    /**
+     * Set the strategy used to locate the {@link AuthenticationContext} associated with a given
+     * {@link ProfileRequestContext}.
+     * 
+     * @param strategy strategy used to locate the {@link AuthenticationContext} associated with a given
+     *            {@link ProfileRequestContext}
+     */
+    public void setAuthenticationContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, AuthenticationContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        authnContextLookupStrategy =
+                Constraint.isNotNull(strategy, "AuthenticationContext lookup strategy cannot be null");
+    }
+
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext)
             throws ProfileException {
@@ -136,6 +163,11 @@ public class FilterAttributes extends AbstractProfileAction {
             log.debug("{} No subject context available.", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_SUBJECT_CTX);
             return false;
+        }
+
+        authenticationContext = authnContextLookupStrategy.apply(profileRequestContext);
+        if (authenticationContext == null) {
+            log.debug("{} No authentication context available.", getLogPrefix());
         }
 
         attributeContext = rpContext.getSubcontext(AttributeContext.class, false);
@@ -163,6 +195,26 @@ public class FilterAttributes extends AbstractProfileAction {
 
         filterContext.setPrincipal(subjectContext.getPrincipalName());
 
+        // TODO(rdw) This navigation is subject to change
+
+        filterContext.setPrincipalAuthenticationMethod(null);
+        if (null != authenticationContext) {
+            final AuthenticationResult result = authenticationContext.getAuthenticationResult();
+            if (null != result) {
+                filterContext.setPrincipalAuthenticationMethod(result.getAuthenticationFlowId());
+            }
+        }
+
+        filterContext.setAttributeRecipientID(rpContext.getRelyingPartyId());
+
+        // TODO(rdw) This navigation is subject to change
+        final RelyingPartyConfiguration config = rpContext.getConfiguration();
+        if (null != config) {
+            filterContext.setAttributeIssuerID(config.getResponderEntityId());
+        } else {
+            filterContext.setAttributeIssuerID(null);
+        }
+        
         // If the filter context doesn't have a set of attributes to filter already
         // then look for them in the AttributeContext.
         if (filterContext.getPrefilteredIdPAttributes().isEmpty()) {

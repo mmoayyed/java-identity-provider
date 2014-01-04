@@ -28,7 +28,6 @@ import javax.sql.DataSource;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -234,14 +233,6 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
-        final AttributeRecipientContext attributeRecipientContext =
-                resolutionContext.getSubcontext(AttributeRecipientContext.class);
-
-        if (null == attributeRecipientContext) {
-            log.warn("{} No attribute recipient context provided ", getLogPrefix());
-            return null;
-        }
-
         final String principal = StringSupport.trimOrNull(resolutionContext.getPrincipal());
 
         if (null == principal) {
@@ -255,14 +246,14 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
             return null;
         }
 
-        final String attributeIssuerID = StringSupport.trimOrNull(attributeRecipientContext.getAttributeIssuerID());
+        final String attributeIssuerID = StringSupport.trimOrNull(resolutionContext.getAttributeIssuerID());
         if (null == attributeIssuerID) {
             log.warn("{} Could not get attribute issuer ID, skipping ID creation", getLogPrefix());
             return null;
         }
 
         final String attributeRecipientID =
-                StringSupport.trimOrNull(attributeRecipientContext.getAttributeRecipientID());
+                StringSupport.trimOrNull(resolutionContext.getAttributeRecipientID());
         if (null == attributeRecipientID) {
             log.warn("{} Could not get attribute recipient ID, skipping ID creation", getLogPrefix());
             return null;

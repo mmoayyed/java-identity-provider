@@ -25,7 +25,6 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -36,12 +35,6 @@ public class PrincipalNameAttributeDefinition extends AbstractAttributeDefinitio
 
     @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
-        final AttributeRecipientContext attributeRecipientContext =
-                resolutionContext.getSubcontext(AttributeRecipientContext.class);
-
-        if (null == attributeRecipientContext) {
-            throw new ResolutionException(getLogPrefix() + " no attribute recipient context provided ");
-        }
 
         final String principalName = StringSupport.trimOrNull(resolutionContext.getPrincipal());
         if (null == principalName) {

@@ -70,24 +70,24 @@ public class BaseMetadataTests extends XMLObjectBaseTestCase {
             metadataContext(EntityDescriptor idp, EntityDescriptor sp, String principal) {
         BaseContext parent = new BaseContext() {};
 
+        AttributeFilterContext filterContext = parent.getSubcontext(AttributeFilterContext.class, true);
         AttributeRecipientContext recipientContext = new AttributeRecipientContext();
         AttributeResolutionContext resolutionContext = new AttributeResolutionContext();
 
         resolutionContext.setPrincipal(principal);
         if (null != idp) {
-            recipientContext.setAttributeIssuerID(idp.getEntityID());
+            filterContext.setAttributeIssuerID(idp.getEntityID());
             recipientContext.setAttributeIssuerRoleDescriptor(idp.getIDPSSODescriptor("urn:oasis:names:tc:SAML:2.0:protocol"));
         }
         recipientContext.setAttributeIssuerMetadata(idp);
         if (null != sp) {
-            recipientContext.setAttributeRecipientID(sp.getEntityID());
+            filterContext.setAttributeRecipientID(sp.getEntityID());
             recipientContext.setAttributeRequesterRoleDescriptor(sp.getSPSSODescriptor("urn:oasis:names:tc:SAML:2.0:protocol"));
         }
         recipientContext.setAttributeRecipientMetadata(sp);
         resolutionContext.addSubcontext(recipientContext);
 
         parent.addSubcontext(resolutionContext);
-        AttributeFilterContext filterContext = parent.getSubcontext(AttributeFilterContext.class, true);
         filterContext.setPrincipal(principal);
         return filterContext;
     }

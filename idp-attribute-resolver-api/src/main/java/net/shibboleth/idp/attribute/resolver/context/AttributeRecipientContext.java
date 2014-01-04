@@ -34,15 +34,6 @@ import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 @NotThreadSafe
 public class AttributeRecipientContext extends BaseContext {
 
-    /** The local entityID. This is required by some resolvers and filters and injected during setup. */
-    private String attributeIssuerID;
-    
-    /** The other entityID. This is required by some resolvers and filters and injected during setup. */
-    private String attributeRecipientID;
-    
-    /** How was the principal Authenticated? */
-    private String principalAuthenticationMethod;
-    
     /** The issuer's metadata. */
     private EntityDescriptor attributeIssuerMetadata;
 
@@ -55,51 +46,6 @@ public class AttributeRecipientContext extends BaseContext {
     /** The requester's Role Descriptor.  */
     private RoleDescriptor attributeRequesterRoleDescriptor;
     
-
-    /** Gets the attribute issuer (me) associated with this resolution. 
-     * 
-     * @return the attribute issuer associated with this resolution. 
-     */
-    @Nullable public String getAttributeIssuerID() {
-        return attributeIssuerID;
-    }
-    
-    /** Sets the attribute issuer (me)  associated with this resolution. 
-     * 
-     * @param value the attribute issuer associated with this resolution. 
-     */
-    @Nullable public void setAttributeIssuerID(@Nullable String value) {
-        attributeIssuerID = value;
-    }
-
-    /** Gets the attribute recipient (her) associated with this resolution. 
-     * 
-     * @return the attribute recipient associated with this resolution. 
-     */
-    @Nullable public String getAttributeRecipientID() {
-        return attributeRecipientID;
-    }
-    
-    /** Sets the attribute recipient (her)  associated with this resolution. 
-     * 
-     * @param value the attribute recipient associated with this resolution. 
-     */
-    @Nullable public void setAttributeRecipientID(@Nullable String value) {
-        attributeRecipientID = value;
-    }
-    /** Sets how the principal was authenticated. 
-     * @return Returns the principalAuthenticationMethod.
-     */
-    @Nullable public String getPrincipalAuthenticationMethod() {
-        return principalAuthenticationMethod;
-    }
-
-    /** Gets how the principal was authenticated.
-     * @param method The principalAuthenticationMethod to set.
-     */
-    public void setPrincipalAuthenticationMethod(@Nullable String method) {
-        principalAuthenticationMethod = method;
-    }
 
     /**
      * Return the metadata for the entity issuing the attributes.

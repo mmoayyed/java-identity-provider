@@ -26,7 +26,6 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -46,14 +45,7 @@ public class PrincipalAuthenticationMethodAttributeDefinition extends AbstractAt
     @Override @Nullable protected IdPAttribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
 
-        final AttributeRecipientContext attributeRecipientContext =
-                resolutionContext.getSubcontext(AttributeRecipientContext.class);
-
-        if (null == attributeRecipientContext) {
-            throw new ResolutionException(getLogPrefix() + " no attribute recipient context provided ");
-        }
-
-        final String method = StringSupport.trimOrNull(attributeRecipientContext.getPrincipalAuthenticationMethod());
+        final String method = StringSupport.trimOrNull(resolutionContext.getPrincipalAuthenticationMethod());
 
         if (null == method) {
             log.info("{} null or empty method was returned", getLogPrefix());

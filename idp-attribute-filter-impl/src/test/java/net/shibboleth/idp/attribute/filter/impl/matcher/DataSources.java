@@ -67,6 +67,8 @@ public abstract class DataSources {
         parent.addSubcontext(TestSources.createResolutionContext(principal, issuerID, recipientId));
         AttributeFilterContext retVal = parent.getSubcontext(AttributeFilterContext.class, true);
         retVal.setPrincipal(principal);
+        retVal.setAttributeIssuerID(issuerID);
+        retVal.setAttributeRecipientID(recipientId);
         return retVal;
     }
 

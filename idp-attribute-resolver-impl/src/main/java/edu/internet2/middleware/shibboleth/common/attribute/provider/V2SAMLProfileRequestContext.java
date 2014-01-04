@@ -23,7 +23,6 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -47,11 +46,6 @@ import com.google.common.base.Objects;
 public class V2SAMLProfileRequestContext implements IdentifiableComponent {
 
     /**
-     * The recipient Context, used for locating the the recipientEntity and the sourceEntity.
-     */
-    private final AttributeRecipientContext recipientContext;
-    
-    /**
      * The Attribute Resolution Context, used to local the Principal.
      */
     private final AttributeResolutionContext resolutionContext;
@@ -71,9 +65,6 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
     public V2SAMLProfileRequestContext(@Nonnull final AttributeResolutionContext attributeResolutionContext,
             final String attributeId) {
         resolutionContext = Constraint.isNotNull(attributeResolutionContext, "Attribute Resolution Context was null");
-        recipientContext =
-                Constraint.isNotNull(attributeResolutionContext.getSubcontext(AttributeRecipientContext.class),
-                        "Could not locate RecipientContext");
         id = Constraint.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute Id was null or empty");
     }
 
@@ -98,7 +89,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * @return the entityId.
      */
     public String getPeerEntityId() {
-        return recipientContext.getAttributeRecipientID();
+        return resolutionContext.getAttributeRecipientID();
     }
 
     /**
@@ -107,7 +98,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * @return the entityId.
      */
     public String getLocalEntityId() {
-        return recipientContext.getAttributeIssuerID();
+        return resolutionContext.getAttributeIssuerID();
     }
 
     // All other methods are stubs

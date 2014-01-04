@@ -21,13 +21,9 @@ import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.AuthenticationMethodRegexpPolicyRule;
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
-import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 
-import org.opensaml.messaging.context.BaseContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -39,19 +35,12 @@ public class AuthenticationMethodRegexpPolicyRuleTest {
     protected static String METHOD = "AuthnMethod";
     
     protected static AttributeFilterContext filterContextWithAuthn(String authn) {
-        BaseContext parent = new BaseContext() {};
         
-        AttributeRecipientContext recipientContext = new AttributeRecipientContext();
-        AttributeResolutionContext resolutionContext = new AttributeResolutionContext();
-        
-        recipientContext.setPrincipalAuthenticationMethod(authn);
-        resolutionContext.addSubcontext(recipientContext);
-
-        parent.addSubcontext(resolutionContext);
-        return parent.getSubcontext(AttributeFilterContext.class, true);
+        AttributeFilterContext context = new AttributeFilterContext();
+        context.setPrincipalAuthenticationMethod(authn);
+        return context;
     }
     
-
     private AuthenticationMethodRegexpPolicyRule getMatcher() throws ComponentInitializationException {
         final AuthenticationMethodRegexpPolicyRule matcher = new AuthenticationMethodRegexpPolicyRule();
         matcher.setRegularExpression("^Authn.*");

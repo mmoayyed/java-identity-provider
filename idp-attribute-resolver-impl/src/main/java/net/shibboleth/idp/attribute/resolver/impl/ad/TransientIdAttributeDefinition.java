@@ -27,7 +27,6 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -147,14 +146,14 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
     /**
      * Police and get the AttributeRecipientID.
      * 
-     * @param attributeRecipientContext where to look
+     * @param resolutionContext where to look
      * @return the AttributeRecipientID
      * @throws ResolutionException if it was non null
      */
     @Nonnull @NotEmpty private String getAttributeRecipientID(
-            @Nonnull final AttributeRecipientContext attributeRecipientContext) throws ResolutionException {
+            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         final String attributeRecipientID =
-                StringSupport.trimOrNull(attributeRecipientContext.getAttributeRecipientID());
+                StringSupport.trimOrNull(resolutionContext.getAttributeRecipientID());
         if (null == attributeRecipientID) {
             throw new ResolutionException(getLogPrefix() + " provided attribute recipient ID was empty");
         }
@@ -185,14 +184,7 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        final AttributeRecipientContext attributeRecipientContext =
-                resolutionContext.getSubcontext(AttributeRecipientContext.class);
-
-        if (null == attributeRecipientContext) {
-            throw new ResolutionException(getLogPrefix() + " no attribute recipient context provided ");
-        }
-
-        final String attributeRecipientID = getAttributeRecipientID(attributeRecipientContext);
+        final String attributeRecipientID = getAttributeRecipientID(resolutionContext);
 
         final String principalName = getPrincipal(resolutionContext);
 
