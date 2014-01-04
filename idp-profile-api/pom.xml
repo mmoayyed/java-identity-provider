@@ -38,6 +38,13 @@
         <!-- Runtime Dependencies -->
 
         <!-- Test Dependencies -->
+        
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-authn-api</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 

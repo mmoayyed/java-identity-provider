@@ -24,6 +24,7 @@ import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.service.ReloadableService;
@@ -46,6 +47,7 @@ import com.google.common.base.Function;
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
+ * @event {@link IdPEventIds#INVALID_SUBJECT_CTX}
  * @event {@link IdPEventIds#INVALID_ATTRIBUTE_CTX}
  * @event {@link IdPEventIds#UNABLE_FILTER_ATTRIBS}
  * 
@@ -65,20 +67,30 @@ public class FilterAttributes extends AbstractProfileAction {
      */
     @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
 
+    /**
+     * Strategy used to locate the {@link SubjectContext} associated with a given {@link ProfileRequestContext}.
+     */
+    @Nonnull private Function<ProfileRequestContext, SubjectContext> subjectContextLookupStrategy;
+
     /** RelyingPartyContext to operate on. */
     @Nullable private RelyingPartyContext rpContext;
+
+    /** SubjectContext to work from. */
+    @Nullable private SubjectContext subjectContext;
 
     /** AttributeContext to filter. */
     @Nullable private AttributeContext attributeContext;
 
     /**
-     * Constructor. Initializes {@link #relyingPartyContextLookupStrategy} to {@link ChildContextLookup}.
+     * Constructor. Initializes {@link #relyingPartyContextLookupStrategy} and {@link #subjectContextLookupStrategy} to
+     * {@link ChildContextLookup}.
      * 
      * @param service engine used to filter attributes
      */
     public FilterAttributes(@Nonnull final ReloadableService<AttributeFilter> service) {
         filterService = Constraint.isNotNull(service, "Service cannot be null");
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
+        subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class, false);
     }
 
     /**
@@ -96,6 +108,19 @@ public class FilterAttributes extends AbstractProfileAction {
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
 
+    /**
+     * Set the strategy used to locate the {@link SubjectContext} associated with a given {@link ProfileRequestContext}.
+     * 
+     * @param strategy strategy used to locate the {@link SubjectContext} associated with a given
+     *            {@link ProfileRequestContext}
+     */
+    public void
+            setSubjectContextLookupStrategy(@Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        subjectContextLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
+    }
+
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext)
             throws ProfileException {
@@ -103,6 +128,13 @@ public class FilterAttributes extends AbstractProfileAction {
         if (rpContext == null) {
             log.debug("{} No relying party context available", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+            return false;
+        }
+
+        subjectContext = subjectContextLookupStrategy.apply(profileRequestContext);
+        if (subjectContext == null) {
+            log.debug("{} No subject context available.", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_SUBJECT_CTX);
             return false;
         }
 
@@ -128,6 +160,8 @@ public class FilterAttributes extends AbstractProfileAction {
         // Get the filer context from the profile request
         // this may already exist but if not, auto-create it.
         final AttributeFilterContext filterContext = rpContext.getSubcontext(AttributeFilterContext.class, true);
+
+        filterContext.setPrincipal(subjectContext.getPrincipalName());
 
         // If the filter context doesn't have a set of attributes to filter already
         // then look for them in the AttributeContext.

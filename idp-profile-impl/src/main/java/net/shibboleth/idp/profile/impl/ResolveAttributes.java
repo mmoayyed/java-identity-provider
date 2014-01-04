@@ -24,6 +24,7 @@ import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.service.ReloadableService;
@@ -46,6 +47,7 @@ import com.google.common.base.Function;
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
+ * @event {@link IdPEventIds#INVALID_SUBJECT_CTX}
  * @event {@link IdPEventIds#UNABLE_RESOLVE_ATTRIBS}
  * 
  * @post If resolution is successful, the relevant RelyingPartyContext.getSubcontext(AttributeContext.class, false) !=
@@ -64,17 +66,27 @@ public final class ResolveAttributes extends AbstractProfileAction {
      */
     @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
 
+    /**
+     * Strategy used to locate the {@link SubjectContext} associated with a given {@link ProfileRequestContext}.
+     */
+    @Nonnull private Function<ProfileRequestContext, SubjectContext> subjectContextLookupStrategy;
+
     /** RelyingPartyContext to operate on. */
     @Nullable private RelyingPartyContext rpContext;
 
+    /** SubjectContext to work from. */
+    @Nullable private SubjectContext subjectContext;
+
     /**
-     * Constructor. Initializes {@link #relyingPartyContextLookupStrategy} to {@link ChildContextLookup}.
+     * Constructor. Initializes {@link #relyingPartyContextLookupStrategy} and {@link #subjectContextLookupStrategy} to
+     * {@link ChildContextLookup}.
      * 
      * @param resolverService resolver used to fetch attributes
      */
     public ResolveAttributes(@Nonnull final ReloadableService<AttributeResolver> resolverService) {
         attributeResolverService = Constraint.isNotNull(resolverService, "AttributeResolver cannot be null");
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
+        subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class, false);
     }
 
     /**
@@ -92,13 +104,36 @@ public final class ResolveAttributes extends AbstractProfileAction {
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
 
+    /**
+     * Set the strategy used to locate the {@link SubjectContext} associated with a given
+     * {@link ProfileRequestContext}.
+     * 
+     * @param strategy strategy used to locate the {@link SubjectContext} associated with a given
+     *            {@link ProfileRequestContext}
+     */
+    public void setSubjectContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        subjectContextLookupStrategy =
+                Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
+    }
+
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext)
             throws ProfileException {
+
         rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (rpContext == null) {
             log.debug("{} No relying party context available.", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+            return false;
+        }
+
+        subjectContext = subjectContextLookupStrategy.apply(profileRequestContext);
+        if (subjectContext == null) {
+            log.debug("{} No subject context available.", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_SUBJECT_CTX);
             return false;
         }
 

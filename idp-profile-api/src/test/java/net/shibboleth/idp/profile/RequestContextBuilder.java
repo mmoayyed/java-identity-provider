@@ -27,6 +27,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.relyingparty.MockProfileConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
@@ -339,6 +340,7 @@ public class RequestContextBuilder {
         profileContext.setInboundMessageContext(buildInboundMessageContext());
         profileContext.setOutboundMessageContext(buildOutboundMessageContext());
         buildRelyingPartyContext(profileContext);
+        buildSubjectContext(profileContext);
         return profileContext;
     }
 
@@ -495,6 +497,12 @@ public class RequestContextBuilder {
         rpCtx.setProfileConfiguration(selectProfileConfiguration(rpConfig.getProfileConfigurations()));
 
         return rpCtx;
+    }
+    
+    @Nonnull protected SubjectContext buildSubjectContext(
+            @Nonnull final ProfileRequestContext profileRequestContext){
+        final SubjectContext subjectCtx = profileRequestContext.getSubcontext(SubjectContext.class, true);
+        return subjectCtx;
     }
 
     /**

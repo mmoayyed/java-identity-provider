@@ -61,6 +61,9 @@ public class AttributeResolutionContext extends BaseContext {
     /** Data connectors that have been resolved and the resultant attributes. */
     @Nonnull @NonnullElements private final Map<String, ResolvedDataConnector> resolvedDataConnectors;
 
+    /** The principal associated with this resolution. */
+    @Nullable private String principal;
+
     /** Constructor. */
     public AttributeResolutionContext() {
         requestedAttributes = Collections.emptySet();
@@ -74,6 +77,24 @@ public class AttributeResolutionContext extends BaseContext {
 
         resolvedDataConnectors =
                 MapConstraints.constrainedMap(new HashMap<String, ResolvedDataConnector>(), MapConstraints.notNull());
+    }
+
+    /**
+     * Sets the principal associated with this resolution.
+     * 
+     * @return Returns the principal.
+     */
+    @Nullable public String getPrincipal() {
+        return principal;
+    }
+
+    /**
+     * Gets the principal associated with this resolution.
+     * 
+     * @param who The principal to set.
+     */
+    public void setPrincipal(@Nullable String who) {
+        principal = who;
     }
 
     /**
@@ -92,7 +113,7 @@ public class AttributeResolutionContext extends BaseContext {
      */
     public void setRequestedIdPAttributes(@Nonnull @NonnullElements final Collection<IdPAttribute> attributes) {
         Constraint.isNotNull(attributes, "Requested IdPAttribute collection cannot be null");
-        
+
         requestedAttributes = Sets.newHashSet(Collections2.filter(attributes, Predicates.notNull()));
     }
 

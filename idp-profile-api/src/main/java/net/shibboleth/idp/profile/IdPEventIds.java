@@ -49,15 +49,21 @@ public final class IdPEventIds {
      */
     public static final String INVALID_ATTRIBUTE_CTX = "InvalidAttributeContext";
 
+    /**
+     * ID of the event returned if a {@link net.shibboleth.idp.authn.context.SubjectContext} is missing or corrupt in
+     * some way.
+     */
+    public static final String INVALID_SUBJECT_CTX = "InvalidSubjectContext";
+
     /** ID of the event returned when there is a problem resolving attributes. */
     public static final String UNABLE_RESOLVE_ATTRIBS = "UnableToResolveAttributes";
- 
+
     /** ID of event indicating that the attribute filtering process failed. */
     public static final String UNABLE_FILTER_ATTRIBS = "UnableToFilterAttributes";
-    
+
     /** Constructor. */
     private IdPEventIds() {
-        
+
     }
-    
+
 }

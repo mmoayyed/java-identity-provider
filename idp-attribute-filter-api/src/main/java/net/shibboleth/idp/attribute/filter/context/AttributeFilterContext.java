@@ -65,6 +65,9 @@ public final class AttributeFilterContext extends BaseContext {
     /** Attributes which have been filtered. */
     private Map<String, IdPAttribute> filteredAttributes;
 
+    /** The principal associated with the filtering. */
+    private String principal;
+
     /** Constructor. */
     public AttributeFilterContext() {
         prefilteredAttributes =
@@ -109,7 +112,8 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @return collection of attribute values, indexed by ID, that are permitted to be released,
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, Set<IdPAttributeValue>> getPermittedIdPAttributeValues(){
+    @Nonnull @NonnullElements @Unmodifiable public Map<String, Set<IdPAttributeValue>> 
+            getPermittedIdPAttributeValues() {
         return Collections.unmodifiableMap(permittedValues);
     }
 
@@ -251,4 +255,23 @@ public final class AttributeFilterContext extends BaseContext {
 
         requestedAttributes = attributes;
     }
+
+    /**
+     * Sets the principal associated with the filtering.
+     * 
+     * @return Returns the principal.
+     */
+    public String getPrincipal() {
+        return principal;
+    }
+
+    /**
+     * Gets the principal associated with the filtering.
+     * 
+     * @param who The principal to set.
+     */
+    public void setPrincipal(String who) {
+        principal = who;
+    }
+
 }

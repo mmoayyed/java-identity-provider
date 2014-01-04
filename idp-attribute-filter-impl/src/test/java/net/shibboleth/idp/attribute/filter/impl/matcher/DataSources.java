@@ -19,8 +19,8 @@ package net.shibboleth.idp.attribute.filter.impl.matcher;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
@@ -56,16 +56,18 @@ public abstract class DataSources {
 
     public final static IdPAttributeValue OTHER_VALUE = new IdPAttributeValue() {
 
-        @Nonnull public Object getValue() {
+        @Override @Nonnull public Object getValue() {
             return TEST_STRING;
         }
     };
-    
+
     public static AttributeFilterContext populatedFilterContext(String principal, String issuerID, String recipientId) {
 
         BaseContext parent = new BaseContext() {};
         parent.addSubcontext(TestSources.createResolutionContext(principal, issuerID, recipientId));
-        return parent.getSubcontext(AttributeFilterContext.class, true);
+        AttributeFilterContext retVal = parent.getSubcontext(AttributeFilterContext.class, true);
+        retVal.setPrincipal(principal);
+        return retVal;
     }
 
     public static AttributeFilterContext unPopulatedFilterContext() {
