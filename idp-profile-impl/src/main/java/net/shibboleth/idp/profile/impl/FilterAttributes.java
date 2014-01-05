@@ -126,8 +126,8 @@ public class FilterAttributes extends AbstractProfileAction {
      * @param strategy strategy used to locate the {@link SubjectContext} associated with a given
      *            {@link ProfileRequestContext}
      */
-    public void
-            setSubjectContextLookupStrategy(@Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
+    public void setSubjectContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         subjectContextLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
@@ -149,8 +149,8 @@ public class FilterAttributes extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext)
-            throws ProfileException {
+    @Override
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
         rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (rpContext == null) {
             log.debug("{} No relying party context available", getLogPrefix());
@@ -182,12 +182,12 @@ public class FilterAttributes extends AbstractProfileAction {
             return false;
         }
 
-        return true;
+        return super.doPreExecute(profileRequestContext);
     }
 
     /** {@inheritDoc} */
-    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext)
-            throws ProfileException {
+    @Override
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
         // Get the filer context from the profile request
         // this may already exist but if not, auto-create it.
