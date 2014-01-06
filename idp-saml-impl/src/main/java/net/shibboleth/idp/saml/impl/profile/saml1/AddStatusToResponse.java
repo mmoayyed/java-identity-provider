@@ -31,6 +31,7 @@ import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
 
 import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
@@ -43,6 +44,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.saml.saml1.core.Status;
@@ -55,6 +57,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -109,7 +112,8 @@ public class AddStatusToResponse extends AbstractProfileAction<Object, Response>
     /** Constructor. */
     public AddStatusToResponse() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
-        responseLookupStrategy = new OutboundResponseLookupStrategy();
+        responseLookupStrategy =
+                Functions.compose(new MessageLookup<Response>(), new OutboundMessageContextLookup<Response>());
         statusCodes = Collections.emptyList();
         statusMessageFromEvent = true;
         detailedStatus = false;
@@ -295,22 +299,6 @@ public class AddStatusToResponse extends AbstractProfileAction<Object, Response>
         final StatusMessage sm = statusMessageBuilder.buildObject();
         sm.setMessage(message);
         status.setStatusMessage(sm);
-    }
-
-    /**
-     * Default strategy for accessing the {@link Response} to modify.
-     */
-    class OutboundResponseLookupStrategy
-            implements Function<ProfileRequestContext<Object,Response>, Response> {
-
-        /** {@inheritDoc} */
-        @Override
-        @Nullable public Response apply(@Nullable final ProfileRequestContext<Object,Response> input) {
-            if (input == null || input.getOutboundMessageContext() == null) {
-                return null;
-            }
-            return (Response) input.getOutboundMessageContext().getMessage();
-        }
     }
     
 }
