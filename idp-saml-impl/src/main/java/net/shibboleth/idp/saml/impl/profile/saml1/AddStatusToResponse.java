@@ -193,7 +193,7 @@ public class AddStatusToResponse extends AbstractProfileAction<Object, Response>
 
         response = responseLookupStrategy.apply(profileRequestContext);
         if (response == null) {
-            log.error("{} Response message was not returned by lookup strategy", getLogPrefix());
+            log.debug("{} Response message was not returned by lookup strategy", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
             return false;
         }
