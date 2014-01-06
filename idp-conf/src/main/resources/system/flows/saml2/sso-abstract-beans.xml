@@ -41,6 +41,8 @@
             
                 <bean class="idp.TestMessageHandler" scope="prototype" />
                 
+                <bean class="org.opensaml.saml.saml2.binding.CheckRequestVersionHandler" />
+                
                 <bean class="org.opensaml.saml.common.binding.SAMLProtocolAndRoleHandler">
                     <property name="protocol">
                         <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML20P_NS" />
