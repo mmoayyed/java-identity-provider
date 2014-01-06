@@ -493,8 +493,8 @@ public class RequestContextBuilder {
         }
 
         final RelyingPartyConfiguration rpConfig = buildRelyingPartyConfiguration();
-        rpCtx.setRelyingPartyConfiguration(rpConfig);
-        rpCtx.setProfileConfiguration(selectProfileConfiguration(rpConfig.getProfileConfigurations()));
+        rpCtx.setConfiguration(rpConfig);
+        rpCtx.setProfileConfig(selectProfileConfiguration(rpConfig.getProfileConfigurations()));
 
         return rpCtx;
     }

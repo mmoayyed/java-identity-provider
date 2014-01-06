@@ -139,7 +139,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
             }
 
             log.debug("{} Found relying party configuration for request", getLogPrefix());
-            relyingPartyCtx.setRelyingPartyConfiguration(config);
+            relyingPartyCtx.setConfiguration(config);
         } catch (ResolverException e) {
             log.error(getLogPrefix() + " Error trying to resolve relying party configuration", e);
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);

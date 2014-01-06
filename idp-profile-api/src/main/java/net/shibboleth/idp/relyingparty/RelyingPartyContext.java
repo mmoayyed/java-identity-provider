@@ -71,7 +71,7 @@ public final class RelyingPartyContext extends BaseContext {
      * 
      * @param config configuration to use when processing requests for this relying party, or null
      */
-    public void setRelyingPartyConfiguration(@Nullable final RelyingPartyConfiguration config) {
+    public void setConfiguration(@Nullable final RelyingPartyConfiguration config) {
         relyingPartyConfiguration = config;
     }
 
@@ -89,7 +89,7 @@ public final class RelyingPartyContext extends BaseContext {
      * 
      * @param config configuration for the request profile currently being processed, or null
      */
-    public void setProfileConfiguration(@Nullable final ProfileConfiguration config) {
+    public void setProfileConfig(@Nullable final ProfileConfiguration config) {
         profileConfiguration = config;
     }
 }

@@ -54,6 +54,9 @@ import com.google.common.base.Function;
  * Action that creates an empty {@link Response}, and sets it as the
  * message returned by {@link ProfileRequestContext#getOutboundMessageContext()}.
  * 
+ * <p>The {@link Status} is set to {@link StatusCode#SUCCESS} as a default assumption,
+ * and this can be overridden by subsequent actions.</p>
+ * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_MSG_CTX}
  * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
@@ -134,7 +137,7 @@ public class AddResponseShell extends AbstractProfileAction<Object, Response> {
     protected void doExecute(@Nonnull final ProfileRequestContext<Object, Response> profileRequestContext)
             throws ProfileException {
 
-        XMLObjectBuilderFactory bf = XMLObjectProviderRegistrySupport.getBuilderFactory();
+        final XMLObjectBuilderFactory bf = XMLObjectProviderRegistrySupport.getBuilderFactory();
         final SAMLObjectBuilder<StatusCode> statusCodeBuilder =
                 (SAMLObjectBuilder<StatusCode>) bf.<StatusCode>getBuilderOrThrow(StatusCode.TYPE_NAME);
         final SAMLObjectBuilder<Status> statusBuilder =
@@ -142,7 +145,6 @@ public class AddResponseShell extends AbstractProfileAction<Object, Response> {
         final SAMLObjectBuilder<Response> responseBuilder =
                 (SAMLObjectBuilder<Response>) bf.<Response>getBuilderOrThrow(Response.DEFAULT_ELEMENT_NAME);
 
-        // TODO: create status in separate action
         final StatusCode statusCode = statusCodeBuilder.buildObject();
         statusCode.setValue(StatusCode.SUCCESS);
 
@@ -159,7 +161,7 @@ public class AddResponseShell extends AbstractProfileAction<Object, Response> {
         profileRequestContext.getOutboundMessageContext().setMessage(response);
 
         // TODO: Should this be here? Are other contexts also needed?
-        BasicMessageMetadataContext messageMetadata = new BasicMessageMetadataContext();
+        final BasicMessageMetadataContext messageMetadata = new BasicMessageMetadataContext();
         messageMetadata.setMessageId(response.getID());
         messageMetadata.setMessageIssueInstant(response.getIssueInstant().getMillis());
 

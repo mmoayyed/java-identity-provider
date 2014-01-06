@@ -114,7 +114,7 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
             return;
         }
 
-        rpCtx.setProfileConfiguration(profileConfiguration);
+        rpCtx.setProfileConfig(profileConfiguration);
     }
     
 }

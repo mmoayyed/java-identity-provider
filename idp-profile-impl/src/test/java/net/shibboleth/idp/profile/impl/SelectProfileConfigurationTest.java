@@ -58,7 +58,7 @@ public class SelectProfileConfigurationTest {
     @Test public void testNoRelyingPartyConfiguration() throws Exception {
         ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
 
-        profileCtx.getSubcontext(RelyingPartyContext.class).setRelyingPartyConfiguration(null);
+        profileCtx.getSubcontext(RelyingPartyContext.class).setConfiguration(null);
 
         action.execute(profileCtx);
         ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);
