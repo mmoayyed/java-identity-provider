@@ -27,7 +27,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 
@@ -36,13 +35,13 @@ import com.google.common.base.Function;
 /**
  * A base class for authentication related actions.
  * 
- * In addition to the work performed by {@link AbstractProfileAction}, this action also looks up and makes available the
- * {@link AuthenticationContext}.
+ * In addition to the work performed by {@link AbstractProfileAction}, this action also looks up
+ * and makes available the {@link AuthenticationContext}.
  * 
  * Authentication action implementations should override
  * {@link #doExecute(ProfileRequestContext, AuthenticationContext)}
  * 
- * @event {@link EventIds#INVALID_PROFILE_CTX}
+ * @event {@link AuthnEventIds#INVALID_AUTHN_CTX}
  */
 public abstract class AbstractAuthenticationAction extends AbstractProfileAction {
 
@@ -57,9 +56,7 @@ public abstract class AbstractAuthenticationAction extends AbstractProfileAction
 
     /** Constructor. */
     public AbstractAuthenticationAction() {
-        super();
-
-        authnCtxLookupStrategy = new ChildContextLookup(AuthenticationContext.class, false);
+        authnCtxLookupStrategy = new ChildContextLookup<>(AuthenticationContext.class, false);
     }
 
     /**
@@ -74,12 +71,13 @@ public abstract class AbstractAuthenticationAction extends AbstractProfileAction
     }
     
     /** {@inheritDoc} */
+    @Override
     protected final boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext)
             throws ProfileException {
 
         authnContext = authnCtxLookupStrategy.apply(profileRequestContext);
         if (authnContext == null) {
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
             return false;
         }
 
@@ -91,6 +89,7 @@ public abstract class AbstractAuthenticationAction extends AbstractProfileAction
     }
     
     /** {@inheritDoc} */
+    @Override
     protected final void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
         doExecute(profileRequestContext, authnContext);
