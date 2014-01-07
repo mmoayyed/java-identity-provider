@@ -43,7 +43,7 @@ public class AttributeIssuerEntityAttributeExactPolicyRuleTest  extends BaseMeta
         return matcher;
     }
     
-    @Test public void simple() throws ComponentInitializationException {
+    @Test(enabled=false) public void simple() throws ComponentInitializationException {
 
         AttributeIssuerEntityAttributeExactPolicyRule matcher = getMatcher();
         Assert.assertEquals(matcher.matches(metadataContext(jiraEntity, idpEntity, "Principal")), Tristate.FALSE);

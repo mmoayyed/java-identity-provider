@@ -35,11 +35,16 @@ import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.messaging.context.BaseContext;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
+import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,6 +85,16 @@ public class FilterAttributes extends AbstractProfileAction {
      */
     @Nonnull private Function<ProfileRequestContext, AuthenticationContext> authnContextLookupStrategy;
 
+    /**
+     * Strategy used to locate the {@link SAMLMetadataContext} associated with a given {@link ProfileRequestContext}.
+     */
+    @Nonnull private Function<ProfileRequestContext, SAMLMetadataContext> metadataContextLookupStrategy;
+
+    /**
+     * Strategy used to locate the {@link SAMLMetadataContext} associated with a given {@link AttributeFilterContext}.
+     */
+    @Nonnull private Function<AttributeFilterContext, SAMLMetadataContext> metadataFromFilterLookupStrategy;
+
     /** RelyingPartyContext to operate on. */
     @Nullable private RelyingPartyContext rpContext;
 
@@ -103,6 +118,8 @@ public class FilterAttributes extends AbstractProfileAction {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
         subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class, false);
         authnContextLookupStrategy = new ChildContextLookup<>(AuthenticationContext.class, false);
+        metadataContextLookupStrategy = new DefaultMetadataLookup();
+        metadataFromFilterLookupStrategy = new MetadataLookupFromFilterContext(metadataContextLookupStrategy);
     }
 
     /**
@@ -147,6 +164,24 @@ public class FilterAttributes extends AbstractProfileAction {
         authnContextLookupStrategy =
                 Constraint.isNotNull(strategy, "AuthenticationContext lookup strategy cannot be null");
     }
+    
+    /**
+     * Set the strategy used to locate the {@link SAMLMetadataContext} associated with a given
+     * {@link ProfileRequestContext}.  Also sets the strategy to find the {@link SAMLMetadataContext}
+     * from the {@link AttributeFilterContext};  
+     * SAMLMetadataContext
+     * @param strategy strategy used to locate the {@link AuthenticationContext} associated with a given
+     *            {@link ProfileRequestContext}
+     */
+    public void setMetadataContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, SAMLMetadataContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        metadataContextLookupStrategy =
+                Constraint.isNotNull(strategy, "MetadataContext lookup strategy cannot be null");
+        metadataFromFilterLookupStrategy = new MetadataLookupFromFilterContext(metadataContextLookupStrategy);        
+    }
+
 
     /** {@inheritDoc} */
     @Override
@@ -189,7 +224,7 @@ public class FilterAttributes extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
-        // Get the filer context from the profile request
+        // Get the filter context from the profile request
         // this may already exist but if not, auto-create it.
         final AttributeFilterContext filterContext = rpContext.getSubcontext(AttributeFilterContext.class, true);
 
@@ -215,6 +250,8 @@ public class FilterAttributes extends AbstractProfileAction {
             filterContext.setAttributeIssuerID(null);
         }
         
+        filterContext.setRequesterMetadataContextLookupStrategy(metadataFromFilterLookupStrategy);
+
         // If the filter context doesn't have a set of attributes to filter already
         // then look for them in the AttributeContext.
         if (filterContext.getPrefilteredIdPAttributes().isEmpty()) {
@@ -244,4 +281,82 @@ public class FilterAttributes extends AbstractProfileAction {
             }
         }
     }
+
+    /**
+     * Default implementation of the lookup from Profile Request to SAML Metadata.
+     * 
+     */
+    protected static class DefaultMetadataLookup implements
+            ContextDataLookupFunction<ProfileRequestContext, SAMLMetadataContext> {
+
+        /**
+         * By default the SAML Metadata Context is the child of the incoming MessageContext's SAMLPeerEntityContext
+         * child.
+         * 
+         * TODO(rdw) This navigation is subject to change
+         * 
+         * {@inheritDoc}
+         */
+        @Override @Nullable public SAMLMetadataContext apply(@Nullable final ProfileRequestContext input) {
+            if (null == input) {
+                return null;
+            }
+            final MessageContext<?> messageContext = input.getInboundMessageContext();
+            if (null == messageContext) {
+                return null;
+            }
+            SAMLPeerEntityContext peerContext = messageContext.getSubcontext(SAMLPeerEntityContext.class, false);
+            if (null == peerContext) {
+                return null;
+            }
+            return peerContext.getSubcontext(SAMLMetadataContext.class, false);
+        }
+    }
+
+    /**
+     * Class to go from a {@link AttributeFilterContext} to a {@link SAMLMetadataContext). We know how to get to a
+     * 
+     * @link ProfileRequestContext) from a {@link AttributeFilterContext} because we set it up, and we are told how to
+     *       get to a {@link SAMLMetadataContext} from a {@link ProfileRequestContext}, so we plug them together.
+     * 
+     */
+    protected class MetadataLookupFromFilterContext implements
+            ContextDataLookupFunction<AttributeFilterContext, SAMLMetadataContext> {
+
+        /**
+         * How to get from the profile to the SAMLMetadataContext.
+         */
+        private final Function<ProfileRequestContext, SAMLMetadataContext> profileLookupStrategy;
+
+        /**
+         * Constructor.
+         * 
+         * @param strategy how to get to the {@link SAMLMetadataContext) from a {@link ProfileRequestContext}.
+         */
+        public MetadataLookupFromFilterContext(Function<ProfileRequestContext, SAMLMetadataContext> strategy) {
+            profileLookupStrategy = strategy;
+        }
+
+        /** {@inheritDoc} */
+        @Override @Nullable public SAMLMetadataContext apply(@Nullable AttributeFilterContext input) {
+            if (null == input) {
+                return null;
+            }
+            BaseContext parent = input.getParent();
+
+            if (parent == null) {
+                log.error("{} provided filter context was orphan", getLogPrefix());
+                return null;
+            }
+
+            if (parent instanceof ProfileRequestContext<?, ?>) {
+                ProfileRequestContext<?, ?> profileCtx = (ProfileRequestContext<?, ?>) parent;
+                return profileLookupStrategy.apply(profileCtx);
+            }
+            log.error("{} parent of provided filter context was of wrong type {}", getLogPrefix(), parent.getClass()
+                    .getName());
+            return null;
+        }
+    }
+
 }

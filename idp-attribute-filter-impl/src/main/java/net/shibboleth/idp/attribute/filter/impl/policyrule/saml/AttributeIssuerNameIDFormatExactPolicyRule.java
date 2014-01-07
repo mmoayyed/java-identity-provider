@@ -20,11 +20,7 @@ package net.shibboleth.idp.attribute.filter.impl.policyrule.saml;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.NavigationSupport;
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
-import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 
-import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.saml2.metadata.SSODescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,25 +32,9 @@ public class AttributeIssuerNameIDFormatExactPolicyRule extends AbstractNameIDFo
     private final Logger log = LoggerFactory.getLogger(AttributeIssuerNameIDFormatExactPolicyRule.class);
     
     /** {@inheritDoc} */
+    @Override
     @Nullable protected SSODescriptor getEntitySSODescriptor(final AttributeFilterContext filterContext) {
-        final AttributeResolutionContext resolver = NavigationSupport.locateResolverContext(filterContext);
-        if (null == resolver) {
-            log.warn("{} Could not locate resolver context", getLogPrefix());
-            return null;
-        }
-        
-        final AttributeRecipientContext recipient =
-                NavigationSupport.locateRecipientContext(resolver);
-
-        if (null == recipient) {
-            log.warn("{} Could not locate recipient context", getLogPrefix());
-            return null;
-        }
-        RoleDescriptor role = recipient.getAttributeIssuerRoleDescriptor();
-        if (role instanceof SSODescriptor) {
-            return (SSODescriptor) role;
-        }
-        log.warn("{} Provided Role was null or not an SSODescriptor", getLogPrefix());
+        log.warn("{} Unimplemented Function", getLogPrefix());
         return null;
     }
 

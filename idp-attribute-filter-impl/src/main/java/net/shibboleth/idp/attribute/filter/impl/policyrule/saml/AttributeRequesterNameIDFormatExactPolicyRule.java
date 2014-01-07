@@ -20,10 +20,8 @@ package net.shibboleth.idp.attribute.filter.impl.policyrule.saml;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.NavigationSupport;
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
-import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 
+import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.saml2.metadata.SSODescriptor;
 import org.slf4j.Logger;
@@ -34,27 +32,26 @@ public class AttributeRequesterNameIDFormatExactPolicyRule extends AbstractNameI
 
     /** Logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeRequesterNameIDFormatExactPolicyRule.class);
-    
+
     /** {@inheritDoc} */
-    @Nullable protected SSODescriptor getEntitySSODescriptor(final AttributeFilterContext filterContext) {
-        final AttributeResolutionContext resolver = NavigationSupport.locateResolverContext(filterContext);
-        if (null == resolver) {
-            log.warn("{} Could not locate resolver context", getLogPrefix());
+    @Override @Nullable protected SSODescriptor getEntitySSODescriptor(final AttributeFilterContext filterContext) {
+        final SAMLMetadataContext metadataContext = filterContext.getRequesterMetadataContext();
+
+        if (null == metadataContext) {
+            log.warn("{} Could not locate SP metadata context", getLogPrefix());
+            return null;
+        }
+        RoleDescriptor role = metadataContext.getRoleDescriptor();
+        if (null == role) {
+            log.warn("{} Could not locate RoleDescriptor in SP metadata", getLogPrefix());
             return null;
         }
         
-        final AttributeRecipientContext recipient =
-                NavigationSupport.locateRecipientContext(resolver);
-
-        if (null == recipient) {
-            log.warn("{} Could not locate recipient context", getLogPrefix());
-            return null;
-        }
-        final RoleDescriptor role = recipient.getAttributeRequesterRoleDescriptor();
         if (role instanceof SSODescriptor) {
             return (SSODescriptor) role;
         }
-        log.warn("{} Provided Role was null or not an SSODescriptor", getLogPrefix());
+        log.warn("{} Located Role descriptor was of type {} and so could not be used", getLogPrefix(), role.getClass()
+                .toString());
         return null;
     }
 

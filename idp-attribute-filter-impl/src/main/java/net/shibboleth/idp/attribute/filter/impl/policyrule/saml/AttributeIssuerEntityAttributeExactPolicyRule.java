@@ -20,17 +20,14 @@ package net.shibboleth.idp.attribute.filter.impl.policyrule.saml;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.NavigationSupport;
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
-import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Matcher that checks, via an exact match, if the attribute issuer contains an entity attribute with a given
- * value.<br/>
+ * Matcher that checks, via an exact match, if the attribute issuer contains an entity attribute with a 
+ * given value.<br/>
  * 
  * Most of the work is done in parent classes.
  */
@@ -40,20 +37,10 @@ public class AttributeIssuerEntityAttributeExactPolicyRule extends AbstractEntit
     private final Logger log = LoggerFactory.getLogger(AttributeIssuerEntityAttributeExactPolicyRule.class);
 
     /** {@inheritDoc} */
+    @Override
     @Nullable protected EntityDescriptor getEntityMetadata(final AttributeFilterContext filterContext) {
-        final AttributeResolutionContext resolver = NavigationSupport.locateResolverContext(filterContext);
-        if (null == resolver) {
-            log.warn("{} Could not locate resolver context", getLogPrefix());
-            return null;
-        }
-        
-        final AttributeRecipientContext recipient =
-                NavigationSupport.locateRecipientContext(resolver);
 
-        if (null == recipient) {
-            log.warn("{} Could not locate recipient context", getLogPrefix());
-            return null;
-        }
-        return recipient.getAttributeIssuerMetadata();
+        log.warn("{} Unimplemented Function", getLogPrefix());
+        return null;
     }
 }

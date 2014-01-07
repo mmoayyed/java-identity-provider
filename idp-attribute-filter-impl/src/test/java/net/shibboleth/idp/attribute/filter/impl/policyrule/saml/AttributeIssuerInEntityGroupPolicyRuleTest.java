@@ -38,7 +38,7 @@ public class AttributeIssuerInEntityGroupPolicyRuleTest extends BaseMetadataTest
     }
 
     
-    @Test public void parent() throws ComponentInitializationException {
+    @Test(enabled=false) public void parent() throws ComponentInitializationException {
         AttributeIssuerInEntityGroupPolicyRule matcher = getMatcher("http://shibboleth.net");
         
         Assert.assertEquals(matcher.matches(metadataContext(idpEntity, jiraEntity, "Principal")), Tristate.TRUE);
@@ -48,7 +48,7 @@ public class AttributeIssuerInEntityGroupPolicyRuleTest extends BaseMetadataTest
         Assert.assertEquals(matcher.matches(metadataContext(idpEntity, jiraEntity, "Principal")), Tristate.FALSE);
     }
     
-    @Test public void orphan() throws ComponentInitializationException {
+    @Test(enabled=false) public void orphan() throws ComponentInitializationException {
         
         EntityDescriptor orphan = (EntityDescriptor) unmarshallElement("/data/net/shibboleth/idp/filter/impl/saml/orphan.xml");
 

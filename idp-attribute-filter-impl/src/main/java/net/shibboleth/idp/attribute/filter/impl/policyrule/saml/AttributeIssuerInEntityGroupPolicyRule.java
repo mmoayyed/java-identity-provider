@@ -20,9 +20,6 @@ package net.shibboleth.idp.attribute.filter.impl.policyrule.saml;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.NavigationSupport;
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
-import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.slf4j.Logger;
@@ -39,23 +36,9 @@ public class AttributeIssuerInEntityGroupPolicyRule extends AbstractEntityGroupP
     private final Logger log = LoggerFactory.getLogger(AttributeIssuerInEntityGroupPolicyRule.class);
 
     /** {@inheritDoc} */
+    @Override
     @Nullable protected EntityDescriptor getEntityMetadata(final AttributeFilterContext filterContext) {
-        final AttributeResolutionContext resolver = NavigationSupport.locateResolverContext(filterContext);
-        if (null == resolver) {
-            log.warn("{} Could not locate resolver context", getLogPrefix());
-            return null;
-        }
-
-        final AttributeRecipientContext recipient = NavigationSupport.locateRecipientContext(resolver);
-
-        if (null == recipient) {
-            log.warn("{} Could not locate recipient context", getLogPrefix());
-            return null;
-        }
-        final EntityDescriptor result = recipient.getAttributeIssuerMetadata();
-        if (null == result) {
-            log.warn("{} No Attribute Issuer found", getLogPrefix());
-        }
-        return result;
+        log.warn("{} Unimplemented Function", getLogPrefix());
+        return null;
     }
 }

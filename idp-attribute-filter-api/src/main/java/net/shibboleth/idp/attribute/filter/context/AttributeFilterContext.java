@@ -32,6 +32,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
@@ -41,7 +42,9 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
+import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.MapConstraints;
 import com.google.common.collect.Multimap;
@@ -76,6 +79,12 @@ public final class AttributeFilterContext extends BaseContext {
 
     /** How was the principal Authenticated? */
     @Nullable private String principalAuthenticationMethod;
+
+    /** Cache of the metadata context. */
+    private SAMLMetadataContext requesterMetadataContext;
+
+    /** How to get from hus to the SP metadata context. */
+    private Function<AttributeFilterContext, SAMLMetadataContext> requesterMetadataContextLookupStrategy;
 
     /** Constructor. */
     public AttributeFilterContext() {
@@ -122,7 +131,7 @@ public final class AttributeFilterContext extends BaseContext {
      * @return collection of attribute values, indexed by ID, that are permitted to be released,
      */
     @Nonnull @NonnullElements @Unmodifiable public Map<String, Set<IdPAttributeValue>> 
-                       getPermittedIdPAttributeValues() {
+            getPermittedIdPAttributeValues() {
         return Collections.unmodifiableMap(permittedValues);
     }
 
@@ -335,5 +344,36 @@ public final class AttributeFilterContext extends BaseContext {
      */
     public void setPrincipalAuthenticationMethod(@Nullable String method) {
         principalAuthenticationMethod = method;
+    }
+
+    /**
+     * Get the strategy used to locate the SP's metadata context.
+     * 
+     * @return Returns the requesterMetadataContextLookupStrategy.
+     */
+    @NonnullAfterInit public Function<AttributeFilterContext, SAMLMetadataContext>
+            getRequesterMetadataContextLookupStrategy() {
+        return requesterMetadataContextLookupStrategy;
+    }
+
+    /**
+     * Set the strategy used to locate the SP's metadata context.
+     * 
+     * @param strategy The requesterMetadataContextLookupStrategy to set.
+     */
+    public void setRequesterMetadataContextLookupStrategy(
+            @Nonnull Function<AttributeFilterContext, SAMLMetadataContext> strategy) {
+        requesterMetadataContextLookupStrategy =
+                Constraint.isNotNull(strategy, "MetadataContext lookup strategy cannot be null");
+    }
+
+    /** Get the Requester Metadata context.<br/> This value is cached and so only calculated once.
+     * @return the cached context
+     */
+    @Nullable public SAMLMetadataContext getRequesterMetadataContext() {
+        if (null == requesterMetadataContext && null != requesterMetadataContextLookupStrategy) {
+            requesterMetadataContext = requesterMetadataContextLookupStrategy.apply(this);
+        }
+        return requesterMetadataContext;
     }
 }

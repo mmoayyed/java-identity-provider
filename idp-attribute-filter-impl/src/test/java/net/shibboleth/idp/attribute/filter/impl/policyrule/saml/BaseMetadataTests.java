@@ -18,11 +18,10 @@
 package net.shibboleth.idp.attribute.filter.impl.policyrule.saml;
 
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
-import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
-import org.opensaml.messaging.context.BaseContext;
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.testng.annotations.BeforeClass;
@@ -68,27 +67,20 @@ public class BaseMetadataTests extends XMLObjectBaseTestCase {
 
     static protected AttributeFilterContext
             metadataContext(EntityDescriptor idp, EntityDescriptor sp, String principal) {
-        BaseContext parent = new BaseContext() {};
 
-        AttributeFilterContext filterContext = parent.getSubcontext(AttributeFilterContext.class, true);
-        AttributeRecipientContext recipientContext = new AttributeRecipientContext();
-        AttributeResolutionContext resolutionContext = new AttributeResolutionContext();
+        AttributeFilterContext filterContext = new AttributeFilterContext();
+        SAMLMetadataContext metadataContext = filterContext.getSubcontext(SAMLMetadataContext.class, true);
 
-        resolutionContext.setPrincipal(principal);
-        if (null != idp) {
-            filterContext.setAttributeIssuerID(idp.getEntityID());
-            recipientContext.setAttributeIssuerRoleDescriptor(idp.getIDPSSODescriptor("urn:oasis:names:tc:SAML:2.0:protocol"));
-        }
-        recipientContext.setAttributeIssuerMetadata(idp);
-        if (null != sp) {
+        metadataContext.setEntityDescriptor(sp);
+        if (sp != null) {
+            metadataContext.setRoleDescriptor(sp.getSPSSODescriptor("urn:oasis:names:tc:SAML:2.0:protocol"));
             filterContext.setAttributeRecipientID(sp.getEntityID());
-            recipientContext.setAttributeRequesterRoleDescriptor(sp.getSPSSODescriptor("urn:oasis:names:tc:SAML:2.0:protocol"));
         }
-        recipientContext.setAttributeRecipientMetadata(sp);
-        resolutionContext.addSubcontext(recipientContext);
 
-        parent.addSubcontext(resolutionContext);
         filterContext.setPrincipal(principal);
+        filterContext
+                .setRequesterMetadataContextLookupStrategy(new ChildContextLookup<AttributeFilterContext, SAMLMetadataContext>(
+                        SAMLMetadataContext.class, false));
         return filterContext;
     }
 }

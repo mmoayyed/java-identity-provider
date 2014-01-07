@@ -46,7 +46,7 @@ public class AttributeIssuerEntityAttributeRegexPolicyRuleTest  extends BaseMeta
         return matcher;
     }
     
-    @Test public void simple() throws ComponentInitializationException {
+    @Test(enabled=false) public void simple() throws ComponentInitializationException {
 
         AttributeIssuerEntityAttributeRegexPolicyRule matcher = getMatcher();
         Assert.assertEquals(matcher.matches(metadataContext(jiraEntity, idpEntity, "Principal")), Tristate.FALSE);
