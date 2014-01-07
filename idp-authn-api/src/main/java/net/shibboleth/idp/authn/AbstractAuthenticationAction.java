@@ -41,9 +41,13 @@ import com.google.common.base.Function;
  * Authentication action implementations should override
  * {@link #doExecute(ProfileRequestContext, AuthenticationContext)}
  * 
+ * @param <InboundMessageType> type of in-bound message
+ * @param <OutboundMessageType> type of out-bound message
+ * 
  * @event {@link AuthnEventIds#INVALID_AUTHN_CTX}
  */
-public abstract class AbstractAuthenticationAction extends AbstractProfileAction {
+public abstract class AbstractAuthenticationAction<InboundMessageType, OutboundMessageType>
+        extends AbstractProfileAction<InboundMessageType, OutboundMessageType> {
 
     /**
      * Strategy used to extract, and create if necessary, the {@link AuthenticationContext} from the
@@ -72,8 +76,9 @@ public abstract class AbstractAuthenticationAction extends AbstractProfileAction
     
     /** {@inheritDoc} */
     @Override
-    protected final boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext)
-            throws ProfileException {
+    protected final boolean doPreExecute(
+            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
+                    throws ProfileException {
 
         authnContext = authnCtxLookupStrategy.apply(profileRequestContext);
         if (authnContext == null) {
@@ -90,8 +95,9 @@ public abstract class AbstractAuthenticationAction extends AbstractProfileAction
     
     /** {@inheritDoc} */
     @Override
-    protected final void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
-
+    protected final void doExecute(
+            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
+                    throws ProfileException {
         doExecute(profileRequestContext, authnContext);
     }
 
@@ -105,7 +111,8 @@ public abstract class AbstractAuthenticationAction extends AbstractProfileAction
      * 
      * @throws AuthenticationException thrown if there is a problem performing the authentication action
      */
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+    protected boolean doPreExecute(
+            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         return true;
     }
@@ -118,7 +125,8 @@ public abstract class AbstractAuthenticationAction extends AbstractProfileAction
      * 
      * @throws AuthenticationException thrown if there is a problem performing the authentication action
      */
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+    protected void doExecute(
+            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         throw new UnsupportedOperationException("This action is not implemented");
     }
