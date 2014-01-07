@@ -20,7 +20,6 @@ package net.shibboleth.idp.attribute.resolver.impl.dc.rdbms;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -140,15 +139,11 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
     /**
      * Apply the context to the template. {@inheritDoc}
      */
+    @Override
     protected String getSQLQuery(AttributeResolutionContext resolutionContext) {
         final VelocityContext context = new VelocityContext();
         log.trace("Creating search filter using attribute resolution context {}", resolutionContext);
         context.put("resolutionContext", resolutionContext);
-
-        final AttributeRecipientContext recipientContext =
-                resolutionContext.getSubcontext(AttributeRecipientContext.class);
-        log.trace("Creating search filter using attribute recipient context {}", recipientContext);
-        context.put("recipientContext", recipientContext);
 
         if (isV2Compatibility()) {
             final V2SAMLProfileRequestContext requestContext =
@@ -160,6 +155,7 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 

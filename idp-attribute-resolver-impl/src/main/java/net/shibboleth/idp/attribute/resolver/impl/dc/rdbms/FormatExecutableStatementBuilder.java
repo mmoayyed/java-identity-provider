@@ -19,7 +19,6 @@ package net.shibboleth.idp.attribute.resolver.impl.dc.rdbms;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -54,9 +53,9 @@ public class FormatExecutableStatementBuilder extends AbstractExecutableStatemen
     }
 
     /** {@inheritDoc} */
+    @Override
     protected String getSQLQuery(AttributeResolutionContext resolutionContext) {
-        final AttributeRecipientContext subContext = resolutionContext.getSubcontext(AttributeRecipientContext.class);
-        final String query = String.format(sqlQuery, subContext);
+        final String query = String.format(sqlQuery, resolutionContext);
         return query;
     }
 

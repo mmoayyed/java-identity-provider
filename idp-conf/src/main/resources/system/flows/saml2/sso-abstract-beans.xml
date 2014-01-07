@@ -233,6 +233,4 @@
 
     <bean id="AddAttributeStatementToAssertion" class="net.shibboleth.idp.saml.impl.profile.saml2.AddAttributeStatementToAssertion" />
     
-    <bean id="AddAttributeRecipientContext" class="idp.AddAttributeRecipientContext" />
-
 </beans>
