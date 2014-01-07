@@ -23,6 +23,9 @@ package net.shibboleth.idp.authn;
  */
 public final class AuthnEventIds {
 
+    /** ID of event returned if the {@link AuthenticationContext} is missing or invalid. */
+    public static final String INVALID_AUTHN_CTX = "InvalidAuthenticationContext";
+    
     /** ID of event returned if there are no authentication flows that could be used to authenticate the user. */
     public static final String NO_POTENTIAL_FLOW = "NoPotentialFlow";
 
