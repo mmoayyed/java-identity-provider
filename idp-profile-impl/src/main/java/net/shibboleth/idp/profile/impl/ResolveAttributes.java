@@ -212,10 +212,9 @@ public final class ResolveAttributes extends AbstractProfileAction {
                 attributeResolver.resolveAttributes(resolutionContext);
                 profileRequestContext.removeSubcontext(resolutionContext);
 
-                final AttributeContext attributeCtx = new AttributeContext();
+                final AttributeContext attributeCtx = rpContext.getSubcontext(AttributeContext.class, true);
                 attributeCtx.setIdPAttributes(resolutionContext.getResolvedIdPAttributes().values());
 
-                rpContext.addSubcontext(attributeCtx);
             }
         } catch (ResolutionException e) {
             log.error("{} Error resolving attributes", getLogPrefix(), e);
