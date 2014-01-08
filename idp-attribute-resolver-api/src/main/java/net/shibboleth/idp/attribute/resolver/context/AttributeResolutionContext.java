@@ -49,8 +49,8 @@ import com.google.common.collect.Sets;
 @NotThreadSafe
 public class AttributeResolutionContext extends BaseContext {
 
-    /** Attributes that have been requested to be resolved. */
-    @Nonnull @NonnullElements private Set<IdPAttribute> requestedAttributes;
+    /** (internal) Names of the attributes that have been requested to be resolved. */
+    @Nonnull @NonnullElements private Set<String> requestedAttributeNames;
 
     /** Attributes which were resolved and released by the attribute resolver. */
     @Nonnull @NonnullElements private Map<String, IdPAttribute> resolvedAttributes;
@@ -75,7 +75,7 @@ public class AttributeResolutionContext extends BaseContext {
 
     /** Constructor. */
     public AttributeResolutionContext() {
-        requestedAttributes = Collections.emptySet();
+        requestedAttributeNames = Collections.emptySet();
 
         resolvedAttributes =
                 MapConstraints.constrainedMap(new HashMap<String, IdPAttribute>(), MapConstraints.notNull());
@@ -161,23 +161,23 @@ public class AttributeResolutionContext extends BaseContext {
     }
 
     /**
-     * Gets the set of attributes requested to be resolved.
+     * Gets the (internal) names of the attributes requested to be resolved.
      * 
      * @return set of attributes requested to be resolved
      */
-    @Nonnull @NonnullElements public Set<IdPAttribute> getRequestedIdPAttributes() {
-        return requestedAttributes;
+    @Nonnull @NonnullElements public Collection<String> getRequestedIdPAttributeNames() {
+        return requestedAttributeNames;
     }
 
     /**
-     * Sets the set of attributes requested to be resolved.
+     * Sets the (internal) names of the attributes requested to be resolved.
      * 
-     * @param attributes attributes requested to be resolved
+     * @param names the (internal) names of the attributes requested to be resolved
      */
-    public void setRequestedIdPAttributes(@Nonnull @NonnullElements final Collection<IdPAttribute> attributes) {
-        Constraint.isNotNull(attributes, "Requested IdPAttribute collection cannot be null");
+    public void setRequestedIdPAttributeNames(@Nonnull @NonnullElements final Collection<String> names) {
+        Constraint.isNotNull(names, "Requested IdPAttribute collection cannot be null");
 
-        requestedAttributes = Sets.newHashSet(Collections2.filter(attributes, Predicates.notNull()));
+        requestedAttributeNames = Sets.newHashSet(Collections2.filter(names, Predicates.notNull()));
     }
 
     /**

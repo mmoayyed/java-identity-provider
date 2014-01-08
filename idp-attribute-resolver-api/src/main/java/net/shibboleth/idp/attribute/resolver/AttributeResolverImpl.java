@@ -247,17 +247,15 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             @Nonnull final AttributeResolutionContext resolutionContext) {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
-        final Collection<String> attributeIds = new LazyList<String>();
-        for (IdPAttribute requestedAttribute : resolutionContext.getRequestedIdPAttributes()) {
-            attributeIds.add(requestedAttribute.getId());
-        }
-
         // if no attributes requested, then resolve everything
-        if (attributeIds.isEmpty()) {
+        if (resolutionContext.getRequestedIdPAttributeNames().isEmpty()) {
+            final Collection<String> attributeIds = new LazyList<String>();
             attributeIds.addAll(attributeDefinitions.keySet());
+            return attributeIds;
+        } else {
+            return resolutionContext.getRequestedIdPAttributeNames();
         }
 
-        return attributeIds;
     }
 
     /**

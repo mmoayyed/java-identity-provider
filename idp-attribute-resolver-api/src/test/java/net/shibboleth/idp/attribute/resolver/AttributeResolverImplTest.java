@@ -189,7 +189,7 @@ public class AttributeResolverImplTest {
         resolver.initialize();
 
         AttributeResolutionContext context = new AttributeResolutionContext();
-        context.setRequestedIdPAttributes(Collections.singleton(new IdPAttribute("ad1")));
+        context.setRequestedIdPAttributeNames(Collections.singleton("ad1"));
         resolver.resolveAttributes(context);
 
         Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions().get("ad1"));
@@ -197,7 +197,7 @@ public class AttributeResolverImplTest {
         Assert.assertEquals(context.getResolvedIdPAttributes().get("ad1"), attribute);
 
         context = new AttributeResolutionContext();
-        context.setRequestedIdPAttributes(Collections.singleton(new IdPAttribute("1da")));
+        context.setRequestedIdPAttributeNames(Collections.singleton("1da"));
         resolver.resolveAttributes(context);
 
         Assert.assertTrue(context.getResolvedIdPAttributeDefinitions().isEmpty());

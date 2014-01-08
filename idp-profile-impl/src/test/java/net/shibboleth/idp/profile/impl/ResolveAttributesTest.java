@@ -114,7 +114,7 @@ public class ResolveAttributesTest {
         resolver.initialize();
 
         AttributeResolutionContext attributeResolutionCtx = new AttributeResolutionContext();
-        attributeResolutionCtx.setRequestedIdPAttributes(Collections.singleton(new IdPAttribute("ad1")));
+        attributeResolutionCtx.setRequestedIdPAttributeNames(Collections.singleton("ad1"));
         profileCtx.addSubcontext(attributeResolutionCtx);
 
         final ResolveAttributes action = new ResolveAttributes(new AttributeService(resolver));
@@ -141,7 +141,7 @@ public class ResolveAttributesTest {
         profileCtx = new RequestContextBuilder().buildProfileRequestContext();
 
         attributeResolutionCtx = new AttributeResolutionContext();
-        attributeResolutionCtx.setRequestedIdPAttributes(Collections.singleton(new IdPAttribute("dne")));
+        attributeResolutionCtx.setRequestedIdPAttributeNames(Collections.singleton("dne"));
         profileCtx.addSubcontext(attributeResolutionCtx, true);
 
         action.execute(profileCtx);
@@ -205,6 +205,7 @@ public class ResolveAttributesTest {
         }
 
         /** {@inheritDoc} */
+        @Override
         @Nullable public ServiceableComponent<AttributeResolver> getServiceableComponent() {
             if (null == component) {
                 return null;
@@ -214,6 +215,7 @@ public class ResolveAttributesTest {
         }
 
         /** {@inheritDoc} */
+        @Override
         protected boolean shouldReload() {
             return false;
         }
