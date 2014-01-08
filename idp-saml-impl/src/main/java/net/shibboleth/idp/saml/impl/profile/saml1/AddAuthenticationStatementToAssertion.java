@@ -18,19 +18,23 @@
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import net.shibboleth.ext.spring.webflow.Event;
-import net.shibboleth.ext.spring.webflow.Events;
+import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AuthenticationException;
+import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.authn.principal.DefaultPrincipalDeterminationStrategy;
 import net.shibboleth.idp.profile.IdPEventIds;
 
-import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
 
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
-import net.shibboleth.idp.saml.profile.SAMLEventIds;
+import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.idp.saml.profile.saml1.SAML1ActionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -38,39 +42,42 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.joda.time.DateTime;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.AuthenticationStatement;
 import org.opensaml.saml.saml1.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 
 /**
- * Builds an {@link AuthenticationStatement} and adds it to the {@link Response} set as the message of the
- * {@link ProfileRequestContext#getOutboundMessageContext()}. If the {@link Response} does not contain any
- * {@link Assertion} one will be created and added to it, otherwise the {@link AuthenticationStatement} will be added to
- * first {@link Assertion} in the {@link Response}.
+ * Action that builds an {@link AuthenticationStatement} and adds it to the {@link Response} returned by a lookup
+ * strategy, by default the message returned by {@link ProfileRequestContext#getOutboundMessageContext()}.
  * 
- * A constructed {@link Assertion} will have its ID, issue instant, issuer, and version properties set. The issuer is
- * retrieved from the {@link org.opensaml.messaging.context.BasicMessageMetadataContext} on the
- * {@link ProfileRequestContext#getOutboundMessageContext()}.
+ * <p>If the {@link Response} does not contain an {@link Assertion} one will be created and added to,
+ * otherwise the {@link AuthenticationStatement} will be added to first {@link Assertion} in the {@link Response},
+ * unless the option is set to preclude this.</p>
  * 
- * The constructed {@link AuthenticationStatement} will have its authentication instant and method properties set. This
- * information is retrieved from the {@link AuthenticationRequestContext} on the {@link ProfileRequestContext}.
+ * <p>A constructed {@link Assertion} will have its ID, IssueInstant, Issuer, and Version properties set.
+ * The issuer is based on {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration#getResponderEntityId()}.</p>
+ * 
+ * <p>The {@link AuthenticationStatement} will have its authentication instant set, based on
+ * {@link AuthenticationResult#getAuthenticationInstant()} via {@link AuthenticationContext#getAuthenticationResult()}.
+ * The method property will be set via an injected or defaulted function that obtains an
+ * {@link AuthenticationMethodPrincipal} from the profile context.</p>
+ * 
+ * @event {@link EventIds#PROCEED_EVENT_ID}
+ * @event {@link EventIds#INVALID_MSG_CTX}
+ * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
+ * @event {@link AuthnEventIds#INVALID_AUTHN_CTX}
  */
-@Events({
-        @Event(id = org.opensaml.profile.action.EventIds.PROCEED_EVENT_ID),
-        @Event(id = IdPEventIds.INVALID_RELYING_PARTY_CTX,
-                description = "Returned if no relying party information is associated with the current request"),
-        @Event(id = SAMLEventIds.NO_RESPONSE,
-                description = "No SAML response object is associated with the current request")})
-public class AddAuthenticationStatementToAssertion extends AbstractProfileAction<Object, Response> {
+public class AddAuthenticationStatementToAssertion extends AbstractAuthenticationAction<Object, Response> {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AddAuthenticationStatementToAssertion.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AddAuthenticationStatementToAssertion.class);
 
     /**
      * Whether the generated authentication statement should be placed in its own assertion or added to one if it
@@ -81,31 +88,36 @@ public class AddAuthenticationStatementToAssertion extends AbstractProfileAction
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
      */
-    private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
 
+    /** Strategy used to locate the {@link Response} to operate on. */
+    @Nonnull private Function<ProfileRequestContext<Object,Response>, Response> responseLookupStrategy;
+
+    /** Strategy used to determine the AuthenticationMethod attribute. */
+    @Nonnull private Function<ProfileRequestContext, AuthenticationMethodPrincipal> methodLookupStrategy;
+        
+    /** RelyingPartyContext to access. */
+    @Nullable private RelyingPartyContext relyingPartyCtx;
+
+    /** AuthenticationResult basis of statement. */
+    @Nullable private AuthenticationResult authenticationResult;
+    
+    /** Response to modify. */
+    @Nullable private Response response;
+    
     /** Constructor. */
     public AddAuthenticationStatementToAssertion() {
-        super();
-
         statementInOwnAssertion = false;
 
-        relyingPartyContextLookupStrategy =
-                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class, false);
+        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
+        responseLookupStrategy =
+                Functions.compose(new MessageLookup<Response>(), new OutboundMessageContextLookup<Response>());
+        methodLookupStrategy = new DefaultPrincipalDeterminationStrategy<>(AuthenticationMethodPrincipal.class,
+                new AuthenticationMethodPrincipal(AuthenticationStatement.UNSPECIFIED_AUTHN_METHOD));
     }
 
     /**
-     * Gets whether the generated authentication statement should be placed in its own assertion or added to one if it
-     * exists.
-     * 
-     * @return whether the generated authentication statement should be placed in its own assertion or added to one if
-     *         it exists
-     */
-    public boolean isStatementInOwnAssertion() {
-        return statementInOwnAssertion;
-    }
-
-    /**
-     * Sets whether the generated authentication statement should be placed in its own assertion or added to one if it
+     * Set whether the generated authentication statement should be placed in its own assertion or added to one if it
      * exists.
      * 
      * @param inOwnAssertion whether the generated authentication statement should be placed in its own assertion or
@@ -116,20 +128,9 @@ public class AddAuthenticationStatementToAssertion extends AbstractProfileAction
 
         statementInOwnAssertion = inOwnAssertion;
     }
-
+    
     /**
-     * Gets the strategy used to locate the {@link RelyingPartyContext} associated with a given
-     * {@link ProfileRequestContext}.
-     * 
-     * @return strategy used to locate the {@link RelyingPartyContext} associated with a given
-     *         {@link ProfileRequestContext}
-     */
-    @Nonnull public Function<ProfileRequestContext, RelyingPartyContext> getRelyingPartyContextLookupStrategy() {
-        return relyingPartyContextLookupStrategy;
-    }
-
-    /**
-     * Sets the strategy used to locate the {@link RelyingPartyContext} associated with a given
+     * Set the strategy used to locate the {@link RelyingPartyContext} associated with a given
      * {@link ProfileRequestContext}.
      * 
      * @param strategy strategy used to locate the {@link RelyingPartyContext} associated with a given
@@ -140,83 +141,107 @@ public class AddAuthenticationStatementToAssertion extends AbstractProfileAction
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         relyingPartyContextLookupStrategy =
-                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy can not be null");
+                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
+    
+    /**
+     * Set the strategy used to locate the {@link Response} to operate on.
+     * 
+     * @param strategy strategy used to locate the {@link Response} to operate on
+     */
+    public synchronized void setResponseLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext<Object,Response>, Response> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-    /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event doExecute(
-            @Nonnull final RequestContext springRequestContext,
-            @Nonnull final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
-        log.debug("Action {}: Attempting to add an AuthenticationStatement to outgoing Response", getId());
-
-        final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (relyingPartyCtx == null) {
-            log.error("Action {}: No relying party context located in current profile request context", getId());
-            return ActionSupport.buildEvent(this, IdPEventIds.INVALID_RELYING_PARTY_CTX);
-        }
-        
-        final Response response = profileRequestContext.getOutboundMessageContext().getMessage();
-        if (response == null) {
-            log.error("Action {}: No SAML response located in current profile request context", getId());
-            return ActionSupport.buildEvent(this, SAMLEventIds.NO_RESPONSE);
-        }
-
-        final AuthenticationStatement statement = buildAuthenticationStatement(profileRequestContext);
-        if (statement == null) {
-            log.debug("Action {}: No AuthenticationStatement was built, nothing left to do");
-            return ActionSupport.buildProceedEvent(this);
-        }
-
-        final Assertion assertion =
-                getStatementAssertion(relyingPartyCtx, profileRequestContext.getOutboundMessageContext().getMessage());
-        assertion.getAuthenticationStatements().add(statement);
-
-        log.debug("Action {}: Added AuthenticationStatement to assertion {}", getId(), assertion.getID());
-        return ActionSupport.buildProceedEvent(this);
+        responseLookupStrategy = Constraint.isNotNull(strategy, "Response lookup strategy cannot be null");
     }
 
     /**
-     * Gets the assertion to which the authentication statement will be added.
+     * Set the strategy function to use to obtain the authentication method to use.
      * 
-     * @param relyingPartyContext current relying party information
-     * @param response current response
+     * @param strategy  authentication method lookup strategy
+     */
+    public synchronized void setAuthenticationMethodLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, AuthenticationMethodPrincipal> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        methodLookupStrategy = Constraint.isNotNull(strategy, "Authentication method strategy cannot be null");
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected boolean doPreExecute(
+            @Nonnull final ProfileRequestContext<Object, Response> profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+        log.debug("{} Attempting to add an AuthenticationStatement to outgoing Response", getLogPrefix());
+
+        relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
+        if (relyingPartyCtx == null) {
+            log.debug("{} No relying party context located in current profile request context", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+            return false;
+        }
+        
+        authenticationResult = authenticationContext.getAuthenticationResult();
+        if (authenticationResult == null) {
+            log.debug("{} No AuthenticationResult in current authentication context", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
+            return false;
+        }
+        
+        response = responseLookupStrategy.apply(profileRequestContext);
+        if (response == null) {
+            log.debug("{} No SAML response located in current profile request context", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
+            return false;
+        }
+        
+        return super.doPreExecute(profileRequestContext, authenticationContext);
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected void doExecute(
+            @Nonnull final ProfileRequestContext<Object, Response> profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+
+        final Assertion assertion = getStatementAssertion();
+        assertion.getAuthenticationStatements().add(buildAuthenticationStatement(profileRequestContext));
+
+        log.debug("{} Added AuthenticationStatement to assertion {}", getLogPrefix(), assertion.getID());
+    }
+
+    /**
+     * Get the assertion to which the authentication statement will be added.
      * 
      * @return the assertion to which the attribute statement will be added
      */
-    private Assertion getStatementAssertion(RelyingPartyContext relyingPartyContext, Response response) {
-        final Assertion assertion;
+    private Assertion getStatementAssertion() {
         if (statementInOwnAssertion || response.getAssertions().isEmpty()) {
-            assertion = SAML1ActionSupport.addAssertionToResponse(this, relyingPartyContext, response);
+            return SAML1ActionSupport.addAssertionToResponse(this, relyingPartyCtx, response);
         } else {
-            assertion = response.getAssertions().get(0);
+            return response.getAssertions().get(0);
         }
-
-        return assertion;
     }
 
     /**
-     * Builds the {@link AuthenticationStatement} to be added to the {@link Response}.
+     * Build the {@link AuthenticationStatement} to be added to the {@link Response}.
      * 
      * @param profileRequestContext current request context
      * 
-     * @return the authentication statement or null if no {@link AuthenticationContext} is available
+     * @return the authentication statement
      */
-    private AuthenticationStatement buildAuthenticationStatement(
-            final ProfileRequestContext<Object, Response> profileRequestContext) {
-        final AuthenticationContext authnCtx =
-                profileRequestContext.getSubcontext(AuthenticationContext.class, false);
-        if (authnCtx == null) {
-            log.debug("Action {}: Not AuthenticationRequestContext available, nothing left to do", getId());
-            return null;
-        }
+    @Nonnull private AuthenticationStatement buildAuthenticationStatement(
+            @Nonnull final ProfileRequestContext profileRequestContext) {
 
-        final SAMLObjectBuilder<AuthenticationStatement> statementBuilder =
-                (SAMLObjectBuilder<AuthenticationStatement>) XMLObjectProviderRegistrySupport.getBuilderFactory()
-                        .getBuilder(AuthenticationStatement.TYPE_NAME);
+        final SAMLObjectBuilder<AuthenticationStatement> statementBuilder = (SAMLObjectBuilder<AuthenticationStatement>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<AuthenticationStatement>getBuilderOrThrow(
+                        AuthenticationStatement.TYPE_NAME);
 
         final AuthenticationStatement statement = statementBuilder.buildObject();
-        statement.setAuthenticationInstant(new DateTime(authnCtx.getCompletionInstant()));
-        statement.setAuthenticationMethod(authnCtx.getAttemptedFlow().getId());
+        statement.setAuthenticationInstant(new DateTime(authenticationResult.getAuthenticationInstant()));
+        statement.setAuthenticationMethod(methodLookupStrategy.apply(profileRequestContext).getName());
         return statement;
     }
+    
 }

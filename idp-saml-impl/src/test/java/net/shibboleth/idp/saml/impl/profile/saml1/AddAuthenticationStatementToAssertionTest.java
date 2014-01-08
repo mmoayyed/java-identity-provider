@@ -17,95 +17,74 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
-import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
+import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.IdPEventIds;
 
+import org.opensaml.profile.action.ActionTestingSupport;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.profile.RequestContextBuilder;
-import net.shibboleth.idp.saml.profile.SAMLEventIds;
+import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.idp.saml.profile.saml1.SAML1ActionTestingSupport;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.AuthenticationStatement;
 import org.opensaml.saml.saml1.core.Response;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.test.MockRequestContext;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link AddAuthenticationStatementToAssertion} unit test. */
 public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
 
+    private AddAuthenticationStatementToAssertion action;
+    
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
+        action = new AddAuthenticationStatementToAssertion();
+        action.initialize();
+    }
+    
+    /** Test that the action errors out properly if there is no authentication context. */
+    @Test public void testNoAuthnContext() throws Exception {
+        ProfileRequestContext profileCtx = new ProfileRequestContext();
+
+        action.execute(profileCtx);
+        ActionTestingSupport.assertEvent(profileCtx, AuthnEventIds.INVALID_AUTHN_CTX);
+    }
+
     /** Test that the action errors out properly if there is no relying party context. */
     @Test public void testNoRelyingPartyContext() throws Exception {
         ProfileRequestContext profileCtx = new ProfileRequestContext();
+        profileCtx.getSubcontext(AuthenticationContext.class, true);
 
-        AddAuthenticationStatementToAssertion action = new AddAuthenticationStatementToAssertion();
-        action.setId("test");
-        action.initialize();
-
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
-
-        ActionTestingSupport.assertEvent(result, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+        action.execute(profileCtx);
+        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_RELYING_PARTY_CTX);
     }
 
     /** Test that the action errors out properly if there is no response. */
     @Test public void testNoResponse() throws Exception {
         ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
+        profileCtx.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
+                new AuthenticationResult("Test", new AuthenticationMethodPrincipal("Test")));
 
-        AddAuthenticationStatementToAssertion action = new AddAuthenticationStatementToAssertion();
-        action.setId("test");
-        action.initialize();
-
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
-
-        ActionTestingSupport.assertEvent(result, SAMLEventIds.NO_RESPONSE);
+        action.execute(profileCtx);
+        ActionTestingSupport.assertEvent(profileCtx, EventIds.INVALID_MSG_CTX);
     }
 
-    /** Test that the action proceeds properly returning no assertions if there is no authentication context. */
+    /** Test that the action proceeds properly returning no assertions if there is no authentication result. */
     @Test public void testNoAuthenticationStatement() throws Exception {
         ProfileRequestContext profileCtx =
                 new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
                         .buildProfileRequestContext();
+        profileCtx.getSubcontext(AuthenticationContext.class, true);
 
-        AddAuthenticationStatementToAssertion action = new AddAuthenticationStatementToAssertion();
-        action.setId("test");
-        action.initialize();
-
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
-
-        ActionTestingSupport.assertProceedEvent(result);
-
-        Assert.assertNotNull(profileCtx.getOutboundMessageContext().getMessage());
-        Assert.assertTrue(profileCtx.getOutboundMessageContext().getMessage() instanceof Response);
-
-        Response response = (Response) profileCtx.getOutboundMessageContext().getMessage();
-        Assert.assertEquals(response.getAssertions().size(), 0);
-    }
-
-    /** Test that the action throws an exception if the authentication context lacks an attempted workflow. */
-    @Test public void testNoAttemptedWorkflow() throws Exception {
-        ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
-                        .buildProfileRequestContext();
-
-        AuthenticationContext authCtx = new AuthenticationContext();
-        profileCtx.addSubcontext(authCtx);
-
-        AddAuthenticationStatementToAssertion action = new AddAuthenticationStatementToAssertion();
-        action.setId("test");
-        action.initialize();
-
-        try {
-            action.doExecute(new MockRequestContext(), profileCtx);
-            Assert.fail();
-        } catch (NullPointerException e) {
-            // ok
-        }
+        action.execute(profileCtx);
+        ActionTestingSupport.assertEvent(profileCtx, AuthnEventIds.INVALID_AUTHN_CTX);
     }
 
     /** Test that the authentication statement is properly added. */
@@ -114,23 +93,15 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
                 new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
                         .buildProfileRequestContext();
 
-        AuthenticationContext authCtx = new AuthenticationContext();
-        authCtx.setAttemptedFlow(new AuthenticationFlowDescriptor("test"));
-
         long now = System.currentTimeMillis();
         // this is here to allow the event's creation time to deviate from the 'start' time
         Thread.sleep(50);
-        authCtx.setCompletionInstant();
+        
+        profileCtx.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
+                new AuthenticationResult("Test", new AuthenticationMethodPrincipal("Test")));
 
-        profileCtx.addSubcontext(authCtx);
-
-        AddAuthenticationStatementToAssertion action = new AddAuthenticationStatementToAssertion();
-        action.setId("test");
-        action.initialize();
-
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
-
-        ActionTestingSupport.assertProceedEvent(result);
+        action.execute(profileCtx);
+        ActionTestingSupport.assertProceedEvent(profileCtx);
 
         Assert.assertNotNull(profileCtx.getOutboundMessageContext().getMessage());
         Assert.assertTrue(profileCtx.getOutboundMessageContext().getMessage() instanceof Response);
@@ -145,6 +116,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
 
         AuthenticationStatement authenticationStatement = assertion.getAuthenticationStatements().get(0);
         Assert.assertTrue(authenticationStatement.getAuthenticationInstant().getMillis() > now);
-        Assert.assertEquals(authenticationStatement.getAuthenticationMethod(), "test");
+        Assert.assertEquals(authenticationStatement.getAuthenticationMethod(), "Test");
     }
+    
 }
