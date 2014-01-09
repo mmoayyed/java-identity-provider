@@ -25,6 +25,7 @@ import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.principal.DefaultPrincipalDeterminationStrategy;
 import net.shibboleth.idp.profile.IdPEventIds;
 
@@ -66,8 +67,8 @@ import com.google.common.base.Functions;
  * 
  * <p>The {@link AuthenticationStatement} will have its authentication instant set, based on
  * {@link AuthenticationResult#getAuthenticationInstant()} via {@link AuthenticationContext#getAuthenticationResult()}.
- * The method property will be set via an injected or defaulted function that obtains an
- * {@link AuthenticationMethodPrincipal} from the profile context.</p>
+ * The method property will be set via {@link RequestedPrincipalContext#getMatchingPrincipal()}, or via an injected
+ * or defaulted function that obtains an {@link AuthenticationMethodPrincipal} from the profile context.</p>
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_MSG_CTX}
@@ -206,7 +207,9 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
         final Assertion assertion = getStatementAssertion();
-        assertion.getAuthenticationStatements().add(buildAuthenticationStatement(profileRequestContext));
+        final AuthenticationStatement statement = buildAuthenticationStatement(profileRequestContext,
+                authenticationContext.getSubcontext(RequestedPrincipalContext.class, false)); 
+        assertion.getAuthenticationStatements().add(statement);
 
         log.debug("{} Added AuthenticationStatement to assertion {}", getLogPrefix(), assertion.getID());
     }
@@ -228,11 +231,13 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
      * Build the {@link AuthenticationStatement} to be added to the {@link Response}.
      * 
      * @param profileRequestContext current request context
+     * @param requestedPrincipalContext context specifying request requirements for authn method
      * 
      * @return the authentication statement
      */
     @Nonnull private AuthenticationStatement buildAuthenticationStatement(
-            @Nonnull final ProfileRequestContext profileRequestContext) {
+            @Nonnull final ProfileRequestContext profileRequestContext,
+            @Nullable final RequestedPrincipalContext requestedPrincipalContext) {
 
         final SAMLObjectBuilder<AuthenticationStatement> statementBuilder = (SAMLObjectBuilder<AuthenticationStatement>)
                 XMLObjectProviderRegistrySupport.getBuilderFactory().<AuthenticationStatement>getBuilderOrThrow(
@@ -240,7 +245,12 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
 
         final AuthenticationStatement statement = statementBuilder.buildObject();
         statement.setAuthenticationInstant(new DateTime(authenticationResult.getAuthenticationInstant()));
-        statement.setAuthenticationMethod(methodLookupStrategy.apply(profileRequestContext).getName());
+        
+        if (requestedPrincipalContext != null && requestedPrincipalContext.getMatchingPrincipal() != null) {
+            statement.setAuthenticationMethod(requestedPrincipalContext.getMatchingPrincipal().getName());
+        } else {
+            statement.setAuthenticationMethod(methodLookupStrategy.apply(profileRequestContext).getName());
+        }
         return statement;
     }
     

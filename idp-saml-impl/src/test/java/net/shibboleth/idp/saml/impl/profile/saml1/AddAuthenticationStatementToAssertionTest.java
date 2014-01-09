@@ -17,9 +17,15 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
+import java.security.Principal;
+import java.util.Collections;
+
+import javax.security.auth.Subject;
+
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.profile.IdPEventIds;
 
 import org.opensaml.profile.action.ActionTestingSupport;
@@ -51,7 +57,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
     
     /** Test that the action errors out properly if there is no authentication context. */
     @Test public void testNoAuthnContext() throws Exception {
-        ProfileRequestContext profileCtx = new ProfileRequestContext();
+        final ProfileRequestContext profileCtx = new ProfileRequestContext();
 
         action.execute(profileCtx);
         ActionTestingSupport.assertEvent(profileCtx, AuthnEventIds.INVALID_AUTHN_CTX);
@@ -59,7 +65,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
 
     /** Test that the action errors out properly if there is no relying party context. */
     @Test public void testNoRelyingPartyContext() throws Exception {
-        ProfileRequestContext profileCtx = new ProfileRequestContext();
+        final ProfileRequestContext profileCtx = new ProfileRequestContext();
         profileCtx.getSubcontext(AuthenticationContext.class, true);
 
         action.execute(profileCtx);
@@ -68,7 +74,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
 
     /** Test that the action errors out properly if there is no response. */
     @Test public void testNoResponse() throws Exception {
-        ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
+        final ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
         profileCtx.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
                 new AuthenticationResult("Test", new AuthenticationMethodPrincipal("Test")));
 
@@ -78,7 +84,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
 
     /** Test that the action proceeds properly returning no assertions if there is no authentication result. */
     @Test public void testNoAuthenticationStatement() throws Exception {
-        ProfileRequestContext profileCtx =
+        final ProfileRequestContext profileCtx =
                 new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
                         .buildProfileRequestContext();
         profileCtx.getSubcontext(AuthenticationContext.class, true);
@@ -89,11 +95,11 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
 
     /** Test that the authentication statement is properly added. */
     @Test public void testAddAuthenticationStatement() throws Exception {
-        ProfileRequestContext profileCtx =
+        final ProfileRequestContext profileCtx =
                 new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
                         .buildProfileRequestContext();
 
-        long now = System.currentTimeMillis();
+        final long now = System.currentTimeMillis();
         // this is here to allow the event's creation time to deviate from the 'start' time
         Thread.sleep(50);
         
@@ -106,7 +112,42 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         Assert.assertNotNull(profileCtx.getOutboundMessageContext().getMessage());
         Assert.assertTrue(profileCtx.getOutboundMessageContext().getMessage() instanceof Response);
 
-        Response response = (Response) profileCtx.getOutboundMessageContext().getMessage();
+        final Response response = (Response) profileCtx.getOutboundMessageContext().getMessage();
+        Assert.assertEquals(response.getAssertions().size(), 1);
+        Assert.assertNotNull(response.getAssertions().get(0));
+
+        final Assertion assertion = response.getAssertions().get(0);
+        Assert.assertEquals(assertion.getAuthenticationStatements().size(), 1);
+        Assert.assertNotNull(assertion.getAuthenticationStatements().get(0));
+
+        final AuthenticationStatement authenticationStatement = assertion.getAuthenticationStatements().get(0);
+        Assert.assertTrue(authenticationStatement.getAuthenticationInstant().getMillis() > now);
+        Assert.assertEquals(authenticationStatement.getAuthenticationMethod(), "Test");
+    }
+    
+    /** Test that the authentication statement is properly added with the right method. */
+    @Test public void testAddAuthenticationStatementAndMethod() throws Exception {
+        final ProfileRequestContext profileCtx =
+                new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
+                        .buildProfileRequestContext();
+
+        final Subject subject = new Subject();
+        subject.getPrincipals().add(new AuthenticationMethodPrincipal("Foo"));
+        subject.getPrincipals().add(new AuthenticationMethodPrincipal("Bar"));
+        profileCtx.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
+                new AuthenticationResult("Test", subject));
+        final RequestedPrincipalContext requested = new RequestedPrincipalContext("Test",
+                Collections.<Principal>singletonList(new AuthenticationMethodPrincipal("Bar")));
+        requested.setMatchingPrincipal(requested.getRequestedPrincipals().get(0));
+        profileCtx.getSubcontext(AuthenticationContext.class, false).addSubcontext(requested);
+        
+        action.execute(profileCtx);
+        ActionTestingSupport.assertProceedEvent(profileCtx);
+
+        Assert.assertNotNull(profileCtx.getOutboundMessageContext().getMessage());
+        Assert.assertTrue(profileCtx.getOutboundMessageContext().getMessage() instanceof Response);
+
+        final Response response = (Response) profileCtx.getOutboundMessageContext().getMessage();
         Assert.assertEquals(response.getAssertions().size(), 1);
         Assert.assertNotNull(response.getAssertions().get(0));
 
@@ -114,9 +155,8 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         Assert.assertEquals(assertion.getAuthenticationStatements().size(), 1);
         Assert.assertNotNull(assertion.getAuthenticationStatements().get(0));
 
-        AuthenticationStatement authenticationStatement = assertion.getAuthenticationStatements().get(0);
-        Assert.assertTrue(authenticationStatement.getAuthenticationInstant().getMillis() > now);
-        Assert.assertEquals(authenticationStatement.getAuthenticationMethod(), "Test");
+        final AuthenticationStatement authenticationStatement = assertion.getAuthenticationStatements().get(0);
+        Assert.assertEquals(authenticationStatement.getAuthenticationMethod(), "Bar");
     }
     
 }
