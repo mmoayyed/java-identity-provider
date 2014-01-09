@@ -72,7 +72,7 @@ public class RequestedPrincipalContext extends BaseContext {
      */
     public RequestedPrincipalContext(@Nonnull @NotEmpty final String operator,
             @Nonnull @NotEmpty @NonnullElements final List<Principal> principals) {
-        Constraint.isNotEmpty(principals, "Principal list cannot be null");
+        Constraint.isNotEmpty(principals, "Principal list cannot be null or empty");
         
         operatorString = Constraint.isNotNull(StringSupport.trimOrNull(operator), "Operator cannot be null or empty");
         requestedPrincipals = Lists.newArrayList(Collections2.filter(principals, Predicates.notNull()));
