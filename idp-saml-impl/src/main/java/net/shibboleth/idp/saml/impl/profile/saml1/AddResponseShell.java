@@ -106,25 +106,25 @@ public class AddResponseShell extends AbstractProfileAction<Object, Response> {
         
         final MessageContext<Response> outboundMessageCtx = profileRequestContext.getOutboundMessageContext();
         if (outboundMessageCtx == null) {
-            log.error("{} Outbound message context did not exist", getLogPrefix());
+            log.debug("{} Outbound message context did not exist", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
             return false;
         } else if (outboundMessageCtx.getMessage() != null) {
-            log.error("{} Outbound message context already contains a Response", getLogPrefix());
+            log.debug("{} Outbound message context already contains a Response", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
             return false;
         }
 
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyCtx == null) {
-            log.error("{} No relying party context located in current profile request context", getLogPrefix());
+            log.debug("{} No relying party context located in current profile request context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
             return false;
         }
 
         profileConfig = relyingPartyCtx.getProfileConfig();
         if (profileConfig == null || profileConfig.getSecurityConfiguration() == null) {
-            log.error("{} No profile/security configuration located in current relying party context", getLogPrefix());
+            log.debug("{} No profile/security configuration located in current relying party context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
             return false;
         }

@@ -17,11 +17,14 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml2;
 
-import net.shibboleth.idp.profile.ActionTestingSupport;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.action.ActionTestingSupport;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
+
 import net.shibboleth.idp.profile.RequestContextBuilder;
-import net.shibboleth.idp.saml.profile.SAMLEventIds;
 import net.shibboleth.idp.saml.profile.saml2.SAML2ActionTestingSupport;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
@@ -30,61 +33,59 @@ import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link AddResponseShell} unit test. */
 public class AddResponseShellTest extends OpenSAMLInitBaseTestCase {
 
-    @Test public void testAddResponse() throws Exception {
-        RequestContext springRequestContext =
-                new RequestContextBuilder().setRelyingPartyProfileConfigurations(
-                        SAML2ActionTestingSupport.buildProfileConfigurations()).buildRequestContext();
-
-        AddResponseShell action = new AddResponseShell();
-        action.setId("test");
+    private AddResponseShell action;
+    
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
+        action = new AddResponseShell();
         action.initialize();
-        Event result = action.execute(springRequestContext);
-        ActionTestingSupport.assertProceedEvent(result);
+    }
+    
+    @Test public void testAddResponse() throws ProfileException {
+        final ProfileRequestContext prc =
+                new RequestContextBuilder().setRelyingPartyProfileConfigurations(
+                        SAML2ActionTestingSupport.buildProfileConfigurations()).buildProfileRequestContext();
 
-        ProfileRequestContext<Object, Response> profileRequestContext =
-                (ProfileRequestContext<Object, Response>) springRequestContext.getConversationScope().get(
-                        ProfileRequestContext.BINDING_KEY);
-        MessageContext<Response> outMsgCtx = profileRequestContext.getOutboundMessageContext();
-        Response response = outMsgCtx.getMessage();
+        action.execute(prc);
+        ActionTestingSupport.assertProceedEvent(prc);
+
+        final MessageContext<Response> outMsgCtx = prc.getOutboundMessageContext();
+        final Response response = outMsgCtx.getMessage();
 
         Assert.assertNotNull(response);
         Assert.assertNotNull(response.getID());
         Assert.assertNotNull(response.getIssueInstant());
         Assert.assertEquals(response.getVersion(), SAMLVersion.VERSION_20);
+        
+        Assert.assertNotNull(response.getIssuer());
+        Assert.assertEquals(response.getIssuer().getValue(), ActionTestingSupport.OUTBOUND_MSG_ISSUER);
 
-        Status status = response.getStatus();
+        final Status status = response.getStatus();
         Assert.assertNotNull(status);
         Assert.assertNotNull(status.getStatusCode());
         Assert.assertEquals(status.getStatusCode().getValue(), StatusCode.SUCCESS_URI);
 
-        BasicMessageMetadataContext messageMetadata = outMsgCtx.getSubcontext(BasicMessageMetadataContext.class, false);
+        final BasicMessageMetadataContext messageMetadata =
+                outMsgCtx.getSubcontext(BasicMessageMetadataContext.class, false);
         Assert.assertNotNull(messageMetadata);
         Assert.assertEquals(messageMetadata.getMessageId(), response.getID());
         Assert.assertEquals(messageMetadata.getMessageIssueInstant(), response.getIssueInstant().getMillis());
     }
 
-    @Test public void testAddResponseWhenResponseAlreadyExist() throws Exception {
-        RequestContext springRequestContext =
+    @Test public void testAddResponseWhenResponseAlreadyExist() throws ProfileException {
+        ProfileRequestContext prc =
                 new RequestContextBuilder().setOutboundMessage(SAML2ActionTestingSupport.buildResponse())
                         .setRelyingPartyProfileConfigurations(SAML2ActionTestingSupport.buildProfileConfigurations())
-                        .buildRequestContext();
+                        .buildProfileRequestContext();
 
-        AddResponseShell action = new AddResponseShell();
-        action.setId("test");
-        action.initialize();
-
-        Event result = action.execute(springRequestContext);
-
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), SAMLEventIds.RESPONSE_EXISTS);
+        action.execute(prc);
+        ActionTestingSupport.assertEvent(prc, EventIds.INVALID_MSG_CTX);
     }
+
 }

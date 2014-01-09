@@ -18,77 +18,80 @@
 package net.shibboleth.idp.saml.impl.profile.saml2;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import net.shibboleth.ext.spring.webflow.Event;
-import net.shibboleth.ext.spring.webflow.Events;
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
-import net.shibboleth.idp.saml.profile.SAMLEventIds;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
+import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.action.AbstractProfileAction;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.SAMLVersion;
+import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
 /**
- * A profile action that creates a {@link Response}, adds a {@link StatusCode#SUCCESS} status to it, and sets it as the
- * message for the {@link ProfileRequestContext#getOutboundMessageContext()}.
+ * Action that creates an empty {@link Response}, and sets it as the
+ * message returned by {@link ProfileRequestContext#getOutboundMessageContext()}.
+ * 
+ * <p>The {@link Status} is set to {@link StatusCode#SUCCESS_URI} as a default assumption,
+ * and this can be overridden by subsequent actions.</p>
+ * 
+ * <p>If the {@link RelyingPartyContext} contains a responder identity (via
+ * {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration#getResponderEntityId()},
+ * it is set as the Issuer of the message.
+ * 
+ * @event {@link EventIds#PROCEED_EVENT_ID}
+ * @event {@link EventIds#INVALID_MSG_CTX}
+ * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
+ * @event {@link IdPEventIds#INVALID_PROFILE_CONFIG}
+ * 
+ * @post ProfileRequestContext.getOutboundMessageContext().getMessage() != null
+ * @post ProfileRequestContext.getOutboundMessageContext().getSubcontext(
+ *  BasicMessageMetadataContext.class, false) != null
  */
-@Events({
-        @Event(id = org.opensaml.profile.action.EventIds.PROCEED_EVENT_ID),
-        @Event(id = IdPEventIds.INVALID_RELYING_PARTY_CTX, description = "No relying party context available"),
-        @Event(id = SAMLEventIds.RESPONSE_EXISTS,
-                description = "If the outgoing message context already contains a message")})
 public class AddResponseShell extends AbstractProfileAction<Object, Response> {
 
     /** Class logger. */
-    private Logger log = LoggerFactory.getLogger(AddResponseShell.class);
+    @Nonnull private Logger log = LoggerFactory.getLogger(AddResponseShell.class);
 
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
      */
-    private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
 
+    /** Profile configuration for request. */
+    @Nullable private ProfileConfiguration profileConfig; 
+
+    /** EntityID to populate into Issuer element. */
+    @Nullable private String issuerId;
+    
     /** Constructor. */
     public AddResponseShell() {
-        super();
-
-        relyingPartyContextLookupStrategy =
-                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class, false);
+        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
     }
 
     /**
-     * Gets the strategy used to locate the {@link RelyingPartyContext} associated with a given
-     * {@link ProfileRequestContext}.
-     * 
-     * @return strategy used to locate the {@link RelyingPartyContext} associated with a given
-     *         {@link ProfileRequestContext}
-     */
-    @Nonnull public Function<ProfileRequestContext, RelyingPartyContext> getRelyingPartyContextLookupStrategy() {
-        return relyingPartyContextLookupStrategy;
-    }
-
-    /**
-     * Sets the strategy used to locate the {@link RelyingPartyContext} associated with a given
+     * Set the strategy used to locate the {@link RelyingPartyContext} associated with a given
      * {@link ProfileRequestContext}.
      * 
      * @param strategy strategy used to locate the {@link RelyingPartyContext} associated with a given
@@ -99,34 +102,58 @@ public class AddResponseShell extends AbstractProfileAction<Object, Response> {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         relyingPartyContextLookupStrategy =
-                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy can not be null");
+                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
-
+    
     /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event doExecute(@Nonnull final RequestContext springRequestContext,
-            @Nonnull final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
-
+    @Override
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext<Object, Response> profileRequestContext)
+            throws ProfileException {
+        
         final MessageContext<Response> outboundMessageCtx = profileRequestContext.getOutboundMessageContext();
-        if (outboundMessageCtx.getMessage() != null) {
-            log.error("Action {}: Outbound message context already contains a Response", getId());
-            return ActionSupport.buildEvent(this, SAMLEventIds.RESPONSE_EXISTS);
+        if (outboundMessageCtx == null) {
+            log.debug("{} Outbound message context did not exist", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
+            return false;
+        } else if (outboundMessageCtx.getMessage() != null) {
+            log.debug("{} Outbound message context already contains a Response", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
+            return false;
         }
 
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyCtx == null) {
-            log.error("Action {}: No relying party context located in current profile request context", getId());
-            return ActionSupport.buildEvent(this, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+            log.debug("{} No relying party context located in current profile request context", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+            return false;
+        }
+        
+        if (relyingPartyCtx.getConfiguration() != null) {
+            issuerId = relyingPartyCtx.getConfiguration().getResponderEntityId();
         }
 
+        profileConfig = relyingPartyCtx.getProfileConfig();
+        if (profileConfig == null || profileConfig.getSecurityConfiguration() == null) {
+            log.debug("{} No profile/security configuration located in current relying party context", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
+            return false;
+        }
+        
+        return super.doPreExecute(profileRequestContext);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void doExecute(@Nonnull final ProfileRequestContext<Object, Response> profileRequestContext)
+            throws ProfileException {
+
+        final XMLObjectBuilderFactory bf = XMLObjectProviderRegistrySupport.getBuilderFactory();
         final SAMLObjectBuilder<StatusCode> statusCodeBuilder =
-                (SAMLObjectBuilder<StatusCode>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
-                        StatusCode.TYPE_NAME);
+                (SAMLObjectBuilder<StatusCode>) bf.<StatusCode>getBuilderOrThrow(StatusCode.TYPE_NAME);
         final SAMLObjectBuilder<Status> statusBuilder =
-                (SAMLObjectBuilder<Status>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
-                        Status.TYPE_NAME);
+                (SAMLObjectBuilder<Status>) bf.<Status>getBuilderOrThrow(Status.TYPE_NAME);
         final SAMLObjectBuilder<Response> responseBuilder =
-                (SAMLObjectBuilder<Response>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
-                        Response.DEFAULT_ELEMENT_NAME);
+                (SAMLObjectBuilder<Response>) bf.<Response>getBuilderOrThrow(Response.DEFAULT_ELEMENT_NAME);
 
         final StatusCode statusCode = statusCodeBuilder.buildObject();
         statusCode.setValue(StatusCode.SUCCESS_URI);
@@ -135,25 +162,32 @@ public class AddResponseShell extends AbstractProfileAction<Object, Response> {
         status.setStatusCode(statusCode);
 
         final Response response = responseBuilder.buildObject();
-        ProfileConfiguration profileConfiguration = relyingPartyCtx.getProfileConfig();
-        if (profileConfiguration == null) {
-            log.error("Action {}: No profile configuration located in current relying party context", getId());
-            return ActionSupport.buildEvent(this, IdPEventIds.INVALID_RELYING_PARTY_CTX);
-        }
 
-        response.setID(profileConfiguration.getSecurityConfiguration().getIdGenerator().generateIdentifier());
+        response.setID(profileConfig.getSecurityConfiguration().getIdGenerator().generateIdentifier());
         response.setIssueInstant(new DateTime(ISOChronology.getInstanceUTC()));
         response.setStatus(status);
         response.setVersion(SAMLVersion.VERSION_20);
+        
+        if (issuerId != null) {
+            log.debug("{} Setting Issuer to responder ID {}", getLogPrefix(), issuerId);
+            final SAMLObjectBuilder<Issuer> issuerBuilder =
+                    (SAMLObjectBuilder<Issuer>) bf.<Issuer>getBuilderOrThrow(Issuer.DEFAULT_ELEMENT_NAME);
+            final Issuer issuer = issuerBuilder.buildObject();
+            issuer.setValue(issuerId);
+            response.setIssuer(issuer);
+        } else {
+            log.debug("{} No responder ID available, leaving Issuer unset", getLogPrefix());
+        }
 
-        outboundMessageCtx.setMessage(response);
+        profileRequestContext.getOutboundMessageContext().setMessage(response);
 
-        BasicMessageMetadataContext messageMetadata = new BasicMessageMetadataContext();
+        // TODO: Should this be here? Are other contexts also needed?
+        final BasicMessageMetadataContext messageMetadata = new BasicMessageMetadataContext();
         messageMetadata.setMessageId(response.getID());
         messageMetadata.setMessageIssueInstant(response.getIssueInstant().getMillis());
+        messageMetadata.setMessageIssuer(issuerId);
 
-        outboundMessageCtx.addSubcontext(messageMetadata);
-
-        return ActionSupport.buildProceedEvent(this);
+        profileRequestContext.getOutboundMessageContext().addSubcontext(messageMetadata);
     }
+    
 }
