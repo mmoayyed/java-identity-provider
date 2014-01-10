@@ -73,6 +73,7 @@ import com.google.common.base.Functions;
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_MSG_CTX}
  * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
+ * @event {@link IdPEventIds#INVALID_PROFILE_CONFIG}
  * @event {@link AuthnEventIds#INVALID_AUTHN_CTX}
  */
 public class AddAuthenticationStatementToAssertion extends AbstractAuthenticationAction<Object, Response> {
@@ -180,6 +181,11 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
         if (relyingPartyCtx == null) {
             log.debug("{} No relying party context located in current profile request context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+            return false;
+        } else if (relyingPartyCtx.getProfileConfig() == null
+                || relyingPartyCtx.getProfileConfig().getSecurityConfiguration() == null) {
+            log.debug("{} No profile configuration located in relying party context", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
             return false;
         }
         
