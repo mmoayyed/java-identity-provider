@@ -39,6 +39,7 @@ import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
+import net.shibboleth.idp.saml.profile.config.saml2.BrowserSSOProfileConfiguration;
 import net.shibboleth.idp.saml.profile.saml2.SAML2ActionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -75,9 +76,12 @@ import com.google.common.base.Functions;
  * The {@link AuthnContext} will be set via {@link RequestedPrincipalContext#getMatchingPrincipal()}, or via an injected
  * or defaulted function that obtains a custom principal from the profile context.</p>
  * 
+ * <p>The SessionIndex and optionally SessionNotOnOrAfter attributes will also be set.</p>
+ * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_MSG_CTX}
  * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
+ * @event {@link IdPEventIds#INVALID_PROFILE_CONFIG}
  * @event {@link AuthnEventIds#INVALID_AUTHN_CTX}
  */
 public class AddAuthnStatementToAssertion extends AbstractAuthenticationAction<Object, Response> {
@@ -187,6 +191,11 @@ public class AddAuthnStatementToAssertion extends AbstractAuthenticationAction<O
             log.debug("{} No relying party context located in current profile request context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
             return false;
+        } else if (relyingPartyCtx.getProfileConfig() == null
+                || relyingPartyCtx.getProfileConfig().getSecurityConfiguration() == null) {
+            log.debug("{} No profile configuration located in relying party context", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
+            return false;
         }
         
         authenticationResult = authenticationContext.getAuthenticationResult();
@@ -273,6 +282,19 @@ public class AddAuthnStatementToAssertion extends AbstractAuthenticationAction<O
             authnContext.setAuthnContextClassRef(
                     classRefLookupStrategy.apply(profileRequestContext).getAuthnContextClassRef());
         }
+        
+        if (relyingPartyCtx.getProfileConfig() != null &&
+                relyingPartyCtx.getProfileConfig() instanceof BrowserSSOProfileConfiguration) {
+            final BrowserSSOProfileConfiguration profileConfig =
+                    (BrowserSSOProfileConfiguration) relyingPartyCtx.getProfileConfig();
+            if (profileConfig.getMaximumSPSessionLifetime() > 0) {
+                statement.setSessionNotOnOrAfter(new DateTime().plus(profileConfig.getMaximumSPSessionLifetime()));
+            }
+        }
+        
+        statement.setSessionIndex(
+                relyingPartyCtx.getProfileConfig().getSecurityConfiguration().getIdGenerator().generateIdentifier());
+        
         return statement;
     }    
 }

@@ -33,7 +33,10 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
+import net.shibboleth.idp.saml.profile.config.saml2.BrowserSSOProfileConfiguration;
 import net.shibboleth.idp.saml.profile.saml2.SAML2ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -123,11 +126,35 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
 
         final AuthnStatement authenticationStatement = assertion.getAuthnStatements().get(0);
         Assert.assertTrue(authenticationStatement.getAuthnInstant().getMillis() > now);
+        Assert.assertNotNull(authenticationStatement.getSessionIndex());
+        Assert.assertNull(authenticationStatement.getSessionNotOnOrAfter());
         
         final AuthnContext authnContext = authenticationStatement.getAuthnContext();
         Assert.assertNotNull(authnContext);
         Assert.assertNotNull(authnContext.getAuthnContextClassRef());
         Assert.assertEquals(authnContext.getAuthnContextClassRef().getAuthnContextClassRef(), "Test");
+    }
+
+    /** Test that the authentication statement is properly added. */
+    @Test public void testSessionNotOnOrAfter() throws Exception {
+        final BrowserSSOProfileConfiguration ssoConfig = new BrowserSSOProfileConfiguration();
+        ssoConfig.setMaximumSPSessionLifetime(60 * 60 * 1000);
+        ssoConfig.setSecurityConfiguration(new SecurityConfiguration());
+        final ProfileRequestContext profileCtx =
+                new RequestContextBuilder().setOutboundMessage(SAML2ActionTestingSupport.buildResponse())
+                    .setRelyingPartyProfileConfigurations(
+                            Collections.<ProfileConfiguration>singleton(ssoConfig)).buildProfileRequestContext();
+
+        profileCtx.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
+                new AuthenticationResult("Test", new AuthnContextClassRefPrincipal("Test")));
+
+        action.execute(profileCtx);
+        ActionTestingSupport.assertProceedEvent(profileCtx);
+
+        final Response response = (Response) profileCtx.getOutboundMessageContext().getMessage();
+        final Assertion assertion = response.getAssertions().get(0);
+        final AuthnStatement authenticationStatement = assertion.getAuthnStatements().get(0);
+        Assert.assertNotNull(authenticationStatement.getSessionNotOnOrAfter());
     }
     
     /** Test that the authentication statement is properly added with the right method. */
