@@ -41,6 +41,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.joda.time.DateTime;
+import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.MessageLookup;
@@ -48,6 +49,7 @@ import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.AuthenticationStatement;
 import org.opensaml.saml.saml1.core.Response;
+import org.opensaml.saml.saml1.core.SubjectLocality;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -245,9 +247,11 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nullable final RequestedPrincipalContext requestedPrincipalContext) {
 
+        final XMLObjectBuilderFactory bf = XMLObjectProviderRegistrySupport.getBuilderFactory();
         final SAMLObjectBuilder<AuthenticationStatement> statementBuilder = (SAMLObjectBuilder<AuthenticationStatement>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<AuthenticationStatement>getBuilderOrThrow(
-                        AuthenticationStatement.TYPE_NAME);
+                bf.<AuthenticationStatement>getBuilderOrThrow(AuthenticationStatement.TYPE_NAME);
+        final SAMLObjectBuilder<SubjectLocality> localityBuilder = (SAMLObjectBuilder<SubjectLocality>)
+                bf.<SubjectLocality>getBuilderOrThrow(SubjectLocality.TYPE_NAME);
 
         final AuthenticationStatement statement = statementBuilder.buildObject();
         statement.setAuthenticationInstant(new DateTime(authenticationResult.getAuthenticationInstant()));
@@ -257,6 +261,15 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
         } else {
             statement.setAuthenticationMethod(methodLookupStrategy.apply(profileRequestContext).getName());
         }
+        
+        if (getHttpServletRequest() != null) {
+            final SubjectLocality locality = localityBuilder.buildObject();
+            locality.setIPAddress(getHttpServletRequest().getRemoteAddr());
+            statement.setSubjectLocality(locality);
+        } else {
+            log.debug("{} HttpServletRequest not available, omitting SubjectLocality element", getLogPrefix());
+        }
+        
         return statement;
     }
     

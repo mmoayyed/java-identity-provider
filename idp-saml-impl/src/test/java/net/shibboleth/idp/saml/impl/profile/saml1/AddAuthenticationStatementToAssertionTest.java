@@ -41,6 +41,7 @@ import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.AuthenticationStatement;
 import org.opensaml.saml.saml1.core.Response;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -52,6 +53,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
     
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         action = new AddAuthenticationStatementToAssertion();
+        action.setHttpServletRequest(new MockHttpServletRequest());
         action.initialize();
     }
     
@@ -106,6 +108,8 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         profileCtx.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
                 new AuthenticationResult("Test", new AuthenticationMethodPrincipal("Test")));
 
+        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr("127.0.0.1");
+        
         action.execute(profileCtx);
         ActionTestingSupport.assertProceedEvent(profileCtx);
 
@@ -123,6 +127,9 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         final AuthenticationStatement authenticationStatement = assertion.getAuthenticationStatements().get(0);
         Assert.assertTrue(authenticationStatement.getAuthenticationInstant().getMillis() > now);
         Assert.assertEquals(authenticationStatement.getAuthenticationMethod(), "Test");
+        
+        Assert.assertNotNull(authenticationStatement.getSubjectLocality());
+        Assert.assertEquals(authenticationStatement.getSubjectLocality().getIPAddress(), "127.0.0.1");
     }
     
     /** Test that the authentication statement is properly added with the right method. */

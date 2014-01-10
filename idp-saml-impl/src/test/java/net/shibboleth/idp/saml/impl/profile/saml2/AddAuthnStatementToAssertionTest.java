@@ -45,6 +45,7 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Response;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -56,6 +57,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
     
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         action = new AddAuthnStatementToAssertion();
+        action.setHttpServletRequest(new MockHttpServletRequest());
         action.initialize();
     }
     
@@ -109,6 +111,8 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         
         profileCtx.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
                 new AuthenticationResult("Test", new AuthnContextClassRefPrincipal("Test")));
+        
+        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr("127.0.0.1");
 
         action.execute(profileCtx);
         ActionTestingSupport.assertProceedEvent(profileCtx);
@@ -128,6 +132,9 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         Assert.assertTrue(authenticationStatement.getAuthnInstant().getMillis() > now);
         Assert.assertNotNull(authenticationStatement.getSessionIndex());
         Assert.assertNull(authenticationStatement.getSessionNotOnOrAfter());
+
+        Assert.assertNotNull(authenticationStatement.getSubjectLocality());
+        Assert.assertEquals(authenticationStatement.getSubjectLocality().getAddress(), "127.0.0.1");
         
         final AuthnContext authnContext = authenticationStatement.getAuthnContext();
         Assert.assertNotNull(authnContext);

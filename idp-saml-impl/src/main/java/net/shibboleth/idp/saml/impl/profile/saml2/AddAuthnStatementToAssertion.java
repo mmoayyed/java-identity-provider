@@ -50,6 +50,7 @@ import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.opensaml.saml.common.SAMLObjectBuilder;
+import org.opensaml.saml.saml2.core.SubjectLocality;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnStatement;
@@ -259,6 +260,8 @@ public class AddAuthnStatementToAssertion extends AbstractAuthenticationAction<O
                 bf.<AuthnStatement>getBuilderOrThrow(AuthnStatement.TYPE_NAME);
         final SAMLObjectBuilder<AuthnContext> authnContextBuilder = (SAMLObjectBuilder<AuthnContext>)
                 bf.<AuthnContext>getBuilderOrThrow(AuthnContext.TYPE_NAME);
+        final SAMLObjectBuilder<SubjectLocality> localityBuilder = (SAMLObjectBuilder<SubjectLocality>)
+                bf.<SubjectLocality>getBuilderOrThrow(SubjectLocality.TYPE_NAME);
 
         final AuthnStatement statement = statementBuilder.buildObject();
         statement.setAuthnInstant(new DateTime(authenticationResult.getAuthenticationInstant()));
@@ -294,6 +297,14 @@ public class AddAuthnStatementToAssertion extends AbstractAuthenticationAction<O
         
         statement.setSessionIndex(
                 relyingPartyCtx.getProfileConfig().getSecurityConfiguration().getIdGenerator().generateIdentifier());
+
+        if (getHttpServletRequest() != null) {
+            final SubjectLocality locality = localityBuilder.buildObject();
+            locality.setAddress(getHttpServletRequest().getRemoteAddr());
+            statement.setSubjectLocality(locality);
+        } else {
+            log.debug("{} HttpServletRequest not available, omitting SubjectLocality element", getLogPrefix());
+        }
         
         return statement;
     }    
