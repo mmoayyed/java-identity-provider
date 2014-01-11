@@ -28,7 +28,7 @@ import org.springframework.beans.factory.BeanCreationException;
 /**
  * Parser for {@link AttributeIssuerEntityAttributeExactPolicyRule}.
  */
-public class AttributeIssuerEntityAttributeExactRuleParser extends AbstractEntityAttributeExactRuleParser {
+public class AttributeIssuerEntityAttributeExactRuleParser extends AbstractEntityAttributeRuleParser {
 
     /** Schema name. */
     public static final String SCHEMA_NAME = "AttributeIssuerEntityAttributeExactMatch";

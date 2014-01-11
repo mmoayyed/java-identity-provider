@@ -20,14 +20,19 @@ package net.shibboleth.idp.attribute.filter.spring.saml;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
 
 /**
  * Parser for {@link AttributeIssuerInEntityGroupPolicyRule}.
  */
-public class AttributeIssuerInEntityGroupRuleParser extends AbstractEntityGroupRuleParser {
+public class AttributeIssuerInEntityGroupRuleParser extends BasePolicyRuleParser {
 
     /** Schema name. */
     public static final String SCHEMA_NAME = "AttributeIssuerInEntityGroup";
@@ -42,5 +47,13 @@ public class AttributeIssuerInEntityGroupRuleParser extends AbstractEntityGroupR
     @Override @Nonnull protected Class<?> getNativeBeanClass() {
         log.error("Unimplemented Attribute Filter {}.  Consider other implementation methods.", SCHEMA_NAME);
         throw new BeanCreationException("Unimplemented filter " + SCHEMA_NAME);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void doNativeParse(@Nonnull Element element, @Nonnull ParserContext parserContext,
+            @Nonnull BeanDefinitionBuilder builder) {
+        log.error("Unimplemented Attribute Filter {}.  Consider other implementation methods.", SCHEMA_NAME);
+        throw new BeanCreationException("Unimplemented filter " + SCHEMA_NAME);        
     }
 }

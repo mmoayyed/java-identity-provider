@@ -22,18 +22,30 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeRequesterEntityAttributeExactPolicyRule;
 
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
+
 /**
  * Parser for {@link AttributeRequesterEntityAttributeExactPolicyRule}.
  */
-public class AttributeRequesterEntityAttributeExactRuleParser extends AbstractEntityAttributeExactRuleParser {
+public class AttributeRequesterEntityAttributeExactRuleParser extends AbstractEntityAttributeRuleParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
             "AttributeRequesterEntityAttributeExactMatch");
-    
+
     /** {@inheritDoc} */
-    @Nonnull protected Class<AttributeRequesterEntityAttributeExactPolicyRule> getNativeBeanClass() {
-        
+    @Override @Nonnull protected Class<AttributeRequesterEntityAttributeExactPolicyRule> getNativeBeanClass() {
+
         return AttributeRequesterEntityAttributeExactPolicyRule.class;
+    }
+
+    /** {@inheritDoc} */
+    @Override protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
+        super.doNativeParse(element, parserContext, builder);
+
+        builder.addPropertyValue("value", element.getAttributeNS(null, "attributeValue"));
     }
 }

@@ -21,18 +21,31 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeRequesterInEntityGroupPolicyRule;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
 
 /**
  * Parser for {@link AttributeRequesterInEntityGroupPolicyRule}.
  */
-public class AttributeRequesterInEntityGroupRuleParser extends AbstractEntityGroupRuleParser {
-   
+public class AttributeRequesterInEntityGroupRuleParser extends BasePolicyRuleParser {
+
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
             "AttributeRequesterInEntityGroup");
 
     /** {@inheritDoc} */
-    @Nonnull protected Class<AttributeRequesterInEntityGroupPolicyRule> getNativeBeanClass() {
+    @Override @Nonnull protected Class<AttributeRequesterInEntityGroupPolicyRule> getNativeBeanClass() {
         return AttributeRequesterInEntityGroupPolicyRule.class;
+    }
+
+    /** {@inheritDoc} */
+    @Override protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
+
+        builder.addPropertyValue("entityGroup", StringSupport.trimOrNull(element.getAttributeNS(null, "groupID")));
     }
 }

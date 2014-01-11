@@ -23,11 +23,14 @@ import javax.xml.namespace.QName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
 
 /**
  * Parser for {@link AttributeIssuerEntityAttributeRegexPolicyRule}.
  */
-public class AttributeIssuerEntityAttributeRegexRuleParser extends AbstractEntityAttributeRegexRuleParser {
+public class AttributeIssuerEntityAttributeRegexRuleParser extends AbstractEntityAttributeRuleParser {
 
     /** Schema name. */
     public static final String SCHEMA_NAME = "AttributeIssuerEntityAttributeRegexMatch";
@@ -43,6 +46,15 @@ public class AttributeIssuerEntityAttributeRegexRuleParser extends AbstractEntit
 
         log.error("Unimplemented Attribute Filter {}.  Consider other implementation methods.", SCHEMA_NAME);
         throw new BeanCreationException("Unimplemented filter " + SCHEMA_NAME);
+    }
+    /** {@inheritDoc} */
+    @Override
+    protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
+        super.doNativeParse(element, parserContext, builder);
+
+        builder.addPropertyValue("valueRegex", element.getAttributeNS(null, "attributeValueRegex"));
+
     }
 
 }

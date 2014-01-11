@@ -21,18 +21,31 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeRequesterNameIDFormatExactPolicyRule;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
+
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
 
 /**
  * Parser for {@link AttributeRequesterNameIDFormatExactPolicyRule}.
  */
-public class AttributeRequesterNameIdFormatRuleParser extends AbstractNameIdFormatRuleParser {
+public class AttributeRequesterNameIdFormatRuleParser extends BasePolicyRuleParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
             "AttributeRequesterNameIDFormatExactMatch");
-    
+
     /** {@inheritDoc} */
-    @Nonnull protected Class<AttributeRequesterNameIDFormatExactPolicyRule> getNativeBeanClass() {
+    @Override @Nonnull protected Class<AttributeRequesterNameIDFormatExactPolicyRule> getNativeBeanClass() {
         return AttributeRequesterNameIDFormatExactPolicyRule.class;
     }
+
+    /** {@inheritDoc} */
+    @Override protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
+
+        builder.addPropertyValue("nameIdFormat", element.getAttributeNS(null, "nameIdFormat"));
+    }
+
 }

@@ -20,24 +20,53 @@ package net.shibboleth.idp.attribute.filter.impl.policyrule.saml;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Objects;
+
 /**
- * Matcher that checks, via an exact match, if the attribute requester contains an entity attribute with a given
- * value.
+ * Matcher that checks, via an exact match, if the attribute requester contains an entity attribute with a given value.
  */
-public class AttributeRequesterEntityAttributeExactPolicyRule extends AbstractEntityAttributeExactPolicyRule {
+public class AttributeRequesterEntityAttributeExactPolicyRule extends AbstractEntityAttributePolicyRule {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeRequesterEntityAttributeExactPolicyRule.class);
 
+    /** The value of the entity attribute the entity must have. */
+    private String value;
+
+    /**
+     * Gets the value of the entity attribute the entity must have.
+     * 
+     * @return value of the entity attribute the entity must have
+     */
+    @NonnullAfterInit public String getValue() {
+        return value;
+    }
+
+    /**
+     * Sets the value of the entity attribute the entity must have.
+     * 
+     * @param attributeValue value of the entity attribute the entity must have
+     */
+    public void setValue(@Nullable final String attributeValue) {
+        value = attributeValue;
+    }
+
     /** {@inheritDoc} */
     @Override
-    @Nullable protected EntityDescriptor getEntityMetadata(final AttributeFilterContext filterContext) {
+    protected boolean entityAttributeValueMatches(@Nullable final String stringValue) {
+        return Objects.equal(value, stringValue);
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nullable protected EntityDescriptor getEntityMetadata(final AttributeFilterContext filterContext) {
         final SAMLMetadataContext metadataContext = filterContext.getRequesterMetadataContext();
 
         if (null == metadataContext) {
@@ -46,4 +75,14 @@ public class AttributeRequesterEntityAttributeExactPolicyRule extends AbstractEn
         }
         return metadataContext.getEntityDescriptor();
     }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        if (null == value) {
+            throw new ComponentInitializationException(getLogPrefix() + " No value supplied to compare against");
+        }
+    }
+
 }
