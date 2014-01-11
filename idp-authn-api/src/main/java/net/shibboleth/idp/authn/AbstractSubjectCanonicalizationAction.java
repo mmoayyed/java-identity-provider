@@ -158,6 +158,7 @@ public abstract class AbstractSubjectCanonicalizationAction extends AbstractProf
     }
     
     /** {@inheritDoc} */
+    @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
         scContext = scCtxLookupStrategy.apply(profileRequestContext);
         if (scContext == null) {
@@ -170,12 +171,6 @@ public abstract class AbstractSubjectCanonicalizationAction extends AbstractProf
         } else {
             return false;
         }
-    }
-
-    /** {@inheritDoc} */
-    protected final void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
-
-        doExecute(profileRequestContext, scContext);
     }
 
     /**
@@ -194,6 +189,13 @@ public abstract class AbstractSubjectCanonicalizationAction extends AbstractProf
         return c14nContext.getSubject() != null;
     }
     
+    /** {@inheritDoc} */
+    @Override
+    protected final void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+
+        doExecute(profileRequestContext, scContext);
+    }
+
     /**
      * Performs this authentication action. Default implementation throws an exception.
      * 
