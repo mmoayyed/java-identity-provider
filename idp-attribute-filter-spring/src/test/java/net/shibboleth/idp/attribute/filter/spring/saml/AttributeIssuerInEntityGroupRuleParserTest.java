@@ -17,21 +17,19 @@
 
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
-import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeIssuerInEntityGroupPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.testng.Assert;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.annotations.Test;
 
 /**
  * test for {@link AttributeRequesterInEntityGroupRuleParser}.
  */
-public class AttributeIssuerInEntityGroupRuleParserTest extends  BaseAttributeFilterParserTest {
+public class AttributeIssuerInEntityGroupRuleParserTest extends BaseAttributeFilterParserTest {
 
-    @Test public void basic() throws ComponentInitializationException {
-        AttributeIssuerInEntityGroupPolicyRule rule = (AttributeIssuerInEntityGroupPolicyRule) getPolicyRule("issuerEG.xml");
-     
-        Assert.assertEquals(rule.getEntityGroup(), "urn:example.org");
+    @Test(expectedExceptions = {BeanDefinitionStoreException.class}) public void basic()
+            throws ComponentInitializationException {
+        getPolicyRule("issuerEG.xml");
     }
 }

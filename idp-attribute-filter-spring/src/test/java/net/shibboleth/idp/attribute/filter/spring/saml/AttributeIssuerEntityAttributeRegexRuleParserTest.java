@@ -17,23 +17,19 @@
 
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeIssuerEntityAttributeRegexPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+
+import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.testng.annotations.Test;
 
 /**
  * test for {@link AttributeIssuerEntityAttributeRegexRuleParser}.
  */
-public class AttributeIssuerEntityAttributeRegexRuleParserTest extends  BaseAttributeFilterParserTest {
+public class AttributeIssuerEntityAttributeRegexRuleParserTest extends BaseAttributeFilterParserTest {
 
-    @Test public void basic() throws ComponentInitializationException {
-        AttributeIssuerEntityAttributeRegexPolicyRule rule = (AttributeIssuerEntityAttributeRegexPolicyRule) getPolicyRule("issuerEARegex.xml");
-     
-        Assert.assertEquals(rule.getValueRegex().pattern(), "^urn:example\\.org:policy:[^:]*$");
-        Assert.assertEquals(rule.getAttributeName(), "urn:example.org:policy");
-        Assert.assertEquals(rule.getNameFormat(), "urn:example.org:nf");
+    @Test(expectedExceptions = {BeanDefinitionStoreException.class}) public void basic()
+            throws ComponentInitializationException {
+        getPolicyRule("issuerEARegex.xml");
     }
 }

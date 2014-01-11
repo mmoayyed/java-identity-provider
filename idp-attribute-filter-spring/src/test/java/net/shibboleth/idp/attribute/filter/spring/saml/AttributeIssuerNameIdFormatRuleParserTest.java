@@ -17,21 +17,20 @@
 
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
-import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeIssuerNameIDFormatExactPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.testng.Assert;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.annotations.Test;
 
 /**
  * test for {@link AttributeIssuerNameIdFormatRuleParser}.
  */
-public class AttributeIssuerNameIdFormatRuleParserTest extends  BaseAttributeFilterParserTest {
+public class AttributeIssuerNameIdFormatRuleParserTest extends BaseAttributeFilterParserTest {
 
-    @Test public void basic() throws ComponentInitializationException {
-        AttributeIssuerNameIDFormatExactPolicyRule rule = (AttributeIssuerNameIDFormatExactPolicyRule) getPolicyRule("issuerNameId.xml");
-     
-        Assert.assertEquals(rule.getNameIdFormat(), "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent");
+    @Test(expectedExceptions = {BeanDefinitionStoreException.class}) public void basic()
+            throws ComponentInitializationException {
+        getPolicyRule("issuerNameId.xml");
+
     }
 }

@@ -22,17 +22,27 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeIssuerInEntityGroupPolicyRule;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanCreationException;
+
 /**
  * Parser for {@link AttributeIssuerInEntityGroupPolicyRule}.
  */
 public class AttributeIssuerInEntityGroupRuleParser extends AbstractEntityGroupRuleParser {
-    
+
+    /** Schema name. */
+    public static final String SCHEMA_NAME = "AttributeIssuerInEntityGroup";
+
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
-            "AttributeIssuerInEntityGroup");
-   
+    public static final QName SCHEMA_TYPE = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE, SCHEMA_NAME);
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(AttributeIssuerEntityAttributeExactRuleParser.class);
+
     /** {@inheritDoc} */
-    @Nonnull protected Class<AttributeIssuerInEntityGroupPolicyRule> getNativeBeanClass() {
-       return AttributeIssuerInEntityGroupPolicyRule.class;
+    @Override @Nonnull protected Class<AttributeIssuerInEntityGroupPolicyRule> getNativeBeanClass() {
+        log.error("Unimplemented Attribute Filter {}.  Consider other implementation methods.", SCHEMA_NAME);
+        throw new BeanCreationException("Unimplemented filter " + SCHEMA_NAME);
     }
 }

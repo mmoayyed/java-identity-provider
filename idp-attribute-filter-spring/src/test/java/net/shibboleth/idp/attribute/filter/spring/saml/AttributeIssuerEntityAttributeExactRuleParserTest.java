@@ -17,22 +17,20 @@
 
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
-import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeIssuerEntityAttributeExactPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.testng.Assert;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.annotations.Test;
 
 /**
  * test for {@link AttributeIssuerEntityAttributeExactRuleParser}.
  */
-public class AttributeIssuerEntityAttributeExactRuleParserTest extends  BaseAttributeFilterParserTest {
+public class AttributeIssuerEntityAttributeExactRuleParserTest extends BaseAttributeFilterParserTest {
 
-    @Test public void basic() throws ComponentInitializationException {
-        AttributeIssuerEntityAttributeExactPolicyRule rule = (AttributeIssuerEntityAttributeExactPolicyRule) getPolicyRule("issuerEA.xml");
-     
-        Assert.assertEquals(rule.getValue(), "urn:example.org:policy:ABCD1234");
-        Assert.assertEquals(rule.getAttributeName(), "urn:example.org:policy");
+    @Test(expectedExceptions = {BeanDefinitionStoreException.class}) public void basic()
+            throws ComponentInitializationException {
+        getPolicyRule("issuerEA.xml");
+
     }
 }
