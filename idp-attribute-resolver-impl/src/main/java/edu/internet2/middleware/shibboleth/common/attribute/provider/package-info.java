@@ -16,7 +16,8 @@
  */
 
 /** 
- * Classes in this package are to do with emulating the V2 scripted attribute environment.
+ * Classes in this package are to do with emulating the V2 scripted
+ * attribute environment.
  */
 
 package edu.internet2.middleware.shibboleth.common.attribute.provider;
