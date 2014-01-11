@@ -20,8 +20,6 @@ package net.shibboleth.idp.attribute.filter.spring.saml;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeIssuerNameIDFormatExactPolicyRule;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
@@ -43,7 +41,7 @@ public class AttributeIssuerNameIdFormatRuleParser extends AbstractNameIdFormatR
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull protected Class<AttributeIssuerNameIDFormatExactPolicyRule> getNativeBeanClass() {
+    @Nonnull protected Class<?> getNativeBeanClass() {
 
         log.error("Unimplemented Attribute Filter {}.  Consider other implementation methods.", SCHEMA_NAME);
         throw new BeanCreationException("Unimplemented filter " + SCHEMA_NAME);
