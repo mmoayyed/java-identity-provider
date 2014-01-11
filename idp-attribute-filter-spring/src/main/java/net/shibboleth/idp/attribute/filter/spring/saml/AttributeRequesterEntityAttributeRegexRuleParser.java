@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.filter.spring.saml;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeIssuerEntityAttributeRegexPolicyRule;
+import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeRequesterEntityAttributeRegexPolicyRule;
 
 /**
  * Parser for {@link AttributeIssuerEntityAttributeRegexPolicyRule}.
@@ -32,8 +32,9 @@ public class AttributeRequesterEntityAttributeRegexRuleParser extends AbstractEn
             "AttributeRequesterEntityAttributeRegexMatch");
 
     /** {@inheritDoc} */
-    @Nonnull protected Class<AttributeIssuerEntityAttributeRegexPolicyRule> getNativeBeanClass() {
+    @Override
+    @Nonnull protected Class<AttributeRequesterEntityAttributeRegexPolicyRule> getNativeBeanClass() {
 
-        return AttributeIssuerEntityAttributeRegexPolicyRule.class;
+        return AttributeRequesterEntityAttributeRegexPolicyRule.class;
     }
 }
