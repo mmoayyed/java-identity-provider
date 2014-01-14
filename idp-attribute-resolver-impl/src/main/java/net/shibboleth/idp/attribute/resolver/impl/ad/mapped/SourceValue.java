@@ -61,7 +61,7 @@ public class SourceValue {
         value = StringSupport.trimOrNull(theValue);
         ignoreCase = theIgnoreCase;
         partialMatch = thePartialMatch;
-        if (!partialMatch) {
+        if (!partialMatch && value != null) {
             int flags = 0;
             if (ignoreCase) {
                 flags = Pattern.CASE_INSENSITIVE;
