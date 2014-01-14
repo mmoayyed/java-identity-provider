@@ -97,7 +97,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         connector.setQueryTimeout(1);
 
         try {
-            connector.doDataConnectorResolve(null);
+            connector.resolve(null);
             Assert.fail("need to initialize first");
         } catch (UninitializedComponentException e) {
             // OK

@@ -145,7 +145,7 @@ public class PrescopedAtributeTest {
         attrDef.initialize();
 
         try {
-            attrDef.doAttributeDefinitionResolve(resolutionContext);
+            attrDef.resolve(resolutionContext);
             Assert.fail("Invalid type");
         } catch (ResolutionException e) {
             //
@@ -182,7 +182,7 @@ public class PrescopedAtributeTest {
         attrDef.setDependencies(pluginDependencies);
 
         try {
-            attrDef.doAttributeDefinitionResolve(new AttributeResolutionContext());
+            attrDef.resolve(new AttributeResolutionContext());
             Assert.fail("resolve not initialized");
         } catch (UninitializedComponentException e) {
             // OK
@@ -192,7 +192,7 @@ public class PrescopedAtributeTest {
         Assert.assertEquals(attrDef.getScopeDelimiter(), DELIMITER);
 
         try {
-            attrDef.doAttributeDefinitionResolve(null);
+            attrDef.resolve(null);
             Assert.fail("Null context not allowed");
         } catch (ConstraintViolationException e) {
             // OK
@@ -206,7 +206,7 @@ public class PrescopedAtributeTest {
             // OK
         }
         try {
-            attrDef.doAttributeDefinitionResolve(new AttributeResolutionContext());
+            attrDef.resolve(new AttributeResolutionContext());
             Assert.fail("Resolve after destroy");
         } catch (DestroyedComponentException e) {
             // OK

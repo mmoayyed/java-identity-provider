@@ -28,12 +28,8 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.DataConnector;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.ResolvedAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.ResolvedDataConnector;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -42,24 +38,17 @@ import org.opensaml.messaging.context.BaseContext;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.MapConstraints;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-/** A context which carries and collects information through an attribute resolution. */
+/** A context supplying input to the {@link net.shibboleth.idp.attribute.resolver.AttributeResolver} interface. */
 @NotThreadSafe
 public class AttributeResolutionContext extends BaseContext {
 
     /** (internal) Names of the attributes that have been requested to be resolved. */
     @Nonnull @NonnullElements private Set<String> requestedAttributeNames;
-
-    /** Attributes which were resolved and released by the attribute resolver. */
-    @Nonnull @NonnullElements private Map<String, IdPAttribute> resolvedAttributes;
-
-    /** Attribute definitions that have been resolved and the resultant attribute. */
-    @Nonnull @NonnullElements private final Map<String, ResolvedAttributeDefinition> resolvedAttributeDefinitions;
-
-    /** Data connectors that have been resolved and the resultant attributes. */
-    @Nonnull @NonnullElements private final Map<String, ResolvedDataConnector> resolvedDataConnectors;
 
     /** The principal associated with this resolution. */
     @Nullable private String principal;
@@ -73,23 +62,18 @@ public class AttributeResolutionContext extends BaseContext {
     /** How was the principal Authenticated? */
     @Nullable private String principalAuthenticationMethod;
 
+    /** Attributes which were resolved and released by the attribute resolver. */
+    @Nonnull @NonnullElements private Map<String, IdPAttribute> resolvedAttributes;
+    
     /** Constructor. */
     public AttributeResolutionContext() {
         requestedAttributeNames = Collections.emptySet();
-
         resolvedAttributes =
                 MapConstraints.constrainedMap(new HashMap<String, IdPAttribute>(), MapConstraints.notNull());
-
-        resolvedAttributeDefinitions =
-                MapConstraints.constrainedMap(new HashMap<String, ResolvedAttributeDefinition>(),
-                        MapConstraints.notNull());
-
-        resolvedDataConnectors =
-                MapConstraints.constrainedMap(new HashMap<String, ResolvedDataConnector>(), MapConstraints.notNull());
     }
 
     /**
-     * Gets the attribute issuer (me) associated with this resolution.
+     * Get the attribute issuer (me) associated with this resolution.
      * 
      * @return the attribute issuer associated with this resolution.
      */
@@ -98,7 +82,7 @@ public class AttributeResolutionContext extends BaseContext {
     }
 
     /**
-     * Sets the attribute issuer (me) associated with this resolution.
+     * Set the attribute issuer (me) associated with this resolution.
      * 
      * @param value the attribute issuer associated with this resolution.
      */
@@ -107,7 +91,7 @@ public class AttributeResolutionContext extends BaseContext {
     }
 
     /**
-     * Gets the attribute recipient (her) associated with this resolution.
+     * Get the attribute recipient (her) associated with this resolution.
      * 
      * @return the attribute recipient associated with this resolution.
      */
@@ -116,7 +100,7 @@ public class AttributeResolutionContext extends BaseContext {
     }
 
     /**
-     * Sets the attribute recipient (her) associated with this resolution.
+     * Set the attribute recipient (her) associated with this resolution.
      * 
      * @param value the attribute recipient associated with this resolution.
      */
@@ -125,7 +109,7 @@ public class AttributeResolutionContext extends BaseContext {
     }
 
     /**
-     * Sets how the principal was authenticated.
+     * Set how the principal was authenticated.
      * 
      * @return Returns the principalAuthenticationMethod.
      */
@@ -134,7 +118,7 @@ public class AttributeResolutionContext extends BaseContext {
     }
 
     /**
-     * Gets how the principal was authenticated.
+     * Get how the principal was authenticated.
      * 
      * @param method The principalAuthenticationMethod to set.
      */
@@ -143,7 +127,7 @@ public class AttributeResolutionContext extends BaseContext {
     }
 
     /**
-     * Sets the principal associated with this resolution.
+     * Set the principal associated with this resolution.
      * 
      * @return Returns the principal.
      */
@@ -152,7 +136,7 @@ public class AttributeResolutionContext extends BaseContext {
     }
 
     /**
-     * Gets the principal associated with this resolution.
+     * Get the principal associated with this resolution.
      * 
      * @param who The principal to set.
      */
@@ -161,7 +145,7 @@ public class AttributeResolutionContext extends BaseContext {
     }
 
     /**
-     * Gets the (internal) names of the attributes requested to be resolved.
+     * Get the (internal) names of the attributes requested to be resolved.
      * 
      * @return set of attributes requested to be resolved
      */
@@ -170,7 +154,7 @@ public class AttributeResolutionContext extends BaseContext {
     }
 
     /**
-     * Sets the (internal) names of the attributes requested to be resolved.
+     * Set the (internal) names of the attributes requested to be resolved.
      * 
      * @param names the (internal) names of the attributes requested to be resolved
      */
@@ -181,94 +165,29 @@ public class AttributeResolutionContext extends BaseContext {
     }
 
     /**
-     * Gets the collection of resolved attributes.
+     * Get the collection of resolved attributes.
      * 
      * @return set of resolved attributes
      */
-    @Nonnull @NonnullElements public Map<String, IdPAttribute> getResolvedIdPAttributes() {
-        return resolvedAttributes;
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public Map<String, IdPAttribute> getResolvedIdPAttributes() {
+        return ImmutableMap.copyOf(resolvedAttributes);
     }
 
     /**
-     * Sets the set of resolved attributes.
+     * Set the set of resolved attributes.
      * 
-     * @param attributes set of resolved attributes, may be null, empty or contain null values
+     * @param attributes set of resolved attributes
      */
     public void setResolvedIdPAttributes(@Nullable @NullableElements final Collection<IdPAttribute> attributes) {
-        Map<String, IdPAttribute> checkedAttributes =
-                MapConstraints.constrainedMap(new HashMap<String, IdPAttribute>(), MapConstraints.notNull());
+        resolvedAttributes = Maps.newHashMap();
 
         if (attributes != null) {
             for (IdPAttribute attribute : attributes) {
                 if (attribute != null) {
-                    checkedAttributes.put(attribute.getId(), attribute);
+                    resolvedAttributes.put(attribute.getId(), attribute);
                 }
             }
         }
-
-        resolvedAttributes = checkedAttributes;
     }
-
-    /**
-     * Gets the resolved attribute definitions that been recorded.
-     * 
-     * @return resolved attribute definitions that been recorded
-     */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, ResolvedAttributeDefinition>
-            getResolvedIdPAttributeDefinitions() {
-        return Collections.unmodifiableMap(resolvedAttributeDefinitions);
-    }
-
-    /**
-     * Records the results of an attribute definition resolution.
-     * 
-     * @param definition the resolved attribute definition, must not be null
-     * @param attribute the attribute produced by the given attribute definition, may be null
-     * 
-     * @throws ResolutionException thrown if a result of a resolution for the given attribute definition have already
-     *             been recorded
-     */
-    public void recordAttributeDefinitionResolution(@Nonnull final AttributeDefinition definition,
-            @Nullable final IdPAttribute attribute) throws ResolutionException {
-        Constraint.isNotNull(definition, "Resolver attribute definition cannot be null");
-
-        if (resolvedAttributeDefinitions.containsKey(definition.getId())) {
-            throw new ResolutionException("The resolution of attribute definition " + definition.getId()
-                    + " has already been recorded");
-        }
-
-        final ResolvedAttributeDefinition wrapper = new ResolvedAttributeDefinition(definition, attribute);
-        resolvedAttributeDefinitions.put(definition.getId(), wrapper);
-    }
-
-    /**
-     * Gets the resolved data connectors that been recorded.
-     * 
-     * @return resolved data connectors that been recorded
-     */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, ResolvedDataConnector> getResolvedDataConnectors() {
-        return Collections.unmodifiableMap(resolvedDataConnectors);
-    }
-
-    /**
-     * Records the results of an data connector resolution.
-     * 
-     * @param connector the resolved data connector, must not be null
-     * @param attributes the attribute produced by the given data connector, may be null
-     * 
-     * @throws ResolutionException thrown if a result of a resolution for the given data connector has already been
-     *             recorded
-     */
-    public void recordDataConnectorResolution(@Nonnull final DataConnector connector,
-            @Nullable final Map<String, IdPAttribute> attributes) throws ResolutionException {
-        Constraint.isNotNull(connector, "Resolver data connector cannot be null");
-
-        if (resolvedDataConnectors.containsKey(connector.getId())) {
-            throw new ResolutionException("The resolution of data connector " + connector.getId()
-                    + " has already been recorded");
-        }
-
-        final ResolvedDataConnector wrapper = new ResolvedDataConnector(connector, attributes);
-        resolvedDataConnectors.put(connector.getId(), wrapper);
-    }
+    
 }

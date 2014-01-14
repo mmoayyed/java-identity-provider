@@ -109,7 +109,7 @@ public class LdapDataConnectorParserTest {
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Map<String, IdPAttribute> attrs = dataConnector.doResolve(context);
+        Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
         Assert.assertNotNull(attrs);
     }
 
@@ -123,7 +123,7 @@ public class LdapDataConnectorParserTest {
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Map<String, IdPAttribute> attrs = dataConnector.doResolve(context);
+        Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
         Assert.assertNotNull(attrs);
     }
 

@@ -22,6 +22,7 @@ import java.util.Arrays;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
@@ -47,7 +48,9 @@ public class ResolverTestSupport {
     public static final String[] EPE3_VALUES = new String[] {"urn:example.org:entitlement2"};
 
     public static AttributeResolutionContext buildResolutionContext(ResolverPlugin... plugins) {
-        AttributeResolutionContext resolutionContext = new AttributeResolutionContext();
+        final AttributeResolutionContext resolutionContext = new AttributeResolutionContext();
+        final AttributeResolverWorkContext workContext =
+                resolutionContext.getSubcontext(AttributeResolverWorkContext.class, true);
 
         MockStaticAttributeDefinition definition;
         MockStaticDataConnector connector;
@@ -55,13 +58,13 @@ public class ResolverTestSupport {
             for (ResolverPlugin plugin : plugins) {
                 if (plugin instanceof MockStaticAttributeDefinition) {
                     definition = (MockStaticAttributeDefinition) plugin;
-                    resolutionContext.recordAttributeDefinitionResolution(definition,
+                    workContext.recordAttributeDefinitionResolution(definition,
                             definition.resolve(resolutionContext));
                 }
 
                 if (plugin instanceof MockStaticDataConnector) {
                     connector = (MockStaticDataConnector) plugin;
-                    resolutionContext.recordDataConnectorResolution(connector, connector.resolve(resolutionContext));
+                    workContext.recordDataConnectorResolution(connector, connector.resolve(resolutionContext));
                 }
             }
         } catch (ResolutionException e) {
@@ -73,7 +76,7 @@ public class ResolverTestSupport {
     }
 
     public static IdPAttribute buildAttribute(String attributeId, String... values) {
-        IdPAttribute attribute = new IdPAttribute(attributeId);
+        final IdPAttribute attribute = new IdPAttribute(attributeId);
         for (String value : values) {
             attribute.getValues().add(new StringAttributeValue(value));
         }
@@ -82,10 +85,10 @@ public class ResolverTestSupport {
     }
 
     public static MockStaticAttributeDefinition buildAttributeDefinition(String attributeId, String... values) {
-        IdPAttribute attribute = buildAttribute(attributeId, values);
+        final IdPAttribute attribute = buildAttribute(attributeId, values);
 
         try {
-            MockStaticAttributeDefinition definition = new MockStaticAttributeDefinition();
+            final MockStaticAttributeDefinition definition = new MockStaticAttributeDefinition();
             definition.setId(attributeId);
             definition.setValue(attribute);
             definition.initialize();
@@ -100,7 +103,7 @@ public class ResolverTestSupport {
     public static MockStaticDataConnector buildDataConnector(String connectorId, IdPAttribute... attributes) {
 
         try {
-            MockStaticDataConnector connector = new MockStaticDataConnector();
+            final MockStaticDataConnector connector = new MockStaticDataConnector();
             connector.setId(connectorId);
             connector.setValues(Arrays.asList(attributes));
             connector.initialize();

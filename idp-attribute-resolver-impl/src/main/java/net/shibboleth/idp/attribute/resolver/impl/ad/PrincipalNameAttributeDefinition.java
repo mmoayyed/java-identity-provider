@@ -20,12 +20,14 @@ package net.shibboleth.idp.attribute.resolver.impl.ad;
 import java.util.Collections;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
@@ -33,8 +35,9 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  */
 public class PrincipalNameAttributeDefinition extends AbstractAttributeDefinition {
 
-    @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
+    @Override @Nullable protected IdPAttribute doAttributeDefinitionResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
 
         final String principalName = StringSupport.trimOrNull(resolutionContext.getPrincipal());
         if (null == principalName) {
@@ -45,4 +48,5 @@ public class PrincipalNameAttributeDefinition extends AbstractAttributeDefinitio
         attribute.setValues(Collections.singleton(new StringAttributeValue(principalName)));
         return attribute;
     }
+    
 }

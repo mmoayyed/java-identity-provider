@@ -32,6 +32,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
@@ -55,25 +56,25 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
         AttributeDefinition {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AbstractAttributeDefinition.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractAttributeDefinition.class);
 
     /** Whether this attribute definition is only a dependency and thus its values should never be released. */
     private boolean dependencyOnly;
 
     /** The sourceAttributeID attributeName. */
-    private String sourceAttributeID;
+    @Nullable private String sourceAttributeID;
 
     /** Attribute encoders associated with this definition. */
-    private Set<AttributeEncoder<?>> encoders = Collections.emptySet();
+    @Nonnull private Set<AttributeEncoder<?>> encoders = Collections.emptySet();
 
     /** Localized human intelligible attribute name. */
-    private Map<Locale, String> displayNames = Collections.emptyMap();
+    @Nonnull private Map<Locale, String> displayNames = Collections.emptyMap();
 
     /** Localized human readable description of attribute. */
-    private Map<Locale, String> displayDescriptions = Collections.emptyMap();
+    @Nonnull private Map<Locale, String> displayDescriptions = Collections.emptyMap();
 
     /** cache for the log prefix - to save multiple recalculations. */
-    private String logPrefix;
+    @Nullable private String logPrefix;
 
     /**
      * Gets whether this attribute definition is only a dependency and thus its values should never be released outside
@@ -112,8 +113,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
      * 
      * @param descriptions localized human readable descriptions of attribute
      */
-    public void setDisplayDescriptions(@Nullable @NullableElements 
-            final Map<Locale, String> descriptions) {
+    public void setDisplayDescriptions(@Nullable @NullableElements  final Map<Locale, String> descriptions) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -174,8 +174,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
      * 
      * @param attributeEncoders encoders used to encode the values of this attribute in to protocol specific formats
      */
-    public void setAttributeEncoders(
-            @Nullable @NullableElements final Set<AttributeEncoder<?>> attributeEncoders) {
+    public void setAttributeEncoders(@Nullable @NullableElements final Set<AttributeEncoder<?>> attributeEncoders) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -204,6 +203,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doDestroy() {
         for (AttributeEncoder encoder : encoders) {
             ComponentSupport.destroy(encoder);
@@ -217,6 +217,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
 
         // Set up the dependencies first. Then the initialize in the parent
@@ -237,6 +238,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doValidate() throws ComponentValidationException {
         super.doValidate();
 
@@ -252,10 +254,11 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
      * {@link #doAttributeDefinitionResolve(AttributeResolutionContext)} method. Afterwards, if null was not returned,
      * this method will attach the registered display names, descriptions, and encoders to the resultant attribute.
      */
-    @Nullable protected IdPAttribute doResolve(@Nonnull final AttributeResolutionContext resolutionContext)
-            throws ResolutionException {
+    @Override
+    @Nullable protected IdPAttribute doResolve(@Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
 
-        final IdPAttribute resolvedAttribute = doAttributeDefinitionResolve(resolutionContext);
+        final IdPAttribute resolvedAttribute = doAttributeDefinitionResolve(resolutionContext, workContext);
 
         if (null == resolvedAttribute) {
             log.debug("{} no attribute was produced during resolution", getLogPrefix());
@@ -290,13 +293,14 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
      * attribute be recorded in the given resolution context.
      * 
      * @param resolutionContext current attribute resolution context
+     * @param workContext current resolver work context
      * 
      * @return resolved attribute or null if nothing to resolve.
-     * 
      * @throws ResolutionException thrown if there is a problem resolving and creating the attribute
      */
     @Nullable protected abstract IdPAttribute doAttributeDefinitionResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException;
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException;
 
     /**
      * return a string which is to be prepended to all log messages.
@@ -315,4 +319,5 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
         }
         return prefix;
     }
+    
 }

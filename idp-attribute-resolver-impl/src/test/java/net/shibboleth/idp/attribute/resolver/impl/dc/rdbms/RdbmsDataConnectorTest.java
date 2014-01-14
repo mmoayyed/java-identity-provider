@@ -145,7 +145,7 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
         connector.setMappingStrategy(mappingStrategy);
 
         try {
-            connector.doResolve(null);
+            connector.resolve(null);
             Assert.fail("Need to initialize first");
         } catch (UninitializedComponentException e) {
             // OK
@@ -171,7 +171,7 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
 
-        Map<String, IdPAttribute> attrs = connector.doResolve(context);
+        Map<String, IdPAttribute> attrs = connector.resolve(context);
         // check total attributes: userid, name, homephone, mail
         Assert.assertTrue(attrs.size() == 4);
         // check userid
@@ -206,7 +206,7 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        connector.doResolve(context);
+        connector.resolve(context);
     }
 
     @Test(expectedExceptions = ResolutionException.class) public void resolveNoResultIsError()
@@ -219,7 +219,7 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         try {
-            Assert.assertNotNull(connector.doResolve(context));
+            Assert.assertNotNull(connector.resolve(context));
         } catch (ResolutionException e) {
             Assert.fail("Resolution exception occurred", e);
         }
@@ -227,7 +227,7 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
         context =
                 TestSources.createResolutionContext("NOT_A_PRINCIPAL", TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        connector.doResolve(context);
+        connector.resolve(context);
     }
 
     @Test public void resolveWithCache() throws ComponentInitializationException, ResolutionException {
@@ -240,8 +240,9 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         Assert.assertTrue(cache.size() == 0);
-        Map<String, IdPAttribute> optional = connector.doResolve(context);
+        Map<String, IdPAttribute> optional = connector.resolve(context);
         Assert.assertTrue(cache.size() == 1);
         Assert.assertEquals(cache.iterator().next(), optional);
     }
+    
 }

@@ -81,7 +81,7 @@ public class MappedAttributeTest {
         }
 
         try {
-            definition.doAttributeDefinitionResolve(new AttributeResolutionContext());
+            definition.resolve(new AttributeResolutionContext());
             Assert.fail("resolve a torn down mapper?");
         } catch (DestroyedComponentException e) {
             // expected this
@@ -148,7 +148,7 @@ public class MappedAttributeTest {
         definition.initialize();
 
         try {
-            definition.doAttributeDefinitionResolve(resolutionContext);
+            definition.resolve(resolutionContext);
             Assert.fail("invalid types");
         } catch (ResolutionException e) {
             //
@@ -237,4 +237,5 @@ public class MappedAttributeTest {
         retVal.setSourceValues(Collections.singleton(new SourceValue(returnValue, caseInsensitive, true)));
         return retVal;
     }
+    
 }

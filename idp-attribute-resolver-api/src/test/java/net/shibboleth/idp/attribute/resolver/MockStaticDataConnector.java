@@ -27,6 +27,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -42,7 +43,7 @@ import com.google.common.collect.ImmutableMap;
 public class MockStaticDataConnector extends AbstractDataConnector {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(MockStaticDataConnector.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(MockStaticDataConnector.class);
 
     /** Static collection of values returned by this connector. */
     private Map<String, IdPAttribute> attributes;
@@ -82,8 +83,10 @@ public class MockStaticDataConnector extends AbstractDataConnector {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Map<String, IdPAttribute> doDataConnectorResolve(
-            final AttributeResolutionContext resolutionContext) throws ResolutionException {
+    @Override
+    @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         log.debug("Data connector '{}': Resolving static attribute {}", getId(), attributes);
@@ -91,6 +94,7 @@ public class MockStaticDataConnector extends AbstractDataConnector {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
@@ -99,4 +103,5 @@ public class MockStaticDataConnector extends AbstractDataConnector {
                     + " does not have values set up.");
         }
     }
+    
 }

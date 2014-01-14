@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 
 /**
  * A principal connector which just pulls the value from the 
@@ -27,8 +28,9 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 public class MockSubjectNamePrincipalConnector extends AbstractSubjectNamePrincipalConnectorDefinition {
 
     /** {@inheritDoc} */
-    @Nonnull protected String doResolve(AttributeResolutionContext resolutionContext)
-            throws ResolutionException {
+    @Override
+    @Nonnull protected String doResolve(@Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
         return contentOf(resolutionContext);
     }
 

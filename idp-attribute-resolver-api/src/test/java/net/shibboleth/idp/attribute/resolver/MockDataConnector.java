@@ -19,10 +19,13 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
@@ -82,8 +85,10 @@ public class MockDataConnector extends AbstractDataConnector implements Validata
     }
 
     /** {@inheritDoc} */
-    protected Map<String, IdPAttribute> doDataConnectorResolve(AttributeResolutionContext resolutionContext)
-            throws ResolutionException {
+    @Override
+    @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
         if (resolutionException != null) {
             throw resolutionException;
         }
@@ -92,6 +97,7 @@ public class MockDataConnector extends AbstractDataConnector implements Validata
     }
 
     /** {@inheritDoc} */
+    @Override
     public void doValidate() throws ComponentValidationException {
         if (invalid) {
             throw new ComponentValidationException();
@@ -100,6 +106,7 @@ public class MockDataConnector extends AbstractDataConnector implements Validata
     }
     
     /** {@inheritDoc} */
+    @Override
     public void doDestroy() {
         super.doDestroy();
         destroyCount += 1;
@@ -107,11 +114,13 @@ public class MockDataConnector extends AbstractDataConnector implements Validata
 
 
     /** {@inheritDoc} */
+    @Override
     public boolean isInitialized() {
         return initializeCount > 0;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         initializeCount += 1;
@@ -143,4 +152,5 @@ public class MockDataConnector extends AbstractDataConnector implements Validata
     public int getValidateCount() {
         return validateCount;
     }
+    
 }

@@ -29,6 +29,7 @@ import javax.sql.DataSource;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -52,7 +53,7 @@ import org.slf4j.LoggerFactory;
 public class StoredIDDataConnector extends BaseComputedIDDataConnector {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(StoredIDDataConnector.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(StoredIDDataConnector.class);
 
     /** The {@link DataSource} used to communicate with the database. */
     private DataSource dataSource;
@@ -229,7 +230,8 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
     /** {@inheritDoc} */
     @Override
     @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(
-            @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
@@ -240,7 +242,7 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
             return null;
         }
 
-        final String localId = StringSupport.trimOrNull(resolveSourceAttribute(resolutionContext));
+        final String localId = StringSupport.trimOrNull(resolveSourceAttribute(workContext));
         if (null == localId) {
             // We did the logging in the helper method
             return null;
@@ -261,4 +263,5 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
 
         return encodeAsAttribute(getStoredId(principal, attributeIssuerID, attributeRecipientID, localId));
     }
+    
 }

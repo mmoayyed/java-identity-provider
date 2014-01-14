@@ -165,7 +165,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         connector.setMappingStrategy(mappingStrategy);
 
         try {
-            connector.doResolve(null);
+            connector.resolve(null);
             Assert.fail("Need to initialize first");
         } catch (UninitializedComponentException e) {
             // OK
@@ -229,7 +229,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Map<String, IdPAttribute> attrs = connector.doResolve(context);
+        Map<String, IdPAttribute> attrs = connector.resolve(context);
         Assert.assertNotNull(attrs);
         // check total attributes: uid, cn, sn, mail
         Assert.assertTrue(attrs.size() == 4);
@@ -270,7 +270,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        connector.doResolve(context);
+        connector.resolve(context);
     }
 
     @Test(expectedExceptions = ResolutionException.class) public void resolveNoResultIsError()
@@ -283,7 +283,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         try {
-            Map<String, IdPAttribute> res = connector.doResolve(context);
+            Map<String, IdPAttribute> res = connector.resolve(context);
             Assert.assertNotNull(res);
         } catch (ResolutionException e) {
             Assert.fail("Resolution exception occurred", e);
@@ -292,7 +292,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         context =
                 TestSources.createResolutionContext("NOT_A_PRINCIPAL", TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        connector.doResolve(context);
+        connector.resolve(context);
     }
 
     @Test public void resolveWithCache() throws ComponentInitializationException, ResolutionException {
@@ -305,8 +305,9 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         Assert.assertTrue(cache.size() == 0);
-        Map<String, IdPAttribute> optional = connector.doResolve(context);
+        Map<String, IdPAttribute> optional = connector.resolve(context);
         Assert.assertTrue(cache.size() == 1);
         Assert.assertEquals(cache.iterator().next(), optional);
     }
+    
 }

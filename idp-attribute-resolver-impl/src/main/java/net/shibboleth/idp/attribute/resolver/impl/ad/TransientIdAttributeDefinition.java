@@ -21,13 +21,13 @@ import java.io.IOException;
 import java.util.Collections;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -49,16 +49,16 @@ import org.slf4j.LoggerFactory;
 public class TransientIdAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Context label for storage of IDs. */
-    public static final String CONTEXT = "TransientId";
+    @Nonnull @NotEmpty public static final String CONTEXT = "TransientId";
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(TransientIdAttributeDefinition.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(TransientIdAttributeDefinition.class);
 
     /** Store used to map identifiers to principals. */
-    private StorageService idStore;
+    @NonnullAfterInit private StorageService idStore;
 
     /** Generator of random, hex-encoded, identifiers. */
-    private IdentifierGenerationStrategy idGenerator;
+    @NonnullAfterInit private IdentifierGenerationStrategy idGenerator;
 
     /** Size, in bytes, of the token. */
     private int idSize;
@@ -79,7 +79,7 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
      * 
      * @return the ID store we are using.
      */
-    @Nullable @NonnullAfterInit public StorageService getIdStore() {
+    @NonnullAfterInit public StorageService getIdStore() {
         return idStore;
     }
 
@@ -179,7 +179,8 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
 
     /** {@inheritDoc} */
     @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);

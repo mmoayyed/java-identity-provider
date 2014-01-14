@@ -34,6 +34,7 @@ import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
@@ -142,8 +143,10 @@ public class SAMLAttributeDataConnector extends AbstractDataConnector {
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
         final List<Attribute> samlAttributes = attributesStrategy.apply(resolutionContext);
 
         if (null == samlAttributes) {

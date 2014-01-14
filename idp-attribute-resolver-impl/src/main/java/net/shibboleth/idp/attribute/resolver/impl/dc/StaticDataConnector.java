@@ -29,6 +29,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -47,7 +48,7 @@ import com.google.common.collect.ImmutableMap;
 public class StaticDataConnector extends AbstractDataConnector {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(StaticDataConnector.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(StaticDataConnector.class);
 
     /** Static collection of values returned by this connector. */
     private Map<String, IdPAttribute> attributes;
@@ -87,8 +88,10 @@ public class StaticDataConnector extends AbstractDataConnector {
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull protected Map<String, IdPAttribute> doDataConnectorResolve(
-            final AttributeResolutionContext resolutionContext) throws ResolutionException {
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         log.trace("{} Resolved attributes: {}", getLogPrefix(), attributes);
@@ -96,6 +99,7 @@ public class StaticDataConnector extends AbstractDataConnector {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
@@ -103,4 +107,5 @@ public class StaticDataConnector extends AbstractDataConnector {
             throw new ComponentInitializationException(getLogPrefix() + " No values set up.");
         }
     }
+    
 }

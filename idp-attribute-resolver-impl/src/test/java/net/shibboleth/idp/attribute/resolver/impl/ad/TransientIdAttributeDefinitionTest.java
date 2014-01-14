@@ -69,7 +69,7 @@ public class TransientIdAttributeDefinitionTest {
         defn.initialize();
 
         final IdPAttribute result =
-                defn.doAttributeDefinitionResolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
+                defn.resolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
                         TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
 
         Set<IdPAttributeValue<?>> vals = result.getValues();
@@ -102,7 +102,7 @@ public class TransientIdAttributeDefinitionTest {
         defn.setIdStore(store);
         defn.initialize();
         try {
-            defn.doAttributeDefinitionResolve(TestSources.createResolutionContext(principal, idp, sp));
+            defn.resolve(TestSources.createResolutionContext(principal, idp, sp));
             Assert.fail(whyItFailed);
         } catch (ResolutionException e) {
             // OK
@@ -152,28 +152,26 @@ public class TransientIdAttributeDefinitionTest {
         defn.setIdStore(store);
         defn.initialize();
 
-        IdPAttribute result =
-                defn.doAttributeDefinitionResolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
-                        TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
+        IdPAttribute result = defn.resolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
+                TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
 
         Set<IdPAttributeValue<?>> vals = result.getValues();
         String firstTime = (String) vals.iterator().next().getValue();
 
-        result =
-                defn.doAttributeDefinitionResolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
-                        TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
+        result = defn.resolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
+                TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
         Assert.assertEquals(firstTime, vals.iterator().next().getValue());
         Assert.assertTrue(firstTime.length() >= defn.getIdSize());
 
         Thread.sleep(TEST_LIFETIME * 2);
 
-        result =
-                defn.doAttributeDefinitionResolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
-                        TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
+        result = defn.resolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
+                TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
         vals = result.getValues();
         Assert.assertNotEquals(firstTime, vals.iterator().next().getValue());
 
         defn.destroy();
         store.destroy();
     }
+    
 }

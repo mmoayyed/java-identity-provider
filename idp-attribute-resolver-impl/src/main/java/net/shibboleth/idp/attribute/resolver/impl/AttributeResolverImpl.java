@@ -37,6 +37,7 @@ import net.shibboleth.idp.attribute.resolver.ResolvedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPlugin;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.service.AbstractServiceableComponent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -98,7 +99,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
         Map<String, AttributeDefinition> checkedDefinitions;
         if (definitions != null) {
-            checkedDefinitions = new HashMap<String, AttributeDefinition>(definitions.size());
+            checkedDefinitions = new HashMap<>(definitions.size());
             for (AttributeDefinition definition : definitions) {
                 if (definition != null) {
                     if (checkedDefinitions.containsKey(definition.getId())) {
@@ -109,13 +110,13 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                 }
             }
         } else {
-            checkedDefinitions = Collections.EMPTY_MAP;
+            checkedDefinitions = Collections.emptyMap();
         }
         attributeDefinitions = ImmutableMap.copyOf(checkedDefinitions);
 
         Map<String, DataConnector> checkedConnectors;
         if (connectors != null) {
-            checkedConnectors = new HashMap<String, DataConnector>(connectors.size());
+            checkedConnectors = new HashMap<>(connectors.size());
             for (DataConnector connector : connectors) {
                 if (connector != null) {
                     if (checkedConnectors.containsKey(connector.getId())) {
@@ -126,7 +127,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                 }
             }
         } else {
-            checkedConnectors = Collections.EMPTY_MAP;
+            checkedConnectors = Collections.emptyMap();
         }
         dataConnectors = ImmutableMap.copyOf(checkedConnectors);
     }
@@ -216,7 +217,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
+        Constraint.isNotNull(resolutionContext, "Attribute resolution context cannot be null");
 
         log.debug("{} initiating attribute resolution", logPrefix);
 
@@ -228,6 +229,10 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         final Collection<String> attributeIds = getToBeResolvedAttributeIds(resolutionContext);
         log.debug("{} attempting to resolve the following attribute definitions {}", logPrefix, attributeIds);
 
+        // Create work context to hold intermediate results.
+        final AttributeResolverWorkContext workContext =
+                resolutionContext.getSubcontext(AttributeResolverWorkContext.class, true);
+        
         for (String attributeId : attributeIds) {
             resolveAttributeDefinition(attributeId, resolutionContext);
         }
@@ -235,10 +240,10 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         log.debug("{} finalizing resolved attributes", logPrefix);
         finalizeResolvedAttributes(resolutionContext);
 
+        resolutionContext.removeSubcontext(workContext);
+
         log.debug("{} final resolved attribute collection: {}", logPrefix, resolutionContext.getResolvedIdPAttributes()
                 .keySet());
-
-        return;
     }
 
     /**
@@ -252,7 +257,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      */
     @Nonnull @NonnullElements protected Collection<String> getToBeResolvedAttributeIds(
             @Nonnull final AttributeResolutionContext resolutionContext) {
-        Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
+        Constraint.isNotNull(resolutionContext, "Attribute resolution context cannot be null");
 
         // if no attributes requested, then resolve everything
         if (resolutionContext.getRequestedIdPAttributeNames().isEmpty()) {
@@ -278,11 +283,13 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     protected void resolveAttributeDefinition(@Nonnull final String attributeId,
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(attributeId, "Attribute ID can not be null");
-        Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
+        Constraint.isNotNull(resolutionContext, "Attribute resolution context cannot be null");
+        final AttributeResolverWorkContext workContext =
+                resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
 
         log.trace("{} beginning to resolve attribute definition {}", logPrefix, attributeId);
 
-        if (resolutionContext.getResolvedIdPAttributeDefinitions().containsKey(attributeId)) {
+        if (workContext.getResolvedIdPAttributeDefinitions().containsKey(attributeId)) {
             log.trace("{} attribute definition {} was already resolved, nothing to do", logPrefix, attributeId);
             return;
         }
@@ -305,7 +312,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                     attributeId, resolvedAttribute.getValues().size(),});
         }
 
-        resolutionContext.recordAttributeDefinitionResolution(definition, resolvedAttribute);
+        workContext.recordAttributeDefinitionResolution(definition, resolvedAttribute);
     }
 
     /**
@@ -321,9 +328,11 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     protected void resolveDataConnector(@Nonnull final String connectorId,
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(connectorId, "Data connector ID can not be null");
-        Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
+        Constraint.isNotNull(resolutionContext, "Attribute resolution context cannot be null");
+        final AttributeResolverWorkContext workContext =
+                resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
 
-        if (resolutionContext.getResolvedDataConnectors().containsKey(connectorId)) {
+        if (workContext.getResolvedDataConnectors().containsKey(connectorId)) {
             log.trace("{} data connector {} was already resolved, nothing to do", logPrefix, connectorId);
             return;
         }
@@ -360,7 +369,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         } else {
             log.debug("{} data connector {} produced no attributes", logPrefix, connectorId);
         }
-        resolutionContext.recordDataConnectorResolution(connector, resolvedAttributes);
+        workContext.recordDataConnectorResolution(connector, resolvedAttributes);
     }
 
     /**
@@ -374,7 +383,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     protected void resolveDependencies(@Nonnull final ResolverPlugin<?> plugin,
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(plugin, "Plugin dependency can not be null");
-        Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
+        Constraint.isNotNull(resolutionContext, "Attribute resolution context cannot be null");
 
         if (plugin.getDependencies().isEmpty()) {
             return;
@@ -407,12 +416,14 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * @param resolutionContext current resolution context
      */
     protected void finalizeResolvedAttributes(@Nonnull final AttributeResolutionContext resolutionContext) {
-        Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
+        Constraint.isNotNull(resolutionContext, "Attribute resolution context cannot be null");
+        final AttributeResolverWorkContext workContext =
+                resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
 
         final LazySet<IdPAttribute> resolvedAttributes = new LazySet<IdPAttribute>();
 
         IdPAttribute resolvedAttribute;
-        for (ResolvedAttributeDefinition definition : resolutionContext.getResolvedIdPAttributeDefinitions().values()) {
+        for (ResolvedAttributeDefinition definition : workContext.getResolvedIdPAttributeDefinitions().values()) {
             resolvedAttribute = definition.getResolvedAttribute();
 
             // remove nulls
@@ -451,8 +462,8 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      */
     protected boolean validateDataConnector(@Nonnull DataConnector connector,
             @Nonnull LazyList<String> invalidDataConnectors) {
-        Constraint.isNotNull(connector, "To-be-validated connector can not be null");
-        Constraint.isNotNull(invalidDataConnectors, "List of invalid data connectors can not be null");
+        Constraint.isNotNull(connector, "To-be-validated connector can no be null");
+        Constraint.isNotNull(invalidDataConnectors, "List of invalid data connectors cannot be null");
 
         final String failoverId = connector.getFailoverDataConnectorId();
         if (null != failoverId) {

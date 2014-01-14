@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
@@ -58,7 +59,8 @@ public class ComputedIDDataConnector extends BaseComputedIDDataConnector {
     /** {@inheritDoc} */
     @Override
     @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(
-            @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
@@ -69,7 +71,7 @@ public class ComputedIDDataConnector extends BaseComputedIDDataConnector {
             return null;
         }
 
-        return encodeAsAttribute(generateComputedId(attributeRecipientID, resolveSourceAttribute(resolutionContext)));
+        return encodeAsAttribute(generateComputedId(attributeRecipientID, resolveSourceAttribute(workContext)));
     }
 
 }

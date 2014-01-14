@@ -25,6 +25,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -39,13 +40,13 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
         DataConnector {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AbstractDataConnector.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractDataConnector.class);
 
     /** ID of the data connector to use if this one fails. */
-    private String failoverDataConnectorId;
+    @Nullable private String failoverDataConnectorId;
 
     /** cache for the log prefix - to save multiple recalculations. */
-    private String logPrefix;
+    @Nullable private String logPrefix;
 
     /**
      * Gets the ID of the {@link AbstractDataConnector} whose values will be used in the event that this data connector
@@ -78,9 +79,11 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
      * This method delegates to {@link #doDataConnectorResolve(AttributeResolutionContext)}. It serves as a future
      * extension point for introducing new common behavior.
      */
+    @Override
     @Nullable public final Map<String, IdPAttribute> doResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
-        Map<String, IdPAttribute> result = doDataConnectorResolve(resolutionContext);
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
+        Map<String, IdPAttribute> result = doDataConnectorResolve(resolutionContext, workContext);
 
         if (null == result) {
             log.debug("{} no attributes were produced during resolution", getId());
@@ -98,6 +101,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
 
         super.doInitialize();
@@ -109,14 +113,16 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
     /**
      * Retrieves a collection of attributes from some data source.
      * 
-     * @param resolutionContext current resolution context, guaranteed not to be bull
+     * @param resolutionContext current resolution context
+     * @param workContext current resolver work context
      * 
      * @return collected attributes indexed by attribute ID
      * 
      * @throws ResolutionException thrown if there is a problem resolving the attributes
      */
     @Nullable protected abstract Map<String, IdPAttribute> doDataConnectorResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException;
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException;
 
     /**
      * Return a string which is to be prepended to all log messages.
@@ -127,7 +133,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
         // local cache of cached entry to allow unsynchronised clearing of per class cache.
         String prefix = logPrefix;
         if (null == prefix) {
-            StringBuilder builder = new StringBuilder("Data Connector '").append(getId()).append("':");
+            final StringBuilder builder = new StringBuilder("Data Connector '").append(getId()).append("':");
             prefix = builder.toString();
             if (null == logPrefix) {
                 logPrefix = prefix;

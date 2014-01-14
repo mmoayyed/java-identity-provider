@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.impl.ad;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -31,6 +32,7 @@ import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -48,7 +50,7 @@ import org.slf4j.LoggerFactory;
 public class PrescopedAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(PrescopedAttributeDefinition.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(PrescopedAttributeDefinition.class);
 
     /** Delimiter between value and scope. Default value: @ */
     private String scopeDelimiter = "@";
@@ -77,16 +79,17 @@ public class PrescopedAttributeDefinition extends AbstractAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
-        Constraint.isNotNull(resolutionContext, getLogPrefix() + " Attribute resolution context can not be null");
+    @Override @Nullable protected IdPAttribute doAttributeDefinitionResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
+        Constraint.isNotNull(workContext, getLogPrefix() + " AttributeResolverWorkContext cannot be null");
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         final IdPAttribute resultantAttribute = new IdPAttribute(getId());
 
         final Set<IdPAttributeValue<?>> dependencyValues =
-                PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
+                PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies());
         log.debug("{} Dependencies {} provided unmapped values of {}", new Object[] {getLogPrefix(), getDependencies(),
                 dependencyValues,});
 

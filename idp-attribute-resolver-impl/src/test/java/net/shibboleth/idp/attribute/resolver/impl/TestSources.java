@@ -28,6 +28,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.attribute.resolver.impl.ad.SAML2NameIDAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.impl.ad.StaticAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.impl.dc.StaticDataConnector;
@@ -178,6 +179,8 @@ public final class TestSources {
         retVal.setAttributeIssuerID(issuerID);
         retVal.setAttributeRecipientID(recipientId);
         retVal.setPrincipal(principal);
+        
+        retVal.getSubcontext(AttributeResolverWorkContext.class, true);
         return retVal;
     }
     

@@ -36,6 +36,7 @@ import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
@@ -69,19 +70,19 @@ import com.google.common.base.Predicates;
 public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(TemplateAttributeDefinition.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(TemplateAttributeDefinition.class);
 
     /** Template to be evaluated. */
-    private Template template;
+    @NonnullAfterInit private Template template;
 
     /** Template (as Text) to be evaluated. */
-    private String templateText;
+    @NonnullAfterInit private String templateText;
 
     /** VelocityEngine. */
-    private VelocityEngine engine;
+    @NonnullAfterInit private VelocityEngine engine;
 
     /** The names of the attributes we need. */
-    private List<String> sourceAttributes = Collections.EMPTY_LIST;
+    @Nonnull private List<String> sourceAttributes = Collections.emptyList();
 
     /**
      * Get the source attribute IDs.
@@ -111,7 +112,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @return the template
      */
-    @Nullable @NonnullAfterInit public Template getTemplate() {
+    @NonnullAfterInit public Template getTemplate() {
         return template;
     }
 
@@ -120,7 +121,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @return the template
      */
-    @Nullable @NonnullAfterInit public String getTemplateText() {
+    @NonnullAfterInit public String getTemplateText() {
         return templateText;
     }
 
@@ -141,7 +142,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @return the template
      */
-    @Nullable @NonnullAfterInit public VelocityEngine getVelocityEngine() {
+    @NonnullAfterInit public VelocityEngine getVelocityEngine() {
         return engine;
     }
 
@@ -150,7 +151,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @param velocityEngine engine to be used
      */
-    public synchronized void setVelocityEngine(final VelocityEngine velocityEngine) {
+    public synchronized void setVelocityEngine(@Nullable final VelocityEngine velocityEngine) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -159,12 +160,13 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
 
     /** {@inheritDoc} */
     @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
-            final AttributeResolutionContext resolutionContext) throws ResolutionException {
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
 
         final IdPAttribute resultantAttribute = new IdPAttribute(getId());
 
         final Map<String, Iterator<IdPAttributeValue<?>>> sourceValues = new LazyMap<>();
-        final int valueCount = setupSourceValues(resolutionContext, sourceValues);
+        final int valueCount = setupSourceValues(workContext, sourceValues);
 
         // build velocity context
         VelocityContext velocityContext;
@@ -246,16 +248,17 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
      * Finally, the names of the source attributes is checked against the dependency attributes and if there is a
      * mismatch then a warning is emitted.
      * 
-     * @param resolutionContext to look for dependencies in.
+     * @param workContext source for dependencies
      * @param sourceValues to populate with the attribute iterators
+     * 
      * @return how many values in the attributes
      * @throws ResolutionException if there is a mismatched count of attributes
      */
-    private int setupSourceValues(final AttributeResolutionContext resolutionContext,
+    private int setupSourceValues(@Nonnull final AttributeResolverWorkContext workContext,
             final Map<String, Iterator<IdPAttributeValue<?>>> sourceValues) throws ResolutionException {
 
         final Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes =
-                PluginDependencySupport.getAllAttributeValues(resolutionContext, getDependencies());
+                PluginDependencySupport.getAllAttributeValues(workContext, getDependencies());
 
         int valueCount = 0;
         boolean valueCountSet = false;
@@ -284,4 +287,5 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
 
         return valueCount;
     }
+    
 }

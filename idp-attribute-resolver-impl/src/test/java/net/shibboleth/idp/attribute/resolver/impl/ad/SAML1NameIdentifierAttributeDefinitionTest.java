@@ -61,8 +61,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         defn.initialize();
 
         final IdPAttribute result =
-                defn.doAttributeDefinitionResolve(TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID,
-                        null));
+                defn.resolve(TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, null));
 
         Assert.assertTrue(result.getValues().isEmpty());
     }

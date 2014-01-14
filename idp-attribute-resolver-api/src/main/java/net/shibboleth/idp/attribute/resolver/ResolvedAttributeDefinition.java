@@ -28,6 +28,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -46,10 +47,10 @@ import com.google.common.base.Predicates;
 public final class ResolvedAttributeDefinition extends AbstractAttributeDefinition {
 
     /** The attribute definition that was resolved to produce the attribute. */
-    private final AttributeDefinition resolvedDefinition;
+    @Nonnull private final AttributeDefinition resolvedDefinition;
 
     /** The attribute produced by the resolved attribute definition. */
-    private final IdPAttribute resolvedAttribute;
+    @Nullable private final IdPAttribute resolvedAttribute;
 
     /**
      * Constructor.
@@ -57,7 +58,8 @@ public final class ResolvedAttributeDefinition extends AbstractAttributeDefiniti
      * @param definition attribute definition that was resolved to produce the given attribute
      * @param attribute attribute produced by the given attribute definition
      */
-    public ResolvedAttributeDefinition(@Nonnull AttributeDefinition definition, @Nullable IdPAttribute attribute) {
+    public ResolvedAttributeDefinition(@Nonnull final AttributeDefinition definition,
+            @Nullable final IdPAttribute attribute) {
         resolvedDefinition = Constraint.isNotNull(definition, "Resolved attribute definition can not be null");
         Constraint.isTrue(definition.isInitialized(), "Resolved definition must have been initialized");
         Constraint.isFalse(definition.isDestroyed(), "Resolved definition can not have been destroyed");
@@ -65,43 +67,51 @@ public final class ResolvedAttributeDefinition extends AbstractAttributeDefiniti
     }
 
     /** {@inheritDoc} */
-    @Nullable protected IdPAttribute
-            doAttributeDefinitionResolve(@Nonnull AttributeResolutionContext resolutionContext)
-                    throws ResolutionException {
+    @Override
+    @Nullable protected IdPAttribute doAttributeDefinitionResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
         return resolvedAttribute;
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object obj) {
         return resolvedDefinition.equals(obj);
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NonnullElements public Set<AttributeEncoder<?>> getAttributeEncoders() {
         return resolvedDefinition.getAttributeEncoders();
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NonnullElements public Set<ResolverPluginDependency> getDependencies() {
         return resolvedDefinition.getDependencies();
     }
-
+    
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NonnullElements public Map<Locale, String> getDisplayDescriptions() {
         return resolvedDefinition.getDisplayDescriptions();
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NonnullElements public Map<Locale, String> getDisplayNames() {
         return resolvedDefinition.getDisplayNames();
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull public Predicate<AttributeResolutionContext> getActivationCriteria() {
         return Predicates.alwaysTrue();
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull public String getId() {
         return resolvedDefinition.getId();
     }
@@ -116,41 +126,49 @@ public final class ResolvedAttributeDefinition extends AbstractAttributeDefiniti
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return resolvedDefinition.hashCode();
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isDependencyOnly() {
         return resolvedDefinition.isDependencyOnly();
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isPropagateResolutionExceptions() {
         return resolvedDefinition.isPropagateResolutionExceptions();
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setDependencyOnly(boolean isDependencyOnly) {
         return;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setDisplayDescriptions(Map<Locale, String> descriptions) {
         return;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setDisplayNames(Map<Locale, String> names) {
         return;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setPropagateResolutionExceptions(boolean propagate) {
         return;
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull public String toString() {
         return resolvedDefinition.toString();
     }
@@ -165,13 +183,16 @@ public final class ResolvedAttributeDefinition extends AbstractAttributeDefiniti
     }
 
     /** {@inheritDoc} */
+    @Override
     public void doValidate() throws ComponentValidationException {
         super.doValidate();
         return;
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isInitialized() {
         return true;
     }
+
 }

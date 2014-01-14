@@ -19,7 +19,11 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.HashSet;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
@@ -112,6 +116,7 @@ public class AbstractResolverPluginTest {
     /** Test {@link ResolverPlugin#resolve(AttributeResolutionContext)}. */
     @Test public void resolver() throws Exception {
         AttributeResolutionContext context = new AttributeResolutionContext();
+        context.getSubcontext(AttributeResolverWorkContext.class, true);
         MockBaseResolverPlugin plugin = new MockBaseResolverPlugin("foo", "bar");
         plugin.initialize();
 
@@ -147,9 +152,11 @@ public class AbstractResolverPluginTest {
         }
 
         /** {@inheritDoc} */
-        protected String doResolve(AttributeResolutionContext resolutionContext)
-                throws ResolutionException {
+        @Override
+        @Nullable protected String doResolve(@Nonnull final AttributeResolutionContext resolutionContext,
+                @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
             return resolverValue;
         }
     }
+    
 }

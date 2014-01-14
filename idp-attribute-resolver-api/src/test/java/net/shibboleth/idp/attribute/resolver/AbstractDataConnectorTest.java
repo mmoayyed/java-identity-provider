@@ -21,8 +21,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -57,6 +61,7 @@ public class AbstractDataConnectorTest {
     /** Test the resolution of the data connector. */
     @Test public void resolve() throws Exception {
         AttributeResolutionContext context = new AttributeResolutionContext();
+        context.getSubcontext(AttributeResolverWorkContext.class, true);
 
         MockBaseDataConnector connector = new MockBaseDataConnector("foo", (Map<String, IdPAttribute>) null);
         connector.initialize();
@@ -99,8 +104,10 @@ public class AbstractDataConnectorTest {
         }
 
         /** {@inheritDoc} */
-        protected Map<String, IdPAttribute> doDataConnectorResolve(
-                AttributeResolutionContext resolutionContext) throws ResolutionException {
+        @Override
+        @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(
+                @Nonnull final AttributeResolutionContext resolutionContext,
+                @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
             return staticValues;
         }
     }

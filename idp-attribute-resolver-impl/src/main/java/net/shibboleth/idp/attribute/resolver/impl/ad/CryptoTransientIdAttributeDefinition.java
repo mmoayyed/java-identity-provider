@@ -28,6 +28,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -46,7 +47,7 @@ import org.slf4j.LoggerFactory;
 public class CryptoTransientIdAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(CryptoTransientIdAttributeDefinition.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(CryptoTransientIdAttributeDefinition.class);
 
     /** Object used to protect and encrypt the data. */
     private DataSealer dataSealer;
@@ -66,10 +67,11 @@ public class CryptoTransientIdAttributeDefinition extends AbstractAttributeDefin
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
+    @Override @Nullable protected IdPAttribute doAttributeDefinitionResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
 
-        Constraint.isNotNull(resolutionContext, "resolution context was null");
+        Constraint.isNotNull(resolutionContext, "Resolution context cannot be null");
 
         final String attributeIssuerID = resolutionContext.getAttributeIssuerID();
         if (null == attributeIssuerID) {

@@ -32,7 +32,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolvedAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -139,13 +139,13 @@ public abstract class BaseComputedIDDataConnector extends AbstractDataConnector 
     /**
      * Helper function to locate the source Attribute in the dependencies.
      * 
-     * @param resolutionContext the context to look in
+     * @param workContext the context to look in
      * @return the value, or null in any of the failure cases.
      */
-    @Nullable protected String resolveSourceAttribute(@Nonnull AttributeResolutionContext resolutionContext) {
+    @Nullable protected String resolveSourceAttribute(@Nonnull AttributeResolverWorkContext workContext) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ResolvedAttributeDefinition attributeDefinition =
-                resolutionContext.getResolvedIdPAttributeDefinitions().get(getSourceAttributeId());
+                workContext.getResolvedIdPAttributeDefinitions().get(getSourceAttributeId());
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -233,4 +233,5 @@ public abstract class BaseComputedIDDataConnector extends AbstractDataConnector 
         attribute.setValues(Collections.singleton(new StringAttributeValue(value)));
         return Collections.singletonMap(getGeneratedAttributeId(), attribute);
     }
+    
 }

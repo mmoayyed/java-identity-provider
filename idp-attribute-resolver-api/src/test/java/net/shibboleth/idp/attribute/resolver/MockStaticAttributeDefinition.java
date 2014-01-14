@@ -23,6 +23,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
@@ -35,7 +36,7 @@ import org.slf4j.LoggerFactory;
 public class MockStaticAttributeDefinition extends AbstractAttributeDefinition {
     
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(MockStaticAttributeDefinition.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(MockStaticAttributeDefinition.class);
 
     /** Static value returned by this definition. */
     private IdPAttribute value;
@@ -64,8 +65,10 @@ public class MockStaticAttributeDefinition extends AbstractAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
-            final AttributeResolutionContext resolutionContext) throws ResolutionException {
+    @Override
+    @Nullable protected IdPAttribute doAttributeDefinitionResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         log.debug("Attribute definition '{}': Resolving static attribute {}", getId(), value);
@@ -73,6 +76,7 @@ public class MockStaticAttributeDefinition extends AbstractAttributeDefinition {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
@@ -81,4 +85,5 @@ public class MockStaticAttributeDefinition extends AbstractAttributeDefinition {
                     + " does not have an attribute set up.");
         }
     }
+    
 }

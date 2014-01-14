@@ -30,6 +30,7 @@ import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.attribute.resolver.impl.dc.SAMLAttributeDataConnector;
 import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -77,7 +78,9 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
 
         connector.initialize();
 
-        return connector.doResolve(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext();
+        context.getSubcontext(AttributeResolverWorkContext.class, true);
+        return connector.resolve(context);
     }
 
     protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context) {

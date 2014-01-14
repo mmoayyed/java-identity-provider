@@ -33,6 +33,7 @@ import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -49,10 +50,10 @@ import org.slf4j.LoggerFactory;
 public class RegexSplitAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(RegexSplitAttributeDefinition.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(RegexSplitAttributeDefinition.class);
 
     /** Regular expression used to split values. */
-    private Pattern regexp;
+    @Nullable private Pattern regexp;
 
     /**
      * Gets the regular expression used to split input values.
@@ -72,13 +73,14 @@ public class RegexSplitAttributeDefinition extends AbstractAttributeDefinition {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        regexp = Constraint.isNotNull(expression, "Regular expression can not be null");
+        regexp = Constraint.isNotNull(expression, "Regular expression cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
-        Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
+    @Override @Nullable protected IdPAttribute doAttributeDefinitionResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
+        Constraint.isNotNull(workContext, "AttributeResolverWorkContext cannot be null");
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
@@ -86,7 +88,7 @@ public class RegexSplitAttributeDefinition extends AbstractAttributeDefinition {
         final IdPAttribute resultantAttribute = new IdPAttribute(getId());
 
         final Set<IdPAttributeValue<?>> dependencyValues =
-                PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
+                PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies());
 
         for (final IdPAttributeValue dependencyValue : dependencyValues) {
             if (!(dependencyValue instanceof StringAttributeValue)) {

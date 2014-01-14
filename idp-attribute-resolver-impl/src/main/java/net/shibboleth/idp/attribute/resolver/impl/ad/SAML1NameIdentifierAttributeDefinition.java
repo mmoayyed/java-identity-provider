@@ -32,6 +32,7 @@ import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -51,10 +52,10 @@ import org.slf4j.LoggerFactory;
 public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(SAML1NameIdentifierAttributeDefinition.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(SAML1NameIdentifierAttributeDefinition.class);
 
     /** The builder for the object represented inside this attribute. */
-    private final SAMLObjectBuilder<NameIdentifier> nameIdentifierBuilder;
+    @Nonnull private final SAMLObjectBuilder<NameIdentifier> nameIdentifierBuilder;
 
     /** Format of the NameID. */
     private String nameIdFormat;
@@ -66,8 +67,8 @@ public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDef
      * Constructor.
      */
     public SAML1NameIdentifierAttributeDefinition() {
-        nameIdentifierBuilder =
-                (SAMLObjectBuilder<NameIdentifier>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
+        nameIdentifierBuilder = (SAMLObjectBuilder<NameIdentifier>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIdentifier>getBuilderOrThrow(
                         NameIdentifier.DEFAULT_ELEMENT_NAME);
     }
 
@@ -171,7 +172,8 @@ public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDef
 
     /** {@inheritDoc} */
     @Override @Nullable protected IdPAttribute doAttributeDefinitionResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
@@ -179,7 +181,7 @@ public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDef
         Set<? extends IdPAttributeValue<?>> outputValues = null;
         final IdPAttribute result = new IdPAttribute(getId());
 
-        inputValues = PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
+        inputValues = PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies());
 
         if (null != inputValues && !inputValues.isEmpty()) {
 

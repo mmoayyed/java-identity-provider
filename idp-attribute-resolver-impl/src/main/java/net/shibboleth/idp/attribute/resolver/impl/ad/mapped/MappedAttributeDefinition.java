@@ -33,6 +33,7 @@ import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
@@ -187,14 +188,16 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
+    @Override
+    @Nullable protected IdPAttribute doAttributeDefinitionResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
         final Set<IdPAttributeValue<?>> unmappedResults =
-                PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
+                PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies());
         log.debug("Attribute Definition '{}': Attempting to map the following values: {}", getId(), unmappedResults);
 
         // Bucket for results
@@ -224,6 +227,7 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doDestroy() {
         valueMaps = null;
 
@@ -231,6 +235,7 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
@@ -244,4 +249,5 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
                     + "': no value mappings were configured");
         }
     }
+    
 }

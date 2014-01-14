@@ -25,6 +25,7 @@ import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -37,11 +38,12 @@ public class SimpleAttributeDefinition extends AbstractAttributeDefinition {
 
     /** {@inheritDoc} */
     @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
-        Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
+        Constraint.isNotNull(workContext, "AttributeResolverWorkContext cannot be null");
 
         final IdPAttribute result = new IdPAttribute(getId());
-        result.setValues(PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies()));
+        result.setValues(PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies()));
 
         return result;
     }
@@ -54,4 +56,5 @@ public class SimpleAttributeDefinition extends AbstractAttributeDefinition {
             throw new ComponentInitializationException(getLogPrefix() + " no dependencies were configured");
         }
     }
+    
 }

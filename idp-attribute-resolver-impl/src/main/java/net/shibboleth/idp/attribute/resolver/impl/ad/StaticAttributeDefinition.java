@@ -25,6 +25,8 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
@@ -36,10 +38,10 @@ import org.slf4j.LoggerFactory;
 public class StaticAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(StaticAttributeDefinition.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(StaticAttributeDefinition.class);
 
     /** Static value returned by this definition. */
-    private IdPAttribute value;
+    @NonnullAfterInit private IdPAttribute value;
 
     /**
      * Set the attribute value we are returning.
@@ -58,13 +60,14 @@ public class StaticAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @return the attribute.
      */
-    @Nonnull public IdPAttribute getValue() {
+    @NonnullAfterInit public IdPAttribute getValue() {
         return value;
     }
 
     /** {@inheritDoc} */
     @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
-            final AttributeResolutionContext resolutionContext) throws ResolutionException {
+            final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         log.debug("{} resolving static attribute {}", getLogPrefix(), value);
@@ -80,4 +83,5 @@ public class StaticAttributeDefinition extends AbstractAttributeDefinition {
             throw new ComponentInitializationException(getLogPrefix() + " no attribute value set");
         }
     }
+    
 }

@@ -60,7 +60,7 @@ public class RegexAtributeTest {
     @Test public void regex() throws ResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
+        final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
         ResolverPluginDependency depend = new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME);
         depend.setDependencyAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
         dependencySet.add(depend);
@@ -71,7 +71,7 @@ public class RegexAtributeTest {
         attrDef.initialize();
 
         // And resolve
-        final Set<DataConnector> connectorSet = new LazySet<DataConnector>();
+        final Set<DataConnector> connectorSet = new LazySet<>();
         connectorSet.add(TestSources.populatedStaticConnector());
 
         final Set<AttributeDefinition> attributeSet = new LazySet<AttributeDefinition>();
@@ -104,7 +104,7 @@ public class RegexAtributeTest {
         attrDef.initialize();
 
         try {
-            attrDef.doAttributeDefinitionResolve(resolutionContext);
+            attrDef.resolve(resolutionContext);
             Assert.fail("Invalid type");
         } catch (ResolutionException e) {
             //
@@ -145,7 +145,7 @@ public class RegexAtributeTest {
         attrDef.setDependencies(pluginDependencies);
 
         try {
-            attrDef.doAttributeDefinitionResolve(new AttributeResolutionContext());
+            attrDef.resolve(new AttributeResolutionContext());
             Assert.fail("resolve not initialized");
         } catch (UninitializedComponentException e) {
             // OK
@@ -155,7 +155,7 @@ public class RegexAtributeTest {
         Assert.assertEquals(attrDef.getRegularExpression(), TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN);
 
         try {
-            attrDef.doAttributeDefinitionResolve(null);
+            attrDef.resolve(null);
             Assert.fail("Null context not allowed");
         } catch (ConstraintViolationException e) {
             // OK
@@ -175,7 +175,7 @@ public class RegexAtributeTest {
             // OK
         }
         try {
-            attrDef.doAttributeDefinitionResolve(new AttributeResolutionContext());
+            attrDef.resolve(new AttributeResolutionContext());
             Assert.fail("Resolve after destroy");
         } catch (DestroyedComponentException e) {
             // OK

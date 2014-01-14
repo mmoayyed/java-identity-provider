@@ -26,6 +26,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -44,10 +45,10 @@ import com.google.common.base.Predicates;
 public final class ResolvedDataConnector extends AbstractDataConnector {
 
     /** The data connector that was resolved to produce the attributes. */
-    private final DataConnector resolvedConnector;
+    @Nonnull private final DataConnector resolvedConnector;
 
     /** The attributes produced by the resolved data connector. */
-    private final Map<String, IdPAttribute> resolvedAttributes;
+    @Nullable private final Map<String, IdPAttribute> resolvedAttributes;
 
     /**
      * Constructor.
@@ -55,66 +56,78 @@ public final class ResolvedDataConnector extends AbstractDataConnector {
      * @param connector data connector that was resolved to produce the attributes
      * @param attributes attributes produced by the resolved data connector
      */
-    public ResolvedDataConnector(@Nonnull DataConnector connector,
-            @Nullable Map<String, IdPAttribute> attributes) {
-        resolvedConnector = Constraint.isNotNull(connector, "Resolved data connector can not be null");
+    public ResolvedDataConnector(@Nonnull final DataConnector connector,
+            @Nullable final Map<String, IdPAttribute> attributes) {
+        resolvedConnector = Constraint.isNotNull(connector, "Resolved data connector cannot be null");
         resolvedAttributes = attributes;
         Constraint.isTrue(connector.isInitialized(), "Provided connector should be initialized");
         Constraint.isFalse(connector.isDestroyed(), "Provided connector must not be destroyed");    
         }
 
     /** {@inheritDoc} */
+    @Override
     @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(
-            AttributeResolutionContext resolutionContext) throws ResolutionException {
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
         return resolvedAttributes;
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object obj) {
         return resolvedConnector.equals(obj);
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NonnullElements public Set<ResolverPluginDependency> getDependencies() {
         return resolvedConnector.getDependencies();
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull public Predicate<AttributeResolutionContext> getActivationCriteria() {
         return Predicates.alwaysTrue();
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nullable public String getFailoverDataConnectorId() {
         return null;
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull public String getId() {
         return resolvedConnector.getId();
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return resolvedConnector.hashCode();
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isPropagateResolutionExceptions() {
         return resolvedConnector.isPropagateResolutionExceptions();
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setFailoverDataConnectorId(String id) {
         return;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setPropagateResolutionExceptions(boolean propagate) {
         return;
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull public String toString() {
         return resolvedConnector.toString();
     }
@@ -138,13 +151,16 @@ public final class ResolvedDataConnector extends AbstractDataConnector {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void doValidate() throws ComponentValidationException {
         super.doValidate();
         return;
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isInitialized() {
         return true;
     }
+    
 }

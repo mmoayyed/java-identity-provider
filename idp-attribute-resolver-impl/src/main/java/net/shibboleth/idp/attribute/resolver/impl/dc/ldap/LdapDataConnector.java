@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 public class LdapDataConnector extends AbstractSearchDataConnector<ExecutableSearchFilter> {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(LdapDataConnector.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(LdapDataConnector.class);
 
     /** Factory for retrieving LDAP connections. */
     private ConnectionFactory connectionFactory;
@@ -107,6 +107,7 @@ public class LdapDataConnector extends AbstractSearchDataConnector<ExecutableSea
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 

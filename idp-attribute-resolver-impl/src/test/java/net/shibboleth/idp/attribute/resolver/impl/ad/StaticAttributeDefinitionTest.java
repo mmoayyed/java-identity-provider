@@ -21,6 +21,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -58,7 +59,7 @@ public class StaticAttributeDefinitionTest {
         Assert.assertNotNull(attrDef.getValue());
 
         try {
-            attrDef.doAttributeDefinitionResolve(new AttributeResolutionContext());
+            attrDef.resolve(new AttributeResolutionContext());
             Assert.fail("Need to be initialized to resolve");
         } catch (UninitializedComponentException e) {
             // OK
@@ -68,8 +69,9 @@ public class StaticAttributeDefinitionTest {
 
         Assert.assertNotNull(attrDef.getValue());
 
-        AttributeResolutionContext context = new AttributeResolutionContext();
-        IdPAttribute result = attrDef.doAttributeDefinitionResolve(context);
+        final AttributeResolutionContext context = new AttributeResolutionContext();
+        context.getSubcontext(AttributeResolverWorkContext.class, true);
+        IdPAttribute result = attrDef.resolve(context);
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.getId(), "attribute");
@@ -100,11 +102,12 @@ public class StaticAttributeDefinitionTest {
         }
 
         try {
-            attrDef.doAttributeDefinitionResolve(new AttributeResolutionContext());
+            attrDef.resolve(new AttributeResolutionContext());
             Assert.fail();
         } catch (DestroyedComponentException e) {
             // OK
         }
 
     }
+    
 }

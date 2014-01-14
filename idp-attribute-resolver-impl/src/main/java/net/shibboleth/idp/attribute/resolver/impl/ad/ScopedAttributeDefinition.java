@@ -20,7 +20,6 @@ package net.shibboleth.idp.attribute.resolver.impl.ad;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -32,6 +31,7 @@ import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -47,14 +47,14 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 public class ScopedAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Scope value. */
-    private String scope;
+    @NonnullAfterInit private String scope;
 
     /**
      * Get scope value.
      * 
      * @return Returns the scope.
      */
-    @Nullable @NonnullAfterInit public String getScope() {
+    @NonnullAfterInit public String getScope() {
         return scope;
     }
 
@@ -72,7 +72,8 @@ public class ScopedAttributeDefinition extends AbstractAttributeDefinition {
 
     /** {@inheritDoc} */
     @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
 
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -80,7 +81,7 @@ public class ScopedAttributeDefinition extends AbstractAttributeDefinition {
         final IdPAttribute resultantAttribute = new IdPAttribute(getId());
 
         final Set<IdPAttributeValue<?>> dependencyValues =
-                PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
+                PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies());
 
         for (final IdPAttributeValue dependencyValue : dependencyValues) {
             if (!(dependencyValue instanceof StringAttributeValue)) {
@@ -109,4 +110,5 @@ public class ScopedAttributeDefinition extends AbstractAttributeDefinition {
             throw new ComponentInitializationException(getLogPrefix() + "': no dependencies were configured");
         }
     }
+    
 }

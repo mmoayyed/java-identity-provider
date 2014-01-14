@@ -37,7 +37,7 @@ public class PrincipalAuthenticationMethodAttributeDefinitionTest {
         PrincipalAuthenticationMethodAttributeDefinition defn = new PrincipalAuthenticationMethodAttributeDefinition();
         defn.setId("id");
         defn.initialize();
-        Assert.assertNull(defn.doAttributeDefinitionResolve(TestSources.createResolutionContext("princ", "issuer", "recipient")));
+        Assert.assertNull(defn.resolve(TestSources.createResolutionContext("princ", "issuer", "recipient")));
     }
     
     @Test
@@ -49,7 +49,7 @@ public class PrincipalAuthenticationMethodAttributeDefinitionTest {
         arc.setPrincipalAuthenticationMethod("Method");
 
         arc.setPrincipalAuthenticationMethod("Method");
-        IdPAttribute result = defn.doAttributeDefinitionResolve(arc);
+        IdPAttribute result = defn.resolve(arc);
         
         Assert.assertEquals(result.getValues().size(), 1);
         

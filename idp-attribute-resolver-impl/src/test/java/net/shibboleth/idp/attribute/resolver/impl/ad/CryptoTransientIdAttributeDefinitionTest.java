@@ -29,6 +29,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.security.DataSealer;
@@ -114,8 +115,10 @@ public class CryptoTransientIdAttributeDefinitionTest {
         defn.setIdLifetime(TIMEOUT);
         defn.initialize();
         
+        AttributeResolutionContext context = new AttributeResolutionContext();
+        context.getSubcontext(AttributeResolverWorkContext.class, true);
         try {
-            defn.resolve(new AttributeResolutionContext());
+            defn.resolve(context);
             Assert.fail("No SP");
         } catch (ResolutionException e) {
             // OK
@@ -153,7 +156,7 @@ public class CryptoTransientIdAttributeDefinitionTest {
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
 
-        final IdPAttribute result = defn.doAttributeDefinitionResolve(context);
+        final IdPAttribute result = defn.resolve(context);
 
         final Set<IdPAttributeValue<?>> values = result.getValues();
         Assert.assertEquals(values.size(), 1);

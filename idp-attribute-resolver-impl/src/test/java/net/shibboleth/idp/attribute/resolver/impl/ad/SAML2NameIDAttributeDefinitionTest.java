@@ -29,6 +29,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.utilities.java.support.collection.LazySet;
@@ -61,7 +62,10 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
         defn.initialize();
 
-        final IdPAttribute result = defn.doAttributeDefinitionResolve(new AttributeResolutionContext());
+        final AttributeResolutionContext context = new AttributeResolutionContext();
+        context.getSubcontext(AttributeResolverWorkContext.class, true);
+
+        final IdPAttribute result = defn.resolve(context);
 
         Assert.assertTrue(result.getValues().isEmpty());
     }
@@ -71,14 +75,14 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         defn.setId(TEST_ATTRIBUTE_NAME);
 
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
+        final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
         dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         defn.setDependencies(dependencySet);
         defn.initialize();
 
         // And resolve
-        final Set<AttributeDefinition> am = new LazySet<AttributeDefinition>();
+        final Set<AttributeDefinition> am = new LazySet<>();
         am.add(defn);
         am.add(TestSources.populatedStaticAttribute());
 
@@ -141,12 +145,12 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         defn2.setId(SECOND_ATTRIBUTE_NAME);
 
         // Set the dependency on the data connector
-        Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
+        Set<ResolverPluginDependency> dependencySet = new LazySet<>();
         dependencySet.add(TestSources.makeResolverPluginDependency(TEST_ATTRIBUTE_NAME, null));
         defn2.setDependencies(dependencySet);
 
         // And resolve
-        Set<AttributeDefinition> am = new LazySet<AttributeDefinition>();
+        Set<AttributeDefinition> am = new LazySet<>();
         am.add(defn);
         am.add(TestSources.populatedStaticAttribute());
         am.add(defn2);
@@ -171,7 +175,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
 
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
+        final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
         dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         defn.setDependencies(dependencySet);
@@ -181,7 +185,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         defn.initialize();
 
         // And resolve
-        final Set<AttributeDefinition> am = new LazySet<AttributeDefinition>();
+        final Set<AttributeDefinition> am = new LazySet<>();
         am.add(defn);
         am.add(TestSources.populatedStaticAttribute(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));
@@ -207,7 +211,6 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         Assert.assertEquals(id.getNameQualifier(), ALTERNATE_QUALIFIER);
         Assert.assertEquals(defn.getNameIdQualifier(), id.getNameQualifier());
         Assert.assertEquals(id.getValue(), TestSources.COMMON_ATTRIBUTE_VALUE_STRING);
-
     }
 
 }

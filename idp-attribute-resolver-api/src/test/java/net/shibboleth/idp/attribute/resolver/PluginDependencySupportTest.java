@@ -23,6 +23,7 @@ import java.util.Set;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -52,12 +53,14 @@ import com.google.common.collect.Lists;
 public class PluginDependencySupportTest {
 
     @Test public void getMergedAttributeValueWithAttributeDefinitionDependency() {
-        AttributeResolutionContext resolutionContext =
+        final AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildAttributeDefinition(
                         ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA1_VALUES));
+        final AttributeResolverWorkContext workContext =
+                resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
 
-        Set<IdPAttributeValue<?>> result =
-                PluginDependencySupport.getMergedAttributeValues(resolutionContext,
+        final Set<IdPAttributeValue<?>> result =
+                PluginDependencySupport.getMergedAttributeValues(workContext,
                         Lists.newArrayList(new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID)));
 
         Assert.assertNotNull(result);
@@ -67,16 +70,18 @@ public class PluginDependencySupportTest {
     }
 
     @Test public void getMergedAttributeValuesWithDataConnectorDependency() {
-        AttributeResolutionContext resolutionContext =
+        final AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1",
                         ResolverTestSupport.buildAttribute(ResolverTestSupport.EPE_ATTRIB_ID,
                                 ResolverTestSupport.EPE1_VALUES), ResolverTestSupport.buildAttribute(
                                 ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA1_VALUES)));
+        final AttributeResolverWorkContext workContext =
+                resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
 
         final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
         depend.setDependencyAttributeId(ResolverTestSupport.EPE_ATTRIB_ID);
-        Set<IdPAttributeValue<?>> result =
-                PluginDependencySupport.getMergedAttributeValues(resolutionContext, Lists.newArrayList(depend));
+        final Set<IdPAttributeValue<?>> result =
+                PluginDependencySupport.getMergedAttributeValues(workContext, Lists.newArrayList(depend));
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 2);
@@ -86,22 +91,24 @@ public class PluginDependencySupportTest {
     }
 
     @Test public void getMergedAttributeValueWithMultipleDependencies() {
-        MockStaticDataConnector connector1 =
+        final MockStaticDataConnector connector1 =
                 ResolverTestSupport.buildDataConnector("connector1", ResolverTestSupport.buildAttribute(
                         ResolverTestSupport.EPE_ATTRIB_ID, ResolverTestSupport.EPE1_VALUES), ResolverTestSupport
                         .buildAttribute(ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA2_VALUES));
 
-        MockStaticAttributeDefinition definition1 =
+        final MockStaticAttributeDefinition definition1 =
                 ResolverTestSupport.buildAttributeDefinition(ResolverTestSupport.EPA_ATTRIB_ID,
                         ResolverTestSupport.EPA1_VALUES);
 
-        AttributeResolutionContext resolutionContext =
+        final AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(connector1, definition1);
+        final AttributeResolverWorkContext workContext =
+                resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
 
         final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
         depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
-        Set<IdPAttributeValue<?>> result =
-                PluginDependencySupport.getMergedAttributeValues(resolutionContext,
+        final Set<IdPAttributeValue<?>> result =
+                PluginDependencySupport.getMergedAttributeValues(workContext,
                         Lists.newArrayList(depend, new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID)));
 
         Assert.assertNotNull(result);
@@ -113,22 +120,24 @@ public class PluginDependencySupportTest {
     }
 
     @Test public void getAllAttributeValues() {
-        MockStaticDataConnector connector1 =
+        final MockStaticDataConnector connector1 =
                 ResolverTestSupport.buildDataConnector("connector1", ResolverTestSupport.buildAttribute(
                         ResolverTestSupport.EPE_ATTRIB_ID, ResolverTestSupport.EPE1_VALUES), ResolverTestSupport
                         .buildAttribute(ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA2_VALUES));
 
-        MockStaticAttributeDefinition definition1 =
+        final MockStaticAttributeDefinition definition1 =
                 ResolverTestSupport.buildAttributeDefinition(ResolverTestSupport.EPA_ATTRIB_ID,
                         ResolverTestSupport.EPA1_VALUES);
 
-        AttributeResolutionContext resolutionContext =
+        final AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(connector1, definition1);
+        final AttributeResolverWorkContext workContext =
+                resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
 
         final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
         depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
-        Map<String, Set<IdPAttributeValue<?>>> result =
-                PluginDependencySupport.getAllAttributeValues(resolutionContext,
+        final Map<String, Set<IdPAttributeValue<?>>> result =
+                PluginDependencySupport.getAllAttributeValues(workContext,
                         Lists.newArrayList(depend, new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID)));
 
         Assert.assertNotNull(result);

@@ -21,6 +21,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -38,8 +39,11 @@ public class PrincipalNameAttributeDefinitionTest {
         defn.setId("id");
         defn.initialize();
 
+        final AttributeResolutionContext context = new AttributeResolutionContext();
+        context.getSubcontext(AttributeResolverWorkContext.class, true);
+        
         try {
-            defn.doAttributeDefinitionResolve(new AttributeResolutionContext());
+            defn.resolve(context);
         } catch (ResolutionException e) {
             // OK
         }
@@ -53,7 +57,7 @@ public class PrincipalNameAttributeDefinitionTest {
         defn.initialize();
         
         try {
-            defn.doAttributeDefinitionResolve(TestSources.createResolutionContext("", "issuer", "recipient"));
+            defn.resolve(TestSources.createResolutionContext("", "issuer", "recipient"));
         } catch (ResolutionException e) {
             // OK
         }
@@ -67,7 +71,7 @@ public class PrincipalNameAttributeDefinitionTest {
         defn.setId("id");
         defn.initialize();
         
-        IdPAttribute result = defn.doAttributeDefinitionResolve(TestSources.createResolutionContext("principal", "issuer", "recipient"));
+        IdPAttribute result = defn.resolve(TestSources.createResolutionContext("principal", "issuer", "recipient"));
         
         Assert.assertEquals(result.getValues().size(), 1);
         

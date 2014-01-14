@@ -27,6 +27,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -43,7 +44,8 @@ public class PrincipalAuthenticationMethodAttributeDefinition extends AbstractAt
 
     /** {@inheritDoc} */
     @Override @Nullable protected IdPAttribute doAttributeDefinitionResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
 
         final String method = StringSupport.trimOrNull(resolutionContext.getPrincipalAuthenticationMethod());
 
@@ -61,4 +63,5 @@ public class PrincipalAuthenticationMethodAttributeDefinition extends AbstractAt
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
     }
+    
 }

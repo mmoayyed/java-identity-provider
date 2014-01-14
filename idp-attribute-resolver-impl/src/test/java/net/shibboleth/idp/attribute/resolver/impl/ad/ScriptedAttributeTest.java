@@ -95,7 +95,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         attr.initialize();
         Assert.assertNotNull(attr.getScript());
 
-        final IdPAttribute val = attr.doAttributeDefinitionResolve(generateContext());
+        final IdPAttribute val = attr.resolve(generateContext());
         final Set<IdPAttributeValue<?>> results = val.getValues();
 
         Assert.assertTrue(test.equals(val), "Scripted result is the same as bases");
@@ -125,7 +125,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         attr.initialize();
         Assert.assertNotNull(attr.getScript());
 
-        final IdPAttribute val = attr.doAttributeDefinitionResolve(generateContext());
+        final IdPAttribute val = attr.resolve(generateContext());
         final Set<IdPAttributeValue<?>> results = val.getValues();
 
         Assert.assertTrue(test.equals(val), "Scripted result is the same as bases");
@@ -148,7 +148,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         attr.initialize();
         Assert.assertNotNull(attr.getScript());
 
-        final IdPAttribute val = attr.doAttributeDefinitionResolve(generateContext());
+        final IdPAttribute val = attr.resolve(generateContext());
         final Set<IdPAttributeValue<?>> results = val.getValues();
 
         Assert.assertTrue(test.equals(val), "Scripted result is the same as bases");
@@ -176,7 +176,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
     private void failureTest(String failingScript, String failingMessage) throws ScriptException, IOException,
             ComponentInitializationException {
         try {
-            buildTest(failingScript).doAttributeDefinitionResolve(generateContext());
+            buildTest(failingScript).resolve(generateContext());
             Assert.fail("Script: '" + failingScript + "' should have thrown an exception: " + failingMessage);
         } catch (ResolutionException ex) {
             // OK
@@ -188,7 +188,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         failureTest("fail1.script", "Unknown method");
         failureTest("fail2.script", "Bad output type");
-        Assert.assertNull(buildTest("fail3.script").doAttributeDefinitionResolve(generateContext()),
+        Assert.assertNull(buildTest("fail3.script").resolve(generateContext()),
                 "returns nothing");
         failureTest("fail4.script", "getValues, then getNativeAttributes");
         failureTest("fail5.script", "getNativeAttributes, then getValues");
@@ -201,7 +201,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
             ComponentInitializationException {
 
         final IdPAttribute result =
-                buildTest("addAfterGetValues.script").doAttributeDefinitionResolve(generateContext());
+                buildTest("addAfterGetValues.script").resolve(generateContext());
         final Set<IdPAttributeValue<?>> values = result.getValues();
         Assert.assertEquals(values.size(), 1);
         Assert.assertTrue(values.contains(new StringAttributeValue("newValue")));
@@ -254,7 +254,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
             ScriptException, IOException {
 
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
+        final Set<ResolverPluginDependency> ds = new LazySet<>();
         ds.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, null));
         
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
@@ -264,7 +264,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         scripted.initialize();
 
         // And resolve
-        final Set<AttributeDefinition> attrDefinitions = new HashSet<AttributeDefinition>(3);
+        final Set<AttributeDefinition> attrDefinitions = new HashSet<>(3);
         attrDefinitions.add(scripted);
         AttributeDefinition nonString = TestSources.nonStringAttributeDefiniton(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR); 
         attrDefinitions.add(nonString);
@@ -298,7 +298,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
             IOException {
 
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
+        final Set<ResolverPluginDependency> ds = new LazySet<>();
         ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
 
@@ -309,11 +309,11 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         scripted.initialize();
 
         // And resolve
-        final Set<AttributeDefinition> attrDefinitions = new LazySet<AttributeDefinition>();
+        final Set<AttributeDefinition> attrDefinitions = new LazySet<>();
         attrDefinitions.add(scripted);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
 
-        final Set<DataConnector> dataDefinitions = new LazySet<DataConnector>();
+        final Set<DataConnector> dataDefinitions = new LazySet<>();
         dataDefinitions.add(TestSources.populatedStaticConnector());
 
         final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, dataDefinitions);
@@ -421,7 +421,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("requestContext.script")));
         scripted.initialize();
 
-        IdPAttribute result = scripted.doAttributeDefinitionResolve(generateContext());
+        IdPAttribute result = scripted.resolve(generateContext());
         HashSet<IdPAttributeValue> set = new HashSet(result.getValues());
         Assert.assertEquals(set.size(), 3);
         Assert.assertTrue(set.contains(new StringAttributeValue(TestSources.PRINCIPAL_ID)));
@@ -438,7 +438,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("requestContextUnimplemented.script")));
         scripted.initialize();
 
-        IdPAttribute result = scripted.doAttributeDefinitionResolve(generateContext());
+        IdPAttribute result = scripted.resolve(generateContext());
         Assert.assertEquals(result.getValues().iterator().next(), new StringAttributeValue("AllDone"));
 
     }

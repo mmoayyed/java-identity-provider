@@ -32,6 +32,7 @@ import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.utilities.java.support.collection.LazySet;
@@ -138,7 +139,9 @@ public class TemplateAttributeTest {
         
         attr.initialize();
         Assert.assertNotNull(attr.getTemplate());
-        final IdPAttribute val = attr.resolve(new AttributeResolutionContext());
+        final AttributeResolutionContext context = new AttributeResolutionContext();
+        context.getSubcontext(AttributeResolverWorkContext.class, true);
+        final IdPAttribute val = attr.resolve(context);
         final Collection<?> results = val.getValues();
 
         Assert.assertEquals(results.size(), 0, "Templated value count");
@@ -153,7 +156,7 @@ public class TemplateAttributeTest {
         attr.initialize();
         Assert.assertNotNull(attr.getTemplate());
         try {
-            attr.resolve(new AttributeResolutionContext());
+            attr.resolve(context);
         } catch (ResolutionException e) {
             // OK
         }

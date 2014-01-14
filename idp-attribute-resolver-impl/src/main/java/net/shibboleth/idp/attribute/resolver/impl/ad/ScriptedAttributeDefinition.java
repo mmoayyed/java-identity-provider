@@ -34,6 +34,7 @@ import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -70,7 +71,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfi
 public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ScriptedAttributeDefinition.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ScriptedAttributeDefinition.class);
 
     /** Script to be evaluated. */
     private EvaluableScript script;
@@ -93,15 +94,17 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        script = Constraint.isNotNull(definitionScript, "Attribute definition script can not be null");
+        script = Constraint.isNotNull(definitionScript, "Attribute definition script cannot be null");
     }
 
     /** {@inheritDoc} */
     @Override @Nullable protected IdPAttribute doAttributeDefinitionResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
-        Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
+        Constraint.isNotNull(resolutionContext, "AttributeResolutionContext cannot be null");
+        Constraint.isNotNull(workContext, "AttributeResolverWorkContext cannot be null");
 
-        final ScriptContext context = getScriptContext(resolutionContext);
+        final ScriptContext context = getScriptContext(resolutionContext, workContext);
 
         try {
             script.eval(context);
@@ -141,18 +144,17 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
      * Constructs the {@link ScriptContext} used when evaluating the script.
      * 
      * @param resolutionContext current resolution context
+     * @param workContext current work context
      * 
      * @return constructed script context
-     * 
      * @throws ResolutionException thrown if dependent data connectors or attribute definitions can not be resolved
      */
-    @Nonnull private ScriptContext getScriptContext(@Nonnull final AttributeResolutionContext resolutionContext)
-            throws ResolutionException {
-        Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
+    @Nonnull private ScriptContext getScriptContext(@Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
 
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
         final Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes =
-                PluginDependencySupport.getAllAttributeValues(resolutionContext, getDependencies());
+                PluginDependencySupport.getAllAttributeValues(workContext, getDependencies());
 
         if (dependencyAttributes.containsKey(getId())) {
             log.debug("{} to-be-populated attribute is a dependency.  Not created", getLogPrefix());
@@ -163,15 +165,16 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
                     ScriptContext.ENGINE_SCOPE);
         }
 
-        log.debug("{} adding current attribute resolution context to script context", getLogPrefix());
+        log.debug("{} adding current attribute resolution contexts to script context", getLogPrefix());
         scriptContext.setAttribute("resolutionContext", resolutionContext, ScriptContext.ENGINE_SCOPE);
+        scriptContext.setAttribute("workContext", workContext, ScriptContext.ENGINE_SCOPE);
 
-        log.debug("{} adding emulated V2 request context context to script context", getLogPrefix());
+        log.debug("{} adding emulated V2 request context to script context", getLogPrefix());
         scriptContext.setAttribute("requestContext", new V2SAMLProfileRequestContext(resolutionContext, getId()),
                 ScriptContext.ENGINE_SCOPE);
 
         for (final Entry<String, Set<IdPAttributeValue<?>>> dependencyAttribute : dependencyAttributes.entrySet()) {
-            log.debug("{} adding dependant attribute '{}' with the following values to the script context: {}",
+            log.debug("{} adding dependent attribute '{}' with the following values to the script context: {}",
                     new Object[] {getLogPrefix(), dependencyAttribute.getKey(), dependencyAttribute.getValue(),});
             final IdPAttribute pseudoAttribute = new IdPAttribute(dependencyAttribute.getKey());
             pseudoAttribute.setValues(dependencyAttribute.getValue());
@@ -182,4 +185,5 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
 
         return scriptContext;
     }
+    
 }

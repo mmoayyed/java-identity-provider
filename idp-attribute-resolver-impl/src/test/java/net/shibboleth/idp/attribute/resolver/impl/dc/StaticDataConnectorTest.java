@@ -26,6 +26,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -59,7 +60,7 @@ public class StaticDataConnectorTest {
             //OK
         }
         
-        List<IdPAttribute> input = new ArrayList<IdPAttribute>();
+        List<IdPAttribute> input = new ArrayList<>();
         connector.setValues(input);
         Assert.assertNotNull(connector.getAttributes());
 
@@ -76,8 +77,9 @@ public class StaticDataConnectorTest {
 
         Assert.assertEquals(connector.getAttributes().size(), 2);
 
-        AttributeResolutionContext context = new AttributeResolutionContext();
-        Map<String, IdPAttribute> result = connector.doResolve(context);
+        final AttributeResolutionContext context = new AttributeResolutionContext();
+        context.getSubcontext(AttributeResolverWorkContext.class, true);
+        Map<String, IdPAttribute> result = connector.resolve(context);
 
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.containsKey("attribute"));
@@ -116,7 +118,7 @@ public class StaticDataConnectorTest {
         connector.destroy();
 
         try {
-            connector.doDataConnectorResolve(new AttributeResolutionContext());
+            connector.resolve(new AttributeResolutionContext());
             Assert.fail();
         } catch (DestroyedComponentException e) {
             //OK

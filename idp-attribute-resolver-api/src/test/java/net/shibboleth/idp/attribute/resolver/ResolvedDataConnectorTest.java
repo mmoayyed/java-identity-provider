@@ -23,6 +23,7 @@ import java.util.Map;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
@@ -104,8 +105,8 @@ public class ResolvedDataConnectorTest {
         dc.initialize();
         ResolvedDataConnector resolvedDataConnector = new ResolvedDataConnector(dc, resolvedData);
 
-        Assert.assertEquals(resolvedDataConnector.doDataConnectorResolve(new AttributeResolutionContext()),
-                resolvedData);
+        Assert.assertEquals(resolvedDataConnector.doDataConnectorResolve(new AttributeResolutionContext(),
+                new AttributeResolverWorkContext()), resolvedData);
         Assert.assertNull(resolvedDataConnector.getFailoverDataConnectorId());
         Assert.assertEquals(resolvedDataConnector.getResolvedConnector(), dc);
         Assert.assertTrue(resolvedDataConnector.isInitialized());

@@ -24,9 +24,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 
@@ -173,6 +177,7 @@ public class AbstractAttributeDefinitionTest {
     @Test
     public void resolve() throws Exception {
         AttributeResolutionContext context = new AttributeResolutionContext();
+        context.getSubcontext(AttributeResolverWorkContext.class, true);
 
         MockAttributeDefinition definition = new MockAttributeDefinition("foo", (IdPAttribute) null);
         definition.initialize();
@@ -262,8 +267,10 @@ public class AbstractAttributeDefinitionTest {
         }
 
         /** {@inheritDoc} */
-        protected IdPAttribute doAttributeDefinitionResolve(AttributeResolutionContext resolutionContext)
-                throws ResolutionException {
+        @Override
+        @Nullable protected IdPAttribute doAttributeDefinitionResolve(
+                @Nonnull final AttributeResolutionContext resolutionContext,
+                @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
             return staticAttribute;
         }
     }

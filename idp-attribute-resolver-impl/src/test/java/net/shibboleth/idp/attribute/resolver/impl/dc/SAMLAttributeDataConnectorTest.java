@@ -29,6 +29,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
@@ -55,7 +56,9 @@ public class SAMLAttributeDataConnectorTest extends XMLObjectBaseTestCase {
         connector.setId(PATH);
         connector.initialize();
     
-        final Map<String, IdPAttribute> attributes = connector.doDataConnectorResolve(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext();
+        context.getSubcontext(AttributeResolverWorkContext.class, true);
+        final Map<String, IdPAttribute> attributes = connector.resolve(context);
         Assert.assertEquals(attributes.size(), 2);
         
         Set<IdPAttributeValue<?>> attributeValues = attributes.get("SamlName").getValues();

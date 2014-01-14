@@ -26,6 +26,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
@@ -45,7 +46,7 @@ import com.google.common.cache.Cache;
 public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> extends AbstractDataConnector {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AbstractSearchDataConnector.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractSearchDataConnector.class);
 
     /** Builder used to create executable searches. */
     private ExecutableSearchBuilder<T> searchBuilder;
@@ -180,8 +181,10 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
     protected abstract Map<String, IdPAttribute> retrieveAttributes(final T executable) throws ResolutionException;
 
     /** {@inheritDoc} */
+    @Override
     @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         final T executable = searchBuilder.build(resolutionContext);
         Map<String, IdPAttribute> resolvedAttributes = null;

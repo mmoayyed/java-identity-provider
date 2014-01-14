@@ -63,7 +63,7 @@ public class ScopedAttributeTest {
     @Test public void scopes() throws ResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
+        final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
         dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
 
@@ -74,10 +74,10 @@ public class ScopedAttributeTest {
         scoped.initialize();
 
         // And resolve
-        final Set<DataConnector> connectorSet = new LazySet<DataConnector>();
+        final Set<DataConnector> connectorSet = new LazySet<>();
         connectorSet.add(TestSources.populatedStaticConnector());
 
-        final Set<AttributeDefinition> attributeSet = new LazySet<AttributeDefinition>();
+        final Set<AttributeDefinition> attributeSet = new LazySet<>();
         attributeSet.add(scoped);
 
         final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attributeSet, connectorSet);
@@ -114,7 +114,7 @@ public class ScopedAttributeTest {
         attrDef.initialize();
 
         try {
-            attrDef.doAttributeDefinitionResolve(resolutionContext);
+            attrDef.resolve(resolutionContext);
             Assert.fail("Invalid type");
         } catch (ResolutionException e) {
             //
@@ -159,7 +159,7 @@ public class ScopedAttributeTest {
         }
 
         try {
-            attrDef.doAttributeDefinitionResolve(new AttributeResolutionContext());
+            attrDef.resolve(new AttributeResolutionContext());
             Assert.fail("resolve not initialized");
         } catch (UninitializedComponentException e) {
             // OK
@@ -171,7 +171,7 @@ public class ScopedAttributeTest {
         Assert.assertEquals(attrDef.getScope(), TEST_SCOPE);
 
         try {
-            attrDef.doAttributeDefinitionResolve(null);
+            attrDef.resolve(null);
             Assert.fail("Null context not allowed");
         } catch (ConstraintViolationException e) {
             // OK
@@ -185,7 +185,7 @@ public class ScopedAttributeTest {
             // OK
         }
         try {
-            attrDef.doAttributeDefinitionResolve(new AttributeResolutionContext());
+            attrDef.resolve(new AttributeResolutionContext());
             Assert.fail("Resolve after destroy");
         } catch (DestroyedComponentException e) {
             // OK
