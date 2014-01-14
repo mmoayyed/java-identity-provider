@@ -43,7 +43,7 @@ public class ValueMapParserTest extends BaseAttributeDefinitionParserTest {
         ValueMap value = getValueMap("valueMap.xml");
         Assert.assertEquals(value.getReturnValue(), "return");
         Assert.assertEquals(value.getSourceValues().size(), 1);
-        Assert.assertEquals(value.getSourceValues().iterator().next().getValue(), "source");
+        Assert.assertEquals(value.getSourceValues().iterator().next().getPattern().pattern(), "source");
     }
     
     @Test public void noSourceValues() {

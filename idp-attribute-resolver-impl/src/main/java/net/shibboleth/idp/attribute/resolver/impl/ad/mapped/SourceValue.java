@@ -96,7 +96,7 @@ public class SourceValue {
      * @return the value string.
      */
     @Nullable public String getValue() {
-        Constraint.isTrue(isPartialMatch(), "getValue is only meaningful for a partialMatch");
+        Constraint.isTrue(isPartialMatch(), "getValue is only meaningful for a partialMatch, use getPattern()");
         return value;
     }
 
@@ -106,7 +106,7 @@ public class SourceValue {
      * @return Returns the pattern.
      */
     @Nonnull public Pattern getPattern() {
-        Constraint.isFalse(isPartialMatch(), "getPattern is only meaningful for a non partial Match");
+        Constraint.isFalse(isPartialMatch(), "getPattern is only meaningful for a non partial Match, use getValue()");
         return pattern;
     }
 
