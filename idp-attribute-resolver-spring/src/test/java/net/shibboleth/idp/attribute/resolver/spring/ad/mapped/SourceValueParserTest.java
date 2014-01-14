@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.resolver.spring.ad.mapped;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.mapped.SourceValue;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
@@ -42,7 +43,12 @@ public class SourceValueParserTest extends BaseAttributeDefinitionParserTest {
         
         Assert.assertFalse(value.isIgnoreCase());
         Assert.assertFalse(value.isPartialMatch());
-        Assert.assertNull(value.getValue());
+        try {
+            Assert.assertNull(value.getValue());
+            Assert.fail();
+        } catch (ConstraintViolationException e) {
+            
+        }
     }
     
     @Test public void values1() {
@@ -58,6 +64,11 @@ public class SourceValueParserTest extends BaseAttributeDefinitionParserTest {
         
         Assert.assertFalse(value.isIgnoreCase());
         Assert.assertFalse(value.isPartialMatch());
-        Assert.assertEquals(value.getValue(), "sourceValueAttributes2");
+        try {
+            Assert.assertEquals(value.getValue(), "sourceValueAttributes2");
+            Assert.fail();
+        } catch (ConstraintViolationException e) {
+            
+        }
     }
 }
