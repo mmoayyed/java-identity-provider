@@ -1,9 +1,9 @@
 /*
- * Licensed to the University Corporation for Advanced Internet Development, 
- * Inc. (UCAID) under one or more contributor license agreements.  See the 
+ * Licensed to the University Corporation for Advanced Internet Development,
+ * Inc. (UCAID) under one or more contributor license agreements.  See the
  * NOTICE file distributed with this work for additional information regarding
- * copyright ownership. The UCAID licenses this file to You under the Apache 
- * License, Version 2.0 (the "License"); you may not use this file except in 
+ * copyright ownership. The UCAID licenses this file to You under the Apache
+ * License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License.  You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -50,12 +50,12 @@ public class AttributeResolverParser extends AbstractSingleBeanDefinitionParser 
             "AttributeResolverType");
 
     /** {@inheritDoc} */
-    protected Class<AttributeResolverImpl> getBeanClass(@Nullable Element element) {
+    @Override protected Class<AttributeResolverImpl> getBeanClass(@Nullable Element element) {
         return AttributeResolverImpl.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext context, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(Element config, ParserContext context, BeanDefinitionBuilder builder) {
 
         final Map<QName, List<Element>> configChildren = ElementSupport.getIndexedChildElements(config);
         List<Element> children;
@@ -64,7 +64,7 @@ public class AttributeResolverParser extends AbstractSingleBeanDefinitionParser 
         // children = configChildren.get(new QName(AttributeResolverNamespaceHandler.NAMESPACE, "PrincipalConnector"));
         // SpringSupport.parseCustomElements(children, context);
         String id = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
-        
+
         if (null == id) {
             // Compatibility with V2
             id = "Shibboleth.Resolver";
@@ -80,7 +80,7 @@ public class AttributeResolverParser extends AbstractSingleBeanDefinitionParser 
     }
 
     /** {@inheritDoc} */
-    protected boolean shouldGenerateId() {
+    @Override protected boolean shouldGenerateId() {
         return true;
     }
 }
