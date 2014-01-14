@@ -1,0 +1,34 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow classpath:/org/springframework/webflow/engine/model/builder/xml/spring-webflow-2.0.xsd"
+      abstract="true">
+
+    <on-start>
+        <evaluate expression="InitializeProfileRequestContext" />
+    </on-start>
+
+    <action-state id="DecodeMessage">
+        <evaluate expression="DecodeMessage" />
+        <transition on="proceed" to="RecordResponseComplete" />
+    </action-state>
+
+    <!-- TODO actions -->
+
+    <action-state id="RecordResponseComplete">
+        <evaluate expression="RecordResponseComplete" />
+        <transition on="proceed" to="end" />
+    </action-state>
+
+    <end-state id="end" />
+
+    <!-- TODO define error state ? <view-state id="error" /> -->
+
+    <global-transitions>
+        <transition on="NoPotentialFlow" to="error" />
+        <transition on="#{currentEvent.id.startsWith('Unable')}" to="error" />
+        <transition on="#{currentEvent.id.startsWith('Invalid')}" to="error" />
+    </global-transitions>
+
+    <bean-import resource="sso-abstract-beans.xml" />
+
+</flow>
