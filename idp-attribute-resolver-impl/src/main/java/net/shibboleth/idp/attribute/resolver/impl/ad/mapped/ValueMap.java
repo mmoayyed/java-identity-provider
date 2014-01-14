@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import javax.annotation.Nonnull;
@@ -65,7 +64,7 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
 
     /**
      * Gets the return value.
-     * 
+     *
      * @return the return value
      */
     @Nullable public String getReturnValue() {
@@ -74,7 +73,7 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
 
     /**
      * Sets the return value.
-     * 
+     *
      * @param newReturnValue the return value
      */
     public void setReturnValue(@Nonnull @NotEmpty String newReturnValue) {
@@ -84,7 +83,7 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
 
     /**
      * Sets the Source values for the mapping.
-     * 
+     *
      * @param newValues functions used to map an input value to an output value
      */
     public synchronized void setSourceValues(@Nullable @NullableElements final Collection<SourceValue> newValues) {
@@ -94,7 +93,7 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
 
     /**
      * Gets the collection of source values.
-     * 
+     *
      * @return the collection of source values
      */
     @Nonnull @NonnullElements @Unmodifiable public Collection<SourceValue> getSourceValues() {
@@ -103,11 +102,12 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
 
     /**
      * Evaluate an incoming attribute value against this value map.
-     * 
+     *
      * @param attributeValue incoming attribute value
      * @return set of new values the incoming value mapped to
      */
     /** {@inheritDoc} */
+    @Override
     @Nullable public Set<StringAttributeValue> apply(@Nullable String attributeValue) {
         log.debug("Attempting to map attribute value '{}'", attributeValue);
         final Set<StringAttributeValue> mappedValues = new HashSet<StringAttributeValue>();
@@ -125,12 +125,7 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
             } else {
                 log.debug("Performing regular expression based comparison");
                 try {
-                    int flags = 0;
-                    if (sourceValue.isIgnoreCase()) {
-                        flags = Pattern.CASE_INSENSITIVE;
-                    }
-                    // TODO pre-compile Pattern in setter ?
-                    final Matcher m = Pattern.compile(sourceValue.getValue(), flags).matcher(attributeValue);
+                    final Matcher m = sourceValue.getPattern().matcher(attributeValue);
                     if (m.matches()) {
                         newValue = m.replaceAll(returnValue);
                         log.debug("Attribute value '{}' matches regular expression it will be mapped to '{}'",

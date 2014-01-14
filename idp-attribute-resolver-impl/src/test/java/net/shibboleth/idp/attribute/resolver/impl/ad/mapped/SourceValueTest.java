@@ -26,21 +26,21 @@ import org.testng.annotations.Test;
  * test for {@link SourceValue}.
  */
 public class SourceValueTest {
-    
+
     Logger log = LoggerFactory.getLogger(SourceValueTest.class);
 
     @Test public void sourceValue() {
         SourceValue value = new SourceValue("value", false,  true);
-        
+
         Assert.assertEquals(value.getValue(), "value");
         Assert.assertTrue(value.isPartialMatch());
         Assert.assertFalse(value.isIgnoreCase());
-        
+
         log.info("Value = 'value', ignore = true, partial = false", value.toString());
 
         value = new SourceValue("eulaV", true,  false);
-        
-        Assert.assertEquals(value.getValue(), "eulaV");
+
+        Assert.assertEquals(value.getPattern().pattern(), "eulaV");
         Assert.assertFalse(value.isPartialMatch());
         Assert.assertTrue(value.isIgnoreCase());
         log.info("Value = 'eulaV', ignore = false, partial = true", value.toString());

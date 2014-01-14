@@ -17,8 +17,12 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.ad.mapped;
 
+import java.util.regex.Pattern;
+
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Objects;
@@ -38,6 +42,9 @@ public class SourceValue {
      */
     private final boolean ignoreCase;
 
+    /** In the regexp case this contains the compiled pattern. */
+    private final Pattern pattern;
+
     /**
      * Whether partial matches should be allowed.
      */
@@ -54,6 +61,15 @@ public class SourceValue {
         value = StringSupport.trimOrNull(theValue);
         ignoreCase = theIgnoreCase;
         partialMatch = thePartialMatch;
+        if (!partialMatch) {
+            int flags = 0;
+            if (ignoreCase) {
+                flags = Pattern.CASE_INSENSITIVE;
+            }
+            pattern = Pattern.compile(value, flags);
+        } else {
+            pattern = null;
+        }
     }
 
     /**
@@ -80,11 +96,22 @@ public class SourceValue {
      * @return the value string.
      */
     @Nullable public String getValue() {
+        Constraint.isTrue(isPartialMatch(), "getValue is only meaningful for a partialMatch");
         return value;
     }
 
+    /**
+     * get the compiled pattern.
+     * 
+     * @return Returns the pattern.
+     */
+    @Nonnull public Pattern getPattern() {
+        Constraint.isFalse(isPartialMatch(), "getPattern is only meaningful for a non partial Match");
+        return pattern;
+    }
+
     /** {@inheritDoc} */
-    public String toString() {
+    @Override public String toString() {
         return Objects.toStringHelper(this).add("value", value).add("IsIgnoreCase", isIgnoreCase())
                 .add("isPartialMatch", isPartialMatch()).toString();
     }
