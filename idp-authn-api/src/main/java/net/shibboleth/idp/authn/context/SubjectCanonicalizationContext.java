@@ -40,10 +40,10 @@ public class SubjectCanonicalizationContext extends BaseContext {
     @Nullable private String principalName;
     
     /** SP Entity ID.*/
-    private String requesterEntityID;
+    private String requesterId;
     
     /** IdP Entity ID.*/
-    private String responderEntityID;
+    private String responderId;
     
     /** Exception raised by a failed canonicalization. */
     @Nullable private Exception canonicalizationError;
@@ -107,31 +107,31 @@ public class SubjectCanonicalizationContext extends BaseContext {
      * Get the entityID of the SP.
      * @return Returns the requesterEntityID.
      */
-    @Nullable public String getRequesterEntityID() {
-        return requesterEntityID;
+    @Nullable public String getRequesterId() {
+        return requesterId;
     }
 
     /**
      * Set the entityID of the SP.
      * @param spID The requesterEntityID to set.
      */
-    public void setRequesterEntityID(@Nullable String spID) {
-        requesterEntityID = spID;
+    public void setRequesterId(@Nullable String spID) {
+        requesterId = spID;
     }
 
     /**
      * Get the entityID of the IdP.
      * @return Returns the responderEntityID.
      */
-    @Nullable public String getResponderEntityID() {
-        return responderEntityID;
+    @Nullable public String getResponderId() {
+        return responderId;
     }
 
     /**
      * Set the entityID of the IdP.
      * @param idpID The responderEntityID to set.
      */
-    public void setResponderEntityID(@Nullable String idpID) {
-        responderEntityID = idpID;
+    public void setResponderId(@Nullable String idpID) {
+        responderId = idpID;
     }
 }
