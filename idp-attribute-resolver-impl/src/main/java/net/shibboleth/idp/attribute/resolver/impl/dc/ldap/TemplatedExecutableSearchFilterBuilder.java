@@ -150,10 +150,7 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
                 if (value == null) {
                     return null;
                 }
-                final String text = value.toString();
-                // TODO use ldaptive attribute value encoding
-                return text.replace("\\", "\\5c").replace("*", "\\2a").replace("(", "\\28").replace(")", "\\29")
-                        .replace("\u0000", "\\00");
+                return SearchFilter.encodeValue(value.toString());
             }
         });
         cartridge.attachToContext(context);

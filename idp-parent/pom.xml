@@ -164,11 +164,6 @@
                 <version>1.2-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>org.ldaptive</groupId>
-                <artifactId>ldaptive</artifactId>
-                <version>1.0.1</version>
-            </dependency>
-            <dependency>
                 <groupId>${spring.groupId}</groupId>
                 <artifactId>spring-jdbc</artifactId>
                 <version>${spring.version}</version>
