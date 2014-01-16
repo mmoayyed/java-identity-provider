@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl.ad;
+package net.shibboleth.idp.saml.nameid;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -42,6 +42,9 @@ import org.slf4j.LoggerFactory;
  * the principal. Having this as a separate class allows streamlining of the encoding/decoding.
  */
 public class TransientIdParameters {
+    /** Context label for storage of IDs. */
+    @Nonnull @NotEmpty public static final String CONTEXT = "TransientId";
+    
     /** Field name of creation instant. */
     private static final String ATTRIBUTE_RECIPIENT_FIELD = "sp";
 

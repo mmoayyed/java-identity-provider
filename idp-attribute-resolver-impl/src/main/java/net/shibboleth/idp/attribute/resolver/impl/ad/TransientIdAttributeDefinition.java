@@ -28,6 +28,7 @@ import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
+import net.shibboleth.idp.saml.nameid.TransientIdParameters;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -47,9 +48,6 @@ import org.slf4j.LoggerFactory;
  * record key, and the value combines the principal name with the identifier of the recipient.
  */
 public class TransientIdAttributeDefinition extends AbstractAttributeDefinition {
-
-    /** Context label for storage of IDs. */
-    @Nonnull @NotEmpty public static final String CONTEXT = "TransientId";
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(TransientIdAttributeDefinition.class);
@@ -216,7 +214,7 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
         int collisions = 0;
         while (collisions < 5) {
             try {
-                if (idStore.create(CONTEXT, id, principalTokenId, expiration)) {
+                if (idStore.create(TransientIdParameters.CONTEXT, id, principalTokenId, expiration)) {
                     // TODO: think we want this to be a NameID-valued attribute now. Or maybe we're keeping this,
                     // but adding a parallel version. I'm thinking maybe we could handle compatibility with the old
                     // String-based encoders by special-casing them to handle NameID-valued attributes?

@@ -21,12 +21,12 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 
-
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
+import net.shibboleth.idp.saml.nameid.TransientIdParameters;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.storage.StorageRecord;
@@ -77,7 +77,7 @@ public class TransientIdAttributeDefinitionTest {
 
         String val = (String) vals.iterator().next().getValue();
 
-        StorageRecord record = store.read(TransientIdAttributeDefinition.CONTEXT, val);
+        StorageRecord record = store.read(TransientIdParameters.CONTEXT, val);
         
         Assert.assertNotNull(record);
         Assert.assertTrue(val.length() >= defn.getIdSize());

@@ -16,7 +16,6 @@
  */
 
 /** 
- * Need Description. 
+ * Code for manipulating NameIDs and NameIdentifiers.
  */
-//TODO needs fleshed out.
 package net.shibboleth.idp.saml.nameid;
