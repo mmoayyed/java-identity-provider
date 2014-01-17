@@ -13,59 +13,6 @@
 
 	<import resource="authn-comparison.xml" />
 	<import resource="authn-flow-descriptors.xml" />
-
-	<!-- Advance Configuration  
-	
-	   Attribute Resolver and Filter definitions from SVN 
-	   
-	   
-	   To use an SVN resource you need to construct it and then inject it into 
-	   The appropriate bean. To use property replacement you will need a separate 
-	   resource pointing to the replacement phrase. 
-		
-	   For example: 
-		
-	<bean id="AuthnMgr" class="org.tmatesoft.svn.core.auth.BasicAuthenticationManager">
-		<constructor-arg>
-			<null />
-		</constructor-arg>
-	</bean>
-	<bean id="ClientMgr" factory-method="newInstance"
-		class="org.tmatesoft.svn.core.wc.SVNClientManager"
-		p:authenticationManager-ref="AuthnMgr" />
-	<bean id="TheSVNURL" factory-method="create"
-		class="org.tmatesoft.svn.core.SVNURL">
-		<constructor-arg value="https" />
-		<constructor-arg>
-			<null />
-		</constructor-arg>
-		<constructor-arg value="svn.shibboleth.net" />
-		<constructor-arg value="-1" />
-		<constructor-arg
-			value="/utilities/spring-extensions/trunk/src/test/resources/data/" />
-		<constructor-arg value="false" />
-	</bean>
-	<bean id="TheSVNResource" class="net.shibboleth.ext.spring.resource.SVNResource">
-		<constructor-arg ref="ClientMgr" />
-		<constructor-arg ref="TheSVNURL" />
-		<constructor-arg value="D:/testdir/dir" />
-		<constructor-arg value="-1" />
-		<constructor-arg value="TestResource.txt" />
-	</bean>
-	
-	<util:list id="shibboleth.AttributeResolverResources">
-	   <ref bean="TheSVNResource"/>
-	   <value>path_to_properties_specifyingBean_file</value>
-	</util:list>
-	
-	 see also http://svnkit.com/javadoc/org/tmatesoft/svn/core/auth/BasicAuthenticationManager.html#constructor_detail 
-	          http://svnkit.com/javadoc/org/tmatesoft/svn/core/SVNURL.html 
-    -->
-
-	<bean id="shibboleth.AttributeResolverResources" class="java.util.Collections"
-		factory-method="singleton" c:_0="file://${idp.home}/conf/attribute-resolver.xml" /> 
-
-    <bean id="shibboleth.AttributeFilterResources" class="java.util.Collections"
-        factory-method="singleton" c:_0="file://${idp.home}/conf/attribute-filter.xml" /> 
+	<import resource="attribute-params-config.xml" />
 
 </beans>
