@@ -55,11 +55,12 @@
     
     <!--  Otherwise by default we look at files whose names are derived from idp.home -->
 
-    <bean id="shibboleth.AttributeResolverResources" class="java.util.Collections"
-        factory-method="singleton" c:_0="file://${idp.home}/conf/attribute-resolver.xml" /> 
+    <util:list id ="shibboleth.AttributeResolverResources">
+        <value>file://${idp.home}/conf/attribute-resolver.xml</value>
+    </util:list>
 
-    <bean id="shibboleth.AttributeFilterResources" class="java.util.Collections"
-        factory-method="singleton" c:_0="file://${idp.home}/conf/attribute-filter.xml" /> 
-
+    <util:list id ="shibboleth.AttributeFilterResources">
+        <value>file://${idp.home}/conf/attribute-filter.xml</value>
+    </util:list>
                            
 </beans>
