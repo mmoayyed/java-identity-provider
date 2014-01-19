@@ -26,7 +26,7 @@ public class AttributeFilterSAMLNamespaceHandler extends BaseSpringNamespaceHand
     public static final String NAMESPACE = "urn:mace:shibboleth:2.0:afp:mf:saml";
 
     /** {@inheritDoc} */
-    public void init() {
+    @Override public void init() {
 
         registerBeanDefinitionParser(AttributeIssuerEntityAttributeExactRuleParser.SCHEMA_TYPE,
                 new AttributeIssuerEntityAttributeExactRuleParser());
@@ -53,5 +53,8 @@ public class AttributeFilterSAMLNamespaceHandler extends BaseSpringNamespaceHand
                 new AttributeRequesterInEntityGroupRuleParser());
 
         registerBeanDefinitionParser(AttributeInMetadataRuleParser.SCHEMA_TYPE, new AttributeInMetadataRuleParser());
+
+        registerBeanDefinitionParser(RegistrationAuthorityRuleParser.SCHEMA_TYPE, 
+                new RegistrationAuthorityRuleParser());
     }
 }

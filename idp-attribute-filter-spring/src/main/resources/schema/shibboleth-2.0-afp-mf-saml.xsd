@@ -215,6 +215,35 @@
                 </attribute>
             </extension>
         </complexContent>
-    </complexType>    
+    </complexType>
+    
+    <complexType name="AttributeRequesterRegistrationAuthority">
+        <annotation>
+            <documentation>
+                A match function that matches the SP (requester) MDRPI against a list of potential values.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:MatchFunctorType">
+                <attribute name="registrars" type="saml:anyURIListType" use="required">
+                    <annotation>
+                        <documentation>The string values to match.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="matchIfMetadataSilent" type="boolean">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether a match should occur if the metadata does
+                            not contain an MDRPI statement (coded) default is false.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <simpleType name="anyURIListType">
+        <list itemType="anyURI"/>
+    </simpleType>
     
 </schema>
