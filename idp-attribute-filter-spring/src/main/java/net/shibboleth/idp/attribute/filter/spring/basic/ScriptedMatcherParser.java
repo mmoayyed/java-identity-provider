@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.script.ScriptException;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.impl.matcher.ScriptedMatcher;
@@ -61,7 +60,7 @@ public class ScriptedMatcherParser extends BaseFilterParser {
     private String logPrefix;
 
     /** {@inheritDoc} */
-    @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {
+    @Override @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {
         if (isPolicyRule(element)) {
             return ScriptedPolicyRule.class;
         }
@@ -104,7 +103,7 @@ public class ScriptedMatcherParser extends BaseFilterParser {
     /**
      * {@inheritDoc} Both types of bean take the same constructor, so the parser is simplified.
      */
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
@@ -122,11 +121,9 @@ public class ScriptedMatcherParser extends BaseFilterParser {
 
         final String script = getScript(config);
         log.debug("{} script: {}.", logPrefix, script);
-        try {
-            builder.addConstructorArgValue(new EvaluableScript(scriptLanguage, script));
-        } catch (ScriptException e) {
-            log.error("{} could not create the EvaluableScript : {}.", logPrefix, e);
-            throw new BeanCreationException("Scripted filter :'" + myId + "' Could not create the EvaluableScript");
-        }
+        BeanDefinitionBuilder scriptDefn = BeanDefinitionBuilder.genericBeanDefinition(EvaluableScript.class);
+        scriptDefn.addConstructorArgValue(scriptLanguage);
+        scriptDefn.addConstructorArgValue(script);
+        builder.addConstructorArgValue(scriptDefn.getBeanDefinition());
     }
 }

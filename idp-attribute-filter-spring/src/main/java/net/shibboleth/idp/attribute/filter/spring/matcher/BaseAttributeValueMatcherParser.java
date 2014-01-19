@@ -66,7 +66,7 @@ public abstract class BaseAttributeValueMatcherParser extends BaseFilterParser {
     }
 
     /** {@inheritDoc} The table at the top describes the precise work. */
-    @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {
+    @Override @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {
         if (isPolicyRule(element)) {
             if (hasAttributeId(element)) {
                 return PolicyFromMatcherId.class;
@@ -85,7 +85,7 @@ public abstract class BaseAttributeValueMatcherParser extends BaseFilterParser {
     /**
      * Parse bean definition. If needs be we inject it into a parent bean (or two). {@inheritDoc}
      */
-    protected void doParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
@@ -130,7 +130,7 @@ public abstract class BaseAttributeValueMatcherParser extends BaseFilterParser {
     @Nonnull protected abstract Class<?> getNativeBeanClass();
 
     /**
-     * Parse the native bean class. This is either called direct or then injected into the nesting class.
+     * Parse the native bean class. This is either called direct or indirectly and then injected into the nesting class.
      * 
      * @param element the config
      * @param parserContext the context

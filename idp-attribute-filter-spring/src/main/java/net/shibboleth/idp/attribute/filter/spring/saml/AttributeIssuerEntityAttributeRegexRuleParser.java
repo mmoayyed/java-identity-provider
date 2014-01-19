@@ -47,9 +47,9 @@ public class AttributeIssuerEntityAttributeRegexRuleParser extends AbstractEntit
         log.error("Unimplemented Attribute Filter {}.  Consider other implementation methods.", SCHEMA_NAME);
         throw new BeanCreationException("Unimplemented filter " + SCHEMA_NAME);
     }
+
     /** {@inheritDoc} */
-    @Override
-    protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
+    @Override protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
 
