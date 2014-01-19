@@ -1,9 +1,9 @@
 /*
- * Licensed to the University Corporation for Advanced Internet Development, 
- * Inc. (UCAID) under one or more contributor license agreements.  See the 
+ * Licensed to the University Corporation for Advanced Internet Development,
+ * Inc. (UCAID) under one or more contributor license agreements.  See the
  * NOTICE file distributed with this work for additional information regarding
- * copyright ownership. The UCAID licenses this file to You under the Apache 
- * License, Version 2.0 (the "License"); you may not use this file except in 
+ * copyright ownership. The UCAID licenses this file to You under the Apache
+ * License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License.  You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
  * test for {@link AttributeRequesterInEntityGroupPolicyRule}.
  */
 public class AttributeRequesterInEntityGroupPolicyRuleTest extends BaseMetadataTests {
-    
+
     private AttributeRequesterInEntityGroupPolicyRule getMatcher(String group) throws ComponentInitializationException {
         AttributeRequesterInEntityGroupPolicyRule matcher = new AttributeRequesterInEntityGroupPolicyRule();
         matcher.setId("matcher");
@@ -36,17 +36,17 @@ public class AttributeRequesterInEntityGroupPolicyRuleTest extends BaseMetadataT
         return matcher;
     }
 
-    
+
     @Test public void parent() throws ComponentInitializationException {
         AttributeRequesterInEntityGroupPolicyRule matcher = getMatcher("http://shibboleth.net");
-        
-        Assert.assertEquals(matcher.matches(metadataContext(idpEntity, jiraEntity, "Principal")), Tristate.TRUE);
-        Assert.assertEquals(matcher.matches(metadataContext(null, null, null)), Tristate.FAIL);
+
+        Assert.assertEquals(matcher.matches(metadataContext(jiraEntity, "Principal")), Tristate.TRUE);
+        Assert.assertEquals(matcher.matches(metadataContext(null, null)), Tristate.FAIL);
 
         matcher = getMatcher("urn:otherstuff");
-        Assert.assertEquals(matcher.matches(metadataContext(idpEntity, jiraEntity, "Principal")), Tristate.FALSE);
+        Assert.assertEquals(matcher.matches(metadataContext(jiraEntity, "Principal")), Tristate.FALSE);
     }
-    
+
     @Test public void getter() throws ComponentInitializationException {
         Assert.assertEquals(getMatcher("http://shibboleth.net").getEntityGroup(), "http://shibboleth.net");
     }
@@ -55,6 +55,6 @@ public class AttributeRequesterInEntityGroupPolicyRuleTest extends BaseMetadataT
         AttributeRequesterInEntityGroupPolicyRule matcher = new AttributeRequesterInEntityGroupPolicyRule();
         matcher.setId("matcher");
         matcher.initialize();
-        Assert.assertEquals(matcher.matches(metadataContext(null, null, null)), Tristate.FAIL);
+        Assert.assertEquals(matcher.matches(metadataContext(null, null)), Tristate.FAIL);
     }
 }

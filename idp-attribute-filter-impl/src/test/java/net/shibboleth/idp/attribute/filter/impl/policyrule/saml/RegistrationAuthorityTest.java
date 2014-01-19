@@ -57,7 +57,7 @@ public class RegistrationAuthorityTest extends BaseMetadataTests {
 
     @Test public void swamid() throws Exception {
 
-        AttributeFilterContext context = metadataContext(null, getEntity(SWAMID), "principal");
+        AttributeFilterContext context = metadataContext(getEntity(SWAMID), "principal");
         final RegistrationAuthorityPolicyRule filter = new RegistrationAuthorityPolicyRule();
         String[] array = {REQUESTED_REG_INFO, "foo",};
         filter.setIssuers(array);
@@ -68,7 +68,7 @@ public class RegistrationAuthorityTest extends BaseMetadataTests {
     }
 
     @Test public void ligo() {
-        AttributeFilterContext context = metadataContext(null, getEntity(INCOMMON_SP), "principal");
+        AttributeFilterContext context = metadataContext(getEntity(INCOMMON_SP), "principal");
         final RegistrationAuthorityPolicyRule filter = new RegistrationAuthorityPolicyRule();
         String[] array = {REQUESTED_REG_INFO, "foo",};
         filter.setIssuers(array);
@@ -79,7 +79,7 @@ public class RegistrationAuthorityTest extends BaseMetadataTests {
     }
 
     @Test public void none()  {
-        AttributeFilterContext context = metadataContext(null, getEntity(NO_REGINFO_SP), "principal");
+        AttributeFilterContext context = metadataContext(getEntity(NO_REGINFO_SP), "principal");
         final RegistrationAuthorityPolicyRule filter = new RegistrationAuthorityPolicyRule();
         String[] array = {REQUESTED_REG_INFO, INCOMMON_REG_INFO, "foo",};
         filter.setIssuers(array);
