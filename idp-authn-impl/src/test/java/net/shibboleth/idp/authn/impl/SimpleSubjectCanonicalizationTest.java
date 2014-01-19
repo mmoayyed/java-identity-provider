@@ -50,7 +50,7 @@ public class SimpleSubjectCanonicalizationTest extends PopulateAuthenticationCon
     @Test public void testNoContext() throws ProfileException {
         action.execute(prc);
         
-        ActionTestingSupport.assertEvent(prc, EventIds.INVALID_PROFILE_CTX);
+        ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
     }
 
     @Test public void testNoPrincipal() throws ProfileException {
