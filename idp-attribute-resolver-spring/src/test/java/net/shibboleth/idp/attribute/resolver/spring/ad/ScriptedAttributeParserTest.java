@@ -19,9 +19,9 @@ package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.ScriptedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.attribute.resolver.spring.ad.ScriptedAttributeDefinitionParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -59,7 +59,7 @@ public class ScriptedAttributeParserTest extends BaseAttributeDefinitionParserTe
         try {
             getAttributeDefn("scriptedAttributeBad.xml", ScriptedAttributeDefinition.class);     
             Assert.fail("Bad script worked?");
-        } catch (BeanDefinitionStoreException e) {
+        } catch (BeanDefinitionStoreException | BeanCreationException e) {
             // OK
         }
     }

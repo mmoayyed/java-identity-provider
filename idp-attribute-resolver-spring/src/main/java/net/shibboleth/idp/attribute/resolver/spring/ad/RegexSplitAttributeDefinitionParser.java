@@ -72,6 +72,7 @@ public class RegexSplitAttributeDefinitionParser extends BaseAttributeDefinition
 
         if (caseSensitive) {
             pattern.addConstructorArgValue(regexp);
+            pattern.addConstructorArgValue(0);
         } else {
             pattern.addConstructorArgValue(regexp);
             pattern.addConstructorArgValue(Pattern.CASE_INSENSITIVE);
