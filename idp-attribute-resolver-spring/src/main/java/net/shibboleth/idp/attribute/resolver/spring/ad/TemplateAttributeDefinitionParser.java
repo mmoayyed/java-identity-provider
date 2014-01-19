@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -31,6 +30,7 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
@@ -55,11 +55,13 @@ public class TemplateAttributeDefinitionParser extends BaseAttributeDefinitionPa
             .getLogger(TemplateAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
+    @Override
     protected Class<TemplateAttributeDefinition> getBeanClass(@Nullable Element element) {
         return TemplateAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
@@ -76,7 +78,7 @@ public class TemplateAttributeDefinitionParser extends BaseAttributeDefinitionPa
         final List<Element> sourceAttributeElements =
                 ElementSupport.getChildElements(config, SOURCE_ATTRIBUTE_ELEMENT_NAME);
         if (null != sourceAttributeElements) {
-            final List<String> sourceAttributes = new ArrayList<String>(sourceAttributeElements.size());
+            final List<String> sourceAttributes = new ManagedList<>(sourceAttributeElements.size());
             for (Element element : sourceAttributeElements) {
                 sourceAttributes.add(StringSupport.trimOrNull(element.getTextContent()));
             }

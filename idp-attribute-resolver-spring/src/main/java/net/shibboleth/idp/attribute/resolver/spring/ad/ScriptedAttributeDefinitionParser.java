@@ -23,7 +23,6 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.script.ScriptException;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.ScriptedAttributeDefinition;
@@ -58,7 +57,7 @@ public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionPa
     private final Logger log = LoggerFactory.getLogger(ScriptedAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
-    protected Class<ScriptedAttributeDefinition> getBeanClass(@Nullable Element element) {
+    @Override protected Class<ScriptedAttributeDefinition> getBeanClass(@Nullable Element element) {
         return ScriptedAttributeDefinition.class;
     }
 
@@ -97,7 +96,7 @@ public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionPa
     }
 
     /** {@inheritDoc} */
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
@@ -109,12 +108,10 @@ public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionPa
 
         String script = getScript(config);
         log.debug("{} script: {}.", getLogPrefix(), script);
-        try {
-            builder.addPropertyValue("script", new EvaluableScript(scriptLanguage, script));
-        } catch (ScriptException e) {
-            log.error("{} could not create the EvaluableScript : {}.", new Object[] {
-                    getLogPrefix(), e,});
-            throw new BeanCreationException(getLogPrefix() + " Could not create the EvaluableScript");
-        }
+        BeanDefinitionBuilder scriptBuilder = BeanDefinitionBuilder.genericBeanDefinition(EvaluableScript.class);
+        scriptBuilder.addConstructorArgValue(scriptLanguage);
+        scriptBuilder.addConstructorArgValue(script);
+
+        builder.addPropertyValue("script", scriptBuilder.getBeanDefinition());
     }
 }

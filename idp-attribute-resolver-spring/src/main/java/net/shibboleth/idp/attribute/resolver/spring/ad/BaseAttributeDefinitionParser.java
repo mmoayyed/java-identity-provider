@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -35,6 +34,7 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
@@ -55,13 +55,13 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
             "AttributeEncoder");
 
     /** Class logger. */
-    private Logger log = LoggerFactory.getLogger(BaseAttributeDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(BaseAttributeDefinitionParser.class);
 
     /** cache for the log prefix - to save multiple recalculations. */
     private String logPrefix;
 
     /** {@inheritDoc} */
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
@@ -117,13 +117,14 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
 
     /**
      * Used to process string elements that contain an xml:lang attribute expressing localization.
+     * Eeturns a {@link ManagedMap} to allow property replacement to work.
      * 
      * @param elements list of elements, must not be null, may be empty
      * 
      * @return the localized string indexed by locale
      */
     protected Map<Locale, String> processLocalizedElement(@Nonnull final List<Element> elements) {
-        HashMap<Locale, String> localizedString = new HashMap<Locale, String>(elements.size());
+        Map<Locale, String> localizedString = new ManagedMap<>(elements.size());
         for (Element element : elements) {
             localizedString.put(AttributeSupport.getXMLLangAsLocale(element), element.getTextContent());
         }

@@ -41,41 +41,42 @@ public class RegexSplitAttributeDefinitionParser extends BaseAttributeDefinition
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "RegexSplit");
-    
-    /** Logger.*/
-    private final Logger log = LoggerFactory.getLogger(RegexSplitAttributeDefinitionParser.class); 
+
+    /** Logger. */
+    private final Logger log = LoggerFactory.getLogger(RegexSplitAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
-    protected Class<RegexSplitAttributeDefinition> getBeanClass(@Nullable Element element) {
+    @Override protected Class<RegexSplitAttributeDefinition> getBeanClass(@Nullable Element element) {
         return RegexSplitAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
         final String regexp = StringSupport.trimOrNull(config.getAttributeNS(null, "regex"));
-        
+
         if (null == regexp) {
             log.error("{} No regexp specified.", getLogPrefix());
-            throw new BeanCreationException(getLogPrefix() + " No regexp text provided."); 
+            throw new BeanCreationException(getLogPrefix() + " No regexp text provided.");
         }
-        
+
         boolean caseSensitive = true;
         if (config.hasAttributeNS(null, "caseSensitive")) {
             caseSensitive =
                     AttributeSupport.getAttributeValueAsBoolean(config.getAttributeNodeNS(null, "caseSensitive"));
         }
-        
-        Pattern pattern;
+
+        BeanDefinitionBuilder pattern = BeanDefinitionBuilder.genericBeanDefinition(Pattern.class);
+
         if (caseSensitive) {
-            pattern = Pattern.compile(regexp);
+            pattern.addConstructorArgValue(regexp);
         } else {
-            pattern = Pattern.compile(regexp, Pattern.CASE_INSENSITIVE);
+            pattern.addConstructorArgValue(regexp);
+            pattern.addConstructorArgValue(Pattern.CASE_INSENSITIVE);
         }
-        
-        
-        builder.addPropertyValue("regularExpression", pattern);
+
+        builder.addPropertyValue("regularExpression", pattern.getBeanDefinition());
     }
 }
