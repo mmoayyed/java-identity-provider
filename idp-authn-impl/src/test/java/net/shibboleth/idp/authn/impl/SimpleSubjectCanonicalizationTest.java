@@ -28,7 +28,6 @@ import net.shibboleth.utilities.java.support.collection.Pair;
 
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionTestingSupport;
-import org.opensaml.profile.action.EventIds;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
