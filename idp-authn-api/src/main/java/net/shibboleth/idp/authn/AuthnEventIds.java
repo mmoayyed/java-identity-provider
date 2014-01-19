@@ -19,14 +19,17 @@ package net.shibboleth.idp.authn;
 
 /**
  * Constants to use for {@link org.opensaml.profile.action.ProfileAction}
- * {@link org.opensaml.profile.context.EventContext} results.
+ * {@link org.opensaml.profile.context.EventContext} results related to
+ * authentication and subject c14n.
  */
 public final class AuthnEventIds {
 
-    /** ID of event returned if the {@link AuthenticationContext} is missing or invalid. */
+    /**
+     * ID of event returned if the {@link net.shibboleth.idp.authn.context.AuthenticationContext} is missing or invalid.
+     */
     public static final String INVALID_AUTHN_CTX = "InvalidAuthenticationContext";
     
-    /** ID of event returned if there are no authentication flows that could be used to authenticate the user. */
+    /** ID of event returned if there are no flows that could be used for authentication or c14n. */
     public static final String NO_POTENTIAL_FLOW = "NoPotentialFlow";
 
     /** ID of event returned if the request's authentication requirements can't be met by an action or flow. */
@@ -46,6 +49,12 @@ public final class AuthnEventIds {
     
     /** ID of event returned if a flow wishes to indicate that another flow should be selected instead. */
     public static final String RESELECT_FLOW = "ReselectFlow";
+    
+    /**
+     * ID of event returned if the {@link net.shibboleth.idp.authn.context.SubjectCanonicalizationContext}
+     * is missing or invalid.
+     */
+    public static final String INVALID_SUBJECT_C14N_CTX = "InvalidSubjectCanonicalizationContext";
     
     /** ID of event returned if a Subject cannot be canonicalized. */
     public static final String SUBJECT_C14N_ERROR = "SubjectCanonicalizationError";

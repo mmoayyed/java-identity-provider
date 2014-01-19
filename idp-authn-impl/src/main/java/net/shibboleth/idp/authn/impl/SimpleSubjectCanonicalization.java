@@ -20,6 +20,7 @@ package net.shibboleth.idp.authn.impl;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractSubjectCanonicalizationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
@@ -29,6 +30,8 @@ import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
+
+import com.google.common.base.Predicate;
 
 /**
  * An action that operates on a {@link SubjectCanonicalizationContext} child of the current
@@ -44,21 +47,64 @@ import org.opensaml.profile.context.ProfileRequestContext;
  */
 public class SimpleSubjectCanonicalization extends AbstractSubjectCanonicalizationAction {
     
+    /** The custom Principal to operate on. */
+    @Nullable private UsernamePrincipal usernamePrincipal;
+    
+    /** {@inheritDoc} */
+    @Override
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext, 
+            @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
+        
+        final Set<UsernamePrincipal> usernames;
+        if (c14nContext.getSubject() != null) {
+            usernames = c14nContext.getSubject().getPrincipals(UsernamePrincipal.class);
+        } else {
+            usernames = null;
+        }
+        
+        if (usernames == null || usernames.isEmpty()) {
+            c14nContext.setException(new SubjectCanonicalizationException("No UsernamePrincipals were found"));
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);
+            return false;
+        } else if (usernames.size() > 1) {
+            c14nContext.setException(new SubjectCanonicalizationException("Multiple UsernamePrincipals were found"));
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);
+            return false;
+        }
+        
+        usernamePrincipal = usernames.iterator().next();
+        
+        return super.doPreExecute(profileRequestContext, c14nContext);
+    }
+    
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext, 
             @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
         
-        Set<UsernamePrincipal> usernames = c14nContext.getSubject().getPrincipals(UsernamePrincipal.class);
-        if (usernames == null || usernames.isEmpty()) {
-            c14nContext.setException(new SubjectCanonicalizationException("No UsernamePrincipals were found"));
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);
-        } else if (usernames.size() > 1) {
-            c14nContext.setException(new SubjectCanonicalizationException("Multiple UsernamePrincipals were found"));
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);
-        } else {
-            c14nContext.setPrincipalName(applyTransforms(usernames.iterator().next().getName()));
-        }
+        c14nContext.setPrincipalName(applyTransforms(usernamePrincipal.getName()));
     }
-    
+     
+    /** A predicate that determines if this action can run or not. */
+    public static class ActivationCondition implements Predicate<ProfileRequestContext> {
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean apply(@Nullable final ProfileRequestContext input) {
+            
+            if (input != null) {
+                final SubjectCanonicalizationContext c14nContext =
+                        input.getSubcontext(SubjectCanonicalizationContext.class, false);
+                if (c14nContext != null || c14nContext.getSubject() != null) {
+                    final Set<UsernamePrincipal> usernames =
+                            c14nContext.getSubject().getPrincipals(UsernamePrincipal.class);
+                    return usernames != null && usernames.size() == 1;
+                }
+            }
+            
+            return false;
+        }
+        
+    }
+
 }

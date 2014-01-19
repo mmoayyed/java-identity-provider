@@ -60,6 +60,11 @@
     -->
     <subflow-state id="CallAuthenticationFlow" subflow="#{currentEvent.id}">
         <transition on="ReselectFlow" to="SelectAuthenticationFlow" />
+        <transition on="proceed" to="CallSubjectCanonicalization" />
+    </subflow-state>
+
+    <!-- This runs a canonicalization step on the result of the authentication. -->
+    <subflow-state id="CallSubjectCanonicalization" subflow="SubjectC14N">
         <transition on="proceed" to="InvalidateSessionOnIdentitySwitch" />
     </subflow-state>
 

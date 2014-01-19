@@ -1,15 +1,9 @@
 <flow xmlns="http://www.springframework.org/schema/webflow"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow classpath:/org/springframework/webflow/engine/model/builder/spring-webflow-2.0.xsd"
-      parent="Authentication.Abstract, Authentication.Subflow.Abstract">
+      parent="Authentication.Abstract">
 
-    <!--
-    This is a login flow for container-based pseudo-authentication.
-    
-    All login flows are required to invoke a Subject Canonicalization subflow
-    before completing, and must return the result of that subflow as their
-    result, barring an error of some other kind earlier.
-    -->
+    <!-- This is a login flow for container-based pseudo-authentication. -->
     
     <action-state id="ExtractRemoteUser">
         <evaluate expression="ExtractRemoteUser" />
@@ -18,8 +12,6 @@
     
     <action-state id="ValidateRemoteUser">
         <evaluate expression="ValidateRemoteUser" />
-        
-        <transition on="proceed" to="CallSubjectCanonicalization" />
     </action-state>
 
     <bean-import resource="remoteuser-authn-beans.xml" />

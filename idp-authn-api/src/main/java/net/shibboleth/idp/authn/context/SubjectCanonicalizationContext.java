@@ -17,12 +17,17 @@
 
 package net.shibboleth.idp.authn.context;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor;
+import net.shibboleth.utilities.java.support.annotation.constraint.Live;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
@@ -39,15 +44,30 @@ public class SubjectCanonicalizationContext extends BaseContext {
     /** Canonical principal name of subject. */
     @Nullable private String principalName;
     
-    /** SP Entity ID.*/
+    /** Requester ID.*/
     private String requesterId;
     
-    /** IdP Entity ID.*/
+    /** Responder ID.*/
     private String responderId;
+
+    /** Flows that could potentially be used. */
+    @Nonnull @NonnullElements private final Map<String, SubjectCanonicalizationFlowDescriptor> potentialFlows;
+
+    /** Previously attempted flows (could be failures or intermediate results). */
+    @Nonnull @NonnullElements private final Map<String, SubjectCanonicalizationFlowDescriptor> intermediateFlows;
+    
+    /** The last c14 flow attempted. */
+    @Nullable private SubjectCanonicalizationFlowDescriptor attemptedFlow;
     
     /** Exception raised by a failed canonicalization. */
     @Nullable private Exception canonicalizationError;
 
+    /** Constructor. */
+    public SubjectCanonicalizationContext() {
+        potentialFlows = new LinkedHashMap<>();
+        intermediateFlows = new HashMap<>();
+    }
+    
     /**
      * Get the {@link Subject} to canonicalize.
      * 
@@ -61,9 +81,12 @@ public class SubjectCanonicalizationContext extends BaseContext {
      * Set the {@link Subject} to canonicalize.
      * 
      * @param newSubject Subject to canonicalize
+     * 
+     * @return this context
      */
-    public void setSubject(@Nullable final Subject newSubject) {
+    @Nonnull public SubjectCanonicalizationContext setSubject(@Nullable final Subject newSubject) {
         subject = newSubject;
+        return this;
     }
     
     /**
@@ -79,10 +102,12 @@ public class SubjectCanonicalizationContext extends BaseContext {
      * Set the canonical principal name of the subject.
      * 
      * @param name the canonical principal name
+     * 
+     * @return this context
      */
-    public void setPrincipalName(@Nonnull @NotEmpty final String name) {
-        principalName = Constraint.isNotNull(
-                StringSupport.trimOrNull(name), "Principal name cannot be null or empty");
+    @Nonnull public SubjectCanonicalizationContext setPrincipalName(@Nullable final String name) {
+        principalName = StringSupport.trimOrNull(name);
+        return this;
     }
     
     /**
@@ -98,40 +123,94 @@ public class SubjectCanonicalizationContext extends BaseContext {
      * Set the exception raised by a failed canonicalization.
      * 
      * @param e  exception raised by a failed canonicalization
+     * 
+     * @return this context
      */
-    public void setException(@Nonnull final Exception e) {
-        canonicalizationError = Constraint.isNotNull(e, "Exception cannot be null");
+    @Nonnull public SubjectCanonicalizationContext setException(@Nullable final Exception e) {
+        canonicalizationError = e;
+        return this;
     }
 
     /**
-     * Get the entityID of the SP.
-     * @return Returns the requesterEntityID.
+     * Get the requester's ID.
+     * @return the requester's ID
      */
     @Nullable public String getRequesterId() {
         return requesterId;
     }
 
     /**
-     * Set the entityID of the SP.
-     * @param spID The requesterEntityID to set.
+     * Set the requester's ID.
+     * 
+     * @param id the requester's ID
+     * 
+     * @return this context
      */
-    public void setRequesterId(@Nullable String spID) {
-        requesterId = spID;
+    @Nonnull public SubjectCanonicalizationContext setRequesterId(@Nullable final String id) {
+        requesterId = id;
+        return this;
     }
 
     /**
-     * Get the entityID of the IdP.
-     * @return Returns the responderEntityID.
+     * Get the responder's ID.
+     * 
+     * @return the responder's ID
      */
     @Nullable public String getResponderId() {
         return responderId;
     }
 
     /**
-     * Set the entityID of the IdP.
-     * @param idpID The responderEntityID to set.
+     * Set the responder's ID.
+     * 
+     * @param id the responder's ID
+     * 
+     * @return this context
      */
-    public void setResponderId(@Nullable String idpID) {
-        responderId = idpID;
+    @Nonnull public SubjectCanonicalizationContext setResponderId(@Nullable final String id) {
+        responderId = id;
+        return this;
     }
+    
+    /**
+     * Get the set of flows that could potentially be used for subject canonicalization.
+     * 
+     * @return the potential flows
+     */
+    @Nonnull @NonnullElements @Live public Map<String, SubjectCanonicalizationFlowDescriptor> getPotentialFlows() {
+        return potentialFlows;
+    }
+
+    
+    /**
+     * Get the set of flows that have been executed, successfully or otherwise, without producing a completed result.
+     * 
+     * @return the intermediately executed flows
+     */
+    @Nonnull @NonnullElements @Live public Map<String, SubjectCanonicalizationFlowDescriptor> getIntermediateFlows() {
+        return intermediateFlows;
+    }
+
+    /**
+     * Get the last flow that was attemted for subject c14n.
+     * 
+     * @return last flow that was attempted for subject c14n
+     */
+    @Nullable public SubjectCanonicalizationFlowDescriptor getAttemptedFlow() {
+        return attemptedFlow;
+    }
+
+    /**
+     * Set the last flow that was attempted for subject c14n.
+     * 
+     * @param flow last flow that was attempted for subject c14n
+     * 
+     * @return this context
+     */
+    @Nonnull public SubjectCanonicalizationContext setAttemptedFlow(
+            @Nullable final SubjectCanonicalizationFlowDescriptor flow) {
+        attemptedFlow = flow;
+        return this;
+    }
+
 }

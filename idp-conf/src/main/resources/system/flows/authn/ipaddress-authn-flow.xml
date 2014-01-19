@@ -1,15 +1,9 @@
 <flow xmlns="http://www.springframework.org/schema/webflow"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow classpath:/org/springframework/webflow/engine/model/builder/spring-webflow-2.0.xsd"
-      parent="Authentication.Abstract, Authentication.Subflow.Abstract">
+      parent="Authentication.Abstract">
 
-    <!--
-    This is a login flow for IP Address-based pseudo-authentication.
-    
-    All login flows are required to invoke a Subject Canonicalization subflow
-    before completing, and must return the result of that subflow as their
-    result, barring an error of some other kind earlier.
-    -->
+    <!-- This is a login flow for IP Address-based pseudo-authentication. -->
     
     <action-state id="ExtractUserAgentAddress">
         <evaluate expression="ExtractUserAgentAddress" />
@@ -21,8 +15,6 @@
         
         <!--  Example to wire a second validation range in using a differently named bean. -->
         <!-- <transition on="InvalidCredentials" to="ValidateUserAgentAddress2" /> -->
-        
-        <transition on="proceed" to="CallSubjectCanonicalization" />
     </action-state>
 
     <!-- As a "fall-through" method, remap selected events to select a different flow. -->    

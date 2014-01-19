@@ -39,7 +39,6 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +54,7 @@ import com.google.common.base.Function;
  * Authentication action implementations should override
  * {@link #doExecute(ProfileRequestContext, SubjectCanonicalizationContext)}
  * 
- * @event {@link EventIds#INVALID_PROFILE_CTX}
+ * @event {@link AuthnEventIds#INVALID_SUBJECT_C14N_CTX}
  */
 public abstract class AbstractSubjectCanonicalizationAction extends AbstractProfileAction {
 
@@ -68,7 +67,7 @@ public abstract class AbstractSubjectCanonicalizationAction extends AbstractProf
      */
     @Nonnull private Function<ProfileRequestContext, SubjectCanonicalizationContext> scCtxLookupStrategy;
     
-    /** SubjectCanonicalizationContext to operate on. */
+    /** {@link SubjectCanonicalizationContext} to operate on. */
     @Nullable private SubjectCanonicalizationContext scContext;
     
     /** Match patterns and replacement strings to apply. */
@@ -85,9 +84,7 @@ public abstract class AbstractSubjectCanonicalizationAction extends AbstractProf
     
     /** Constructor. */
     public AbstractSubjectCanonicalizationAction() {
-        super();
-        
-        scCtxLookupStrategy = new ChildContextLookup(SubjectCanonicalizationContext.class, false);
+        scCtxLookupStrategy = new ChildContextLookup<>(SubjectCanonicalizationContext.class, false);
         transforms = Collections.emptyList();
 
         uppercase = false;
@@ -162,7 +159,7 @@ public abstract class AbstractSubjectCanonicalizationAction extends AbstractProf
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
         scContext = scCtxLookupStrategy.apply(profileRequestContext);
         if (scContext == null) {
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
             return false;
         }
         
@@ -192,7 +189,6 @@ public abstract class AbstractSubjectCanonicalizationAction extends AbstractProf
     /** {@inheritDoc} */
     @Override
     protected final void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
-
         doExecute(profileRequestContext, scContext);
     }
 

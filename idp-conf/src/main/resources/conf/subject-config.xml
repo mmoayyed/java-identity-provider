@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.2.xsd
+                           http://www.springframework.org/schema/context classpath:/org/springframework/context/config/spring-context-3.2.xsd
+                           http://www.springframework.org/schema/util classpath:/org/springframework/beans/factory/xml/spring-util-3.2.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <!--
+    This file provisions the IdP with information about the configured mechanisms used for managing
+    subject identity information, including canonicalizing technology-specific subject names into principal
+    names, and turning principal names back into technology-specific forms like SAML NameIDs.
+    -->
+
+    <!--
+    This is a list of Subject Canonicalization flows that turn arbitrary Subject data into a string-based
+    principal name that the rest of the IdP can operate on.
+    
+    Flows are described with an ID that corresponds to a Spring Web Flow subflow name, and an optional
+    predicate function that tells the IdP whether the flow can be run or not on a particular Subject
+    for a particular profile request. 
+    -->
+    <util:list id="shibboleth.AvailableSubjectCanonicalizationFlows">
+        
+        <bean c:id="SubjectC14NFlow/Simple" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
+            <property name="activationCondition">
+                <bean class="net.shibboleth.idp.authn.impl.SimpleSubjectCanonicalization.ActivationCondition" />
+            </property>
+        </bean>
+
+    </util:list>
+    
+</beans>

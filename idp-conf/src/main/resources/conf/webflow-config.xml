@@ -34,18 +34,19 @@
         <webflow:flow-location id="SAML2/Unsolicited/SSO" path="/saml2/sso-unsolicited-flow.xml"  />
     
         <webflow:flow-location id="Authentication.Abstract" path="/authn/authn-abstract-flow.xml" />
-        <webflow:flow-location id="Authentication.Subflow.Abstract" path="/authn/authn-subflow-abstract-flow.xml" />
-
         <webflow:flow-location id="Authentication" path="/authn/authn-flow.xml" />
+        
+        <webflow:flow-location id="SubjectC14N.Abstract" path="/c14n/subject-c14n-abstract-flow.xml" />
+        <webflow:flow-location id="SubjectC14N" path="/c14n/subject-c14n-flow.xml" />
         
         <!-- Login methods. -->
         <webflow:flow-location id="AuthenticationFlow/IPAddress" path="/authn/ipaddress-authn-flow.xml" />
         <webflow:flow-location id="AuthenticationFlow/RemoteUser" path="/authn/remoteuser-authn-flow.xml" />
         <webflow:flow-location id="AuthenticationFlow/JAAS" path="/authn/jaas-authn-flow.xml" />
-        <webflow:flow-location id="AuthenticationFlow/LDAP" path="/authn/ldap-authn-flow.xml" />
-                
+        <webflow:flow-location id="AuthenticationFlow/LDAP" path="/authn/ldap-authn-flow.xml" />        
+        
         <!-- C14N methods. -->
-        <webflow:flow-location id="SubjectC14N/Simple" path="/authn/simple-subject-c14n-flow.xml" />
+        <webflow:flow-location id="SubjectC14NFlow/Simple" path="/c14n/simple-subject-c14n-flow.xml" />
                 
     </webflow:flow-registry>
     

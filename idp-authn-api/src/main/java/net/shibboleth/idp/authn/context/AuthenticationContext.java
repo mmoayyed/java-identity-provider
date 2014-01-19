@@ -320,6 +320,7 @@ public final class AuthenticationContext extends BaseContext {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return Objects.toStringHelper(this).add("initiationInstant", new DateTime(initiationInstant))
                 .add("isPassive", isPassive).add("forceAuthn", forceAuthn).add("hintedName", hintedName)

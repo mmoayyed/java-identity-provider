@@ -1,15 +1,9 @@
 <flow xmlns="http://www.springframework.org/schema/webflow"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow classpath:/org/springframework/webflow/engine/model/builder/spring-webflow-2.0.xsd"
-      parent="Authentication.Abstract, Authentication.Subflow.Abstract, Authentication.Conditions">
+      parent="Authentication.Abstract, Authentication.Conditions">
 
-    <!--
-    This is a login flow for form-based LDAP-backed authentication.
-    
-    All login flows are required to invoke a Subject Canonicalization subflow
-    before completing, and must return the result of that subflow as their
-    result, barring an error of some other kind earlier.
-    -->
+    <!-- This is a login flow for form-based LDAP-backed authentication. -->
 
     <action-state id="ExtractUsernamePasswordFromBasicAuth">
         <evaluate expression="ExtractUsernamePasswordFromBasicAuth" />
@@ -43,7 +37,7 @@
     <action-state id="ValidateUsernamePasswordAgainstLDAP" parent="Authentication.Conditions#ValidateUsernamePassword">
         <evaluate expression="ValidateUsernamePasswordAgainstLDAP" />
         
-        <transition on="proceed" to="CallSubjectCanonicalization" />
+        <transition on="proceed" to="proceed" />
         
         <!-- Fall through to a different flow if login fails on a passive request. -->
         <transition on="#{ flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext').getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext), false).isPassive() }" to="ReselectFlow" />
