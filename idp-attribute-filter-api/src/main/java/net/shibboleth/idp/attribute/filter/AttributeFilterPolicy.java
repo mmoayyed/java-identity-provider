@@ -116,7 +116,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
     }
 
     /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
+    @Override public void validate() throws ComponentValidationException {
         ComponentSupport.validate(rule);
 
         for (AttributeRule valuePolicy : valuePolicies) {
@@ -141,7 +141,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
 
         if (isActive == Tristate.FAIL) {
             log.warn("{} Policy requirement rule failed for this request", getLogPrefix());
-        } else if (isActive == Tristate.FALSE) { 
+        } else if (isActive == Tristate.FALSE) {
             log.debug("{} Policy is active for this request", getLogPrefix());
         } else {
             log.debug("{} Policy is not active for this request", getLogPrefix());
@@ -163,7 +163,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
-        
+
         if (!isApplicable(filterContext)) {
             return;
         }
@@ -184,7 +184,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         ComponentSupport.initialize(rule);
@@ -196,7 +196,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
     }
 
     /** {@inheritDoc} */
-    protected void doDestroy() {
+    @Override protected void doDestroy() {
         ComponentSupport.destroy(rule);
 
         for (AttributeRule valuePolicy : valuePolicies) {
@@ -205,7 +205,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
 
         super.doDestroy();
     }
-    
+
     /**
      * Get the prefix for logging.
      * 

@@ -26,6 +26,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filter.context.AttributeFilterWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
@@ -81,7 +82,7 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
     private boolean isDenyRule = true;
 
     /** {@inheritDoc} */
-    public synchronized void setId(@Nonnull @NotEmpty final String componentId) {
+    @Override public synchronized void setId(@Nonnull @NotEmpty final String componentId) {
         super.setId(componentId);
     }
 
@@ -154,7 +155,7 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
     }
 
     /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
+    @Override public void validate() throws ComponentValidationException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         ComponentSupport.validate(matcher);
@@ -174,6 +175,10 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
         Constraint.isNotNull(attribute, "To-be-filtered attribute can not be null");
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 
+        final AttributeFilterWorkContext filterWorkContext =
+                filterContext.getSubcontext(AttributeFilterWorkContext.class, false);
+        Constraint.isNotNull(filterWorkContext, "Attribute filter work context can not be null");
+
         log.debug("{} Filtering values for attribute '{}' which currently contains {} values", getLogPrefix(),
                 getAttributeId(), attribute.getValues().size());
 
@@ -181,34 +186,32 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
 
         if (!isDenyRule) {
             if (null == matchingValues) {
-                log.warn("{} Filter failed. No values released for attribute '{}'", getLogPrefix(),
-                        getAttributeId());
+                log.warn("{} Filter failed. No values released for attribute '{}'", getLogPrefix(), getAttributeId());
             } else {
                 log.debug("{} Filter has permitted the release of {} values for attribute '{}'", getLogPrefix(),
                         matchingValues.size(), attribute.getId());
-                filterContext.addPermittedIdPAttributeValues(attribute.getId(), matchingValues);
+                filterWorkContext.addPermittedIdPAttributeValues(attribute.getId(), matchingValues);
             }
         } else {
             if (null == matchingValues) {
-                log.warn("{} Filter failed. All values denied for attribute '{}'", getLogPrefix(),
-                        getAttributeId());
-                filterContext.addDeniedIdPAttributeValues(attribute.getId(), attribute.getValues());
+                log.warn("{} Filter failed. All values denied for attribute '{}'", getLogPrefix(), getAttributeId());
+                filterWorkContext.addDeniedIdPAttributeValues(attribute.getId(), attribute.getValues());
             } else {
                 log.debug("{} Filter has denied the release of {} values for attribute '{}'", getLogPrefix(),
                         matchingValues.size(), attribute.getId());
-                filterContext.addDeniedIdPAttributeValues(attribute.getId(), matchingValues);
+                filterWorkContext.addDeniedIdPAttributeValues(attribute.getId(), matchingValues);
             }
         }
     }
 
     /** {@inheritDoc} */
-    protected void doDestroy() {
+    @Override protected void doDestroy() {
         ComponentSupport.destroy(matcher);
         super.doDestroy();
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         logPrefix = null;
 
@@ -218,8 +221,7 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
         }
 
         if (matcher == null) {
-            throw new ComponentInitializationException(getLogPrefix()
-                    + " Must have a permit rule or a deny rule");
+            throw new ComponentInitializationException(getLogPrefix() + " Must have a permit rule or a deny rule");
         }
 
         ComponentSupport.initialize(matcher);

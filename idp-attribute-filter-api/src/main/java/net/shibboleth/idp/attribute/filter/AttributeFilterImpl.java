@@ -28,6 +28,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filter.context.AttributeFilterWorkContext;
 import net.shibboleth.idp.service.AbstractServiceableComponent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -52,8 +53,7 @@ import com.google.common.collect.Iterables;
 
 /** Service that filters out attributes and values based upon loaded policies. */
 @ThreadSafe
-public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeFilter> implements
-        AttributeFilter {
+public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeFilter> implements AttributeFilter {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeFilterImpl.class);
@@ -84,12 +84,12 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
      * 
      * @return immutable collection of filter policies
      */
-    @Nonnull @NonnullElements @Unmodifiable public List<AttributeFilterPolicy> getFilterPolicies() {
+    @Override @Nonnull @NonnullElements @Unmodifiable public List<AttributeFilterPolicy> getFilterPolicies() {
         return filterPolicies;
     }
 
     /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
+    @Override public void validate() throws ComponentValidationException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -121,12 +121,16 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
      * 
      * @throws AttributeFilterException thrown if there is a problem retrieving or applying the attribute filter policy
      */
-    public void filterAttributes(@Nonnull final AttributeFilterContext filterContext) throws AttributeFilterException {
+    @Override public void filterAttributes(@Nonnull final AttributeFilterContext filterContext)
+            throws AttributeFilterException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
         Map<String, IdPAttribute> prefilteredAttributes = filterContext.getPrefilteredIdPAttributes();
+
+        // Create work context to hold intermediate results.
+        filterContext.getSubcontext(AttributeFilterWorkContext.class, true);
 
         log.debug("{} beginning process of filtering the following {} attributes: {}", new Object[] {getLogPrefix(),
                 prefilteredAttributes.size(), prefilteredAttributes.keySet(),});
@@ -167,7 +171,11 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
         Constraint.isNotNull(attributeId, "attributeId can not be null");
         Constraint.isNotNull(filterContext, "filterContext can not be null");
 
-        final Collection filteredAttributeValues = filterContext.getPermittedIdPAttributeValues().get(attributeId);
+        final AttributeFilterWorkContext filterWorkContext =
+                filterContext.getSubcontext(AttributeFilterWorkContext.class, false);
+        Constraint.isNotNull(filterWorkContext, "Attribute filter work context can not be null");
+
+        final Collection filteredAttributeValues = filterWorkContext.getPermittedIdPAttributeValues().get(attributeId);
 
         if (filteredAttributeValues == null || filteredAttributeValues.isEmpty()) {
             log.debug("Attribute filtering engine '{}': no policy permitted release of attribute {} values", getId(),
@@ -175,8 +183,8 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
             return null;
         }
 
-        if (filterContext.getDeniedAttributeValues().containsKey(attributeId)) {
-            filteredAttributeValues.removeAll(filterContext.getDeniedAttributeValues().get(attributeId));
+        if (filterWorkContext.getDeniedAttributeValues().containsKey(attributeId)) {
+            filteredAttributeValues.removeAll(filterWorkContext.getDeniedAttributeValues().get(attributeId));
         }
 
         if (filteredAttributeValues.isEmpty()) {
@@ -191,7 +199,7 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         logPrefix = null;
 
@@ -201,7 +209,7 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
     }
 
     /** {@inheritDoc} */
-    protected void doDestroy() {
+    @Override protected void doDestroy() {
         final List<AttributeFilterPolicy> policies = getFilterPolicies();
         for (AttributeFilterPolicy policy : policies) {
             policy.destroy();
@@ -227,7 +235,7 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
     }
 
     /** {@inheritDoc} */
-    @Nonnull public AttributeFilter getComponent() {
+    @Override @Nonnull public AttributeFilter getComponent() {
         return this;
     }
 }

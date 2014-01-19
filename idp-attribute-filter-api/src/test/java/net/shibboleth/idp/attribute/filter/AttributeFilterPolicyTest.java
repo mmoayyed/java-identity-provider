@@ -26,6 +26,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filter.context.AttributeFilterWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
@@ -206,6 +207,8 @@ public class AttributeFilterPolicyTest {
         Assert.assertTrue(thrown);
 
         AttributeFilterContext context = new AttributeFilterContext();
+        context.getSubcontext(AttributeFilterWorkContext.class, true);
+
         IdPAttribute attribute = new IdPAttribute(ATTR_NAME);
 
         attribute.setValues(Lists.<IdPAttributeValue<?>> newArrayList(new StringAttributeValue("one"),
@@ -227,20 +230,23 @@ public class AttributeFilterPolicyTest {
     @Test public void testApply() throws ComponentInitializationException, AttributeFilterException {
         
         AttributeFilterContext ctx = apply(Tristate.TRUE);
+        AttributeFilterWorkContext workCtx = ctx.getSubcontext(AttributeFilterWorkContext.class, false);
         
-        Collection values = ctx.getPermittedIdPAttributeValues().get(ATTR_NAME);
+        Collection values = workCtx.getPermittedIdPAttributeValues().get(ATTR_NAME);
 
         Assert.assertEquals(values.size(), 2);
         Assert.assertTrue(values.containsAll(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue(
                 "three"))));
 
-        Assert.assertNull(ctx.getPermittedIdPAttributeValues().get(ATTR_NAME_2));
+        Assert.assertNull(workCtx.getPermittedIdPAttributeValues().get(ATTR_NAME_2));
 
         ctx = apply(Tristate.FALSE);
-        Assert.assertNull(ctx.getPermittedIdPAttributeValues().get(ATTR_NAME));
+        workCtx = ctx.getSubcontext(AttributeFilterWorkContext.class, false);
+        Assert.assertNull(workCtx.getPermittedIdPAttributeValues().get(ATTR_NAME));
 
         ctx = apply(Tristate.FAIL);
-        Assert.assertNull(ctx.getPermittedIdPAttributeValues().get(ATTR_NAME));
+        workCtx = ctx.getSubcontext(AttributeFilterWorkContext.class, false);
+        Assert.assertNull(workCtx.getPermittedIdPAttributeValues().get(ATTR_NAME));
 }
 
     @Test public void testApplyToEmpty() throws ComponentInitializationException, AttributeFilterException {
@@ -248,13 +254,14 @@ public class AttributeFilterPolicyTest {
         //
         // Empty attribute
         //
-        AttributeFilterContext context = new AttributeFilterContext();
+        AttributeFilterContext ctx = new AttributeFilterContext();
+        AttributeFilterWorkContext workCtx = ctx.getSubcontext(AttributeFilterWorkContext.class, true);
         IdPAttribute attribute = new IdPAttribute(ATTR_NAME);
         attribute.setValues(Collections.EMPTY_LIST);
-        context.setPrefilteredIdPAttributes(Arrays.asList(attribute));
+        ctx.setPrefilteredIdPAttributes(Arrays.asList(attribute));
         policy.initialize();
-        policy.apply(context);
-        Assert.assertTrue(context.getPermittedIdPAttributeValues().isEmpty());
+        policy.apply(ctx);
+        Assert.assertTrue(workCtx.getPermittedIdPAttributeValues().isEmpty());
 
     }
 }

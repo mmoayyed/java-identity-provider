@@ -39,12 +39,12 @@ public interface Matcher extends IdentifiableComponent {
     public static final Matcher MATCHES_ALL = new Matcher() {
 
         /** {@inheritDoc} */
-        public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull IdPAttribute attribute,
+        @Override public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull IdPAttribute attribute,
                 @Nonnull AttributeFilterContext filterContext) {
             return Collections.unmodifiableSet(attribute.getValues());
         }
 
-        @Nullable public String getId() {
+        @Override @Nullable public String getId() {
             return "MATCHES_ALL";
         }
     };
@@ -53,12 +53,12 @@ public interface Matcher extends IdentifiableComponent {
     public static final Matcher MATCHES_NONE = new Matcher() {
 
         /** {@inheritDoc} */
-        public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull IdPAttribute attribute,
+        @Override public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull IdPAttribute attribute,
                 @Nonnull AttributeFilterContext filterContext) {
             return Collections.emptySet();
         }
 
-        @Nullable public String getId() {
+        @Override @Nullable public String getId() {
             return "MATCHES_NONE";
         }
     };
@@ -67,12 +67,12 @@ public interface Matcher extends IdentifiableComponent {
     public static final Matcher MATCHER_FAILS = new Matcher() {
 
         /** {@inheritDoc} */
-        public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull IdPAttribute attribute,
+        @Override public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull IdPAttribute attribute,
                 @Nonnull AttributeFilterContext filterContext) {
             return null;
         }
 
-        @Nullable public String getId() {
+        @Override @Nullable public String getId() {
             return "MATCHER_FAILS";
         }
     };

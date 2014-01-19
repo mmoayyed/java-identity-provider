@@ -24,6 +24,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filter.context.AttributeFilterWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
@@ -253,14 +254,15 @@ public class AttributeValueFilterPolicyTest {
 
         AttributeFilterContext context = new AttributeFilterContext();
         context.setPrefilteredIdPAttributes(Arrays.asList(attribute1));
+        AttributeFilterWorkContext workCtx = context.getSubcontext(AttributeFilterWorkContext.class, true);
 
         policy.apply(attribute1, context);
 
-        Collection<IdPAttributeValue> result = context.getPermittedIdPAttributeValues().get(ATTR_NAME);
+        Collection<IdPAttributeValue> result = workCtx.getPermittedIdPAttributeValues().get(ATTR_NAME);
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(aStringAttributeValue));
         Assert.assertTrue(result.contains(cStringAttributeValue));
-        Assert.assertNull(context.getDeniedAttributeValues().get(ATTR_NAME));
+        Assert.assertNull(workCtx.getDeniedAttributeValues().get(ATTR_NAME));
 
         policy = new AttributeRule();
         policy.setId("id");
@@ -270,15 +272,16 @@ public class AttributeValueFilterPolicyTest {
         policy.initialize();
 
         context = new AttributeFilterContext();
+        workCtx = context.getSubcontext(AttributeFilterWorkContext.class, true);
         context.setPrefilteredIdPAttributes(Arrays.asList(attribute1));
 
         policy.apply(attribute1, context);
 
-        result = context.getDeniedAttributeValues().get(ATTR_NAME);
+        result = workCtx.getDeniedAttributeValues().get(ATTR_NAME);
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(aStringAttributeValue));
         Assert.assertTrue(result.contains(cStringAttributeValue));
-        Assert.assertNull(context.getPermittedIdPAttributeValues().get(ATTR_NAME));
+        Assert.assertNull(workCtx.getPermittedIdPAttributeValues().get(ATTR_NAME));
 
         policy.destroy();
 
