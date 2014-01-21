@@ -34,8 +34,18 @@
 
     <action-state id="SelectProfileConfiguration">
         <evaluate expression="SelectProfileConfiguration" />
-        <transition on="proceed" to="RecordResponseComplete" />
+        <transition on="proceed" to="InitializeAuthenticationContext" />
     </action-state>
+    
+    <action-state id="InitializeAuthenticationContext">
+        <evaluate expression="InitializeAuthenticationContext" />
+        <transition on="proceed" to="DoAuthenticationSubflow" />
+    </action-state>
+    
+    <subflow-state id="DoAuthenticationSubflow" subflow="Authentication">
+        <transition on="proceed" to="RecordResponseComplete" />
+        <transition on="#{true}" to="RecordResponseComplete" />
+    </subflow-state>
 
     <!-- TODO actions -->
 

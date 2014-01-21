@@ -48,7 +48,9 @@
         class="net.shibboleth.idp.saml.profile.config.saml1.BrowserSSOProfileConfiguration"
         p:securityConfiguration-ref="SecurityConfiguration" />
 
+    <!-- TODO replace configurationId with something else -->
     <!-- TODO replace responderId "https://idp.example.org" with something else -->
+    <!-- TODO replace predicate with something else -->
     <bean
         id="ConditionalRelyingPartyConfiguration"
         class="net.shibboleth.idp.relyingparty.impl.ConditionalRelyingPartyConfiguration"
@@ -61,6 +63,11 @@
     <bean
         id="SelectProfileConfiguration"
         class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration"
+        scope="prototype" />
+
+    <bean
+        id="InitializeAuthenticationContext"
+        class="net.shibboleth.idp.saml.impl.profile.InitializeAuthenticationContext"
         scope="prototype" />
 
     <bean
