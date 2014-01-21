@@ -9,6 +9,31 @@
 
     <action-state id="DecodeMessage">
         <evaluate expression="DecodeMessage" />
+        <transition on="proceed" to="AddBasicMessageMetadataContext" />
+    </action-state>
+
+    <!-- TODO OpenSAML message handling -->
+
+    <!-- TODO to be replaced by something else -->
+    <action-state id="AddBasicMessageMetadataContext">
+        <evaluate expression="AddBasicMessageMetadataContext" />
+        <transition on="proceed" to="InitializeRelyingPartyContext" />
+    </action-state>
+
+    <action-state id="InitializeRelyingPartyContext">
+        <evaluate expression="InitializeRelyingPartyContext" />
+        <transition on="proceed" to="SelectRelyingPartyConfiguration" />
+    </action-state>
+
+    <!-- TODO CheckMandatoryIssuer during inbound message handling ? -->
+
+    <action-state id="SelectRelyingPartyConfiguration">
+        <evaluate expression="SelectRelyingPartyConfiguration" />
+        <transition on="proceed" to="SelectProfileConfiguration" />
+    </action-state>
+
+    <action-state id="SelectProfileConfiguration">
+        <evaluate expression="SelectProfileConfiguration" />
         <transition on="proceed" to="RecordResponseComplete" />
     </action-state>
 
