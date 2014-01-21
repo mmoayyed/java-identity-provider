@@ -70,6 +70,17 @@
         class="net.shibboleth.idp.saml.impl.profile.InitializeAuthenticationContext"
         scope="prototype" />
 
+    <!-- TODO make constructor arg names consistent for resolution and filtering -->
+    <bean
+        id="ResolveAttributes"
+        class="net.shibboleth.idp.profile.impl.ResolveAttributes"
+        c:resolverService-ref="shibboleth.AttributeResolverService" />
+
+    <bean
+        id="FilterAttributes"
+        class="net.shibboleth.idp.profile.impl.FilterAttributes"
+        c:service-ref="shibboleth.AttributeFilterService" />
+
     <bean
         id="RecordResponseComplete"
         class="net.shibboleth.idp.profile.impl.RecordResponseComplete" />
