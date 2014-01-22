@@ -9,10 +9,14 @@
 
     <action-state id="DecodeMessage">
         <evaluate expression="DecodeMessage" />
-        <transition on="proceed" to="AddBasicMessageMetadataContext" />
+        <transition on="proceed" to="HandleInboundMessage" />
     </action-state>
 
     <!-- TODO OpenSAML message handling -->
+    <action-state id="HandleInboundMessage">
+        <evaluate expression="HandleInboundMessage" />
+        <transition on="proceed" to="AddBasicMessageMetadataContext" />
+    </action-state>
 
     <!-- TODO to be replaced by something else -->
     <action-state id="AddBasicMessageMetadataContext">
@@ -39,6 +43,11 @@
 
     <action-state id="InitializeAuthenticationContext">
         <evaluate expression="InitializeAuthenticationContext" />
+        <transition on="proceed" to="InitializeRequestedPrincipalContext" />
+    </action-state>
+    
+    <action-state id="InitializeRequestedPrincipalContext">
+        <evaluate expression="InitializeRequestedPrincipalContext" />
         <transition on="proceed" to="DoAuthenticationSubflow" />
     </action-state>
 
@@ -59,6 +68,13 @@
         <evaluate expression="FilterAttributes" />
         <transition on="proceed" to="RecordResponseComplete" />
     </action-state>
+    
+    <!-- TODO 
+    <action-state id="AddResponseShell">
+        <evaluate expression="AddResponseShell" />
+        <transition on="proceed" to="RecordResponseComplete" />
+    </action-state>
+    -->
 
     <!-- TODO actions -->
 
@@ -69,7 +85,8 @@
 
     <end-state id="end" />
 
-    <!-- TODO define error state ? <view-state id="error" /> -->
+    <!-- TODO error view-state ? -->
+    <view-state id="error" />
 
     <global-transitions>
         <transition on="NoPotentialFlow" to="error" />
