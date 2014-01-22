@@ -31,7 +31,26 @@
         scope="prototype">
         <property name="handlers">
             <util:list>
-                <!-- TODO -->
+                <!-- TODO inbound handlers -->
+                <!-- TODO CheckMandatoryIssuer ? -->
+            </util:list>
+        </property>
+    </bean>
+
+    <bean
+        id="HandleOutboundMessage"
+        class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor"
+        scope="prototype"
+        c:messageHandler-ref="outboundMessageHandlerChain"
+        c:executionDirection="OUTBOUND" />
+
+    <bean
+        id="outboundMessageHandlerChain"
+        class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain"
+        scope="prototype">
+        <property name="handlers">
+            <util:list>
+                <!-- TODO outbound handlers -->
             </util:list>
         </property>
     </bean>
@@ -107,6 +126,14 @@
     <bean
         id="AddResponseShell"
         class="net.shibboleth.idp.saml.impl.profile.saml1.AddResponseShell" />
+
+    <bean
+        id="UpdateSessionWithSPSession"
+        class="net.shibboleth.idp.session.impl.UpdateSessionWithSPSession"
+        scope="prototype"
+        p:enabled="${idp.session.enabled}"
+        p:sessionManager-ref="shibboleth.SessionManager"
+        p:sessionLifetime="${idp.session.defaultSPlifetime}" />
 
     <bean
         id="RecordResponseComplete"

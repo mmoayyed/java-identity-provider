@@ -29,8 +29,6 @@
         <transition on="proceed" to="SelectRelyingPartyConfiguration" />
     </action-state>
 
-    <!-- TODO CheckMandatoryIssuer during inbound message handling ? -->
-
     <action-state id="SelectRelyingPartyConfiguration">
         <evaluate expression="SelectRelyingPartyConfiguration" />
         <transition on="proceed" to="SelectProfileConfiguration" />
@@ -66,12 +64,26 @@
 
     <action-state id="FilterAttributes">
         <evaluate expression="FilterAttributes" />
-        <transition on="proceed" to="RecordResponseComplete" />
+        <transition on="proceed" to="UpdateSessionWithSPSession" />
     </action-state>
     
     <!-- TODO 
     <action-state id="AddResponseShell">
         <evaluate expression="AddResponseShell" />
+        <transition on="proceed" to="RecordResponseComplete" />
+    </action-state>
+    -->
+    
+    <action-state id="UpdateSessionWithSPSession">
+        <evaluate expression="UpdateSessionWithSPSession" />
+        <transition on="proceed" to="RecordResponseComplete"/>
+        <!-- Mask storage failure. -->
+        <transition on="IOError" to="RecordResponseComplete"/>
+    </action-state>
+    
+    <!-- TODO needs non-null outbound message context
+    <action-state id="HandleOutboundMessage">
+        <evaluate expression="HandleOutboundMessage" />
         <transition on="proceed" to="RecordResponseComplete" />
     </action-state>
     -->
