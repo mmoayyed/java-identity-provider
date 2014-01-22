@@ -18,6 +18,7 @@
 package net.shibboleth.idp.saml.profile.config.saml1;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -57,6 +58,8 @@ public class BrowserSSOProfileConfiguration
     /** Constructor. */
     public BrowserSSOProfileConfiguration() {
         this(PROFILE_ID);
+        
+        defaultAuthenticationMethods = Collections.emptyList();
     }
 
     /**
