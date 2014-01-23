@@ -44,6 +44,7 @@ import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml1.profile.AbstractSAML1NameIdentifierGenerator;
+import org.opensaml.saml.saml1.profile.SAML1ObjectSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,7 +121,9 @@ public class DefaultSAML1NameIdentifierGenerator extends AbstractSAML1NameIdenti
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         
-        Constraint.isNotEmpty(attributeSourceIds, "Attribute source ID list cannot be empty");
+        if (attributeSourceIds.isEmpty()) {
+            throw new ComponentInitializationException("Attribute source ID list cannot be empty");
+        }
     }
 
     /** {@inheritDoc} */
@@ -147,8 +150,13 @@ public class DefaultSAML1NameIdentifierGenerator extends AbstractSAML1NameIdenti
             final Set<IdPAttributeValue<?>> values = attribute.getValues();
             for (final IdPAttributeValue value : values) {
                 if (value instanceof XMLObjectAttributeValue && value.getValue() instanceof NameIdentifier) {
-                    log.info("Returning NameIdentifier from XMLObject-valued attribute {}", sourceId);
-                    return (NameIdentifier) value.getValue(); 
+                    if (SAML1ObjectSupport.areNameIdentifierFormatsEquivalent(getFormat(),
+                            ((NameIdentifier) value.getValue()).getFormat())) {
+                        log.info("Returning NameIdentifier from XMLObject-valued attribute {}", sourceId);
+                        return (NameIdentifier) value.getValue();
+                    } else {
+                        log.debug("Attribute {} value was NameIdentifier, but Format did not match", sourceId);
+                    }
                 }
             }
         }
