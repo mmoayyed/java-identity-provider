@@ -21,13 +21,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractSubjectCanonicalizationAction;
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
-import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -54,9 +52,6 @@ public class PopulateSubjectCanonicalizationContext extends AbstractSubjectCanon
     
     /** The flows to make available for possible use. */
     @Nonnull @NonnullElements private Collection<SubjectCanonicalizationFlowDescriptor> availableFlows;
-    
-    /** The registry of predicate factories for custom principal evaluation. */
-    @Nullable private PrincipalEvalPredicateFactoryRegistry evalRegistry;
 
     /** Constructor. */
     PopulateSubjectCanonicalizationContext() {
