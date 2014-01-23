@@ -193,7 +193,7 @@
     </bean>
 
     <!-- TODO replace responderId "https://idp.example.org" with something else -->
-    <bean id="ConditionalRelyingPartyConfiguration" class="net.shibboleth.idp.relyingparty.impl.ConditionalRelyingPartyConfiguration">
+    <bean id="RelyingPartyConfiguration" class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration">
         <constructor-arg value="ActivatedRelyingPartyConfiguration" />
         <constructor-arg value="https://idp.example.org" />
         <constructor-arg value="true" />
@@ -211,16 +211,16 @@
         </constructor-arg>
     </bean>
 
-    <bean id="ConditionalRelyingPartyConfigurationResolver" p:id="ConditionalRelyingPartyConfigurationResolver" class="net.shibboleth.idp.relyingparty.impl.ConditionalRelyingPartyConfigurationResolver">
+    <bean id="RelyingPartyConfigurationResolver" p:id="RelyingPartyConfigurationResolver" class="net.shibboleth.idp.relyingparty.impl.RelyingPartyConfigurationResolver">
         <property name="relyingPartyConfigurations">
             <util:list>
-                <ref bean="ConditionalRelyingPartyConfiguration" />
+                <ref bean="RelyingPartyConfiguration" />
             </util:list>
         </property>
     </bean>
 
     <bean id="SelectRelyingPartyConfiguration" class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration" scope="prototype">
-        <constructor-arg ref="ConditionalRelyingPartyConfigurationResolver" />
+        <constructor-arg ref="RelyingPartyConfigurationResolver" />
     </bean>
 
     <bean id="SelectProfileConfiguration" class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration" scope="prototype"/>

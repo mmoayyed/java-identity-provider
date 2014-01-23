@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
+import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
@@ -49,20 +50,20 @@ import com.google.common.collect.Lists;
 /**
  * Retrieves a per-relying party configuration for a given profile request based on the request context.
  * 
- * <p>Note that this resolver does not permit more than one {@link ConditionalRelyingPartyConfiguration}
+ * <p>Note that this resolver does not permit more than one {@link RelyingPartyConfiguration}
  * with the same ID.</p>
  */
-public class ConditionalRelyingPartyConfigurationResolver extends AbstractIdentifiableInitializableComponent implements
-        Resolver<ConditionalRelyingPartyConfiguration, ProfileRequestContext> {
+public class RelyingPartyConfigurationResolver extends AbstractIdentifiableInitializableComponent implements
+        Resolver<RelyingPartyConfiguration, ProfileRequestContext> {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ConditionalRelyingPartyConfigurationResolver.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(RelyingPartyConfigurationResolver.class);
 
     /** Registered relying party configurations. */
-    private Collection<ConditionalRelyingPartyConfiguration> rpConfigurations;
+    private Collection<RelyingPartyConfiguration> rpConfigurations;
 
     /** Constructor. */
-    public ConditionalRelyingPartyConfigurationResolver() {
+    public RelyingPartyConfigurationResolver() {
         rpConfigurations = Collections.emptyList();
     }
     
@@ -78,7 +79,7 @@ public class ConditionalRelyingPartyConfigurationResolver extends AbstractIdenti
      * @return unmodifiable list of registered relying party configurations
      */
     @Nonnull @NonnullElements @Unmodifiable @NotLive
-    public Collection<ConditionalRelyingPartyConfiguration> getRelyingPartyConfigurations() {
+    public Collection<RelyingPartyConfiguration> getRelyingPartyConfigurations() {
         return ImmutableList.copyOf(rpConfigurations);
     }
 
@@ -90,7 +91,7 @@ public class ConditionalRelyingPartyConfigurationResolver extends AbstractIdenti
      * @param configs list of registered relying party configurations
      */
     public void setRelyingPartyConfigurations(
-            @Nonnull @NonnullElements final Collection<ConditionalRelyingPartyConfiguration> configs) {
+            @Nonnull @NonnullElements final Collection<RelyingPartyConfiguration> configs) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(configs, "RelyingPartyConfiguration collection cannot be null");
 
@@ -103,7 +104,7 @@ public class ConditionalRelyingPartyConfigurationResolver extends AbstractIdenti
         super.doInitialize();
 
         final HashSet<String> configIds = new HashSet<>(rpConfigurations.size());
-        for (ConditionalRelyingPartyConfiguration config : rpConfigurations) {
+        for (RelyingPartyConfiguration config : rpConfigurations) {
             if (configIds.contains(config.getId())) {
                 throw new ComponentInitializationException("Multiple replying party configurations with ID "
                         + config.getId() + " detected. Configuration IDs must be unique.");
@@ -113,7 +114,8 @@ public class ConditionalRelyingPartyConfigurationResolver extends AbstractIdenti
     }
     
     /** {@inheritDoc} */
-    public Iterable<ConditionalRelyingPartyConfiguration> resolve(@Nullable final ProfileRequestContext context)
+    @Override
+    public Iterable<RelyingPartyConfiguration> resolve(@Nullable final ProfileRequestContext context)
             throws ResolverException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
@@ -123,12 +125,12 @@ public class ConditionalRelyingPartyConfigurationResolver extends AbstractIdenti
 
         log.debug("Resolving relying party configurations for profile request {}", context.getId());
 
-        final ArrayList<ConditionalRelyingPartyConfiguration> matches = new ArrayList<>();
+        final ArrayList<RelyingPartyConfiguration> matches = new ArrayList<>();
 
-        for (ConditionalRelyingPartyConfiguration configuration : rpConfigurations) {
+        for (RelyingPartyConfiguration configuration : rpConfigurations) {
             log.debug("Checking if relying party configuration {} is applicable to profile request {}",
                     configuration.getId(), context.getId());
-            if (configuration.getActivationCondition().apply(context)) {
+            if (configuration.apply(context)) {
                 log.debug("Relying party configuration {} is applicable to profile request {}",
                         configuration.getId(), context.getId());
                 matches.add(configuration);
@@ -142,7 +144,8 @@ public class ConditionalRelyingPartyConfigurationResolver extends AbstractIdenti
     }
 
     /** {@inheritDoc} */
-    public ConditionalRelyingPartyConfiguration resolveSingle(@Nullable final ProfileRequestContext context)
+    @Override
+    public RelyingPartyConfiguration resolveSingle(@Nullable final ProfileRequestContext context)
             throws ResolverException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
@@ -151,10 +154,10 @@ public class ConditionalRelyingPartyConfigurationResolver extends AbstractIdenti
         }
 
         log.debug("Resolving relying party configuration for profile request {}", context.getId());
-        for (ConditionalRelyingPartyConfiguration configuration : rpConfigurations) {
+        for (RelyingPartyConfiguration configuration : rpConfigurations) {
             log.debug("Checking if relying party configuration {} is applicable to profile request {}",
                     configuration.getId(), context.getId());
-            if (configuration.getActivationCondition().apply(context)) {
+            if (configuration.apply(context)) {
                 log.debug("Relying party configuration {} is applicable to profile request {}",
                         configuration.getId(), context.getId());
                 return configuration;

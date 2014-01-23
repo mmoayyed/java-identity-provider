@@ -68,13 +68,13 @@
         id="SelectRelyingPartyConfiguration"
         class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration"
         scope="prototype"
-        c:resolver-ref="ConditionalRelyingPartyConfigurationResolver" />
+        c:resolver-ref="RelyingPartyConfigurationResolver" />
 
     <bean
-        id="ConditionalRelyingPartyConfigurationResolver"
-        class="net.shibboleth.idp.relyingparty.impl.ConditionalRelyingPartyConfigurationResolver"
-        p:id="ConditionalRelyingPartyConfigurationResolver"
-        p:relyingPartyConfigurations-ref="ConditionalRelyingPartyConfiguration" />
+        id="RelyingPartyConfigurationResolver"
+        class="net.shibboleth.idp.relyingparty.impl.RelyingPartyConfigurationResolver"
+        p:id="RelyingPartyConfigurationResolver"
+        p:relyingPartyConfigurations-ref="RelyingPartyConfiguration" />
 
     <bean
         id="SecurityConfiguration"
@@ -89,8 +89,8 @@
     <!-- TODO replace responderId "https://idp.example.org" with something else -->
     <!-- TODO replace predicate with something else -->
     <bean
-        id="ConditionalRelyingPartyConfiguration"
-        class="net.shibboleth.idp.relyingparty.impl.ConditionalRelyingPartyConfiguration"
+        id="RelyingPartyConfiguration"
+        class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"
         c:configurationId="ActivatedRelyingPartyConfiguration"
         c:responderId="https://idp.example.org"
         c:detailedErrorsFlag="true"

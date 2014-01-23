@@ -20,39 +20,40 @@ package net.shibboleth.idp.relyingparty.impl;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.opensaml.profile.context.ProfileRequestContext;
+import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicates;
 
-/** Unit test for {@link ConditionalRelyingPartyConfigurationResolver}. */
-public class ConditionalRelyingPartyConfigurationResolverTest {
+/** Unit test for {@link RelyingPartyConfigurationResolver}. */
+public class RelyingPartyConfigurationResolverTest {
 
     @Test public void testConstruction() {
-        ConditionalRelyingPartyConfigurationResolver resolver;
+        RelyingPartyConfigurationResolver resolver;
 
-        ArrayList<ConditionalRelyingPartyConfiguration> rpConfigs = new ArrayList<>();
-        rpConfigs.add(new ConditionalRelyingPartyConfiguration("one", "foo", true, null, Predicates
+        ArrayList<RelyingPartyConfiguration> rpConfigs = new ArrayList<>();
+        rpConfigs.add(new RelyingPartyConfiguration("one", "foo", true, null, Predicates
                 .<ProfileRequestContext> alwaysTrue()));
-        rpConfigs.add(new ConditionalRelyingPartyConfiguration("two", "foo", true, null, Predicates
+        rpConfigs.add(new RelyingPartyConfiguration("two", "foo", true, null, Predicates
                 .<ProfileRequestContext> alwaysFalse()));
-        rpConfigs.add(new ConditionalRelyingPartyConfiguration("three", "foo", true, null, Predicates
+        rpConfigs.add(new RelyingPartyConfiguration("three", "foo", true, null, Predicates
                 .<ProfileRequestContext> alwaysTrue()));
 
-        resolver = new ConditionalRelyingPartyConfigurationResolver();
+        resolver = new RelyingPartyConfigurationResolver();
         resolver.setId("test");
         resolver.setRelyingPartyConfigurations(rpConfigs);
         Assert.assertEquals(resolver.getId(), "test");
         Assert.assertEquals(resolver.getRelyingPartyConfigurations().size(), 3);
 
-        resolver = new ConditionalRelyingPartyConfigurationResolver();
+        resolver = new RelyingPartyConfigurationResolver();
         resolver.setId("test");
         Assert.assertEquals(resolver.getId(), "test");
         Assert.assertEquals(resolver.getRelyingPartyConfigurations().size(), 0);
 
-        resolver = new ConditionalRelyingPartyConfigurationResolver();
+        resolver = new RelyingPartyConfigurationResolver();
         resolver.setId("test");
         Assert.assertEquals(resolver.getId(), "test");
         Assert.assertEquals(resolver.getRelyingPartyConfigurations().size(), 0);
@@ -61,37 +62,37 @@ public class ConditionalRelyingPartyConfigurationResolverTest {
     @Test public void testResolve() throws Exception {
         ProfileRequestContext requestContext = new ProfileRequestContext();
 
-        ConditionalRelyingPartyConfiguration config1 =
-                new ConditionalRelyingPartyConfiguration("one", "foo", true, null,
+        RelyingPartyConfiguration config1 =
+                new RelyingPartyConfiguration("one", "foo", true, null,
                         Predicates.<ProfileRequestContext> alwaysTrue());
-        ConditionalRelyingPartyConfiguration config2 =
-                new ConditionalRelyingPartyConfiguration("two", "foo", true, null,
+        RelyingPartyConfiguration config2 =
+                new RelyingPartyConfiguration("two", "foo", true, null,
                         Predicates.<ProfileRequestContext> alwaysFalse());
-        ConditionalRelyingPartyConfiguration config3 =
-                new ConditionalRelyingPartyConfiguration("three", "foo", true, null,
+        RelyingPartyConfiguration config3 =
+                new RelyingPartyConfiguration("three", "foo", true, null,
                         Predicates.<ProfileRequestContext> alwaysTrue());
 
-        ArrayList<ConditionalRelyingPartyConfiguration> rpConfigs = new ArrayList<>();
+        ArrayList<RelyingPartyConfiguration> rpConfigs = new ArrayList<>();
         rpConfigs.add(config1);
         rpConfigs.add(config2);
         rpConfigs.add(config3);
 
-        ConditionalRelyingPartyConfigurationResolver resolver = new ConditionalRelyingPartyConfigurationResolver();
+        RelyingPartyConfigurationResolver resolver = new RelyingPartyConfigurationResolver();
         resolver.setId("test");
         resolver.setRelyingPartyConfigurations(rpConfigs);
         resolver.initialize();
 
-        Iterable<ConditionalRelyingPartyConfiguration> results = resolver.resolve(requestContext);
+        Iterable<RelyingPartyConfiguration> results = resolver.resolve(requestContext);
         Assert.assertNotNull(results);
 
-        Iterator<ConditionalRelyingPartyConfiguration> resultItr = results.iterator();
+        Iterator<RelyingPartyConfiguration> resultItr = results.iterator();
         Assert.assertTrue(resultItr.hasNext());
         Assert.assertSame(resultItr.next(), config1);
         Assert.assertTrue(resultItr.hasNext());
         Assert.assertSame(resultItr.next(), config3);
         Assert.assertFalse(resultItr.hasNext());
 
-        ConditionalRelyingPartyConfiguration result = resolver.resolveSingle(requestContext);
+        RelyingPartyConfiguration result = resolver.resolveSingle(requestContext);
         Assert.assertSame(result, config1);
 
         results = resolver.resolve(null);
