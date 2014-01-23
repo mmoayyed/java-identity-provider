@@ -85,7 +85,7 @@ public class RelyingPartyIdPredicate extends AbstractIdentifiableInitializableCo
      * 
      * @param ids   relying party IDs to match against
      */
-    public synchronized void setRelyingPartyIds(@Nonnull @NonnullElements Collection<String> ids) {
+    public synchronized void setRelyingPartyIds(@Nonnull @NonnullElements final Collection<String> ids) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(ids, "Relying party ID collection cannot be null");
         
