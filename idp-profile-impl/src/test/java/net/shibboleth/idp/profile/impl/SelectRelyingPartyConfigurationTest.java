@@ -73,8 +73,11 @@ public class SelectRelyingPartyConfigurationTest {
     @Test public void testUnableToResolveRelyingPartyConfiguration() throws Exception {
         ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
 
-        RelyingPartyConfiguration config =
-                new RelyingPartyConfiguration("foo", "http://idp.example.org", true, Collections.EMPTY_LIST);
+        RelyingPartyConfiguration config = new RelyingPartyConfiguration();
+        config.setId("foo");
+        config.setResponderId("http://idp.example.org");
+        config.setDetailedErrors(true);
+        config.initialize();
 
         Resolver<RelyingPartyConfiguration, ProfileRequestContext> resolver =
                 new MockResolver(config, new ResolverException());
@@ -92,8 +95,11 @@ public class SelectRelyingPartyConfigurationTest {
     @Test public void testResolveRelyingPartyConfiguration() throws Exception {
         ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
 
-        RelyingPartyConfiguration config =
-                new RelyingPartyConfiguration("foo", "http://idp.example.org", true, Collections.EMPTY_LIST);
+        RelyingPartyConfiguration config = new RelyingPartyConfiguration();
+        config.setId("foo");
+        config.setResponderId("http://idp.example.org");
+        config.setDetailedErrors(true);
+        config.initialize();
 
         Resolver<RelyingPartyConfiguration, ProfileRequestContext> resolver = new MockResolver(config, null);
 
@@ -108,7 +114,7 @@ public class SelectRelyingPartyConfigurationTest {
         RelyingPartyConfiguration resolvedConfig =
                 profileCtx.getSubcontext(RelyingPartyContext.class).getConfiguration();
         Assert.assertEquals(resolvedConfig.getId(), config.getId());
-        Assert.assertEquals(resolvedConfig.getResponderEntityId(), config.getResponderEntityId());
+        Assert.assertEquals(resolvedConfig.getResponderId(), config.getResponderId());
         Assert.assertEquals(resolvedConfig.getProfileConfigurations(), config.getProfileConfigurations());
     }
 

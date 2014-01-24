@@ -72,7 +72,7 @@ public final class SAML1ActionSupport {
         final Assertion assertion = assertionBuilder.buildObject();
         assertion.setID(securityConfig.getIdGenerator().generateIdentifier());
         assertion.setIssueInstant(response.getIssueInstant());
-        assertion.setIssuer(relyingPartyContext.getConfiguration().getResponderEntityId());
+        assertion.setIssuer(relyingPartyContext.getConfiguration().getResponderId());
         assertion.setVersion(SAMLVersion.VERSION_11);
         
         getLogger().debug("Profile Action {}: Added Assertion {} to Response {}",

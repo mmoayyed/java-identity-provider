@@ -209,7 +209,7 @@ public class DefaultSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator {
         if (rpCtx != null) {
             final RelyingPartyConfiguration rpConfig = rpCtx.getConfiguration();
             if (rpConfig != null) {
-                return rpConfig.getResponderEntityId();
+                return rpConfig.getResponderId();
             }
         }
         

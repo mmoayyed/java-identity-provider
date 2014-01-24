@@ -31,6 +31,7 @@ import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.config.saml2.ArtifactResolutionProfileConfiguration;
 import net.shibboleth.idp.saml.profile.config.saml2.AttributeQueryProfileConfiguration;
 import net.shibboleth.idp.saml.profile.config.saml2.BrowserSSOProfileConfiguration;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
@@ -55,18 +56,22 @@ public final class SAML2ActionTestingSupport extends org.opensaml.saml.saml2.pro
      * @param activeProfileConfig the active profile configuration
      * 
      * @return the constructed subcontext
+     * @throws ComponentInitializationException 
      */
     public static RelyingPartyContext buildRelyingPartySubcontext(@Nonnull final BaseContext parent,
-            @Nullable final String relyingPartyId) {
+            @Nullable final String relyingPartyId) throws ComponentInitializationException {
 
         String id = StringSupport.trimOrNull(relyingPartyId);
         if (id == null) {
             id = ActionTestingSupport.INBOUND_MSG_ISSUER;
         }
 
-        final RelyingPartyConfiguration rpConfig =
-                new RelyingPartyConfiguration(id, ActionTestingSupport.OUTBOUND_MSG_ISSUER, true,
-                        buildProfileConfigurations());
+        final RelyingPartyConfiguration rpConfig = new RelyingPartyConfiguration();
+        rpConfig.setId(id);
+        rpConfig.setResponderId(ActionTestingSupport.OUTBOUND_MSG_ISSUER);
+        rpConfig.setDetailedErrors(true);
+        rpConfig.setProfileConfigurations(buildProfileConfigurations());
+        rpConfig.initialize();
 
         RelyingPartyContext subcontext = parent.getSubcontext(RelyingPartyContext.class, true);
         subcontext.setRelyingPartyId(id);

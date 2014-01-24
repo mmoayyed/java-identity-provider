@@ -65,7 +65,7 @@ import com.google.common.base.Functions;
  * unless the option is set to preclude this.</p>
  * 
  * <p>A constructed {@link Assertion} will have its ID, IssueInstant, Issuer, and Version properties set.
- * The issuer is based on {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration#getResponderEntityId()}.</p>
+ * The issuer is based on {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration#getResponderId()}.</p>
  * 
  * <p>The {@link AuthenticationStatement} will have its authentication instant set, based on
  * {@link AuthenticationResult#getAuthenticationInstant()} via {@link AuthenticationContext#getAuthenticationResult()}.

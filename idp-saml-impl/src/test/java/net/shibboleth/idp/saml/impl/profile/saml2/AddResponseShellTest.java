@@ -47,7 +47,7 @@ public class AddResponseShellTest extends OpenSAMLInitBaseTestCase {
         action.initialize();
     }
     
-    @Test public void testAddResponse() throws ProfileException {
+    @Test public void testAddResponse() throws ProfileException, ComponentInitializationException {
         final ProfileRequestContext prc =
                 new RequestContextBuilder().setRelyingPartyProfileConfigurations(
                         SAML2ActionTestingSupport.buildProfileConfigurations()).buildProfileRequestContext();
@@ -78,7 +78,7 @@ public class AddResponseShellTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(messageMetadata.getMessageIssueInstant(), response.getIssueInstant().getMillis());
     }
 
-    @Test public void testAddResponseWhenResponseAlreadyExist() throws ProfileException {
+    @Test public void testAddResponseWhenResponseAlreadyExist() throws ProfileException, ComponentInitializationException {
         ProfileRequestContext prc =
                 new RequestContextBuilder().setOutboundMessage(SAML2ActionTestingSupport.buildResponse())
                         .setRelyingPartyProfileConfigurations(SAML2ActionTestingSupport.buildProfileConfigurations())

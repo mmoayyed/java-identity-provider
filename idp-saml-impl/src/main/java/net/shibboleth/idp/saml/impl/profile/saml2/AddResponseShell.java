@@ -57,7 +57,7 @@ import com.google.common.base.Function;
  * and this can be overridden by subsequent actions.</p>
  * 
  * <p>If the {@link RelyingPartyContext} contains a responder identity (via
- * {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration#getResponderEntityId()},
+ * {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration#getResponderId()},
  * it is set as the Issuer of the message.
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
@@ -129,7 +129,7 @@ public class AddResponseShell extends AbstractProfileAction<Object, Response> {
         }
         
         if (relyingPartyCtx.getConfiguration() != null) {
-            issuerId = relyingPartyCtx.getConfiguration().getResponderEntityId();
+            issuerId = relyingPartyCtx.getConfiguration().getResponderId();
         }
 
         profileConfig = relyingPartyCtx.getProfileConfig();

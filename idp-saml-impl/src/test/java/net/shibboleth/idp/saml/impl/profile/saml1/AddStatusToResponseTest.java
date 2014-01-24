@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
-import java.util.Collections;
 import java.util.Locale;
 
 import org.opensaml.profile.ProfileException;
@@ -25,7 +24,6 @@ import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.profile.RequestContextBuilder;
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
@@ -137,8 +135,11 @@ public class AddStatusToResponseTest extends OpenSAMLInitBaseTestCase {
         action.setMessageSource(new MockMessageSource());
         action.initialize();
 
-        RelyingPartyConfiguration rpConfig =
-                new RelyingPartyConfiguration("foo", "foo", true, Collections.<ProfileConfiguration>emptyList());
+        RelyingPartyConfiguration rpConfig = new RelyingPartyConfiguration();
+        rpConfig.setId("foo");
+        rpConfig.setResponderId("foo");
+        rpConfig.setDetailedErrors(true);
+        rpConfig.initialize();
         prc.getSubcontext(RelyingPartyContext.class, false).setConfiguration(rpConfig);
         
         action.execute(springRequestContext);
@@ -158,7 +159,11 @@ public class AddStatusToResponseTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNotNull(status);
         Assert.assertEquals(status.getStatusMessage().getMessage(), "Mapped");
 
-        rpConfig = new RelyingPartyConfiguration("foo", "foo", false, Collections.<ProfileConfiguration>emptyList());
+        rpConfig = new RelyingPartyConfiguration();
+        rpConfig.setId("foo");
+        rpConfig.setResponderId("foo");
+        rpConfig.setDetailedErrors(false);
+        rpConfig.initialize();
         prc.getSubcontext(RelyingPartyContext.class, false).setConfiguration(rpConfig);
         
         action.execute(springRequestContext);

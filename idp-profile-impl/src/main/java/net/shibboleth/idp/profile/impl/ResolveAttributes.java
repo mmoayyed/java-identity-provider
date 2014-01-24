@@ -196,7 +196,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
         // TODO(rdw) This navigation is subject to change
         final RelyingPartyConfiguration config = rpContext.getConfiguration();
         if (null != config) {
-            resolutionContext.setAttributeIssuerID(config.getResponderEntityId());
+            resolutionContext.setAttributeIssuerID(config.getResponderId());
         } else {
             resolutionContext.setAttributeIssuerID(null);
         }

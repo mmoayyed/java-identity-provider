@@ -186,7 +186,7 @@ public class DefaultSAML1NameIdentifierGeneratorTest extends OpenSAMLInitBaseTes
         Assert.assertEquals(outputNameId.getNameIdentifier(), NAME_1);
         Assert.assertEquals(outputNameId.getFormat(), NameIdentifier.X509_SUBJECT);
         Assert.assertEquals(outputNameId.getNameQualifier(),
-                prc.getSubcontext(RelyingPartyContext.class).getConfiguration().getResponderEntityId());
+                prc.getSubcontext(RelyingPartyContext.class).getConfiguration().getResponderId());
     }
 
     @Test public void testScopeValued() throws Exception {
@@ -205,6 +205,6 @@ public class DefaultSAML1NameIdentifierGeneratorTest extends OpenSAMLInitBaseTes
         Assert.assertEquals(outputNameId.getNameIdentifier(), NAME_1 + '@' + QUALIFIER);
         Assert.assertEquals(outputNameId.getFormat(), NameIdentifier.X509_SUBJECT);
         Assert.assertEquals(outputNameId.getNameQualifier(),
-                prc.getSubcontext(RelyingPartyContext.class).getConfiguration().getResponderEntityId());
+                prc.getSubcontext(RelyingPartyContext.class).getConfiguration().getResponderId());
     }
 }

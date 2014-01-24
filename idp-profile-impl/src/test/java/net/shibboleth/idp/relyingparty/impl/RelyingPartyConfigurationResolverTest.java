@@ -21,28 +21,41 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
 
 /** Unit test for {@link RelyingPartyConfigurationResolver}. */
 public class RelyingPartyConfigurationResolverTest {
 
-    @Test public void testConstruction() {
-        RelyingPartyConfigurationResolver resolver;
+    @Test public void testConstruction() throws ComponentInitializationException {
+        RelyingPartyConfiguration one = new RelyingPartyConfiguration();
+        one.setId("one");
+        one.setResponderId("foo");
+        one.setDetailedErrors(true);
+        one.initialize();
 
-        ArrayList<RelyingPartyConfiguration> rpConfigs = new ArrayList<>();
-        rpConfigs.add(new RelyingPartyConfiguration("one", "foo", true, null, Predicates
-                .<ProfileRequestContext> alwaysTrue()));
-        rpConfigs.add(new RelyingPartyConfiguration("two", "foo", true, null, Predicates
-                .<ProfileRequestContext> alwaysFalse()));
-        rpConfigs.add(new RelyingPartyConfiguration("three", "foo", true, null, Predicates
-                .<ProfileRequestContext> alwaysTrue()));
+        RelyingPartyConfiguration two = new RelyingPartyConfiguration();
+        two.setId("two");
+        two.setResponderId("foo");
+        two.setDetailedErrors(true);
+        two.setActivationCondition(Predicates.<ProfileRequestContext>alwaysFalse());
+        two.initialize();
 
-        resolver = new RelyingPartyConfigurationResolver();
+        RelyingPartyConfiguration three = new RelyingPartyConfiguration();
+        three.setId("three");
+        three.setResponderId("foo");
+        three.setDetailedErrors(true);
+        three.initialize();
+        
+        ArrayList<RelyingPartyConfiguration> rpConfigs = Lists.newArrayList(one, two, three);
+
+        RelyingPartyConfigurationResolver resolver = new RelyingPartyConfigurationResolver();
         resolver.setId("test");
         resolver.setRelyingPartyConfigurations(rpConfigs);
         Assert.assertEquals(resolver.getId(), "test");
@@ -62,20 +75,26 @@ public class RelyingPartyConfigurationResolverTest {
     @Test public void testResolve() throws Exception {
         ProfileRequestContext requestContext = new ProfileRequestContext();
 
-        RelyingPartyConfiguration config1 =
-                new RelyingPartyConfiguration("one", "foo", true, null,
-                        Predicates.<ProfileRequestContext> alwaysTrue());
-        RelyingPartyConfiguration config2 =
-                new RelyingPartyConfiguration("two", "foo", true, null,
-                        Predicates.<ProfileRequestContext> alwaysFalse());
-        RelyingPartyConfiguration config3 =
-                new RelyingPartyConfiguration("three", "foo", true, null,
-                        Predicates.<ProfileRequestContext> alwaysTrue());
+        RelyingPartyConfiguration one = new RelyingPartyConfiguration();
+        one.setId("one");
+        one.setResponderId("foo");
+        one.setDetailedErrors(true);
+        one.initialize();
 
-        ArrayList<RelyingPartyConfiguration> rpConfigs = new ArrayList<>();
-        rpConfigs.add(config1);
-        rpConfigs.add(config2);
-        rpConfigs.add(config3);
+        RelyingPartyConfiguration two = new RelyingPartyConfiguration();
+        two.setId("two");
+        two.setResponderId("foo");
+        two.setDetailedErrors(true);
+        two.setActivationCondition(Predicates.<ProfileRequestContext>alwaysFalse());
+        two.initialize();
+
+        RelyingPartyConfiguration three = new RelyingPartyConfiguration();
+        three.setId("three");
+        three.setResponderId("foo");
+        three.setDetailedErrors(true);
+        three.initialize();
+        
+        ArrayList<RelyingPartyConfiguration> rpConfigs = Lists.newArrayList(one, two, three);
 
         RelyingPartyConfigurationResolver resolver = new RelyingPartyConfigurationResolver();
         resolver.setId("test");
@@ -87,13 +106,13 @@ public class RelyingPartyConfigurationResolverTest {
 
         Iterator<RelyingPartyConfiguration> resultItr = results.iterator();
         Assert.assertTrue(resultItr.hasNext());
-        Assert.assertSame(resultItr.next(), config1);
+        Assert.assertSame(resultItr.next(), one);
         Assert.assertTrue(resultItr.hasNext());
-        Assert.assertSame(resultItr.next(), config3);
+        Assert.assertSame(resultItr.next(), three);
         Assert.assertFalse(resultItr.hasNext());
 
         RelyingPartyConfiguration result = resolver.resolveSingle(requestContext);
-        Assert.assertSame(result, config1);
+        Assert.assertSame(result, one);
 
         results = resolver.resolve(null);
         Assert.assertNotNull(results);

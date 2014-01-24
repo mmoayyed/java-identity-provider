@@ -32,6 +32,7 @@ import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.relyingparty.MockProfileConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.opensaml.messaging.context.MessageContext;
@@ -280,8 +281,9 @@ public class RequestContextBuilder {
      * </ul>
      * 
      * @return the constructed {@link MockRequestContext}
+     * @throws ComponentInitializationException 
      */
-    @Nonnull public RequestContext buildRequestContext() {
+    @Nonnull public RequestContext buildRequestContext() throws ComponentInitializationException {
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(buildServletExternalContext());
 
@@ -332,10 +334,11 @@ public class RequestContextBuilder {
      * <li>{@link RelyingPartyContext} created by {@link #buildRelyingPartyContext()}</li>
      * </ul>
      * 
-     * @return the constructed {@link ProfileRequestContext
+     * @return the constructed {
+     * @throws ComponentInitializationException @link ProfileRequestContext
 
      */
-    @Nonnull public ProfileRequestContext buildProfileRequestContext() {
+    @Nonnull public ProfileRequestContext buildProfileRequestContext() throws ComponentInitializationException {
         final ProfileRequestContext profileContext = new ProfileRequestContext();
         profileContext.setInboundMessageContext(buildInboundMessageContext());
         profileContext.setOutboundMessageContext(buildOutboundMessageContext());
@@ -482,9 +485,10 @@ public class RequestContextBuilder {
      * </ul>
      * 
      * @return the constructed {@link RelyingPartyContext}
+     * @throws ComponentInitializationException 
      */
     @Nonnull protected RelyingPartyContext buildRelyingPartyContext(
-            @Nonnull final ProfileRequestContext profileRequestContext) {
+            @Nonnull final ProfileRequestContext profileRequestContext) throws ComponentInitializationException {
         final RelyingPartyContext rpCtx = profileRequestContext.getSubcontext(RelyingPartyContext.class, true);
         if (Objects.equal(NO_VAL, inboundMessageIssuer) || inboundMessageIssuer == null) {
             rpCtx.setRelyingPartyId(ActionTestingSupport.INBOUND_MSG_ISSUER);
@@ -519,8 +523,9 @@ public class RequestContextBuilder {
      * </ul>
      * 
      * @return the constructed {@link RelyingPartyConfiguration}
+     * @throws ComponentInitializationException 
      */
-    @Nonnull protected RelyingPartyConfiguration buildRelyingPartyConfiguration() {
+    @Nonnull protected RelyingPartyConfiguration buildRelyingPartyConfiguration() throws ComponentInitializationException {
         String responderId;
         if (Objects.equal(NO_VAL, outboundMessageIssuer) || outboundMessageIssuer == null) {
             responderId = ActionTestingSupport.OUTBOUND_MSG_ISSUER;
@@ -538,7 +543,13 @@ public class RequestContextBuilder {
             profileConfigs.add(new MockProfileConfiguration("mock"));
         }
 
-        return new RelyingPartyConfiguration("mock", responderId, true, profileConfigs);
+        RelyingPartyConfiguration rp = new RelyingPartyConfiguration();
+        rp.setId("mock");
+        rp.setResponderId(responderId);
+        rp.setDetailedErrors(true);
+        rp.setProfileConfigurations(profileConfigs);
+        rp.initialize();
+        return rp;
     }
 
     /**

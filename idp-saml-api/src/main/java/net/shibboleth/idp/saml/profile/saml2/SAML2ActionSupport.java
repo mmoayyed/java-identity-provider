@@ -75,7 +75,7 @@ public final class SAML2ActionSupport {
         final SecurityConfiguration securityConfig = relyingPartyContext.getProfileConfig().getSecurityConfiguration();
 
         final Issuer issuer = issuerBuilder.buildObject();
-        issuer.setValue(relyingPartyContext.getConfiguration().getResponderEntityId());
+        issuer.setValue(relyingPartyContext.getConfiguration().getResponderId());
 
         final Assertion assertion = assertionBuilder.buildObject();
         assertion.setID(securityConfig.getIdGenerator().generateIdentifier());

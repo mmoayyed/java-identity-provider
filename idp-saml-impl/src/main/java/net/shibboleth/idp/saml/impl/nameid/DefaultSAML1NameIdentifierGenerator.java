@@ -209,7 +209,7 @@ public class DefaultSAML1NameIdentifierGenerator extends AbstractSAML1NameIdenti
         if (rpCtx != null) {
             final RelyingPartyConfiguration rpConfig = rpCtx.getConfiguration();
             if (rpConfig != null) {
-                return rpConfig.getResponderEntityId();
+                return rpConfig.getResponderId();
             }
         }
         
