@@ -18,6 +18,7 @@
 package net.shibboleth.idp.relyingparty;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -42,6 +43,9 @@ public class MockAuthenticationProfileConfiguration extends AbstractProfileConfi
 
     /** Selects, and limits, the authentication methods to use for requests. */
     @Nonnull @NonnullElements private List<Principal> defaultAuthenticationMethods;
+
+    /** Precedence of name identifier formats to use for requests. */
+    @Nonnull @NonnullElements private List<String> nameIDFormatPrecedence;
     
     /**
      * Constructor.
@@ -51,11 +55,25 @@ public class MockAuthenticationProfileConfiguration extends AbstractProfileConfi
      */
     public MockAuthenticationProfileConfiguration(@Nonnull @NotEmpty final String id,
             @Nonnull @NonnullElements final List<Principal> methods) {
+        this(id, methods, Collections.<String>emptyList());
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param id ID of this profile
+     * @param methods default authentication methods to use
+     * @param formats name identifier formats to use
+     */
+    public MockAuthenticationProfileConfiguration(@Nonnull @NotEmpty final String id,
+            @Nonnull @NonnullElements final List<Principal> methods,
+            @Nonnull @NonnullElements final List<String> formats) {
         super(id);
         setSecurityConfiguration(new SecurityConfiguration());
         setDefaultAuthenticationMethods(methods);
+        setNameIDFormatPrecedence(formats);
     }
-
+    
     /** {@inheritDoc} */
     @Override
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods() {
@@ -73,4 +91,21 @@ public class MockAuthenticationProfileConfiguration extends AbstractProfileConfi
         defaultAuthenticationMethods = Lists.newArrayList(Collections2.filter(methods, Predicates.notNull()));
     }
     
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence() {
+        return ImmutableList.copyOf(nameIDFormatPrecedence);
+    }
+
+    /**
+     * Set the name identifier formats to use.
+     * 
+     * @param formats   name identifier formats to use
+     */
+    public void setNameIDFormatPrecedence(@Nonnull @NonnullElements final List<String> formats) {
+        Constraint.isNotNull(formats, "List of formats cannot be null");
+        
+        nameIDFormatPrecedence = Lists.newArrayList(Collections2.filter(formats, Predicates.notNull()));
+    }
+
 }

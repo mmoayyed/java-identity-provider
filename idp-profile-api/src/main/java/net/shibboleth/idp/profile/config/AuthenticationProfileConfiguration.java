@@ -36,4 +36,11 @@ public interface AuthenticationProfileConfiguration extends ProfileConfiguration
      */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods();
 
+    /**
+     * Get the name identifier formats to use with this relying party, in order of preference.
+     * 
+     * @return  name identifier formats to use
+     */
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence();
+
 }

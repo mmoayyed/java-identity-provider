@@ -63,6 +63,9 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
     /** Selects, and limits, the authentication contexts to use for requests. */
     @Nonnull @NonnullElements private List<AuthnContextClassRefPrincipal> defaultAuthenticationContexts;
 
+    /** Precedence of name identifier formats to use for requests. */
+    @Nonnull @NonnullElements private List<String> nameIDFormatPrecedence;
+    
     /** Constructor. */
     public BrowserSSOProfileConfiguration() {
         this(PROFILE_ID);
@@ -81,6 +84,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
         maximumSPSessionLifetime = 0;
         allowingDelegation = false;
         defaultAuthenticationContexts = Collections.emptyList();
+        nameIDFormatPrecedence = Collections.emptyList();
     }
 
     /**
@@ -176,4 +180,21 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
         defaultAuthenticationContexts = Lists.newArrayList(Collections2.filter(contexts, Predicates.notNull()));
     }
     
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence() {
+        return ImmutableList.copyOf(nameIDFormatPrecedence);
+    }
+
+    /**
+     * Set the name identifier formats to use.
+     * 
+     * @param formats   name identifier formats to use
+     */
+    public void setNameIDFormatPrecedence(@Nonnull @NonnullElements final List<String> formats) {
+        Constraint.isNotNull(formats, "List of formats cannot be null");
+        
+        nameIDFormatPrecedence = Lists.newArrayList(Collections2.filter(formats, Predicates.notNull()));
+    }
+
 }
