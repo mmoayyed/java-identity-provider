@@ -18,17 +18,18 @@
 package net.shibboleth.idp.attribute.resolver.impl.dc.ldap;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
-import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearch;
 import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder;
 import net.shibboleth.idp.attribute.resolver.impl.dc.TestCache;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -46,6 +47,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Maps;
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
@@ -190,6 +192,40 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolve(builder);
     }
 
+    @Test public void resolveWithDepends() throws ComponentInitializationException, ResolutionException {
+        ParameterizedExecutableSearchFilterBuilder builder =
+                new ParameterizedExecutableSearchFilterBuilder("(&(cn={principalName})(eduPersonAffiliation={affiliation[0]}))");
+        builder.initialize();
+        AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        Map<String, Set<IdPAttributeValue<?>>> dependsAttributes = Maps.newHashMap();
+        Set<IdPAttributeValue<?>> attributeValues = new HashSet<>();
+        attributeValues.add(new StringAttributeValue("student"));
+        dependsAttributes.put("affiliation", attributeValues);
+        ExecutableSearchFilter filter = builder.build(context, dependsAttributes);
+        Assert.assertEquals(filter.getSearchFilter().format(), "(&(cn=PETER_THE_PRINCIPAL)(eduPersonAffiliation=student))");
+    }
+
+    @Test public void resolveWithMultiValueDepends() throws ComponentInitializationException, ResolutionException {
+        ParameterizedExecutableSearchFilterBuilder builder =
+                new ParameterizedExecutableSearchFilterBuilder(
+                        "(&(cn={principalName})(eduPersonEntitlement={entitlement[0]})(eduPersonEntitlement={entitlement[1]}))");
+        builder.initialize();
+        AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        Map<String, Set<IdPAttributeValue<?>>> dependsAttributes = Maps.newHashMap();
+        Set<IdPAttributeValue<?>> attributeValues = new LinkedHashSet<>();
+        attributeValues.add(new StringAttributeValue("entitlement1"));
+        attributeValues.add(new StringAttributeValue("entitlement*"));
+        dependsAttributes.put("entitlement", attributeValues);
+        ExecutableSearchFilter filter = builder.build(context, dependsAttributes);
+        Assert.assertEquals(
+                filter.getSearchFilter().format(),
+                "(&(cn=PETER_THE_PRINCIPAL)(eduPersonEntitlement=entitlement1)(eduPersonEntitlement=entitlement\\2a))");
+    }
+
     @Test public void escape() throws ComponentInitializationException, ResolutionException {
         ParameterizedExecutableSearchFilterBuilder builder =
                 new ParameterizedExecutableSearchFilterBuilder("(cn={principalName})");
@@ -197,7 +233,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         AttributeResolutionContext context =
                 TestSources.createResolutionContext("domain\\user*", TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        ExecutableSearchFilter filter = builder.build(context);
+        ExecutableSearchFilter filter = builder.build(context, null);
         Assert.assertEquals(filter.getSearchFilter().format(), "(cn=domain\\5cuser\\2a)");
     }
 
@@ -209,6 +245,42 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolve(builder);
     }
 
+    @Test public void resolveTemplateWithDepends() throws ComponentInitializationException, ResolutionException {
+        TemplatedExecutableSearchFilterBuilder builder = new TemplatedExecutableSearchFilterBuilder();
+        builder.setTemplateText("(&(cn=${resolutionContext.principal})(eduPersonAffiliation=${affiliation[0]}))");
+        builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
+        builder.initialize();
+        AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        Map<String, Set<IdPAttributeValue<?>>> dependsAttributes = Maps.newHashMap();
+        Set<IdPAttributeValue<?>> attributeValues = new HashSet<>();
+        attributeValues.add(new StringAttributeValue("student"));
+        dependsAttributes.put("affiliation", attributeValues);
+        ExecutableSearchFilter filter = builder.build(context, dependsAttributes);
+        Assert.assertEquals(filter.getSearchFilter().format(), "(&(cn=PETER_THE_PRINCIPAL)(eduPersonAffiliation=student))");
+    }
+
+    @Test public void resolveTemplateWithMultiValueDepends() throws ComponentInitializationException, ResolutionException {
+        TemplatedExecutableSearchFilterBuilder builder = new TemplatedExecutableSearchFilterBuilder();
+        builder.setTemplateText(
+                "(&(cn=${resolutionContext.principal})(eduPersonEntitlement=${entitlement[0]})(eduPersonEntitlement=${entitlement[1]}))");
+        builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
+        builder.initialize();
+        AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        Map<String, Set<IdPAttributeValue<?>>> dependsAttributes = Maps.newHashMap();
+        Set<IdPAttributeValue<?>> attributeValues = new LinkedHashSet<>();
+        attributeValues.add(new StringAttributeValue("entitlement1"));
+        attributeValues.add(new StringAttributeValue("entitlement*"));
+        dependsAttributes.put("entitlement", attributeValues);
+        ExecutableSearchFilter filter = builder.build(context, dependsAttributes);
+        Assert.assertEquals(
+                filter.getSearchFilter().format(),
+                "(&(cn=PETER_THE_PRINCIPAL)(eduPersonEntitlement=entitlement1)(eduPersonEntitlement=entitlement\\2a))");
+    }
+
     @Test public void escapeTemplate() throws ComponentInitializationException, ResolutionException {
         TemplatedExecutableSearchFilterBuilder builder = new TemplatedExecutableSearchFilterBuilder();
         builder.setTemplateText("(cn=${resolutionContext.principal})");
@@ -217,7 +289,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         AttributeResolutionContext context =
                 TestSources.createResolutionContext("domain\\user*", TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        ExecutableSearchFilter filter = builder.build(context);
+        ExecutableSearchFilter filter = builder.build(context, null);
         Assert.assertEquals(filter.getSearchFilter().format(), "(cn=domain\\5cuser\\2a)");
     }
 
@@ -257,10 +329,10 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     @Test(expectedExceptions = ResolutionException.class) public void resolveNoFilter()
             throws ComponentInitializationException, ResolutionException {
-        LdapDataConnector connector = createLdapDataConnector(new ExecutableSearchBuilder() {
+        LdapDataConnector connector = createLdapDataConnector(new ExecutableSearchBuilder<ExecutableSearchFilter>() {
 
             @Override
-            @Nonnull public ExecutableSearch build(@Nonnull AttributeResolutionContext resolutionContext)
+            @Nonnull public ExecutableSearchFilter build(@Nonnull AttributeResolutionContext resolutionContext, @Nonnull Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes)
                     throws ResolutionException {
                 return null;
             }

@@ -17,9 +17,15 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.dc.ldap;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -36,11 +42,13 @@ import org.ldaptive.SearchFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
 import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfileRequestContext;
 
 /**
- * An {@link net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder} that generates the search
- * filter to be executed by evaluating a {@link Template} against the currently resolved attributes within a
+ * An {@link net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder} that generates the search filter to
+ * be executed by evaluating a {@link Template} against the currently resolved attributes within a
  * {@link AttributeResolutionContext}.
  */
 public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSearchFilterBuilder {
@@ -56,6 +64,9 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
 
     /** VelocityEngine. */
     private VelocityEngine engine;
+
+    /** Event handler used for escaping. */
+    private ReferenceInsertionEventHandler eventHandler = new EscapingReferenceInsertionEventHandler();
 
     /** Do we need to make ourself V2 Compatible? */
     private boolean v2Compatibility;
@@ -110,6 +121,26 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
     }
 
     /**
+     * Gets the {@link ReferenceInsertionEventHandler} to be used.
+     * 
+     * @return the reference insertion event handler
+     */
+    @Nullable public ReferenceInsertionEventHandler getReferenceInsertionEventHandler() {
+        return eventHandler;
+    }
+
+    /**
+     * Sets the {@link ReferenceInsertionEventHandler} to be used.
+     * 
+     * @param handler reference insertion event handler to be used
+     */
+    public void setReferenceInsertionEventHandler(@Nullable final ReferenceInsertionEventHandler handler) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        eventHandler = handler;
+    }
+
+    /**
      * Are we in V2 Compatibility mode?
      * 
      * @return Returns the v2Compat.
@@ -128,9 +159,8 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
     }
 
     /** {@inheritDoc} */
-    @Override
-    public ExecutableSearchFilter build(@Nonnull final AttributeResolutionContext resolutionContext)
-            throws ResolutionException {
+    @Override public ExecutableSearchFilter build(@Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
 
         final VelocityContext context = new VelocityContext();
         log.trace("Creating search filter using attribute resolution context {}", resolutionContext);
@@ -143,17 +173,21 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
             context.put("requestContext", requestContext);
         }
 
-        final EventCartridge cartridge = new EventCartridge();
-        cartridge.addEventHandler(new ReferenceInsertionEventHandler() {
-
-            @Override public Object referenceInsert(final String reference, final Object value) {
-                if (value == null) {
-                    return null;
+        if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {
+            for (Map.Entry<String, Set<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet()) {
+                final List<Object> values = Lists.newArrayList();
+                for (IdPAttributeValue<?> value : entry.getValue()) {
+                    values.add(value.getValue());
                 }
-                return SearchFilter.encodeValue(value.toString());
+                context.put(entry.getKey(), values);
             }
-        });
-        cartridge.attachToContext(context);
+        }
+
+        if (eventHandler != null) {
+            final EventCartridge cartridge = new EventCartridge();
+            cartridge.addEventHandler(eventHandler);
+            cartridge.attachToContext(context);
+        }
 
         final SearchFilter searchFilter = new SearchFilter(merge(context));
         return super.build(searchFilter);
@@ -173,8 +207,7 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         if (null == engine) {
@@ -188,5 +221,45 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
         }
 
         template = Template.fromTemplate(engine, templateText);
+    }
+
+    /** Escapes LDAP attribute values added to the template context. */
+    protected static class EscapingReferenceInsertionEventHandler implements ReferenceInsertionEventHandler {
+
+        @Override public Object referenceInsert(final String reference, final Object value) {
+            if (value == null) {
+                return null;
+            } else if (value instanceof Object[]) {
+                final List<Object> encodedValues = Lists.newArrayList();
+                for (Object o : (Object[]) value) {
+                    encodedValues.add(encode(o));
+                }
+                return encodedValues.toArray();
+            } else if (value instanceof Collection<?>) {
+                final List<Object> encodedValues = Lists.newArrayList();
+                for (Object o : (Collection<?>) value) {
+                    encodedValues.add(encode(o));
+                }
+                return encodedValues;
+            } else {
+                return encode(value);
+            }
+        }
+
+        /**
+         * Returns {@link SearchFilter#encodeValue} if value is a string.
+         * 
+         * @param value to encode
+         *
+         * @return encoded value if value is a string
+         */
+        private Object encode(final Object value) {
+            if (value instanceof String){ 
+                return SearchFilter.encodeValue((String) value);
+            } else if (value instanceof byte[]) {
+                return SearchFilter.encodeValue((byte[]) value);
+            }
+            return value;
+        }
     }
 }

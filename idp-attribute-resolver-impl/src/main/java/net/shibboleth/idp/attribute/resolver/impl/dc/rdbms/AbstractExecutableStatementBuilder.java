@@ -21,9 +21,12 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder;
@@ -62,13 +65,17 @@ public abstract class AbstractExecutableStatementBuilder extends AbstractInitial
      * Method to return the query SQL.
      * 
      * @param resolutionContext the context of the resolution
+     * @param dependencyAttributes made available to the executable search
+     * 
      * @return the SQL string
      */
-    protected abstract String getSQLQuery(AttributeResolutionContext resolutionContext);
+    protected abstract String getSQLQuery(@Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes);
 
     /** {@inheritDoc} */
-    public ExecutableStatement build(AttributeResolutionContext resolutionContext) throws ResolutionException {
-        final String query = getSQLQuery(resolutionContext);
+    @Override public ExecutableStatement build(@Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
+        final String query = getSQLQuery(resolutionContext, dependencyAttributes);
 
         return new ExecutableStatement() {
 

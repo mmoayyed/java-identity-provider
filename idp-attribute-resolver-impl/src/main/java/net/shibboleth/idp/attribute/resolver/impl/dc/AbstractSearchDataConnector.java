@@ -18,12 +18,15 @@
 package net.shibboleth.idp.attribute.resolver.impl.dc;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
+import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
@@ -38,8 +41,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.cache.Cache;
 
 /**
- * A {@link net.shibboleth.idp.attribute.resolver.DataConnector} containing functionality common to data connectors
- * that retrieve attribute data by searching a data source.
+ * A {@link net.shibboleth.idp.attribute.resolver.DataConnector} containing functionality common to data connectors that
+ * retrieve attribute data by searching a data source.
  * 
  * @param <T> type of executable search
  */
@@ -181,12 +184,14 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
     protected abstract Map<String, IdPAttribute> retrieveAttributes(final T executable) throws ResolutionException;
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(
+    @Override @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(
             @Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        final T executable = searchBuilder.build(resolutionContext);
+
+        final Map<String, Set<IdPAttributeValue<?>>> dependsAttributes =
+                PluginDependencySupport.getAllAttributeValues(workContext, getDependencies());
+        final T executable = searchBuilder.build(resolutionContext, dependsAttributes);
         Map<String, IdPAttribute> resolvedAttributes = null;
         if (resultsCache != null) {
             final String cacheKey = executable.getResultCacheKey();
@@ -207,7 +212,7 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         if (searchBuilder == null) {
@@ -224,7 +229,7 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
     }
 
     /** {@inheritDoc} */
-    protected void doValidate() throws ComponentValidationException {
+    @Override protected void doValidate() throws ComponentValidationException {
         try {
             connectorValidator.validate();
         } catch (ValidationException e) {

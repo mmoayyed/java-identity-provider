@@ -17,8 +17,12 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.dc.ldap;
 
+import java.util.Map;
+import java.util.Set;
+
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -26,8 +30,8 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.ldaptive.SearchFilter;
 
 /**
- * An {@link net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder} that generates the search
- * filter to be executed by evaluating a parameterized filter string against the currently resolved attributes within a
+ * An {@link net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder} that generates the search filter to
+ * be executed by evaluating a parameterized filter string against the currently resolved attributes within a
  * {@link AttributeResolutionContext}.
  */
 public class ParameterizedExecutableSearchFilterBuilder extends AbstractExecutableSearchFilterBuilder {
@@ -45,11 +49,21 @@ public class ParameterizedExecutableSearchFilterBuilder extends AbstractExecutab
     }
 
     /** {@inheritDoc} */
-    @Override
-    public ExecutableSearchFilter build(@Nonnull final AttributeResolutionContext resolutionContext)
-            throws ResolutionException {
+    @Override public ExecutableSearchFilter build(@Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
         final SearchFilter sf = new SearchFilter(searchFilter);
         sf.setParameter("principalName", resolutionContext.getPrincipal());
+        if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {
+            for (Map.Entry<String, Set<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet()) {
+                int i = 0;
+                for (IdPAttributeValue<?> value : entry.getValue()) {
+                    if (i == 0) {
+                        sf.setParameter(String.format("%s", entry.getKey(), i), value.getValue());
+                    }
+                    sf.setParameter(String.format("%s[%s]", entry.getKey(), i++), value.getValue());
+                }
+            }
+        }
         return super.build(sf);
     }
 }

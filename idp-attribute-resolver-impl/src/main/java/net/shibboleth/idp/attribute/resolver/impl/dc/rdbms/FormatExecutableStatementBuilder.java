@@ -17,14 +17,23 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.dc.rdbms;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import javax.annotation.Nonnull;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
+import com.google.common.collect.Lists;
+
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * An {@link net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder}. It generates the SQL statement
- * to be executed by invoking {@link String#format(String, Object...)} with
+ * An {@link net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder}. It generates the SQL statement to
+ * be executed by invoking {@link String#format(String, Object...)} with
  * {@link AttributeRecipientContext#getPrincipal() }.
  */
 public class FormatExecutableStatementBuilder extends AbstractExecutableStatementBuilder {
@@ -53,10 +62,23 @@ public class FormatExecutableStatementBuilder extends AbstractExecutableStatemen
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected String getSQLQuery(AttributeResolutionContext resolutionContext) {
-        final String query = String.format(sqlQuery, resolutionContext);
-        return query;
+    @Override protected String getSQLQuery(@Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes) {
+        final List<Object> args = Lists.newArrayList();
+        if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {
+            for (Map.Entry<String, Set<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet()) {
+                for (IdPAttributeValue<?> value : entry.getValue()) {
+                    if (value.getValue() instanceof String){ 
+                        args.add(StringEscapeUtils.escapeSql((String) value.getValue()));
+                    } else {
+                        args.add(value.getValue());
+                    }
+                }
+            }
+        } else {
+            args.add(StringEscapeUtils.escapeSql(resolutionContext.getPrincipal()));
+        }
+        return String.format(sqlQuery, args.toArray());
     }
 
 }

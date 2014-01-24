@@ -17,15 +17,17 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.dc.rdbms;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
@@ -36,12 +38,15 @@ import net.shibboleth.idp.attribute.resolver.impl.dc.TestCache;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
 
 import org.hsqldb.jdbc.JDBCDataSource;
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Maps;
 
 /**
  * Tests for {@link RdbmsDataConnector}
@@ -55,30 +60,9 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     private static final String DATA_FILE = "/data/net/shibboleth/idp/attribute/resolver/impl/dc/rdbms/RdbmsData.sql";
 
+    private static final String SQL_QUERY = "SELECT userid, name, homephone, mail FROM people WHERE userid='%s'";
+
     private DataSource datasource;
-
-    /** Simple search filter builder that leverages a custom filter. */
-    private class TestExecutableStatementBuilder implements ExecutableSearchBuilder<ExecutableStatement> {
-
-        /** {@inheritDoc} */
-        @Override @Nonnull public ExecutableStatement
-                build(@Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
-            return new ExecutableStatement() {
-
-                private final String query = String.format(
-                        "SELECT userid, name, homephone, mail FROM people WHERE userid='%s'",
-                        resolutionContext.getPrincipal());
-
-                @Override @Nonnull public String getResultCacheKey() {
-                    return query;
-                }
-
-                @Override @Nonnull public ResultSet execute(@Nonnull Connection connection) throws SQLException {
-                    return connection.createStatement().executeQuery(query);
-                }
-            };
-        }
-    }
 
     /**
      * Creates an HSQLDB database instance.
@@ -105,7 +89,7 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
         RdbmsDataConnector connector = new RdbmsDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setDataSource(datasource);
-        connector.setExecutableSearchBuilder(builder == null ? new TestExecutableStatementBuilder() : builder);
+        connector.setExecutableSearchBuilder(builder == null ? new FormatExecutableStatementBuilder(SQL_QUERY) : builder);
         connector.setMappingStrategy(strategy == null ? new StringResultMappingStrategy() : strategy);
         return connector;
     }
@@ -130,7 +114,7 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
             // OK
         }
 
-        ExecutableSearchBuilder statementBuilder = new TestExecutableStatementBuilder();
+        ExecutableSearchBuilder statementBuilder = new FormatExecutableStatementBuilder(SQL_QUERY);
         connector.setExecutableSearchBuilder(statementBuilder);
         try {
             connector.initialize();
@@ -161,6 +145,51 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(connector.getDataSource(), datasource);
         Assert.assertEquals(connector.getExecutableSearchBuilder(), statementBuilder);
         Assert.assertEquals(connector.getMappingStrategy(), mappingStrategy);
+    }
+
+    @Test public void resolveTemplateWithDepends() throws ComponentInitializationException, ResolutionException {
+        TemplatedExecutableStatementBuilder builder = new TemplatedExecutableStatementBuilder();
+        builder.setTemplateText("SELECT userid FROM people WHERE userid='${resolutionContext.principal}' AND affiliation='${affiliation[0]}'");
+        builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
+        builder.initialize();
+        AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        Map<String, Set<IdPAttributeValue<?>>> dependsAttributes = Maps.newHashMap();
+        Set<IdPAttributeValue<?>> attributeValues = new HashSet<>();
+        attributeValues.add(new StringAttributeValue("student"));
+        dependsAttributes.put("affiliation", attributeValues);
+        String query = builder.getSQLQuery(context, dependsAttributes);
+        Assert.assertEquals(query, "SELECT userid FROM people WHERE userid='PETER_THE_PRINCIPAL' AND affiliation='student'");
+    }
+
+    @Test public void resolveTemplateWithMultiValueDepends() throws ComponentInitializationException, ResolutionException {
+        TemplatedExecutableStatementBuilder builder = new TemplatedExecutableStatementBuilder();
+        builder.setTemplateText("SELECT userid FROM people WHERE userid='${resolutionContext.principal}' AND eduPersonEntitlement='${entitlement[0]}' AND eduPersonEntitlement='${entitlement[1]}'");
+        builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
+        builder.initialize();
+        AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        Map<String, Set<IdPAttributeValue<?>>> dependsAttributes = Maps.newHashMap();
+        Set<IdPAttributeValue<?>> attributeValues = new LinkedHashSet<>();
+        attributeValues.add(new StringAttributeValue("entitlement1"));
+        attributeValues.add(new StringAttributeValue("entitlement2"));
+        dependsAttributes.put("entitlement", attributeValues);
+        String query = builder.getSQLQuery(context, dependsAttributes);
+        Assert.assertEquals(query, "SELECT userid FROM people WHERE userid='PETER_THE_PRINCIPAL' AND eduPersonEntitlement='entitlement1' AND eduPersonEntitlement='entitlement2'");
+    }
+
+    @Test public void escapeTemplate() throws ComponentInitializationException, ResolutionException {
+        TemplatedExecutableStatementBuilder builder = new TemplatedExecutableStatementBuilder();
+        builder.setTemplateText("SELECT userid FROM people WHERE userid='${resolutionContext.principal}'");
+        builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
+        builder.initialize();
+        AttributeResolutionContext context =
+                TestSources.createResolutionContext("McHale's Navy", TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        String query = builder.getSQLQuery(context, null);
+        Assert.assertEquals(query, "SELECT userid FROM people WHERE userid='McHale''s Navy'");
     }
 
     @Test public void resolve() throws ComponentInitializationException, ResolutionException {
@@ -196,7 +225,7 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
             throws ComponentInitializationException, ResolutionException {
         RdbmsDataConnector connector = createRdbmsDataConnector(new ExecutableSearchBuilder<ExecutableStatement>() {
 
-            @Override @Nonnull public ExecutableStatement build(@Nonnull AttributeResolutionContext resolutionContext)
+            @Override @Nonnull public ExecutableStatement build(@Nonnull AttributeResolutionContext resolutionContext, @Nonnull Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes)
                     throws ResolutionException {
                 return null;
             }

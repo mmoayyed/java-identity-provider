@@ -17,9 +17,15 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.dc.rdbms;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -27,10 +33,15 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.velocity.Template;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.app.event.EventCartridge;
+import org.apache.velocity.app.event.ReferenceInsertionEventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfileRequestContext;
 
@@ -52,6 +63,9 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
 
     /** VelocityEngine. */
     private VelocityEngine engine;
+
+    /** Event handler used for escaping. */
+    private ReferenceInsertionEventHandler eventHandler = new EscapingReferenceInsertionEventHandler();
 
     /** Do we need to make ourself V2 Compatible? */
     private boolean v2Compatibility;
@@ -79,7 +93,7 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
      * 
      * @param velocityTemplate template to be evaluated
      */
-    public void setTemplateText(@Nullable String velocityTemplate) {
+    public void setTemplateText(@Nullable final String velocityTemplate) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         templateText = StringSupport.trimOrNull(velocityTemplate);
@@ -99,10 +113,30 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
      * 
      * @param velocityEngine engine to be used
      */
-    public synchronized void setVelocityEngine(VelocityEngine velocityEngine) {
+    public synchronized void setVelocityEngine(@Nonnull final VelocityEngine velocityEngine) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         engine = velocityEngine;
+    }
+
+    /**
+     * Gets the {@link ReferenceInsertionEventHandler} to be used.
+     * 
+     * @return the reference insertion event handler
+     */
+    @Nullable public ReferenceInsertionEventHandler getReferenceInsertionEventHandler() {
+        return eventHandler;
+    }
+
+    /**
+     * Sets the {@link ReferenceInsertionEventHandler} to be used.
+     * 
+     * @param handler reference insertion event handler to be used
+     */
+    public void setReferenceInsertionEventHandler(@Nullable final ReferenceInsertionEventHandler handler) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        eventHandler = handler;
     }
 
     /**
@@ -139,8 +173,8 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
     /**
      * Apply the context to the template. {@inheritDoc}
      */
-    @Override
-    protected String getSQLQuery(AttributeResolutionContext resolutionContext) {
+    @Override protected String getSQLQuery(@Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes) {
         final VelocityContext context = new VelocityContext();
         log.trace("Creating search filter using attribute resolution context {}", resolutionContext);
         context.put("resolutionContext", resolutionContext);
@@ -151,12 +185,29 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
             log.trace("Adding v2 request context {}", requestContext);
             context.put("requestContext", requestContext);
         }
+
+        // inject dependencies
+        if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {
+            for (Map.Entry<String, Set<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet()) {
+                final List<Object> values = Lists.newArrayList();
+                for (IdPAttributeValue<?> value : entry.getValue()) {
+                    values.add(value.getValue());
+                }
+                context.put(entry.getKey(), values);
+            }
+        }
+
+        if (eventHandler != null) {
+            final EventCartridge cartridge = new EventCartridge();
+            cartridge.addEventHandler(eventHandler);
+            cartridge.attachToContext(context);
+        }
+
         return merge(context);
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         if (null == engine) {
@@ -172,4 +223,42 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
         template = Template.fromTemplate(engine, templateText);
     }
 
+    /** Escapes SQL values added to the template context. */
+    protected static class EscapingReferenceInsertionEventHandler implements ReferenceInsertionEventHandler {
+
+        @Override
+        public Object referenceInsert(final String reference, final Object value) {
+            if (value == null) {
+                return null;
+            } else if (value instanceof Object[]) {
+                final List<Object> encodedValues = Lists.newArrayList();
+                for (Object o : (Object[]) value) {
+                    encodedValues.add(encode(o));
+                }
+                return encodedValues.toArray();
+            } else if (value instanceof Collection<?>) {
+                final List<Object> encodedValues = Lists.newArrayList();
+                for (Object o : (Collection<?>) value) {
+                    encodedValues.add(encode(o));
+                }
+                return encodedValues;
+            } else {
+                return encode(value);
+            }
+        }
+        
+        /**
+         * Returns {@link StringEscapeUtils#escapeSql(String)} if value is a string.
+         * 
+         * @param value to encode
+         *
+         * @return encoded value if value is a string
+         */
+        private Object encode(final Object value) {
+            if (value instanceof String){ 
+                return StringEscapeUtils.escapeSql((String) value);
+            }
+            return value;
+        }
+    }
 }

@@ -17,12 +17,17 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.dc;
 
+import java.util.Map;
+import java.util.Set;
+
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 
-/** Builder used to created {@link ExecutableSearch} instances.
+/**
+ * Builder used to created {@link ExecutableSearch} instances.
  * 
  * @param <T> The type to build.
  */
@@ -32,11 +37,12 @@ public interface ExecutableSearchBuilder<T extends ExecutableSearch> {
      * Creates an executable search that can be executed against a data source in order to produce results.
      * 
      * @param resolutionContext current request context
+     * @param dependencyAttributes made available to the executable search
      * 
      * @return executable search
      * 
      * @throws ResolutionException throw if their is a problem creating the executable search
      */
-    @Nonnull public T build(@Nonnull AttributeResolutionContext resolutionContext)
-            throws ResolutionException;
+    @Nonnull public T build(@Nonnull AttributeResolutionContext resolutionContext,
+            @Nonnull Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException;
 }
