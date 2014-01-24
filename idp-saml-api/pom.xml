@@ -82,11 +82,6 @@
         <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->
-        <dependency>
-            <groupId>${xerces.groupId}</groupId>
-            <artifactId>xml-apis</artifactId>
-            <scope>runtime</scope>
-        </dependency>
 
         <!-- Test Dependencies -->
         <dependency>
