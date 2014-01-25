@@ -91,7 +91,7 @@
             p:responderId="https://idp.example.org"
             p:detailedErrors="true"
             p:profileConfigurations-ref="SAML1BrowserSSOProfileConfiguration"
-            p:activationCondition-ref="AlwaysTruePredicate /">
+            p:activationCondition-ref="AlwaysTruePredicate" />
             
     <bean
         id="SelectProfileConfiguration"
