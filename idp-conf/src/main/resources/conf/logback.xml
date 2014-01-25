@@ -3,39 +3,41 @@
 
     <logger name="idp" level="DEBUG" />
 
-    <logger name="org.opensaml.saml.saml2.binding" level="DEBUG" />
-
-    <logger name="org.opensaml.saml.common.binding" level="DEBUG" />
-
-    <logger name="net.shibboleth.idp.profile" level="DEBUG" />
+    <logger name="net.shibboleth.idp" level="INFO" />
 
     <logger name="net.shibboleth.idp.authn" level="DEBUG" />
 
-    <logger name="net.shibboleth.idp.session" level="DEBUG" />
-
+    <logger name="net.shibboleth.idp.profile" level="DEBUG" />
+    
     <logger name="net.shibboleth.idp.saml" level="DEBUG" />
 
-    <logger name="org.springframework.web" level="WARN" />
-
-    <logger name="org.springframework.webflow" level="WARN" />
-
-    <logger name="net.shibboleth.idp" level="INFO" />
-
-    <logger name="org.opensaml" level="WARN" />
-
-    <logger name="org.opensaml.storage" level="TRACE" />
+    <logger name="net.shibboleth.idp.session" level="DEBUG" />
 
     <logger name="org.eclipse.jetty" level="INFO" />
 
     <logger name="org.ldaptive" level="INFO" />
+    
+    <logger name="org.opensaml" level="WARN" />
+   
+    <logger name="org.opensaml.saml.common.binding" level="DEBUG" />
+
+    <logger name="org.opensaml.saml.saml2.binding" level="DEBUG" />
+
+    <logger name="org.opensaml.storage" level="TRACE" />
+
+    <!-- Do not log exception when bean definition class is a property and root level is DEBUG. -->
+    <logger name="org.springframework.beans.factory.support.DefaultListableBeanFactory" level="INFO" />
 
     <!-- Do not log exception when schemaLocation begins with 'classpath:' and root level is DEBUG. -->
     <logger name="org.springframework.beans.factory.xml.ResourceEntityResolver" level="INFO" />
-    
+
     <!-- Do not log exception when bean definition class is a property and root level is DEBUG. -->
-    <logger name="org.springframework.beans.factory.support.DefaultListableBeanFactory" level="INFO" />
     <logger name="org.springframework.context.annotation.ConfigurationClassUtils" level="INFO" />
 
+    <logger name="org.springframework.web" level="WARN" />
+
+    <logger name="org.springframework.webflow" level="WARN" />
+    
     <logger name="PROTOCOL_MESSAGE" level="DEBUG" />
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
