@@ -39,8 +39,7 @@ import com.google.common.base.Predicate;
  * into a principal name by searching for one and only one {@link UsernamePrincipal} custom principal.
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @event {@link org.opensaml.profile.action.EventIds#INVALID_PROFILE_CTX}
- * @event {@link AuthnEventIds#SUBJECT_C14N_ERROR}
+ * @event {@link AuthnEventIds#INVALID_SUBJECT}
  * @pre <pre>ProfileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, false) != null</pre>
  * @post <pre>SubjectCanonicalizationContext.getPrincipalName() != null
  *  || SubjectCanonicalizationContext.getException() != null</pre>
