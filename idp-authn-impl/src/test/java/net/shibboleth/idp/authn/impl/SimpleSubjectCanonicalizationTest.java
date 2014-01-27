@@ -58,7 +58,7 @@ public class SimpleSubjectCanonicalizationTest extends PopulateAuthenticationCon
         
         action.execute(prc);
         
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.SUBJECT_C14N_ERROR);
+        ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
         Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
     }
 
@@ -70,7 +70,7 @@ public class SimpleSubjectCanonicalizationTest extends PopulateAuthenticationCon
         
         action.execute(prc);
         
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.SUBJECT_C14N_ERROR);
+        ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
         Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
     }
 

@@ -55,8 +55,11 @@ public final class AuthnEventIds {
      * is missing or invalid.
      */
     public static final String INVALID_SUBJECT_C14N_CTX = "InvalidSubjectCanonicalizationContext";
-    
+
     /** ID of event returned if a Subject cannot be canonicalized. */
+    public static final String INVALID_SUBJECT = "InvalidSubject";
+
+    /** ID of event returned if an error occurs canonicalizing a Subject. */
     public static final String SUBJECT_C14N_ERROR = "SubjectCanonicalizationError";
     
     /** ID of event returned if authentication throws an exception unrelated to credential validation. */

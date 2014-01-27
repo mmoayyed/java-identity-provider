@@ -46,35 +46,29 @@ import com.google.common.base.Predicate;
  *  || SubjectCanonicalizationContext.getException() != null</pre>
  */
 public class SimpleSubjectCanonicalization extends AbstractSubjectCanonicalizationAction {
+
+    /** Supplies logic for pre-execute test. */
+    @Nonnull private final ActivationCondition embeddedPredicate;
     
     /** The custom Principal to operate on. */
     @Nullable private UsernamePrincipal usernamePrincipal;
+    
+    /** Constructor. */
+    public SimpleSubjectCanonicalization() {
+        embeddedPredicate = new ActivationCondition();
+    }
     
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext, 
             @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
-        
-        final Set<UsernamePrincipal> usernames;
-        if (c14nContext.getSubject() != null) {
-            usernames = c14nContext.getSubject().getPrincipals(UsernamePrincipal.class);
-        } else {
-            usernames = null;
+
+        if (embeddedPredicate.apply(profileRequestContext, c14nContext, true)) {
+            usernamePrincipal = c14nContext.getSubject().getPrincipals(UsernamePrincipal.class).iterator().next();
+            return super.doPreExecute(profileRequestContext, c14nContext);
         }
         
-        if (usernames == null || usernames.isEmpty()) {
-            c14nContext.setException(new SubjectCanonicalizationException("No UsernamePrincipals were found"));
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);
-            return false;
-        } else if (usernames.size() > 1) {
-            c14nContext.setException(new SubjectCanonicalizationException("Multiple UsernamePrincipals were found"));
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);
-            return false;
-        }
-        
-        usernamePrincipal = usernames.iterator().next();
-        
-        return super.doPreExecute(profileRequestContext, c14nContext);
+        return false;
     }
     
     /** {@inheritDoc} */
@@ -95,14 +89,51 @@ public class SimpleSubjectCanonicalization extends AbstractSubjectCanonicalizati
             if (input != null) {
                 final SubjectCanonicalizationContext c14nContext =
                         input.getSubcontext(SubjectCanonicalizationContext.class, false);
-                if (c14nContext != null || c14nContext.getSubject() != null) {
-                    final Set<UsernamePrincipal> usernames =
-                            c14nContext.getSubject().getPrincipals(UsernamePrincipal.class);
-                    return usernames != null && usernames.size() == 1;
+                if (c14nContext != null) {
+                    return apply(input, c14nContext, false);
                 }
             }
             
             return false;
+        }
+
+        /**
+         * Helper method that runs either as part of the {@link Predicate} or directly from
+         * the {@link SimpleSubjectCanonicalization#doPreExecute(ProfileRequestContext, SubjectCanonicalizationContext)}
+         * method above.
+         * 
+         * @param profileRequestContext the current profile request context
+         * @param c14nContext   the current c14n context
+         * @param duringAction  true iff the method is run from the action above
+         * @return true iff the action can operate successfully on the candidate contexts
+         */
+        public boolean apply(@Nullable final ProfileRequestContext profileRequestContext,
+                @Nonnull final SubjectCanonicalizationContext c14nContext, final boolean duringAction) {
+
+            final Set<UsernamePrincipal> usernames;
+            if (c14nContext.getSubject() != null) {
+                usernames = c14nContext.getSubject().getPrincipals(UsernamePrincipal.class);
+            } else {
+                usernames = null;
+            }
+            
+            if (duringAction) {
+                if (usernames == null || usernames.isEmpty()) {
+                    c14nContext.setException(
+                            new SubjectCanonicalizationException("No UsernamePrincipals were found"));
+                    ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+                    return false;
+                } else if (usernames.size() > 1) {
+                    c14nContext.setException(
+                            new SubjectCanonicalizationException("Multiple UsernamePrincipals were found"));
+                    ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+                    return false;
+                }
+                
+                return true;
+            } else {
+                return usernames != null && usernames.size() == 1;
+            }
         }
         
     }
