@@ -21,19 +21,25 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.security.auth.Subject;
+
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.impl.attribute.encoding.SAML2StringNameIDEncoder;
-import net.shibboleth.idp.saml.impl.nameid.NameIDTransientCanonicalizer;
-import net.shibboleth.idp.saml.nameid.NameCanonicalizationException;
+import net.shibboleth.idp.saml.impl.nameid.NameIDTransientCanonicalization;
 import net.shibboleth.idp.saml.nameid.TransientIdParameters;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.action.ActionTestingSupport;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageService;
@@ -180,7 +186,8 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         store.destroy();
     }
     
-    @Test public void decode() throws ComponentInitializationException, ResolutionException, AttributeEncodingException, NameCanonicalizationException {
+    @Test public void decode2() throws ComponentInitializationException, ResolutionException, AttributeEncodingException, ProfileException {
+        
         final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
         defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
@@ -196,17 +203,28 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
     
         final SAML2StringNameIDEncoder encoder = new SAML2StringNameIDEncoder();
         encoder.setNameFormat("https://example.org/");
-        NameID nameid = encoder.encode(result);
+        final NameID nameid = encoder.encode(result);
         
-        final NameIDTransientCanonicalizer canon = new NameIDTransientCanonicalizer();
+        final NameIDTransientCanonicalization canon = new NameIDTransientCanonicalization();
+        canon.setFormats(Collections.singleton("https://example.org/"));
         canon.setIdStore(store);
-        canon.setId("canon");
+        
+        final ProfileRequestContext prc = new ProfileRequestContext<>();
+        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
+        final Subject subject = new Subject();
+        subject.getPrincipals().add(new NameIDPrincipal(nameid));
+        scc.setSubject(subject);
+        
+        scc.setRequesterId(TestSources.SP_ENTITY_ID);
+        scc.setResponderId(TestSources.IDP_ENTITY_ID);
+        
         canon.initialize();
+        canon.execute(prc);
         
-        final String principal = canon.canonicalize(nameid, TestSources.SP_ENTITY_ID, TestSources.IDP_ENTITY_ID);
+        ActionTestingSupport.assertProceedEvent(prc);
         
-        Assert.assertEquals(principal, TestSources.PRINCIPAL_ID);
-
+        Assert.assertEquals(scc.getPrincipalName(), TestSources.PRINCIPAL_ID);
+        
     }
     
 }

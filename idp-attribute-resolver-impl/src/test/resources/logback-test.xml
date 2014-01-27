@@ -3,6 +3,8 @@
 
     <logger name="net.shibboleth.idp.attribute" level="DEBUG"/>
 
+    <logger name="net.shibboleth.idp.saml" level="DEBUG"/>
+
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <charset>UTF-8</charset>
