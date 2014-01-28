@@ -17,12 +17,12 @@
 
 package net.shibboleth.idp.saml.nameid;
 
-import org.opensaml.saml.common.SAMLObject;
-
 import net.shibboleth.idp.attribute.AttributeEncoder;
 
+import org.opensaml.saml.common.SAMLObject;
+
 /**
- * Marker interface for {@link AttributeEncoder} that prooduces SAML name identifiers
+ * Marker interface for {@link AttributeEncoder} that produces SAML name identifiers
  * instead of attributes.
  * 
  * @param <NameIdType>  type of object produced
