@@ -32,7 +32,8 @@ import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.impl.attribute.encoding.SAML2StringNameIDEncoder;
-import net.shibboleth.idp.saml.impl.nameid.NameIDTransientCanonicalization;
+import net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization;
+import net.shibboleth.idp.saml.impl.nameid.TransientDecoder;
 import net.shibboleth.idp.saml.nameid.TransientIdParameters;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -205,9 +206,15 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         encoder.setNameFormat("https://example.org/");
         final NameID nameid = encoder.encode(result);
         
-        final NameIDTransientCanonicalization canon = new NameIDTransientCanonicalization();
+        final TransientDecoder decoder = new TransientDecoder();
+        decoder.setIdStore(store);
+        decoder.setId("Transient Decoder");
+        decoder.initialize();
+
+        final NameIDCanonicalization canon = new NameIDCanonicalization();
         canon.setFormats(Collections.singleton("https://example.org/"));
-        canon.setIdStore(store);
+        canon.setDecoder(decoder);
+        canon.initialize();
         
         final ProfileRequestContext prc = new ProfileRequestContext<>();
         final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
@@ -218,7 +225,6 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         scc.setRequesterId(TestSources.SP_ENTITY_ID);
         scc.setResponderId(TestSources.IDP_ENTITY_ID);
         
-        canon.initialize();
         canon.execute(prc);
         
         ActionTestingSupport.assertProceedEvent(prc);

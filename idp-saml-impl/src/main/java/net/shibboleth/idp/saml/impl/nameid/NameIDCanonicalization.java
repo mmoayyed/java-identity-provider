@@ -1,9 +1,9 @@
 /*
- * Licensed to the University Corporation for Advanced Internet Development, 
- * Inc. (UCAID) under one or more contributor license agreements.  See the 
+ * Licensed to the University Corporation for Advanced Internet Development,
+ * Inc. (UCAID) under one or more contributor license agreements.  See the
  * NOTICE file distributed with this work for additional information regarding
- * copyright ownership. The UCAID licenses this file to You under the Apache 
- * License, Version 2.0 (the "License"); you may not use this file except in 
+ * copyright ownership. The UCAID licenses this file to You under the Apache
+ * License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License.  You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -26,6 +26,11 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
+import net.shibboleth.idp.saml.nameid.NameIdentifierAttributeDecoder;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -36,8 +41,9 @@ import com.google.common.base.Predicate;
 /**
  * An action that operates on a {@link SubjectCanonicalizationContext} child of the current
  * {@link ProfileRequestContext}, and transforms the input {@link javax.security.auth.Subject} into a principal name by
- * searching for one and only one {@link NameIDPrincipal} custom principal.
- * 
+ * searching for one and only one {@link NameIDPrincipal} custom principal. <br/>
+ * The precise decide is controlled by the
+ *
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link AuthnEventIds#INVALID_SUBJECT}
  * @pre <pre>
@@ -47,7 +53,7 @@ import com.google.common.base.Predicate;
  * SubjectCanonicalizationContext.getPrincipalName() != null || SubjectCanonicalizationContext.getException() != null
  * </pre>
  */
-public class NameIDTransientCanonicalization extends AbstractTransientCanonicalization {
+public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
 
     /** The custom Principal to operate on. */
     @Nullable private String transientPrincipal;
@@ -55,11 +61,41 @@ public class NameIDTransientCanonicalization extends AbstractTransientCanonicali
     /** Supplies logic for pre-execute test. */
     @Nonnull private final ActivationCondition embeddedPredicate;
 
+    /** Supplies logic for decoding the {@link NameID#getValue()} into the principal. */
+    @NonnullAfterInit private NameIdentifierAttributeDecoder decoder;
+
     /**
      * Constructor.
      */
-    public NameIDTransientCanonicalization() {
+    public NameIDCanonicalization() {
         embeddedPredicate = new ActivationCondition();
+    }
+
+    /**
+     * Gets the class responsible for decoding the {@link NameID#getValue()} into the principal.
+     *
+     * @return Returns the decoder.
+     */
+    @NonnullAfterInit public NameIdentifierAttributeDecoder getDecoder() {
+        return decoder;
+    }
+
+    /**
+     * Sets the class responsible for decoding the {@link NameID#getValue()} into the principal.
+     *
+     * @param theDecoder the decoder.
+     */
+    @NonnullAfterInit public void setDecoder(@Nonnull NameIdentifierAttributeDecoder theDecoder) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        decoder = Constraint.isNotNull(theDecoder, "Name decoder must not be null");
+    }
+
+    /** {@inheritDoc} */
+    @Override protected void doInitialize() throws ComponentInitializationException {
+        if (null == decoder) {
+            throw new ComponentInitializationException(getLogPrefix() + " decoder not supplied");
+        }
+        super.doInitialize();
     }
 
     /** {@inheritDoc} */
@@ -72,7 +108,8 @@ public class NameIDTransientCanonicalization extends AbstractTransientCanonicali
             final NameID nameId = nameIDs.iterator().next().getNameID();
 
             try {
-                transientPrincipal = decode(nameId.getValue(), c14nContext.getRequesterId());
+                transientPrincipal =
+                        decoder.decode(nameId.getValue(), c14nContext.getResponderId(), c14nContext.getRequesterId());
             } catch (SubjectCanonicalizationException e) {
                 c14nContext.setException(e);
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);
@@ -110,8 +147,8 @@ public class NameIDTransientCanonicalization extends AbstractTransientCanonicali
 
         /**
          * Helper method that runs either as part of the {@link Predicate} or directly from the
-         * {@link NameIDTransientCanonicalization#doPreExecute(ProfileRequestContext, SubjectCanonicalizationContext)}
-         * method above.
+         * {@link NameIDCanonicalization#doPreExecute(ProfileRequestContext, SubjectCanonicalizationContext)} method
+         * above.
          *
          * @param profileRequestContext the current profile request context
          * @param c14nContext the current c14n context

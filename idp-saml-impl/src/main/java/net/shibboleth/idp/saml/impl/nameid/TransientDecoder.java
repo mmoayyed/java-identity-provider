@@ -1,9 +1,9 @@
 /*
- * Licensed to the University Corporation for Advanced Internet Development, 
- * Inc. (UCAID) under one or more contributor license agreements.  See the 
+ * Licensed to the University Corporation for Advanced Internet Development,
+ * Inc. (UCAID) under one or more contributor license agreements.  See the
  * NOTICE file distributed with this work for additional information regarding
- * copyright ownership. The UCAID licenses this file to You under the Apache 
- * License, Version 2.0 (the "License"); you may not use this file except in 
+ * copyright ownership. The UCAID licenses this file to You under the Apache
+ * License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License.  You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -23,8 +23,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
+import net.shibboleth.idp.saml.nameid.NameIdentifierAttributeDecoder;
 import net.shibboleth.idp.saml.nameid.TransientIdParameters;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -35,21 +37,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * TODO
- * An abstract action which contains the logic to do transient decoding matching (shared between SAML2
- * and SAML1).
+ * An abstract action which contains the logic to do transient decoding matching (shared between SAML2 and SAML1).
  */
-public abstract class AbstractTransientCanonicalization extends AbstractSAMLNameCanonicalization {
+public class TransientDecoder extends AbstractIdentifiableInitializableComponent implements
+        NameIdentifierAttributeDecoder {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractTransientCanonicalization.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(TransientDecoder.class);
 
     /** Store used to map identifiers to principals. */
     @NonnullAfterInit private StorageService idStore;
 
+    /** cache for the log prefix - to save multiple recalculations. */
+    @Nullable private String logPrefix;
+
+
     /**
      * Gets the ID store we are using.
-     * 
+     *
      * @return the ID store we are using.
      */
     @NonnullAfterInit public StorageService getIdStore() {
@@ -58,7 +63,7 @@ public abstract class AbstractTransientCanonicalization extends AbstractSAMLName
 
     /**
      * Sets the ID store we should use.
-     * 
+     *
      * @param store the store to use.
      */
     public void setIdStore(@Nonnull final StorageService store) {
@@ -66,17 +71,25 @@ public abstract class AbstractTransientCanonicalization extends AbstractSAMLName
         idStore = Constraint.isNotNull(store, "StorageService cannot be null");
     }
 
+    /** {@inheritDoc} */
+    @Override public synchronized void setId(String componentId) {
+        super.setId(componentId);
+    }
+
     /**
      * Convert the transient Id into the principal.
-     * 
+     *
      * @param transientId the transientID
-     * @param requesterId the SP
+     * @param issuerId The issuer (not used)
+     * @param requesterId the requested (SP)
      * @return the decoded entity.
-     * @throws SubjectCanonicalizationException if a decode error occurrs.
+     * @throws SubjectCanonicalizationException if a decode error occurs.
      */
-    protected String decode(@Nullable String transientId, @Nonnull String requesterId)
-            throws SubjectCanonicalizationException {
+    /** {@inheritDoc} */
+    @Override @Nonnull public String decode(@Nullable String transientId, @Nonnull String issuerId,
+            @Nonnull String requesterId) throws SubjectCanonicalizationException {
         Constraint.isNotNull(requesterId, "Supplied requested should be null");
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         if (null == transientId) {
             throw new SubjectCanonicalizationException(getLogPrefix() + " transient Identifier was null");
@@ -115,4 +128,23 @@ public abstract class AbstractTransientCanonicalization extends AbstractSAMLName
         }
         log.debug("{} using the store '{}'", getLogPrefix(), idStore.getId());
     }
+
+    /**
+     * Return a prefix for logging messages for this component.
+     *
+     * @return a string for insertion at the beginning of any log messages
+     */
+    @Nonnull protected String getLogPrefix() {
+     // local cache of cached entry to allow unsynchronised clearing.
+        String prefix = logPrefix;
+        if (null == prefix) {
+            StringBuilder builder = new StringBuilder("Transient Decoder '").append(getId()).append("':");
+            prefix = builder.toString();
+            if (null == logPrefix) {
+                logPrefix = prefix;
+            }
+        }
+        return prefix;
+    }
+
 }

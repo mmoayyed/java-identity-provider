@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.impl.nameid;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -63,7 +64,7 @@ public abstract class AbstractSAMLNameCanonicalization extends AbstractSubjectCa
      * 
      * @return Returns the formats.
      */
-    @Nonnull public Set<String> getFormats() {
+    @Nonnull public Collection<String> getFormats() {
         return formats;
     }
 
@@ -72,7 +73,7 @@ public abstract class AbstractSAMLNameCanonicalization extends AbstractSubjectCa
      * 
      * @param theFormats The formats to set.
      */
-    public void setFormats(@Nonnull Set<String> theFormats) {
+    public void setFormats(@Nonnull Collection<String> theFormats) {
         Constraint.isNotNull(theFormats, "Format loist must be non null");
         final Set<String> newFormats = new HashSet(theFormats.size());
         CollectionSupport.addIf(newFormats, theFormats, Predicates.notNull());
