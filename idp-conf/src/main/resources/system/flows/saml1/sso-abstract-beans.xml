@@ -86,13 +86,15 @@
         p:securityConfiguration-ref="SecurityConfiguration" />
 
     <!-- TODO replace with eventual relying-party.xml config -->
-    <bean id="RelyingPartyConfiguration" class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"
-            p:id="ActivatedRelyingPartyConfiguration"
-            p:responderId="https://idp.example.org"
-            p:detailedErrors="true"
-            p:profileConfigurations-ref="SAML1BrowserSSOProfileConfiguration"
-            p:activationCondition-ref="AlwaysTruePredicate" />
-            
+    <bean
+        id="RelyingPartyConfiguration"
+        class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"
+        p:id="ActivatedRelyingPartyConfiguration"
+        p:responderId="https://idp.example.org"
+        p:detailedErrors="true"
+        p:profileConfigurations-ref="SAML1BrowserSSOProfileConfiguration"
+        p:activationCondition-ref="AlwaysTruePredicate" />
+
     <bean
         id="SelectProfileConfiguration"
         class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration"
