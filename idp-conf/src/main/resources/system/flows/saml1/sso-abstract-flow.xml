@@ -76,11 +76,16 @@
     
     <action-state id="UpdateSessionWithSPSession">
         <evaluate expression="UpdateSessionWithSPSession" />
-        <transition on="proceed" to="RecordResponseComplete"/>
+        <transition on="proceed" to="InitializeOutboundMessageContext"/>
         <!-- Mask storage failure. -->
-        <transition on="IOError" to="RecordResponseComplete"/>
+        <transition on="IOError" to="InitializeOutboundMessageContext"/>
     </action-state>
-    
+   
+    <action-state id="InitializeOutboundMessageContext">
+        <evaluate expression="InitializeOutboundMessageContext" />
+        <transition on="proceed" to="RecordResponseComplete" />
+    </action-state>
+
     <!-- TODO needs non-null outbound message context
     <action-state id="HandleOutboundMessage">
         <evaluate expression="HandleOutboundMessage" />

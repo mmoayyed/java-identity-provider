@@ -134,6 +134,10 @@
         p:sessionLifetime="${idp.session.defaultSPlifetime}" />
 
     <bean
+        id="InitializeOutboundMessageContext"
+        class="net.shibboleth.idp.saml.impl.profile.saml1.InitializeOutboundMessageContext" />
+
+    <bean
         id="RecordResponseComplete"
         class="net.shibboleth.idp.profile.impl.RecordResponseComplete" />
 
