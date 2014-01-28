@@ -19,15 +19,15 @@ package net.shibboleth.idp.saml.attribute.encoding;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.saml.nameid.NameIdentifierAttributeEncoder;
+import net.shibboleth.idp.saml.nameid.SAML1NameIdentifierAttributeEncoder;
 
 import org.opensaml.saml.common.xml.SAMLConstants;
-import org.opensaml.saml.saml1.core.NameIdentifier;
 
-/** Base class for attribute encoders that produce a SAML 1 {@link NameIdentifier}. */
-public abstract class AbstractSAML1NameIdentifierEncoder implements NameIdentifierAttributeEncoder<NameIdentifier> {
+/** Base class for {@link SAML1NameIdentifierAttributeEncoder}s. */
+public abstract class AbstractSAML1NameIdentifierEncoder implements SAML1NameIdentifierAttributeEncoder {
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull public final String getProtocol() {
         return SAMLConstants.SAML11P_NS;
     }
