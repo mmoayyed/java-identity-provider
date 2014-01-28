@@ -21,13 +21,18 @@ import net.shibboleth.idp.attribute.AttributeEncoder;
 
 import org.opensaml.saml.common.SAMLObject;
 
+import com.google.common.base.Predicate;
+
 /**
  * Marker interface for {@link AttributeEncoder} that produces SAML name identifiers
  * instead of attributes.
  * 
+ * <p>Implementations must be able to support a predicate test indicating
+ * support, or not, for a particular name identifier format.</p> 
+ * 
  * @param <NameIdType>  type of object produced
  */
 public interface NameIdentifierAttributeEncoder<NameIdType extends SAMLObject>
-    extends AttributeEncoder<NameIdType> {
+    extends AttributeEncoder<NameIdType>, Predicate<String> {
 
 }

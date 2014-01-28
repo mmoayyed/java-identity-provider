@@ -96,5 +96,11 @@ public class SAML2XMLObjectNameIDEncoder extends AbstractSAML2NameIDEncoder {
     public int hashCode() {
         return Objects.hashCode(getProtocol(), SAML2XMLObjectNameIDEncoder.class);
     }
+
+    /** {@inheritDoc} */
+    public boolean apply(String input) {
+        // TODO Auto-generated method stub
+        return false;
+    }
     
 }

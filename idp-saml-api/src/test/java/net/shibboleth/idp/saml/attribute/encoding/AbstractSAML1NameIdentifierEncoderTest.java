@@ -35,6 +35,10 @@ public class AbstractSAML1NameIdentifierEncoderTest {
             public NameIdentifier encode(IdPAttribute attribute) throws AttributeEncodingException {
                 return null;
             }
+
+            public boolean apply(String input) {
+                return false;
+            }
         };
         // Again, use constants
         Assert.assertEquals(encoder.getProtocol(), "urn:oasis:names:tc:SAML:1.1:protocol");

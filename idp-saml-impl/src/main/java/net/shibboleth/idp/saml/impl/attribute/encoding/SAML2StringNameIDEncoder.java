@@ -32,6 +32,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.profile.SAML2ObjectSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,6 +100,12 @@ public class SAML2StringNameIDEncoder extends AbstractSAML2NameIDEncoder {
      */
     @Nullable public final void setNameQualifier(final String nameQualifier) {
         qualifier = StringSupport.trimOrNull(nameQualifier);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean apply(String input) {
+        return SAML2ObjectSupport.areNameIdentifierFormatsEquivalent(input, format);
     }
 
     /** {@inheritDoc} */

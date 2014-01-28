@@ -32,6 +32,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml1.core.NameIdentifier;
+import org.opensaml.saml.saml1.profile.SAML1ObjectSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,6 +102,12 @@ public class SAML1StringNameIdentifierEncoder extends AbstractSAML1NameIdentifie
         qualifier = StringSupport.trimOrNull(nameQualifier);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public boolean apply(@Nullable final String input) {
+        return SAML1ObjectSupport.areNameIdentifierFormatsEquivalent(input, format);
+    }
+    
     /** {@inheritDoc} */
     @Nonnull public NameIdentifier encode(@Nonnull final IdPAttribute attribute) throws AttributeEncodingException {
         final String attributeId = attribute.getId();

@@ -36,7 +36,7 @@ import com.google.common.base.Objects;
  * {@link net.shibboleth.idp.saml.nameid.NameIdentifierAttributeEncoder} that encodes the first {@link NameIdentifier}
  * value of an {@link net.shibboleth.idp.attribute.IdPAttribute} to a SAML 1 {@link NameIdentifier}.
  */
-// TODO Is this class redundant?
+// TODO Is this class redundant? 
 public class SAML1XMLObjectNameIdentifierEncoder extends AbstractSAML1NameIdentifierEncoder {
 
     /** Class logger. */
@@ -96,6 +96,12 @@ public class SAML1XMLObjectNameIdentifierEncoder extends AbstractSAML1NameIdenti
     @Override
     public int hashCode() {
         return Objects.hashCode(getProtocol(), SAML1XMLObjectNameIdentifierEncoder.class);
+    }
+
+    /** {@inheritDoc} */
+    public boolean apply(String input) {
+        // TODO Auto-generated method stub
+        return false;
     }
     
 }

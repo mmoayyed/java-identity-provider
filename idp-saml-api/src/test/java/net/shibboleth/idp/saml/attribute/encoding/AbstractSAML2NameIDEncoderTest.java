@@ -41,10 +41,12 @@ public class AbstractSAML2NameIDEncoderTest {
                 return null;
             }
 
-            @Nullable public
-                    AttributeMapper<RequestedAttribute, IdPRequestedAttribute>
-                    getMapper(String name) {
+            @Nullable public AttributeMapper<RequestedAttribute, IdPRequestedAttribute> getMapper(String name) {
                 return null;
+            }
+
+            public boolean apply(String input) {
+                return false;
             }
         };
         // Again, use constants
