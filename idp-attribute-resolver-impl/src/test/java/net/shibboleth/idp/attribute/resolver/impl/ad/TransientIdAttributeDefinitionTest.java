@@ -186,7 +186,7 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         store.destroy();
     }
     
-    @Test public void decode2() throws ComponentInitializationException, ResolutionException, AttributeEncodingException, ProfileException {
+    @Test public void decode() throws ComponentInitializationException, ResolutionException, AttributeEncodingException, ProfileException {
         
         final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);

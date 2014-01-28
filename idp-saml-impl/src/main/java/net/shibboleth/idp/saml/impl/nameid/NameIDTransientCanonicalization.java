@@ -31,73 +31,130 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.NameID;
 
+import com.google.common.base.Predicate;
+
 /**
  * An action that operates on a {@link SubjectCanonicalizationContext} child of the current
- * {@link ProfileRequestContext}, and transforms the input {@link javax.security.auth.Subject}
- * into a principal name by searching for one and only one {@link NameIDPrincipal} custom principal.
+ * {@link ProfileRequestContext}, and transforms the input {@link javax.security.auth.Subject} into a principal name by
+ * searching for one and only one {@link NameIDPrincipal} custom principal.
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @event {@link org.opensaml.profile.action.EventIds#INVALID_PROFILE_CTX}
- * @event {@link AuthnEventIds#SUBJECT_C14N_ERROR}
- * @event {@link AuthnEventIds#RESELECT_FLOW}
- * @pre <pre>ProfileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, false) != null</pre>
- * @post <pre>SubjectCanonicalizationContext.getPrincipalName() != null
- *  || SubjectCanonicalizationContext.getException() != null</pre>
+ * @event {@link AuthnEventIds#INVALID_SUBJECT}
+ * @pre <pre>
+ * ProfileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, false) != null
+ * </pre>
+ * @post <pre>
+ * SubjectCanonicalizationContext.getPrincipalName() != null || SubjectCanonicalizationContext.getException() != null
+ * </pre>
  */
 public class NameIDTransientCanonicalization extends AbstractTransientCanonicalization {
-    
+
     /** The custom Principal to operate on. */
     @Nullable private String transientPrincipal;
-    
-    
-    
-    /** {@inheritDoc} */
-    @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext, 
-            @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
-        
-        final Set<NameIDPrincipal> nameIDs;
-        if (c14nContext.getSubject() != null) {
-            nameIDs = c14nContext.getSubject().getPrincipals(NameIDPrincipal.class);
-        } else {
-            nameIDs = null;
-        }
-        
-        if (nameIDs == null || nameIDs.isEmpty()) {
-            c14nContext.setException(new SubjectCanonicalizationException("No NameIDPrincipals were found"));
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.RESELECT_FLOW);
-            return false;
-        } else if (nameIDs.size() > 1) {
-            c14nContext.setException(new SubjectCanonicalizationException("Multiple NameIDPrincipals were found"));
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);
-            return false;
-        }
-        
-        final NameID nameId = nameIDs.iterator().next().getNameID();
-        
-        if (!getFormats().contains(nameId.getFormat())) {
-            c14nContext.setException(new SubjectCanonicalizationException("Format does not match found"));
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.RESELECT_FLOW);
-            return false;
-        }
-        
-        try {
-            transientPrincipal = decode(nameId.getValue(), c14nContext.getRequesterId());
-        } catch (SubjectCanonicalizationException e) {
-            c14nContext.setException(e);
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);
-            return false;            
-        }
-        
-        return super.doPreExecute(profileRequestContext, c14nContext);
+
+    /** Supplies logic for pre-execute test. */
+    @Nonnull private final ActivationCondition embeddedPredicate;
+
+    /**
+     * Constructor.
+     */
+    public NameIDTransientCanonicalization() {
+        embeddedPredicate = new ActivationCondition();
     }
-    
+
     /** {@inheritDoc} */
-    @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext, 
+    @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
-        
+
+        if (embeddedPredicate.apply(profileRequestContext, c14nContext, true)) {
+
+            final Set<NameIDPrincipal> nameIDs = c14nContext.getSubject().getPrincipals(NameIDPrincipal.class);
+            final NameID nameId = nameIDs.iterator().next().getNameID();
+
+            try {
+                transientPrincipal = decode(nameId.getValue(), c14nContext.getRequesterId());
+            } catch (SubjectCanonicalizationException e) {
+                c14nContext.setException(e);
+                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);
+                return false;
+            }
+            return super.doPreExecute(profileRequestContext, c14nContext);
+        } else {
+            return false;
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
+
         c14nContext.setPrincipalName(transientPrincipal);
     }
-     
+
+    /** A predicate that determines if this action can run or not. */
+    public class ActivationCondition implements Predicate<ProfileRequestContext> {
+
+        /** {@inheritDoc} */
+        @Override public boolean apply(@Nullable final ProfileRequestContext input) {
+
+            if (input != null) {
+                final SubjectCanonicalizationContext c14nContext =
+                        input.getSubcontext(SubjectCanonicalizationContext.class, false);
+                if (c14nContext != null) {
+                    return apply(input, c14nContext, false);
+                }
+            }
+
+            return false;
+        }
+
+        /**
+         * Helper method that runs either as part of the {@link Predicate} or directly from the
+         * {@link NameIDTransientCanonicalization#doPreExecute(ProfileRequestContext, SubjectCanonicalizationContext)}
+         * method above.
+         *
+         * @param profileRequestContext the current profile request context
+         * @param c14nContext the current c14n context
+         * @param duringAction true iff the method is run from the action above
+         * @return true iff the action can operate successfully on the candidate contexts
+         */
+        public boolean apply(@Nullable final ProfileRequestContext profileRequestContext,
+                @Nonnull final SubjectCanonicalizationContext c14nContext, final boolean duringAction) {
+
+            final Set<NameIDPrincipal> nameIDs;
+            if (c14nContext.getSubject() != null) {
+                nameIDs = c14nContext.getSubject().getPrincipals(NameIDPrincipal.class);
+            } else {
+                nameIDs = null;
+            }
+
+            if (duringAction) {
+                if (nameIDs == null || nameIDs.isEmpty()) {
+                    c14nContext.setException(new SubjectCanonicalizationException("No UsernamePrincipals were found"));
+                    ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+                    return false;
+                } else if (nameIDs.size() > 1) {
+                    c14nContext.setException(new SubjectCanonicalizationException(
+                            "Multiple UsernamePrincipals were found"));
+                    ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+                    return false;
+                }
+            } else {
+                if (nameIDs == null || nameIDs.size() != 1) {
+                    return false;
+                }
+            }
+            final NameID nameID = nameIDs.iterator().next().getNameID();
+
+            if (!getFormats().contains(nameID.getFormat())) {
+                if (duringAction) {
+                    c14nContext.setException(new SubjectCanonicalizationException("Format does not match found"));
+                    ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+                }
+                return false;
+            }
+            return true;
+        }
+
+    }
 }
