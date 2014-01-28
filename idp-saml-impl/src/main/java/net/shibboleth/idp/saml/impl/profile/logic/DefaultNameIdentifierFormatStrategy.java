@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 /**
  * Function to return a set of candidate NameIdentifier/NameID Format values derived from an entity's
@@ -71,14 +72,14 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
     /** {@inheritDoc} */
     @Override
     @Nullable public List<String> apply(@Nullable final ProfileRequestContext input) {
-        List<String> fromConfig = null;
+        List<String> fromConfig = Lists.newArrayList();
         final List<String> fromMetadata = super.apply(input);
         
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(input);
         if (relyingPartyCtx != null) {
             final ProfileConfiguration profileConfig = relyingPartyCtx.getProfileConfig();
             if (profileConfig != null && profileConfig instanceof AuthenticationProfileConfiguration) {
-                fromConfig = ((AuthenticationProfileConfiguration) profileConfig).getNameIDFormatPrecedence();
+                fromConfig.addAll(((AuthenticationProfileConfiguration) profileConfig).getNameIDFormatPrecedence());
                 log.debug("Configuration specifies the following formats: {}", fromConfig);
             } else {
                 log.debug("No ProfileConfiguraton available (or not an AuthenticationProfileConfiguration)");
