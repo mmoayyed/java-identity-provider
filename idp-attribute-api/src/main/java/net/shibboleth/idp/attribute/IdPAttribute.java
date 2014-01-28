@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -80,7 +81,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
         displayNames = Collections.emptyMap();
         displayDescriptions = Collections.emptyMap();
 
-        values = Constraints.constrainedSet(new HashSet<IdPAttributeValue<?>>(), Constraints.notNull());
+        values = Constraints.constrainedSet(new LinkedHashSet<IdPAttributeValue<?>>(), Constraints.notNull());
         encoders = Collections.emptySet();
     }
 
@@ -170,7 +171,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      */
     public void setValues(@Nullable @NullableElements final Collection<? extends IdPAttributeValue<?>> newValues) {
         Set<IdPAttributeValue<?>> checkedValues =
-                Constraints.constrainedSet(new HashSet<IdPAttributeValue<?>>(), Constraints.notNull());
+                Constraints.constrainedSet(new LinkedHashSet<IdPAttributeValue<?>>(), Constraints.notNull());
         CollectionSupport.addIf(checkedValues, newValues, Predicates.<IdPAttributeValue> notNull());
         values = checkedValues;
     }

@@ -19,7 +19,7 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -62,7 +62,7 @@ public final class PluginDependencySupport {
         Constraint.isNotNull(workContext, "Attribute resolution context cannot be null");
         Constraint.isNotNull(dependencies, "Resolver dependency collection cannot be null");
 
-        final Set<IdPAttributeValue<?>> values = new HashSet<>();
+        final Set<IdPAttributeValue<?>> values = new LinkedHashSet<>();
 
         for (ResolverPluginDependency dependency : dependencies) {
             final IdPAttribute resolvedAttribute;
@@ -171,7 +171,7 @@ public final class PluginDependencySupport {
         }
         Set<IdPAttributeValue<?>> attributeValues = target.get(source.getId());
         if (attributeValues == null) {
-            attributeValues = new HashSet<>();
+            attributeValues = new LinkedHashSet<>();
             target.put(source.getId(), attributeValues);
         }
 
