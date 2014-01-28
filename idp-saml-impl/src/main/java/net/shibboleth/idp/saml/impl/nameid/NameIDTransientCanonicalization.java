@@ -26,7 +26,6 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
-import net.shibboleth.idp.saml.nameid.NameCanonicalizationException;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -84,7 +83,7 @@ public class NameIDTransientCanonicalization extends AbstractTransientCanonicali
         
         try {
             transientPrincipal = decode(nameId.getValue(), c14nContext.getRequesterId());
-        } catch (NameCanonicalizationException e) {
+        } catch (SubjectCanonicalizationException e) {
             c14nContext.setException(e);
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);
             return false;            

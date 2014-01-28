@@ -22,7 +22,7 @@ import java.io.IOException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.saml.nameid.NameCanonicalizationException;
+import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.saml.nameid.TransientIdParameters;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * TODO
  * An abstract action which contains the logic to do transient decoding matching (shared between SAML2
- * and SAML1)
+ * and SAML1).
  */
 public abstract class AbstractTransientCanonicalization extends AbstractSAMLNameCanonicalization {
 
@@ -72,37 +72,37 @@ public abstract class AbstractTransientCanonicalization extends AbstractSAMLName
      * @param transientId the transientID
      * @param requesterId the SP
      * @return the decoded entity.
-     * @throws NameCanonicalizationException if a decode error occurrs.
+     * @throws SubjectCanonicalizationException if a decode error occurrs.
      */
     protected String decode(@Nullable String transientId, @Nonnull String requesterId)
-            throws NameCanonicalizationException {
+            throws SubjectCanonicalizationException {
         Constraint.isNotNull(requesterId, "Supplied requested should be null");
 
         if (null == transientId) {
-            throw new NameCanonicalizationException(getLogPrefix() + " transient Identifier was null");
+            throw new SubjectCanonicalizationException(getLogPrefix() + " transient Identifier was null");
         }
 
         try {
             final StorageRecord record = idStore.read(TransientIdParameters.CONTEXT, transientId);
 
             if (null == record) {
-                throw new NameCanonicalizationException(getLogPrefix() + " Could not find transient Identifier");
+                throw new SubjectCanonicalizationException(getLogPrefix() + " Could not find transient Identifier");
             }
 
             if (record.getExpiration() < System.currentTimeMillis()) {
-                throw new NameCanonicalizationException(getLogPrefix() + " Transient identifier has expired");
+                throw new SubjectCanonicalizationException(getLogPrefix() + " Transient identifier has expired");
             }
 
             final TransientIdParameters param = new TransientIdParameters(record.getValue());
 
             if (!requesterId.equals(param.getAttributeRecipient())) {
-                throw new NameCanonicalizationException(getLogPrefix() + " Transient identifier was issued to "
+                throw new SubjectCanonicalizationException(getLogPrefix() + " Transient identifier was issued to "
                         + param.getAttributeRecipient() + " but is being used by " + requesterId);
             }
 
             return param.getPrincipal();
         } catch (IOException e) {
-            throw new NameCanonicalizationException(e);
+            throw new SubjectCanonicalizationException(e);
         }
     }
 
