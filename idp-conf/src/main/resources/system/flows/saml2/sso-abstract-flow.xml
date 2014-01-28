@@ -118,6 +118,8 @@
             <evaluate expression="externalContext.recordResponseComplete()" />
         </on-entry>
         -->
+        <!-- TODO: Probably remove later. For tests, map the profile request context as an output attribute -->
+        <output name="ProfileRequestContext" value="flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext')" />          
     </end-state>
     
     <global-transitions>
