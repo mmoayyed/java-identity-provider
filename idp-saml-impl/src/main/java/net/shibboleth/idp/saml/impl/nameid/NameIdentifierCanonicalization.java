@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
-import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
+import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
 import net.shibboleth.idp.saml.nameid.NameIdentifierAttributeDecoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -34,16 +34,16 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml1.core.NameIdentifier;
 
 import com.google.common.base.Predicate;
 
 /**
  * An action that operates on a {@link SubjectCanonicalizationContext} child of the current
  * {@link ProfileRequestContext}, and transforms the input {@link javax.security.auth.Subject} into a principal name by
- * searching for one and only one {@link NameIDPrincipal} custom principal. <br/>
+ * searching for one and only one {@link NameIdentifierPrincipal} custom principal. <br/>
  * The precise decide is controlled by the
- *
+ * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link AuthnEventIds#INVALID_SUBJECT}
  * @pre <pre>
@@ -53,7 +53,7 @@ import com.google.common.base.Predicate;
  * SubjectCanonicalizationContext.getPrincipalName() != null || SubjectCanonicalizationContext.getException() != null
  * </pre>
  */
-public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
+public class NameIdentifierCanonicalization extends AbstractSAMLNameCanonicalization {
 
     /** The custom Principal to operate on. */
     @Nullable private String transientPrincipal;
@@ -61,19 +61,19 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
     /** Supplies logic for pre-execute test. */
     @Nonnull private final ActivationCondition embeddedPredicate;
 
-    /** Supplies logic for decoding the {@link NameID#getValue()} into the principal. */
+    /** Supplies logic for decoding the {@link NameIdentifier#getNameIdentifier()} into the principal. */
     @NonnullAfterInit private NameIdentifierAttributeDecoder decoder;
 
     /**
      * Constructor.
      */
-    public NameIDCanonicalization() {
+    public NameIdentifierCanonicalization() {
         embeddedPredicate = new ActivationCondition();
     }
 
     /**
-     * Gets the class responsible for decoding the {@link NameID#getValue()} into the principal.
-     *
+     * Gets the class responsible for decoding the {@link NameIdentifier#getNameIdentifier()} into the principal.
+     * 
      * @return Returns the decoder.
      */
     @NonnullAfterInit public NameIdentifierAttributeDecoder getDecoder() {
@@ -81,8 +81,8 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
     }
 
     /**
-     * Sets the class responsible for decoding the {@link NameID#getValue()} into the principal.
-     *
+     * Sets the class responsible for decoding the {@link NameIdentifier#getNameIdentifier()} into the principal.
+     * 
      * @param theDecoder the decoder.
      */
     @NonnullAfterInit public void setDecoder(@Nonnull NameIdentifierAttributeDecoder theDecoder) {
@@ -104,12 +104,14 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
 
         if (embeddedPredicate.apply(profileRequestContext, c14nContext, true)) {
 
-            final Set<NameIDPrincipal> nameIDs = c14nContext.getSubject().getPrincipals(NameIDPrincipal.class);
-            final NameID nameID = nameIDs.iterator().next().getNameID();
+            final Set<NameIdentifierPrincipal> nameIdentifiers =
+                    c14nContext.getSubject().getPrincipals(NameIdentifierPrincipal.class);
+            final NameIdentifier nameIdentifier = nameIdentifiers.iterator().next().getNameIdentifier();
 
             try {
                 transientPrincipal =
-                        decoder.decode(nameID.getValue(), c14nContext.getResponderId(), c14nContext.getRequesterId());
+                        decoder.decode(nameIdentifier.getNameIdentifier(), c14nContext.getResponderId(),
+                                c14nContext.getRequesterId());
             } catch (SubjectCanonicalizationException e) {
                 c14nContext.setException(e);
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);
@@ -147,9 +149,9 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
 
         /**
          * Helper method that runs either as part of the {@link Predicate} or directly from the
-         * {@link NameIDCanonicalization#doPreExecute(ProfileRequestContext, SubjectCanonicalizationContext)} method
-         * above.
-         *
+         * {@link NameIdentifierCanonicalization#doPreExecute(ProfileRequestContext, SubjectCanonicalizationContext)}
+         * method above.
+         * 
          * @param profileRequestContext the current profile request context
          * @param c14nContext the current c14n context
          * @param duringAction true iff the method is run from the action above
@@ -158,32 +160,32 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
         public boolean apply(@Nullable final ProfileRequestContext profileRequestContext,
                 @Nonnull final SubjectCanonicalizationContext c14nContext, final boolean duringAction) {
 
-            final Set<NameIDPrincipal> nameIDs;
+            final Set<NameIdentifierPrincipal> nameIdentifiers;
             if (c14nContext.getSubject() != null) {
-                nameIDs = c14nContext.getSubject().getPrincipals(NameIDPrincipal.class);
+                nameIdentifiers = c14nContext.getSubject().getPrincipals(NameIdentifierPrincipal.class);
             } else {
-                nameIDs = null;
+                nameIdentifiers = null;
             }
 
             if (duringAction) {
-                if (nameIDs == null || nameIDs.isEmpty()) {
+                if (nameIdentifiers == null || nameIdentifiers.isEmpty()) {
                     c14nContext.setException(new SubjectCanonicalizationException("No UsernamePrincipals were found"));
                     ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
                     return false;
-                } else if (nameIDs.size() > 1) {
+                } else if (nameIdentifiers.size() > 1) {
                     c14nContext.setException(new SubjectCanonicalizationException(
                             "Multiple UsernamePrincipals were found"));
                     ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
                     return false;
                 }
             } else {
-                if (nameIDs == null || nameIDs.size() != 1) {
+                if (nameIdentifiers == null || nameIdentifiers.size() != 1) {
                     return false;
                 }
             }
-            final NameID nameID = nameIDs.iterator().next().getNameID();
+            final NameIdentifier nameIdentifier = nameIdentifiers.iterator().next().getNameIdentifier();
 
-            if (!getFormats().contains(nameID.getFormat())) {
+            if (!getFormats().contains(nameIdentifier.getFormat())) {
                 if (duringAction) {
                     c14nContext.setException(new SubjectCanonicalizationException("Format does not match found"));
                     ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
