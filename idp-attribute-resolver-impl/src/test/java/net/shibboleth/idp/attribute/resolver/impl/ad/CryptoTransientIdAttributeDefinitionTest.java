@@ -17,12 +17,11 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.Collections;
 import java.util.Set;
+
+import javax.security.auth.Subject;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -31,10 +30,22 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
+import net.shibboleth.idp.saml.impl.nameid.CryptoTransientDecoder;
+import net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.DataSealerException;
 
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.action.ActionTestingSupport;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -43,7 +54,7 @@ import org.testng.annotations.Test;
  * Tests for {Link CryptoTransientIdAttributeDefinition}.
  */
 
-public class CryptoTransientIdAttributeDefinitionTest {
+public class CryptoTransientIdAttributeDefinitionTest   extends OpenSAMLInitBaseTestCase {
 
     private static final String ID = "CryptoTransientIdAttributeDefn";
 
@@ -52,26 +63,18 @@ public class CryptoTransientIdAttributeDefinitionTest {
     private DataSealer dataSealer;
 
     /**
-     * Copy the JKS from the classpath into the filesystem and get the name.
+     * Set up the data sealer.  We take advantage of the fact that Spring a {@link ClassPathResource} wraps a files.
      * 
      * @throws IOException
      * @throws DataSealerException
      * @throws ComponentInitializationException 
      */
-    @BeforeClass public void setupDataSealser() throws IOException, DataSealerException, ComponentInitializationException {
-        final File out = File.createTempFile("testDataSeal", "file");
-
-        final InputStream inStream = CryptoTransientIdAttributeDefinitionTest.class.getResourceAsStream("/data/SealerKeyStore.jks");
-
-        final String keyStorePath = out.getAbsolutePath();
-
-        final OutputStream outStream = new FileOutputStream(out, false);
-
-        final byte buffer[] = new byte[1024];
-
-        final int bytesRead = inStream.read(buffer);
-        outStream.write(buffer, 0, bytesRead);
-        outStream.close();
+    @BeforeClass public void setupDataSealer() throws IOException, DataSealerException, ComponentInitializationException {
+        
+        final Resource keyStore  = new ClassPathResource("/data/SealerKeyStore.jks");
+        Assert.assertTrue(keyStore.exists());
+        
+        final String keyStorePath = keyStore.getFile().getAbsolutePath();
 
         dataSealer = new DataSealer();
         dataSealer.setCipherKeyAlias("secret");
@@ -174,5 +177,59 @@ public class CryptoTransientIdAttributeDefinitionTest {
         } catch (Exception e) {
             // OK
         }
+    }
+    
+    
+    @Test public void decode() throws ComponentInitializationException, ResolutionException, DataSealerException,
+            InterruptedException, ProfileException {
+        final CryptoTransientIdAttributeDefinition defn = new CryptoTransientIdAttributeDefinition();
+        defn.setId(ID);
+        defn.setDataSealer(dataSealer);
+        defn.setIdLifetime(TIMEOUT);
+        defn.initialize();
+
+        final AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+
+        final IdPAttribute result = defn.resolve(context);
+
+        final Set<IdPAttributeValue<?>> values = result.getValues();
+        Assert.assertEquals(values.size(), 1);
+        final String code = ((StringAttributeValue) values.iterator().next()).getValue();
+        
+        final NameID nameID = new NameIDBuilder().buildObject();
+        nameID.setFormat("https://example.org/");
+        nameID.setNameQualifier(TestSources.IDP_ENTITY_ID);
+        nameID.setSPNameQualifier(TestSources.SP_ENTITY_ID);
+        nameID.setValue(code);
+        
+        final CryptoTransientDecoder decoder = new CryptoTransientDecoder();
+        decoder.setDataSealer(dataSealer);
+        decoder.setId("Crypto Transient Decoder");
+        decoder.initialize();
+
+        final NameIDCanonicalization canon = new NameIDCanonicalization();
+        canon.setFormats(Collections.singleton("https://example.org/"));
+        canon.setDecoder(decoder);
+        canon.initialize();
+        
+        final ProfileRequestContext prc = new ProfileRequestContext<>();
+        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
+        final Subject subject = new Subject();
+        
+        
+        subject.getPrincipals().add(new NameIDPrincipal(nameID));
+        scc.setSubject(subject);
+        
+        scc.setRequesterId(TestSources.SP_ENTITY_ID);
+        scc.setResponderId(TestSources.IDP_ENTITY_ID);
+        
+        canon.execute(prc);
+        
+        ActionTestingSupport.assertProceedEvent(prc);
+        
+        Assert.assertEquals(scc.getPrincipalName(), TestSources.PRINCIPAL_ID);
+
     }
 }

@@ -29,7 +29,7 @@ import org.opensaml.storage.impl.MemoryStorageService;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** {@link SimpleSubjectCanonicalization} unit test. */
+/** {@link TransientDecoder} unit test. */
 public class TransientDecoderTest {
 
     private static final String RECIPIENT="TheRecipient";
