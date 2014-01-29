@@ -167,12 +167,12 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
 
             if (duringAction) {
                 if (nameIDs == null || nameIDs.isEmpty()) {
-                    c14nContext.setException(new SubjectCanonicalizationException("No UsernamePrincipals were found"));
+                    c14nContext.setException(new SubjectCanonicalizationException("No NameIDPrincipals were found"));
                     ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
                     return false;
                 } else if (nameIDs.size() > 1) {
                     c14nContext.setException(new SubjectCanonicalizationException(
-                            "Multiple UsernamePrincipals were found"));
+                            "Multiple NameIDPrincipals were found"));
                     ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
                     return false;
                 }
@@ -185,7 +185,7 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
 
             if (!getFormats().contains(nameID.getFormat())) {
                 if (duringAction) {
-                    c14nContext.setException(new SubjectCanonicalizationException("Format does not match found"));
+                    c14nContext.setException(new SubjectCanonicalizationException("Format not supported"));
                     ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
                 }
                 return false;
