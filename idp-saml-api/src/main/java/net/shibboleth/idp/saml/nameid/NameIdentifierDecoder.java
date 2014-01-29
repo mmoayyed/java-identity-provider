@@ -28,7 +28,7 @@ import net.shibboleth.idp.authn.SubjectCanonicalizationException;
  * decoder.
  *
  */
-public interface NameIdentifierAttributeDecoder {
+public interface NameIdentifierDecoder {
 
     /**
      * Decode the provided value, testing or otherwise using either or both of the issuer and requester.

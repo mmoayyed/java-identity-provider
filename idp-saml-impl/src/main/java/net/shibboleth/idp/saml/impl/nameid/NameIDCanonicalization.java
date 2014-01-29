@@ -26,7 +26,7 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
-import net.shibboleth.idp.saml.nameid.NameIdentifierAttributeDecoder;
+import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -62,7 +62,7 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
     @Nonnull private final ActivationCondition embeddedPredicate;
 
     /** Supplies logic for decoding the {@link NameID#getValue()} into the principal. */
-    @NonnullAfterInit private NameIdentifierAttributeDecoder decoder;
+    @NonnullAfterInit private NameIdentifierDecoder decoder;
 
     /**
      * Constructor.
@@ -76,7 +76,7 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
      *
      * @return Returns the decoder.
      */
-    @NonnullAfterInit public NameIdentifierAttributeDecoder getDecoder() {
+    @NonnullAfterInit public NameIdentifierDecoder getDecoder() {
         return decoder;
     }
 
@@ -85,7 +85,7 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
      *
      * @param theDecoder the decoder.
      */
-    @NonnullAfterInit public void setDecoder(@Nonnull NameIdentifierAttributeDecoder theDecoder) {
+    @NonnullAfterInit public void setDecoder(@Nonnull NameIdentifierDecoder theDecoder) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         decoder = Constraint.isNotNull(theDecoder, "Name decoder must not be null");
     }

@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
-import net.shibboleth.idp.saml.nameid.NameIdentifierAttributeDecoder;
+import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * {@link net.shibboleth.idp.attribute.resolver.impl.ad.CryptoTransientIdAttributeDefinition}
  */
 public class CryptoTransientDecoder extends AbstractIdentifiableInitializableComponent implements
-        NameIdentifierAttributeDecoder {
+        NameIdentifierDecoder {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(CryptoTransientDecoder.class);
