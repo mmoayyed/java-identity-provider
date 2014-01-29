@@ -23,7 +23,6 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
@@ -113,7 +112,7 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
      */
     @Nonnull private String getPeerEntityId(@Nonnull final ProfileRequestContext profileRequestContext) {
         // TODO Get peer entity id from somewhere
-        return ActionTestingSupport.INBOUND_MSG_ISSUER;
+        return "http://sp.example.org";
     }
 
     /**
