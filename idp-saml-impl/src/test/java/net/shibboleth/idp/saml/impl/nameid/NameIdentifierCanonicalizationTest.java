@@ -29,7 +29,7 @@ import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
-import net.shibboleth.idp.saml.nameid.NameIdentifierAttributeDecoder;
+import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.ProfileException;
@@ -67,7 +67,7 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
         prc = new ProfileRequestContext<>();
         action = new NameIdentifierCanonicalization();
         action.setFormats(formats);
-        action.setDecoder(new NameIdentifierAttributeDecoder() {
+        action.setDecoder(new NameIdentifierDecoder() {
 
             @Override @Nonnull public String decode(@Nullable String value, @Nonnull String issuerId,
                     @Nonnull String requesterId) throws SubjectCanonicalizationException {
