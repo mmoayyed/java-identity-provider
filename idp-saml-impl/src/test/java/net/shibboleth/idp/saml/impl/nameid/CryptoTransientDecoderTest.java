@@ -133,14 +133,14 @@ public class CryptoTransientDecoderTest {
             throws SubjectCanonicalizationException, DataSealerException, NameDecoderException {
         String ct = code(PRINCIPAL, ISSUER, RECIPIENT);
 
-        decoder.decode(ct + ct, ISSUER, "my" + RECIPIENT);
+        decoder.decode(ct, ISSUER, "my" + RECIPIENT);
     }
 
     @Test(expectedExceptions = {SubjectCanonicalizationException.class,}) public void badIdP()
             throws SubjectCanonicalizationException, DataSealerException, NameDecoderException {
         String ct = code(PRINCIPAL, ISSUER, RECIPIENT);
 
-        decoder.decode(ct + ct, "my" + ISSUER, RECIPIENT);
+        decoder.decode(ct, "my" + ISSUER, RECIPIENT);
     }
 
 }
