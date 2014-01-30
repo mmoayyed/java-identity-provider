@@ -106,7 +106,7 @@ public class SimpleSubjectCanonicalization extends AbstractSubjectCanonicalizati
          * @param duringAction  true iff the method is run from the action above
          * @return true iff the action can operate successfully on the candidate contexts
          */
-        public boolean apply(@Nullable final ProfileRequestContext profileRequestContext,
+        public boolean apply(@Nonnull final ProfileRequestContext profileRequestContext,
                 @Nonnull final SubjectCanonicalizationContext c14nContext, final boolean duringAction) {
 
             final Set<UsernamePrincipal> usernames;
