@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
+import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
 import net.shibboleth.idp.saml.nameid.TransientIdParameters;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -82,27 +83,28 @@ public class TransientDecoder extends AbstractIdentifiableInitializableComponent
      * @param issuerId The issuer (not used)
      * @param requesterId the requested (SP)
      * @return the decoded entity.
-     * @throws SubjectCanonicalizationException if a decode error occurs.
+     * @throws NameDecoderException if a decode error occurs.
+     * @throws SubjectCanonicalizationException if a mismatch occurs.
      */
     /** {@inheritDoc} */
     @Override @Nonnull public String decode(@Nonnull String transientId, @Nullable String issuerId,
-            @Nullable String requesterId) throws SubjectCanonicalizationException {
+            @Nullable String requesterId) throws SubjectCanonicalizationException, NameDecoderException {
         Constraint.isNotNull(requesterId, "Supplied requested should be null");
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         if (null == transientId) {
-            throw new SubjectCanonicalizationException(getLogPrefix() + " transient Identifier was null");
+            throw new NameDecoderException(getLogPrefix() + " transient Identifier was null");
         }
 
         try {
             final StorageRecord record = idStore.read(TransientIdParameters.CONTEXT, transientId);
 
             if (null == record) {
-                throw new SubjectCanonicalizationException(getLogPrefix() + " Could not find transient Identifier");
+                throw new NameDecoderException(getLogPrefix() + " Could not find transient Identifier");
             }
 
             if (record.getExpiration() < System.currentTimeMillis()) {
-                throw new SubjectCanonicalizationException(getLogPrefix() + " Transient identifier has expired");
+                throw new NameDecoderException(getLogPrefix() + " Transient identifier has expired");
             }
 
             final TransientIdParameters param = new TransientIdParameters(record.getValue());

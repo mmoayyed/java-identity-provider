@@ -26,6 +26,7 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
+import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -114,6 +115,10 @@ public class NameIdentifierCanonicalization extends AbstractSAMLNameCanonicaliza
                                 c14nContext.getRequesterId());
             } catch (SubjectCanonicalizationException e) {
                 c14nContext.setException(e);
+                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+                return false;
+            } catch (NameDecoderException e) {
+                c14nContext.setException(e);
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);
                 return false;
             }
@@ -157,7 +162,7 @@ public class NameIdentifierCanonicalization extends AbstractSAMLNameCanonicaliza
          * @param duringAction true iff the method is run from the action above
          * @return true iff the action can operate successfully on the candidate contexts
          */
-        public boolean apply(@Nullable final ProfileRequestContext profileRequestContext,
+        public boolean apply(@Nonnull final ProfileRequestContext profileRequestContext,
                 @Nonnull final SubjectCanonicalizationContext c14nContext, final boolean duringAction) {
 
             final Set<NameIdentifierPrincipal> nameIdentifiers;
@@ -169,8 +174,8 @@ public class NameIdentifierCanonicalization extends AbstractSAMLNameCanonicaliza
 
             if (duringAction) {
                 if (nameIdentifiers == null || nameIdentifiers.isEmpty()) {
-                    c14nContext.setException(
-                            new SubjectCanonicalizationException("No NameIdentifierPrincipals were found"));
+                    c14nContext.setException(new SubjectCanonicalizationException(
+                            "No NameIdentifierPrincipals were found"));
                     ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
                     return false;
                 } else if (nameIdentifiers.size() > 1) {
@@ -186,14 +191,10 @@ public class NameIdentifierCanonicalization extends AbstractSAMLNameCanonicaliza
             }
             final NameIdentifier nameIdentifier = nameIdentifiers.iterator().next().getNameIdentifier();
 
-            if (!getFormats().contains(nameIdentifier.getFormat())) {
-                if (duringAction) {
-                    c14nContext.setException(new SubjectCanonicalizationException("Format not supported"));
-                    ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-                }
-                return false;
-            }
-            return true;
+            return formatMatches(nameIdentifier.getFormat(), profileRequestContext, c14nContext, duringAction)
+                    && responderMatches(nameIdentifier.getNameQualifier(), profileRequestContext, c14nContext,
+                            duringAction);
+
         }
 
     }

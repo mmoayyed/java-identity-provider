@@ -38,9 +38,10 @@ public interface NameIdentifierDecoder {
      * @param responderId the entityID of the which issued (and is looking at and responding to) the value
      * @param requesterId the entityID of the which is providing the and which asking for information based on it.
      * @return the principal decoded from the value
-     * @throws SubjectCanonicalizationException if some preconditions failed or an error occurred during translation.
+     * @throws SubjectCanonicalizationException if match conditions failed.
+     * @throws NameDecoderException if an error occurred during translation.
      */
     @Nonnull public String decode(@Nonnull String value, @Nullable String responderId, @Nullable String requesterId)
-            throws SubjectCanonicalizationException;
+            throws SubjectCanonicalizationException, NameDecoderException;
 
 }

@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
+import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
@@ -81,30 +82,31 @@ public class CryptoTransientDecoder extends AbstractIdentifiableInitializableCom
      * @param issuerId The issuer (not used)
      * @param requesterId the requested (SP)
      * @return the decoded entity.
-     * @throws SubjectCanonicalizationException if a decode error occurs.
+     * @throws SubjectCanonicalizationException if a mismatch occurrs
+     * @throws NameDecoderException if a decode error occurs.
      */
     /** {@inheritDoc} */
     @Override @Nonnull public String decode(@Nonnull String transientId, @Nullable String issuerId,
-            @Nullable String requesterId) throws SubjectCanonicalizationException {
+            @Nullable String requesterId) throws SubjectCanonicalizationException, NameDecoderException {
         Constraint.isNotNull(requesterId, "Supplied requested should be null");
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         if (null == transientId) {
-            throw new SubjectCanonicalizationException(getLogPrefix() + " transient Identifier was null");
+            throw new NameDecoderException(getLogPrefix() + " transient Identifier was null");
         }
 
         final String decodedId;
         try {
             decodedId = dataSealer.unwrap(transientId);
         } catch (DataExpiredException e) {
-            throw new SubjectCanonicalizationException(getLogPrefix() + " Principal identifier has expired.");
+            throw new NameDecoderException(getLogPrefix() + " Principal identifier has expired.");
         } catch (DataSealerException e) {
-            throw new SubjectCanonicalizationException(getLogPrefix()
+            throw new NameDecoderException(getLogPrefix()
                     + " Caught exception unwrapping principal identifier.", e);
         }
 
         if (decodedId == null) {
-            throw new SubjectCanonicalizationException(getLogPrefix()
+            throw new NameDecoderException(getLogPrefix()
                     + " Unable to recover principal from transient identifier: " + transientId);
         }
 

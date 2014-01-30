@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.impl.nameid;
 import java.io.IOException;
 
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
+import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.TransientIdParameters;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -59,7 +60,7 @@ public class TransientDecoderTest {
 
     }
 
-    @Test(expectedExceptions={SubjectCanonicalizationException.class,}) public void testExpired() throws ProfileException, ComponentInitializationException, IOException {
+    @Test(expectedExceptions={NameDecoderException.class,}) public void testExpired() throws ProfileException, ComponentInitializationException, IOException {
 
         final StorageService store = new MemoryStorageService();
         store.initialize();
@@ -84,7 +85,7 @@ public class TransientDecoderTest {
     }
 
 
-    @Test(expectedExceptions={SubjectCanonicalizationException.class,})  public void testNotFound() throws ProfileException, ComponentInitializationException, IOException {
+    @Test(expectedExceptions={NameDecoderException.class,})  public void testNotFound() throws ProfileException, ComponentInitializationException, IOException {
 
         final StorageService store = new MemoryStorageService();
         store.initialize();

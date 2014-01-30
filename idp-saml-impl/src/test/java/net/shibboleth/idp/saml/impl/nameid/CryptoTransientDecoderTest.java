@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.impl.nameid;
 import java.io.IOException;
 
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
+import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.DataSealerException;
@@ -37,12 +38,15 @@ import org.testng.annotations.Test;
 public class CryptoTransientDecoderTest {
 
     private final static long TIMEOUT = 5000;
+
     private final static String PRINCIPAL = "ThePrincipal";
+
     private final static String ISSUER = "https://idp.example.org/issuer";
+
     private final static String RECIPIENT = "https://sp.example.org/recipient";
-    
 
     private DataSealer dataSealer;
+
     private CryptoTransientDecoder decoder;
 
     /**
@@ -75,57 +79,68 @@ public class CryptoTransientDecoderTest {
         decoder.initialize();
     }
 
-    private String code(String principalName, String attributeIssuerID, String attributeRecipientID, long timeout) throws DataSealerException {
-        final String principalTokenId = new StringBuilder().append(attributeIssuerID).append("!")
-                .append(attributeRecipientID).append("!").append(principalName).toString();
+    private String code(String principalName, String attributeIssuerID, String attributeRecipientID, long timeout)
+            throws DataSealerException {
+        final String principalTokenId =
+                new StringBuilder().append(attributeIssuerID).append("!").append(attributeRecipientID).append("!")
+                        .append(principalName).toString();
         return dataSealer.wrap(principalTokenId, System.currentTimeMillis() + timeout);
     }
 
-    private String code(String principalName, String attributeIssuerID, String attributeRecipientID) throws DataSealerException {
+    private String code(String principalName, String attributeIssuerID, String attributeRecipientID)
+            throws DataSealerException {
         return code(principalName, attributeIssuerID, attributeRecipientID, TIMEOUT);
     }
 
-    @Test public void testSucess() throws ProfileException, ComponentInitializationException, IOException, DataSealerException {
+    @Test public void testSucess() throws ProfileException, ComponentInitializationException, IOException,
+            DataSealerException {
         String ct = code(PRINCIPAL, ISSUER, RECIPIENT);
-        
+
         Assert.assertEquals(decoder.decode(ct, ISSUER, RECIPIENT), PRINCIPAL);
     }
 
-    @Test(expectedExceptions={SubjectCanonicalizationException.class,}) public void noTransient() throws SubjectCanonicalizationException {
+    @Test(expectedExceptions = {NameDecoderException.class,}) public void noTransient()
+            throws SubjectCanonicalizationException, NameDecoderException {
         decoder.decode(null, ISSUER, RECIPIENT);
     }
-    
-    
-    @Test(expectedExceptions={SubjectCanonicalizationException.class,}) public void timeout() throws SubjectCanonicalizationException, DataSealerException {
+
+    @Test(expectedExceptions = {NameDecoderException.class,}) public void timeout()
+            throws SubjectCanonicalizationException, DataSealerException, NameDecoderException {
         String ct = code(PRINCIPAL, ISSUER, RECIPIENT, -10);
-        
+
         decoder.decode(ct, ISSUER, RECIPIENT);
     }
 
-    @Test(expectedExceptions={SubjectCanonicalizationException.class,}) public void baddata() throws SubjectCanonicalizationException, DataSealerException {
+    @Test(expectedExceptions = {NameDecoderException.class,}) public void baddata()
+            throws SubjectCanonicalizationException, DataSealerException, NameDecoderException {
         String ct = code(PRINCIPAL, ISSUER, RECIPIENT);
-        
+
         decoder.decode(ct.toUpperCase(), ISSUER, RECIPIENT);
     }
 
-    @Test(expectedExceptions={SubjectCanonicalizationException.class,}) public void baddata2() throws SubjectCanonicalizationException, DataSealerException {
-        
-        final String principalTokenId = new StringBuilder().append(ISSUER).append("!")
-                .append(RECIPIENT).append("+").append(PRINCIPAL).toString();
+    @Test(expectedExceptions = {SubjectCanonicalizationException.class,}) public void baddata2()
+            throws SubjectCanonicalizationException, DataSealerException, NameDecoderException {
+
+        final String principalTokenId =
+                new StringBuilder().append(ISSUER).append("!").append(RECIPIENT).append("+").append(PRINCIPAL)
+                        .toString();
         String ct = dataSealer.wrap(principalTokenId, System.currentTimeMillis() + TIMEOUT);
-        
+
         decoder.decode(ct, ISSUER, RECIPIENT);
     }
-    
-    @Test(expectedExceptions={SubjectCanonicalizationException.class,}) public void badSP() throws SubjectCanonicalizationException, DataSealerException {
+
+    @Test(expectedExceptions = {SubjectCanonicalizationException.class,}) public void badSP()
+            throws SubjectCanonicalizationException, DataSealerException, NameDecoderException {
         String ct = code(PRINCIPAL, ISSUER, RECIPIENT);
-        
-        decoder.decode(ct+ct, ISSUER, "my"+RECIPIENT);
+
+        decoder.decode(ct + ct, ISSUER, "my" + RECIPIENT);
     }
-    @Test(expectedExceptions={SubjectCanonicalizationException.class,}) public void badIdP() throws SubjectCanonicalizationException, DataSealerException {
+
+    @Test(expectedExceptions = {SubjectCanonicalizationException.class,}) public void badIdP()
+            throws SubjectCanonicalizationException, DataSealerException, NameDecoderException {
         String ct = code(PRINCIPAL, ISSUER, RECIPIENT);
-        
-        decoder.decode(ct+ct, "my"+ISSUER, RECIPIENT);
+
+        decoder.decode(ct + ct, "my" + ISSUER, RECIPIENT);
     }
 
 }

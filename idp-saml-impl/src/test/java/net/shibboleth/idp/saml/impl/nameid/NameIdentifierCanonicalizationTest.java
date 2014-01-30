@@ -102,6 +102,12 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
         id.setNameQualifier(nameQualifier);
         return id;
     }
+    
+    private NameIdentifier nameId(String value, String format) {
+
+        return nameId(value, format, RESPONDER);
+    }
+
 
     @Test public void testFormatCount() {
         Assert.assertEquals(action.getFormats().size(), 2);
@@ -129,8 +135,8 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
 
     @Test public void testMultiPrincipals() throws ProfileException {
         Subject subject = new Subject();
-        subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("value", NameIdentifier.WIN_DOMAIN_QUALIFIED, "qual")));
-        subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("value2", NameIdentifier.X509_SUBJECT, "qual")));
+        subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("value", NameIdentifier.WIN_DOMAIN_QUALIFIED)));
+        subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("value2", NameIdentifier.X509_SUBJECT)));
 
         setSubContext(subject, null, null);
 
@@ -142,7 +148,7 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
 
     @Test public void testWrongFormat() throws ProfileException {
         Subject subject = new Subject();
-        subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("value", NameIdentifier.WIN_DOMAIN_QUALIFIED, "qual")));
+        subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("value", NameIdentifier.WIN_DOMAIN_QUALIFIED)));
 
         setSubContext(subject, RESPONDER, REQUESTER);
 
@@ -154,30 +160,42 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
 
     @Test public void testWrongRequester() throws ProfileException {
         Subject subject = new Subject();
-        subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("value", NameIdentifier.EMAIL, "qual")));
+        subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("value", NameIdentifier.EMAIL)));
         setSubContext(subject, RESPONDER, RESPONDER);
 
         action.execute(prc);
 
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.SUBJECT_C14N_ERROR);
+        ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
         Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
     }
 
-    @Test public void testWrongResponder() throws ProfileException {
+    @Test public void testWrongResponderNameId() throws ProfileException {
         Subject subject = new Subject();
-        subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("value", NameIdentifier.EMAIL, "qual")));
+        subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("value", NameIdentifier.EMAIL)));
         setSubContext(subject, REQUESTER, REQUESTER);
 
         action.execute(prc);
 
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.SUBJECT_C14N_ERROR);
+        ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
         Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
     }
+    
+    @Test public void testWrongResponder() throws ProfileException {
+        Subject subject = new Subject();
+        subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("value", NameIdentifier.EMAIL, REQUESTER)));
+        setSubContext(subject, REQUESTER, REQUESTER);
+
+        action.execute(prc);
+
+        ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
+        Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
+    }
+
 
     @Test public void testSuccess() throws ProfileException {
         Subject subject = new Subject();
         subject.getPrincipals().add(new UsernamePrincipal("foo@osu.edu"));
-        subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("works", NameIdentifier.EMAIL, "qual")));
+        subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("works", NameIdentifier.EMAIL)));
         setSubContext(subject, RESPONDER, REQUESTER);
 
 
