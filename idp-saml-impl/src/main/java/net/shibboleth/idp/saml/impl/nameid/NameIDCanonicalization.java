@@ -36,6 +36,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.profile.SAML2ObjectSupport;
 
 import com.google.common.base.Predicate;
 
@@ -98,6 +99,34 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
         }
         super.doInitialize();
     }
+    
+    /**
+     * Check the format against the format list. If we are in the action then we log the error into the C14N context and
+     * add the appropriate event to the ProfileRequest context
+     * 
+     * @param format the format to check
+     * @param profileRequestContext the current profile request context
+     * @param c14nContext the current c14n context
+     * @param duringAction true iff the method is run from the action above
+     * @return true if the format matches.
+     */
+    protected boolean formatMatches(@Nonnull String format, @Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final SubjectCanonicalizationContext c14nContext, final boolean duringAction) {
+
+        for (String testFormat: getFormats()) {
+            if (SAML2ObjectSupport.areNameIdentifierFormatsEquivalent(testFormat, format)) {
+                return true;
+            }
+        }
+        
+        if (duringAction) {
+            c14nContext.setException(new SubjectCanonicalizationException("Format not supported"));
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+        }
+        return false;
+    }
+
+
 
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
