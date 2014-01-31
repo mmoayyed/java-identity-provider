@@ -86,6 +86,11 @@
     
     <action-state id="AddAuthenticationStatementToAssertion">
         <evaluate expression="AddAuthenticationStatementToAssertion" />
+        <transition on="proceed" to="AddAttributeStatementToAssertion"/>
+    </action-state>
+    
+    <action-state id="AddAttributeStatementToAssertion">
+        <evaluate expression="AddAttributeStatementToAssertion" />
         <transition on="proceed" to="RecordResponseComplete"/>
     </action-state>
 

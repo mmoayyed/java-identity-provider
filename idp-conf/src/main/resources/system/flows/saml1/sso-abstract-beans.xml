@@ -142,6 +142,10 @@
         class="net.shibboleth.idp.saml.impl.profile.saml1.AddAuthenticationStatementToAssertion" />
 
     <bean
+        id="AddAttributeStatementToAssertion"
+        class="net.shibboleth.idp.saml.impl.profile.saml1.AddAttributeStatementToAssertion" />
+
+    <bean
         id="RecordResponseComplete"
         class="net.shibboleth.idp.profile.impl.RecordResponseComplete" />
 
