@@ -122,10 +122,6 @@
         c:service-ref="shibboleth.AttributeFilterService" />
 
     <bean
-        id="AddResponseShell"
-        class="net.shibboleth.idp.saml.impl.profile.saml1.AddResponseShell" />
-
-    <bean
         id="UpdateSessionWithSPSession"
         class="net.shibboleth.idp.session.impl.UpdateSessionWithSPSession"
         scope="prototype"
@@ -136,6 +132,10 @@
     <bean
         id="InitializeOutboundMessageContext"
         class="net.shibboleth.idp.saml.impl.profile.saml1.InitializeOutboundMessageContext" />
+
+    <bean
+        id="AddResponseShell"
+        class="net.shibboleth.idp.saml.impl.profile.saml1.AddResponseShell" />
 
     <bean
         id="RecordResponseComplete"

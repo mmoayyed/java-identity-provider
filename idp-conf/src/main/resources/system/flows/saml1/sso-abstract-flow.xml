@@ -67,13 +67,6 @@
         <transition on="proceed" to="UpdateSessionWithSPSession" />
     </action-state>
     
-    <!-- TODO 
-    <action-state id="AddResponseShell">
-        <evaluate expression="AddResponseShell" />
-        <transition on="proceed" to="RecordResponseComplete" />
-    </action-state>
-    -->
-    
     <action-state id="UpdateSessionWithSPSession">
         <evaluate expression="UpdateSessionWithSPSession" />
         <transition on="proceed" to="InitializeOutboundMessageContext"/>
@@ -83,6 +76,11 @@
    
     <action-state id="InitializeOutboundMessageContext">
         <evaluate expression="InitializeOutboundMessageContext" />
+        <transition on="proceed" to="AddResponseShell" />
+    </action-state>
+    
+    <action-state id="AddResponseShell">
+        <evaluate expression="AddResponseShell" />
         <transition on="proceed" to="RecordResponseComplete" />
     </action-state>
 
