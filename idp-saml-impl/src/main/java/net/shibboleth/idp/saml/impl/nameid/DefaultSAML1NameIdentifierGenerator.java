@@ -66,7 +66,7 @@ public class DefaultSAML1NameIdentifierGenerator extends AbstractSAML1NameIdenti
     @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
 
     /** Strategy function to lookup AttributeContext. */
-    @Nonnull private Function<ProfileRequestContext, AttributeContext> attributeContextLookupStrategy;
+    @Nonnull private Function<RelyingPartyContext, AttributeContext> attributeContextLookupStrategy;
     
     /** Attribute(s) to use as an identifier source. */
     @Nonnull @NonnullElements private List<String> attributeSourceIds;
@@ -97,7 +97,7 @@ public class DefaultSAML1NameIdentifierGenerator extends AbstractSAML1NameIdenti
      * @param strategy lookup function to use
      */
     public synchronized void setAttributeContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, AttributeContext> strategy) {
+            @Nonnull final Function<RelyingPartyContext, AttributeContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         attributeContextLookupStrategy = Constraint.isNotNull(strategy,
@@ -132,8 +132,14 @@ public class DefaultSAML1NameIdentifierGenerator extends AbstractSAML1NameIdenti
             throws ProfileException {
         
         // Check for a natively generated NameIdentifier attribute value.
+        
+        final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
+        if (rpCtx == null) {
+            log.warn("Unable to locate RelyingPartContext.");
+            return null;
+        }
 
-        final AttributeContext attributeCtx = attributeContextLookupStrategy.apply(profileRequestContext);
+        final AttributeContext attributeCtx = attributeContextLookupStrategy.apply(rpCtx);
         if (attributeCtx == null) {
             log.warn("Unable to locate AttributeContext");
             return null;
@@ -170,8 +176,11 @@ public class DefaultSAML1NameIdentifierGenerator extends AbstractSAML1NameIdenti
     @Override
     @Nullable protected String getIdentifier(@Nonnull final ProfileRequestContext profileRequestContext)
             throws ProfileException {
+
+        // TODO null check rpCtx ?
+        final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         
-        final AttributeContext attributeCtx = attributeContextLookupStrategy.apply(profileRequestContext);
+        final AttributeContext attributeCtx = attributeContextLookupStrategy.apply(rpCtx);
         
         final Map<String, IdPAttribute> attributes = attributeCtx.getIdPAttributes();
         for (final String sourceId : attributeSourceIds) {
