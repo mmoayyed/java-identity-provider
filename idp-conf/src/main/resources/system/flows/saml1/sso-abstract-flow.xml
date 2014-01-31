@@ -81,7 +81,12 @@
     
     <action-state id="AddResponseShell">
         <evaluate expression="AddResponseShell" />
-        <transition on="proceed" to="RecordResponseComplete" />
+        <transition on="proceed" to="AddAuthenticationStatementToAssertion" />
+    </action-state>
+    
+    <action-state id="AddAuthenticationStatementToAssertion">
+        <evaluate expression="AddAuthenticationStatementToAssertion" />
+        <transition on="proceed" to="RecordResponseComplete"/>
     </action-state>
 
     <!-- TODO needs non-null outbound message context
