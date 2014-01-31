@@ -63,7 +63,7 @@ public class BasicSPSessionCreationStrategy implements Function<ProfileRequestCo
     @Override
     @Nullable public SPSession apply(@Nullable final ProfileRequestContext input) {
         
-        if (input.getInboundMessageContext() == null) {
+        if (input == null || input.getInboundMessageContext() == null) {
             log.debug("No inbound MessageContext, no SPSession created");
             return null;
         }
