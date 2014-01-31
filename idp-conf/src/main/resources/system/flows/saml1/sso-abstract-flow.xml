@@ -1,7 +1,10 @@
-<flow xmlns="http://www.springframework.org/schema/webflow"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.springframework.org/schema/webflow classpath:/org/springframework/webflow/engine/model/builder/xml/spring-webflow-2.0.xsd"
-      abstract="true">
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow classpath:/org/springframework/webflow/engine/model/builder/xml/spring-webflow-2.0.xsd"
+    abstract="true">
+
+    <!-- https://wiki.shibboleth.net/confluence/display/IDP30/SAML+1.1+Browser+SSO -->
+
+    <!-- Preamble / Decode / Configuration Lookup -->
 
     <on-start>
         <evaluate expression="InitializeProfileRequestContext" />
@@ -12,15 +15,9 @@
         <transition on="proceed" to="HandleInboundMessage" />
     </action-state>
 
-    <!-- TODO OpenSAML message handling -->
+    <!-- TODO inbound message handling -->
     <action-state id="HandleInboundMessage">
         <evaluate expression="HandleInboundMessage" />
-        <transition on="proceed" to="AddBasicMessageMetadataContext" />
-    </action-state>
-
-    <!-- TODO to be replaced by something else -->
-    <action-state id="AddBasicMessageMetadataContext">
-        <evaluate expression="AddBasicMessageMetadataContext" />
         <transition on="proceed" to="InitializeRelyingPartyContext" />
     </action-state>
 
@@ -36,14 +33,23 @@
 
     <action-state id="SelectProfileConfiguration">
         <evaluate expression="SelectProfileConfiguration" />
+        <transition on="proceed" to="InitializeOutboundMessageContext" />
+    </action-state>
+
+    <!-- Request Checking and Preliminaries -->
+
+    <action-state id="InitializeOutboundMessageContext">
+        <evaluate expression="InitializeOutboundMessageContext" />
         <transition on="proceed" to="InitializeAuthenticationContext" />
     </action-state>
+
+    <!-- Authentication Handoff -->
 
     <action-state id="InitializeAuthenticationContext">
         <evaluate expression="InitializeAuthenticationContext" />
         <transition on="proceed" to="InitializeRequestedPrincipalContext" />
     </action-state>
-    
+
     <action-state id="InitializeRequestedPrincipalContext">
         <evaluate expression="InitializeRequestedPrincipalContext" />
         <transition on="proceed" to="DoAuthenticationSubflow" />
@@ -51,11 +57,11 @@
 
     <subflow-state id="DoAuthenticationSubflow" subflow="Authentication">
         <transition on="proceed" to="ResolveAttributes" />
-        <!-- TODO
-        <transition on="#{true}" to="BuildResponse" />
-        -->
+        <!-- TODO <transition on="#{true}" to="BuildResponse" /> -->
         <transition on="#{true}" to="ResolveAttributes" />
     </subflow-state>
+
+    <!-- Attribute Resolution -->
 
     <action-state id="ResolveAttributes">
         <evaluate expression="ResolveAttributes" />
@@ -64,53 +70,89 @@
 
     <action-state id="FilterAttributes">
         <evaluate expression="FilterAttributes" />
-        <transition on="proceed" to="UpdateSessionWithSPSession" />
-    </action-state>
-    
-    <action-state id="UpdateSessionWithSPSession">
-        <evaluate expression="UpdateSessionWithSPSession" />
-        <transition on="proceed" to="InitializeOutboundMessageContext"/>
-        <!-- Mask storage failure. -->
-        <transition on="IOError" to="InitializeOutboundMessageContext"/>
-    </action-state>
-   
-    <action-state id="InitializeOutboundMessageContext">
-        <evaluate expression="InitializeOutboundMessageContext" />
         <transition on="proceed" to="AddResponseShell" />
     </action-state>
-    
+
+    <!-- Response Generation -->
+
     <action-state id="AddResponseShell">
         <evaluate expression="AddResponseShell" />
         <transition on="proceed" to="AddAuthenticationStatementToAssertion" />
     </action-state>
-    
+
+    <!-- Assertion Generation -->
+
     <action-state id="AddAuthenticationStatementToAssertion">
         <evaluate expression="AddAuthenticationStatementToAssertion" />
-        <transition on="proceed" to="AddAttributeStatementToAssertion"/>
+        <transition on="proceed" to="AddAttributeStatementToAssertion" />
     </action-state>
-    
+
     <action-state id="AddAttributeStatementToAssertion">
         <evaluate expression="AddAttributeStatementToAssertion" />
-        <transition on="proceed" to="RecordResponseComplete"/>
+        <transition on="proceed" to="AddNameIdentifierToSubjects" />
     </action-state>
 
-    <!-- TODO needs non-null outbound message context
+    <action-state id="AddNameIdentifierToSubjects">
+        <evaluate expression="AddNameIdentifierToSubjects" />
+        <transition on="proceed" to="AddSubjectConfirmationToSubjects" />
+    </action-state>
+
+    <action-state id="AddSubjectConfirmationToSubjects">
+        <evaluate expression="AddSubjectConfirmationToSubjects" />
+        <transition on="proceed" to="AddNotBeforeConditionToAssertions" />
+    </action-state>
+
+    <action-state id="AddNotBeforeConditionToAssertions">
+        <evaluate expression="AddNotBeforeConditionToAssertions" />
+        <transition on="proceed" to="AddNotOnOrAfterConditionToAssertions" />
+    </action-state>
+
+    <action-state id="AddNotOnOrAfterConditionToAssertions">
+        <evaluate expression="AddNotOnOrAfterConditionToAssertions" />
+        <transition on="proceed" to="AddAudienceRestrictionToAssertions" />
+    </action-state>
+
+    <action-state id="AddAudienceRestrictionToAssertions">
+        <evaluate expression="AddAudienceRestrictionToAssertions" />
+        <transition on="proceed" to="SignAssertions" />
+    </action-state>
+
+    <!-- TODO only a stub action -->
+    <action-state id="SignAssertions">
+        <evaluate expression="SignAssertions" />
+        <transition on="proceed" to="UpdateSessionWithSPSession" />
+    </action-state>
+
+    <!-- Session Update -->
+
+    <action-state id="UpdateSessionWithSPSession">
+        <evaluate expression="UpdateSessionWithSPSession" />
+        <transition on="proceed" to="HandleOutboundMessage" />
+        <!-- Mask storage failure. -->
+        <transition on="IOError" to="HandleOutboundMessage" />
+    </action-state>
+
+    <!-- Post Processing / Encode -->
+
     <action-state id="HandleOutboundMessage">
         <evaluate expression="HandleOutboundMessage" />
+        <transition on="proceed" to="EncodeMessage" />
+    </action-state>
+
+    <action-state id="EncodeMessage">
+        <evaluate expression="EncodeMessage" />
         <transition on="proceed" to="RecordResponseComplete" />
     </action-state>
-    -->
-
-    <!-- TODO actions -->
 
     <action-state id="RecordResponseComplete">
         <evaluate expression="RecordResponseComplete" />
         <transition on="proceed" to="end" />
     </action-state>
 
-    <end-state id="end" >
+    <end-state id="end">
         <!-- TODO: Probably remove later. For tests, map the profile request context as an output attribute -->
-        <output name="ProfileRequestContext" value="flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext')" />
+        <output name="ProfileRequestContext"
+            value="flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext')" />
     </end-state>
 
     <!-- TODO error view-state ? -->

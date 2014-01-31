@@ -14,7 +14,7 @@
 
     <context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
 
-    <!-- Note: The DecodeMessage action is defined in the non-abstract beans definition file. -->
+    <!-- Note: The DecodeMessage and EncodeMessage actions are defined in the non-abstract beans definition file. -->
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
@@ -146,19 +146,75 @@
         class="net.shibboleth.idp.saml.impl.profile.saml1.AddAttributeStatementToAssertion" />
 
     <bean
+        id="DefaultSAML1NameIdentifierGenerator"
+        class="net.shibboleth.idp.saml.impl.nameid.DefaultSAML1NameIdentifierGenerator"
+        p:format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">
+        <property name="attributeSourceIds">
+            <util:list>
+                <value>uid</value>
+            </util:list>
+        </property>
+    </bean>
+
+    <bean
+        id="SAML1NameIdentifierGenerator"
+        class="net.shibboleth.idp.saml.impl.nameid.DefaultSAML1NameIdentifierGenerator"
+        p:format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress">
+        <property name="attributeSourceIds">
+            <util:list>
+                <value>email</value>
+            </util:list>
+        </property>
+    </bean>
+
+    <bean
+        id="AddNameIdentifierToSubjects"
+        class="org.opensaml.saml.saml1.profile.impl.AddNameIdentifierToSubjects"
+        p:defaultNameIDGenerator-ref="DefaultSAML1NameIdentifierGenerator">
+        <property name="nameIdentifierGenerators">
+            <util:list>
+                <ref bean="SAML1NameIdentifierGenerator" />
+            </util:list>
+        </property>
+    </bean>
+
+    <bean
+        id="AddSubjectConfirmationToSubjects"
+        class="org.opensaml.saml.saml1.profile.impl.AddSubjectConfirmationToSubjects">
+        <property name="methods">
+            <util:list>
+                <value>urn:oasis:names:tc:SAML:1.0:cm:bearer</value>
+            </util:list>
+        </property>
+    </bean>
+
+    <bean
+        id="AddNotBeforeConditionToAssertions"
+        class="net.shibboleth.idp.saml.impl.profile.saml1.AddNotBeforeConditionToAssertions" />
+
+    <bean
+        id="AddNotOnOrAfterConditionToAssertions"
+        class="net.shibboleth.idp.saml.impl.profile.saml1.AddNotOnOrAfterConditionToAssertions" />
+
+    <bean
+        id="AddAudienceRestrictionToAssertions"
+        class="net.shibboleth.idp.saml.impl.profile.saml1.AddAudienceRestrictionToAssertions" />
+
+    <!-- TODO only a stub action -->
+    <bean
+        id="SignAssertions"
+        class="net.shibboleth.idp.saml.impl.profile.saml1.SignAssertions" />
+
+    <bean
         id="RecordResponseComplete"
         class="net.shibboleth.idp.profile.impl.RecordResponseComplete" />
 
 
-    <!-- TODO The following are mostly temporary. -->
+    <!-- TODO The following are temporary. -->
 
     <bean
         id="AlwaysTruePredicate"
         class="com.google.common.base.Predicates"
         factory-method="alwaysTrue" />
-
-    <bean
-        id="AddBasicMessageMetadataContext"
-        class="idp.AddBasicMessageMetadataContext" />
 
 </beans>
