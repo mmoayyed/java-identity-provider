@@ -19,6 +19,7 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 
 import javax.annotation.Nonnull;
 
+import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.AbstractProfileAction;
@@ -28,8 +29,10 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
+import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.xmlsec.SecurityConfigurationSupport;
 import org.opensaml.xmlsec.SignatureSigningParameters;
@@ -68,6 +71,8 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
             return false;
         }
 
+        // TODO incomplete
+
         return super.doPreExecute(profileRequestContext);
     }
 
@@ -83,6 +88,11 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
         final SAMLPeerEntityContext peerContext = msgCtx.getSubcontext(SAMLPeerEntityContext.class, true);
         peerContext.setEntityId(getPeerEntityId(profileRequestContext));
 
+        SAMLEndpointContext endpointContext = peerContext.getSubcontext(SAMLEndpointContext.class, true);
+        // TODO not correct
+        endpointContext.setEndpoint(buildSpAcsEndpoint(getBindingURI(profileRequestContext),
+                "https://sp.example.org/ACSURL"));
+
         final SAMLBindingContext bindingCtx = msgCtx.getSubcontext(SAMLBindingContext.class, true);
         bindingCtx.setBindingUri(getBindingURI(profileRequestContext));
         bindingCtx.setRelayState(SAMLBindingSupport.getRelayState(profileRequestContext.getInboundMessageContext()));
@@ -91,6 +101,23 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
         secParamCtx.setSignatureSigningParameters(getSignatureSigningParameters(profileRequestContext));
 
         log.debug("{} Initialized outbound message context", this.getLogPrefix());
+    }
+
+    /**
+     * TODO not correct
+     * 
+     * @param binding
+     * @param destination
+     * @return
+     */
+    private AssertionConsumerService buildSpAcsEndpoint(String binding, String destination) {
+        // TODO wrong
+        AssertionConsumerService acsEndpoint =
+                (AssertionConsumerService) XMLObjectSupport.getBuilder(AssertionConsumerService.DEFAULT_ELEMENT_NAME)
+                        .buildObject(AssertionConsumerService.DEFAULT_ELEMENT_NAME);
+        acsEndpoint.setBinding(binding);
+        acsEndpoint.setLocation(destination);
+        return acsEndpoint;
     }
 
     /**
