@@ -58,7 +58,7 @@ public class DatabaseBackedIDStoreTest {
     @BeforeTest
     public void setupSource() throws StoredIDException, IOException  {
         
-        testSource = DatabaseTestingSupport.GetMockDataSource("/data/net/shibboleth/idp/attribute/resolver/impl/dc/StoredIdStore.sql", "StoredIDStore");
+        testSource = DatabaseTestingSupport.GetMockDataSource("/net/shibboleth/idp/saml/impl/attribute/resolver/StoredIdStore.sql", "StoredIDStore");
     }
     
     @Test public void initializeAndGetters() throws ComponentInitializationException, StoredIDException {

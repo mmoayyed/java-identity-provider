@@ -54,12 +54,6 @@
 		<!-- Provided Dependencies -->
 
 		<!-- Runtime Dependencies -->
-		<dependency>
-			<groupId>org.glassfish</groupId>
-			<artifactId>javax.json</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-
 		<!-- Test Dependencies -->
 
         <dependency>

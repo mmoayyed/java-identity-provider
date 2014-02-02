@@ -59,7 +59,7 @@ public class CryptoTransientDecoderTest {
     @BeforeClass public void setupDataSealer() throws IOException, DataSealerException,
             ComponentInitializationException {
 
-        final Resource keyStore = new ClassPathResource("SealerKeyStore.jks");
+        final Resource keyStore = new ClassPathResource("/net/shibboleth/idp/saml/impl/attribute/resolver/SealerKeyStore.jks");
         Assert.assertTrue(keyStore.exists());
 
         final String keyStorePath = keyStore.getFile().getAbsolutePath();
