@@ -46,6 +46,7 @@ public class KeyAuthorityNodeProcessor implements MetadataNodeProcessor {
     private Logger log = LoggerFactory.getLogger(KeyAuthority.class);
 
     /** {@inheritDoc} */
+    @Override
     public void process(XMLObject metadataNode) throws FilterException {
         if (metadataNode instanceof EntitiesDescriptor) {
             handleEntitiesDescriptor((EntitiesDescriptor) metadataNode);

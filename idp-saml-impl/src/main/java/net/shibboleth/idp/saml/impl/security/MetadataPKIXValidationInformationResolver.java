@@ -54,32 +54,31 @@ import org.opensaml.security.x509.PKIXValidationInformation;
 import org.opensaml.security.x509.PKIXValidationInformationResolver;
 import org.opensaml.xmlsec.keyinfo.KeyInfoSupport;
 import org.opensaml.xmlsec.signature.KeyInfo;
-import org.opensaml.xmlsec.signature.KeyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of {@link PKIXValidationInformationResolver} which resolves {@link PKIXValidationInformation} based
  * on information stored in SAML 2 metadata. Validation information is retrieved from Shibboleth-specific metadata
- * extensions to {@link EntityDescriptor} represented by instances of {@link KeyAuthority}, as well as instances
- * of {@link PKIXValidationInformation} which have been previously populated within the data set available from
+ * extensions to {@link EntityDescriptor} represented by instances of {@link KeyAuthority}, as well as instances of
+ * {@link PKIXValidationInformation} which have been previously populated within the data set available from
  * {@link EntityDescriptor#getObjectMetadata()}.
  * 
- * Resolution of trusted names for an entity is also supported, based on {@link KeyName} information contained within
- * the {@link KeyInfo} of a role descriptor's {@link KeyDescriptor} element.
+ * Resolution of trusted names for an entity is also supported, based on {@link org.opensaml.xmlsec.signature.KeyName}
+ * information contained within the {@link KeyInfo} of a role descriptor's {@link KeyDescriptor} element.
  */
-public class MetadataPKIXValidationInformationResolver implements PKIXValidationInformationResolver, 
+public class MetadataPKIXValidationInformationResolver implements PKIXValidationInformationResolver,
         InitializableComponent {
 
     /** Default value for Shibboleth KeyAuthority verify depth. */
     public static final int KEY_AUTHORITY_VERIFY_DEPTH_DEFAULT = 1;
-    
+
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(MetadataPKIXValidationInformationResolver.class);
-    
+
     /** Metadata RoleDescriptor resolver used to resolve metadata information. */
     private RoleDescriptorResolver roleDescriptorResolver;
-    
+
     /** Initialization flag. */
     private boolean isInitialized;
 
@@ -91,20 +90,20 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
     public MetadataPKIXValidationInformationResolver(RoleDescriptorResolver resolver) {
         roleDescriptorResolver = Constraint.isNotNull(resolver, "RoleDescriptor resolver cannot be null");
     }
-    
+
     /** {@inheritDoc} */
-    public boolean isInitialized() {
+    @Override public boolean isInitialized() {
         return isInitialized;
     }
 
     /** {@inheritDoc} */
-    public void initialize() throws ComponentInitializationException {
+    @Override public void initialize() throws ComponentInitializationException {
         isInitialized = true;
     }
-    
+
     /**
      * Get the metadata RoleDescriptor resolver instance used by this resolver.
-     *
+     * 
      * @return the resolver's RoleDescriptor metadata resolver instance
      */
     public RoleDescriptorResolver getRoleDescriptorResolver() {
@@ -112,7 +111,7 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
     }
 
     /** {@inheritDoc} */
-    public PKIXValidationInformation resolveSingle(CriteriaSet criteriaSet) throws ResolverException {
+    @Override public PKIXValidationInformation resolveSingle(CriteriaSet criteriaSet) throws ResolverException {
         Iterator<PKIXValidationInformation> pkixInfoIter = resolve(criteriaSet).iterator();
         if (pkixInfoIter.hasNext()) {
             return pkixInfoIter.next();
@@ -122,16 +121,16 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
     }
 
     /** {@inheritDoc} */
-    public Iterable<PKIXValidationInformation> resolve(CriteriaSet criteriaSet) throws ResolverException {
+    @Override public Iterable<PKIXValidationInformation> resolve(CriteriaSet criteriaSet) throws ResolverException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         checkCriteriaRequirements(criteriaSet);
-        
+
         String entityID = criteriaSet.get(EntityIdCriterion.class).getEntityId();
-        
+
         EntityRoleCriterion roleCriteria = criteriaSet.get(EntityRoleCriterion.class);
         QName role = roleCriteria.getRole();
-        
+
         String protocol = null;
         ProtocolCriterion protocolCriteria = criteriaSet.get(ProtocolCriterion.class);
         if (protocolCriteria != null) {
@@ -142,22 +141,22 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
     }
 
     /** {@inheritDoc} */
-    public Set<String> resolveTrustedNames(CriteriaSet criteriaSet) throws ResolverException {
+    @Override public Set<String> resolveTrustedNames(CriteriaSet criteriaSet) throws ResolverException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         checkCriteriaRequirements(criteriaSet);
-        
+
         String entityID = criteriaSet.get(EntityIdCriterion.class).getEntityId();
-        
+
         EntityRoleCriterion roleCriteria = criteriaSet.get(EntityRoleCriterion.class);
         QName role = roleCriteria.getRole();
-        
+
         String protocol = null;
         ProtocolCriterion protocolCriteria = criteriaSet.get(ProtocolCriterion.class);
         if (protocolCriteria != null) {
             protocol = protocolCriteria.getProtocol();
         }
-        
+
         UsageCriterion usageCriteria = criteriaSet.get(UsageCriterion.class);
         UsageType usage = null;
         if (usageCriteria != null) {
@@ -167,11 +166,11 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
         }
 
         return retrieveTrustedNamesFromMetadata(criteriaSet, entityID, role, protocol, usage);
-        
+
     }
 
     /** {@inheritDoc} */
-    public boolean supportsTrustedNameResolution() {
+    @Override public boolean supportsTrustedNameResolution() {
         return true;
     }
 
@@ -181,15 +180,15 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
      * @param criteriaSet the criteria set to evaluate
      */
     protected void checkCriteriaRequirements(CriteriaSet criteriaSet) {
-        EntityIdCriterion entityCriteria = Constraint.isNotNull(criteriaSet.get(EntityIdCriterion.class), 
-                "EntityIdCriterion must be supplied");
-        Constraint.isNotNull(StringSupport.trimOrNull(entityCriteria.getEntityId()), 
+        EntityIdCriterion entityCriteria =
+                Constraint.isNotNull(criteriaSet.get(EntityIdCriterion.class), "EntityIdCriterion must be supplied");
+        Constraint.isNotNull(StringSupport.trimOrNull(entityCriteria.getEntityId()),
                 "Credential owner entity ID criteria value must be supplied");
-        
-        EntityRoleCriterion roleCriteria = Constraint.isNotNull(criteriaSet.get(EntityRoleCriterion.class), 
-                "EntityRoleCriterion must be supplied");
-        Constraint.isNotNull(roleCriteria.getRole(), 
-                "Credential entity role criteria value must be supplied");
+
+        EntityRoleCriterion roleCriteria =
+                Constraint
+                        .isNotNull(criteriaSet.get(EntityRoleCriterion.class), "EntityRoleCriterion must be supplied");
+        Constraint.isNotNull(roleCriteria.getRole(), "Credential entity role criteria value must be supplied");
     }
 
     /**
@@ -205,15 +204,15 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
      * @throws ResolverException thrown if the key, certificate, or CRL information is represented in an unsupported
      *             format
      */
-    protected Collection<PKIXValidationInformation> retrievePKIXInfoFromMetadata(CriteriaSet criteriaSet, 
+    protected Collection<PKIXValidationInformation> retrievePKIXInfoFromMetadata(CriteriaSet criteriaSet,
             String entityID, QName role, String protocol) throws ResolverException {
 
         log.debug("Attempting to retrieve PKIX validation info from resolver for entity: {}", entityID);
         // Use LinkedHashSet so we don't worry about duplicates, but keep predictable ordering (insertion order).
         Collection<PKIXValidationInformation> accumulator = new LinkedHashSet<>();
-        
+
         Iterable<RoleDescriptor> roleDescriptors = getRoleDescriptors(criteriaSet, entityID, role, protocol);
-        if(roleDescriptors == null) {
+        if (roleDescriptors == null) {
             return accumulator;
         }
 
@@ -235,15 +234,15 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
      */
     protected void resolvePKIXInfo(Collection<PKIXValidationInformation> accumulator, RoleDescriptor roleDescriptor)
             throws ResolverException {
-        
+
         if (roleDescriptor.getParent() instanceof EntityDescriptor) {
             EntityDescriptor entityDescriptor = (EntityDescriptor) roleDescriptor.getParent();
-            
+
             resolvePKIXInfo(accumulator, entityDescriptor.getExtensions());
-            
+
             // These would have been cached on the EntityDescriptor by another mechanism,
             // for example via pre-processing by the MetadataResolver.
-            LockableClassToInstanceMultiMap<Object> entityDescriptorObjectMetadata = 
+            LockableClassToInstanceMultiMap<Object> entityDescriptorObjectMetadata =
                     entityDescriptor.getObjectMetadata();
             ReadWriteLock rwlock = entityDescriptorObjectMetadata.getReadWriteLock();
             try {
@@ -253,7 +252,7 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
                 rwlock.readLock().unlock();
             }
         }
-        
+
     }
 
     /**
@@ -264,7 +263,7 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
      * @throws ResolverException thrown if the key, certificate, or CRL information is represented in an unsupported
      *             format
      */
-    protected void resolvePKIXInfo(Collection<PKIXValidationInformation> accumulator, Extensions extensions) 
+    protected void resolvePKIXInfo(Collection<PKIXValidationInformation> accumulator, Extensions extensions)
             throws ResolverException {
         if (extensions == null) {
             return;
@@ -274,7 +273,7 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
         if (authorities == null || authorities.isEmpty()) {
             return;
         }
-        
+
         for (XMLObject xmlObj : authorities) {
             extractPKIXInfo(accumulator, (KeyAuthority) xmlObj);
         }
@@ -288,15 +287,15 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
      * @throws ResolverException thrown if the key, certificate, or CRL information is represented in an unsupported
      *             format
      */
-    protected void extractPKIXInfo(@Nonnull final Collection<PKIXValidationInformation> accumulator, 
+    protected void extractPKIXInfo(@Nonnull final Collection<PKIXValidationInformation> accumulator,
             @Nonnull final KeyAuthority keyAuthority) throws ResolverException {
-        
+
         LockableClassToInstanceMultiMap<Object> keyAuthorityObjectMetadata = keyAuthority.getObjectMetadata();
         ReadWriteLock rwlock = keyAuthorityObjectMetadata.getReadWriteLock();
-        
+
         try {
             rwlock.readLock().lock();
-            List<PKIXValidationInformation> cachedPKIXInfo = 
+            List<PKIXValidationInformation> cachedPKIXInfo =
                     keyAuthorityObjectMetadata.get(PKIXValidationInformation.class);
             if (!cachedPKIXInfo.isEmpty()) {
                 log.debug("Resolved cached PKIXValidationInformation from KeyAuthority object metadata");
@@ -307,15 +306,15 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
             }
         } finally {
             // Note: with the standard Java ReentrantReadWriteLock impl, you can not upgrade a read lock
-            // to a write lock!  So have to release here and then acquire the write lock below.
+            // to a write lock! So have to release here and then acquire the write lock below.
             rwlock.readLock().unlock();
         }
-        
+
         try {
             rwlock.writeLock().lock();
-            
+
             // Need to check again in case another waiting writer beat us in acquiring the write lock
-            List<PKIXValidationInformation> cachedPKIXInfo = 
+            List<PKIXValidationInformation> cachedPKIXInfo =
                     keyAuthorityObjectMetadata.get(PKIXValidationInformation.class);
             if (!cachedPKIXInfo.isEmpty()) {
                 log.debug("PKIXValidationInformation was resolved and cached by another thread "
@@ -323,21 +322,21 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
                 accumulator.addAll(cachedPKIXInfo);
                 return;
             }
-            
+
             PKIXValidationInformation pkixInfo = KeyAuthoritySupport.extractPKIXValidationInfo(keyAuthority);
             if (pkixInfo != null) {
-                
+
                 keyAuthorityObjectMetadata.put(pkixInfo);
-                
+
                 accumulator.add(pkixInfo);
             }
-            
+
         } catch (org.opensaml.security.SecurityException e) {
             throw new ResolverException("Error resolving PKIXValidationInformation for shibmd:KeyAuthority", e);
         } finally {
             rwlock.writeLock().unlock();
         }
-        
+
     }
 
     /**
@@ -352,16 +351,16 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
      * @return collection of resolved trusted name information, possibly empty
      * 
      * @throws SecurityException thrown if there is an error extracting trusted name information
-     * @throws ResolverException 
+     * @throws ResolverException if we have an error getting the role descriptors
      */
     protected Set<String> retrieveTrustedNamesFromMetadata(CriteriaSet criteriaSet, String entityID, QName role,
             String protocol, UsageType usage) throws ResolverException {
 
         log.debug("Attempting to retrieve trusted names for PKIX validation from resolver for entity: {}", entityID);
         Set<String> trustedNames = new HashSet<>();
-        
+
         Iterable<RoleDescriptor> roleDescriptors = getRoleDescriptors(criteriaSet, entityID, role, protocol);
-        if(roleDescriptors == null) {
+        if (roleDescriptors == null) {
             return trustedNames;
         }
 
@@ -380,7 +379,7 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
             }
 
         }
-        
+
         return trustedNames;
     }
 
@@ -423,17 +422,17 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
             String protocol) throws ResolverException {
         try {
             if (log.isDebugEnabled()) {
-                log.debug("Retrieving role descriptor metadata for entity '{}' in role '{}' for protocol '{}'", 
+                log.debug("Retrieving role descriptor metadata for entity '{}' in role '{}' for protocol '{}'",
                         new Object[] {entityID, role, protocol});
             }
-            
+
             return getRoleDescriptorResolver().resolve(criteriaSet);
 
         } catch (ResolverException e) {
             log.error("Unable to resolve information from metadata", e);
             throw new ResolverException("Unable to resolve unformation from metadata", e);
         }
-            
+
     }
 
 }
