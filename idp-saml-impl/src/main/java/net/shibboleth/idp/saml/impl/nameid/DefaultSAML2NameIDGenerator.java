@@ -49,6 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -74,7 +75,9 @@ public class DefaultSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator {
     /** Constructor. */
     public DefaultSAML2NameIDGenerator() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
-        attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class);
+        attributeContextLookupStrategy = Functions.compose(
+                new ChildContextLookup<RelyingPartyContext, AttributeContext>(AttributeContext.class),
+                relyingPartyContextLookupStrategy);
         attributeSourceIds = Collections.emptyList();
     }
     
@@ -132,6 +135,12 @@ public class DefaultSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator {
             throws ProfileException {
         
         // Check for a natively generated NameIdentifier attribute value.
+
+        final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
+        if (rpCtx == null) {
+            log.warn("Unable to locate RelyingPartContext.");
+            return null;
+        }
 
         final AttributeContext attributeCtx = attributeContextLookupStrategy.apply(profileRequestContext);
         if (attributeCtx == null) {

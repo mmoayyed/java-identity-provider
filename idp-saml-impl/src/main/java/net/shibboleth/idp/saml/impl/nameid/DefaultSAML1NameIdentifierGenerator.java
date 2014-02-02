@@ -49,6 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -66,7 +67,7 @@ public class DefaultSAML1NameIdentifierGenerator extends AbstractSAML1NameIdenti
     @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
 
     /** Strategy function to lookup AttributeContext. */
-    @Nonnull private Function<RelyingPartyContext, AttributeContext> attributeContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext, AttributeContext> attributeContextLookupStrategy;
     
     /** Attribute(s) to use as an identifier source. */
     @Nonnull @NonnullElements private List<String> attributeSourceIds;
@@ -74,7 +75,9 @@ public class DefaultSAML1NameIdentifierGenerator extends AbstractSAML1NameIdenti
     /** Constructor. */
     public DefaultSAML1NameIdentifierGenerator() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
-        attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class);
+        attributeContextLookupStrategy = Functions.compose(
+                new ChildContextLookup<RelyingPartyContext, AttributeContext>(AttributeContext.class),
+                relyingPartyContextLookupStrategy);
         attributeSourceIds = Collections.emptyList();
     }
     
@@ -97,7 +100,7 @@ public class DefaultSAML1NameIdentifierGenerator extends AbstractSAML1NameIdenti
      * @param strategy lookup function to use
      */
     public synchronized void setAttributeContextLookupStrategy(
-            @Nonnull final Function<RelyingPartyContext, AttributeContext> strategy) {
+            @Nonnull final Function<ProfileRequestContext, AttributeContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         attributeContextLookupStrategy = Constraint.isNotNull(strategy,
@@ -132,14 +135,8 @@ public class DefaultSAML1NameIdentifierGenerator extends AbstractSAML1NameIdenti
             throws ProfileException {
         
         // Check for a natively generated NameIdentifier attribute value.
-        
-        final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (rpCtx == null) {
-            log.warn("Unable to locate RelyingPartContext.");
-            return null;
-        }
 
-        final AttributeContext attributeCtx = attributeContextLookupStrategy.apply(rpCtx);
+        final AttributeContext attributeCtx = attributeContextLookupStrategy.apply(profileRequestContext);
         if (attributeCtx == null) {
             log.warn("Unable to locate AttributeContext");
             return null;
@@ -177,10 +174,7 @@ public class DefaultSAML1NameIdentifierGenerator extends AbstractSAML1NameIdenti
     @Nullable protected String getIdentifier(@Nonnull final ProfileRequestContext profileRequestContext)
             throws ProfileException {
 
-        // TODO null check rpCtx ?
-        final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        
-        final AttributeContext attributeCtx = attributeContextLookupStrategy.apply(rpCtx);
+        final AttributeContext attributeCtx = attributeContextLookupStrategy.apply(profileRequestContext);
         
         final Map<String, IdPAttribute> attributes = attributeCtx.getIdPAttributes();
         for (final String sourceId : attributeSourceIds) {
