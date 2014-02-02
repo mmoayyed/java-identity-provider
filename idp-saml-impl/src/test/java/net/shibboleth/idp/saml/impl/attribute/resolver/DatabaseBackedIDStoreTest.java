@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl.dc;
+package net.shibboleth.idp.saml.impl.attribute.resolver;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -26,8 +26,9 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 
-import net.shibboleth.idp.attribute.resolver.impl.DatabaseTestingSupport;
-import net.shibboleth.idp.attribute.resolver.impl.TestSources;
+import net.shibboleth.idp.saml.attribute.resolver.PersistentIdEntry;
+import net.shibboleth.idp.saml.attribute.resolver.StoredIDException;
+import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
@@ -42,11 +43,11 @@ import com.google.common.base.Objects;
 import com.google.common.io.CharStreams;
 
 /**
- * Tests for {@link StoredIDStore}
+ * Tests for {@link DatabaseBackedIDStore}
  */
-public class StoredIDStoreTest {
+public class DatabaseBackedIDStoreTest {
     
-    private final Logger log = LoggerFactory.getLogger(StoredIDStoreTest.class);
+    private final Logger log = LoggerFactory.getLogger(DatabaseBackedIDStoreTest.class);
 
     private DataSource testSource;
     
@@ -55,14 +56,14 @@ public class StoredIDStoreTest {
     }
     
     @BeforeTest
-    public void setupSource() throws SQLException, IOException  {
+    public void setupSource() throws StoredIDException, IOException  {
         
         testSource = DatabaseTestingSupport.GetMockDataSource("/data/net/shibboleth/idp/attribute/resolver/impl/dc/StoredIdStore.sql", "StoredIDStore");
     }
     
-    @Test public void initializeAndGetters() throws ComponentInitializationException, SQLException {
+    @Test public void initializeAndGetters() throws ComponentInitializationException, StoredIDException {
 
-        StoredIDStore store = new StoredIDStore();
+        DatabaseBackedIDStore store = new DatabaseBackedIDStore();
         try {
             store.initialize();
             Assert.fail("Need to initialize the source");
@@ -118,7 +119,7 @@ public class StoredIDStoreTest {
         return result;
     }
     
-    private void tryToValidate(StoredIDStore store, PersistentIdEntry id, String errorMessage) {
+    private void tryToValidate(DatabaseBackedIDStore store, PersistentIdEntry id, String errorMessage) {
 
         try {
             store.validatePersistentIdEntry(id);
@@ -129,8 +130,8 @@ public class StoredIDStoreTest {
 
     }
    
-    @Test public void storeEntry() throws ComponentInitializationException, SQLException {
-        StoredIDStore store = new StoredIDStore();
+    @Test public void storeEntry() throws ComponentInitializationException, StoredIDException {
+        DatabaseBackedIDStore store = new DatabaseBackedIDStore();
         store.setDataSource(testSource);
         store.initialize();
         
@@ -138,13 +139,13 @@ public class StoredIDStoreTest {
         String persistentId = UUID.randomUUID().toString();
         
         tryToValidate(store, id, "No Local Id");
-        id.setAttributeIssuerId(TestSources.IDP_ENTITY_ID);
+        id.setAttributeIssuerId(DatabaseTestingSupport.IDP_ENTITY_ID);
         
         tryToValidate(store, id, "No Peer Entity Id");
-        id.setPeerEntityId(TestSources.SP_ENTITY_ID);
+        id.setPeerEntityId(DatabaseTestingSupport.SP_ENTITY_ID);
         
         tryToValidate(store, id, "No Principal Name");
-        id.setPrincipalName(TestSources.PRINCIPAL_ID);
+        id.setPrincipalName(DatabaseTestingSupport.PRINCIPAL_ID);
         
         tryToValidate(store, id, "No Local Id");
         id.setLocalId("localID");
@@ -161,7 +162,7 @@ public class StoredIDStoreTest {
         Assert.assertNull(gotback.getDeactivationTime());
         
         Assert.assertTrue(comparePersistentIdEntrys(gotback, id));
-        List<PersistentIdEntry> list = store.getPersistentIdEntries(TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID, "localID");
+        List<PersistentIdEntry> list = store.getPersistentIdEntries(DatabaseTestingSupport.IDP_ENTITY_ID, DatabaseTestingSupport.SP_ENTITY_ID, "localID");
         
         Assert.assertEquals(list.size(), 1);
         Assert.assertTrue(comparePersistentIdEntrys(list.get(0), gotback));
@@ -170,12 +171,12 @@ public class StoredIDStoreTest {
         
         Assert.assertNull(store.getActivePersistentIdEntry(persistentId));
         
-        Assert.assertEquals(store.getNumberOfPersistentIdEntries(TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID, "localID"), 1);
+        Assert.assertEquals(store.getNumberOfPersistentIdEntries(DatabaseTestingSupport.IDP_ENTITY_ID, DatabaseTestingSupport.SP_ENTITY_ID, "localID"), 1);
      
         persistentId = UUID.randomUUID().toString();
         id.setPersistentId(persistentId);
         id.setPeerProvidedId(null);
-        id.setPeerEntityId(TestSources.SP_ENTITY_ID + "2");
+        id.setPeerEntityId(DatabaseTestingSupport.SP_ENTITY_ID + "2");
         store.storePersistentIdEntry(id);
         
         gotback = store.getActivePersistentIdEntry(persistentId);

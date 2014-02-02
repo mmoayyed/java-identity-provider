@@ -28,12 +28,12 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.impl.DatabaseTestingSupport;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.idp.service.ReloadableService;
 import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
+import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl.dc;
+package net.shibboleth.idp.saml.impl.attribute.resolver;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,12 +30,16 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.sql.DataSource;
 
+import net.shibboleth.idp.saml.attribute.resolver.PersistentIdEntry;
+import net.shibboleth.idp.saml.attribute.resolver.StoredIDException;
+import net.shibboleth.idp.saml.attribute.resolver.StoredIDStore;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,10 +52,10 @@ import org.slf4j.LoggerFactory;
  *     VARCHAR NOT NULL, localId VARCHAR NOT NULL, persistentId VARCHAR NOT NULL, peerProvidedId \\
  *     VARCHAR, creationDate TIMESTAMP NOT NULL, deactivationDate TIMESTAMP}</tt> .
  */
-public class StoredIDStore extends AbstractInitializableComponent {
+public class DatabaseBackedIDStore extends AbstractInitializableComponent implements StoredIDStore {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(StoredIDStore.class);
+    private final Logger log = LoggerFactory.getLogger(DatabaseBackedIDStore.class);
 
     /** JDBC data source for retrieving connections. */
     private DataSource dataSource;
@@ -132,7 +136,7 @@ public class StoredIDStore extends AbstractInitializableComponent {
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         if (null == dataSource) {
             throw new ComponentInitializationException(getLogPrefix() + " No database connection provided");
@@ -148,10 +152,10 @@ public class StoredIDStore extends AbstractInitializableComponent {
      * 
      * @return the number of identifiers
      * 
-     * @throws SQLException thrown if there is a problem communication with the database
+     * @throws StoredIDException thrown if there is a problem communication with the database
      */
-    public int getNumberOfPersistentIdEntries(@Nonnull @NotEmpty String localEntity,
-            @Nonnull @NotEmpty String peerEntity, @Nonnull @NotEmpty String localId) throws SQLException {
+    @Override public int getNumberOfPersistentIdEntries(@Nonnull @NotEmpty String localEntity,
+            @Nonnull @NotEmpty String peerEntity, @Nonnull @NotEmpty String localId) throws StoredIDException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         StringBuilder sqlBuilder = new StringBuilder();
         sqlBuilder.append("SELECT");
@@ -164,8 +168,10 @@ public class StoredIDStore extends AbstractInitializableComponent {
         sqlBuilder.append(localIdColumn).append(" = ?");
 
         final String sql = sqlBuilder.toString();
-        Connection dbConn = dataSource.getConnection();
+        Connection dbConn = null;
+
         try {
+            dbConn = dataSource.getConnection();
             log.debug("{} Selecting number of persistent ID entries based on prepared sql statement: {}",
                     getLogPrefix(), sql);
             PreparedStatement statement = dbConn.prepareStatement(sql);
@@ -181,6 +187,8 @@ public class StoredIDStore extends AbstractInitializableComponent {
             ResultSet rs = statement.executeQuery();
             rs.next();
             return rs.getInt(1);
+        } catch (SQLException e1) {
+            throw new StoredIDException(e1);
         } finally {
             try {
                 if (dbConn != null && !dbConn.isClosed()) {
@@ -201,10 +209,10 @@ public class StoredIDStore extends AbstractInitializableComponent {
      * 
      * @return the active identifier
      * 
-     * @throws SQLException thrown if there is a problem communication with the database
+     * @throws StoredIDException thrown if there is a problem communication with the database
      */
-    @Nonnull public List<PersistentIdEntry> getPersistentIdEntries(@Nonnull @NotEmpty String localEntity,
-            @Nonnull @NotEmpty String peerEntity, @Nonnull @NotEmpty String localId) throws SQLException {
+    @Override @Nonnull public List<PersistentIdEntry> getPersistentIdEntries(@Nonnull @NotEmpty String localEntity,
+            @Nonnull @NotEmpty String peerEntity, @Nonnull @NotEmpty String localId) throws StoredIDException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         StringBuilder sqlBuilder = new StringBuilder(idEntrySelectSQL);
         sqlBuilder.append(localEntityColumn).append(" = ?");
@@ -214,8 +222,9 @@ public class StoredIDStore extends AbstractInitializableComponent {
 
         log.debug("{} Selecting all persistent ID entries based on prepared sql statement: {}", getLogPrefix(), sql);
 
-        Connection dbConn = dataSource.getConnection();
+        Connection dbConn = null;
         try {
+            dbConn = dataSource.getConnection();
             PreparedStatement statement = dbConn.prepareStatement(sql);
             statement.setQueryTimeout(queryTimeout);
 
@@ -227,6 +236,8 @@ public class StoredIDStore extends AbstractInitializableComponent {
             statement.setString(3, localId);
 
             return buildIdentifierEntries(statement.executeQuery());
+        } catch (SQLException e1) {
+            throw new StoredIDException(e1);
         } finally {
             try {
                 if (dbConn != null && !dbConn.isClosed()) {
@@ -245,9 +256,10 @@ public class StoredIDStore extends AbstractInitializableComponent {
      * 
      * @return the ID entry for the given ID or null if none exists
      * 
-     * @throws SQLException thrown if there is a problem communication with the database
+     * @throws StoredIDException thrown if there is a problem communication with the database
      */
-    @Nullable public PersistentIdEntry getActivePersistentIdEntry(String persistentId) throws SQLException {
+    @Override @Nullable public PersistentIdEntry getActivePersistentIdEntry(String persistentId)
+            throws StoredIDException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         return getPersistentIdEntry(persistentId, true);
     }
@@ -260,10 +272,10 @@ public class StoredIDStore extends AbstractInitializableComponent {
      * 
      * @return the ID entry for the given ID or null if none exists
      * 
-     * @throws SQLException thrown if there is a problem communication with the database
+     * @throws StoredIDException thrown if there is a problem communication with the database
      */
-    @Nullable public PersistentIdEntry
-            getPersistentIdEntry(@Nonnull @NotEmpty String persistentId, boolean onlyActiveId) throws SQLException {
+    @Nullable public PersistentIdEntry getPersistentIdEntry(@Nonnull @NotEmpty String persistentId, 
+            boolean onlyActiveId) throws StoredIDException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         StringBuilder sqlBuilder = new StringBuilder(idEntrySelectSQL);
         sqlBuilder.append(persistentIdColumn).append(" = ?");
@@ -274,8 +286,9 @@ public class StoredIDStore extends AbstractInitializableComponent {
 
         log.debug("{} Selecting persistent ID entry based on prepared sql statement: {}", getLogPrefix(), sql);
 
-        Connection dbConn = dataSource.getConnection();
+        Connection dbConn = null;
         try {
+            dbConn = dataSource.getConnection();
             PreparedStatement statement = dbConn.prepareStatement(sql);
             statement.setQueryTimeout(queryTimeout);
 
@@ -293,6 +306,8 @@ public class StoredIDStore extends AbstractInitializableComponent {
             }
 
             return entries.get(0);
+        } catch (SQLException e1) {
+            throw new StoredIDException(e1);
         } finally {
             try {
                 if (dbConn != null && !dbConn.isClosed()) {
@@ -315,10 +330,10 @@ public class StoredIDStore extends AbstractInitializableComponent {
      * 
      * @return the active identifier
      * 
-     * @throws SQLException thrown if there is a problem communication with the database
+     * @throws StoredIDException thrown if there is a problem communication with the database
      */
-    @Nonnull public PersistentIdEntry getActivePersistentIdEntry(@Nonnull @NotEmpty String localEntity,
-            @Nonnull @NotEmpty String peerEntity, @Nonnull @NotEmpty String localId) throws SQLException {
+    @Override @Nonnull public PersistentIdEntry getActivePersistentIdEntry(@Nonnull @NotEmpty String localEntity,
+            @Nonnull @NotEmpty String peerEntity, @Nonnull @NotEmpty String localId) throws StoredIDException {
         StringBuilder sqlBuilder = new StringBuilder(idEntrySelectSQL);
         sqlBuilder.append(localEntityColumn).append(" = ?");
         sqlBuilder.append(" AND ").append(peerEntityColumn).append(" = ?");
@@ -327,8 +342,9 @@ public class StoredIDStore extends AbstractInitializableComponent {
         String sql = sqlBuilder.toString();
 
         log.debug("{} Selecting active persistent ID entry based on prepared sql statement: {}", getLogPrefix(), sql);
-        Connection dbConn = dataSource.getConnection();
+        Connection dbConn = null;
         try {
+            dbConn = dataSource.getConnection();
             PreparedStatement statement = dbConn.prepareStatement(sql);
             statement.setQueryTimeout(queryTimeout);
 
@@ -351,6 +367,8 @@ public class StoredIDStore extends AbstractInitializableComponent {
             }
 
             return entries.get(0);
+        } catch (SQLException e1) {
+            throw new StoredIDException(e1);
         } finally {
             try {
                 if (dbConn != null && !dbConn.isClosed()) {
@@ -432,22 +450,27 @@ public class StoredIDStore extends AbstractInitializableComponent {
      * 
      * @param entry entry to persist
      * 
-     * @throws SQLException thrown is there is a problem writing to the database
+     * @throws StoredIDException thrown is there is a problem writing to the database
      */
-    public void storePersistentIdEntry(@Nonnull PersistentIdEntry entry) throws SQLException {
+    @Override public void storePersistentIdEntry(@Nonnull PersistentIdEntry entry) throws StoredIDException {
 
-        validatePersistentIdEntry(entry);
+        try {
+            validatePersistentIdEntry(entry);
+        } catch (SQLException e2) {
+           throw new StoredIDException(e2);
+        }
 
         final String sql = getInsertSql();
 
-        Connection dbConn = dataSource.getConnection();
+        Connection dbConn = null;
         try {
+            dbConn = dataSource.getConnection();
             log.debug("{} Storing persistent ID entry based on prepared sql statement: {}", getLogPrefix(), sql);
             PreparedStatement statement = dbConn.prepareStatement(sql);
             statement.setQueryTimeout(queryTimeout);
 
             log.debug("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 1, 
-                    entry.getAttributeIssuerId());
+                        entry.getAttributeIssuerId());
             statement.setString(1, entry.getAttributeIssuerId());
             log.debug("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 2,
                     entry.getAttributeConsumerId());
@@ -474,6 +497,8 @@ public class StoredIDStore extends AbstractInitializableComponent {
             log.debug(statement.toString());
 
             statement.executeUpdate();
+        } catch (SQLException e1) {
+            throw new StoredIDException(e1);
         } finally {
             try {
                 if (dbConn != null && !dbConn.isClosed()) {
@@ -491,23 +516,28 @@ public class StoredIDStore extends AbstractInitializableComponent {
      * @param persistentId ID to deactivate
      * @param deactivation deactivation time, if null the current time is used
      * 
-     * @throws SQLException thrown if there is a problem communication with the database
+     * @throws StoredIDException thrown if there is a problem communication with the database
      */
-    public void deactivatePersistentId(@NotEmpty String persistentId, @Nullable Timestamp deactivation)
-            throws SQLException {
-        Timestamp deactivationTime = deactivation;
-        if (deactivationTime == null) {
+    @Override public void deactivatePersistentId(@NotEmpty String persistentId, @Nullable DateTime deactivation)
+            throws StoredIDException {
+        final Timestamp deactivationTime;
+        if (deactivation == null) {
             deactivationTime = new Timestamp(System.currentTimeMillis());
+        } else {
+            deactivationTime = new Timestamp(deactivation.getMillis());
         }
 
-        Connection dbConn = dataSource.getConnection();
+        Connection dbConn = null;
         try {
+            dbConn = dataSource.getConnection();
             log.debug("Deactivating persistent id {} as of {}", persistentId, deactivationTime.toString());
             PreparedStatement statement = dbConn.prepareStatement(deactivateIdSQL);
             statement.setQueryTimeout(queryTimeout);
             statement.setTimestamp(1, deactivationTime);
             statement.setString(2, persistentId);
             statement.executeUpdate();
+        } catch (SQLException e1) {
+            throw new StoredIDException(e1);
         } finally {
             try {
                 if (dbConn != null && !dbConn.isClosed()) {

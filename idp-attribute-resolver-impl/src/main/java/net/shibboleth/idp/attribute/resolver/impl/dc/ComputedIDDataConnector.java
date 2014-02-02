@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.resolver.AbstractComputedIDDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
@@ -36,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * A data connector that generates a unique ID by computing the SHA-1 hash of a given attribute value, the entity ID of
  * the inbound message issuer, and a provided salt.
  */
-public class ComputedIDDataConnector extends BaseComputedIDDataConnector {
+public class ComputedIDDataConnector extends AbstractComputedIDDataConnector {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ComputedIDDataConnector.class);

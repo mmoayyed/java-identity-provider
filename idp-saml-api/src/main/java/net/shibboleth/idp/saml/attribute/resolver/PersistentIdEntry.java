@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl.dc;
+package net.shibboleth.idp.saml.attribute.resolver;
 
 import java.io.Serializable;
 import java.sql.Timestamp;

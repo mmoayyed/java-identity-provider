@@ -15,9 +15,8 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl.dc;
+package net.shibboleth.idp.saml.impl.attribute.resolver;
 
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Map;
 import java.util.UUID;
@@ -27,9 +26,12 @@ import javax.annotation.Nullable;
 import javax.sql.DataSource;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.resolver.AbstractComputedIDDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
+import net.shibboleth.idp.saml.attribute.resolver.PersistentIdEntry;
+import net.shibboleth.idp.saml.attribute.resolver.StoredIDException;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -48,9 +50,9 @@ import org.slf4j.LoggerFactory;
  * principal name, the peer entity ID, and the salt. If the salt is not provided we fall straight into generating UUIDs.
  * <em>NOTE</em> that neither or both must be supplied.
  * 
- * If a {@link DataSource} is supplied the IDs are created and managed as described by {@link StoredIDStore}.
+ * If a {@link DataSource} is supplied the IDs are created and managed as described by {@link DatabaseBackedIDStore}.
  */
-public class StoredIDDataConnector extends BaseComputedIDDataConnector {
+public class StoredIDDataConnector extends AbstractComputedIDDataConnector {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(StoredIDDataConnector.class);
@@ -62,7 +64,7 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
     private int queryTimeout;
 
     /** Persistent identifier data store. */
-    private StoredIDStore pidStore = new StoredIDStore();
+    private DatabaseBackedIDStore pidStore = new DatabaseBackedIDStore();
 
     /**
      * Gets the {@link DataSource} used to communicate with the database.
@@ -88,7 +90,7 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
      * 
      * @return data store used to manage stored IDs
      */
-    @NonnullAfterInit public StoredIDStore getStoredIDStore() {
+    @NonnullAfterInit public DatabaseBackedIDStore getStoredIDStore() {
         return pidStore;
     }
 
@@ -124,7 +126,7 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
                     + " If provided, the salt must be at least 16 bytes in size");
         }
 
-        StoredIDStore store = new StoredIDStore();
+        DatabaseBackedIDStore store = new DatabaseBackedIDStore();
         store.setDataSource(dataSource);
         store.setQueryTimeout(queryTimeout);
         store.initialize();
@@ -147,12 +149,12 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
      * 
      * @return the created identifier
      * 
-     * @throws SQLException thrown if there is a problem communication with the database
+     * @throws StoredIDException thrown if there is a problem communication with the database
      * @throws ResolutionException if there is a problem with has generation
      */
     @Nonnull protected PersistentIdEntry createPersistentId(@Nonnull @NotEmpty String principalName,
             @Nonnull @NotEmpty String localEntityId, @Nonnull @NotEmpty String peerEntityId,
-            @Nonnull @NotEmpty String localId) throws SQLException, ResolutionException {
+            @Nonnull @NotEmpty String localId) throws StoredIDException, ResolutionException {
         final PersistentIdEntry entry = new PersistentIdEntry();
         entry.setAttributeIssuerId(Constraint.isNotNull(StringSupport.trimOrNull(localEntityId),
                 "Attribute Issuer entity Id must not be null"));
@@ -221,7 +223,7 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
             }
 
             return pid;
-        } catch (SQLException e) {
+        } catch (StoredIDException e) {
             log.debug("{} Database error retrieving persistent identifier", getLogPrefix(), e);
             throw new ResolutionException("Database error retrieving persistent identifier", e);
         }

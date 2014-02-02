@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl;
+package net.shibboleth.idp.testing;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,9 +30,9 @@ import javax.sql.DataSource;
 
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.slf4j.LoggerFactory;
 import org.hsqldb.jdbc.JDBCDataSource;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.io.CharStreams;
 
@@ -42,6 +42,13 @@ import com.google.common.io.CharStreams;
 public class DatabaseTestingSupport {
 
     static Logger log = LoggerFactory.getLogger(DatabaseTestingSupport.class);
+    
+    public static final String IDP_ENTITY_ID = "https://idp.example.org/idp";
+
+    public static final String PRINCIPAL_ID = "PETER_THE_PRINCIPAL";
+
+    public static final String SP_ENTITY_ID = "https://sp.example.org/sp";
+    
 
     protected static void InitializeDataSource(@Nullable String initializingSQLFile, DataSource source) {
 

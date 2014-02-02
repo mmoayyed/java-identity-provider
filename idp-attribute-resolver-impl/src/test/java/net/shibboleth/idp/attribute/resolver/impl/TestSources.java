@@ -29,9 +29,10 @@ import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
-import net.shibboleth.idp.attribute.resolver.impl.ad.SAML2NameIDAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.impl.ad.StaticAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.impl.dc.StaticDataConnector;
+import net.shibboleth.idp.saml.impl.attribute.resolver.SAML2NameIDAttributeDefinition;
+import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -81,11 +82,11 @@ public final class TestSources {
     /** Authentication method for Principal method tests */
     public static final String TEST_AUTHN_METHOD = "AuthNmEthod";
 
-    public static final String IDP_ENTITY_ID = "https://idp.example.org/idp";
+    public static final String IDP_ENTITY_ID = DatabaseTestingSupport.IDP_ENTITY_ID;
 
-    public static final String PRINCIPAL_ID = "PETER_THE_PRINCIPAL";
+    public static final String PRINCIPAL_ID = DatabaseTestingSupport.PRINCIPAL_ID;
 
-    public static final String SP_ENTITY_ID = "https://sp.example.org/sp";
+    public static final String SP_ENTITY_ID = DatabaseTestingSupport.SP_ENTITY_ID;
 
 
     /** Constructor. */

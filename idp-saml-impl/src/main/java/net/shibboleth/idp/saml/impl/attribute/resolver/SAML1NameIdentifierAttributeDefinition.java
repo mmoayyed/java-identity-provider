@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl.ad;
+package net.shibboleth.idp.saml.impl.attribute.resolver;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -38,25 +38,24 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.common.SAMLObjectBuilder;
-import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An attribute definition that creates attributes whose values are {@link NameID}. <br/>
- * When building the NameID the textual content of the NameID is the value of the source attribute. If a
- * {@link #nameIdQualifier} is provided that value is used as the NameID's name qualifier otherwise the attribute
- * issuer's entity ID is used. If a {@link #nameIdSPQualifier} is provided then that valid is used as the NameID's SP
- * name qualifier, otherwise the the attribute recipient's entityID is used.
+ * An attribute definition the creates attributes whose values are {@link NameIdentifier}. <br/>
+ * When building the NameIdentifier the textual content of the NameIdentifier is the value of the source attribute. If a
+ * {@link #nameIdQualifier} is provided that value is used as the NameIdentifier's name qualifier otherwise the
+ * attribute issuer's entity ID is used.
  */
 
-public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition {
+public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(SAML2NameIDAttributeDefinition.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(SAML1NameIdentifierAttributeDefinition.class);
 
     /** The builder for the object represented inside this attribute. */
-    @Nonnull private final SAMLObjectBuilder<NameID> nameIDBuilder;
+    @Nonnull private final SAMLObjectBuilder<NameIdentifier> nameIdentifierBuilder;
 
     /** Format of the NameID. */
     private String nameIdFormat;
@@ -64,16 +63,13 @@ public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition 
     /** Name qualifier for the NameID. */
     private String nameIdQualifier;
 
-    /** SP name qualifier for the NameID. */
-    private String nameIdSPQualifier;
-
     /**
      * Constructor.
      */
-    public SAML2NameIDAttributeDefinition() {
-        nameIDBuilder = (SAMLObjectBuilder<NameID>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameID>getBuilderOrThrow(
-                        NameID.DEFAULT_ELEMENT_NAME);
+    public SAML1NameIdentifierAttributeDefinition() {
+        nameIdentifierBuilder = (SAMLObjectBuilder<NameIdentifier>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIdentifier>getBuilderOrThrow(
+                        NameIdentifier.DEFAULT_ELEMENT_NAME);
     }
 
     /**
@@ -90,7 +86,7 @@ public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition 
      * 
      * @param format format for the NameID used as an attribute value
      */
-    public void setNameIdFormat(@Nullable final String format) {
+    @Nullable public void setNameIdFormat(@Nullable final String format) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         nameIdFormat = format;
     }
@@ -115,73 +111,41 @@ public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition 
     }
 
     /**
-     * Gets the SPNameQualifier for the NameID used as an attribute value.
+     * Builds a name ID. The provided value is the textual content of the NameIdentifier. If a {@link #nameIdQualifier}
+     * is not null it is used as the NameIdentifier's name qualifier, otherwise the attribute issuer's entity id is
+     * used.
      * 
-     * @return SPNameQualifier for the NameID used as an attribute value
-     */
-    @Nullable public String getNameIdSPQualifier() {
-        return nameIdSPQualifier;
-    }
-
-    /**
-     * Sets the SPNameQualifier for the NameID used as an attribute value.
-     * 
-     * @param qualifier SPNameQualifier for the NameID used as an attribute value
-     */
-    public void setNameIdSPQualifier(@Nullable final String qualifier) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        nameIdSPQualifier = qualifier;
-    }
-
-    /**
-     * Builds a name ID. The provided value is the textual content of the NameID. The NameQualifier and SPNameQualifier
-     * are set according to the configuration, or to the local and requesting entityIDs respectively.
-     * 
-     * @param nameIdValue value of the NameID
+     * @param nameIdValue value of the NameIdentifier
      * @param resolutionContext current resolution context
      * 
-     * @return the constructed NameID
+     * @return the constructed NameIdentifier
      * @throws ResolutionException if the IdP Name is empty.
      */
-    protected NameID buildNameId(@Nonnull final String nameIdValue,
+    protected NameIdentifier buildNameId(@Nonnull final String nameIdValue,
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
 
-        log.debug("{} building a SAML2 NameID with value of '{}'", getLogPrefix(), nameIdValue);
+        log.debug("{} building a SAML1 NameIdentifier with value of '{}'", getLogPrefix(), nameIdValue);
 
-        final String attributeRecipientID =
-                StringSupport.trimOrNull(resolutionContext.getAttributeRecipientID());
-
-        final String attributeIssuerID = StringSupport.trimOrNull(resolutionContext.getAttributeIssuerID());
-
-        final NameID nameId = nameIDBuilder.buildObject();
-        nameId.setValue(nameIdValue);
+        final NameIdentifier nameIdentifier = nameIdentifierBuilder.buildObject();
+        nameIdentifier.setNameIdentifier(nameIdValue);
 
         if (nameIdFormat != null) {
             log.debug("{} Format set to '{}'", getLogPrefix(), nameIdFormat);
-            nameId.setFormat(nameIdFormat);
+            nameIdentifier.setFormat(nameIdFormat);
         }
+        final String attributeIssuerID = StringSupport.trimOrNull(resolutionContext.getAttributeIssuerID());
 
         if (nameIdQualifier != null) {
+            nameIdentifier.setNameQualifier(nameIdQualifier);
             log.debug("{} NameQualifier set to '{}'", getLogPrefix(), nameIdQualifier);
-            nameId.setNameQualifier(nameIdQualifier);
         } else if (null != attributeIssuerID) {
             log.debug("{} NameQualifier set to '{}'", getLogPrefix(), attributeIssuerID);
-            nameId.setNameQualifier(attributeIssuerID);
+            nameIdentifier.setNameQualifier(attributeIssuerID);
         } else {
-            throw new ResolutionException(getLogPrefix() + " provided attribute issuer ID  was empty");
+            throw new ResolutionException(getLogPrefix() + " provided attribute issuer ID was empty");
         }
 
-        if (nameIdSPQualifier != null) {
-            log.debug("{} SPNameQualifier set to '{}'", getLogPrefix(), nameIdSPQualifier);
-            nameId.setSPNameQualifier(nameIdSPQualifier);
-        } else if (null != attributeRecipientID) {
-            log.debug("{} SPNameQualifier set to '{}'", getLogPrefix(), attributeRecipientID);
-            nameId.setSPNameQualifier(attributeRecipientID);
-        } else {
-            throw new ResolutionException(getLogPrefix() + " provided attribute recipient ID was empty");
-        }
-
-        return nameId;
+        return nameIdentifier;
     }
 
     /**
@@ -190,18 +154,19 @@ public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition 
      * 
      * @param theValue an arbitrary value.
      * @param resolutionContext the context to get the rest of the values from
-     * @return null or an attributeValue.
+     * @return null or an attributeValue;
      * @throws ResolutionException if the IdP Name is empty.
      */
-    @Nullable private XMLObjectAttributeValue encodeOneValue(@Nonnull final IdPAttributeValue theValue,
+    @Nullable private XMLObjectAttributeValue encodeOneValue(@Nonnull final IdPAttributeValue<?> theValue,
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
+
         if (theValue instanceof StringAttributeValue) {
             final StringAttributeValue value = (StringAttributeValue) theValue;
-            final NameID nid = buildNameId(value.getValue(), resolutionContext);
+            final NameIdentifier nid = buildNameId(value.getValue(), resolutionContext);
             final XMLObjectAttributeValue val = new XMLObjectAttributeValue(nid);
             return val;
         }
-        log.warn("{} value {} is not a string", getLogPrefix(), theValue.toString());
+        log.warn("{} Value {} is not a string", getLogPrefix(), theValue.toString());
         return null;
     }
 
@@ -212,7 +177,7 @@ public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition 
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        Set<IdPAttributeValue<?>> inputValues;
+        Set<? extends IdPAttributeValue<?>> inputValues;
         Set<? extends IdPAttributeValue<?>> outputValues = null;
         final IdPAttribute result = new IdPAttribute(getId());
 
@@ -226,7 +191,8 @@ public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition 
                     outputValues = Collections.singleton(val);
                 }
             } else {
-                // TODO Intermediate to solve typing issues.
+                // TODO(rdw) Fix typing
+                // Intermediate to solve typing issues.
                 final HashSet<XMLObjectAttributeValue> xmlVals = new HashSet<>(inputValues.size());
                 for (final IdPAttributeValue<?> theValue : inputValues) {
                     final XMLObjectAttributeValue val = encodeOneValue(theValue, resolutionContext);
@@ -235,7 +201,7 @@ public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition 
                     }
                 }
                 if (0 == xmlVals.size()) {
-                    log.warn("{} no appropriate values", getLogPrefix());
+                    log.warn("{} No appropriate values", getLogPrefix());
                     return null;
                 }
                 outputValues = xmlVals;
@@ -244,7 +210,6 @@ public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition 
         result.setValues(outputValues);
 
         return result;
-
     }
 
 }

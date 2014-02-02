@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl.dc;
+package net.shibboleth.idp.attribute.resolver.impl.ad;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -25,12 +25,14 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AbstractComputedIDDataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.idp.attribute.resolver.impl.ad.SimpleAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.impl.dc.ComputedIDDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
@@ -40,7 +42,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Test for {@link BaseComputedIDDataConnector}
+ * Test for {@link AbstractComputedIDDataConnector}
  */
 public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
@@ -60,7 +62,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     protected static final byte smallSalt[] = {0, 1, 2};
 
-    private static void testInit(BaseComputedIDDataConnector connector, String failMessage) {
+    private static void testInit(AbstractComputedIDDataConnector connector, String failMessage) {
         try {
             connector.initialize();
             Assert.fail(failMessage);
@@ -136,7 +138,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         return constructResolver(connector, values);
     }
 
-    protected static AttributeResolver constructResolver(BaseComputedIDDataConnector connector, int values)
+    protected static AttributeResolver constructResolver(AbstractComputedIDDataConnector connector, int values)
             throws ComponentInitializationException {
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency(
@@ -163,7 +165,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         return constructResolverWithNonString(new ComputedIDDataConnector(), dependantOn);
     }
 
-    protected static AttributeResolver constructResolverWithNonString(BaseComputedIDDataConnector connector,
+    protected static AttributeResolver constructResolverWithNonString(AbstractComputedIDDataConnector connector,
             String dependantOn) throws ComponentInitializationException {
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency(dependantOn, null)));
@@ -184,8 +186,8 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         return new AttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector));
     }
 
-    protected static BaseComputedIDDataConnector connectorFromResolver(AttributeResolver resolver) {
-        return (BaseComputedIDDataConnector) resolver.getDataConnectors().get(TEST_CONNECTOR_NAME);
+    protected static AbstractComputedIDDataConnector connectorFromResolver(AttributeResolver resolver) {
+        return (AbstractComputedIDDataConnector) resolver.getDataConnectors().get(TEST_CONNECTOR_NAME);
     }
 
     //TODO: fix assertion on line 218, see IDP-357

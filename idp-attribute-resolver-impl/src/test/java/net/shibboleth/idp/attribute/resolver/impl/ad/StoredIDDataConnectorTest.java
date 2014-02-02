@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl.dc;
+package net.shibboleth.idp.attribute.resolver.impl.ad;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -26,11 +26,14 @@ import javax.sql.DataSource;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.impl.DatabaseTestingSupport;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
+import net.shibboleth.idp.saml.attribute.resolver.PersistentIdEntry;
+import net.shibboleth.idp.saml.attribute.resolver.StoredIDException;
+import net.shibboleth.idp.saml.impl.attribute.resolver.StoredIDDataConnector;
+import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -44,7 +47,7 @@ import org.testng.annotations.Test;
 import com.google.common.io.CharStreams;
 
 /**
- * Tests for {@link StoredIDDataConnector}
+ * Tests for {@link StoredIDDataConnector} Placed here for convenience.
  */
 public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
@@ -77,8 +80,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     }
 
-    @Test public void initializeAndGetters() throws ComponentInitializationException, SQLException,
-            ResolutionException {
+    @Test public void initializeAndGetters() throws ComponentInitializationException, SQLException, ResolutionException {
 
         StoredIDDataConnector connector = new StoredIDDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
@@ -137,8 +139,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
      * @throws SQLException if badness happens
      * @throws ResolutionException if badness happens
      */
-    @Test public void storeEntry() throws ComponentInitializationException, SQLException,
-            ResolutionException {
+    @Test public void storeEntry() throws ComponentInitializationException, SQLException, ResolutionException {
         AttributeResolver resolver = constructResolver(1);
 
         ComponentSupport.initialize(resolver);
@@ -175,11 +176,11 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
      * deactivated. The resolve again and hey presto a new value.
      * 
      * @throws ComponentInitializationException if badness happens
-     * @throws SQLException if badness happens
+     * @throws StoredIDException if badness happens
      * @throws ResolutionException if badness happens
      */
     @Test(dependsOnMethods = {"storeEntry"}) void retrieveEntry() throws ComponentInitializationException,
-            SQLException, ResolutionException {
+            StoredIDException, ResolutionException {
         AttributeResolver resolver = constructResolver(1);
 
         ComponentSupport.initialize(resolver);
@@ -222,7 +223,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test(dependsOnMethods = {"retrieveEntry"}) void badEntry() throws ComponentInitializationException,
-            SQLException, ResolutionException {
+            StoredIDException, ResolutionException {
         StoredIDDataConnector connector = new StoredIDDataConnector();
         connector.setDataSource(testSource);
 
@@ -232,7 +233,8 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
         connector.getStoredIDStore().deactivatePersistentId(ComputedIDDataConnectorTest.RESULT, null);
 
-        AttributeResolutionContext context =  TestSources.createResolutionContext(" ", TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
+        AttributeResolutionContext context =
+                TestSources.createResolutionContext(" ", TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
 
         resolver.resolveAttributes(context);
 
@@ -247,8 +249,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
      * @throws SQLException if badness happens
      * @throws ResolutionException if badness happens
      */
-    @Test() void previousEntry() throws ComponentInitializationException, SQLException,
-            ResolutionException {
+    @Test() void previousEntry() throws ComponentInitializationException, StoredIDException, ResolutionException {
         AttributeResolver resolver = constructResolver(1);
         StoredIDDataConnector connector =
                 (StoredIDDataConnector) ComputedIDDataConnectorTest.connectorFromResolver(resolver);
@@ -268,8 +269,9 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
         connector.getStoredIDStore().storePersistentIdEntry(idEntry);
 
-        AttributeResolutionContext context =  TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
-                TestSources.SP_ENTITY_ID);
+        AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected
