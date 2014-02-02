@@ -27,7 +27,7 @@ import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
-import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
+import net.shibboleth.idp.saml.nameid.NameIDDecoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -63,8 +63,8 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
     /** Supplies logic for pre-execute test. */
     @Nonnull private final ActivationCondition embeddedPredicate;
 
-    /** Supplies logic for decoding the {@link NameID#getValue()} into the principal. */
-    @NonnullAfterInit private NameIdentifierDecoder decoder;
+    /** Supplies logic for decoding the {@link NameID} into the principal. */
+    @NonnullAfterInit private NameIDDecoder decoder;
 
     /**
      * Constructor.
@@ -78,7 +78,7 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
      * 
      * @return Returns the decoder.
      */
-    @NonnullAfterInit public NameIdentifierDecoder getDecoder() {
+    @NonnullAfterInit public NameIDDecoder getDecoder() {
         return decoder;
     }
 
@@ -87,9 +87,9 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
      * 
      * @param theDecoder the decoder.
      */
-    @NonnullAfterInit public void setDecoder(@Nonnull NameIdentifierDecoder theDecoder) {
+    @NonnullAfterInit public void setDecoder(@Nonnull NameIDDecoder theDecoder) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        decoder = Constraint.isNotNull(theDecoder, "Name decoder must not be null");
+        decoder = Constraint.isNotNull(theDecoder, "Name ID decoder must not be null");
     }
 
     /** {@inheritDoc} */
@@ -99,7 +99,7 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
         }
         super.doInitialize();
     }
-    
+
     /**
      * Check the format against the format list. If we are in the action then we log the error into the C14N context and
      * add the appropriate event to the ProfileRequest context
@@ -107,26 +107,19 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
      * @param format the format to check
      * @param profileRequestContext the current profile request context
      * @param c14nContext the current c14n context
-     * @param duringAction true iff the method is run from the action above
      * @return true if the format matches.
      */
     protected boolean formatMatches(@Nonnull String format, @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final SubjectCanonicalizationContext c14nContext, final boolean duringAction) {
+            @Nonnull final SubjectCanonicalizationContext c14nContext) {
 
-        for (String testFormat: getFormats()) {
+        for (String testFormat : getFormats()) {
             if (SAML2ObjectSupport.areNameIdentifierFormatsEquivalent(testFormat, format)) {
                 return true;
             }
         }
-        
-        if (duringAction) {
-            c14nContext.setException(new SubjectCanonicalizationException("Format not supported"));
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-        }
+
         return false;
     }
-
-
 
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
@@ -138,8 +131,7 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
             final NameID nameID = nameIDs.iterator().next().getNameID();
 
             try {
-                transientPrincipal =
-                        decoder.decode(nameID.getValue(), c14nContext.getResponderId(), c14nContext.getRequesterId());
+                transientPrincipal = decoder.decode(nameID, c14nContext.getResponderId(), c14nContext.getRequesterId());
             } catch (SubjectCanonicalizationException e) {
                 c14nContext.setException(e);
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
@@ -209,17 +201,20 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
                             "Multiple NameIDPrincipals were found"));
                     ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
                     return false;
-                }
-            } else {
-                if (nameIDs == null || nameIDs.size() != 1) {
+                } else if (!formatMatches(nameIDs.iterator().next().getNameID().getFormat(), profileRequestContext,
+                        c14nContext)) {
+
+                    c14nContext.setException(new SubjectCanonicalizationException("Format not supported"));
+                    ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
                     return false;
                 }
+                return true;
             }
-            final NameID nameID = nameIDs.iterator().next().getNameID();
+            if (nameIDs == null || nameIDs.size() != 1) {
+                return false;
+            }
 
-            return formatMatches(nameID.getFormat(), profileRequestContext, c14nContext, duringAction)
-                    && responderMatches(nameID.getNameQualifier(), profileRequestContext, c14nContext, duringAction)
-                    && requesterMatches(nameID.getSPNameQualifier(), profileRequestContext, c14nContext, duringAction);
+            return formatMatches(nameIDs.iterator().next().getNameID().getFormat(), profileRequestContext, c14nContext);
         }
     }
 }

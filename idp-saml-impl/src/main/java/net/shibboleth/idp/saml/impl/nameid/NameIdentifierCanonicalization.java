@@ -99,7 +99,7 @@ public class NameIdentifierCanonicalization extends AbstractSAMLNameCanonicaliza
         }
         super.doInitialize();
     }
-    
+
     /**
      * Check the format against the format list. If we are in the action then we log the error into the C14N context and
      * add the appropriate event to the ProfileRequest context
@@ -107,25 +107,19 @@ public class NameIdentifierCanonicalization extends AbstractSAMLNameCanonicaliza
      * @param format the format to check
      * @param profileRequestContext the current profile request context
      * @param c14nContext the current c14n context
-     * @param duringAction true iff the method is run from the action above
      * @return true if the format matches.
      */
     protected boolean formatMatches(@Nonnull String format, @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final SubjectCanonicalizationContext c14nContext, final boolean duringAction) {
+            @Nonnull final SubjectCanonicalizationContext c14nContext) {
 
-        for (String testFormat: getFormats()) {
+        for (String testFormat : getFormats()) {
             if (SAML1ObjectSupport.areNameIdentifierFormatsEquivalent(testFormat, format)) {
                 return true;
             }
         }
-        
-        if (duringAction) {
-            c14nContext.setException(new SubjectCanonicalizationException("Format not supported"));
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-        }
+
         return false;
     }
-
 
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
@@ -139,8 +133,7 @@ public class NameIdentifierCanonicalization extends AbstractSAMLNameCanonicaliza
 
             try {
                 transientPrincipal =
-                        decoder.decode(nameIdentifier.getNameIdentifier(), c14nContext.getResponderId(),
-                                c14nContext.getRequesterId());
+                        decoder.decode(nameIdentifier, c14nContext.getResponderId(), c14nContext.getRequesterId());
             } catch (SubjectCanonicalizationException e) {
                 c14nContext.setException(e);
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
@@ -211,19 +204,20 @@ public class NameIdentifierCanonicalization extends AbstractSAMLNameCanonicaliza
                             "Multiple NameIdentifierPrincipals were found"));
                     ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
                     return false;
-                }
-            } else {
-                if (nameIdentifiers == null || nameIdentifiers.size() != 1) {
+                } else if (!formatMatches(nameIdentifiers.iterator().next().getNameIdentifier().getFormat(),
+                        profileRequestContext, c14nContext)) {
+                    c14nContext.setException(new SubjectCanonicalizationException("Format not supported"));
+                    ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
                     return false;
                 }
+                return true;
             }
-            final NameIdentifier nameIdentifier = nameIdentifiers.iterator().next().getNameIdentifier();
 
-            return formatMatches(nameIdentifier.getFormat(), profileRequestContext, c14nContext, duringAction)
-                    && responderMatches(nameIdentifier.getNameQualifier(), profileRequestContext, c14nContext,
-                            duringAction);
-
+            if (nameIdentifiers == null || nameIdentifiers.size() != 1) {
+                return false;
+            }
+            return formatMatches(nameIdentifiers.iterator().next().getNameIdentifier().getFormat(),
+                    profileRequestContext, c14nContext);
         }
-
     }
 }

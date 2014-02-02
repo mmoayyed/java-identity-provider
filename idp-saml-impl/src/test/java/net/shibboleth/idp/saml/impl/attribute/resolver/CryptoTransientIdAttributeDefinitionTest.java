@@ -18,10 +18,7 @@
 package net.shibboleth.idp.saml.impl.attribute.resolver;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Set;
-
-import javax.security.auth.Subject;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -29,21 +26,12 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
-import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
-import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.impl.TestSources;
-import net.shibboleth.idp.saml.impl.nameid.CryptoTransientDecoder;
-import net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.DataSealerException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
-import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.ActionTestingSupport;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.saml2.core.NameID;
-import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.testng.Assert;
@@ -177,59 +165,5 @@ public class CryptoTransientIdAttributeDefinitionTest   extends OpenSAMLInitBase
         } catch (Exception e) {
             // OK
         }
-    }
-    
-    
-    @Test public void decode() throws ComponentInitializationException, ResolutionException, DataSealerException,
-            InterruptedException, ProfileException {
-        final CryptoTransientIdAttributeDefinition defn = new CryptoTransientIdAttributeDefinition();
-        defn.setId(ID);
-        defn.setDataSealer(dataSealer);
-        defn.setIdLifetime(TIMEOUT);
-        defn.initialize();
-
-        final AttributeResolutionContext context =
-                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
-                        TestSources.SP_ENTITY_ID);
-
-        final IdPAttribute result = defn.resolve(context);
-
-        final Set<IdPAttributeValue<?>> values = result.getValues();
-        Assert.assertEquals(values.size(), 1);
-        final String code = ((StringAttributeValue) values.iterator().next()).getValue();
-        
-        final NameID nameID = new NameIDBuilder().buildObject();
-        nameID.setFormat("https://example.org/");
-        nameID.setNameQualifier(TestSources.IDP_ENTITY_ID);
-        nameID.setSPNameQualifier(TestSources.SP_ENTITY_ID);
-        nameID.setValue(code);
-        
-        final CryptoTransientDecoder decoder = new CryptoTransientDecoder();
-        decoder.setDataSealer(dataSealer);
-        decoder.setId("Crypto Transient Decoder");
-        decoder.initialize();
-
-        final NameIDCanonicalization canon = new NameIDCanonicalization();
-        canon.setFormats(Collections.singleton("https://example.org/"));
-        canon.setDecoder(decoder);
-        canon.initialize();
-        
-        final ProfileRequestContext prc = new ProfileRequestContext<>();
-        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
-        final Subject subject = new Subject();
-        
-        
-        subject.getPrincipals().add(new NameIDPrincipal(nameID));
-        scc.setSubject(subject);
-        
-        scc.setRequesterId(TestSources.SP_ENTITY_ID);
-        scc.setResponderId(TestSources.IDP_ENTITY_ID);
-        
-        canon.execute(prc);
-        
-        ActionTestingSupport.assertProceedEvent(prc);
-        
-        Assert.assertEquals(scc.getPrincipalName(), TestSources.PRINCIPAL_ID);
-
     }
 }

@@ -29,7 +29,8 @@ import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
-import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
+import net.shibboleth.idp.saml.nameid.NameDecoderException;
+import net.shibboleth.idp.saml.nameid.NameIDDecoder;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.ProfileException;
@@ -67,12 +68,12 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
         prc = new ProfileRequestContext<>();
         action = new NameIDCanonicalization();
         action.setFormats(formats);
-        action.setDecoder(new NameIdentifierDecoder() {
+        action.setDecoder(new NameIDDecoder() {
 
-            @Override @Nonnull public String decode(@Nullable String value, @Nonnull String issuerId,
-                    @Nonnull String requesterId) throws SubjectCanonicalizationException {
-                if (RESPONDER.equals(issuerId) && REQUESTER.equals(requesterId)) {
-                    return VALUE_PREFIX + value;
+            @Override @Nonnull public String decode(@Nonnull NameID nameID, @Nullable String responderId,
+                    @Nullable String requesterId) throws SubjectCanonicalizationException, NameDecoderException {
+                if (RESPONDER.equals(responderId) && REQUESTER.equals(requesterId)) {
+                    return VALUE_PREFIX + nameID.getValue();
                 }
                 throw new SubjectCanonicalizationException();
             }
@@ -103,17 +104,16 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
         id.setSPNameQualifier(nameSPQualifier);
         return id;
     }
-    
+
     private NameID nameId(String value, String format) {
         return nameId(value, format, RESPONDER, REQUESTER);
     }
-    
 
     @Test public void testFormatCount() {
         Assert.assertEquals(action.getFormats().size(), 2);
     }
 
-    @Test(expectedExceptions={UnsupportedOperationException.class}) public void testFormatSet() {
+    @Test(expectedExceptions = {UnsupportedOperationException.class}) public void testFormatSet() {
         action.getFormats().add("bar");
     }
 
@@ -179,7 +179,7 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
         Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
     }
-    
+
     @Test public void testWrongRequester() throws ProfileException {
         Subject subject = new Subject();
         subject.getPrincipals().add(new NameIDPrincipal(nameId("value", NameID.KERBEROS, REQUESTER, REQUESTER)));
@@ -202,19 +202,17 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
     }
 
-
     @Test public void testSuccess() throws ProfileException {
         Subject subject = new Subject();
         subject.getPrincipals().add(new UsernamePrincipal("foo@osu.edu"));
         subject.getPrincipals().add(new NameIDPrincipal(nameId("works", NameID.KERBEROS)));
         setSubContext(subject, RESPONDER, REQUESTER);
 
-
         action.execute(prc);
 
         ActionTestingSupport.assertProceedEvent(prc);
         SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class, false);
-        Assert.assertEquals(sc.getPrincipalName(), VALUE_PREFIX+"works");
+        Assert.assertEquals(sc.getPrincipalName(), VALUE_PREFIX + "works");
     }
 
 }

@@ -69,10 +69,10 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
         action.setFormats(formats);
         action.setDecoder(new NameIdentifierDecoder() {
 
-            @Override @Nonnull public String decode(@Nullable String value, @Nonnull String issuerId,
+            @Override @Nonnull public String decode(@Nullable NameIdentifier nameIdentifier, @Nonnull String issuerId,
                     @Nonnull String requesterId) throws SubjectCanonicalizationException {
                 if (RESPONDER.equals(issuerId) && REQUESTER.equals(requesterId)) {
-                    return VALUE_PREFIX + value;
+                    return VALUE_PREFIX + nameIdentifier.getNameIdentifier();
                 }
                 throw new SubjectCanonicalizationException();
             }

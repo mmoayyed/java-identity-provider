@@ -21,27 +21,28 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
-import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
+import net.shibboleth.idp.saml.nameid.NameIDDecoder;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
+import org.opensaml.saml.saml2.core.NameID;
 import org.slf4j.LoggerFactory;
 
 /**
- * class to implement the direct transform.
+ * class to implement the direct transform from a {@link NameID}.
  */
-public class DirectDecoder extends AbstractIdentifiableInitializableComponent implements NameIdentifierDecoder {
+public class DirectNameIDDecoder extends AbstractIdentifiableInitializableComponent implements NameIDDecoder {
 
     /**
-     * {@inheritDoc}
-     * 
-     * @return the value parameter.
+     * {@inheritDoc}. The decoded value just the input.  We do not police any values
      */
-    @Override @Nonnull public String decode(@Nonnull String value, @Nullable String responderId,
+    @Override @Nonnull public String decode(@Nonnull NameID nameID, @Nullable String responderId,
             @Nullable String requesterId) throws SubjectCanonicalizationException {
+        
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        return value;
+        
+        return nameID.getValue();
     }
 
     /** {@inheritDoc} */
@@ -52,6 +53,6 @@ public class DirectDecoder extends AbstractIdentifiableInitializableComponent im
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        LoggerFactory.getLogger(DirectDecoder.class).debug("Direct Transform {}", getId());
+        LoggerFactory.getLogger(DirectNameIDDecoder.class).debug("Direct Transform {}", getId());
     }
 }

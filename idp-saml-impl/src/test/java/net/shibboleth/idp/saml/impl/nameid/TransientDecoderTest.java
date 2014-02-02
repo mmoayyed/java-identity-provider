@@ -18,19 +18,33 @@
 package net.shibboleth.idp.saml.impl.nameid;
 
 import java.io.IOException;
+import java.util.Collections;
 
+import javax.security.auth.Subject;
+
+import net.shibboleth.idp.attribute.AttributeEncodingException;
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
+import net.shibboleth.idp.saml.impl.TestSources;
+import net.shibboleth.idp.saml.impl.attribute.encoding.SAML2StringNameIDEncoder;
+import net.shibboleth.idp.saml.impl.attribute.resolver.TransientIdAttributeDefinition;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.TransientIdParameters;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.action.ActionTestingSupport;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.storage.StorageService;
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** {@link TransientDecoder} unit test. */
+/** {@link BaseTransientDecoder} unit test. */
 public class TransientDecoderTest {
 
     private static final String RECIPIENT="TheRecipient";
@@ -51,7 +65,7 @@ public class TransientDecoderTest {
         Assert.assertTrue(store.create(TransientIdParameters.CONTEXT, id, principalTokenId, expiration),
                 "initial store");
 
-        TransientDecoder decoder = new TransientDecoder();
+        BaseTransientDecoder decoder = new BaseTransientDecoder(){};
         decoder.setId("decoder");
         decoder.setIdStore(store);
         decoder.initialize();
@@ -75,7 +89,7 @@ public class TransientDecoderTest {
         Assert.assertTrue(store.create(TransientIdParameters.CONTEXT, id, principalTokenId, expiration),
                 "initial store");
 
-        TransientDecoder decoder = new TransientDecoder();
+        BaseTransientDecoder decoder = new BaseTransientDecoder(){};
         decoder.setId("decoder");
         decoder.setIdStore(store);
         decoder.initialize();
@@ -90,7 +104,7 @@ public class TransientDecoderTest {
         final StorageService store = new MemoryStorageService();
         store.initialize();
 
-        TransientDecoder decoder = new TransientDecoder();
+        BaseTransientDecoder decoder = new BaseTransientDecoder(){};
         decoder.setId("decoder");
         decoder.setIdStore(store);
         decoder.initialize();
@@ -115,7 +129,7 @@ public class TransientDecoderTest {
         Assert.assertTrue(store.create(TransientIdParameters.CONTEXT, id, principalTokenId, expiration),
                 "initial store");
 
-        TransientDecoder decoder = new TransientDecoder();
+        BaseTransientDecoder decoder = new BaseTransientDecoder(){};
         decoder.setId("decoder");
         decoder.setIdStore(store);
         decoder.initialize();
@@ -124,5 +138,51 @@ public class TransientDecoderTest {
 
     }
 
+    
+    @Test public void decode() throws ComponentInitializationException, ResolutionException, AttributeEncodingException, ProfileException {
+        
+        final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
+        defn.setId("id");
+        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
+        final StorageService store = new MemoryStorageService();
+        store.initialize();
+        defn.setIdStore(store);
+        defn.initialize();
+    
+        final IdPAttribute result =
+                defn.resolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
+                        TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
+    
+    
+        final SAML2StringNameIDEncoder encoder = new SAML2StringNameIDEncoder();
+        encoder.setNameFormat("https://example.org/");
+        final NameID nameid = encoder.encode(result);
+        
+        final NameIDCanonicalization canon = new NameIDCanonicalization();
+        canon.setFormats(Collections.singleton("https://example.org/"));
+       
+        final TransientNameIDDecoder decoder = new TransientNameIDDecoder();
+        decoder.setId("decoder");
+        decoder.setIdStore(store);
+        decoder.initialize();
+        canon.setDecoder(decoder);
+        canon.initialize();
+        
+        final ProfileRequestContext prc = new ProfileRequestContext<>();
+        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
+        final Subject subject = new Subject();
+        subject.getPrincipals().add(new NameIDPrincipal(nameid));
+        scc.setSubject(subject);
+        
+        scc.setRequesterId(TestSources.SP_ENTITY_ID);
+        scc.setResponderId(TestSources.IDP_ENTITY_ID);
+        
+        canon.execute(prc);
+        
+        ActionTestingSupport.assertProceedEvent(prc);
+        
+        Assert.assertEquals(scc.getPrincipalName(), TestSources.PRINCIPAL_ID);
+        
+    }
 
 }

@@ -17,58 +17,55 @@
 
 package net.shibboleth.idp.saml.impl.nameid;
 
-import java.io.IOException;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
-import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
-import net.shibboleth.idp.saml.nameid.TransientIdParameters;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.security.DataExpiredException;
+import net.shibboleth.utilities.java.support.security.DataSealer;
+import net.shibboleth.utilities.java.support.security.DataSealerException;
 
-import org.opensaml.storage.StorageRecord;
-import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An abstract action which contains the logic to do transient decoding matching (shared between SAML2 and SAML1).
+ * An abstract action which contains the logic to do crypto transient decoding matching. This reverses the work done by
+ * {@link net.shibboleth.idp.attribute.resolver.impl.ad.CryptoTransientIdAttributeDefinition}
  */
-public class TransientDecoder extends AbstractIdentifiableInitializableComponent implements
-        NameIdentifierDecoder {
+public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableInitializableComponent {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(TransientDecoder.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(BaseCryptoTransientDecoder.class);
 
-    /** Store used to map identifiers to principals. */
-    @NonnullAfterInit private StorageService idStore;
+    /** Object used to protect and encrypt the data. */
+    @NonnullAfterInit private DataSealer dataSealer;
 
     /** cache for the log prefix - to save multiple recalculations. */
     @Nullable private String logPrefix;
 
     /**
-     * Gets the ID store we are using.
+     * Gets the Data Sealer we are using.
      * 
-     * @return the ID store we are using.
+     * @return the Data Sealer we are using.
      */
-    @NonnullAfterInit public StorageService getIdStore() {
-        return idStore;
+    @NonnullAfterInit public DataSealer getDataSealer() {
+        return dataSealer;
     }
 
     /**
-     * Sets the ID store we should use.
+     * Sets the Data Sealer we should use.
      * 
-     * @param store the store to use.
+     * @param sealer the Data Sealer to use.
      */
-    public void setIdStore(@Nonnull final StorageService store) {
+    public void setDataSealer(@Nonnull final DataSealer sealer) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        idStore = Constraint.isNotNull(store, "StorageService cannot be null");
+        dataSealer = Constraint.isNotNull(sealer, "DataSealer cannot be null");
     }
 
     /** {@inheritDoc} */
@@ -79,15 +76,15 @@ public class TransientDecoder extends AbstractIdentifiableInitializableComponent
     /**
      * Convert the transient Id into the principal.
      * 
-     * @param transientId the transientID
+     * @param transientId the encrypted transientID
      * @param issuerId The issuer (not used)
      * @param requesterId the requested (SP)
      * @return the decoded entity.
+     * @throws SubjectCanonicalizationException if a mismatch occurrs
      * @throws NameDecoderException if a decode error occurs.
-     * @throws SubjectCanonicalizationException if a mismatch occurs.
      */
     /** {@inheritDoc} */
-    @Override @Nonnull public String decode(@Nonnull String transientId, @Nullable String issuerId,
+    @Nonnull protected String decode(@Nonnull String transientId, @Nullable String issuerId,
             @Nullable String requesterId) throws SubjectCanonicalizationException, NameDecoderException {
         Constraint.isNotNull(requesterId, "Supplied requested should be null");
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -96,38 +93,46 @@ public class TransientDecoder extends AbstractIdentifiableInitializableComponent
             throw new NameDecoderException(getLogPrefix() + " transient Identifier was null");
         }
 
+        final String decodedId;
         try {
-            final StorageRecord record = idStore.read(TransientIdParameters.CONTEXT, transientId);
-
-            if (null == record) {
-                throw new NameDecoderException(getLogPrefix() + " Could not find transient Identifier");
-            }
-
-            if (record.getExpiration() < System.currentTimeMillis()) {
-                throw new NameDecoderException(getLogPrefix() + " Transient identifier has expired");
-            }
-
-            final TransientIdParameters param = new TransientIdParameters(record.getValue());
-
-            if (!requesterId.equals(param.getAttributeRecipient())) {
-                throw new SubjectCanonicalizationException(getLogPrefix() + " Transient identifier was issued to "
-                        + param.getAttributeRecipient() + " but is being used by " + requesterId);
-            }
-
-            return param.getPrincipal();
-        } catch (IOException e) {
-            throw new SubjectCanonicalizationException(e);
+            decodedId = dataSealer.unwrap(transientId);
+        } catch (DataExpiredException e) {
+            throw new NameDecoderException(getLogPrefix() + " Principal identifier has expired.");
+        } catch (DataSealerException e) {
+            throw new NameDecoderException(getLogPrefix()
+                    + " Caught exception unwrapping principal identifier.", e);
         }
+
+        if (decodedId == null) {
+            throw new NameDecoderException(getLogPrefix()
+                    + " Unable to recover principal from transient identifier: " + transientId);
+        }
+
+        // Split the identifier.
+        String[] parts = decodedId.split("!");
+        if (parts.length != 3) {
+            throw new SubjectCanonicalizationException(getLogPrefix() + " Decoded principal information was invalid: "
+                    + decodedId);
+        }
+
+        if (issuerId != null && !issuerId.equals(parts[0])) {
+            throw new SubjectCanonicalizationException(getLogPrefix() + " Issuer (" + issuerId
+                    + ") does not match supplied value (" + parts[0] + ").");
+        } else if (requesterId != null && !requesterId.equals(parts[1])) {
+            throw new SubjectCanonicalizationException(getLogPrefix() + " Requested (" + requesterId
+                    + ") does not match supplied value (" + parts[1] + ").");
+        }
+
+        return parts[2];
     }
 
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (null == idStore) {
-            throw new ComponentInitializationException(getLogPrefix() + " no Id store set");
+        if (null == dataSealer) {
+            throw new ComponentInitializationException(getLogPrefix() + " no data sealer set");
         }
-        log.debug("{} using the store '{}'", getLogPrefix(), idStore.getId());
     }
 
     /**
@@ -139,7 +144,7 @@ public class TransientDecoder extends AbstractIdentifiableInitializableComponent
         // local cache of cached entry to allow unsynchronised clearing.
         String prefix = logPrefix;
         if (null == prefix) {
-            StringBuilder builder = new StringBuilder("Transient Decoder '").append(getId()).append("':");
+            StringBuilder builder = new StringBuilder("Crypto Transient Decoder '").append(getId()).append("':");
             prefix = builder.toString();
             if (null == logPrefix) {
                 logPrefix = prefix;

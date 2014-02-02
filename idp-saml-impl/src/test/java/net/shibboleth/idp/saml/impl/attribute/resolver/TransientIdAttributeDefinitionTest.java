@@ -21,27 +21,15 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.security.auth.Subject;
-
-import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
-import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.impl.TestSources;
-import net.shibboleth.idp.saml.impl.attribute.encoding.SAML2StringNameIDEncoder;
-import net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization;
-import net.shibboleth.idp.saml.impl.nameid.TransientDecoder;
 import net.shibboleth.idp.saml.nameid.TransientIdParameters;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
-import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.ActionTestingSupport;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageService;
 import org.opensaml.storage.impl.MemoryStorageService;
@@ -185,52 +173,6 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
 
         defn.destroy();
         store.destroy();
-    }
-    
-    @Test public void decode() throws ComponentInitializationException, ResolutionException, AttributeEncodingException, ProfileException {
-        
-        final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
-        defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
-        final StorageService store = new MemoryStorageService();
-        store.initialize();
-        defn.setIdStore(store);
-        defn.initialize();
-    
-        final IdPAttribute result =
-                defn.resolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
-                        TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
-    
-    
-        final SAML2StringNameIDEncoder encoder = new SAML2StringNameIDEncoder();
-        encoder.setNameFormat("https://example.org/");
-        final NameID nameid = encoder.encode(result);
-        
-        final TransientDecoder decoder = new TransientDecoder();
-        decoder.setIdStore(store);
-        decoder.setId("Transient Decoder");
-        decoder.initialize();
-
-        final NameIDCanonicalization canon = new NameIDCanonicalization();
-        canon.setFormats(Collections.singleton("https://example.org/"));
-        canon.setDecoder(decoder);
-        canon.initialize();
-        
-        final ProfileRequestContext prc = new ProfileRequestContext<>();
-        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
-        final Subject subject = new Subject();
-        subject.getPrincipals().add(new NameIDPrincipal(nameid));
-        scc.setSubject(subject);
-        
-        scc.setRequesterId(TestSources.SP_ENTITY_ID);
-        scc.setResponderId(TestSources.IDP_ENTITY_ID);
-        
-        canon.execute(prc);
-        
-        ActionTestingSupport.assertProceedEvent(prc);
-        
-        Assert.assertEquals(scc.getPrincipalName(), TestSources.PRINCIPAL_ID);
-        
     }
     
 }

@@ -17,57 +17,56 @@
 
 package net.shibboleth.idp.saml.impl.nameid;
 
+import java.io.IOException;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
-import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
+import net.shibboleth.idp.saml.nameid.TransientIdParameters;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.security.DataExpiredException;
-import net.shibboleth.utilities.java.support.security.DataSealer;
-import net.shibboleth.utilities.java.support.security.DataSealerException;
 
+import org.opensaml.storage.StorageRecord;
+import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An abstract action which contains the logic to do crypto transient decoding matching. This reverses the work done by
- * {@link net.shibboleth.idp.attribute.resolver.impl.ad.CryptoTransientIdAttributeDefinition}
+ * An abstract action which contains the logic to do transient decoding matching (shared between SAML2 and SAML1).
  */
-public class CryptoTransientDecoder extends AbstractIdentifiableInitializableComponent implements
-        NameIdentifierDecoder {
+public abstract class BaseTransientDecoder extends AbstractIdentifiableInitializableComponent {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(CryptoTransientDecoder.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(BaseTransientDecoder.class);
 
-    /** Object used to protect and encrypt the data. */
-    @NonnullAfterInit private DataSealer dataSealer;
+    /** Store used to map identifiers to principals. */
+    @NonnullAfterInit private StorageService idStore;
 
     /** cache for the log prefix - to save multiple recalculations. */
     @Nullable private String logPrefix;
 
     /**
-     * Gets the Data Sealer we are using.
+     * Gets the ID store we are using.
      * 
-     * @return the Data Sealer we are using.
+     * @return the ID store we are using.
      */
-    @NonnullAfterInit public DataSealer getDataSealer() {
-        return dataSealer;
+    @NonnullAfterInit public StorageService getIdStore() {
+        return idStore;
     }
 
     /**
-     * Sets the Data Sealer we should use.
+     * Sets the ID store we should use.
      * 
-     * @param sealer the Data Sealer to use.
+     * @param store the store to use.
      */
-    public void setDataSealer(@Nonnull final DataSealer sealer) {
+    public void setIdStore(@Nonnull final StorageService store) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        dataSealer = Constraint.isNotNull(sealer, "DataSealer cannot be null");
+        idStore = Constraint.isNotNull(store, "StorageService cannot be null");
     }
 
     /** {@inheritDoc} */
@@ -78,16 +77,16 @@ public class CryptoTransientDecoder extends AbstractIdentifiableInitializableCom
     /**
      * Convert the transient Id into the principal.
      * 
-     * @param transientId the encrypted transientID
+     * @param transientId the transientID
      * @param issuerId The issuer (not used)
      * @param requesterId the requested (SP)
      * @return the decoded entity.
-     * @throws SubjectCanonicalizationException if a mismatch occurrs
      * @throws NameDecoderException if a decode error occurs.
+     * @throws SubjectCanonicalizationException if a mismatch occurs.
      */
     /** {@inheritDoc} */
-    @Override @Nonnull public String decode(@Nonnull String transientId, @Nullable String issuerId,
-            @Nullable String requesterId) throws SubjectCanonicalizationException, NameDecoderException {
+    @Nonnull public String decode(@Nonnull String transientId, @Nullable String issuerId, @Nullable String requesterId)
+            throws SubjectCanonicalizationException, NameDecoderException {
         Constraint.isNotNull(requesterId, "Supplied requested should be null");
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
@@ -95,46 +94,38 @@ public class CryptoTransientDecoder extends AbstractIdentifiableInitializableCom
             throw new NameDecoderException(getLogPrefix() + " transient Identifier was null");
         }
 
-        final String decodedId;
         try {
-            decodedId = dataSealer.unwrap(transientId);
-        } catch (DataExpiredException e) {
-            throw new NameDecoderException(getLogPrefix() + " Principal identifier has expired.");
-        } catch (DataSealerException e) {
-            throw new NameDecoderException(getLogPrefix()
-                    + " Caught exception unwrapping principal identifier.", e);
-        }
+            final StorageRecord record = idStore.read(TransientIdParameters.CONTEXT, transientId);
 
-        if (decodedId == null) {
-            throw new NameDecoderException(getLogPrefix()
-                    + " Unable to recover principal from transient identifier: " + transientId);
-        }
+            if (null == record) {
+                throw new NameDecoderException(getLogPrefix() + " Could not find transient Identifier");
+            }
 
-        // Split the identifier.
-        String[] parts = decodedId.split("!");
-        if (parts.length != 3) {
-            throw new SubjectCanonicalizationException(getLogPrefix() + " Decoded principal information was invalid: "
-                    + decodedId);
-        }
+            if (record.getExpiration() < System.currentTimeMillis()) {
+                throw new NameDecoderException(getLogPrefix() + " Transient identifier has expired");
+            }
 
-        if (issuerId != null && !issuerId.equals(parts[0])) {
-            throw new SubjectCanonicalizationException(getLogPrefix() + " Issuer (" + issuerId
-                    + ") does not match supplied value (" + parts[0] + ").");
-        } else if (requesterId != null && !requesterId.equals(parts[1])) {
-            throw new SubjectCanonicalizationException(getLogPrefix() + " Requested (" + requesterId
-                    + ") does not match supplied value (" + parts[1] + ").");
-        }
+            final TransientIdParameters param = new TransientIdParameters(record.getValue());
 
-        return parts[2];
+            if (!requesterId.equals(param.getAttributeRecipient())) {
+                throw new SubjectCanonicalizationException(getLogPrefix() + " Transient identifier was issued to "
+                        + param.getAttributeRecipient() + " but is being used by " + requesterId);
+            }
+
+            return param.getPrincipal();
+        } catch (IOException e) {
+            throw new SubjectCanonicalizationException(e);
+        }
     }
 
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (null == dataSealer) {
-            throw new ComponentInitializationException(getLogPrefix() + " no data sealer set");
+        if (null == idStore) {
+            throw new ComponentInitializationException(getLogPrefix() + " no Id store set");
         }
+        log.debug("{} using the store '{}'", getLogPrefix(), idStore.getId());
     }
 
     /**
@@ -146,7 +137,7 @@ public class CryptoTransientDecoder extends AbstractIdentifiableInitializableCom
         // local cache of cached entry to allow unsynchronised clearing.
         String prefix = logPrefix;
         if (null == prefix) {
-            StringBuilder builder = new StringBuilder("Crypto Transient Decoder '").append(getId()).append("':");
+            StringBuilder builder = new StringBuilder("Transient Decoder '").append(getId()).append("':");
             prefix = builder.toString();
             if (null == logPrefix) {
                 logPrefix = prefix;

@@ -23,28 +23,35 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 
 import org.opensaml.profile.ProfileException;
+import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** {@link DirectDecoder} unit test. */
+/** {@link DirectNameIDDecoder} unit test. */
 public class DirectDecoderTest {
 
     private static final String PRINCIPAL="ThePrincipalName";
 
     @Test public void testSucess() throws ProfileException, ComponentInitializationException, IOException {
-        DirectDecoder decode = new DirectDecoder();
+        DirectNameIDDecoder decode = new DirectNameIDDecoder();
         decode.setId("Decoder");
         decode.initialize();
         
-        Assert.assertEquals(decode.decode(PRINCIPAL, null, null), PRINCIPAL);
+        NameID nameId = new NameIDBuilder().buildObject();
+        nameId.setValue(PRINCIPAL);
+        
+        Assert.assertEquals(decode.decode(nameId, null, null), PRINCIPAL);
 
     }
 
     @Test(expectedExceptions={UninitializedComponentException.class,}) public void testNoinit() throws ProfileException, ComponentInitializationException, IOException {
 
-        DirectDecoder decode = new DirectDecoder();
+        DirectNameIDDecoder decode = new DirectNameIDDecoder();
         decode.setId("Decoder");
-        decode.decode(PRINCIPAL, null, null);
+        NameID nameId = new NameIDBuilder().buildObject();
+        nameId.setValue(PRINCIPAL);
+        decode.decode(nameId, null, null);
     }
 
 }
