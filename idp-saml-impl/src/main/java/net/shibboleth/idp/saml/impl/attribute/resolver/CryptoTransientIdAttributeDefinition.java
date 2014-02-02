@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl.ad;
+package net.shibboleth.idp.saml.impl.attribute.resolver;
 
 import java.util.Collections;
 import java.util.Set;

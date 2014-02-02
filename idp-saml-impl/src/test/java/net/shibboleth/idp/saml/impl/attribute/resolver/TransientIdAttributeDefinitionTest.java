@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl.ad;
+package net.shibboleth.idp.saml.impl.attribute.resolver;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -28,9 +28,9 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
+import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.saml.impl.attribute.encoding.SAML2StringNameIDEncoder;
 import net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization;
 import net.shibboleth.idp.saml.impl.nameid.TransientDecoder;
@@ -48,7 +48,7 @@ import org.opensaml.storage.impl.MemoryStorageService;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** test for {@link net.shibboleth.idp.attribute.resolver.impl.TransientIdAttributeDefinition}. */
+/** test for {@link net.shibboleth.idp.saml.impl.attribute.resolver.TransientIdAttributeDefinition}. */
 public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase {
 
     /** The name. */

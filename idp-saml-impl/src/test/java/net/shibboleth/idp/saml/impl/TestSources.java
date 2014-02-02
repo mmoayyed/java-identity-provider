@@ -15,26 +15,38 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl;
+package net.shibboleth.idp.saml.impl;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
-import net.shibboleth.idp.attribute.resolver.impl.ad.StaticAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.impl.dc.StaticDataConnector;
 import net.shibboleth.idp.saml.impl.attribute.resolver.SAML2NameIDAttributeDefinition;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+
+import com.google.common.collect.ImmutableMap;
 
 /** Basic data sources for testing the attribute generators. */
 public final class TestSources {
@@ -189,5 +201,106 @@ public final class TestSources {
         ResolverPluginDependency retVal = new ResolverPluginDependency(pluginId);
         retVal.setDependencyAttributeId(attributeId);
         return retVal;
+    }
+    
+    private static class StaticAttributeDefinition extends AbstractAttributeDefinition {
+
+
+        /** Static value returned by this definition. */
+        @NonnullAfterInit private IdPAttribute value;
+
+        /**
+         * Set the attribute value we are returning.
+         * 
+         * @param newAttribute what to set.
+         */
+        public synchronized void setValue(@Nullable final IdPAttribute newAttribute) {
+            ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+            ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
+            value = newAttribute;
+        }
+
+        /**
+         * Return the static attribute we are returning.
+         * 
+         * @return the attribute.
+         */
+        @NonnullAfterInit public IdPAttribute getValue() {
+            return value;
+        }
+
+        /** {@inheritDoc} */
+        @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
+                final AttributeResolutionContext resolutionContext,
+                @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
+                return value;
+        }
+
+        /** {@inheritDoc} */
+        @Override protected void doInitialize() throws ComponentInitializationException {
+            super.doInitialize();
+
+            if (null == value) {
+                throw new ComponentInitializationException(getLogPrefix() + " no attribute value set");
+            }
+        }
+    }
+    
+    private static class StaticDataConnector extends AbstractDataConnector {
+
+        /** Static collection of values returned by this connector. */
+        private Map<String, IdPAttribute> attributes;
+
+        /**
+         * Get the static values returned by this connector.
+         * 
+         * @return static values returned by this connector
+         */
+        @Nullable @NonnullAfterInit public Map<String, IdPAttribute> getAttributes() {
+            return attributes;
+        }
+
+        /**
+         * Set static values returned by this connector.
+         * 
+         * @param newValues static values returned by this connector
+         */
+        public synchronized void setValues(@Nullable @NullableElements Collection<IdPAttribute> newValues) {
+
+            if (null == newValues) {
+                attributes = null;
+                return;
+            }
+
+            final Map<String, IdPAttribute> map = new HashMap<String, IdPAttribute>(newValues.size());
+            for (IdPAttribute attr : newValues) {
+                if (null == attr) {
+                    continue;
+                }
+                map.put(attr.getId(), attr);
+            }
+
+            attributes = ImmutableMap.copyOf(map);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        @Nonnull protected Map<String, IdPAttribute> doDataConnectorResolve(
+                @Nonnull final AttributeResolutionContext resolutionContext,
+                @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
+            return attributes;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected void doInitialize() throws ComponentInitializationException {
+            super.doInitialize();
+
+            if (null == attributes) {
+                throw new ComponentInitializationException(getLogPrefix() + " No values set up.");
+            }
+        }
+        
     }
 }

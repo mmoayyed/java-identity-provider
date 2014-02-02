@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl.ad;
+package net.shibboleth.idp.saml.impl.attribute.resolver;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -29,9 +29,9 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
-import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
+import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.saml.impl.nameid.CryptoTransientDecoder;
 import net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;

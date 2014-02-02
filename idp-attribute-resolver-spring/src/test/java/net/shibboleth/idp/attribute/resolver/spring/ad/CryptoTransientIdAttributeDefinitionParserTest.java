@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
-import net.shibboleth.idp.attribute.resolver.impl.ad.CryptoTransientIdAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.CryptoTransientIdAttributeDefinitionParser;
+import net.shibboleth.idp.saml.impl.attribute.resolver.CryptoTransientIdAttributeDefinition;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 
