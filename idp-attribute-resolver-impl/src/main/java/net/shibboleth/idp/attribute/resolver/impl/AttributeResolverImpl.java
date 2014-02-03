@@ -32,13 +32,16 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
+import net.shibboleth.idp.attribute.resolver.PrincipalConnectorDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolvedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPlugin;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.service.AbstractServiceableComponent;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
@@ -65,23 +68,28 @@ import com.google.common.collect.ImmutableMap;
  * response to the exigies of the provided context. It does <em>not</em> implement
  * {@link net.shibboleth.utilities.java.support.resolver.Resolver} which in about summoning up bits of generic data from
  * the configuration (usually the metadata) in response to specific
- * {@link net.shibboleth.utilities.java.support.resolver.Criterion}s.
+ * {@link net.shibboleth.utilities.java.support.resolver.Criterion}s. <br>
+ * The implementation also implements {@link PrincipalConnectorDefinition} in support of the deprecated
+ * &lt;PrincipalConnector&gt;
  * */
 @ThreadSafe
-public class AttributeResolverImpl extends AbstractServiceableComponent<AttributeResolver> 
-    implements AttributeResolver {
+public class AttributeResolverImpl extends AbstractServiceableComponent<AttributeResolver> implements
+        AttributeResolver, PrincipalConnectorDefinition<SubjectCanonicalizationContext> {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AttributeResolverImpl.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeResolverImpl.class);
 
     /** Attribute definitions defined for this resolver. */
-    private final Map<String, AttributeDefinition> attributeDefinitions;
+    @Nonnull private final Map<String, AttributeDefinition> attributeDefinitions;
 
     /** Data connectors defined for this resolver. */
-    private final Map<String, DataConnector> dataConnectors;
+    @Nonnull private final Map<String, DataConnector> dataConnectors;
 
     /** cache for the log prefix - to save multiple recalculations. */
-    private final String logPrefix;
+    @NonnullAfterInit private final String logPrefix;
+
+    /** The Principal mapper. */
+    @Nullable private final PrincipalConnectorDefinition<SubjectCanonicalizationContext> principalConnector;
 
     /**
      * Constructor.
@@ -89,10 +97,12 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * @param resolverId ID of this resolver
      * @param definitions attribute definitions loaded in to this resolver
      * @param connectors data connectors loaded in to this resolver
+     * @param principalResolver code to resolve the principal
      */
     public AttributeResolverImpl(@Nonnull @NotEmpty String resolverId,
             @Nullable @NullableElements Collection<AttributeDefinition> definitions,
-            @Nullable @NullableElements Collection<DataConnector> connectors) {
+            @Nullable @NullableElements Collection<DataConnector> connectors,
+            @Nullable PrincipalConnectorDefinition<SubjectCanonicalizationContext> principalResolver) {
         setId(resolverId);
 
         logPrefix = new StringBuilder("Attribute Resolver '").append(getId()).append("':").toString();
@@ -130,6 +140,8 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             checkedConnectors = Collections.emptyMap();
         }
         dataConnectors = ImmutableMap.copyOf(checkedConnectors);
+
+        principalConnector = principalResolver;
     }
 
     /**
@@ -138,7 +150,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * @return attribute definitions loaded in to this resolver
      */
     @Override @Nonnull @NonnullElements @Unmodifiable public Map<String, AttributeDefinition> 
-                    getAttributeDefinitions() {
+            getAttributeDefinitions() {
         return attributeDefinitions;
     }
 
@@ -232,7 +244,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         // Create work context to hold intermediate results.
         final AttributeResolverWorkContext workContext =
                 resolutionContext.getSubcontext(AttributeResolverWorkContext.class, true);
-        
+
         for (String attributeId : attributeIds) {
             resolveAttributeDefinition(attributeId, resolutionContext);
         }
@@ -571,5 +583,14 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     /** {@inheritDoc} */
     @Override @Nonnull public AttributeResolver getComponent() {
         return this;
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nullable public String canonicalize(@Nonnull SubjectCanonicalizationContext context)
+            throws ResolutionException {
+        if (null == principalConnector) {
+            return null;
+        }
+        return principalConnector.canonicalize(context);
     }
 }

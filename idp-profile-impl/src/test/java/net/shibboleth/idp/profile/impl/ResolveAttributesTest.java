@@ -56,7 +56,7 @@ public class ResolveAttributesTest {
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
         definitions.add(new MockAttributeDefinition("ad1", attribute));
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("resolver", definitions, null);
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("resolver", definitions, null, null);
         resolver.initialize();
 
         final ResolveAttributes action = new ResolveAttributes(new AttributeService(resolver));
@@ -77,7 +77,7 @@ public class ResolveAttributesTest {
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
         definitions.add(new MockAttributeDefinition("ad1", attribute));
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("resolver", definitions, null);
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("resolver", definitions, null, null);
         resolver.initialize();
 
         final ResolveAttributes action = new ResolveAttributes(new AttributeService(resolver));
@@ -110,7 +110,7 @@ public class ResolveAttributesTest {
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
         definitions.add(new MockAttributeDefinition("ad1", attribute));
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("resolver", definitions, null);
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("resolver", definitions, null, null);
         resolver.initialize();
 
         AttributeResolutionContext attributeResolutionCtx = new AttributeResolutionContext();
@@ -166,7 +166,7 @@ public class ResolveAttributesTest {
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
         definitions.add(new MockAttributeDefinition("ad1", new ResolutionException()));
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("resolver", definitions, null);
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("resolver", definitions, null, null);
         resolver.initialize();
 
         final ResolveAttributes action = new ResolveAttributes(new AttributeService(resolver));

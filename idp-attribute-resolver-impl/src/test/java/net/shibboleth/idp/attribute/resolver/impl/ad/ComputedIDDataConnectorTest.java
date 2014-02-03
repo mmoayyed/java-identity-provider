@@ -23,14 +23,13 @@ import java.util.Set;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AbstractComputedIDDataConnector;
-import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
+import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.impl.ad.SimpleAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.impl.dc.ComputedIDDataConnector;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -95,7 +94,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));
 
         final AttributeResolverImpl resolver =
-                new AttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector));
+                new AttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector), null);
 
         resolver.initialize();
 
@@ -157,7 +156,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         set.add(TestSources.populatedStaticAttribute(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, values));
 
-        return new AttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector));
+        return new AttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector), null);
     }
 
     private AttributeResolver constructResolverWithNonString(String dependantOn)
@@ -183,7 +182,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));
         set.add(TestSources.nonStringAttributeDefiniton(dependantOn));
 
-        return new AttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector));
+        return new AttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector), null);
     }
 
     protected static AbstractComputedIDDataConnector connectorFromResolver(AttributeResolver resolver) {

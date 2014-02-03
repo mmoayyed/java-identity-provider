@@ -80,7 +80,7 @@ public class ScopedAttributeTest {
         final Set<AttributeDefinition> attributeSet = new LazySet<>();
         attributeSet.add(scoped);
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attributeSet, connectorSet);
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attributeSet, connectorSet, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();

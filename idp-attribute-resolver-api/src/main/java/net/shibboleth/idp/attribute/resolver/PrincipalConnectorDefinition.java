@@ -23,25 +23,26 @@ import javax.annotation.Nullable;
 import org.opensaml.messaging.context.BaseContext;
 
 /**
- * Definition of a Principal Connector. <br/> This is the component which takes a context and produces the unique
- * principal. Examples are
- * <ul>
- * <li><em>BaseSubjectNamePrincipalConnectors</em> which sit at the beginning of (for instance) the AA flow and collect
- * the principal from the incoming SAML message</li>
- * <li><em>Canonicalising</em>Connectors which sit immediately after authentication.</li>
- * </ul>
+ * Definition of the legacy Principal Connectors. <br/>
+ * This is the component which takes a context and produces the unique principal.
+ * 
+ * Code will only be implemented by the legacy parsing of the &lt;PrinicipalConnector&gt; statements and will consume
+ * CanonicalizationContexts.
  * 
  * @param <ConsumedContext> The type of context which is expected.
  */
 public interface PrincipalConnectorDefinition<ConsumedContext extends BaseContext> {
 
     /**
-     * Resolve the principal with respect to the provided context.
+     * Resolve the principal with respect to the provided context. This is expected to strip out the
+     * {@link org.opensaml.saml.saml2.core.NameID} or {@link org.opensaml.saml.saml1.core.NameIdentifier} and match it
+     * against the connector definitions configured.
      * 
      * @param context what to look at.
-     * @return the IdP principal, or null if this definition wasn't applicable
-     * @throws ResolutionException if we encountered a fatal processing error.
+     * @return the IdP principal, or null if no definitions were applicable
+     * @throws ResolutionException if we recognise the definition but could not decode it (data out of date and so
+     *             forth)
      */
-    @Nullable String resolve(@Nonnull final ConsumedContext context) throws ResolutionException;
+    @Nullable String canonicalize(@Nonnull final ConsumedContext context) throws ResolutionException;
 
 }

@@ -77,6 +77,9 @@ public class AttributeResolverParser extends AbstractSingleBeanDefinitionParser 
 
         children = configChildren.get(AbstractDataConnectorParser.ELEMENT_NAME);
         builder.addConstructorArgValue(SpringSupport.parseCustomElements(children, context));
+        
+        // Prinicipal
+        builder.addConstructorArgValue(null);
     }
 
     /** {@inheritDoc} */

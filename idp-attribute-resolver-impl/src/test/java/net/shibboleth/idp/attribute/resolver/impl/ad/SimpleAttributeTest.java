@@ -92,7 +92,7 @@ public class SimpleAttributeTest {
         final Set<AttributeDefinition> attributeSet = new LazySet<>();
         attributeSet.add(simple);
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attributeSet, connectorSet);
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attributeSet, connectorSet, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -131,7 +131,7 @@ public class SimpleAttributeTest {
         am.add(simple);
         am.add(TestSources.populatedStaticAttribute());
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", am, null);
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", am, null, null);
         resolver.initialize();
 
         AttributeResolutionContext context = new AttributeResolutionContext();
@@ -175,7 +175,7 @@ public class SimpleAttributeTest {
         final Set<DataConnector> dataDefinitions = new LazySet<>();
         dataDefinitions.add(TestSources.populatedStaticConnector());
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, dataDefinitions);
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, dataDefinitions, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();

@@ -208,7 +208,7 @@ public class TemplateAttributeTest {
         final Set<DataConnector> dataDefinitions = new LazySet<DataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnector());
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, dataDefinitions);
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, dataDefinitions, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -252,7 +252,7 @@ public class TemplateAttributeTest {
         final Set<DataConnector> dataDefinitions = new LazySet<DataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnector());
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, dataDefinitions);
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, dataDefinitions, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -292,7 +292,7 @@ public class TemplateAttributeTest {
         attrDefinitions.add(TestSources.populatedStaticAttribute());
         attrDefinitions.add(TestSources.populatedStaticAttribute(otherDefName, otherAttrName, 1));
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, Collections.EMPTY_SET);
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, Collections.EMPTY_SET, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -330,7 +330,7 @@ public class TemplateAttributeTest {
         attrDefinitions.add(templateDef);
         attrDefinitions.add(simple);
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, Collections.EMPTY_SET);
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, Collections.EMPTY_SET, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();

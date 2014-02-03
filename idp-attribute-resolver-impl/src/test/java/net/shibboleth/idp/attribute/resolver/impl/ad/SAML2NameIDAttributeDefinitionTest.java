@@ -24,8 +24,8 @@ import java.util.Set;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
@@ -87,7 +87,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         am.add(defn);
         am.add(TestSources.populatedStaticAttribute());
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", am, null);
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", am, null, null);
         resolver.initialize();
 
         return resolver;
@@ -156,7 +156,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         am.add(TestSources.populatedStaticAttribute());
         am.add(defn2);
 
-        AttributeResolverImpl resolver = new AttributeResolverImpl("foo", am, null);
+        AttributeResolverImpl resolver = new AttributeResolverImpl("foo", am, null, null);
         resolver.initialize();
 
         AttributeResolutionContext context =
@@ -191,7 +191,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         am.add(TestSources.populatedStaticAttribute(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", am, null);
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", am, null, null);
         resolver.initialize();
 
         AttributeResolutionContext context = TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
