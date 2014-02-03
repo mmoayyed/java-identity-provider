@@ -27,6 +27,11 @@
 			<artifactId>idp-attribute-resolver-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-authn-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
 		<dependency>
 			<groupId>org.apache.velocity</groupId>
@@ -49,6 +54,13 @@
 			<groupId>javax.json</groupId>
 			<artifactId>javax.json-api</artifactId>
 		</dependency>
+		
+		<!--  We only need openSAML because of the legacy Contexts we need for scripting -->
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-saml-api</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
 
 
 		<!-- Provided Dependencies -->
