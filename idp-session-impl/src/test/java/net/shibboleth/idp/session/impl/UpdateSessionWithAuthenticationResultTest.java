@@ -25,6 +25,9 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.impl.DefaultAuthenticationResultSerializer;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.profile.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.context.SessionContext;
@@ -35,18 +38,21 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageSerializer;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link UpdateSessionWithAuthenticationResult} unit test. */
 public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBaseTestCase {
+    
+    private RequestContext src;
     
     private ProfileRequestContext prc;
     
@@ -57,7 +63,8 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
     private UpdateSessionWithAuthenticationResult action;
     
     @BeforeMethod public void setUpAction() throws ComponentInitializationException {
-        prc = new ProfileRequestContext();
+        src = new RequestContextBuilder().buildRequestContext();
+        prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         ac = prc.getSubcontext(AuthenticationContext.class, true);
 
         action = new UpdateSessionWithAuthenticationResult();
@@ -78,8 +85,8 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
 
     @Test public void testNoResult() throws ProfileException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNull(prc.getSubcontext(SessionContext.class, false));
     }
 
@@ -89,8 +96,8 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         ac.setAttemptedFlow(flowDescriptor);
         ac.setAuthenticationResult(new AuthenticationResult("test2", new UsernamePrincipal("joe")));
         
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, EventIds.IO_ERROR);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, EventIds.IO_ERROR);
         SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, false);
         Assert.assertNotNull(sessionCtx);
         
@@ -108,8 +115,8 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, true);
         sessionCtx.setIdPSession(sessionManager.createSession("joe"));
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertEquals(sessionCtx.getIdPSession().getAuthenticationResults().size(), 0);
     }
     
@@ -119,8 +126,8 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         ac.setAttemptedFlow(flowDescriptor);
         ac.setAuthenticationResult(new AuthenticationResult("test1", new UsernamePrincipal("joe")));
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, false);
         Assert.assertNotNull(sessionCtx);
         
@@ -137,8 +144,8 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, true);
         sessionCtx.setIdPSession(sessionManager.createSession("joe"));
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         
         Assert.assertSame(sessionCtx.getIdPSession().getAuthenticationResult("test1"), ac.getAuthenticationResult());
     }
@@ -150,8 +157,8 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, true);
         sessionCtx.setIdPSession(sessionManager.createSession("joe"));
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         
         Assert.assertEquals(sessionCtx.getIdPSession().getAuthenticationResults().size(), 0);
     }
@@ -167,8 +174,8 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         long ts = System.currentTimeMillis() + 5 * 60 * 1000;
         ac.getAuthenticationResult().setLastActivityInstant(ts);
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertSame(sessionCtx.getIdPSession().getAuthenticationResult("test1"), ac.getAuthenticationResult());
         
         IdPSession session2 = sessionManager.resolveSingle(

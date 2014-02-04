@@ -20,6 +20,7 @@ package net.shibboleth.idp.session.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.idp.session.SessionException;
@@ -33,7 +34,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -155,7 +155,8 @@ public class UpdateSessionWithSPSession extends AbstractProfileAction {
             sessionCtx = profileRequestContext.getSubcontext(SessionContext.class, false);
             
             // We can only do work if a session exists.
-            return sessionCtx != null && sessionCtx.getIdPSession() != null;
+            return sessionCtx != null && sessionCtx.getIdPSession() != null
+                    && super.doPreExecute(profileRequestContext);
         }
         
         return false;

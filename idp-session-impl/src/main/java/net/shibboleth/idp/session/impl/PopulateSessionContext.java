@@ -20,6 +20,7 @@ package net.shibboleth.idp.session.impl;
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionResolver;
@@ -33,7 +34,6 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,7 +112,7 @@ public class PopulateSessionContext extends AbstractProfileAction {
                 return;
             }
             
-            HttpServletRequest request = getHttpServletRequest();
+            final HttpServletRequest request = getHttpServletRequest();
             if (request != null && request.getRemoteAddr() != null) {
                 if (!session.checkAddress(request.getRemoteAddr())) {
                     return;

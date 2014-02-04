@@ -19,16 +19,20 @@ package net.shibboleth.idp.session.impl;
 
 import javax.servlet.http.Cookie;
 
+import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.profile.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -36,12 +40,15 @@ import org.testng.annotations.Test;
 /** {@link PopulateSessionContext} unit test. */
 public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
     
+    private RequestContext src;
+    
     private ProfileRequestContext prc;
     
     private PopulateSessionContext action;
     
     @BeforeMethod public void setUpAction() throws ComponentInitializationException {
-        prc = new ProfileRequestContext();
+        src = new RequestContextBuilder().buildRequestContext();
+        prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         
         action = new PopulateSessionContext();
         action.setHttpServletRequest(requestProxy);
@@ -52,8 +59,8 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
     
     @Test public void testNoSession() throws ProfileException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNull(prc.getSubcontext(SessionContext.class, false));
     }
     
@@ -63,8 +70,8 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, false);
         Assert.assertNotNull(sessionCtx);
         
@@ -78,8 +85,8 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
         ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
         ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setRemoteAddr("::1");
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, false);
         Assert.assertNotNull(sessionCtx);
         
@@ -93,8 +100,8 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
         ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
         ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setRemoteAddr("192.168.1.1");
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNull(prc.getSubcontext(SessionContext.class, false));
     }
 
@@ -106,8 +113,8 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
         
         Thread.sleep(5000);
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNull(prc.getSubcontext(SessionContext.class, false));
     }
 }

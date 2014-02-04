@@ -23,22 +23,28 @@ import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.profile.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link InvalidateSessionOnIdentitySwitch} unit test. */
 public class InvalidateSessionOnIdentitySwitchTest extends SessionManagerBaseTestCase {
+    
+    private RequestContext src;
     
     private ProfileRequestContext prc;
     
@@ -51,7 +57,8 @@ public class InvalidateSessionOnIdentitySwitchTest extends SessionManagerBaseTes
     private InvalidateSessionOnIdentitySwitch action;
     
     @BeforeMethod public void setUpAction() throws ComponentInitializationException {
-        prc = new ProfileRequestContext();
+        src = new RequestContextBuilder().buildRequestContext();
+        prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         ac = prc.getSubcontext(AuthenticationContext.class, true);
         sc = prc.getSubcontext(SessionContext.class, true);
         c14n = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
@@ -64,8 +71,8 @@ public class InvalidateSessionOnIdentitySwitchTest extends SessionManagerBaseTes
     @Test public void testNoSession() throws ProfileException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         c14n.setPrincipalName("joe");
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
     }
     
     @Test public void testSesssion() throws ProfileException, SessionException {
@@ -74,8 +81,8 @@ public class InvalidateSessionOnIdentitySwitchTest extends SessionManagerBaseTes
         sc.setIdPSession(sessionManager.createSession("joe"));
         ac.setActiveResults(Collections.singletonList(new AuthenticationResult("test1", new UsernamePrincipal("joe"))));
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNotNull(sc.getIdPSession());
         Assert.assertEquals(ac.getActiveResults().size(), 1);
     }
@@ -87,8 +94,8 @@ public class InvalidateSessionOnIdentitySwitchTest extends SessionManagerBaseTes
         ac.setActiveResults(Collections.singletonList(new AuthenticationResult("test1", new UsernamePrincipal("joe"))));
         c14n.setPrincipalName("joe");
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNotNull(sc.getIdPSession());
         Assert.assertEquals(ac.getActiveResults().size(), 1);
     }
@@ -100,9 +107,10 @@ public class InvalidateSessionOnIdentitySwitchTest extends SessionManagerBaseTes
         ac.setActiveResults(Collections.singletonList(new AuthenticationResult("test1", new UsernamePrincipal("joe"))));
         c14n.setPrincipalName("joe2");
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNull(sc.getIdPSession());
         Assert.assertEquals(ac.getActiveResults().size(), 0);
     }
+    
 }

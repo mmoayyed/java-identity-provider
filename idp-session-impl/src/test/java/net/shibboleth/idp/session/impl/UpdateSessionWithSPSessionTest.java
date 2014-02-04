@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.session.impl;
 
+import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.profile.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.session.BasicSPSession;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SPSession;
@@ -27,10 +30,11 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -40,12 +44,15 @@ import com.google.common.base.Function;
 /** {@link UpdateSessionWithSPSession} unit test. */
 public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
     
+    private RequestContext src;
+    
     private ProfileRequestContext prc;
     
     private UpdateSessionWithSPSession action;
     
     @BeforeMethod public void setUpAction() throws ComponentInitializationException {
-        prc = new ProfileRequestContext();
+        src = new RequestContextBuilder().buildRequestContext();
+        prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
 
         action = new UpdateSessionWithSPSession();
         action.setSessionManager(sessionManager);
@@ -66,8 +73,8 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         action.initialize();
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNull(prc.getSubcontext(SessionContext.class, false));
     }
     
@@ -79,8 +86,8 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
         
         action.setSPSessionCreationStrategy(new NullStrategy());
         action.initialize();
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNull(session.getSPSession("https://sp.example.org"));
     }
 
@@ -95,8 +102,8 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
         
         action.setSPSessionCreationStrategy(new DummyStrategy(creation, expiration));
         action.initialize();
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         
         final SPSession spSession = session.getSPSession("https://sp.example.org");
         Assert.assertNotNull(spSession);
