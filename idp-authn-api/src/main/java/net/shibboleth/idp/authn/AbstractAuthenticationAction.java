@@ -21,11 +21,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;

@@ -21,10 +21,11 @@ package net.shibboleth.idp.authn.impl;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UserAgentContext;
+import net.shibboleth.idp.profile.ActionTestingSupport;
 
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.ActionTestingSupport;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -43,21 +44,21 @@ public class ExtractUserAgentIdntifierTest extends PopulateAuthenticationContext
     }
     
     @Test public void testNoServlet() throws Exception {
-        action.execute(prc);
+        final Event event = action.execute(src);
         
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testMissingHeader() throws ProfileException {
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testValidHeader() throws ProfileException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader("User-Agent", "foo bar baz");
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         UserAgentContext uaCtx = authCtx.getSubcontext(UserAgentContext.class, false);
         Assert.assertNotNull(uaCtx, "No UserAgentContext attached");

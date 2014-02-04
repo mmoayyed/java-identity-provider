@@ -19,9 +19,12 @@ package net.shibboleth.idp.authn.impl;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.profile.navigate.WebflowRequestContextProfileRequestContextLookup;
 
 import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -31,11 +34,13 @@ import com.google.common.collect.ImmutableList;
 /** {@link PopulateAuthenticationContext} unit test and base class for further action tests. */
 public class PopulateAuthenticationContextTest {
 
+    protected RequestContext src;
     protected ProfileRequestContext prc;
     protected ImmutableList<AuthenticationFlowDescriptor> authenticationFlows;
     
     @BeforeMethod public void setUp() throws Exception {        
-        prc = new ProfileRequestContext();
+        src = new RequestContextBuilder().buildRequestContext();
+        prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         prc.addSubcontext(new AuthenticationContext(), true);
 
         authenticationFlows = ImmutableList.of(new AuthenticationFlowDescriptor("test1"),
@@ -45,7 +50,7 @@ public class PopulateAuthenticationContextTest {
         action.setAvailableFlows(authenticationFlows);
         action.initialize();
 
-        action.execute(prc);
+        action.execute(src);
     }
 
     /** Test that the authentication context is properly added. */

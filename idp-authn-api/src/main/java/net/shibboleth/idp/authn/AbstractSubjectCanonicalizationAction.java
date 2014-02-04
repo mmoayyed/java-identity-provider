@@ -28,6 +28,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.Pair;
@@ -37,7 +38,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;

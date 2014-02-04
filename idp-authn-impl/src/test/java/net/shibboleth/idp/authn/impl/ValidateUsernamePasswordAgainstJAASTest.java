@@ -32,12 +32,13 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.net.UriSupport;
 
-import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -96,16 +97,16 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
     @Test public void testMissingFlow() throws Exception {
         action.initialize();
 
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, EventIds.INVALID_PROFILE_CTX);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
     }
 
     @Test public void testMissingUser() throws Exception {
         prc.getSubcontext(AuthenticationContext.class, false).setAttemptedFlow(authenticationFlows.get(0));
         action.initialize();
 
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testMissingUser2() throws Exception {
@@ -114,8 +115,8 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
         ac.getSubcontext(UsernamePasswordContext.class, true);
         action.initialize();
 
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testBadConfig() throws Exception {
@@ -128,8 +129,8 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
 
         doExtract(prc);
 
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
         AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class, false);
         Assert.assertEquals(errorCtx.getExceptions().size(), 1);
         Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
@@ -149,8 +150,8 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
 
         doExtract(prc);
 
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, "UnknownUsername");
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, "UnknownUsername");
         AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class, false);
         Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
         Assert.assertTrue(errorCtx.isClassifiedError("UnknownUsername"));
@@ -171,8 +172,8 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
 
         doExtract(prc);
 
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, "InvalidPassword");
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, "InvalidPassword");
         AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class, false);
         Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
         Assert.assertFalse(errorCtx.isClassifiedError("UnknownUsername"));
@@ -194,8 +195,8 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
 
         doExtract(prc);
 
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNotNull(ac.getAuthenticationResult());
         Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
                 .next().getName(), "PETER_THE_PRINCIPAL");
@@ -205,7 +206,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
         ExtractUsernamePasswordFromFormRequest extract = new ExtractUsernamePasswordFromFormRequest();
         extract.setHttpServletRequest(action.getHttpServletRequest());
         extract.initialize();
-        extract.execute(prc);
+        extract.execute(src);
     }
 
     private String getCurrentDir() throws IOException {
@@ -214,4 +215,5 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
 
         return currentDir.replace(File.separatorChar, '/');
     }
+    
 }

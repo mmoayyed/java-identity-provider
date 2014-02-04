@@ -21,10 +21,11 @@ package net.shibboleth.idp.authn.impl;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UserAgentContext;
+import net.shibboleth.idp.profile.ActionTestingSupport;
 
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.ActionTestingSupport;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -45,13 +46,13 @@ public class ExtractUserAgentAddressTest extends PopulateAuthenticationContextTe
     @Test public void testMissingAddress() throws ProfileException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr(null);
         
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testValidAddress() throws ProfileException {
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         UserAgentContext uaCtx = authCtx.getSubcontext(UserAgentContext.class, false);
         Assert.assertNotNull(uaCtx, "No UserAgentContext attached");
@@ -61,7 +62,7 @@ public class ExtractUserAgentAddressTest extends PopulateAuthenticationContextTe
     @Test public void testInvalidAddress() throws ProfileException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr("zorkmids");
         
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 }

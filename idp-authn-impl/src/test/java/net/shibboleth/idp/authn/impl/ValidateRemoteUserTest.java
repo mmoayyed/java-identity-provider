@@ -24,12 +24,13 @@ import java.util.regex.Pattern;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.idp.profile.ActionTestingSupport;
 
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -51,14 +52,14 @@ public class ValidateRemoteUserTest extends PopulateAuthenticationContextTest {
     }
 
     @Test public void testMissingFlow() throws ProfileException {
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, EventIds.INVALID_PROFILE_CTX);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
     }
     
     @Test public void testMissingUser() throws ProfileException {
         prc.getSubcontext(AuthenticationContext.class, false).setAttemptedFlow(authenticationFlows.get(0));
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testMissingUser2() throws Exception {
@@ -67,8 +68,8 @@ public class ValidateRemoteUserTest extends PopulateAuthenticationContextTest {
         
         doExtract(prc);
         
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testUnauthorized() throws Exception {
@@ -79,8 +80,8 @@ public class ValidateRemoteUserTest extends PopulateAuthenticationContextTest {
         
         doExtract(prc);
         
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
     }
 
     @Test public void testAuthorized() throws Exception {
@@ -91,8 +92,8 @@ public class ValidateRemoteUserTest extends PopulateAuthenticationContextTest {
         
         doExtract(prc);
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNotNull(ac.getAuthenticationResult());
         Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(
                 UsernamePrincipal.class).iterator().next().getName(), "baz");
@@ -106,8 +107,8 @@ public class ValidateRemoteUserTest extends PopulateAuthenticationContextTest {
         
         doExtract(prc);
         
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
     }
     
     @Test public void testPattern() throws Exception {
@@ -118,8 +119,8 @@ public class ValidateRemoteUserTest extends PopulateAuthenticationContextTest {
         
         doExtract(prc);
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNotNull(ac.getAuthenticationResult());
         Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(
                 UsernamePrincipal.class).iterator().next().getName(), "ban");
@@ -129,6 +130,6 @@ public class ValidateRemoteUserTest extends PopulateAuthenticationContextTest {
         ExtractRemoteUser extract = new ExtractRemoteUser();
         extract.setHttpServletRequest(action.getHttpServletRequest());
         extract.initialize();
-        extract.execute(prc);
+        action.execute(src);
     }
 }

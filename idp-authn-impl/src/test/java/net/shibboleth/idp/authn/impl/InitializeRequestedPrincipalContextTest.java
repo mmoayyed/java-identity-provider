@@ -23,18 +23,21 @@ import java.util.Collections;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.principal.TestPrincipal;
+import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.IdPEventIds;
 
-import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.idp.profile.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.relyingparty.MockAuthenticationProfileConfiguration;
 import net.shibboleth.idp.relyingparty.MockProfileConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -42,45 +45,48 @@ import org.testng.annotations.Test;
 /** {@link InitializeRequestedPrincipalContext} unit test. */
 public class InitializeRequestedPrincipalContextTest {
 
-    InitializeRequestedPrincipalContext action;
+    private RequestContext src;
+    
+    private ProfileRequestContext prc;
+    
+    private InitializeRequestedPrincipalContext action;
     
     @BeforeMethod
     public void setUp() throws ComponentInitializationException {
+        src = new RequestContextBuilder().buildRequestContext();
+        prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         action = new InitializeRequestedPrincipalContext();
         action.initialize();
     }
     
     /** Test that the action errors out properly if there is no relying party context. */
     @Test public void testNoRelyingPartyContext() throws Exception {
-        ProfileRequestContext profileCtx = new ProfileRequestContext();
-        AuthenticationContext authCtx = profileCtx.getSubcontext(AuthenticationContext.class, true);
+        prc.removeSubcontext(RelyingPartyContext.class);
+        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, true);
 
-        action.execute(profileCtx);
-        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_RELYING_PARTY_CTX);
         Assert.assertNull(authCtx.getSubcontext(RequestedPrincipalContext.class, false));
     }
 
     /** Test that the action errors out properly if there is no relying party configuration. */
     @Test public void testNoProfileConfiguration() throws Exception {
-        ProfileRequestContext profileCtx = new ProfileRequestContext();
-        AuthenticationContext authCtx = profileCtx.getSubcontext(AuthenticationContext.class, true);
-        profileCtx.getSubcontext(RelyingPartyContext.class, true);
+        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, true);
 
-        action.execute(profileCtx);
-        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_PROFILE_CONFIG);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_PROFILE_CONFIG);
         Assert.assertNull(authCtx.getSubcontext(RequestedPrincipalContext.class, false));
     }
 
     /** Test that the action errors out properly if the desired profile configuration is not configured. */
     @Test public void testInvalidProfileConfiguration() throws Exception {
-        ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setRelyingPartyProfileConfigurations(
-                        Collections.<ProfileConfiguration>singleton(new MockProfileConfiguration("mock"))
-                            ).buildProfileRequestContext();
-        AuthenticationContext authCtx = profileCtx.getSubcontext(AuthenticationContext.class, true);
+        src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
+                Collections.<ProfileConfiguration>singleton(new MockProfileConfiguration("mock"))).buildRequestContext();
+        prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
+        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, true);
 
-        action.execute(profileCtx);
-        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_PROFILE_CONFIG);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_PROFILE_CONFIG);
         Assert.assertNull(authCtx.getSubcontext(RequestedPrincipalContext.class, false));
     }
 
@@ -88,13 +94,13 @@ public class InitializeRequestedPrincipalContextTest {
     @Test public void testNoMethods() throws Exception {
         MockAuthenticationProfileConfiguration mock =
                 new MockAuthenticationProfileConfiguration("mock", Collections.<Principal>emptyList());
-        ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setRelyingPartyProfileConfigurations(
-                        Collections.<ProfileConfiguration>singleton(mock)).buildProfileRequestContext();
-        AuthenticationContext authCtx = profileCtx.getSubcontext(AuthenticationContext.class, true);
+        src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
+                Collections.<ProfileConfiguration>singleton(mock)).buildRequestContext();
+        prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
+        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, true);
 
-        action.execute(profileCtx);
-        ActionTestingSupport.assertProceedEvent(profileCtx);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNull(authCtx.getSubcontext(RequestedPrincipalContext.class, false));
     }
     
@@ -103,13 +109,12 @@ public class InitializeRequestedPrincipalContextTest {
         Principal method = new TestPrincipal("test");
         MockAuthenticationProfileConfiguration mock =
                 new MockAuthenticationProfileConfiguration("mock", Collections.singletonList(method));
-        ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setRelyingPartyProfileConfigurations(
-                        Collections.<ProfileConfiguration>singleton(mock)).buildProfileRequestContext();
-        AuthenticationContext authCtx = profileCtx.getSubcontext(AuthenticationContext.class, true);
+        src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
+                Collections.<ProfileConfiguration>singleton(mock)).buildRequestContext();
+        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, true);
 
-        action.execute(profileCtx);
-        ActionTestingSupport.assertProceedEvent(profileCtx);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         RequestedPrincipalContext rpCtx = authCtx.getSubcontext(RequestedPrincipalContext.class, false);
         Assert.assertNotNull(rpCtx);
         Assert.assertEquals(rpCtx.getOperator(), "exact");

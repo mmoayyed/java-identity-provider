@@ -21,9 +21,10 @@ package net.shibboleth.idp.authn.impl;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
+import net.shibboleth.idp.profile.ActionTestingSupport;
 
-import org.opensaml.profile.action.ActionTestingSupport;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -44,42 +45,42 @@ public class ExtractUsernamePasswordFromBasicAuthTest extends PopulateAuthentica
     }
     
     @Test public void testNoServlet() throws Exception {
-        action.execute(prc);
+        final Event event = action.execute(src);
         
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testMissingIdentity() throws Exception {
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testMissingIdentity2() throws Exception {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(HttpHeaders.AUTHORIZATION, "foo");
         
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testInvalid() throws Exception {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(HttpHeaders.AUTHORIZATION, "Basic foo:bar");
         
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
     }
 
     @Test public void testInvalid2() throws Exception {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(HttpHeaders.AUTHORIZATION, "Basic Zm9vOg==");
         
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
     }
     
     @Test public void testValid() throws Exception {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(HttpHeaders.AUTHORIZATION, "Basic Zm9vOmJhcg==");
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         UsernamePasswordContext upCtx = authCtx.getSubcontext(UsernamePasswordContext.class, false);
         Assert.assertNotNull(upCtx, "No UsernamePasswordContext attached");

@@ -24,10 +24,11 @@ import javax.security.auth.Subject;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.collection.Pair;
 
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.ActionTestingSupport;
+import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -41,24 +42,23 @@ public class SimpleSubjectCanonicalizationTest extends PopulateAuthenticationCon
         super.setUp();
         
         action = new SimpleSubjectCanonicalization();
-        action.setTransforms(
-                Arrays.asList(new Pair<>("^(.+)@osu\\.edu$", "$1")));
+        action.setTransforms(Arrays.asList(new Pair<>("^(.+)@osu\\.edu$", "$1")));
         action.initialize();
     }
     
     @Test public void testNoContext() throws ProfileException {
-        action.execute(prc);
+        final Event event = action.execute(src);
         
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
     }
 
     @Test public void testNoPrincipal() throws ProfileException {
         Subject subject = new Subject();
         prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
         
-        action.execute(prc);
+        final Event event = action.execute(src);
         
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT);
         Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
     }
 
@@ -68,9 +68,9 @@ public class SimpleSubjectCanonicalizationTest extends PopulateAuthenticationCon
         subject.getPrincipals().add(new UsernamePrincipal("bar"));
         prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
         
-        action.execute(prc);
+        final Event event = action.execute(src);
         
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT);
         Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
     }
 
@@ -79,9 +79,9 @@ public class SimpleSubjectCanonicalizationTest extends PopulateAuthenticationCon
         subject.getPrincipals().add(new UsernamePrincipal("foo"));
         prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
         
-        action.execute(prc);
+        final Event event = action.execute(src);
         
-        ActionTestingSupport.assertProceedEvent(prc);
+        ActionTestingSupport.assertProceedEvent(event);
         SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class, false);
         Assert.assertEquals(sc.getPrincipalName(), "foo");
     }
@@ -91,10 +91,11 @@ public class SimpleSubjectCanonicalizationTest extends PopulateAuthenticationCon
         subject.getPrincipals().add(new UsernamePrincipal("foo@osu.edu"));
         prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
         
-        action.execute(prc);
+        final Event event = action.execute(src);
         
-        ActionTestingSupport.assertProceedEvent(prc);
+        ActionTestingSupport.assertProceedEvent(event);
         SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class, false);
         Assert.assertEquals(sc.getPrincipalName(), "foo");
     }
+    
 }

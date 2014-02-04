@@ -25,9 +25,10 @@ import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.profile.ActionTestingSupport;
 
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.ActionTestingSupport;
+import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -45,18 +46,18 @@ public class FinalizeAuthenticationTest extends PopulateAuthenticationContextTes
     }
     
     @Test public void testNotSet() throws ProfileException {
-        action.execute(prc);
+        final Event event = action.execute(src);
         
-        ActionTestingSupport.assertProceedEvent(prc);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNull(prc.getSubcontext(SubjectContext.class, false));
     }
 
     @Test public void testNothingActive() throws ProfileException {
         prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("foo");
         
-        action.execute(prc);
+        final Event event = action.execute(src);
         
-        ActionTestingSupport.assertProceedEvent(prc);
+        ActionTestingSupport.assertProceedEvent(event);
         SubjectContext sc = prc.getSubcontext(SubjectContext.class, false);
         Assert.assertNotNull(sc);
         Assert.assertEquals(sc.getPrincipalName(), "foo");
@@ -69,9 +70,9 @@ public class FinalizeAuthenticationTest extends PopulateAuthenticationContextTes
         authCtx.setAuthenticationResult(active);
         prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("foo");
         
-        action.execute(prc);
+        final Event event = action.execute(src);
         
-        ActionTestingSupport.assertProceedEvent(prc);
+        ActionTestingSupport.assertProceedEvent(event);
         SubjectContext sc = prc.getSubcontext(SubjectContext.class, false);
         Assert.assertNotNull(sc);
         Assert.assertEquals(sc.getPrincipalName(), "foo");
@@ -86,9 +87,9 @@ public class FinalizeAuthenticationTest extends PopulateAuthenticationContextTes
         authCtx.setAuthenticationResult(active2);
         prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("foo");
         
-        action.execute(prc);
+        final Event event = action.execute(src);
         
-        ActionTestingSupport.assertProceedEvent(prc);
+        ActionTestingSupport.assertProceedEvent(event);
         SubjectContext sc = prc.getSubcontext(SubjectContext.class, false);
         Assert.assertNotNull(sc);
         Assert.assertEquals(sc.getPrincipalName(), "foo");

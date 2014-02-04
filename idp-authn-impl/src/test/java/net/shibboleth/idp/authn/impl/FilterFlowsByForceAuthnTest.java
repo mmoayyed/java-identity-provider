@@ -19,9 +19,10 @@ package net.shibboleth.idp.authn.impl;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.profile.ActionTestingSupport;
 
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.ActionTestingSupport;
+import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -42,8 +43,8 @@ public class FilterFlowsByForceAuthnTest extends PopulateAuthenticationContextTe
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         authCtx.setForceAuthn(false);
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertEquals(authCtx.getPotentialFlows().size(), 3);
     }
 
@@ -54,8 +55,8 @@ public class FilterFlowsByForceAuthnTest extends PopulateAuthenticationContextTe
             fd.setForcedAuthenticationSupported(true);
         }
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertEquals(authCtx.getPotentialFlows().size(), 3);
     }
 
@@ -64,8 +65,8 @@ public class FilterFlowsByForceAuthnTest extends PopulateAuthenticationContextTe
         authCtx.setForceAuthn(true);
         authCtx.getPotentialFlows().get("test2").setForcedAuthenticationSupported(true);
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertEquals(authCtx.getPotentialFlows().size(), 1);
         Assert.assertNull(authCtx.getPotentialFlows().get("test1"));
         Assert.assertNotNull(authCtx.getPotentialFlows().get("test2"));

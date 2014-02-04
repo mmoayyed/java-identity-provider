@@ -29,13 +29,14 @@ import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.impl.principal.ExactPrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.net.IPRange;
 
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -57,14 +58,14 @@ public class ValidateUserAgentAddressTest extends PopulateAuthenticationContextT
     }
 
     @Test public void testMissingFlow() throws ProfileException {
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, EventIds.INVALID_PROFILE_CTX);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
     }
     
     @Test public void testMissingAddress() throws ProfileException {
         prc.getSubcontext(AuthenticationContext.class, false).setAttemptedFlow(authenticationFlows.get(0));
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testMissingAddress2() throws Exception {
@@ -75,8 +76,8 @@ public class ValidateUserAgentAddressTest extends PopulateAuthenticationContextT
         
         doExtract(prc);
         
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testUnauthorized() throws Exception {
@@ -85,8 +86,8 @@ public class ValidateUserAgentAddressTest extends PopulateAuthenticationContextT
         
         doExtract(prc);
         
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
     }
 
     @Test public void testIncompatible() throws Exception {
@@ -103,8 +104,8 @@ public class ValidateUserAgentAddressTest extends PopulateAuthenticationContextT
         
         doExtract(prc);
         
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.REQUEST_UNSUPPORTED);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
     }
 
     @Test public void testCompatible() throws Exception {
@@ -121,8 +122,8 @@ public class ValidateUserAgentAddressTest extends PopulateAuthenticationContextT
         
         doExtract(prc);
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNotNull(ac.getAuthenticationResult());
         Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(
                 UsernamePrincipal.class).iterator().next().getName(), "foo");
@@ -132,8 +133,7 @@ public class ValidateUserAgentAddressTest extends PopulateAuthenticationContextT
         ExtractUserAgentAddress extract = new ExtractUserAgentAddress();
         extract.setHttpServletRequest(action.getHttpServletRequest());
         extract.initialize();
-        extract.execute(prc);
+        extract.execute(src);
     }
-    
     
 }

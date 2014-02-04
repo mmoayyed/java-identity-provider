@@ -20,8 +20,8 @@ package net.shibboleth.idp.authn.impl;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.context.EventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -46,30 +46,27 @@ public class SelectSubjectCanonicalizationFlowTest extends PopulateSubjectCanoni
     
     @Test public void testSelect() throws ProfileException {
         
-        action.execute(prc);
+        final Event event = action.execute(src);
         
-        EventContext<String> event = prc.getSubcontext(EventContext.class, false);
-        Assert.assertEquals(c14nCtx.getAttemptedFlow(), c14nCtx.getPotentialFlows().get(event.getEvent()));
+        Assert.assertEquals(c14nCtx.getAttemptedFlow(), c14nCtx.getPotentialFlows().get(event.getId()));
         Assert.assertEquals(c14nCtx.getAttemptedFlow().getId(), "test1");
     }
 
     @Test public void testIntermediate() throws ProfileException {
         c14nCtx.getIntermediateFlows().put("test1", c14nCtx.getPotentialFlows().get("test1"));
         
-        action.execute(prc);
+        final Event event = action.execute(src);
         
-        EventContext<String> event = prc.getSubcontext(EventContext.class, false);
-        Assert.assertEquals(c14nCtx.getAttemptedFlow(), c14nCtx.getPotentialFlows().get(event.getEvent()));
+        Assert.assertEquals(c14nCtx.getAttemptedFlow(), c14nCtx.getPotentialFlows().get(event.getId()));
         Assert.assertEquals(c14nCtx.getAttemptedFlow().getId(), "test2");
     }
 
     @Test public void testPredicate() throws ProfileException {
         c14nCtx.getPotentialFlows().get("test1").setActivationCondition(Predicates.<ProfileRequestContext>alwaysFalse());
         
-        action.execute(prc);
+        final Event event = action.execute(src);
         
-        EventContext<String> event = prc.getSubcontext(EventContext.class, false);
-        Assert.assertEquals(c14nCtx.getAttemptedFlow(), c14nCtx.getPotentialFlows().get(event.getEvent()));
+        Assert.assertEquals(c14nCtx.getAttemptedFlow(), c14nCtx.getPotentialFlows().get(event.getId()));
         Assert.assertEquals(c14nCtx.getAttemptedFlow().getId(), "test2");
     }
 

@@ -23,11 +23,12 @@ import java.util.Arrays;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernameContext;
+import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.opensaml.profile.action.ActionTestingSupport;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -56,24 +57,24 @@ public class ExtractRemoteUserTest extends PopulateAuthenticationContextTest {
     
     @Test public void testNoServlet() throws Exception {
         action.initialize();
-        action.execute(prc);
+        final Event event = action.execute(src);
         
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testMissingIdentity() throws Exception {
         action.initialize();
         
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.NO_CREDENTIALS);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testRemoteUser() throws Exception {
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser("foo");
         action.initialize();
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         UsernameContext unCtx = authCtx.getSubcontext(UsernameContext.class, false);
         Assert.assertNotNull(unCtx, "No UsernameContext attached");
@@ -85,8 +86,8 @@ public class ExtractRemoteUserTest extends PopulateAuthenticationContextTest {
         action.setCheckAttributes(Arrays.asList("Username"));
         action.initialize();
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         UsernameContext unCtx = authCtx.getSubcontext(UsernameContext.class, false);
         Assert.assertNotNull(unCtx, "No UsernameContext attached");
@@ -99,8 +100,8 @@ public class ExtractRemoteUserTest extends PopulateAuthenticationContextTest {
         action.setCheckHeaders(Arrays.asList("X-Username"));
         action.initialize();
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         UsernameContext unCtx = authCtx.getSubcontext(UsernameContext.class, false);
         Assert.assertNotNull(unCtx, "No UsernameContext attached");
@@ -113,8 +114,8 @@ public class ExtractRemoteUserTest extends PopulateAuthenticationContextTest {
         action.setLowercase(true);
         action.initialize();
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         UsernameContext unCtx = authCtx.getSubcontext(UsernameContext.class, false);
         Assert.assertNotNull(unCtx, "No UsernameContext attached");

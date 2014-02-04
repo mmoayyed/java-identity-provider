@@ -21,9 +21,12 @@ import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.profile.navigate.WebflowRequestContextProfileRequestContextLookup;
 
 import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -33,11 +36,15 @@ import com.google.common.collect.ImmutableList;
 /** {@link PopulateSubjectCanonicalizationContext} unit test and base class for further action tests. */
 public class PopulateSubjectCanonicalizationContextTest {
 
-    protected ProfileRequestContext prc;
     protected ImmutableList<SubjectCanonicalizationFlowDescriptor> c14nFlows;
+
+    protected RequestContext src;
+    
+    protected ProfileRequestContext prc;
     
     @BeforeMethod public void setUp() throws Exception {        
-        prc = new ProfileRequestContext();
+        src = new RequestContextBuilder().buildRequestContext();
+        prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(new Subject());
 
         c14nFlows = ImmutableList.of(new SubjectCanonicalizationFlowDescriptor("test1"),
@@ -47,7 +54,7 @@ public class PopulateSubjectCanonicalizationContextTest {
         action.setAvailableFlows(c14nFlows);
         action.initialize();
 
-        action.execute(prc);
+        action.execute(src);
     }
 
     /** Test that the context is properly added. */

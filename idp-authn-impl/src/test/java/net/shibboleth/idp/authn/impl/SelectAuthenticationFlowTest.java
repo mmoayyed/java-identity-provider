@@ -29,10 +29,10 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.impl.principal.ExactPrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.principal.TestPrincipal;
+import net.shibboleth.idp.profile.ActionTestingSupport;
 
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.ActionTestingSupport;
-import org.opensaml.profile.context.EventContext;
+import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -47,7 +47,7 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
     @BeforeMethod public void setUp() throws Exception {
         super.setUp();
      
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         authCtx.getPrincipalEvalPredicateFactoryRegistry().register(
                 TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         
@@ -56,50 +56,47 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
     }
     
     @Test public void testNoRequestNoneActive() throws ProfileException {
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         
-        action.execute(prc);
+        final Event event = action.execute(src);
         
-        EventContext<String> event = prc.getSubcontext(EventContext.class, false);
         Assert.assertNull(authCtx.getAuthenticationResult());
-        Assert.assertEquals(authCtx.getAttemptedFlow(), authCtx.getPotentialFlows().get(event.getEvent()));
+        Assert.assertEquals(authCtx.getAttemptedFlow(), authCtx.getPotentialFlows().get(event.getId()));
         Assert.assertEquals(authCtx.getAttemptedFlow().getId(), "test1");
     }
 
     @Test public void testNoRequestNoneActiveIntermediate() throws ProfileException {
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         authCtx.getIntermediateFlows().put("test1", authCtx.getPotentialFlows().get("test1"));
         
-        action.execute(prc);
+        final Event event = action.execute(src);
         
-        EventContext<String> event = prc.getSubcontext(EventContext.class, false);
         Assert.assertNull(authCtx.getAuthenticationResult());
-        Assert.assertEquals(authCtx.getAttemptedFlow(), authCtx.getPotentialFlows().get(event.getEvent()));
+        Assert.assertEquals(authCtx.getAttemptedFlow(), authCtx.getPotentialFlows().get(event.getId()));
         Assert.assertEquals(authCtx.getAttemptedFlow().getId(), "test2");
     }
     
     @Test public void testNoRequestActive() throws ProfileException {
-        AuthenticationResult active = new AuthenticationResult("test2", new Subject());
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         authCtx.setActiveResults(Arrays.asList(active));
         
-        action.execute(prc);
+        final Event event = action.execute(src);
         
-        ActionTestingSupport.assertProceedEvent(prc);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertEquals(active, authCtx.getAuthenticationResult());
     }
 
     @Test public void testNoRequestForced() throws ProfileException {
-        AuthenticationResult active = new AuthenticationResult("test2", new Subject());
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         authCtx.setActiveResults(Arrays.asList(active));
         authCtx.setForceAuthn(true);
         
-        action.execute(prc);
+        final Event event = action.execute(src);
         
-        EventContext<String> event = prc.getSubcontext(EventContext.class, false);
         Assert.assertNull(authCtx.getAuthenticationResult());
-        Assert.assertEquals(authCtx.getAttemptedFlow(), authCtx.getPotentialFlows().get(event.getEvent()));
+        Assert.assertEquals(authCtx.getAttemptedFlow(), authCtx.getPotentialFlows().get(event.getId()));
     }
 
     @Test public void testRequestNoMatch() throws ProfileException {
@@ -108,9 +105,9 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
                 Arrays.<Principal>asList(new TestPrincipal("foo")));
         authCtx.addSubcontext(rpc, true);
         
-        action.execute(prc);
+        final Event event = action.execute(src);
         
-        ActionTestingSupport.assertEvent(prc, AuthnEventIds.REQUEST_UNSUPPORTED);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
         Assert.assertNull(rpc.getMatchingPrincipal());
     }
 
@@ -121,7 +118,7 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         authCtx.addSubcontext(rpc, true);
         authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(principals);
         
-        action.execute(prc);
+        action.execute(src);
         
         Assert.assertNull(authCtx.getAuthenticationResult());
         Assert.assertEquals(authCtx.getAttemptedFlow().getId(), "test3");
@@ -138,7 +135,7 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         authCtx.getPotentialFlows().get("test2").setSupportedPrincipals(principals);
         authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(principals);
         
-        action.execute(prc);
+        action.execute(src);
         
         Assert.assertNull(authCtx.getAuthenticationResult());
         Assert.assertEquals(authCtx.getAttemptedFlow().getId(), "test3");
@@ -156,7 +153,7 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         authCtx.setActiveResults(Arrays.asList(active));
         authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(ImmutableList.of(principals.get(0)));
         
-        action.execute(prc);
+        action.execute(src);
         
         Assert.assertNull(authCtx.getAuthenticationResult());
         Assert.assertEquals(authCtx.getAttemptedFlow(), authCtx.getPotentialFlows().get("test3"));
@@ -174,9 +171,9 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         authCtx.setActiveResults(Arrays.asList(active));
         authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(ImmutableList.of(principals.get(0)));
         
-        action.execute(prc);
+        final Event event = action.execute(src);
         
-        ActionTestingSupport.assertProceedEvent(prc);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertEquals(active, authCtx.getAuthenticationResult());
         Assert.assertEquals(rpc.getMatchingPrincipal().getName(), "test3");
     }
@@ -193,9 +190,9 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(ImmutableList.of(principals.get(0)));
         
         action.setFavorSSO(true);
-        action.execute(prc);
+        final Event event = action.execute(src);
         
-        ActionTestingSupport.assertProceedEvent(prc);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertEquals(active, authCtx.getAuthenticationResult());
         Assert.assertEquals(rpc.getMatchingPrincipal().getName(), "test2");
     }
