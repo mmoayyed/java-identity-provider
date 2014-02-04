@@ -37,7 +37,7 @@ public class ProfileActionBeanPostProcessor implements BeanPostProcessor {
     /** {@inheritDoc} */
     public Object postProcessAfterInitialization(Object bean, String beanName) {
         if (bean instanceof ProfileAction && !(bean instanceof Action)) {
-            WebFlowProfileActionAdaptor wrapper = new WebFlowProfileActionAdaptor((ProfileAction) bean);
+            final WebFlowProfileActionAdaptor wrapper = new WebFlowProfileActionAdaptor((ProfileAction) bean);
             try {
                 wrapper.initialize();
             } catch (ComponentInitializationException e) {

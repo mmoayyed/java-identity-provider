@@ -20,9 +20,9 @@ package net.shibboleth.idp.profile.impl;
 import javax.annotation.Nonnull;
 
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.profile.context.ProfileRequestContext;
 
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;

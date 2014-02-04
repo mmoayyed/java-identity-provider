@@ -36,15 +36,20 @@ import net.shibboleth.idp.attribute.filter.MockMatcher;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.profile.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.service.AbstractReloadableService;
 import net.shibboleth.idp.service.ServiceableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
@@ -52,9 +57,18 @@ import com.google.common.collect.Lists;
 /** {@link FilterAttributes} unit test. */
 public class FilterAttributesTest {
 
+    private RequestContext src;
+    
+    private ProfileRequestContext prc;
+    
+    @BeforeMethod public void setUpAction() throws ComponentInitializationException {
+        src = new RequestContextBuilder().buildRequestContext();
+        prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
+    }
+    
     /** Test that the action errors out properly if there is no relying party context. */
     @Test public void testNoRelyingPartyContext() throws Exception {
-        final ProfileRequestContext profileCtx = new ProfileRequestContext();
+        prc.removeSubcontext(RelyingPartyContext.class);
 
         final AttributeFilterImpl engine = new AttributeFilterImpl("test", null);
         engine.initialize();
@@ -63,14 +77,13 @@ public class FilterAttributesTest {
         action.setId("test");
         action.initialize();
 
-        action.execute(profileCtx);
-        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_RELYING_PARTY_CTX);
     }
 
     /** Test that the action errors out properly if there is no attribute context. */
     @Test public void testNoAttributeContext() throws Exception {
-        final ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
-        profileCtx.getSubcontext(SubjectContext.class, true);
+        prc.getSubcontext(SubjectContext.class, true);
 
         final AttributeFilterImpl engine = new AttributeFilterImpl("test", null);
         engine.initialize();
@@ -79,17 +92,15 @@ public class FilterAttributesTest {
         action.setId("test");
         action.initialize();
 
-        action.execute(profileCtx);
-        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_ATTRIBUTE_CTX);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_ATTRIBUTE_CTX);
     }
 
     /** Test that the action proceeds properly if there are no attributes to filter . */
     @Test public void testNoAttributes() throws Exception {
-        final ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
-        profileCtx.getSubcontext(SubjectContext.class, true);
+        prc.getSubcontext(SubjectContext.class, true);
 
-        final AttributeContext attribCtx = new AttributeContext();
-        profileCtx.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
+        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true);
 
         final AttributeFilterImpl engine = new AttributeFilterImpl("test", null);
         engine.initialize();
@@ -98,8 +109,8 @@ public class FilterAttributesTest {
         action.setId("test");
         action.initialize();
 
-        action.execute(profileCtx);
-        ActionTestingSupport.assertProceedEvent(profileCtx);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
     }
 
     /** Test that the action filters attributes and proceeds properly while auto-creating a filter context. */
@@ -129,26 +140,25 @@ public class FilterAttributesTest {
         final AttributeFilterImpl engine = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
         engine.initialize();
 
-        final ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
-        profileCtx.getSubcontext(SubjectContext.class, true);
+        prc.getSubcontext(SubjectContext.class, true);
 
         final AttributeContext attributeCtx = new AttributeContext();
         attributeCtx.setIdPAttributes(attributes);
-        profileCtx.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
+        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
 
         final FilterAttributes action = new FilterAttributes(new FilterService(engine));
         action.setId("test");
         action.initialize();
 
-        action.execute(profileCtx);
-        ActionTestingSupport.assertProceedEvent(profileCtx);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
 
         // The attribute filter context should be removed by the filter attributes action.
-        Assert.assertNull(profileCtx.getSubcontext(RelyingPartyContext.class).getSubcontext(
+        Assert.assertNull(prc.getSubcontext(RelyingPartyContext.class).getSubcontext(
                 AttributeFilterContext.class));
 
         final AttributeContext resultAttributeCtx =
-                profileCtx.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
+                prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
         Assert.assertNotNull(resultAttributeCtx);
 
         final Map<String, IdPAttribute> resultAttributes = resultAttributeCtx.getIdPAttributes();
@@ -187,29 +197,28 @@ public class FilterAttributesTest {
         final AttributeFilterImpl engine = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
         engine.initialize();
 
-        final ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
-        profileCtx.getSubcontext(SubjectContext.class, true);
+        prc.getSubcontext(SubjectContext.class, true);
 
         final AttributeContext attributeCtx = new AttributeContext();
         attributeCtx.setIdPAttributes(attributes);
-        profileCtx.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
+        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
 
         final AttributeFilterContext attributeFilterCtx = new AttributeFilterContext();
-        profileCtx.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeFilterCtx);
+        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeFilterCtx);
 
         final FilterAttributes action = new FilterAttributes(new FilterService(engine));
         action.setId("test");
         action.initialize();
 
-        action.execute(profileCtx);
-        ActionTestingSupport.assertProceedEvent(profileCtx);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
 
         // The attribute filter context should be removed by the filter attributes action.
-        Assert.assertNull(profileCtx.getSubcontext(RelyingPartyContext.class).getSubcontext(
+        Assert.assertNull(prc.getSubcontext(RelyingPartyContext.class).getSubcontext(
                 AttributeFilterContext.class));
 
         final AttributeContext resultAttributeCtx =
-                profileCtx.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
+                prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
         Assert.assertNotNull(resultAttributeCtx);
 
         final Map<String, IdPAttribute> resultAttributes = resultAttributeCtx.getIdPAttributes();
@@ -245,48 +254,44 @@ public class FilterAttributesTest {
         final AttributeFilterImpl engine = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
         engine.initialize();
 
-        final ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
-        profileCtx.getSubcontext(SubjectContext.class, true);
+        prc.getSubcontext(SubjectContext.class, true);
 
         final AttributeContext attributeCtx = new AttributeContext();
         attributeCtx.setIdPAttributes(attributes);
-        profileCtx.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
+        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
 
         final AttributeFilterContext attributeFilterCtx = new AttributeFilterContext();
-        profileCtx.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeFilterCtx);
+        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeFilterCtx);
 
         final FilterAttributes action = new FilterAttributes(new FilterService(engine));
         action.setId("test");
         action.initialize();
 
-        action.execute(profileCtx);
-        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.UNABLE_FILTER_ATTRIBS);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, IdPEventIds.UNABLE_FILTER_ATTRIBS);
     }
     
     /** Test that action returns the proper event if the attribute configuration is broken */
     @Test public void testUnableToFindFilter() throws Exception {
-        final ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
-        profileCtx.getSubcontext(SubjectContext.class, true);
-
         final IdPAttribute attribute1 = new MockUncloneableAttribute("attribute1");
         attribute1.setValues(Lists.newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
 
-        final List<IdPAttribute> attributes = Arrays.asList(attribute1);
-
+        prc.getSubcontext(SubjectContext.class, true);
 
         final AttributeContext attributeCtx = new AttributeContext();
+        final List<IdPAttribute> attributes = Arrays.asList(attribute1);
         attributeCtx.setIdPAttributes(attributes);
-        profileCtx.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
+        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
 
         final AttributeFilterContext attributeFilterCtx = new AttributeFilterContext();
-        profileCtx.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeFilterCtx);
+        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeFilterCtx);
 
         final FilterAttributes action = new FilterAttributes(new FilterService(null));
         action.setId("test");
         action.initialize();
 
-        action.execute(profileCtx);
-        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.UNABLE_FILTER_ATTRIBS);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, IdPEventIds.UNABLE_FILTER_ATTRIBS);
     }
 
 

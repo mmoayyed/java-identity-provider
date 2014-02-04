@@ -32,24 +32,38 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.profile.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.service.AbstractReloadableService;
 import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.collection.LazySet;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link ResolveAttributes} unit test. */
 public class ResolveAttributesTest {
 
+    private RequestContext src;
+    
+    private ProfileRequestContext prc;
+    
+    @BeforeMethod public void setUpAction() throws ComponentInitializationException {
+        src = new RequestContextBuilder().buildRequestContext();
+        prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
+    }
+    
     /** Test that the action errors out properly if there is no relying party context. */
     @Test public void testNoRelyingPartyContext() throws Exception {
-        final ProfileRequestContext profileCtx = new ProfileRequestContext();
+        prc.removeSubcontext(RelyingPartyContext.class);
 
         final IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.getValues().add(new StringAttributeValue("value1"));
@@ -64,14 +78,13 @@ public class ResolveAttributesTest {
         action.setId("test");
         action.initialize();
 
-        action.execute(profileCtx);
-        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_RELYING_PARTY_CTX);
     }
 
     /** Test that the action resolves attributes and proceeds properly. */
     @Test public void testResolveAttributes() throws Exception {
-        final ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
-        profileCtx.getSubcontext(SubjectContext.class, true);
+        prc.getSubcontext(SubjectContext.class, true);
 
         final IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.getValues().add(new StringAttributeValue("value1"));
@@ -86,14 +99,14 @@ public class ResolveAttributesTest {
         action.setId("test");
         action.initialize();
 
-        action.execute(profileCtx);
-        ActionTestingSupport.assertProceedEvent(profileCtx);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
 
         // The attribute resolution context should be removed by the resolve attributes action.
-        Assert.assertNull(profileCtx.getSubcontext(AttributeResolutionContext.class));
+        Assert.assertNull(prc.getSubcontext(AttributeResolutionContext.class));
 
         AttributeContext resolvedAttributeCtx =
-                profileCtx.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
+                prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
         Assert.assertNotNull(resolvedAttributeCtx);
 
         final Map<String, IdPAttribute> resolvedAttributes = resolvedAttributeCtx.getIdPAttributes();
@@ -104,8 +117,7 @@ public class ResolveAttributesTest {
     }
 
     @Test public void testResolveSpecificAttributes() throws Exception {
-        ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
-        profileCtx.getSubcontext(SubjectContext.class, true);
+        prc.getSubcontext(SubjectContext.class, true);
 
         final IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.getValues().add(new StringAttributeValue("value1"));
@@ -118,20 +130,20 @@ public class ResolveAttributesTest {
 
         AttributeResolutionContext attributeResolutionCtx = new AttributeResolutionContext();
         attributeResolutionCtx.setRequestedIdPAttributeNames(Collections.singleton("ad1"));
-        profileCtx.addSubcontext(attributeResolutionCtx);
+        prc.addSubcontext(attributeResolutionCtx);
 
         final ResolveAttributes action = new ResolveAttributes(new AttributeService(resolver));
         action.setId("test");
         action.initialize();
 
-        action.execute(profileCtx);
-        ActionTestingSupport.assertProceedEvent(profileCtx);
+        Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
 
         // The attribute resolution context should be removed by the resolve attributes action.
-        Assert.assertNull(profileCtx.getSubcontext(AttributeResolutionContext.class));
+        Assert.assertNull(prc.getSubcontext(AttributeResolutionContext.class));
 
         AttributeContext resolvedAttributeCtx =
-                profileCtx.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
+                prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
         Assert.assertNotNull(resolvedAttributeCtx);
 
         final Map<String, IdPAttribute> resolvedAttributes = resolvedAttributeCtx.getIdPAttributes();
@@ -141,29 +153,29 @@ public class ResolveAttributesTest {
         Assert.assertEquals(resolvedAttributes.get("ad1"), attribute);
 
         // now test requesting an attribute that does not exist
-        profileCtx = new RequestContextBuilder().buildProfileRequestContext();
-        profileCtx.getSubcontext(SubjectContext.class, true);
+        src = new RequestContextBuilder().buildRequestContext();
+        prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
+        prc.getSubcontext(SubjectContext.class, true);
 
         attributeResolutionCtx = new AttributeResolutionContext();
         attributeResolutionCtx.setRequestedIdPAttributeNames(Collections.singleton("dne"));
-        profileCtx.addSubcontext(attributeResolutionCtx, true);
+        prc.addSubcontext(attributeResolutionCtx, true);
 
-        action.execute(profileCtx);
-        ActionTestingSupport.assertProceedEvent(profileCtx);
+        event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
 
         // The attribute resolution context should be removed by the resolve attributes action.
-        Assert.assertNull(profileCtx.getSubcontext(AttributeResolutionContext.class));
+        Assert.assertNull(prc.getSubcontext(AttributeResolutionContext.class));
 
         resolvedAttributeCtx =
-                profileCtx.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
+                prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
         Assert.assertNotNull(resolvedAttributeCtx);
         Assert.assertTrue(resolvedAttributeCtx.getIdPAttributes().isEmpty());
     }
 
     /** Test that action returns the proper event if the attributes are not able to be resolved. */
     @Test public void testUnableToResolveAttributes() throws Exception {
-        final ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
-        profileCtx.getSubcontext(SubjectContext.class, true);
+        prc.getSubcontext(SubjectContext.class, true);
 
         final IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.getValues().add(new StringAttributeValue("value1"));
@@ -178,14 +190,13 @@ public class ResolveAttributesTest {
         action.setId("test");
         action.initialize();
 
-        action.execute(profileCtx);
-        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
     }
     
     /** Test that action returns the proper event if the attribute configuration is broken */
     @Test public void testUnableToFindResolver() throws Exception {
-        final ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
-        profileCtx.getSubcontext(SubjectContext.class, true);
+        prc.getSubcontext(SubjectContext.class, true);
 
         final IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.getValues().add(new StringAttributeValue("value1"));
@@ -197,8 +208,8 @@ public class ResolveAttributesTest {
         action.setId("test");
         action.initialize();
 
-        action.execute(profileCtx);
-        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
     }
 
     

@@ -40,7 +40,7 @@ public class WebFlowProfileActionAdaptor<InboundMessageType, OutboundMessageType
     extends AbstractProfileAction<InboundMessageType, OutboundMessageType> {
 
     /** A POJO bean being adapted.  */
-    private final ProfileAction action;
+    @Nonnull private final ProfileAction action;
     
     /**
      * Constructor.
@@ -48,8 +48,6 @@ public class WebFlowProfileActionAdaptor<InboundMessageType, OutboundMessageType
      * @param profileAction the POJO bean to adapt to Web Flow use
      */
     public WebFlowProfileActionAdaptor(@Nonnull final ProfileAction profileAction) {
-        super();
-        
         action = Constraint.isNotNull(profileAction, "ProfileAction cannot be null");
     }
 

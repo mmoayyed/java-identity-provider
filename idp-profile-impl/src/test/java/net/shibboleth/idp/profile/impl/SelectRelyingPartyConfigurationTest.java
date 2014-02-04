@@ -21,18 +21,21 @@ import java.util.Collections;
 
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.IdPEventIds;
 
-import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.profile.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.resolver.Resolver;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -41,78 +44,86 @@ public class SelectRelyingPartyConfigurationTest {
 
     /** Test that the action errors out properly if there is no relying party context. */
     @Test public void testNoRelyingPartyContext() throws Exception {
-        ProfileRequestContext profileCtx = new ProfileRequestContext();
+        final RequestContext src = new RequestContextBuilder().buildRequestContext();
+        final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
+        prc.removeSubcontext(RelyingPartyContext.class);
 
-        Resolver<RelyingPartyConfiguration, ProfileRequestContext> resolver = new MockResolver(null, null);
+        final Resolver<RelyingPartyConfiguration, ProfileRequestContext> resolver = new MockResolver(null, null);
 
-        SelectRelyingPartyConfiguration action = new SelectRelyingPartyConfiguration(resolver);
+        final SelectRelyingPartyConfiguration action = new SelectRelyingPartyConfiguration(resolver);
         action.setId("test");
         action.initialize();
 
-        action.execute(profileCtx);
+        final Event event = action.execute(src);
 
-        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+        ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_RELYING_PARTY_CTX);
     }
 
     /** Test that the action errors out properly if there is no relying party configuration. */
     @Test public void testNoRelyingPartyConfiguration() throws Exception {
-        ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
+        final RequestContext src = new RequestContextBuilder().buildRequestContext();
+        final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
+        prc.getSubcontext(RelyingPartyContext.class).setConfiguration(null);
 
-        Resolver<RelyingPartyConfiguration, ProfileRequestContext> resolver = new MockResolver(null, null);
+        final Resolver<RelyingPartyConfiguration, ProfileRequestContext> resolver = new MockResolver(null, null);
 
-        SelectRelyingPartyConfiguration action = new SelectRelyingPartyConfiguration(resolver);
+        final SelectRelyingPartyConfiguration action = new SelectRelyingPartyConfiguration(resolver);
         action.setId("test");
         action.initialize();
 
-        action.execute(profileCtx);
+        final Event event = action.execute(src);
 
-        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);
+        ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);
     }
 
     /** Test that the action errors out properly if the relying party configuration can not be resolved. */
     @Test public void testUnableToResolveRelyingPartyConfiguration() throws Exception {
-        ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
+        final RequestContext src = new RequestContextBuilder().buildRequestContext();
+        final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
+        prc.getSubcontext(RelyingPartyContext.class).setConfiguration(null);
 
-        RelyingPartyConfiguration config = new RelyingPartyConfiguration();
+        final RelyingPartyConfiguration config = new RelyingPartyConfiguration();
         config.setId("foo");
         config.setResponderId("http://idp.example.org");
         config.setDetailedErrors(true);
         config.initialize();
 
-        Resolver<RelyingPartyConfiguration, ProfileRequestContext> resolver =
+        final Resolver<RelyingPartyConfiguration, ProfileRequestContext> resolver =
                 new MockResolver(config, new ResolverException());
 
-        SelectRelyingPartyConfiguration action = new SelectRelyingPartyConfiguration(resolver);
+        final SelectRelyingPartyConfiguration action = new SelectRelyingPartyConfiguration(resolver);
         action.setId("test");
         action.initialize();
 
-        action.execute(profileCtx);
+        final Event event = action.execute(src);
 
-        ActionTestingSupport.assertEvent(profileCtx, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);
+        ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);
     }
 
     /** Test that the action resolves the relying party and proceeds properly. */
     @Test public void testResolveRelyingPartyConfiguration() throws Exception {
-        ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
+        final RequestContext src = new RequestContextBuilder().buildRequestContext();
+        final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
+        prc.getSubcontext(RelyingPartyContext.class).setConfiguration(null);
 
-        RelyingPartyConfiguration config = new RelyingPartyConfiguration();
+        final RelyingPartyConfiguration config = new RelyingPartyConfiguration();
         config.setId("foo");
         config.setResponderId("http://idp.example.org");
         config.setDetailedErrors(true);
         config.initialize();
 
-        Resolver<RelyingPartyConfiguration, ProfileRequestContext> resolver = new MockResolver(config, null);
+        final Resolver<RelyingPartyConfiguration, ProfileRequestContext> resolver = new MockResolver(config, null);
 
-        SelectRelyingPartyConfiguration action = new SelectRelyingPartyConfiguration(resolver);
+        final SelectRelyingPartyConfiguration action = new SelectRelyingPartyConfiguration(resolver);
         action.setId("test");
         action.initialize();
 
-        action.execute(profileCtx);
+        final Event event = action.execute(src);
 
-        ActionTestingSupport.assertProceedEvent(profileCtx);
+        ActionTestingSupport.assertProceedEvent(event);
 
-        RelyingPartyConfiguration resolvedConfig =
-                profileCtx.getSubcontext(RelyingPartyContext.class).getConfiguration();
+        final RelyingPartyConfiguration resolvedConfig =
+                prc.getSubcontext(RelyingPartyContext.class).getConfiguration();
         Assert.assertEquals(resolvedConfig.getId(), config.getId());
         Assert.assertEquals(resolvedConfig.getResponderId(), config.getResponderId());
         Assert.assertEquals(resolvedConfig.getProfileConfigurations(), config.getProfileConfigurations());
