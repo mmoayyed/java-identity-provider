@@ -32,7 +32,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
-import net.shibboleth.idp.attribute.resolver.PrincipalConnectorDefinition;
+import net.shibboleth.idp.attribute.resolver.LegacyPrincipalDecoder;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolvedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPlugin;
@@ -69,12 +69,12 @@ import com.google.common.collect.ImmutableMap;
  * {@link net.shibboleth.utilities.java.support.resolver.Resolver} which in about summoning up bits of generic data from
  * the configuration (usually the metadata) in response to specific
  * {@link net.shibboleth.utilities.java.support.resolver.Criterion}s. <br>
- * The implementation also implements {@link PrincipalConnectorDefinition} in support of the deprecated
+ * The implementation also implements {@link LegacyPrincipalDecoder} in support of the deprecated
  * &lt;PrincipalConnector&gt;
  * */
 @ThreadSafe
 public class AttributeResolverImpl extends AbstractServiceableComponent<AttributeResolver> implements
-        AttributeResolver, PrincipalConnectorDefinition<SubjectCanonicalizationContext> {
+        AttributeResolver, LegacyPrincipalDecoder<SubjectCanonicalizationContext> {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeResolverImpl.class);
@@ -89,7 +89,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     @NonnullAfterInit private final String logPrefix;
 
     /** The Principal mapper. */
-    @Nullable private final PrincipalConnectorDefinition<SubjectCanonicalizationContext> principalConnector;
+    @Nullable private final LegacyPrincipalDecoder<SubjectCanonicalizationContext> principalConnector;
 
     /**
      * Constructor.
@@ -102,7 +102,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     public AttributeResolverImpl(@Nonnull @NotEmpty String resolverId,
             @Nullable @NullableElements Collection<AttributeDefinition> definitions,
             @Nullable @NullableElements Collection<DataConnector> connectors,
-            @Nullable PrincipalConnectorDefinition<SubjectCanonicalizationContext> principalResolver) {
+            @Nullable LegacyPrincipalDecoder<SubjectCanonicalizationContext> principalResolver) {
         setId(resolverId);
 
         logPrefix = new StringBuilder("Attribute Resolver '").append(getId()).append("':").toString();

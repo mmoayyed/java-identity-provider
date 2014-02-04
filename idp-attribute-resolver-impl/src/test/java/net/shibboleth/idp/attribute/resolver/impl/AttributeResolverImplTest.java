@@ -32,7 +32,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.MockAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.MockDataConnector;
-import net.shibboleth.idp.attribute.resolver.PrincipalConnectorDefinition;
+import net.shibboleth.idp.attribute.resolver.LegacyPrincipalDecoder;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
@@ -750,7 +750,7 @@ public class AttributeResolverImplTest {
         Assert.assertNull(resolver.canonicalize(null));
 
         resolver = new AttributeResolverImpl("foo", definitions, null,
-                new PrincipalConnectorDefinition<SubjectCanonicalizationContext>() {
+                new LegacyPrincipalDecoder<SubjectCanonicalizationContext>() {
 
             @Override @Nullable public String canonicalize(SubjectCanonicalizationContext context)
                     throws ResolutionException {

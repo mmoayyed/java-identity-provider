@@ -31,7 +31,7 @@ import org.opensaml.messaging.context.BaseContext;
  * 
  * @param <ConsumedContext> The type of context which is expected.
  */
-public interface PrincipalConnectorDefinition<ConsumedContext extends BaseContext> {
+public interface LegacyPrincipalDecoder<ConsumedContext extends BaseContext> {
 
     /**
      * Resolve the principal with respect to the provided context. This is expected to strip out the
