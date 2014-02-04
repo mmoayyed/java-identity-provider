@@ -21,6 +21,8 @@ package net.shibboleth.idp.authn.impl;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
@@ -47,7 +49,7 @@ public class ValidateRemoteUserTest extends PopulateAuthenticationContextTest {
         action.setWhitelistedUsernames(Arrays.asList("bar", "baz"));
         action.setBlacklistedUsernames(Arrays.asList("foo"));
         action.setMatchExpression(Pattern.compile("^ba(r|z|n)$"));
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        action.setHttpServletRequest((HttpServletRequest) src.getExternalContext().getNativeRequest());
         action.initialize();
     }
 
@@ -63,7 +65,7 @@ public class ValidateRemoteUserTest extends PopulateAuthenticationContextTest {
     }
 
     @Test public void testMissingUser2() throws Exception {
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
         doExtract(prc);
@@ -75,7 +77,7 @@ public class ValidateRemoteUserTest extends PopulateAuthenticationContextTest {
     @Test public void testUnauthorized() throws Exception {
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser("bam");
 
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
         doExtract(prc);
@@ -87,7 +89,7 @@ public class ValidateRemoteUserTest extends PopulateAuthenticationContextTest {
     @Test public void testAuthorized() throws Exception {
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser("baz");
         
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
         doExtract(prc);
@@ -102,7 +104,7 @@ public class ValidateRemoteUserTest extends PopulateAuthenticationContextTest {
     @Test public void testBlacklist() throws Exception {
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser("foo");
 
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
         doExtract(prc);
@@ -114,7 +116,7 @@ public class ValidateRemoteUserTest extends PopulateAuthenticationContextTest {
     @Test public void testPattern() throws Exception {
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser("ban");
 
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
         doExtract(prc);
@@ -127,9 +129,9 @@ public class ValidateRemoteUserTest extends PopulateAuthenticationContextTest {
     }
     
     private void doExtract(ProfileRequestContext prc) throws Exception {
-        ExtractRemoteUser extract = new ExtractRemoteUser();
+        final ExtractRemoteUser extract = new ExtractRemoteUser();
         extract.setHttpServletRequest(action.getHttpServletRequest());
         extract.initialize();
-        action.execute(src);
+        extract.execute(src);
     }
 }

@@ -111,6 +111,7 @@ public class InitializeRequestedPrincipalContextTest {
                 new MockAuthenticationProfileConfiguration("mock", Collections.singletonList(method));
         src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
                 Collections.<ProfileConfiguration>singleton(mock)).buildRequestContext();
+        prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, true);
 
         final Event event = action.execute(src);
