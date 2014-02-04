@@ -31,6 +31,7 @@ import net.shibboleth.idp.attribute.resolver.MockAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
+import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
@@ -70,6 +71,7 @@ public class ResolveAttributesTest {
     /** Test that the action resolves attributes and proceeds properly. */
     @Test public void testResolveAttributes() throws Exception {
         final ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
+        profileCtx.getSubcontext(SubjectContext.class, true);
 
         final IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.getValues().add(new StringAttributeValue("value1"));
@@ -103,6 +105,7 @@ public class ResolveAttributesTest {
 
     @Test public void testResolveSpecificAttributes() throws Exception {
         ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
+        profileCtx.getSubcontext(SubjectContext.class, true);
 
         final IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.getValues().add(new StringAttributeValue("value1"));
@@ -139,6 +142,7 @@ public class ResolveAttributesTest {
 
         // now test requesting an attribute that does not exist
         profileCtx = new RequestContextBuilder().buildProfileRequestContext();
+        profileCtx.getSubcontext(SubjectContext.class, true);
 
         attributeResolutionCtx = new AttributeResolutionContext();
         attributeResolutionCtx.setRequestedIdPAttributeNames(Collections.singleton("dne"));
@@ -159,6 +163,7 @@ public class ResolveAttributesTest {
     /** Test that action returns the proper event if the attributes are not able to be resolved. */
     @Test public void testUnableToResolveAttributes() throws Exception {
         final ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
+        profileCtx.getSubcontext(SubjectContext.class, true);
 
         final IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.getValues().add(new StringAttributeValue("value1"));
@@ -180,6 +185,7 @@ public class ResolveAttributesTest {
     /** Test that action returns the proper event if the attribute configuration is broken */
     @Test public void testUnableToFindResolver() throws Exception {
         final ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
+        profileCtx.getSubcontext(SubjectContext.class, true);
 
         final IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.getValues().add(new StringAttributeValue("value1"));

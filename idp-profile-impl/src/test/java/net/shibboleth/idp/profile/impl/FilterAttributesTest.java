@@ -35,6 +35,7 @@ import net.shibboleth.idp.attribute.filter.AttributeRule;
 import net.shibboleth.idp.attribute.filter.MockMatcher;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
@@ -69,6 +70,7 @@ public class FilterAttributesTest {
     /** Test that the action errors out properly if there is no attribute context. */
     @Test public void testNoAttributeContext() throws Exception {
         final ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
+        profileCtx.getSubcontext(SubjectContext.class, true);
 
         final AttributeFilterImpl engine = new AttributeFilterImpl("test", null);
         engine.initialize();
@@ -84,6 +86,7 @@ public class FilterAttributesTest {
     /** Test that the action proceeds properly if there are no attributes to filter . */
     @Test public void testNoAttributes() throws Exception {
         final ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
+        profileCtx.getSubcontext(SubjectContext.class, true);
 
         final AttributeContext attribCtx = new AttributeContext();
         profileCtx.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
@@ -127,6 +130,7 @@ public class FilterAttributesTest {
         engine.initialize();
 
         final ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
+        profileCtx.getSubcontext(SubjectContext.class, true);
 
         final AttributeContext attributeCtx = new AttributeContext();
         attributeCtx.setIdPAttributes(attributes);
@@ -184,6 +188,7 @@ public class FilterAttributesTest {
         engine.initialize();
 
         final ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
+        profileCtx.getSubcontext(SubjectContext.class, true);
 
         final AttributeContext attributeCtx = new AttributeContext();
         attributeCtx.setIdPAttributes(attributes);
@@ -241,6 +246,7 @@ public class FilterAttributesTest {
         engine.initialize();
 
         final ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
+        profileCtx.getSubcontext(SubjectContext.class, true);
 
         final AttributeContext attributeCtx = new AttributeContext();
         attributeCtx.setIdPAttributes(attributes);
@@ -260,6 +266,7 @@ public class FilterAttributesTest {
     /** Test that action returns the proper event if the attribute configuration is broken */
     @Test public void testUnableToFindFilter() throws Exception {
         final ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
+        profileCtx.getSubcontext(SubjectContext.class, true);
 
         final IdPAttribute attribute1 = new MockUncloneableAttribute("attribute1");
         attribute1.setValues(Lists.newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
