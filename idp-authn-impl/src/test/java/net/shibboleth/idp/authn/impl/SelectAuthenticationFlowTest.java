@@ -100,9 +100,10 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
     }
 
     @Test public void testRequestNoMatch() throws ProfileException {
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
-        RequestedPrincipalContext rpc = new RequestedPrincipalContext("exact",
-                Arrays.<Principal>asList(new TestPrincipal("foo")));
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
+        rpc.setOperator("exact");
+        rpc.setRequestedPrincipals(Arrays.<Principal>asList(new TestPrincipal("foo")));
         authCtx.addSubcontext(rpc, true);
         
         final Event event = action.execute(src);
@@ -112,9 +113,11 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
     }
 
     @Test public void testRequestNoneActive() throws ProfileException {
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
-        List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"));
-        RequestedPrincipalContext rpc = new RequestedPrincipalContext("exact", principals);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"));
+        final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
+        rpc.setOperator("exact");
+        rpc.setRequestedPrincipals(principals);
         authCtx.addSubcontext(rpc, true);
         authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(principals);
         
@@ -126,11 +129,13 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
     }
 
     @Test public void testRequestNoneActiveIntermediate() throws ProfileException {
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         authCtx.getIntermediateFlows().put("test2", authCtx.getPotentialFlows().get("test2"));
-        List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
+        final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
                 new TestPrincipal("test2"));
-        RequestedPrincipalContext rpc = new RequestedPrincipalContext("exact", principals);
+        final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
+        rpc.setOperator("exact");
+        rpc.setRequestedPrincipals(principals);
         authCtx.addSubcontext(rpc, true);
         authCtx.getPotentialFlows().get("test2").setSupportedPrincipals(principals);
         authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(principals);
@@ -143,12 +148,14 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
     }
     
     @Test public void testRequestPickInactive() throws ProfileException {
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
-        List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
                 new TestPrincipal("test2"));
-        RequestedPrincipalContext rpc = new RequestedPrincipalContext("exact", principals);
+        final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
+        rpc.setOperator("exact");
+        rpc.setRequestedPrincipals(principals);
         authCtx.addSubcontext(rpc, true);
-        AuthenticationResult active = new AuthenticationResult("test2", new Subject());
+        final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
         active.getSubject().getPrincipals().add(new TestPrincipal("test2"));
         authCtx.setActiveResults(Arrays.asList(active));
         authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(ImmutableList.of(principals.get(0)));
@@ -161,12 +168,14 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
     }
 
     @Test public void testRequestPickActive() throws ProfileException {
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
-        List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
                 new TestPrincipal("test2"));
-        RequestedPrincipalContext rpc = new RequestedPrincipalContext("exact", principals);
+        final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
+        rpc.setOperator("exact");
+        rpc.setRequestedPrincipals(principals);
         authCtx.addSubcontext(rpc, true);
-        AuthenticationResult active = new AuthenticationResult("test3", new Subject());
+        final AuthenticationResult active = new AuthenticationResult("test3", new Subject());
         active.getSubject().getPrincipals().add(new TestPrincipal("test3"));
         authCtx.setActiveResults(Arrays.asList(active));
         authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(ImmutableList.of(principals.get(0)));
@@ -179,12 +188,14 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
     }
 
     @Test public void testRequestFavorSSO() throws ProfileException {
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
-        List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
                 new TestPrincipal("test2"));
-        RequestedPrincipalContext rpc = new RequestedPrincipalContext("exact", principals);
+        final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
+        rpc.setOperator("exact");
+        rpc.setRequestedPrincipals(principals);
         authCtx.addSubcontext(rpc, true);
-        AuthenticationResult active = new AuthenticationResult("test2", new Subject());
+        final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
         active.getSubject().getPrincipals().add(new TestPrincipal("test2"));
         authCtx.setActiveResults(Arrays.asList(active));
         authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(ImmutableList.of(principals.get(0)));

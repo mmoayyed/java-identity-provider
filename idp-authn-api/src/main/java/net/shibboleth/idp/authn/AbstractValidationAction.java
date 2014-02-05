@@ -181,7 +181,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         // able to satisfy the request.
         final RequestedPrincipalContext rpCtx =
                 authenticationContext.getSubcontext(RequestedPrincipalContext.class, false);
-        if (rpCtx != null) {
+        if (rpCtx != null && rpCtx.getOperator() != null) {
             log.debug("{} Request contains principal requirements, evaluating for compatibility", getLogPrefix());
             for (Principal p : rpCtx.getRequestedPrincipals()) {
                 final PrincipalEvalPredicateFactory factory =

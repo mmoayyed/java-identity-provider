@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml2;
 
-import java.security.Principal;
 import java.util.Collections;
 
 import javax.security.auth.Subject;
@@ -175,9 +174,8 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         subject.getPrincipals().add(new AuthnContextClassRefPrincipal("Bar"));
         profileCtx.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
                 new AuthenticationResult("Test", subject));
-        final RequestedPrincipalContext requested = new RequestedPrincipalContext("Test",
-                Collections.<Principal>singletonList(new AuthnContextClassRefPrincipal("Bar")));
-        requested.setMatchingPrincipal(requested.getRequestedPrincipals().get(0));
+        final RequestedPrincipalContext requested = new RequestedPrincipalContext();
+        requested.setMatchingPrincipal(new AuthnContextClassRefPrincipal("Bar"));
         profileCtx.getSubcontext(AuthenticationContext.class, false).addSubcontext(requested);
         
         action.execute(profileCtx);

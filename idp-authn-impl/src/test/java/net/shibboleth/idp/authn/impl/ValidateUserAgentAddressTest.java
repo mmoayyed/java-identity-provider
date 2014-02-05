@@ -71,7 +71,7 @@ public class ValidateUserAgentAddressTest extends PopulateAuthenticationContextT
     @Test public void testMissingAddress2() throws Exception {
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr(null);
 
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
         doExtract(prc);
@@ -81,7 +81,7 @@ public class ValidateUserAgentAddressTest extends PopulateAuthenticationContextT
     }
 
     @Test public void testUnauthorized() throws Exception {
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
         doExtract(prc);
@@ -93,13 +93,14 @@ public class ValidateUserAgentAddressTest extends PopulateAuthenticationContextT
     @Test public void testIncompatible() throws Exception {
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr("192.168.1.1");
 
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         ac.getPrincipalEvalPredicateFactoryRegistry().register(
                 TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         
-        RequestedPrincipalContext rpc = new RequestedPrincipalContext("exact",
-                Arrays.<Principal>asList(new TestPrincipal("PasswordAuthentication")));
+        final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
+        rpc.setOperator("exact");
+        rpc.setRequestedPrincipals(Arrays.<Principal>asList(new TestPrincipal("PasswordAuthentication")));
         ac.addSubcontext(rpc, true);
         
         doExtract(prc);
@@ -111,13 +112,14 @@ public class ValidateUserAgentAddressTest extends PopulateAuthenticationContextT
     @Test public void testCompatible() throws Exception {
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr("192.168.1.1");
 
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         ac.getPrincipalEvalPredicateFactoryRegistry().register(
                 TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         
-        RequestedPrincipalContext rpc = new RequestedPrincipalContext("exact",
-                Arrays.<Principal>asList(new TestPrincipal("UserAgentAuthentication")));
+        final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
+        rpc.setOperator("exact");
+        rpc.setRequestedPrincipals(Arrays.<Principal>asList(new TestPrincipal("UserAgentAuthentication")));
         ac.addSubcontext(rpc, true);
         
         doExtract(prc);
@@ -130,7 +132,7 @@ public class ValidateUserAgentAddressTest extends PopulateAuthenticationContextT
     }
     
     private void doExtract(ProfileRequestContext prc) throws Exception {
-        ExtractUserAgentAddress extract = new ExtractUserAgentAddress();
+        final ExtractUserAgentAddress extract = new ExtractUserAgentAddress();
         extract.setHttpServletRequest(action.getHttpServletRequest());
         extract.initialize();
         extract.execute(src);

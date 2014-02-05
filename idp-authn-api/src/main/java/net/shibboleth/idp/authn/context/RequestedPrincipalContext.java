@@ -18,6 +18,7 @@
 package net.shibboleth.idp.authn.context;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -25,6 +26,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -56,35 +58,35 @@ import com.google.common.collect.Lists;
 public class RequestedPrincipalContext extends BaseContext {
 
     /** Comparison operator specific to request protocol. */
-    @Nonnull @NotEmpty private final String operatorString;
+    @Nullable private String operatorString;
 
     /** The principals reflecting the request requirements. */
-    @Nonnull @NotEmpty @NonnullElements private final List<Principal> requestedPrincipals;
+    @Nonnull @NonnullElements private List<Principal> requestedPrincipals;
     
     /** The principal that satisfied the request, if any. */
     @Nullable private Principal matchingPrincipal;
     
-    /**
-     * Constructor.
-     * 
-     * @param operator comparison operator specific to request protocol
-     * @param principals ordered list of principals reflecting the request requirements
-     */
-    public RequestedPrincipalContext(@Nonnull @NotEmpty final String operator,
-            @Nonnull @NotEmpty @NonnullElements final List<Principal> principals) {
-        Constraint.isNotEmpty(principals, "Principal list cannot be null or empty");
-        
-        operatorString = Constraint.isNotNull(StringSupport.trimOrNull(operator), "Operator cannot be null or empty");
-        requestedPrincipals = Lists.newArrayList(Collections2.filter(principals, Predicates.notNull()));
+    /** Constructor. */
+    public RequestedPrincipalContext() {
+        requestedPrincipals = Collections.emptyList();
     }
 
     /**
-     * Get the canonical principal name of the subject.
+     * Get the comparison operator for matching requested principals. 
      * 
-     * @return the canonical principal name
+     * @return comparison operator
      */
     @Nonnull @NotEmpty public String getOperator() {
         return operatorString;
+    }
+    
+    /**
+     * Set the comparison operator for matching requested principals.
+     * 
+     * @param operator comparison operator
+     */
+    public void setOperator(@Nullable final String operator) {
+        operatorString = StringSupport.trimOrNull(operator);
     }
 
     /**
@@ -92,8 +94,19 @@ public class RequestedPrincipalContext extends BaseContext {
      * 
      * @return  immutable list of principals 
      */
-    @Nonnull @NotEmpty @NonnullElements @Unmodifiable public List<Principal> getRequestedPrincipals() {
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public List<Principal> getRequestedPrincipals() {
         return ImmutableList.copyOf(requestedPrincipals);
+    }
+    
+    /**
+     * Set list of principals reflecting the request requirements.
+     * 
+     * @param principals list of principals
+     */
+    public void setRequestedPrincipals(@Nonnull @NonnullElements final List<Principal> principals) {
+        Constraint.isNotNull(principals, "Principal list cannot be null");
+        
+        requestedPrincipals = Lists.newArrayList(Collections2.filter(principals, Predicates.notNull()));
     }
     
     /**

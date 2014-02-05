@@ -121,12 +121,13 @@ public class InitializeRequestedPrincipalContext extends AbstractAuthenticationA
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
-        RequestedPrincipalContext rpCtx =
-                new RequestedPrincipalContext("exact", authenticationProfileConfig.getDefaultAuthenticationMethods());
-        authenticationContext.addSubcontext(rpCtx);
+        final RequestedPrincipalContext principalCtx = new RequestedPrincipalContext();
+        principalCtx.setOperator("exact");
+        principalCtx.setRequestedPrincipals(authenticationProfileConfig.getDefaultAuthenticationMethods());
+        authenticationContext.addSubcontext(principalCtx);
         
         log.debug("{} Created requested principal context with {} methods", getLogPrefix(),
-                rpCtx.getRequestedPrincipals().size());
+                principalCtx.getRequestedPrincipals().size());
     }
     
 }
