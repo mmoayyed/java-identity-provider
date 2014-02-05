@@ -26,39 +26,39 @@ package net.shibboleth.idp.profile;
 public final class IdPEventIds {
 
     /**
-     * ID of the event returned if a {@link net.shibboleth.idp.relyingparty.RelyingPartyContext} is missing or corrupt
-     * in some way..
+     * ID of event returned if the {@link net.shibboleth.idp.relyingparty.RelyingPartyContext} is missing or corrupt.
      */
     public static final String INVALID_RELYING_PARTY_CTX = "InvalidRelyingPartyContext";
 
     /**
-     * ID of the event returned if a {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration} is missing or
-     * corrupt in some way..
+     * ID of event returned if the {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration} is missing or
+     * corrupt.
      */
     public static final String INVALID_RELYING_PARTY_CONFIG = "InvalidRelyingPartyConfiguration";
 
     /**
-     * ID of the event returned if a {@link net.shibboleth.idp.profile.config.ProfileConfiguration} is missing or
-     * corrupt in some way.
+     * ID of event returned if the {@link net.shibboleth.idp.profile.config.ProfileConfiguration} is missing or corrupt.
      */
     public static final String INVALID_PROFILE_CONFIG = "InvalidProfileConfiguration";
 
     /**
-     * ID of the event returned if a {@link net.shibboleth.idp.attribute.AttributeContext} is missing or corrupt in some
-     * way.
+     * ID of event returned if the {@link net.shibboleth.idp.attribute.AttributeContext} is missing or corrupt.
      */
     public static final String INVALID_ATTRIBUTE_CTX = "InvalidAttributeContext";
 
     /**
-     * ID of the event returned if a {@link net.shibboleth.idp.authn.context.SubjectContext} is missing or corrupt in
-     * some way.
+     * ID of event returned if the {@link net.shibboleth.idp.authn.context.SubjectContext} is missing or corrupt.
      */
     public static final String INVALID_SUBJECT_CTX = "InvalidSubjectContext";
 
-    /** ID of the event returned when there is a problem resolving attributes. */
+    /**
+     * ID of event returned if attribute resolution failed.
+     */
     public static final String UNABLE_RESOLVE_ATTRIBS = "UnableToResolveAttributes";
 
-    /** ID of event indicating that the attribute filtering process failed. */
+    /**
+     * ID of event returned if attribute filtering failed.
+     */
     public static final String UNABLE_FILTER_ATTRIBS = "UnableToFilterAttributes";
 
     /** Constructor. */
