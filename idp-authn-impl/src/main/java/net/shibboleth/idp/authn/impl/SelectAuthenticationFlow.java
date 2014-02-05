@@ -124,7 +124,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
-        if (requestedPrincipalCtx == null && requestedPrincipalCtx.getOperator() != null) {
+        if (requestedPrincipalCtx == null || requestedPrincipalCtx.getOperator() == null
+                || requestedPrincipalCtx.getRequestedPrincipals().isEmpty()) {
             doSelectNoRequestedPrincipals(profileRequestContext, authenticationContext);
         } else {
             doSelectRequestedPrincipals(profileRequestContext, authenticationContext);
