@@ -27,12 +27,12 @@ import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
-import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
@@ -121,11 +121,15 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction<A
         
         if (!requestedCtx.getAuthnContextClassRefs().isEmpty()) {
             for (final AuthnContextClassRef ref : requestedCtx.getAuthnContextClassRefs()) {
-                principals.add(new AuthnContextClassRefPrincipal(ref.getAuthnContextClassRef()));
+                if (ref.getAuthnContextClassRef() != null) {
+                    principals.add(new AuthnContextClassRefPrincipal(ref.getAuthnContextClassRef()));
+                }
             }
         } else if (!requestedCtx.getAuthnContextDeclRefs().isEmpty()) {
             for (final AuthnContextDeclRef ref : requestedCtx.getAuthnContextDeclRefs()) {
-                principals.add(new AuthnContextDeclRefPrincipal(ref.getAuthnContextDeclRef()));
+                if (ref.getAuthnContextDeclRef() != null) {
+                    principals.add(new AuthnContextDeclRefPrincipal(ref.getAuthnContextDeclRef()));
+                }
             }
         }
         
@@ -143,6 +147,8 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction<A
         rpCtx.setRequestedPrincipals(principals);
         
         authenticationContext.addSubcontext(rpCtx, true);
+        log.debug("{} RequestedPrincipalContext created with operator {} and {} custom principal(s)",
+                getLogPrefix(), rpCtx.getOperator(), principals.size());
     }
 
 }
