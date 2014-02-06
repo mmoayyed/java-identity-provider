@@ -24,7 +24,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>idp-attribute-mapper-api</artifactId>
+            <artifactId>idp-attribute-resolver-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
