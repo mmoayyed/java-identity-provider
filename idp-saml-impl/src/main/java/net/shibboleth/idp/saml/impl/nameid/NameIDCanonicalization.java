@@ -58,7 +58,7 @@ import com.google.common.base.Predicate;
 public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
 
     /** The custom Principal to operate on. */
-    @Nullable private String transientPrincipal;
+    @Nullable private String decodedPrincipal;
 
     /** Supplies logic for pre-execute test. */
     @Nonnull private final ActivationCondition embeddedPredicate;
@@ -131,7 +131,7 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
             final NameID nameID = nameIDs.iterator().next().getNameID();
 
             try {
-                transientPrincipal = decoder.decode(nameID, c14nContext.getResponderId(), c14nContext.getRequesterId());
+                decodedPrincipal = decoder.decode(nameID, c14nContext.getResponderId(), c14nContext.getRequesterId());
             } catch (SubjectCanonicalizationException e) {
                 c14nContext.setException(e);
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
@@ -151,7 +151,7 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
 
-        c14nContext.setPrincipalName(transientPrincipal);
+        c14nContext.setPrincipalName(decodedPrincipal);
     }
 
     /** A predicate that determines if this action can run or not. */
