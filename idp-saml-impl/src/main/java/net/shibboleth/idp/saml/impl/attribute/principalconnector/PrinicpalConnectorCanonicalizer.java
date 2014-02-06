@@ -83,6 +83,7 @@ public class PrinicpalConnectorCanonicalizer implements LegacyPrincipalDecoder<S
      */
     @Nullable protected String canonicalize(NameIdentifier nameIdentifier, SubjectCanonicalizationContext c14nContext)
             throws ResolutionException {
+
         for (PrincipalConnector connector : principalConnectors) {
             
             log.trace("Legacy Principal Decoder: looking at connector {}", connector.getId());
