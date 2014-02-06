@@ -26,6 +26,7 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
+import net.shibboleth.idp.saml.impl.attribute.principalconnector.PrinicpalConnectorCanonicalizer;
 import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -60,9 +61,6 @@ public class AttributeResolverParser extends AbstractSingleBeanDefinitionParser 
         final Map<QName, List<Element>> configChildren = ElementSupport.getIndexedChildElements(config);
         List<Element> children;
 
-        // TODO principal connector
-        // children = configChildren.get(new QName(AttributeResolverNamespaceHandler.NAMESPACE, "PrincipalConnector"));
-        // SpringSupport.parseCustomElements(children, context);
         String id = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
 
         if (null == id) {
@@ -77,9 +75,14 @@ public class AttributeResolverParser extends AbstractSingleBeanDefinitionParser 
 
         children = configChildren.get(AbstractDataConnectorParser.ELEMENT_NAME);
         builder.addConstructorArgValue(SpringSupport.parseCustomElements(children, context));
-        
-        // Prinicipal
-        builder.addConstructorArgValue(null);
+
+        // Prinicipal.
+        children = configChildren.get(new QName(AttributeResolverNamespaceHandler.NAMESPACE, "PrincipalConnector"));
+        BeanDefinitionBuilder childBuilder =
+                BeanDefinitionBuilder.genericBeanDefinition(PrinicpalConnectorCanonicalizer.class);
+        childBuilder.addConstructorArgValue(SpringSupport.parseCustomElements(children, context));
+        builder.addConstructorArgValue(childBuilder.getBeanDefinition());
+
     }
 
     /** {@inheritDoc} */
