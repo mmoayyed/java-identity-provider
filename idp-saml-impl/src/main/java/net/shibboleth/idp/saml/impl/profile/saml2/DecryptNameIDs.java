@@ -89,8 +89,8 @@ public class DecryptNameIDs extends AbstractProfileAction {
     /** Strategy used to locate the SAML message to operate on. */
     @Nonnull private Function<ProfileRequestContext, Object> messageLookupStrategy;
     
-    /** Configuration supporting decryption. */
-    @Nullable private DecryptionConfiguration decryptionConfig;
+    /** The decryption object. */
+    @Nullable private Decrypter decrypter;
     
     /** Message to operate on. */
     @Nullable private Object message;
@@ -165,13 +165,16 @@ public class DecryptNameIDs extends AbstractProfileAction {
             return false;
         }
         
-        decryptionConfig = rpCtx.getProfileConfig().getSecurityConfiguration().getDecryptionConfiguration();
-        if (decryptionConfig == null) {
-            log.debug("{} No DecryptionConfiguration available in security configuration", getLogPrefix());
-            if (errorFatal) {
-                ActionSupport.buildEvent(profileRequestContext, SAMLEventIds.DECRYPT_NAMEID_FAILED);
-            }
-            return false;
+        // TODO: this will be replaced by some accessor of a DecryptionParameters instance.
+        // For now, just construct directly off the DecryptionConfiguration.
+        
+        final DecryptionConfiguration decryptionConfig =
+                rpCtx.getProfileConfig().getSecurityConfiguration().getDecryptionConfiguration();
+        if (decryptionConfig != null) {
+            decrypter = new Decrypter(decryptionConfig.getDataKeyInfoCredentialResolver(),
+                    decryptionConfig.getKEKKeyInfoCredentialResolver(), decryptionConfig.getEncryptedKeyResolver());
+        } else {
+            decrypter = new Decrypter(null, null, null);
         }
         
         return super.doPreExecute(profileRequestContext);
@@ -224,7 +227,6 @@ public class DecryptNameIDs extends AbstractProfileAction {
      * @return the decrypted name, or null
      */
     @Nullable private NameID processEncryptedID(@Nonnull final EncryptedID encID) {
-        final Decrypter decrypter = new Decrypter(decryptionConfig);
         try {
             final SAMLObject object = decrypter.decrypt(encID);
             if (object instanceof NameID) {
@@ -245,7 +247,6 @@ public class DecryptNameIDs extends AbstractProfileAction {
      * @return the decrypted name, or null
      */
     @Nullable private NewID processNewEncryptedID(@Nonnull final NewEncryptedID encID) {
-        final Decrypter decrypter = new Decrypter(decryptionConfig);
         try {
             return decrypter.decrypt(encID);
         } catch (DecryptionException e) {
