@@ -35,21 +35,26 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.profile.SAMLEventIds;
+import org.opensaml.saml.ext.saml2delrestrict.Delegate;
+import org.opensaml.saml.ext.saml2delrestrict.DelegationRestrictionType;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.Condition;
 import org.opensaml.saml.saml2.core.EncryptedID;
 import org.opensaml.saml.saml2.core.LogoutRequest;
-import org.opensaml.saml.saml2.core.LogoutResponse;
 import org.opensaml.saml.saml2.core.ManageNameIDRequest;
-import org.opensaml.saml.saml2.core.ManageNameIDResponse;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDMappingRequest;
 import org.opensaml.saml.saml2.core.NameIDMappingResponse;
+import org.opensaml.saml.saml2.core.NewEncryptedID;
+import org.opensaml.saml.saml2.core.NewID;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectQuery;
+import org.opensaml.saml.saml2.encryption.Decrypter;
 import org.opensaml.xmlsec.DecryptionConfiguration;
+import org.opensaml.xmlsec.encryption.support.DecryptionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,10 +75,10 @@ import com.google.common.base.Functions;
  * @event {@link IdPEventIds#INVALID_PROFILE_CONFIG}
  * @event {@link SAMLEventIds#DECRYPT_NAMEID_FAILED}
  */
-public class DecryptNameID extends AbstractProfileAction {
+public class DecryptNameIDs extends AbstractProfileAction {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(DecryptNameID.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(DecryptNameIDs.class);
     
     /** Are decryption failures a fatal condition? */
     private boolean errorFatal;
@@ -91,7 +96,8 @@ public class DecryptNameID extends AbstractProfileAction {
     @Nullable private Object message;
     
     /** Constructor. */
-    public DecryptNameID() {
+    public DecryptNameIDs() {
+        errorFatal = true;
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
         messageLookupStrategy = Functions.compose(new MessageLookup(), new InboundMessageContextLookup());
     }
@@ -171,6 +177,7 @@ public class DecryptNameID extends AbstractProfileAction {
         return super.doPreExecute(profileRequestContext);
     }
     
+    // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
@@ -182,21 +189,22 @@ public class DecryptNameID extends AbstractProfileAction {
         } else if (message instanceof SubjectQuery) {
             result = processSubject(((SubjectQuery) message).getSubject());
         } else if (message instanceof Response) {
-            
+            for (final Assertion a : ((Response) message).getAssertions()) {
+                if (!processAssertion(a)) {
+                    result = false;
+                    break;
+                }
+            }
         } else if (message instanceof LogoutRequest) {
-            
-        } else if (message instanceof LogoutResponse) {
-            
+            result = processLogoutRequest((LogoutRequest) message);
         } else if (message instanceof ManageNameIDRequest) {
-            
-        } else if (message instanceof ManageNameIDResponse) {
-            
+            result = processManageNameIDRequest((ManageNameIDRequest) message);
         } else if (message instanceof NameIDMappingRequest) {
-            
+            result = processNameIDMappingRequest((NameIDMappingRequest) message);
         } else if (message instanceof NameIDMappingResponse) {
-            
+            result = processNameIDMappingResponse((NameIDMappingResponse) message);
         } else if (message instanceof Assertion) {
-            
+            result = processAssertion((Assertion) message);
         } else {
             log.debug("{} Message was of unrecognized type {}, nothing to do", getLogPrefix(),
                     message.getClass().getName());
@@ -207,6 +215,7 @@ public class DecryptNameID extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, SAMLEventIds.DECRYPT_NAMEID_FAILED);
         }
     }
+    // Checkstyle: CyclomaticComplexity ON
     
     /**
      * Decrypt an {@link EncryptedID} and return the result.
@@ -215,9 +224,36 @@ public class DecryptNameID extends AbstractProfileAction {
      * @return the decrypted name, or null
      */
     @Nullable private NameID processEncryptedID(@Nonnull final EncryptedID encID) {
+        final Decrypter decrypter = new Decrypter(decryptionConfig);
+        try {
+            final SAMLObject object = decrypter.decrypt(encID);
+            if (object instanceof NameID) {
+                return (NameID) object;
+            }
+            log.warn("{} Decrypted EncryptedID was not a NameID, was a {}", getLogPrefix(),
+                    object.getElementQName().toString());
+        } catch (DecryptionException e) {
+            log.warn(getLogPrefix() + " Error decrypting EncryptedID", e);
+        }
         return null;
     }
 
+    /**
+     * Decrypt a {@link NewEncryptedID} and return the result.
+     * 
+     * @param encID the encrypted object
+     * @return the decrypted name, or null
+     */
+    @Nullable private NewID processNewEncryptedID(@Nonnull final NewEncryptedID encID) {
+        final Decrypter decrypter = new Decrypter(decryptionConfig);
+        try {
+            return decrypter.decrypt(encID);
+        } catch (DecryptionException e) {
+            log.warn(getLogPrefix() + " Error decrypting NewEncryptedID", e);
+        }
+        return null;
+    }
+    
     /**
      * Decrypt any {@link EncryptedID} found in a subject and replace it with the result.
      * 
@@ -255,4 +291,149 @@ public class DecryptNameID extends AbstractProfileAction {
         return true;
     }
 
+    /**
+     * Decrypt any {@link EncryptedID} found in a LogoutRequest and replace it with the result.
+     * 
+     * @param request   request to operate on
+     * @return  true iff no decryption failures occurred
+     */
+    private boolean processLogoutRequest(@Nullable final LogoutRequest request) {
+        
+        if (request != null) {
+            if (request.getEncryptedID() != null) {
+                log.debug("{} Decrypting EncryptedID in LogoutRequest", getLogPrefix());
+                final NameID decrypted = processEncryptedID(request.getEncryptedID());
+                if (decrypted != null) {
+                    request.setNameID(decrypted);
+                    request.setEncryptedID(null);
+                } else {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+
+    /**
+     * Decrypt any {@link EncryptedID} found in a ManageNameIDRequest and replace it with the result.
+     * 
+     * @param request   request to operate on
+     * @return  true iff no decryption failures occurred
+     */
+    private boolean processManageNameIDRequest(@Nullable final ManageNameIDRequest request) {
+        
+        if (request != null) {
+            if (request.getEncryptedID() != null) {
+                log.debug("{} Decrypting EncryptedID in ManageNameIDRequest", getLogPrefix());
+                final NameID decrypted = processEncryptedID(request.getEncryptedID());
+                if (decrypted != null) {
+                    request.setNameID(decrypted);
+                    request.setEncryptedID(null);
+                } else {
+                    return false;
+                }
+            }
+            
+            if (request.getNewEncryptedID() != null) {
+                log.debug("{} Decrypting NewEncryptedID in ManageNameIDRequest", getLogPrefix());
+                final NewID decrypted = processNewEncryptedID(request.getNewEncryptedID());
+                if (decrypted != null) {
+                    request.setNewID(decrypted);
+                    request.setNewEncryptedID(null);
+                } else {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+
+    /**
+     * Decrypt any {@link EncryptedID} found in a NameIDMappingRequest and replace it with the result.
+     * 
+     * @param request   request to operate on
+     * @return  true iff no decryption failures occurred
+     */
+    private boolean processNameIDMappingRequest(@Nullable final NameIDMappingRequest request) {
+        
+        if (request != null) {
+            if (request.getEncryptedID() != null) {
+                log.debug("{} Decrypting EncryptedID in NameIDMappingRequest", getLogPrefix());
+                final NameID decrypted = processEncryptedID(request.getEncryptedID());
+                if (decrypted != null) {
+                    request.setNameID(decrypted);
+                    request.setEncryptedID(null);
+                } else {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+
+    /**
+     * Decrypt any {@link EncryptedID} found in a NameIDMappingResponse and replace it with the result.
+     * 
+     * @param response   response to operate on
+     * @return  true iff no decryption failures occurred
+     */
+    private boolean processNameIDMappingResponse(@Nullable final NameIDMappingResponse response) {
+        
+        if (response != null) {
+            if (response.getEncryptedID() != null) {
+                log.debug("{} Decrypting EncryptedID in NameIDMappingRequest", getLogPrefix());
+                final NameID decrypted = processEncryptedID(response.getEncryptedID());
+                if (decrypted != null) {
+                    response.setNameID(decrypted);
+                    response.setEncryptedID(null);
+                } else {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Decrypt any {@link EncryptedID} found in an assertion and replace it with the result.
+     * 
+     * @param assertion   assertion to operate on
+     * @return  true iff no decryption failures occurred
+     */
+    private boolean processAssertion(@Nullable final Assertion assertion) {
+        
+        if (assertion != null) {
+            boolean result = processSubject(assertion.getSubject());
+            if (!result) {
+                return result;
+            }
+            
+            if (assertion.getConditions() != null) {
+                for (final Condition c : assertion.getConditions().getConditions()) {
+                    if (!(c instanceof DelegationRestrictionType)) {
+                        continue;
+                    }
+                    for (final Delegate d : ((DelegationRestrictionType) c).getDelegates()) {
+                        if (d.getEncryptedID() != null) {
+                            log.debug("{} Decrypting EncryptedID in Delegate", getLogPrefix());
+                            final NameID decrypted = processEncryptedID(d.getEncryptedID());
+                            if (decrypted != null) {
+                                d.setNameID(decrypted);
+                                d.setEncryptedID(null);
+                            } else {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        return true;
+    }
+    
 }
