@@ -25,15 +25,9 @@ import org.testng.Assert;
 
 import java.security.KeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Collection;
-import java.util.Collections;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.profile.config.SecurityConfiguration;
-import net.shibboleth.idp.relyingparty.RelyingPartyContext;
-import net.shibboleth.idp.saml.profile.config.saml2.BrowserSSOProfileConfiguration;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -50,9 +44,9 @@ import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.encryption.Encrypter;
 import org.opensaml.saml.saml2.profile.SAML2ActionTestingSupport;
 import org.opensaml.security.credential.Credential;
-import org.opensaml.xmlsec.DecryptionConfiguration;
+import org.opensaml.xmlsec.DecryptionParameters;
+import org.opensaml.xmlsec.context.SecurityParametersContext;
 import org.opensaml.xmlsec.crypto.AlgorithmSupport;
-import org.opensaml.xmlsec.encryption.support.EncryptedKeyResolver;
 import org.opensaml.xmlsec.encryption.support.EncryptionConstants;
 import org.opensaml.xmlsec.encryption.support.EncryptionException;
 import org.opensaml.xmlsec.encryption.support.EncryptionParameters;
@@ -98,12 +92,12 @@ public class DecryptNameIDsTest extends OpenSAMLInitBaseTestCase {
         
         encrypter = new Encrypter(encParams);
         
-        final BrowserSSOProfileConfiguration ssoConfig = new BrowserSSOProfileConfiguration();
-        ssoConfig.setSecurityConfiguration(new SecurityConfiguration());
-        ssoConfig.getSecurityConfiguration().setDecryptionConfiguration(new MockDecryptionConfiguration(keyResolver));
-        src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
-                Collections.<ProfileConfiguration>singletonList(ssoConfig)).buildRequestContext();
+        final DecryptionParameters decParams = new DecryptionParameters();
+        decParams.setDataKeyInfoCredentialResolver(keyResolver);
+        
+        src = new RequestContextBuilder().buildRequestContext();
         prc = (ProfileRequestContext) src.getConversationScope().get(ProfileRequestContext.BINDING_KEY);
+        prc.getSubcontext(SecurityParametersContext.class, true).setDecryptionParameters(decParams);
         
         action = new DecryptNameIDs();
     }
@@ -171,8 +165,8 @@ public class DecryptNameIDsTest extends OpenSAMLInitBaseTestCase {
 
         Credential encCred = AlgorithmSupport.generateSymmetricKeyAndCredential(encURI);
         KeyInfoCredentialResolver badKeyResolver = new StaticKeyInfoCredentialResolver(encCred);
-        prc.getSubcontext(RelyingPartyContext.class).getProfileConfig().getSecurityConfiguration().setDecryptionConfiguration(
-                new MockDecryptionConfiguration(badKeyResolver));
+        prc.getSubcontext(SecurityParametersContext.class).getDecryptionParameters().setDataKeyInfoCredentialResolver(
+                badKeyResolver);
         
         action.initialize();
         
@@ -206,8 +200,8 @@ public class DecryptNameIDsTest extends OpenSAMLInitBaseTestCase {
 
         Credential encCred = AlgorithmSupport.generateSymmetricKeyAndCredential(encURI);
         KeyInfoCredentialResolver badKeyResolver = new StaticKeyInfoCredentialResolver(encCred);
-        prc.getSubcontext(RelyingPartyContext.class).getProfileConfig().getSecurityConfiguration().setDecryptionConfiguration(
-                new MockDecryptionConfiguration(badKeyResolver));
+        prc.getSubcontext(SecurityParametersContext.class).getDecryptionParameters().setDataKeyInfoCredentialResolver(
+                badKeyResolver);
         
         action.setErrorFatal(false);
         action.initialize();
@@ -215,41 +209,6 @@ public class DecryptNameIDsTest extends OpenSAMLInitBaseTestCase {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNull(authnRequest.getSubject().getNameID());
-    }
-    
-    private class MockDecryptionConfiguration implements DecryptionConfiguration {
-
-        private KeyInfoCredentialResolver credential;
-        
-        public MockDecryptionConfiguration(KeyInfoCredentialResolver encryptionCredResolver) {
-            credential = encryptionCredResolver;
-        }
-        
-        /** {@inheritDoc} */
-        public Collection<String> getWhitelistedAlgorithmURIs() {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        public Collection<String> getBlacklistedAlgorithmsURIs() {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        public KeyInfoCredentialResolver getDataKeyInfoCredentialResolver() {
-            return credential;
-        }
-
-        /** {@inheritDoc} */
-        public KeyInfoCredentialResolver getKEKKeyInfoCredentialResolver() {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        public EncryptedKeyResolver getEncryptedKeyResolver() {
-            return null;
-        }
-        
     }
     
 }

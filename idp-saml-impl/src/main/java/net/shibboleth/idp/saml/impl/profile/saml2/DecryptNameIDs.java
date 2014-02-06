@@ -21,8 +21,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -53,7 +51,8 @@ import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectQuery;
 import org.opensaml.saml.saml2.encryption.Decrypter;
-import org.opensaml.xmlsec.DecryptionConfiguration;
+import org.opensaml.xmlsec.DecryptionParameters;
+import org.opensaml.xmlsec.context.SecurityParametersContext;
 import org.opensaml.xmlsec.encryption.support.DecryptionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,8 +70,7 @@ import com.google.common.base.Functions;
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_MSG_CTX}
- * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
- * @event {@link IdPEventIds#INVALID_PROFILE_CONFIG}
+ * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link SAMLEventIds#DECRYPT_NAMEID_FAILED}
  */
 public class DecryptNameIDs extends AbstractProfileAction {
@@ -83,8 +81,8 @@ public class DecryptNameIDs extends AbstractProfileAction {
     /** Are decryption failures a fatal condition? */
     private boolean errorFatal;
 
-    /** Strategy used to locate the {@link RelyingPartyContext}. */
-    @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
+    /** Strategy used to locate the {@link SecurityParametersContext}. */
+    @Nonnull private Function<ProfileRequestContext, SecurityParametersContext> securityParamsLookupStrategy;
 
     /** Strategy used to locate the SAML message to operate on. */
     @Nonnull private Function<ProfileRequestContext, Object> messageLookupStrategy;
@@ -98,7 +96,7 @@ public class DecryptNameIDs extends AbstractProfileAction {
     /** Constructor. */
     public DecryptNameIDs() {
         errorFatal = true;
-        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
+        securityParamsLookupStrategy = new ChildContextLookup<>(SecurityParametersContext.class, false);
         messageLookupStrategy = Functions.compose(new MessageLookup(), new InboundMessageContextLookup());
     }
     
@@ -114,18 +112,18 @@ public class DecryptNameIDs extends AbstractProfileAction {
     }
     
     /**
-     * Set the strategy used to locate the {@link RelyingPartyContext} associated with a given
+     * Set the strategy used to locate the {@link SecurityParametersContext} associated with a given
      * {@link ProfileRequestContext}.
      * 
-     * @param strategy strategy used to locate the {@link RelyingPartyContext} associated with a given
+     * @param strategy strategy used to locate the {@link SecurityParametersContext} associated with a given
      *            {@link ProfileRequestContext}
      */
-    public synchronized void setRelyingPartyContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
+    public synchronized void setSecurityParametersContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, SecurityParametersContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        relyingPartyContextLookupStrategy =
-                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
+        securityParamsLookupStrategy =
+                Constraint.isNotNull(strategy, "SecurityParametersContext lookup strategy cannot be null");
     }
     
     /**
@@ -133,7 +131,7 @@ public class DecryptNameIDs extends AbstractProfileAction {
      * 
      * @param strategy strategy used to locate the {@link SAMLObject} to operate on
      */
-    public synchronized void setResponseLookupStrategy(
+    public synchronized void setMessageLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, Object> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
@@ -153,29 +151,16 @@ public class DecryptNameIDs extends AbstractProfileAction {
             return false;
         }
         
-        final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (rpCtx == null) {
-            log.debug("{} No relying party context located in current profile request context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
-            return false;
-        } else if (rpCtx.getProfileConfig() == null
-                || rpCtx.getProfileConfig().getSecurityConfiguration() == null) {
-            log.debug("{} No profile configuration located in relying party context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
+        final SecurityParametersContext paramsCtx = securityParamsLookupStrategy.apply(profileRequestContext);
+        if (paramsCtx == null || paramsCtx.getDecryptionParameters() == null) {
+            log.debug("{} No security parameter context or decryption parameters", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
         
-        // TODO: this will be replaced by some accessor of a DecryptionParameters instance.
-        // For now, just construct directly off the DecryptionConfiguration.
-        
-        final DecryptionConfiguration decryptionConfig =
-                rpCtx.getProfileConfig().getSecurityConfiguration().getDecryptionConfiguration();
-        if (decryptionConfig != null) {
-            decrypter = new Decrypter(decryptionConfig.getDataKeyInfoCredentialResolver(),
-                    decryptionConfig.getKEKKeyInfoCredentialResolver(), decryptionConfig.getEncryptedKeyResolver());
-        } else {
-            decrypter = new Decrypter(null, null, null);
-        }
+        final DecryptionParameters params = paramsCtx.getDecryptionParameters();
+        decrypter = new Decrypter(params.getDataKeyInfoCredentialResolver(),
+                params.getKEKKeyInfoCredentialResolver(), params.getEncryptedKeyResolver());
         
         return super.doPreExecute(profileRequestContext);
     }
