@@ -124,7 +124,7 @@ public class SignAssertions extends AbstractProfileAction {
                 logResponse("Response after signing:", outboundMsgCtx.getMessage());
             }
         } catch (SecurityException | MarshallingException | SignatureException e) {
-            log.error("{} Error encountered while signing assertions", getLogPrefix(), e);
+            log.warn("{} Error encountered while signing assertions", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.UNABLE_TO_SIGN);
         }
     }
@@ -141,7 +141,7 @@ public class SignAssertions extends AbstractProfileAction {
                 Element dom = XMLObjectSupport.marshall(response);
                 log.trace(message + "\n" + SerializeSupport.prettyPrintXML(dom));
             } catch (MarshallingException e) {
-                log.error("Unable to marshall message for logging purposes", e);
+                log.warn("Unable to marshall message for logging purposes", e);
             }
         }
     }
