@@ -222,7 +222,6 @@
         class="net.shibboleth.idp.saml.impl.profile.saml1.AddAudienceRestrictionToAssertions"
         scope="prototype" />
 
-    <!-- TODO only a stub action -->
     <bean
         id="SignAssertions"
         class="net.shibboleth.idp.saml.impl.profile.saml1.SignAssertions"
