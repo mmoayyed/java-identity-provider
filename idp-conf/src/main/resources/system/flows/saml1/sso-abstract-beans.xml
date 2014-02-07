@@ -31,8 +31,10 @@
         scope="prototype">
         <property name="handlers">
             <util:list>
-                <!-- TODO inbound handlers -->
-                <!-- TODO CheckMandatoryIssuer ? -->
+                <bean
+                    class="org.opensaml.saml.common.binding.security.MessageReplaySecurityHandler"
+                    p:replayCache-ref="shibboleth.ReplayCache" />
+                <bean class="org.opensaml.saml.common.binding.security.MessageLifetimeSecurityHandler" />
             </util:list>
         </property>
     </bean>
@@ -51,6 +53,9 @@
         <property name="handlers">
             <util:list>
                 <!-- TODO outbound handlers -->
+                <bean class="org.opensaml.saml.common.binding.SAMLOutboundDestinationHandler" />
+                <bean class="org.opensaml.saml.common.binding.security.EndpointUrlSchemeSecurityHandler" />
+                <bean class="org.opensaml.saml.common.binding.security.SAMLOutboundProtocolMessageSigningHandler" />
             </util:list>
         </property>
     </bean>
@@ -58,11 +63,13 @@
     <bean
         id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext"
+        scope="prototype"
         p:profileId="#{T(net.shibboleth.idp.saml.profile.config.saml1.BrowserSSOProfileConfiguration).PROFILE_ID}" />
 
     <bean
         id="InitializeRelyingPartyContext"
-        class="net.shibboleth.idp.profile.impl.InitializeRelyingPartyContext" />
+        class="net.shibboleth.idp.profile.impl.InitializeRelyingPartyContext"
+        scope="prototype" />
 
     <bean
         id="SelectRelyingPartyConfiguration"
@@ -73,22 +80,26 @@
     <bean
         id="RelyingPartyConfigurationResolver"
         class="net.shibboleth.idp.relyingparty.impl.RelyingPartyConfigurationResolver"
+        scope="prototype"
         p:id="RelyingPartyConfigurationResolver"
         p:relyingPartyConfigurations-ref="RelyingPartyConfiguration" />
 
     <bean
         id="SecurityConfiguration"
-        class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
+        class="net.shibboleth.idp.profile.config.SecurityConfiguration"
+        scope="prototype" />
 
     <bean
         id="SAML1BrowserSSOProfileConfiguration"
         class="net.shibboleth.idp.saml.profile.config.saml1.BrowserSSOProfileConfiguration"
+        scope="prototype"
         p:securityConfiguration-ref="SecurityConfiguration" />
 
     <!-- TODO replace with eventual relying-party.xml config -->
     <bean
         id="RelyingPartyConfiguration"
         class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"
+        scope="prototype"
         p:id="ActivatedRelyingPartyConfiguration"
         p:responderId="https://idp.example.org"
         p:detailedErrors="true"
@@ -131,23 +142,28 @@
 
     <bean
         id="InitializeOutboundMessageContext"
-        class="net.shibboleth.idp.saml.impl.profile.saml1.InitializeOutboundMessageContext" />
+        class="net.shibboleth.idp.saml.impl.profile.saml1.InitializeOutboundMessageContext"
+        scope="prototype" />
 
     <bean
         id="AddResponseShell"
-        class="net.shibboleth.idp.saml.impl.profile.saml1.AddResponseShell" />
+        class="net.shibboleth.idp.saml.impl.profile.saml1.AddResponseShell"
+        scope="prototype" />
 
     <bean
         id="AddAuthenticationStatementToAssertion"
-        class="net.shibboleth.idp.saml.impl.profile.saml1.AddAuthenticationStatementToAssertion" />
+        class="net.shibboleth.idp.saml.impl.profile.saml1.AddAuthenticationStatementToAssertion"
+        scope="prototype" />
 
     <bean
         id="AddAttributeStatementToAssertion"
-        class="net.shibboleth.idp.saml.impl.profile.saml1.AddAttributeStatementToAssertion" />
+        class="net.shibboleth.idp.saml.impl.profile.saml1.AddAttributeStatementToAssertion"
+        scope="prototype" />
 
     <bean
         id="DefaultSAML1NameIdentifierGenerator"
         class="net.shibboleth.idp.saml.impl.nameid.DefaultSAML1NameIdentifierGenerator"
+        scope="prototype"
         p:format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">
         <property name="attributeSourceIds">
             <util:list>
@@ -159,6 +175,7 @@
     <bean
         id="SAML1NameIdentifierGenerator"
         class="net.shibboleth.idp.saml.impl.nameid.DefaultSAML1NameIdentifierGenerator"
+        scope="prototype"
         p:format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress">
         <property name="attributeSourceIds">
             <util:list>
@@ -170,6 +187,7 @@
     <bean
         id="AddNameIdentifierToSubjects"
         class="org.opensaml.saml.saml1.profile.impl.AddNameIdentifierToSubjects"
+        scope="prototype"
         p:defaultNameIDGenerator-ref="DefaultSAML1NameIdentifierGenerator">
         <property name="nameIdentifierGenerators">
             <util:list>
@@ -180,7 +198,8 @@
 
     <bean
         id="AddSubjectConfirmationToSubjects"
-        class="org.opensaml.saml.saml1.profile.impl.AddSubjectConfirmationToSubjects">
+        class="org.opensaml.saml.saml1.profile.impl.AddSubjectConfirmationToSubjects"
+        scope="prototype">
         <property name="methods">
             <util:list>
                 <value>urn:oasis:names:tc:SAML:1.0:cm:bearer</value>
@@ -190,20 +209,24 @@
 
     <bean
         id="AddNotBeforeConditionToAssertions"
-        class="net.shibboleth.idp.saml.impl.profile.saml1.AddNotBeforeConditionToAssertions" />
+        class="net.shibboleth.idp.saml.impl.profile.saml1.AddNotBeforeConditionToAssertions"
+        scope="prototype" />
 
     <bean
         id="AddNotOnOrAfterConditionToAssertions"
-        class="net.shibboleth.idp.saml.impl.profile.saml1.AddNotOnOrAfterConditionToAssertions" />
+        class="net.shibboleth.idp.saml.impl.profile.saml1.AddNotOnOrAfterConditionToAssertions"
+        scope="prototype" />
 
     <bean
         id="AddAudienceRestrictionToAssertions"
-        class="net.shibboleth.idp.saml.impl.profile.saml1.AddAudienceRestrictionToAssertions" />
+        class="net.shibboleth.idp.saml.impl.profile.saml1.AddAudienceRestrictionToAssertions"
+        scope="prototype" />
 
     <!-- TODO only a stub action -->
     <bean
         id="SignAssertions"
-        class="net.shibboleth.idp.saml.impl.profile.saml1.SignAssertions" />
+        class="net.shibboleth.idp.saml.impl.profile.saml1.SignAssertions"
+        scope="prototype" />
 
     <bean
         id="RecordResponseComplete"

@@ -25,6 +25,8 @@
         <evaluate expression="InitializeRelyingPartyContext" />
         <transition on="proceed" to="SelectRelyingPartyConfiguration" />
     </action-state>
+    
+    <!-- TODO CheckMandatoryIssuer ? -->
 
     <action-state id="SelectRelyingPartyConfiguration">
         <evaluate expression="SelectRelyingPartyConfiguration" />
