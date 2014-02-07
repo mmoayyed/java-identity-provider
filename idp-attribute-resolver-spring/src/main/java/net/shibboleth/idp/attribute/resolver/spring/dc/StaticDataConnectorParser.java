@@ -48,39 +48,36 @@ public class StaticDataConnectorParser extends AbstractDataConnectorParser {
     private final Logger log = LoggerFactory.getLogger(StaticDataConnectorParser.class);
 
     /** {@inheritDoc} */
-    @Override
-    protected Class<StaticDataConnector> getBeanClass(Element element) {
+    @Override protected Class<StaticDataConnector> getBeanClass(Element element) {
         return StaticDataConnector.class;
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
         List<Element> children = ElementSupport.getChildElements(config, ATTRIBUTE_ELEMENT_NAME);
         List<BeanDefinition> attributes = new ManagedList<BeanDefinition>(children.size());
-        
+
         for (Element child : children) {
-            
+
             String attrId = child.getAttributeNS(null, "id");
             BeanDefinitionBuilder attributeDefn = BeanDefinitionBuilder.genericBeanDefinition(IdPAttribute.class);
             attributeDefn.addConstructorArgValue(attrId);
-            
+
             List<Element> values =
                     ElementSupport.getChildElementsByTagNameNS(child, DataConnectorNamespaceHandler.NAMESPACE, "Value");
             ManagedList<BeanDefinition> inValues = new ManagedList<BeanDefinition>(values.size());
             for (Element val : values) {
                 BeanDefinitionBuilder value = BeanDefinitionBuilder.genericBeanDefinition(StringAttributeValue.class);
                 value.addConstructorArgValue(val.getTextContent());
-                log.trace("{} Attribute: {}, adding value {} ", new Object[] {getLogPrefix(), attrId,
-                        val.getTextContent(),});
+                log.trace("{} Attribute: {}, adding value {} ",
+                        new Object[] {getLogPrefix(), attrId, val.getTextContent(),});
                 inValues.add(value.getBeanDefinition());
             }
             attributeDefn.addPropertyValue("values", inValues);
-            log.debug("{} Adding Attribute: {} with {} values", new Object[] {getLogPrefix(), attrId,
-                   values.size(),});
+            log.debug("{} Adding Attribute: {} with {} values", new Object[] {getLogPrefix(), attrId, values.size(),});
             attributes.add(attributeDefn.getBeanDefinition());
         }
 

@@ -75,9 +75,9 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
     private final Logger log = LoggerFactory.getLogger(AbstractDataConnectorParser.class);
 
     /** {@inheritDoc} */
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
-         super.doParse(config, parserContext, builder);
+        super.doParse(config, parserContext, builder);
 
         final List<Element> failoverConnector =
                 ElementSupport.getChildElements(config, FAILOVER_DATA_CONNECTOR_ELEMENT_NAME);
@@ -112,7 +112,7 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
      * @return bean factory
      */
     @Nonnull protected BeanFactory createBeanFactory(@Nonnull final Element springBeans) {
-        
+
         GenericApplicationContext ctx = new GenericApplicationContext();
         final XmlBeanDefinitionReader definitionReader = new XmlBeanDefinitionReader(ctx);
         // TODO why does validation need to be turned off?

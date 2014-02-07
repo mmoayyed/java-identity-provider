@@ -28,7 +28,7 @@ public class DataConnectorNamespaceHandler extends BaseSpringNamespaceHandler {
     public static final String NAMESPACE = "urn:mace:shibboleth:2.0:resolver:dc";
 
     /** {@inheritDoc} */
-    public void init() {
+    @Override public void init() {
         registerBeanDefinitionParser(StaticDataConnectorParser.TYPE_NAME, new StaticDataConnectorParser());
         // TODO
         registerBeanDefinitionParser(ComputedIDDataConnectorParser.TYPE_NAME, new ComputedIDDataConnectorParser());

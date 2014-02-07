@@ -42,22 +42,23 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
     private final Logger log = LoggerFactory.getLogger(StoredIDDataConnectorParser.class);
 
     /** {@inheritDoc} */
-    protected Class<StoredIDDataConnector> getBeanClass(Element element) {
+    @Override protected Class<StoredIDDataConnector> getBeanClass(Element element) {
         return StoredIDDataConnector.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder, "storedId");
         log.debug("doParse {}", config);
         builder.addPropertyValue("dataSource", getDataSource(config));
         // TODO set queryTimeout?
     }
-    
+
     /**
      * Get the dataSource from the configuration.
-     * @param config the DOM element under consideration. 
+     * 
+     * @param config the DOM element under consideration.
      * @return the DataSource
      */
     protected DataSource getDataSource(@Nonnull Element config) {

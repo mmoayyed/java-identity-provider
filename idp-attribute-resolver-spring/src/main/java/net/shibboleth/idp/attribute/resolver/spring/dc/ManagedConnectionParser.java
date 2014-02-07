@@ -64,15 +64,15 @@ public class ManagedConnectionParser {
      */
     public DataSource createDataSource() {
         final Element containerManagedElement =
-                ElementSupport.getFirstChildElement(configElement, new QName(
-                        DataConnectorNamespaceHandler.NAMESPACE, "ContainerManagedConnection"));
+                ElementSupport.getFirstChildElement(configElement, new QName(DataConnectorNamespaceHandler.NAMESPACE,
+                        "ContainerManagedConnection"));
         if (containerManagedElement != null) {
             return createContainerManagedDataSource(containerManagedElement);
         }
 
         final Element applicationManagedElement =
-                ElementSupport.getFirstChildElement(configElement, new QName(
-                        DataConnectorNamespaceHandler.NAMESPACE, "ApplicationManagedConnection"));
+                ElementSupport.getFirstChildElement(configElement, new QName(DataConnectorNamespaceHandler.NAMESPACE,
+                        "ApplicationManagedConnection"));
         return createApplicationManagedDataSource(applicationManagedElement);
     }
 
@@ -117,8 +117,7 @@ public class ManagedConnectionParser {
      */
     // Checkstyle: CyclomaticComplexity OFF
     // Checkstyle: MethodLength OFF
-    @Nonnull protected DataSource createApplicationManagedDataSource(
-            @Nonnull final Element applicationManagedElement) {
+    @Nonnull protected DataSource createApplicationManagedDataSource(@Nonnull final Element applicationManagedElement) {
         Constraint.isNotNull(applicationManagedElement, "ApplicationManagedConnection element cannot be null");
         final ComboPooledDataSource datasource = new ComboPooledDataSource();
 
@@ -133,16 +132,14 @@ public class ManagedConnectionParser {
         }
         try {
             datasource.setDriverClass(jdbcDriver);
-            datasource.setJdbcUrl(AttributeSupport.getAttributeValue(applicationManagedElement,
-                    new QName("jdbcURL")));
-            datasource.setUser(AttributeSupport.getAttributeValue(applicationManagedElement, new QName(
-                    "jdbcUserName")));
+            datasource.setJdbcUrl(AttributeSupport.getAttributeValue(applicationManagedElement, new QName("jdbcURL")));
+            datasource
+                    .setUser(AttributeSupport.getAttributeValue(applicationManagedElement, new QName("jdbcUserName")));
             datasource.setPassword(AttributeSupport.getAttributeValue(applicationManagedElement, new QName(
                     "jdbcPassword")));
 
             final String poolAcquireIncrement =
-                    AttributeSupport
-                            .getAttributeValue(applicationManagedElement, new QName("poolAcquireIncrement"));
+                    AttributeSupport.getAttributeValue(applicationManagedElement, new QName("poolAcquireIncrement"));
             if (poolAcquireIncrement != null) {
                 datasource.setAcquireIncrement(Integer.parseInt(poolAcquireIncrement));
             } else {
@@ -150,8 +147,8 @@ public class ManagedConnectionParser {
             }
 
             final String poolAcquireRetryAttempts =
-                    AttributeSupport.getAttributeValue(applicationManagedElement, new QName(
-                            "poolAcquireRetryAttempts"));
+                    AttributeSupport
+                            .getAttributeValue(applicationManagedElement, new QName("poolAcquireRetryAttempts"));
             if (poolAcquireRetryAttempts != null) {
                 datasource.setAcquireRetryAttempts(Integer.parseInt(poolAcquireRetryAttempts));
             } else {
@@ -159,8 +156,7 @@ public class ManagedConnectionParser {
             }
 
             final String poolAcquireRetryDelay =
-                    AttributeSupport.getAttributeValue(applicationManagedElement,
-                            new QName("poolAcquireRetryDelay"));
+                    AttributeSupport.getAttributeValue(applicationManagedElement, new QName("poolAcquireRetryDelay"));
             if (poolAcquireRetryDelay != null) {
                 datasource.setAcquireRetryDelay(Integer.parseInt(poolAcquireRetryDelay));
             } else {

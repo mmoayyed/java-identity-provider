@@ -35,12 +35,12 @@ public class ComputedIDDataConnectorParser extends BaseComputedIDDataConnectorPa
     public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "ComputedId");
 
     /** {@inheritDoc} */
-    protected Class<ComputedIDDataConnector> getBeanClass(Element element) {
+    @Override protected Class<ComputedIDDataConnector> getBeanClass(Element element) {
         return ComputedIDDataConnector.class;
     }
-    
+
     /** {@inheritDoc} */
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder, "computedId");
     }
