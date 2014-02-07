@@ -15,7 +15,6 @@
         <transition on="proceed" to="HandleInboundMessage" />
     </action-state>
 
-    <!-- TODO inbound message handling -->
     <action-state id="HandleInboundMessage">
         <evaluate expression="HandleInboundMessage" />
         <transition on="proceed" to="InitializeRelyingPartyContext" />
@@ -25,8 +24,6 @@
         <evaluate expression="InitializeRelyingPartyContext" />
         <transition on="proceed" to="SelectRelyingPartyConfiguration" />
     </action-state>
-    
-    <!-- TODO CheckMandatoryIssuer ? -->
 
     <action-state id="SelectRelyingPartyConfiguration">
         <evaluate expression="SelectRelyingPartyConfiguration" />
@@ -59,7 +56,6 @@
 
     <subflow-state id="DoAuthenticationSubflow" subflow="Authentication">
         <transition on="proceed" to="ResolveAttributes" />
-        <!-- TODO <transition on="#{true}" to="BuildResponse" /> -->
         <transition on="#{true}" to="ResolveAttributes" />
     </subflow-state>
 
@@ -119,7 +115,6 @@
         <transition on="proceed" to="SignAssertions" />
     </action-state>
 
-    <!-- TODO only a stub action -->
     <action-state id="SignAssertions">
         <evaluate expression="SignAssertions" />
         <transition on="proceed" to="UpdateSessionWithSPSession" />
