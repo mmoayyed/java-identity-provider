@@ -24,6 +24,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.SimpleAttributeDefinitionParser;
+import net.shibboleth.idp.saml.impl.attribute.principalconnector.PrincipalConnector;
 import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -42,6 +43,8 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
 
     public static final String ENCODER_FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/enc/";
 
+    public static final String PRINCIPALCONNECTOR_FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/pc/";
+
     protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context,
             boolean supressValid) {
 
@@ -58,7 +61,7 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         Collection<Type> beans = context.getBeansOfType(claz).values();
         Assert.assertEquals(beans.size(), 1);
 
-        return (Type) beans.iterator().next();
+        return beans.iterator().next();
     }
 
     protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context) {
@@ -127,4 +130,13 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         return getBean(ENCODER_FILE_PATH + fileName, claz, context);
 
     }
+    
+    protected PrincipalConnector getPrincipalConnector(String fileName) {
+
+        GenericApplicationContext context = new GenericApplicationContext();
+        context.setDisplayName("ApplicationContext: " + PrincipalConnector.class);
+
+        return getBean(PRINCIPALCONNECTOR_FILE_PATH + fileName, PrincipalConnector.class, context);
+    }
+
 }

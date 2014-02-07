@@ -73,6 +73,20 @@ public class PrincipalConnector extends AbstractIdentifiableInitializableCompone
                 Constraint.isNotNull(decodernameIdentifier, "provided NameIdentifierDecoder must not be null");
         format = Constraint.isNotNull(StringSupport.trimOrNull(theFormat), "provided format must not be empty or null");
     }
+    
+    /** Get the {@link NameID} decoder.
+     * @return the decoder
+     */
+    @Nonnull public NameIDDecoder getNameIDDecoder() {
+        return nameIDDecoder;
+    }
+
+    /** Get the {@link NameIdentifierDecoder} decoder.
+     * @return the decoder
+     */
+    @Nonnull public NameIdentifierDecoder getNameIdentifierDecoder() {
+        return nameIdentifierDecoder;
+    }
 
     /** {@inheritDoc} */
     @Override public synchronized void setId(@Nonnull String componentId) {

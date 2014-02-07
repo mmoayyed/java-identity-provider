@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring;
 
+import net.shibboleth.idp.attribute.resolver.spring.pc.DirectConnectorParser;
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
@@ -29,12 +30,11 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
     public static final String NAMESPACE = "urn:mace:shibboleth:2.0:resolver";
 
     /** {@inheritDoc} */
-    public void init() {
+    @Override public void init() {
         BeanDefinitionParser parser = new AttributeResolverParser();
         registerBeanDefinitionParser(AttributeResolverParser.SCHEMA_TYPE, parser);
         registerBeanDefinitionParser(AttributeResolverParser.ELEMENT_NAME, parser);
-        
-        registerBeanDefinitionParser(ResolverPluginDependencyParser.ELEMENT_NAME,
-                new ResolverPluginDependencyParser());
+        registerBeanDefinitionParser(DirectConnectorParser.ELEMENT_NAME, new DirectConnectorParser());
+        registerBeanDefinitionParser(ResolverPluginDependencyParser.ELEMENT_NAME, new ResolverPluginDependencyParser());
     }
 }
