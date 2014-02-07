@@ -31,17 +31,11 @@ import net.shibboleth.utilities.java.support.security.DataExpiredException;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.DataSealerException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * An abstract action which contains the logic to do crypto transient decoding matching. This reverses the work done by
  * {@link net.shibboleth.idp.attribute.resolver.impl.ad.CryptoTransientIdAttributeDefinition}
  */
 public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableInitializableComponent {
-
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(BaseCryptoTransientDecoder.class);
 
     /** Object used to protect and encrypt the data. */
     @NonnullAfterInit private DataSealer dataSealer;
