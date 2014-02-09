@@ -5,7 +5,7 @@
         elementFormDefault="qualified" 
         version="3.0">
 
-    <import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="classpath:/schema/xml.xsd"/>
+    <import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 
     <annotation>
         <documentation>Shibboleth 2.0 Attribute Resolver configuration schema</documentation>

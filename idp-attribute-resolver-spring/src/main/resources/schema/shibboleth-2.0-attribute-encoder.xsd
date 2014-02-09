@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:encoder="urn:mace:shibboleth:2.0:attribute:encoder" xmlns:resolver="urn:mace:shibboleth:2.0:resolver" targetNamespace="urn:mace:shibboleth:2.0:attribute:encoder" elementFormDefault="qualified">
 
-    <import namespace="urn:mace:shibboleth:2.0:resolver" schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd"/>
+    <import namespace="urn:mace:shibboleth:2.0:resolver" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd"/>
 
     <!-- Encoders that produce SAML 1 or SAML 2 Attribtues -->
     <complexType name="SAML1String">

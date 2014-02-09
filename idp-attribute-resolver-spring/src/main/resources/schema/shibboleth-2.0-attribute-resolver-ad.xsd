@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ad="urn:mace:shibboleth:2.0:resolver:ad" xmlns:resolver="urn:mace:shibboleth:2.0:resolver" targetNamespace="urn:mace:shibboleth:2.0:resolver:ad" elementFormDefault="qualified">
 
-    <import namespace="urn:mace:shibboleth:2.0:resolver" schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd"/>
+    <import namespace="urn:mace:shibboleth:2.0:resolver" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd"/>
 
     <complexType name="Simple">
         <annotation>

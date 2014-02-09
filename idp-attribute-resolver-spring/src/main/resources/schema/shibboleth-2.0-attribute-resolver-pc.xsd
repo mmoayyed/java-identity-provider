@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:pc="urn:mace:shibboleth:2.0:resolver:pc" xmlns:resolver="urn:mace:shibboleth:2.0:resolver" targetNamespace="urn:mace:shibboleth:2.0:resolver:pc" elementFormDefault="qualified">
 
-    <import namespace="urn:mace:shibboleth:2.0:resolver" schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd"/>
+    <import namespace="urn:mace:shibboleth:2.0:resolver" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd"/>
         
-    <import namespace="urn:mace:shibboleth:2.0:resolver:dc" schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver-dc.xsd"/>
+    <import namespace="urn:mace:shibboleth:2.0:resolver:dc" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-dc.xsd"/>
 
     <complexType name="Transient">
         <annotation>
