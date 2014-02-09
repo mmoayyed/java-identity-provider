@@ -1,2 +1,2 @@
-http\://shibboleth.net/schema/idp/shibboleth-security.xsd = schema/shibboleth-2.0-security.xsd
-classpath\:/schema/shibboleth-2.0-security.xsd = schema/shibboleth-2.0-security.xsd
+http\://shibboleth.net/schema/idp/shibboleth-security.xsd = schema/shibboleth-security.xsd
+classpath\:/schema/shibboleth-2.0-security.xsd = schema/shibboleth-security.xsd
