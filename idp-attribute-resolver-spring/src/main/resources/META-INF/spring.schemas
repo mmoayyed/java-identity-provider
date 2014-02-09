@@ -1,13 +1,13 @@
-http\://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd = schema/shibboleth-2.0-attribute-resolver.xsd
-http\://shibboleth.net/schema/idp/shibboleth-attribute-resolver-ad.xsd = schema/shibboleth-2.0-attribute-resolver-ad.xsd
-http\://shibboleth.net/schema/idp/shibboleth-attribute-resolver-dc.xsd = schema/shibboleth-2.0-attribute-resolver-dc.xsd
-http\://shibboleth.net/schema/idp/shibboleth-attribute-resolver-pc.xsd = schema/shibboleth-2.0-attribute-resolver-pc.xsd
-http\://shibboleth.net/schema/idp/shibboleth-attribute-encoder.xsd = schema/shibboleth-2.0-attribute-encoder.xsd
+http\://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd = schema/shibboleth-attribute-resolver.xsd
+http\://shibboleth.net/schema/idp/shibboleth-attribute-resolver-ad.xsd = schema/shibboleth-attribute-resolver-ad.xsd
+http\://shibboleth.net/schema/idp/shibboleth-attribute-resolver-dc.xsd = schema/shibboleth-attribute-resolver-dc.xsd
+http\://shibboleth.net/schema/idp/shibboleth-attribute-resolver-pc.xsd = schema/shibboleth-attribute-resolver-pc.xsd
+http\://shibboleth.net/schema/idp/shibboleth-attribute-encoder.xsd = schema/shibboleth-attribute-encoder.xsd
 http\://www.w3.org/2001/xml.xsd = schema/xml.xsd
 
-classpath\:/schema/shibboleth-2.0-attribute-resolver.xsd = schema/shibboleth-2.0-attribute-resolver.xsd
-classpath\:/schema/shibboleth-2.0-attribute-resolver-ad.xsd = schema/shibboleth-2.0-attribute-resolver-ad.xsd
-classpath\:/schema/shibboleth-2.0-attribute-resolver-dc.xsd = schema/shibboleth-2.0-attribute-resolver-dc.xsd
-classpath\:/schema/shibboleth-2.0-attribute-resolver-pc.xsd = schema/shibboleth-2.0-attribute-resolver-pc.xsd
-classpath\:/schema/shibboleth-2.0-attribute-encoder.xsd = schema/shibboleth-2.0-attribute-encoder.xsd
+classpath\:/schema/shibboleth-2.0-attribute-resolver.xsd = schema/shibboleth-attribute-resolver.xsd
+classpath\:/schema/shibboleth-2.0-attribute-resolver-ad.xsd = schema/shibboleth-attribute-resolver-ad.xsd
+classpath\:/schema/shibboleth-2.0-attribute-resolver-dc.xsd = schema/shibboleth-attribute-resolver-dc.xsd
+classpath\:/schema/shibboleth-2.0-attribute-resolver-pc.xsd = schema/shibboleth-attribute-resolver-pc.xsd
+classpath\:/schema/shibboleth-2.0-attribute-encoder.xsd = schema/shibboleth-attribute-encoder.xsd
 classpath\:/schema/xml.xsd = schema/xml.xsd
