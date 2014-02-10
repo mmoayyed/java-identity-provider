@@ -33,6 +33,19 @@
                 <bean class="net.shibboleth.idp.authn.impl.SimpleSubjectCanonicalization.ActivationCondition" />
             </property>
         </bean>
+        
+        <bean c:id="SubjectC14NFlow/SAML2/Transient" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
+            <property name="activationCondition">
+                <bean class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition" />
+            </property>
+        </bean>
+        
+        <bean c:id="SubjectC14NFlow/LegacyPrincipalConnector" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
+            <property name="activationCondition">
+                <bean class="net.shibboleth.idp.saml.impl.nameid.LegacyCanonicalization.ActivationCondition" 
+                c:service-ref="shibboleth.AttributeResolverService"/>
+            </property>
+        </bean>
 
     </util:list>
     

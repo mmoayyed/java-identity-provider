@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:c="http://www.springframework.org/schema/c" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.2.xsd
+                           http://www.springframework.org/schema/context classpath:/org/springframework/context/config/spring-context-3.2.xsd
+                           http://www.springframework.org/schema/util classpath:/org/springframework/beans/factory/xml/spring-util-3.2.xsd"
+
+	default-init-method="initialize" default-destroy-method="destroy">
+
+	<bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+
+	<bean id="LegacyPrincipalConnectorCanonicalization"
+		class="net.shibboleth.idp.saml.impl.nameid.LegacyCanonicalization"
+		scope="prototype" c:resolverService-ref="shibboleth.AttributeResolverService"/>
+
+</beans>
