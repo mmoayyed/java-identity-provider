@@ -101,7 +101,7 @@ public class LdapDataConnectorParserTest {
 
     @Test public void v2Config() throws ComponentInitializationException, ServiceException, ResolutionException {
         LdapDataConnector dataConnector =
-                getLdapDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-v2.xml");
+                getLdapDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-v2.xml", false);
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
 
@@ -115,7 +115,7 @@ public class LdapDataConnectorParserTest {
 
     @Test public void springConfig() throws ComponentInitializationException, ServiceException, ResolutionException {
         LdapDataConnector dataConnector =
-                getLdapDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-spring.xml");
+                getLdapDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-spring.xml", true);
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
 
@@ -157,7 +157,7 @@ public class LdapDataConnectorParserTest {
 
     }
 
-    protected LdapDataConnector getLdapDataConnector(final String springContext) {
+    protected LdapDataConnector getLdapDataConnector(final String springContext, boolean suppressValidation) {
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + LdapDataConnectorParserTest.class);
 
@@ -168,8 +168,10 @@ public class LdapDataConnectorParserTest {
 
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
+        if (suppressValidation) {
+            beanDefinitionReader.setValidating(false);
+        }
 
-        beanDefinitionReader.setValidating(false);
         beanDefinitionReader.loadBeanDefinitions(springContext);
 
         return (LdapDataConnector) context.getBean("myLDAP");
