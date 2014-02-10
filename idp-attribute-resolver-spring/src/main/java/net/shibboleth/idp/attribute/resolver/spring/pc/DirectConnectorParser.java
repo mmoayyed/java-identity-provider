@@ -20,7 +20,6 @@ package net.shibboleth.idp.attribute.resolver.spring.pc;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.saml.impl.attribute.principalconnector.PrincipalConnector;
 import net.shibboleth.idp.saml.impl.nameid.DirectNameIDDecoder;
 import net.shibboleth.idp.saml.impl.nameid.DirectNameIdentifierDecoder;
 
@@ -29,17 +28,12 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Parser for Direct &lt;PrincipalConnector&gt;.
+ * Parser for Direct Principal Connector<br/> &lt;PrincipalConnector xsi:type="pc:Direct"&gt;.
  */
 public class DirectConnectorParser extends AbstractPrincipalConnectorParser {
 
     /** Schema type name. */
     public static final QName ELEMENT_NAME = new QName(PrincipalConnectorNamespaceHandler.NAMESPACE, "Direct");
-
-    /** {@inheritDoc} */
-    @Override protected Class<PrincipalConnector> getBeanClass(Element element) {
-        return PrincipalConnector.class;
-    }
 
     /** {@inheritDoc} */
     @Override protected void addSAMLDecoders(@Nonnull final Element config, @Nonnull final ParserContext parserContext,

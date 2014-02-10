@@ -26,7 +26,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * test for principal connector parsers.
+ * test for direct principal connector parsers.
  */
 public class DirectTest extends BaseAttributeDefinitionParserTest {
 

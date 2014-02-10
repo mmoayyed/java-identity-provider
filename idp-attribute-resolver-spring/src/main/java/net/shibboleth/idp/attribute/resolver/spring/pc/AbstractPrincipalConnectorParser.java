@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.spring.AttributeResolverNamespaceHandler;
+import net.shibboleth.idp.saml.impl.attribute.principalconnector.PrincipalConnector;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -40,6 +41,11 @@ public abstract class AbstractPrincipalConnectorParser extends AbstractSingleBea
 
     /** Relying Parties. */
     public static final QName RELYING_PARTY = new QName(AttributeResolverNamespaceHandler.NAMESPACE, "RelyingParty");
+
+    /** {@inheritDoc} */
+    @Override protected Class<PrincipalConnector> getBeanClass(Element element) {
+        return PrincipalConnector.class;
+    }
 
     /** {@inheritDoc} */
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
