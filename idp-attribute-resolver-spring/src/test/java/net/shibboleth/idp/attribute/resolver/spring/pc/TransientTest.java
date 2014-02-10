@@ -17,21 +17,27 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.pc;
 
-import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
+import net.shibboleth.idp.saml.impl.attribute.principalconnector.PrincipalConnector;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 /**
- * Namespace handler for the principal connector. This is a noop and is here purely to allow us to have a handler
- * declared (since all parsing is done inline).
+ * test for direct principal connector parsers.
  */
-public class PrincipalConnectorNamespaceHandler extends BaseSpringNamespaceHandler {
+public class TransientTest extends BaseAttributeDefinitionParserTest {
 
-    /** Namespace for principal connector (which have not handlers). */
-    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:resolver:pc";
-
-    /** {@inheritDoc} */
-    @Override public void init() {
-        registerBeanDefinitionParser(DirectConnectorParser.ELEMENT_NAME, new DirectConnectorParser());
-
-        registerBeanDefinitionParser(TransientConnectorParser.ELEMENT_NAME, new TransientConnectorParser());
+    @Test public void simple() {
+        PrincipalConnector connector = getPrincipalConnector("transientNoStore.xml", "idStore.xml");
+        
+        Assert.assertEquals(connector.getFormat(), "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
     }
+    
+    @Test public void store() {
+        PrincipalConnector connector = getPrincipalConnector("transient.xml", "idStore2.xml");
+        
+        Assert.assertEquals(connector.getFormat(), "urn:oasis:names:tc:SAML:2.0:nameid-format:transient");
+    }
+
 }
