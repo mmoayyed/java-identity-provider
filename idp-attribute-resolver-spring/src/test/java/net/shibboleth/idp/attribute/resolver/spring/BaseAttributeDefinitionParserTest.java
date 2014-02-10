@@ -36,14 +36,16 @@ import org.testng.Assert;
  * Test for {@link SimpleAttributeDefinitionParser} and by extension {@link BaseAttributeDefinitionParser}.
  */
 public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBaseTestCase {
+    
+    public static final String BEAN_FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/";
 
-    public static final String ATTRIBUTE_FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/ad/";
+    public static final String ATTRIBUTE_FILE_PATH = BEAN_FILE_PATH + "ad/";
 
-    public static final String DATACONNECTOR_FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/dc/";
+    public static final String DATACONNECTOR_FILE_PATH = BEAN_FILE_PATH + "dc/";
 
-    public static final String ENCODER_FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/enc/";
+    public static final String ENCODER_FILE_PATH = BEAN_FILE_PATH + "enc/";
 
-    public static final String PRINCIPALCONNECTOR_FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/pc/";
+    public static final String PRINCIPALCONNECTOR_FILE_PATH = BEAN_FILE_PATH + "pc/";
 
     protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context,
             boolean supressValid) {
@@ -93,7 +95,7 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         context.setDisplayName("ApplicationContext: " + claz);
         XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
 
-        configReader.loadBeanDefinitions(ATTRIBUTE_FILE_PATH + beanFileName);
+        configReader.loadBeanDefinitions(BEAN_FILE_PATH + beanFileName);
 
         return getAttributeDefn(fileName, claz, context, supressValidation);
     }
@@ -138,5 +140,17 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
 
         return getBean(PRINCIPALCONNECTOR_FILE_PATH + fileName, PrincipalConnector.class, context);
     }
+    
+    protected PrincipalConnector getPrincipalConnector(String fileName, String beanFileName) {
+
+        GenericApplicationContext context = new GenericApplicationContext();
+        context.setDisplayName("ApplicationContext: " + PrincipalConnector.class);
+        XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
+
+        configReader.loadBeanDefinitions(BEAN_FILE_PATH + beanFileName);
+
+        return getBean(PRINCIPALCONNECTOR_FILE_PATH + fileName, PrincipalConnector.class, context);
+    }
+
 
 }
