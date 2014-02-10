@@ -54,7 +54,7 @@ public class TransientNameIDDecoder extends BaseTransientDecoder implements Name
         final String nameQualifier = nameID.getNameQualifier();
 
         if (null != nameQualifier && null != responderId && !nameQualifier.equals(responderId)) {
-            log.debug("NameQualifier '{}' does not match responderId'{}'", spNameQualifier, requesterId);
+            log.debug("NameQualifier '{}' does not match responderId'{}'", nameQualifier, responderId);
             throw new SubjectCanonicalizationException("NameQualifier does not match responderId");
         }
 
