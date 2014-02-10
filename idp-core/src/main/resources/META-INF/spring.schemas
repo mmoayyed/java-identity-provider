@@ -1,2 +1,4 @@
 http\://shibboleth.net/schema/idp/shibboleth-security.xsd = schema/shibboleth-security.xsd
 classpath\:/schema/shibboleth-2.0-security.xsd = schema/shibboleth-security.xsd
+
+http\://www.springframework.org/schema/webflow/spring-webflow.xsd = org/springframework/webflow/engine/model/builder/xml/spring-webflow-2.0.xsd
