@@ -44,5 +44,11 @@ public interface LegacyPrincipalDecoder<ConsumedContext extends BaseContext> {
      *             forth)
      */
     @Nullable String canonicalize(@Nonnull final ConsumedContext context) throws ResolutionException;
+    
+    /** 
+     * Report on whether this decoder has any configured connectors.
+     * @return whether there are any decoders.
+     */
 
+    boolean hasValidConnectors();
 }

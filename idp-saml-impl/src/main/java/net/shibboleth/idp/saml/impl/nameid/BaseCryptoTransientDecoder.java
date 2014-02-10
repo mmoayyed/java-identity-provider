@@ -31,11 +31,14 @@ import net.shibboleth.utilities.java.support.security.DataExpiredException;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.DataSealerException;
 
+import org.springframework.beans.factory.InitializingBean;
+
 /**
  * An abstract action which contains the logic to do crypto transient decoding matching. This reverses the work done by
  * {@link net.shibboleth.idp.attribute.resolver.impl.ad.CryptoTransientIdAttributeDefinition}
  */
-public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableInitializableComponent {
+public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableInitializableComponent implements
+        InitializingBean {
 
     /** Object used to protect and encrypt the data. */
     @NonnullAfterInit private DataSealer dataSealer;
@@ -67,6 +70,11 @@ public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableIni
         super.setId(componentId);
     }
 
+    /** {@inheritDoc} */
+    @Override public void afterPropertiesSet() throws Exception {
+        initialize();
+    }
+
     /**
      * Convert the transient Id into the principal.
      * 
@@ -93,13 +101,12 @@ public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableIni
         } catch (DataExpiredException e) {
             throw new NameDecoderException(getLogPrefix() + " Principal identifier has expired.");
         } catch (DataSealerException e) {
-            throw new NameDecoderException(getLogPrefix()
-                    + " Caught exception unwrapping principal identifier.", e);
+            throw new NameDecoderException(getLogPrefix() + " Caught exception unwrapping principal identifier.", e);
         }
 
         if (decodedId == null) {
-            throw new NameDecoderException(getLogPrefix()
-                    + " Unable to recover principal from transient identifier: " + transientId);
+            throw new NameDecoderException(getLogPrefix() + " Unable to recover principal from transient identifier: "
+                    + transientId);
         }
 
         // Split the identifier.

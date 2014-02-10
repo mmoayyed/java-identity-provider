@@ -30,9 +30,9 @@ import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
+import net.shibboleth.idp.attribute.resolver.LegacyPrincipalDecoder;
 import net.shibboleth.idp.attribute.resolver.MockAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.MockDataConnector;
-import net.shibboleth.idp.attribute.resolver.LegacyPrincipalDecoder;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
@@ -749,14 +749,19 @@ public class AttributeResolverImplTest {
 
         Assert.assertNull(resolver.canonicalize(null));
 
-        resolver = new AttributeResolverImpl("foo", definitions, null,
-                new LegacyPrincipalDecoder<SubjectCanonicalizationContext>() {
+        resolver =
+                new AttributeResolverImpl("foo", definitions, null,
+                        new LegacyPrincipalDecoder<SubjectCanonicalizationContext>() {
 
-            @Override @Nullable public String canonicalize(SubjectCanonicalizationContext context)
-                    throws ResolutionException {
-                return "Principal";
-            }
-        });
+                            @Override @Nullable public String canonicalize(SubjectCanonicalizationContext context)
+                                    throws ResolutionException {
+                                return "Principal";
+                            }
+
+                            @Override public boolean hasValidConnectors() {
+                                return true;
+                            }
+                        });
         resolver.initialize();
         Assert.assertEquals(resolver.canonicalize(null), "Principal");
     }

@@ -150,7 +150,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * @return attribute definitions loaded in to this resolver
      */
     @Override @Nonnull @NonnullElements @Unmodifiable public Map<String, AttributeDefinition> 
-            getAttributeDefinitions() {
+           getAttributeDefinitions() {
         return attributeDefinitions;
     }
 
@@ -592,5 +592,10 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             return null;
         }
         return principalConnector.canonicalize(context);
+    }
+
+    /** {@inheritDoc} */
+    @Override public boolean hasValidConnectors() {
+        return principalConnector.hasValidConnectors();
     }
 }

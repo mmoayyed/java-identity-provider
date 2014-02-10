@@ -32,6 +32,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
@@ -41,7 +42,8 @@ import com.google.common.collect.ImmutableSet;
  * {@link org.opensaml.saml.saml2.core.NameID} and {@link org.opensaml.saml.saml1.core.NameIdentifier} C14N
  * implementations.
  */
-public abstract class AbstractSAMLNameCanonicalization extends AbstractSubjectCanonicalizationAction {
+public abstract class AbstractSAMLNameCanonicalization extends AbstractSubjectCanonicalizationAction implements
+        InitializingBean {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractSAMLNameCanonicalization.class);
@@ -79,5 +81,10 @@ public abstract class AbstractSAMLNameCanonicalization extends AbstractSubjectCa
         CollectionSupport.addIf(newFormats, theFormats, Predicates.notNull());
 
         formats = ImmutableSet.copyOf(newFormats);
+    }
+
+    /** {@inheritDoc} */
+    @Override public void afterPropertiesSet() throws Exception {
+        initialize();
     }
 }

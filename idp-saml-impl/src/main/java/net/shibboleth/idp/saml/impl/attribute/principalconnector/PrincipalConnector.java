@@ -36,6 +36,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml2.core.NameID;
+import org.springframework.beans.factory.InitializingBean;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
@@ -45,7 +46,7 @@ import com.google.common.collect.Iterables;
  * The concrete representation of a &lt;PrincipalConnector&gt;.
  */
 public class PrincipalConnector extends AbstractIdentifiableInitializableComponent implements NameIdentifierDecoder,
-        NameIDDecoder {
+        NameIDDecoder, InitializingBean {
 
     /** The {@link NameID} decoder. */
     @Nonnull private final NameIDDecoder nameIDDecoder;
@@ -73,15 +74,19 @@ public class PrincipalConnector extends AbstractIdentifiableInitializableCompone
                 Constraint.isNotNull(decodernameIdentifier, "provided NameIdentifierDecoder must not be null");
         format = Constraint.isNotNull(StringSupport.trimOrNull(theFormat), "provided format must not be empty or null");
     }
-    
-    /** Get the {@link NameID} decoder.
+
+    /**
+     * Get the {@link NameID} decoder.
+     * 
      * @return the decoder
      */
     @Nonnull public NameIDDecoder getNameIDDecoder() {
         return nameIDDecoder;
     }
 
-    /** Get the {@link NameIdentifierDecoder} decoder.
+    /**
+     * Get the {@link NameIdentifierDecoder} decoder.
+     * 
      * @return the decoder
      */
     @Nonnull public NameIdentifierDecoder getNameIdentifierDecoder() {
@@ -144,5 +149,10 @@ public class PrincipalConnector extends AbstractIdentifiableInitializableCompone
     @Override @Nonnull public String decode(@Nonnull NameIdentifier nameIdentifier, @Nullable String responderId,
             @Nullable String requesterId) throws SubjectCanonicalizationException, NameDecoderException {
         return nameIdentifierDecoder.decode(nameIdentifier, responderId, requesterId);
+    }
+
+    /** {@inheritDoc} */
+    @Override public void afterPropertiesSet() throws Exception {
+        initialize();
     }
 }

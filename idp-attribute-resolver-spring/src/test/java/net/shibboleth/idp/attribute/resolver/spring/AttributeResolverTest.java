@@ -20,14 +20,18 @@ package net.shibboleth.idp.attribute.resolver.spring;
 import java.util.Map;
 import java.util.Set;
 
+import javax.security.auth.Subject;
 import javax.sql.DataSource;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
+import net.shibboleth.idp.attribute.resolver.LegacyPrincipalDecoder;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.service.ReloadableService;
 import net.shibboleth.idp.service.ServiceException;
@@ -37,6 +41,8 @@ import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.GenericApplicationContext;
@@ -56,12 +62,13 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeResolverTest.class);
-    
+
     /* LDAP */
     private InMemoryDirectoryServer directoryServer;
-    
-    private static final String LDAP_INIT_FILE = "src/test/resources/net/shibboleth/idp/attribute/resolver/spring/ldapDataConnectorTest.ldif";
-    
+
+    private static final String LDAP_INIT_FILE =
+            "src/test/resources/net/shibboleth/idp/attribute/resolver/spring/ldapDataConnectorTest.ldif";
+
     /** DataBase initialise */
     private static final String DB_INIT_FILE = "/net/shibboleth/idp/attribute/resolver/spring/RdbmsStore.sql";
 
@@ -77,15 +84,15 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", 10391));
         config.addAdditionalBindCredentials("cn=Directory Manager", "password");
         directoryServer = new InMemoryDirectoryServer(config);
-        directoryServer.importFromLDIF(true,LDAP_INIT_FILE);
+        directoryServer.importFromLDIF(true, LDAP_INIT_FILE);
         directoryServer.startListening();
-        
-        //RDBMS
+
+        // RDBMS
         datasource = DatabaseTestingSupport.GetMockDataSource(DB_INIT_FILE, "myTestDB");
         DatabaseTestingSupport.InitializeDataSourceFromFile(DB_DATA_FILE, datasource);
 
     }
-    
+
     /**
      * Shutdown the in-memory directory server.
      */
@@ -97,7 +104,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
 
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + AttributeResolverTest.class);
-        
+
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
@@ -105,16 +112,16 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         context.refresh();
 
         final ReloadableService<AttributeResolver> attributeResolverService = context.getBean(ReloadableService.class);
-        
+
         attributeResolverService.start();
 
         ServiceableComponent<AttributeResolver> serviceableComponent = null;
-        final AttributeResolutionContext resolutionContext = TestSources.createResolutionContext("PETER_THE_PRINCIPAL", "issuer", "recipient");
+        final AttributeResolutionContext resolutionContext =
+                TestSources.createResolutionContext("PETER_THE_PRINCIPAL", "issuer", "recipient");
 
         try {
             serviceableComponent = attributeResolverService.getServiceableComponent();
-        
-            
+
             final AttributeResolver resolver = serviceableComponent.getComponent();
             Assert.assertEquals(resolver.getId(), "Shibboleth.Resolver");
             resolver.resolveAttributes(resolutionContext);
@@ -206,14 +213,40 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         values = attribute.getValues();
         Assert.assertEquals(values.size(), 1);
         Assert.assertTrue(values.contains(new StringAttributeValue("#4321")));
+        
+        final NameID nameId = new NameIDBuilder().buildObject();
+        nameId.setFormat("urn:mace:shibboleth:1.0:nameIdentifier");
+        nameId.setValue("MyHovercraftIsFullOfEels");
+        final Subject subject = new Subject();
+        subject.getPrincipals().add(new NameIDPrincipal(nameId));
+        
+        SubjectCanonicalizationContext ctx = new SubjectCanonicalizationContext();
+        ctx.setSubject(subject);
+        ctx.setRequesterId("REQ");
+        ctx.setResponderId("RES");
+
+        try {
+            serviceableComponent = attributeResolverService.getServiceableComponent();
+
+            final AttributeResolver resolver = serviceableComponent.getComponent();
+            LegacyPrincipalDecoder<SubjectCanonicalizationContext> decoder =
+                    (LegacyPrincipalDecoder<SubjectCanonicalizationContext>) resolver;
+            Assert.assertTrue(decoder.hasValidConnectors());
+            Assert.assertEquals(decoder.canonicalize(ctx), "MyHovercraftIsFullOfEels");
+            
+        } finally {
+            if (null != serviceableComponent) {
+                serviceableComponent.unpinComponent();
+            }
+        }
 
     }
-    
+
     @Test public void id() throws ComponentInitializationException, ServiceException, ResolutionException {
 
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + AttributeResolverTest.class);
-        
+
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
@@ -221,15 +254,14 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         context.refresh();
 
         final ReloadableService<AttributeResolver> attributeResolverService = context.getBean(ReloadableService.class);
-        
+
         attributeResolverService.start();
 
         ServiceableComponent<AttributeResolver> serviceableComponent = null;
 
         try {
             serviceableComponent = attributeResolverService.getServiceableComponent();
-        
-            
+
             final AttributeResolver resolver = serviceableComponent.getComponent();
             Assert.assertEquals(resolver.getId(), "TestID");
         } finally {
@@ -237,5 +269,32 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
                 serviceableComponent.unpinComponent();
             }
         }
+        
+        final NameID nameId = new NameIDBuilder().buildObject();
+        nameId.setFormat("urn:mace:shibboleth:1.0:nameIdentifier");
+        nameId.setValue("MyHovercraftIsFullOfEels");
+        final Subject subject = new Subject();
+        subject.getPrincipals().add(new NameIDPrincipal(nameId));
+        
+        SubjectCanonicalizationContext ctx = new SubjectCanonicalizationContext();
+        ctx.setSubject(subject);
+        ctx.setRequesterId("REQ");
+        ctx.setResponderId("RES");
+
+        try {
+            serviceableComponent = attributeResolverService.getServiceableComponent();
+
+            final AttributeResolver resolver = serviceableComponent.getComponent();
+            LegacyPrincipalDecoder<SubjectCanonicalizationContext> decoder =
+                    (LegacyPrincipalDecoder<SubjectCanonicalizationContext>) resolver;
+            Assert.assertFalse(decoder.hasValidConnectors());
+            Assert.assertNull(decoder.canonicalize(ctx));
+            
+        } finally {
+            if (null != serviceableComponent) {
+                serviceableComponent.unpinComponent();
+            }
+        }
+
     }
 }

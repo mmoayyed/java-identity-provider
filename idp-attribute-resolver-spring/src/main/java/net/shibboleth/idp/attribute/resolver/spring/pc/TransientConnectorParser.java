@@ -49,11 +49,15 @@ public class TransientConnectorParser extends AbstractPrincipalConnectorParser {
         // NameID
         BeanDefinitionBuilder subBuilder = BeanDefinitionBuilder.genericBeanDefinition(TransientNameIDDecoder.class);
         subBuilder.addPropertyReference("idStore", idStore);
+        final String id = config.getAttributeNS(null, "id");
+        subBuilder.addPropertyValue("id", id);
+                
         builder.addConstructorArgValue(subBuilder.getBeanDefinition());
         
         // NameIdentifier
         subBuilder = BeanDefinitionBuilder.genericBeanDefinition(TransientNameIdentifierDecoder.class);
         subBuilder.addPropertyReference("idStore", idStore);
+        subBuilder.addPropertyValue("id", id);
         builder.addConstructorArgValue(subBuilder.getBeanDefinition());
     }
 

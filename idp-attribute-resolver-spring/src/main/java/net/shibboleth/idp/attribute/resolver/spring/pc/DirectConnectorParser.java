@@ -28,7 +28,8 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Parser for Direct Principal Connector<br/> &lt;PrincipalConnector xsi:type="pc:Direct"&gt;.
+ * Parser for Direct Principal Connector<br/>
+ * &lt;PrincipalConnector xsi:type="pc:Direct"&gt;.
  */
 public class DirectConnectorParser extends AbstractPrincipalConnectorParser {
 
@@ -38,10 +39,15 @@ public class DirectConnectorParser extends AbstractPrincipalConnectorParser {
     /** {@inheritDoc} */
     @Override protected void addSAMLDecoders(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
-        builder.addConstructorArgValue(BeanDefinitionBuilder.genericBeanDefinition(DirectNameIDDecoder.class)
-                .getBeanDefinition());
-        builder.addConstructorArgValue(BeanDefinitionBuilder.genericBeanDefinition(DirectNameIdentifierDecoder.class)
-                .getBeanDefinition());
+
+        BeanDefinitionBuilder subBuilder = BeanDefinitionBuilder.genericBeanDefinition(DirectNameIDDecoder.class);
+        final String id = config.getAttributeNS(null, "id");
+        subBuilder.addPropertyValue("id", id);
+        builder.addConstructorArgValue(subBuilder.getBeanDefinition());
+
+        subBuilder = BeanDefinitionBuilder.genericBeanDefinition(DirectNameIdentifierDecoder.class);
+        subBuilder.addPropertyValue("id", id);
+        builder.addConstructorArgValue(subBuilder.getBeanDefinition());
     }
 
 }

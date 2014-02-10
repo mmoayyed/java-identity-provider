@@ -29,18 +29,20 @@ import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.service.ReloadableService;
 import net.shibboleth.idp.service.ServiceableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+
+import com.google.common.base.Predicate;
 
 /**
  * Action to perform C14N based on the contents of the attribute-resolver.xml file.
  */
-public class LegacyCanonicalization extends AbstractSubjectCanonicalizationAction {
+public class LegacyCanonicalization extends AbstractSubjectCanonicalizationAction implements InitializingBean {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(LegacyCanonicalization.class);
@@ -53,7 +55,7 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
 
     /**
      * Constructor.
-     *
+     * 
      * @param resolverService the service which will implement {@link LegacyPrincipalDecoder}.
      */
     public LegacyCanonicalization(@Nonnull final ReloadableService<AttributeResolver> resolverService) {
@@ -61,7 +63,8 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
     }
 
     /** {@inheritDoc} */
-    @Override protected void doInitialize() throws ComponentInitializationException {
+    @Override public void afterPropertiesSet() throws Exception {
+        initialize();
     }
 
     /** {@inheritDoc} */
@@ -118,6 +121,54 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
             @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
 
         c14nContext.setPrincipalName(decodedPrincipal);
+    }
+    
+    /**
+     * A predicate that determines if this action can run or not - it does this by inspecting the attribute resolver for
+     * principal connectors.
+     */
+    public static class ActivationCondition implements Predicate<ProfileRequestContext> {
+
+        /** Service used to get the resolver used to fetch attributes. */
+        @Nullable private final ReloadableService<AttributeResolver> attributeResolverService;
+
+        /**
+         * Constructor.
+         * 
+         * @param service the service we need to interrogate.
+         */
+        public ActivationCondition(ReloadableService<AttributeResolver> service) {
+            attributeResolverService = service;
+        }
+
+        /**
+         * {@inheritDoc}. Iff there is a valid service and there are no parsing errors and the service does understand
+         * principal connectors and there were some configures we will proceed.
+         */
+        @Override public boolean apply(@Nullable final ProfileRequestContext input) {
+
+            if (null == attributeResolverService) {
+                return false;
+            }
+
+            ServiceableComponent<AttributeResolver> component = null;
+            try {
+                component = attributeResolverService.getServiceableComponent();
+                if (null == component) {
+                    return false;
+                }
+
+                final AttributeResolver attributeResolver = component.getComponent();
+                if (!(attributeResolver instanceof LegacyPrincipalDecoder)) {
+                    return false;
+                }
+                return ((LegacyPrincipalDecoder) attributeResolver).hasValidConnectors();
+            } finally {
+                if (null != component) {
+                    component.unpinComponent();
+                }
+            }
+        }
     }
 
 }

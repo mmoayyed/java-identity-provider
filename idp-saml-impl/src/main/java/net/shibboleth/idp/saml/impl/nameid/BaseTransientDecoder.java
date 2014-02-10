@@ -35,11 +35,13 @@ import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * An abstract action which contains the logic to do transient decoding matching (shared between SAML2 and SAML1).
  */
-public abstract class BaseTransientDecoder extends AbstractIdentifiableInitializableComponent {
+public abstract class BaseTransientDecoder extends AbstractIdentifiableInitializableComponent 
+    implements InitializingBean  {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(BaseTransientDecoder.class);
@@ -72,6 +74,11 @@ public abstract class BaseTransientDecoder extends AbstractIdentifiableInitializ
     /** {@inheritDoc} */
     @Override public synchronized void setId(String componentId) {
         super.setId(componentId);
+    }
+
+    /** {@inheritDoc} */
+    @Override public void afterPropertiesSet() throws Exception {
+        initialize();
     }
 
     /**

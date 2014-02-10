@@ -49,7 +49,7 @@ import com.google.common.collect.Iterables;
  * This code implements the canonicalization defined by a series of &ltPrincipalConnectors&gt in an attribute resolver
  * file.
  */
-public class PrinicpalConnectorCanonicalizer implements LegacyPrincipalDecoder<SubjectCanonicalizationContext> {
+public class PrinicpalConnectorCanonicalizer implements LegacyPrincipalDecoder<SubjectCanonicalizationContext>  {
 
     /** Logger. */
     private final Logger log = LoggerFactory.getLogger(PrinicpalConnectorCanonicalizer.class);
@@ -85,7 +85,7 @@ public class PrinicpalConnectorCanonicalizer implements LegacyPrincipalDecoder<S
             throws ResolutionException {
 
         for (PrincipalConnector connector : principalConnectors) {
-            
+
             log.trace("Legacy Principal Decoder: looking at connector {}", connector.getId());
 
             if (connector.requesterMatches(c14nContext.getRequesterId())
@@ -94,8 +94,8 @@ public class PrinicpalConnectorCanonicalizer implements LegacyPrincipalDecoder<S
 
                 try {
                     final String result =
-                            connector.decode(nameIdentifier, c14nContext.getResponderId(), 
-                                    c14nContext.getRequesterId());
+                            connector
+                                    .decode(nameIdentifier, c14nContext.getResponderId(), c14nContext.getRequesterId());
                     if (null != result) {
                         log.trace("Legacy Principal Decoder: decoded to {}", result);
                         return result;
@@ -115,10 +115,10 @@ public class PrinicpalConnectorCanonicalizer implements LegacyPrincipalDecoder<S
         }
         return null;
     }
-    
+
     /**
-     * Canonicalize the provided {@link NameID} with respect to the provided
-     * {@link SubjectCanonicalizationContext}.<br/>
+     * Canonicalize the provided {@link NameID} with respect to the provided {@link SubjectCanonicalizationContext}.
+     * <br/>
      * We iterate over all the connectors to see whether anything matches.
      * 
      * @param nameID the {@link NameID}
@@ -132,9 +132,8 @@ public class PrinicpalConnectorCanonicalizer implements LegacyPrincipalDecoder<S
 
             log.trace("Legacy Principal Decoder: looking at connector {}", connector.getId());
 
-            if (connector.requesterMatches(c14nContext.getRequesterId())
-                    && SAML2ObjectSupport.areNameIdentifierFormatsEquivalent(connector.getFormat(),
-                            nameID.getFormat())) {
+            if (connector.requesterMatches(c14nContext.getRequesterId()) &&
+                    SAML2ObjectSupport.areNameIdentifierFormatsEquivalent(connector.getFormat(), nameID.getFormat())) {
 
                 try {
                     final String result =
@@ -160,7 +159,6 @@ public class PrinicpalConnectorCanonicalizer implements LegacyPrincipalDecoder<S
         return null;
     }
 
-
     /**
      * Resolve the principal with respect to the provided context. This is expected to strip out the
      * {@link org.opensaml.saml.saml2.core.NameID} or {@link org.opensaml.saml.saml1.core.NameIdentifier} and match it
@@ -177,7 +175,7 @@ public class PrinicpalConnectorCanonicalizer implements LegacyPrincipalDecoder<S
             throws ResolutionException {
 
         Constraint.isNotNull(c14nContext, "Context must be nonnull");
-        
+
         if (c14nContext.getSubject() == null) {
             return null;
         }
@@ -202,5 +200,10 @@ public class PrinicpalConnectorCanonicalizer implements LegacyPrincipalDecoder<S
             }
         }
         return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override public boolean hasValidConnectors() {
+        return !principalConnectors.isEmpty();
     }
 }
