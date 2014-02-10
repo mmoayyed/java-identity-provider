@@ -8,7 +8,7 @@
                                 urn:mace:shibboleth:2.0:resolver:dc http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-dc.xsd">
 
     <resolver:DataConnector id="myDatabase" xsi:type="dc:RelationalDatabase">
-      <beans>
+      <beans xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
         <bean class="com.mchange.v2.c3p0.ComboPooledDataSource"
               destroy-method="close"
               p:driverClass="org.hsqldb.jdbc.JDBCDriver"

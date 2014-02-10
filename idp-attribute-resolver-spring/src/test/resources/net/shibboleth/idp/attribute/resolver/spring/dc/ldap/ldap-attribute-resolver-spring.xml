@@ -7,7 +7,7 @@
                         urn:mace:shibboleth:2.0:resolver:dc http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-dc.xsd">
 
 	<resolver:DataConnector id="myLDAP" xsi:type="dc:LDAPDirectory">
-		<beans>
+		<beans xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 			<bean class="org.ldaptive.pool.PooledConnectionFactory">
 				<property name="connectionPool">
 					<bean class="org.ldaptive.pool.BlockingConnectionPool"

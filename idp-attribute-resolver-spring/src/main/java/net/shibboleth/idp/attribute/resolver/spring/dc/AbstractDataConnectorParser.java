@@ -115,8 +115,7 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
 
         GenericApplicationContext ctx = new GenericApplicationContext();
         final XmlBeanDefinitionReader definitionReader = new XmlBeanDefinitionReader(ctx);
-        // TODO why does validation need to be turned off?
-        definitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_NONE);
+        definitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
         definitionReader.setNamespaceAware(true);
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         SerializeSupport.writeNode(springBeans, outputStream);
