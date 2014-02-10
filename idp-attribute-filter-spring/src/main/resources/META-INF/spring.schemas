@@ -1,3 +1,10 @@
-urn\:mace\:shibboleth\:2.0\:afp = schema/shibboleth-2.0-afp.xsd
-urn\:mace\:shibboleth\:2.0\:afp\:mf\:basic = schema/shibboleth-2.0-afp-mf-basic.xsd
-urn\:mace\:shibboleth\:2.0\:afp\:mf\:saml = schema/shibboleth-2.0-afp-mf-saml.xsd
+http\://shibboleth.net/schema/idp/shibboleth-afp.xsd = schema/shibboleth-afp.xsd
+http\://shibboleth.net/schema/idp/shibboleth-afp-mf-basic.xsd = schema/shibboleth-afp-mf-basic.xsd
+http\://shibboleth.net/schema/idp/shibboleth-afp-mf-saml.xsd = schema/shibboleth-afp-mf-saml.xsd
+
+classpath\:/schema/shibboleth-2.0-afp.xsd = schema/shibboleth-afp.xsd
+classpath\:/schema/shibboleth-2.0-afp-mf-basic.xsd = schema/shibboleth-afp-mf-basic.xsd
+classpath\:/schema/shibboleth-2.0-afp-mf-saml.xsd = schema/shibboleth-afp-mf-saml.xsd
+
+http\://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd = schema/xmldsig-core-schema.xsd
+classpath\:/schema/xmldsig-core-schema.xsd = schema/xmldsig-core-schema.xsd
