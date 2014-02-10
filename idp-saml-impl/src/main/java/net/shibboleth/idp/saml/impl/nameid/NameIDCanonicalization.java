@@ -125,26 +125,32 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
 
-        if (embeddedPredicate.apply(profileRequestContext, c14nContext, true)) {
-
-            final Set<NameIDPrincipal> nameIDs = c14nContext.getSubject().getPrincipals(NameIDPrincipal.class);
-            final NameID nameID = nameIDs.iterator().next().getNameID();
-
-            try {
-                decodedPrincipal = decoder.decode(nameID, c14nContext.getResponderId(), c14nContext.getRequesterId());
-            } catch (SubjectCanonicalizationException e) {
-                c14nContext.setException(e);
-                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-                return false;
-            } catch (NameDecoderException e) {
-                c14nContext.setException(e);
-                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);
-                return false;
-            }
-            return super.doPreExecute(profileRequestContext, c14nContext);
-        } else {
+        if (!embeddedPredicate.apply(profileRequestContext, c14nContext, true)) {
             return false;
         }
+
+        final Set<NameIDPrincipal> nameIDs = c14nContext.getSubject().getPrincipals(NameIDPrincipal.class);
+        final NameID nameID = nameIDs.iterator().next().getNameID();
+
+        if (!formatMatches(nameID.getFormat(), profileRequestContext, c14nContext)) {
+            c14nContext.setException(new SubjectCanonicalizationException("Format not supported"));
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+            return false;
+        }
+        
+        try {
+            decodedPrincipal = decoder.decode(nameID, c14nContext.getResponderId(), c14nContext.getRequesterId());
+        } catch (SubjectCanonicalizationException e) {
+            c14nContext.setException(e);
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+            return false;
+        } catch (NameDecoderException e) {
+            c14nContext.setException(e);
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);
+            return false;
+        }
+        return super.doPreExecute(profileRequestContext, c14nContext);
+
     }
 
     /** {@inheritDoc} */
@@ -155,7 +161,7 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
     }
 
     /** A predicate that determines if this action can run or not. */
-    public class ActivationCondition implements Predicate<ProfileRequestContext> {
+    public static class ActivationCondition implements Predicate<ProfileRequestContext> {
 
         /** {@inheritDoc} */
         @Override public boolean apply(@Nullable final ProfileRequestContext input) {
@@ -201,12 +207,6 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
                             "Multiple NameIDPrincipals were found"));
                     ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
                     return false;
-                } else if (!formatMatches(nameIDs.iterator().next().getNameID().getFormat(), profileRequestContext,
-                        c14nContext)) {
-
-                    c14nContext.setException(new SubjectCanonicalizationException("Format not supported"));
-                    ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-                    return false;
                 }
                 return true;
             }
@@ -214,7 +214,7 @@ public class NameIDCanonicalization extends AbstractSAMLNameCanonicalization {
                 return false;
             }
 
-            return formatMatches(nameIDs.iterator().next().getNameID().getFormat(), profileRequestContext, c14nContext);
+            return true;
         }
     }
 }
