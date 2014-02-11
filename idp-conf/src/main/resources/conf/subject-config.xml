@@ -34,11 +34,8 @@
             </property>
         </bean>
         
-        <bean c:id="SubjectC14NFlow/SAML2/Transient" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
-            <property name="activationCondition">
-                <bean class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition" />
-            </property>
-        </bean>
+        <bean c:id="SubjectC14NFlow/SAML2/Transient" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor" 
+              p:activationCondition-ref="SubjectC14NFlow/SAML2/Transient/Condition"/>
         
         <bean c:id="SubjectC14NFlow/LegacyPrincipalConnector" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
             <property name="activationCondition">
@@ -48,5 +45,16 @@
         </bean>
 
     </util:list>
+    
+    <!-- Each type of NameID and NameIdentifier flow has formats associated.  These beans are used inside the Canonicalization as well -->
+    
+    <bean id="SubjectC14NFlow/SAML2/Transient/Condition" class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition">
+        <property name="formats">
+        <util:list>
+            <value>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</value>
+            <value>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</value>
+        </util:list>
+        </property>
+    </bean>
     
 </beans>

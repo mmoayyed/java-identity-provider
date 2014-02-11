@@ -33,6 +33,7 @@ import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.saml.impl.attribute.resolver.CryptoTransientIdAttributeDefinition;
+import net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.security.DataSealer;
@@ -180,9 +181,11 @@ public class CryptoTransientNameIDDecoderTest {
         nameID.setSPNameQualifier(TestSources.SP_ENTITY_ID);
         nameID.setValue(code);
 
-        final NameIDCanonicalization canon = new NameIDCanonicalization();
+        ActivationCondition condition = new ActivationCondition();
+        condition.setFormats(Collections.singleton("https://example.org/"));
+        
+        final NameIDCanonicalization canon = new NameIDCanonicalization(condition);
         canon.setId("test");
-        canon.setFormats(Collections.singleton("https://example.org/"));
         canon.setDecoder(decoder);
         canon.initialize();
 

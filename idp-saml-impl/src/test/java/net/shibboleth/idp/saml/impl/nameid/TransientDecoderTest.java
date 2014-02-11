@@ -31,6 +31,7 @@ import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.saml.impl.attribute.encoding.SAML2StringNameIDEncoder;
 import net.shibboleth.idp.saml.impl.attribute.resolver.TransientIdAttributeDefinition;
+import net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.TransientIdParameters;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -158,9 +159,10 @@ public class TransientDecoderTest {
         encoder.setNameFormat("https://example.org/");
         final NameID nameid = encoder.encode(result);
         
-        final NameIDCanonicalization canon = new NameIDCanonicalization();
+        final ActivationCondition condition = new ActivationCondition();
+        condition.setFormats(Collections.singleton("https://example.org/"));
+        final NameIDCanonicalization canon = new NameIDCanonicalization(condition);
         canon.setId("test");
-        canon.setFormats(Collections.singleton("https://example.org/"));
        
         final TransientNameIDDecoder decoder = new TransientNameIDDecoder();
         decoder.setId("decoder");

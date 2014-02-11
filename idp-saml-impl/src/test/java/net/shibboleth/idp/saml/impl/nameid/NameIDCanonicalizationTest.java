@@ -29,6 +29,7 @@ import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
+import net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.NameIDDecoder;
 
@@ -51,6 +52,8 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
     private NameIDCanonicalization action;
 
     private NameIDBuilder builder;
+    
+    private ActivationCondition condition;
 
     private static final String REQUESTER = "TestRequest";
 
@@ -66,9 +69,12 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
 
     @BeforeMethod public void setUp() throws Exception {
         prc = new ProfileRequestContext<>();
-        action = new NameIDCanonicalization();
+        
+        condition = new ActivationCondition();
+        condition.setFormats(formats);
+        
+        action = new NameIDCanonicalization(condition);
         action.setId("test");
-        action.setFormats(formats);
         action.setDecoder(new NameIDDecoder() {
 
             @Override @Nonnull public String decode(@Nonnull NameID nameID, @Nullable String responderId,
@@ -111,11 +117,11 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void testFormatCount() {
-        Assert.assertEquals(action.getFormats().size(), 2);
+        Assert.assertEquals(condition.getFormats().size(), 2);
     }
 
     @Test(expectedExceptions = {UnsupportedOperationException.class}) public void testFormatSet() {
-        action.getFormats().add("bar");
+        condition.getFormats().add("bar");
     }
 
     @Test public void testNoContext() throws ProfileException {
