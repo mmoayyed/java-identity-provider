@@ -1,0 +1,9 @@
+http\://www.oasis-open.org/committees/download.php/1376/oasis-sstc-saml-schema-assertion-1.0.xsd = schema/cs-sstc-schema-assertion-01.xsd
+http\://www.oasis-open.org/committees/download.php/1377/oasis-sstc-saml-schema-protocol-1.0.xsd = schema/cs-sstc-schema-protocol-01.xsd
+http\://www.oasis-open.org/committees/download.php/3408/oasis-sstc-saml-schema-assertion-1.1.xsd = schema/cs-sstc-schema-assertion-1.1.xsd
+http\://www.oasis-open.org/committees/download.php/3407/oasis-sstc-saml-schema-protocol-1.1.xsd = schema/cs-sstc-schema-protocol-1.1.xsd
+
+classpath\:/schema/cs-sstc-schema-assertion-01.xsd = schema/cs-sstc-schema-assertion-01.xsd
+classpath\:/schema/cs-sstc-schema-protocol-01.xsd = schema/cs-sstc-schema-protocol-01.xsd
+classpath\:/schema/cs-sstc-schema-assertion-1.1.xsd = schema/cs-sstc-schema-assertion-1.1.xsd
+classpath\:/schema/cs-sstc-schema-protocol-1.1.xsd = schema/cs-sstc-schema-protocol-1.1.xsd
