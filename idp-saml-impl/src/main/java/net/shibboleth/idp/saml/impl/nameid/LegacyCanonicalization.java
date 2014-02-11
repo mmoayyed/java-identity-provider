@@ -17,8 +17,11 @@
 
 package net.shibboleth.idp.saml.impl.nameid;
 
+import java.util.Set;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.security.auth.Subject;
 
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.LegacyPrincipalDecoder;
@@ -27,6 +30,8 @@ import net.shibboleth.idp.authn.AbstractSubjectCanonicalizationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
+import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
 import net.shibboleth.idp.service.ReloadableService;
 import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -147,6 +152,26 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
          */
         @Override public boolean apply(@Nullable final ProfileRequestContext input) {
 
+            if (null == input) {
+                return false;
+            }
+            final SubjectCanonicalizationContext c14nContext =
+                    input.getSubcontext(SubjectCanonicalizationContext.class, false);
+            
+            if (null == c14nContext) {
+                return false;
+            }
+
+            final Subject subject = c14nContext.getSubject();
+            if (null == subject) {
+                return false;
+            }
+            final Set<NameIDPrincipal> nameIDs = subject.getPrincipals(NameIDPrincipal.class);
+            final Set<NameIdentifierPrincipal> nameIdentifiers = subject.getPrincipals(NameIdentifierPrincipal.class);
+            if (1 != nameIDs.size() + nameIdentifiers.size()) {
+                return false;
+            }
+            
             if (null == attributeResolverService) {
                 return false;
             }
