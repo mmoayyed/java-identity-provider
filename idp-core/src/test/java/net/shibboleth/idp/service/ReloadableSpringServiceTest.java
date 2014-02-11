@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
 
-import junit.framework.Assert;
 import net.shibboleth.idp.spring.SpringSupport;
 
 import org.springframework.beans.factory.BeanInitializationException;
@@ -31,6 +30,7 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.common.io.ByteStreams;
@@ -74,7 +74,7 @@ public class ReloadableSpringServiceTest {
         ServiceableComponent<TestServiceableComponent> serviceableComponent = service.getServiceableComponent();
         TestServiceableComponent component = serviceableComponent.getComponent();
 
-        Assert.assertEquals(component.getTheValue(), "One");
+        Assert.assertEquals("One", component.getTheValue());
         Assert.assertFalse(component.getComponent().isDestroyed());
 
         serviceableComponent.unpinComponent();
@@ -85,7 +85,7 @@ public class ReloadableSpringServiceTest {
             Thread.sleep(RELOAD_DELAY);
             count--;
         }
-        Assert.assertTrue("After 7 second initial component has still not be destroyed", component.isDestroyed());
+        Assert.assertTrue(component.isDestroyed(), "After 7 second initial component has still not be destroyed");
 
         //
         // The reload will have destroyed the old component
@@ -117,7 +117,7 @@ public class ReloadableSpringServiceTest {
         ServiceableComponent<TestServiceableComponent> serviceableComponent = service.getServiceableComponent();
         TestServiceableComponent component = serviceableComponent.getComponent();
 
-        Assert.assertEquals("One", component.getTheValue());
+        Assert.assertEquals(component.getTheValue(), "One");
         Assert.assertFalse(component.isDestroyed());
 
         overwriteFileWith("net/shibboleth/idp/service/ServiceableBean2.xml");
@@ -141,7 +141,7 @@ public class ReloadableSpringServiceTest {
             Thread.sleep(RELOAD_DELAY);
             count--;
         }
-        Assert.assertNotNull("After 7 second initial component has still not got new value", component2);
+        Assert.assertNotNull(component2, "After 7 second initial component has still not got new value");
 
         component.unpinComponent();
 
@@ -150,7 +150,7 @@ public class ReloadableSpringServiceTest {
             Thread.sleep(RELOAD_DELAY);
             count--;
         }
-        Assert.assertTrue("After 7 second initial component has still not be destroyed", component.isDestroyed());
+        Assert.assertTrue(component.isDestroyed(), "After 7 second initial component has still not be destroyed");
 
         service.stop();
         testFile.delete();
@@ -207,9 +207,9 @@ public class ReloadableSpringServiceTest {
             count--;
             serviceableComponent = service.getServiceableComponent();
         }
-        Assert.assertNotNull("After 7 second component has still no initialized", serviceableComponent);
+        Assert.assertNotNull(serviceableComponent, "After 7 second component has still no initialized");
         final TestServiceableComponent component = serviceableComponent.getComponent();
-        Assert.assertEquals("Two", component.getTheValue());
+        Assert.assertEquals(component.getTheValue(), "Two");
 
         Assert.assertFalse(component.isDestroyed());
         component.unpinComponent();
@@ -220,7 +220,7 @@ public class ReloadableSpringServiceTest {
             Thread.sleep(RELOAD_DELAY);
             count--;
         }
-        Assert.assertTrue("After 7 second component has still not be destroyed", component.isDestroyed());
+        Assert.assertTrue(component.isDestroyed(), "After 7 second component has still not be destroyed");
 
         testFile.delete();
 
@@ -235,7 +235,7 @@ public class ReloadableSpringServiceTest {
                 
         ReloadableSpringService service = appCtx.getBean(ReloadableSpringService.class);
 
-        Assert.assertNotNull("Parent context should not be null", service.getParentContext());
+        Assert.assertNotNull(service.getParentContext(), "Parent context should not be null");
     }
 
 }
