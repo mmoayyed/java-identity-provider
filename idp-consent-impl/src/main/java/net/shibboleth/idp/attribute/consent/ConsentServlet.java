@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.consent.ConsentContext.Consent;
 import net.shibboleth.idp.attribute.consent.storage.Storage;
 
@@ -84,13 +84,13 @@ public class ConsentServlet extends HttpServlet {
     protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException,
             IOException {
         final String relyingPartyId = (String) request.getAttribute(RELYINGPARTYID_KEY);
-        final Collection<Attribute> attributes = (Collection<Attribute>) request.getAttribute(ATTRIBUTES_KEY);
+        final Collection<IdPAttribute> attributes = (Collection<IdPAttribute>) request.getAttribute(ATTRIBUTES_KEY);
 
         final String resourceName = localizationHelper.getRelyingPartyName(relyingPartyId, request.getLocale());
         final String resourceDescription =
                 localizationHelper.getRelyingPartyDescription(relyingPartyId, request.getLocale());
 
-        final SortedSet<Attribute> sortedAttributes = ConsentHelper.sortAttributes(attributeSortOrder, attributes);
+        final SortedSet<IdPAttribute> sortedAttributes = ConsentHelper.sortAttributes(attributeSortOrder, attributes);
 
         final List<DisplayAttribute> displayAttributes = createDisplayAttributes(sortedAttributes, request.getLocale());
 
@@ -116,7 +116,7 @@ public class ConsentServlet extends HttpServlet {
         // Probably we need to go via session or other storage service
         final User user = (User) request.getAttribute(USER_KEY);
         final String relyingPartyId = (String) request.getAttribute(RELYINGPARTYID_KEY);
-        final Collection<Attribute> attributes = (Collection<Attribute>) request.getAttribute(ATTRIBUTES_KEY);
+        final Collection<IdPAttribute> attributes = (Collection<IdPAttribute>) request.getAttribute(ATTRIBUTES_KEY);
 
         final boolean accepted =
                 request.getParameter("consent.accept") != null && request.getParameter("consent.accept").equals("yes");
@@ -163,10 +163,10 @@ public class ConsentServlet extends HttpServlet {
      * @param locale The locale.
      * @return Returns a list of display attributes.
      */
-    private List<DisplayAttribute> createDisplayAttributes(final Collection<Attribute> attributes,
+    private List<DisplayAttribute> createDisplayAttributes(final Collection<IdPAttribute> attributes,
             final Locale locale) {
         final List<DisplayAttribute> displayAttributes = new ArrayList<DisplayAttribute>();
-        for (Attribute attribute : attributes) {
+        for (IdPAttribute attribute : attributes) {
             displayAttributes.add(new DisplayAttribute(attribute, locale));
         }
         return displayAttributes;
@@ -193,7 +193,7 @@ public class ConsentServlet extends HttpServlet {
          * @param attribute The attribute.
          * @param locale The locale.
          */
-        public DisplayAttribute(final Attribute attribute, final Locale locale) {
+        public DisplayAttribute(final IdPAttribute attribute, final Locale locale) {
             name = localizationHelper.getAttributeName(attribute, locale);
             description = localizationHelper.getAttributeDescription(attribute, locale);
             values = attribute.getValues();

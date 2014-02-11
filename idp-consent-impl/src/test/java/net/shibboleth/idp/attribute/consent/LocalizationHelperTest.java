@@ -28,9 +28,9 @@ import java.util.Locale;
 
 import javax.annotation.Resource;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 
-import org.opensaml.saml.saml2.metadata.provider.MetadataProvider;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
@@ -73,11 +73,11 @@ public class LocalizationHelperTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test(dataProvider = "metadataProviderRelyingPartyId")
-    public void getRelyingPartyNameAndDescription(MetadataProvider metadataProvider, String relyingPartyId) {
+    public void getRelyingPartyNameAndDescription(MetadataResolver metadataResolver, String relyingPartyId) {
 
         localizationHelper.setPreferredLocale(Locale.ENGLISH);
         localizationHelper.setLocaleEnforcement(false);
-        localizationHelper.setMetadataProvider(metadataProvider);
+        localizationHelper.setMetadataProvider(metadataResolver);
         assertEquals("german-name", localizationHelper.getRelyingPartyName(relyingPartyId, Locale.GERMAN));
         assertEquals("german-description", localizationHelper.getRelyingPartyDescription(relyingPartyId, Locale.GERMAN));
 
@@ -96,10 +96,10 @@ public class LocalizationHelperTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test(dataProvider = "attributesLocaleLocale")
-    public void getAttributeNameAndDescription(Collection<Attribute> attributes, Locale locale, Locale otherLocale) {
+    public void getAttributeNameAndDescription(Collection<IdPAttribute> attributes, Locale locale, Locale otherLocale) {
         localizationHelper.setLocaleEnforcement(false);
 
-        for (Attribute attribute : attributes) {
+        for (IdPAttribute attribute : attributes) {
             localizationHelper.setPreferredLocale(Locale.ENGLISH);
             String name = attribute.getId() + "-" + locale.getLanguage() + "-name";
             String description = attribute.getId() + "-" + locale.getLanguage() + "-description";

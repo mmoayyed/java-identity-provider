@@ -22,7 +22,7 @@ import java.util.HashSet;
 
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 
 import org.joda.time.DateTime;
 
@@ -58,7 +58,7 @@ public class AttributeRelease {
      * @param attribute The @see Attribute.
      * @param consentDate The timestamp for this @see AttributeRelease.
      */
-    private AttributeRelease(final Attribute attribute, final DateTime consentDate) {
+    private AttributeRelease(final IdPAttribute attribute, final DateTime consentDate) {
         this.attributeId = attribute.getId();
         this.valuesHash = ConsentHelper.hashAttributeValues(attribute);
         this.consentDate = consentDate;
@@ -98,10 +98,10 @@ public class AttributeRelease {
      * @param date The consent date for the attributes.
      * @return Returns a collection of attribute releases
      */
-    public static Collection<AttributeRelease> createAttributeReleases(Collection<Attribute> attributes,
+    public static Collection<AttributeRelease> createAttributeReleases(Collection<IdPAttribute> attributes,
             DateTime date) {
         Collection<AttributeRelease> attributeReleases = new HashSet<AttributeRelease>();
-        for (Attribute attribute : attributes) {
+        for (IdPAttribute attribute : attributes) {
             attributeReleases.add(new AttributeRelease(attribute, date));
         }
         return attributeReleases;
@@ -113,7 +113,7 @@ public class AttributeRelease {
      * @param attribute The @see Attribute to check for.
      * @return Returns true if this @see AttributeRelease contains the given attribute.
      */
-    public boolean contains(Attribute attribute) {
+    public boolean contains(IdPAttribute attribute) {
         return attributeId.equals(attribute.getId()) && valuesHash.equals(ConsentHelper.hashAttributeValues(attribute));
     }
 }

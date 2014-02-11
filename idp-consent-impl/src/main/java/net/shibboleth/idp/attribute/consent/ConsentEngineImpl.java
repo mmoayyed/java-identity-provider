@@ -26,11 +26,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.consent.ConsentContext.Consent;
 import net.shibboleth.idp.attribute.consent.storage.Storage;
-import org.opensaml.profile.context.ProfileRequestContext;
 
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -74,7 +74,7 @@ public class ConsentEngineImpl implements ConsentEngine {
                 "Owner of a consent context must be a profile context");
 
         final String relyingPartyId = ConsentHelper.getRelyingParty(consentContext);
-        Collection<Attribute> attributes = consentContext.getUserAttributes().values();
+        Collection<IdPAttribute> attributes = consentContext.getUserIdPAttributes().values();
 
         final String userId = ConsentHelper.findUserId(userIdAttribute, attributes);
         Assert.notNull(userId, "No userId found");
@@ -145,7 +145,7 @@ public class ConsentEngineImpl implements ConsentEngine {
      * @param attributes A collection of attributes.
      */
     private void showAttributeReleaseView(final ConsentContext consentContext, final User user,
-            final String relyingPartyId, final Collection<Attribute> attributes) {
+            final String relyingPartyId, final Collection<IdPAttribute> attributes) {
 
         final HttpServletRequest request = ConsentHelper.getRequest(consentContext);
         final HttpServletResponse response = ConsentHelper.getResponse(consentContext);

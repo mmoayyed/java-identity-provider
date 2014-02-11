@@ -22,11 +22,11 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.Resource;
 
+import net.shibboleth.idp.storage.Cache;
+import net.shibboleth.idp.storage.CacheManager;
+import net.shibboleth.idp.storage.Configuration;
 import net.shibboleth.idp.tou.ToUAcceptance;
 
-import org.infinispan.Cache;
-import org.infinispan.config.Configuration;
-import org.infinispan.manager.CacheManager;
 import org.springframework.util.Assert;
 
 /** Cache implementation. */

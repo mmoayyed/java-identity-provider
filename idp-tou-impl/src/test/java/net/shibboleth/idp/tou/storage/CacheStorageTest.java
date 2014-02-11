@@ -37,8 +37,9 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.Resource;
 
-import org.infinispan.Cache;
-import org.infinispan.manager.CacheManager;
+import net.shibboleth.idp.storage.Cache;
+import net.shibboleth.idp.storage.CacheManager;
+
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

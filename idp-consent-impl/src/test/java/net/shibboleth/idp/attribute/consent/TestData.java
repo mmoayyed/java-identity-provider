@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.consent;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,17 +26,12 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
-import net.shibboleth.idp.attribute.Attribute;
-import net.shibboleth.utilities.java.support.xml.BasicParserPool;
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 
 import org.joda.time.DateTime;
-import org.opensaml.core.config.InitializationException;
-import org.opensaml.core.config.InitializationService;
-import org.opensaml.core.xml.config.XMLConfigurationException;
-import org.opensaml.saml.saml2.metadata.provider.MetadataProvider;
-import org.opensaml.saml.saml2.metadata.provider.MetadataProviderException;
-import org.opensaml.saml2.metadata.provider.FilesystemMetadataProvider;
-import org.testng.Assert;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.testng.annotations.DataProvider;
 
 import edu.vt.middleware.crypt.digest.SHA256;
@@ -97,15 +91,15 @@ public class TestData {
         return new User(getRandomUserId(), getRandomBoolean());
     }
 
-    private static Collection<String> getRandomAttributeValues() {
-        Collection<String> values = new HashSet<String>();
+    private static Collection<IdPAttributeValue<String>> getRandomAttributeValues() {
+        Collection<IdPAttributeValue<String>> values = new HashSet<IdPAttributeValue<String>>();
         if (getRandomBoolean()) {
             // single value
-            values.add(getRandomString());
+            values.add(new StringAttributeValue(getRandomString()));
         } else {
             // multi values 2-3
             for (int i = 0; i < random.nextInt(2) + 2; i++) {
-                values.add(getRandomString());
+                values.add(new StringAttributeValue(getRandomString()));
             }
         }
         return values;
@@ -129,51 +123,51 @@ public class TestData {
         return displayDescriptions;
     }
 
-    private static Attribute getRandomAttribute() {
-        Attribute attribute = new Attribute(getRandomAttributeId());
+    private static IdPAttribute getRandomAttribute() {
+        IdPAttribute attribute = new IdPAttribute(getRandomAttributeId());
         attribute.setValues(getRandomAttributeValues());
         attribute.setDisplayNames(getRandomDisplayNames());
         attribute.setDisplayDescriptions(getRandomDisplayDescriptions());
         return attribute;
     }
 
-    private static Attribute getRandomNumberedAttribute() {
-        return new Attribute("attribute_" + (random.nextInt(9) + 1));
+    private static IdPAttribute getRandomNumberedAttribute() {
+        return new IdPAttribute("attribute_" + (random.nextInt(9) + 1));
     }
 
-    private static Collection<Attribute> getRandomAttributes() {
-        Map<String, Attribute> attributes = new HashMap<String, Attribute>();
+    private static Collection<IdPAttribute> getRandomAttributes() {
+        Map<String, IdPAttribute> attributes = new HashMap<String, IdPAttribute>();
         // 1-10
         for (int i = 0; i < random.nextInt(10) + 1; i++) {
-            Attribute attribute = getRandomAttribute();
+            IdPAttribute attribute = getRandomAttribute();
             attributes.put(attribute.getId(), attribute);
         }
         return attributes.values();
     }
 
-    private static Collection<Attribute> getRandomNumberedAttributes() {
-        Map<String, Attribute> attributes = new HashMap<String, Attribute>();
+    private static Collection<IdPAttribute> getRandomNumberedAttributes() {
+        Map<String, IdPAttribute> attributes = new HashMap<String, IdPAttribute>();
         // 0-10
         for (int i = 0; i < random.nextInt(10) + 1; i++) {
-            Attribute attribute = getRandomNumberedAttribute();
+            IdPAttribute attribute = getRandomNumberedAttribute();
             attributes.put(attribute.getId(), attribute);
         }
         return attributes.values();
     }
 
-    private static Collection<Attribute> getRandomAttributesWithUserIdAttribute() {
-        Collection<Attribute> attributes = new HashSet<Attribute>(getRandomNumberedAttributes());
-        Attribute userIdAttribute = new Attribute("userId");
-        userIdAttribute.setValues(Arrays.asList(new String[] {"userId-value"}));
+    private static Collection<IdPAttribute> getRandomAttributesWithUserIdAttribute() {
+        Collection<IdPAttribute> attributes = new HashSet<IdPAttribute>(getRandomNumberedAttributes());
+        IdPAttribute userIdAttribute = new IdPAttribute("userId");
+        userIdAttribute.setValues(Arrays.asList(new StringAttributeValue[] {new StringAttributeValue("userId-value")}));
         attributes.add(userIdAttribute);
         return attributes;
     }
 
-    private static Collection<Attribute> createLocalizedAttributes(Locale locale) {
-        Map<String, Attribute> attributes = new HashMap<String, Attribute>();
+    private static Collection<IdPAttribute> createLocalizedAttributes(Locale locale) {
+        Map<String, IdPAttribute> attributes = new HashMap<String, IdPAttribute>();
         // 1-10
         for (int i = 0; i < random.nextInt(10) + 1; i++) {
-            Attribute attribute = getRandomAttribute();
+            IdPAttribute attribute = getRandomAttribute();
 
             Map<Locale, String> displayNames = new HashMap<Locale, String>();
             displayNames.put(locale, attribute.getId() + "-" + locale.getLanguage() + "-name");
@@ -188,9 +182,9 @@ public class TestData {
         return attributes.values();
     }
 
-    private static MetadataProvider createMetadataProvider(String file) {
+    private static MetadataResolver createMetadataProvider(String file) {
         //TODO this probably shouldn't be here, this should be taken care of by the tested class, not by this data provider class
-        try {
+ /*       try {
             InitializationService.initialize();
         } catch (InitializationException e) {
             Assert.fail("Initialization of OpenSAML failed");
@@ -205,7 +199,8 @@ public class TestData {
             e.printStackTrace();
         }
 
-        return metadataProvider;
+        return metadataProvider; */
+        return null;
     }
 
     @DataProvider(name = "userIdGlobalConsent")

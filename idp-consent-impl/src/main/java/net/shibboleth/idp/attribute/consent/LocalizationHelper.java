@@ -25,16 +25,18 @@ import java.util.Locale;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
+import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.ServiceDescription;
 import org.opensaml.saml.saml2.metadata.ServiceName;
-import org.opensaml.saml.saml2.metadata.provider.MetadataProvider;
-import org.opensaml.saml.saml2.metadata.provider.MetadataProviderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -57,7 +59,7 @@ public class LocalizationHelper {
     private boolean localeEnforcement;
 
     /** The {@see MetadataProvider} used for resolving localized information. */
-    private MetadataProvider metadataProvider;
+    private MetadataResolver metadataResolver;
 
     /**
      * Sets the preferred locale.
@@ -82,8 +84,8 @@ public class LocalizationHelper {
      * 
      * @param newMetadataProvider The metadata provider to set.
      */
-    public void setMetadataProvider(final MetadataProvider newMetadataProvider) {
-        metadataProvider = newMetadataProvider;
+    public void setMetadataProvider(final MetadataResolver newMetadataProvider) {
+        metadataResolver = newMetadataProvider;
     }
 
     /**
@@ -125,7 +127,7 @@ public class LocalizationHelper {
      * @param userLocale The user's preferred locale.
      * @return Returns the localized name of an attribute.
      */
-    public String getAttributeName(final Attribute attribute, final Locale userLocale) {
+    public String getAttributeName(final IdPAttribute attribute, final Locale userLocale) {
         final Locale locale = selectLocale(attribute.getDisplayNames().keySet(), userLocale);
         logger.debug("Locale {} choosen for attribute {} name", locale, attribute.getId());
         if (locale == null) {
@@ -141,7 +143,7 @@ public class LocalizationHelper {
      * @param userLocale The user's preferred locale.
      * @return Returns the localized description of an attribute.
      */
-    public String getAttributeDescription(final Attribute attribute, final Locale userLocale) {
+    public String getAttributeDescription(final IdPAttribute attribute, final Locale userLocale) {
         final Locale locale = selectLocale(attribute.getDisplayDescriptions().keySet(), userLocale);
         logger.debug("Locale {} choosen for attribute {} description", locale, attribute.getId());
         if (locale == null) {
@@ -285,12 +287,12 @@ public class LocalizationHelper {
      * @return Returns the attribute consuming service element or null if not available.
      */
     private AttributeConsumingService getAttributeConsumingService(final String entityId) {
-        Assert.notNull(metadataProvider);
+        Assert.notNull(metadataResolver);
 
         EntityDescriptor entityDescriptor = null;
         try {
-            entityDescriptor = metadataProvider.getEntityDescriptor(entityId);
-        } catch (MetadataProviderException e) {
+            entityDescriptor = metadataResolver.resolveSingle(new CriteriaSet(new EntityIdCriterion(entityId)));
+        } catch (ResolverException e) {
             logger.warn("Unable to retrieve relying party description for {}", entityId, e);
             return null;
         }

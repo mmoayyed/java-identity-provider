@@ -22,7 +22,7 @@ import static org.testng.AssertJUnit.assertTrue;
 
 import java.util.Collection;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 
 import org.joda.time.DateTime;
 import org.testng.annotations.Test;
@@ -35,8 +35,8 @@ public class UserTest {
 
     @Test(dataProvider = "userRelyingPartyIdAttributesDateAttributes")
     public void hasApprovedAttributes(final User user, final String relyingPartyId,
-            final Collection<Attribute> approvedAttributes, final DateTime date,
-            final Collection<Attribute> notApprovedAttributes) {
+            final Collection<IdPAttribute> approvedAttributes, final DateTime date,
+            final Collection<IdPAttribute> notApprovedAttributes) {
         Collection<AttributeRelease> attributeReleases =
                 AttributeRelease.createAttributeReleases(approvedAttributes, date);
         user.setAttributeReleases(relyingPartyId, attributeReleases);

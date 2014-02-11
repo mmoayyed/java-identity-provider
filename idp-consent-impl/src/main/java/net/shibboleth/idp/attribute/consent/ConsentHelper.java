@@ -32,7 +32,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +85,7 @@ public final class ConsentHelper {
      * @param attribute The @see Attribute.
      * @return Returns the hash of all attribute values.
      */
-    public static String hashAttributeValues(final Attribute attribute) {
+    public static String hashAttributeValues(final IdPAttribute attribute) {
 
         // TODO: Make static member?
         final DigestAlgorithm digestAlgorithm = new SHA256();
@@ -114,8 +114,8 @@ public final class ConsentHelper {
      * @return Returns the user id.
      */
     public static final String findUserId(final String userIdAttribute,
-            final Collection<Attribute> releasedAttributes) {
-        for (Attribute releasedAttribute : releasedAttributes) {
+            final Collection<IdPAttribute> releasedAttributes) {
+        for (IdPAttribute releasedAttribute : releasedAttributes) {
             if (releasedAttribute.getId().equals(userIdAttribute)) {
                 final Collection<?> userIdAttributeValues = releasedAttribute.getValues();
                 if (userIdAttributeValues.isEmpty()) {
@@ -166,10 +166,10 @@ public final class ConsentHelper {
      * @param allAttributes A collection of attributes which will be released.
      * @return Returns a new collection of attributes without the blacklisted ones.
      */
-    public static Collection<Attribute> removeBlacklistedAttributes(final Collection<String> blacklist,
-            final Collection<Attribute> allAttributes) {
-        final Collection<Attribute> attributes = new HashSet<Attribute>();
-        for (Attribute attribute : allAttributes) {
+    public static Collection<IdPAttribute> removeBlacklistedAttributes(final Collection<String> blacklist,
+            final Collection<IdPAttribute> allAttributes) {
+        final Collection<IdPAttribute> attributes = new HashSet<IdPAttribute>();
+        for (IdPAttribute attribute : allAttributes) {
             if (!blacklist.contains(attribute.getId())) {
                 attributes.add(attribute);
             }
@@ -184,13 +184,13 @@ public final class ConsentHelper {
      * @param releasedAttributes A collection of attributes which will be released.
      * @return Returns a new collection of sorted attributes.
      */
-    public static SortedSet<Attribute> sortAttributes(final List<String> sortOrder,
-            final Collection<Attribute> releasedAttributes) {
+    public static SortedSet<IdPAttribute> sortAttributes(final List<String> sortOrder,
+            final Collection<IdPAttribute> releasedAttributes) {
         return new SortedAttributeSet(sortOrder, releasedAttributes);
     }
 
     /** A sorted set of attributes. */
-    private static class SortedAttributeSet extends TreeSet<Attribute> {
+    private static class SortedAttributeSet extends TreeSet<IdPAttribute> {
 
         /** The serial version UID. */
         private static final long serialVersionUID = -9035171496036683394L;
@@ -201,10 +201,10 @@ public final class ConsentHelper {
          * @param sortOrder A list of attribute ids which specifies the sort order.
          * @param attributes A collection of attributes to be sorted.
          */
-        public SortedAttributeSet(final List<String> sortOrder, final Collection<Attribute> attributes) {
-            super(new Comparator<Attribute>() {
+        public SortedAttributeSet(final List<String> sortOrder, final Collection<IdPAttribute> attributes) {
+            super(new Comparator<IdPAttribute>() {
                 @Override
-                public int compare(final Attribute attribute1, final Attribute attribute2) {
+                public int compare(final IdPAttribute attribute1, final IdPAttribute attribute2) {
                     int last = sortOrder.size();
 
                     int rank1 = sortOrder.indexOf(attribute1.getId());

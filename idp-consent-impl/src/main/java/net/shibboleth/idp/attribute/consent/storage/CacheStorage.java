@@ -26,6 +26,9 @@ import javax.annotation.Resource;
 
 import net.shibboleth.idp.attribute.consent.AttributeRelease;
 import net.shibboleth.idp.attribute.consent.User;
+import net.shibboleth.idp.storage.Cache;
+import net.shibboleth.idp.storage.CacheManager;
+import net.shibboleth.idp.storage.Configuration;
 
 import org.springframework.util.Assert;
 

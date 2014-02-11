@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.IdPAttribute;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +68,7 @@ public final class ToUHelper {
      * @param context The current terms of use context.
      * @return A collection of attribute which are releases to the relying party.
      */
-    public static Collection<Attribute> getUserAttributes(final TermsOfUseContext context) {
+    public static Collection<IdPAttribute> getUserAttributes(final TermsOfUseContext context) {
         // TODO retrieve user attributes from one of the contexts
         return null;
     }
@@ -83,8 +83,8 @@ public final class ToUHelper {
      */
     // TODO: Method is duplicated in ConsentHelper
     public static final String findUserId(final String userIdAttribute,
-            final Collection<Attribute> releasedAttributes) {
-        for (final Attribute releasedAttribute : releasedAttributes) {
+            final Collection<IdPAttribute> releasedAttributes) {
+        for (final IdPAttribute releasedAttribute : releasedAttributes) {
             if (releasedAttribute.getId().equals(userIdAttribute)) {
                 final Collection<?> userIdAttributeValues = releasedAttribute.getValues();
                 if (userIdAttributeValues.isEmpty()) {
