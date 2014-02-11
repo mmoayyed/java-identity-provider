@@ -11,24 +11,29 @@
 
     <bean
         id="IdPActionWithDefaultID"
-        class="net.shibboleth.idp.profile.impl.InitializeRelyingPartyContext"
+        class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessorTest$MockIdPAction"
         scope="prototype" />
 
     <bean
         id="IdPActionWithCustomID"
-        class="net.shibboleth.idp.profile.impl.InitializeRelyingPartyContext"
+        class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessorTest$MockIdPAction"
         scope="prototype"
         p:id="CustomID" />
 
     <bean
         id="OpenSAMLActionWithDefaultID"
-        class="org.opensaml.profile.action.impl.CheckMandatoryIssuer"
+        class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessorTest$MockOpenSAMLAction"
         scope="prototype" />
 
     <bean
         id="OpenSAMLActionWithCustomID"
-        class="org.opensaml.profile.action.impl.CheckMandatoryIssuer"
+        class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessorTest$MockOpenSAMLAction"
         scope="prototype"
         p:id="CustomID" />
+
+    <bean
+        id="OpenSAMLExceptionAction"
+        class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessorTest$MockOpenSAMLExceptionAction"
+        scope="prototype" />
 
 </beans>

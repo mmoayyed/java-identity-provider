@@ -17,7 +17,10 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+
 import org.opensaml.profile.action.ProfileAction;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
@@ -63,8 +66,24 @@ public class ProfileActionBeanPostProcessorTest extends AbstractTestNGSpringCont
         bean = applicationContext.getBean("OpenSAMLActionWithCustomID");
         Assert.assertTrue(bean instanceof WebFlowProfileActionAdaptor);
         Assert.assertTrue(((WebFlowProfileActionAdaptor) bean).isInitialized());
-        
-        // TODO Test throwing ComponentInitializationException ?
+    }
+
+    @Test(expectedExceptions = BeanCreationException.class) public void testBeanCreationException() {
+        applicationContext.getBean("OpenSAMLExceptionAction");
+    }
+
+    public static class MockIdPAction extends net.shibboleth.idp.profile.AbstractProfileAction {
+
+    }
+
+    public static class MockOpenSAMLAction extends org.opensaml.profile.action.AbstractProfileAction {
+
+    }
+
+    public static class MockOpenSAMLExceptionAction extends org.opensaml.profile.action.AbstractProfileAction {
+        protected void doInitialize() throws ComponentInitializationException {
+            throw new ComponentInitializationException();
+        }
     }
 
 }
