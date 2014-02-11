@@ -33,6 +33,7 @@ public class InitializeProfileRequestContextTest {
         springRequestContext.setExternalContext(new RequestContextBuilder().buildServletExternalContext());
 
         InitializeProfileRequestContext action = new InitializeProfileRequestContext();
+        action.setId("test");
         action.setProfileId("test");
         action.initialize();
 

@@ -181,6 +181,7 @@ public class CryptoTransientNameIDDecoderTest {
         nameID.setValue(code);
 
         final NameIDCanonicalization canon = new NameIDCanonicalization();
+        canon.setId("test");
         canon.setFormats(Collections.singleton("https://example.org/"));
         canon.setDecoder(decoder);
         canon.initialize();

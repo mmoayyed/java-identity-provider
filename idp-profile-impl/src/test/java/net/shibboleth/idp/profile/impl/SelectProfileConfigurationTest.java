@@ -53,7 +53,8 @@ public class SelectProfileConfigurationTest {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
 
         action = new SelectProfileConfiguration();
-        action.initialize();
+        action.setId("test");
+        action.initialize();        
     }
     
     /** Test that the action errors out properly if there is no relying party context. */

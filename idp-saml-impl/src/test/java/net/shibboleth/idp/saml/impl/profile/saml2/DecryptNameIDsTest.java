@@ -100,6 +100,7 @@ public class DecryptNameIDsTest extends OpenSAMLInitBaseTestCase {
         prc.getSubcontext(SecurityParametersContext.class, true).setDecryptionParameters(decParams);
         
         action = new DecryptNameIDs();
+        action.setId("test");
     }
     
     @Test

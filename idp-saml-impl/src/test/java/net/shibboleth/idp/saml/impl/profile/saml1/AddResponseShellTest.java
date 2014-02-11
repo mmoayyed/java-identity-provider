@@ -44,6 +44,7 @@ public class AddResponseShellTest extends OpenSAMLInitBaseTestCase {
     
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         action = new AddResponseShell();
+        action.setId("test");
         action.initialize();
     }
     

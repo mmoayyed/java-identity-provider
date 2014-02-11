@@ -34,6 +34,7 @@ public class RecordResponseCompleteTest {
 
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         action = new RecordResponseComplete();
+        action.setId("test");
         action.initialize();
     }
 

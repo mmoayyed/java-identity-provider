@@ -35,7 +35,6 @@ public class AbstractProfileActionTest {
 
     @Test public void testActionId() {
         MockProfileAction action = new MockProfileAction();
-        Assert.assertEquals(action.getId(), MockProfileAction.class.getName());
 
         action.setId(" mock");
         Assert.assertEquals(action.getId(), "mock");
@@ -141,18 +140,21 @@ public class AbstractProfileActionTest {
             thrownException = null;
             newEvent = null;
             prevEvent = null;
+            setId("test");
         }
         
         public MockProfileAction(ProfileException exception) {
             thrownException = exception;
             newEvent = null;
             prevEvent = null;
+            setId("test");
         }
 
         public MockProfileAction(String newEvent, String prevEvent) {
             this.newEvent = newEvent;
             this.prevEvent = prevEvent;
             thrownException = null;
+            setId("test");
         }
         
         public boolean isExecuted() {

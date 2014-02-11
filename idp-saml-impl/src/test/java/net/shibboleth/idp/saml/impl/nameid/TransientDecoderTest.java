@@ -159,6 +159,7 @@ public class TransientDecoderTest {
         final NameID nameid = encoder.encode(result);
         
         final NameIDCanonicalization canon = new NameIDCanonicalization();
+        canon.setId("test");
         canon.setFormats(Collections.singleton("https://example.org/"));
        
         final TransientNameIDDecoder decoder = new TransientNameIDDecoder();

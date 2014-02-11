@@ -77,6 +77,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
         ac = prc.getSubcontext(AuthenticationContext.class, true);
         
         action = new ProcessRequestedAuthnContext();
+        action.setId("test");
         action.initialize();
     }
     

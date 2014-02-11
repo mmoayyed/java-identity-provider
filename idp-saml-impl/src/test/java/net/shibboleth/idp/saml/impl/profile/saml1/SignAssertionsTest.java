@@ -53,6 +53,7 @@ public class SignAssertionsTest extends OpenSAMLInitBaseTestCase {
     @BeforeMethod public void setUp() throws ComponentInitializationException {
 
         action = new SignAssertions();
+        action.setId("test");
         action.initialize();
 
         src = new RequestContextBuilder().buildRequestContext();

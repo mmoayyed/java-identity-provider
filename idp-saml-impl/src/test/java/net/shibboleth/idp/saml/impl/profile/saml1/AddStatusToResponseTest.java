@@ -68,10 +68,12 @@ public class AddStatusToResponseTest extends OpenSAMLInitBaseTestCase {
         rpCtx.setProfileConfig(profileConfig);
 
         addResponse = new AddResponseShell();
+        addResponse.setId("test");
         addResponse.initialize();
         addResponse.execute(prc);
         
         action = new AddStatusToResponse();
+        action.setId("test");
     }
 
     @Test public void testMinimal() throws ProfileException, ComponentInitializationException {

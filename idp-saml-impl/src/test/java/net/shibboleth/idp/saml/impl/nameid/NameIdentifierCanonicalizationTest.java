@@ -66,6 +66,7 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
     @BeforeMethod public void setUp() throws Exception {
         prc = new ProfileRequestContext<>();
         action = new NameIdentifierCanonicalization();
+        action.setId("test");
         action.setFormats(formats);
         action.setDecoder(new NameIdentifierDecoder() {
 

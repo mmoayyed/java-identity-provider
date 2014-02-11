@@ -57,6 +57,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         action = new AddAuthnStatementToAssertion();
         action.setHttpServletRequest(new MockHttpServletRequest());
+        action.setId("test");
         action.initialize();
     }
     
