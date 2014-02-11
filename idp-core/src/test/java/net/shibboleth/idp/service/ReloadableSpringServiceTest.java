@@ -233,9 +233,24 @@ public class ReloadableSpringServiceTest {
         GenericApplicationContext appCtx =
                 SpringSupport.newContext("appCtx", Collections.singletonList(parentResource), null);
                 
-        ReloadableSpringService service = appCtx.getBean(ReloadableSpringService.class);
+        ReloadableSpringService service = appCtx.getBean("testReloadableSpringService", ReloadableSpringService.class);
 
         Assert.assertNotNull(service.getParentContext(), "Parent context should not be null");
+    }
+    
+    @Test public void testBeanNameAware() {
+
+        Resource parentResource = new ClassPathResource("net/shibboleth/idp/service/ReloadableSpringService.xml");
+
+        GenericApplicationContext appCtx =
+                SpringSupport.newContext("appCtx", Collections.singletonList(parentResource), null);
+                
+        ReloadableSpringService service1 = appCtx.getBean("testReloadableSpringService", ReloadableSpringService.class);
+        Assert.assertEquals(service1.getId(), "testReloadableSpringService");
+        
+        ReloadableSpringService service2 = appCtx.getBean("testReloadableSpringServiceWithCustomID", ReloadableSpringService.class);
+        Assert.assertEquals(service2.getId(), "CustomID");
+        
     }
 
 }

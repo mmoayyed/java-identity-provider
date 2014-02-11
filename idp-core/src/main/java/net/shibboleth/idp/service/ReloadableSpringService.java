@@ -26,11 +26,13 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.spring.SpringSupport;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.FatalBeanException;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.GenericApplicationContext;
@@ -46,7 +48,8 @@ import com.google.common.collect.Iterables;
  * @param <T> The precise service being implemented.
  */
 @ThreadSafe
-public class ReloadableSpringService<T> extends AbstractReloadableService implements ApplicationContextAware {
+public class ReloadableSpringService<T> extends AbstractReloadableService implements ApplicationContextAware,
+        BeanNameAware {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ReloadableSpringService.class);
@@ -60,6 +63,9 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
     /** Application context owning this engine. */
     private ApplicationContext parentContext;
 
+    /** The bean name. */
+    private String beanName;
+    
     /** The last known good component. */
     private ServiceableComponent<T> cachedComponent;
 
@@ -308,5 +314,18 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
     /** {@inheritDoc} */
     public void setApplicationContext(ApplicationContext applicationContext) {
         setParentContext(applicationContext);
+    }
+
+    /** {@inheritDoc} */
+    public void setBeanName(String name) {
+        beanName = name;        
+    }
+    
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        if (getId() == null) {
+            setId(beanName);
+        }
+        super.doInitialize();
     }
 }

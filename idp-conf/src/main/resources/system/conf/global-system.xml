@@ -130,7 +130,6 @@
 
     <bean id="shibboleth.AttributeFilterService" class="net.shibboleth.idp.service.ReloadableSpringService" depends-on="shibboleth.VelocityEngine"
         c:claz="net.shibboleth.idp.attribute.filter.AttributeFilter"
-        p:id="shibboleth.AttributeFilterService"
         p:serviceConfigurations-ref="shibboleth.AttributeFilterResources"
         p:failFast="${idp.service.attribute.filter.failFast}"
         p:reloadCheckDelay="${idp.service.attribute.filter.checkInterval}"
@@ -139,7 +138,6 @@
     <bean id="shibboleth.AttributeResolverService" class="net.shibboleth.idp.service.ReloadableSpringService" 
           init-method="start" destroy-method="stop" depends-on="shibboleth.VelocityEngine"
         c:claz="net.shibboleth.idp.attribute.resolver.AttributeResolver"
-        p:id="shibboleth.AttributeResolverService"
         p:serviceConfigurations-ref="shibboleth.AttributeResolverResources"
         p:failFast="${idp.service.attribute.resolver.failFast}"
         p:reloadCheckDelay="${idp.service.attribute.resolver.checkInterval}"

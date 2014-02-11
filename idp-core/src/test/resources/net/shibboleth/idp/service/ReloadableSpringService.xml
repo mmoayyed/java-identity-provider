@@ -10,7 +10,16 @@
 
     <bean id="testReloadableSpringService" class="net.shibboleth.idp.service.ReloadableSpringService">
         <constructor-arg value="net.shibboleth.idp.service.TestServiceableComponent" />
-        <property name="id" value="testReloadableSpringService" />
+        <property name="serviceConfigurations">
+            <util:list>
+                <value>classpath:/net/shibboleth/idp/service/ServiceableBean1.xml</value>
+            </util:list>
+        </property>
+    </bean>
+    
+    <bean id="testReloadableSpringServiceWithCustomID" class="net.shibboleth.idp.service.ReloadableSpringService">
+        <constructor-arg value="net.shibboleth.idp.service.TestServiceableComponent" />
+        <property name="id" value="CustomID" />
         <property name="serviceConfigurations">
             <util:list>
                 <value>classpath:/net/shibboleth/idp/service/ServiceableBean1.xml</value>
