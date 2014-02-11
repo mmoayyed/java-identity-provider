@@ -10,23 +10,23 @@
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
     <bean
-        id="AnIdPActionWithDefaultID"
+        id="IdPActionWithDefaultID"
         class="net.shibboleth.idp.profile.impl.InitializeRelyingPartyContext"
         scope="prototype" />
 
     <bean
-        id="AnIdPActionWithCustomID"
+        id="IdPActionWithCustomID"
         class="net.shibboleth.idp.profile.impl.InitializeRelyingPartyContext"
         scope="prototype"
         p:id="CustomID" />
 
     <bean
-        id="AnOpenSAMLActionWithDefaultID"
+        id="OpenSAMLActionWithDefaultID"
         class="org.opensaml.profile.action.impl.CheckMandatoryIssuer"
         scope="prototype" />
 
     <bean
-        id="AnOpenSAMLActionWithCustomID"
+        id="OpenSAMLActionWithCustomID"
         class="org.opensaml.profile.action.impl.CheckMandatoryIssuer"
         scope="prototype"
         p:id="CustomID" />

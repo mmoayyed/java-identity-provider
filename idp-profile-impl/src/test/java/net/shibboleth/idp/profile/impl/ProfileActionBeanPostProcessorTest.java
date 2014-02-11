@@ -30,23 +30,41 @@ public class ProfileActionBeanPostProcessorTest extends AbstractTestNGSpringCont
     @Test public void testPostProcessBeforeInitialization() {
         Object bean = null;
 
-        bean = applicationContext.getBean("AnIdPActionWithDefaultID");
+        bean = applicationContext.getBean("IdPActionWithDefaultID");
         Assert.assertTrue(bean instanceof ProfileAction);
-        Assert.assertEquals(((ProfileAction) bean).getId(), "AnIdPActionWithDefaultID");
+        Assert.assertEquals(((ProfileAction) bean).getId(), "IdPActionWithDefaultID");
 
-        bean = applicationContext.getBean("AnIdPActionWithCustomID");
+        bean = applicationContext.getBean("IdPActionWithCustomID");
         Assert.assertTrue(bean instanceof ProfileAction);
         Assert.assertEquals(((ProfileAction) bean).getId(), "CustomID");
 
-        bean = applicationContext.getBean("AnOpenSAMLActionWithDefaultID");
+        bean = applicationContext.getBean("OpenSAMLActionWithDefaultID");
         Assert.assertTrue(bean instanceof ProfileAction);
-        Assert.assertTrue(bean instanceof WebFlowProfileActionAdaptor);
-        Assert.assertEquals(((ProfileAction) bean).getId(), "AnOpenSAMLActionWithDefaultID");
+        Assert.assertEquals(((ProfileAction) bean).getId(), "OpenSAMLActionWithDefaultID");
 
-        bean = applicationContext.getBean("AnOpenSAMLActionWithCustomID");
+        bean = applicationContext.getBean("OpenSAMLActionWithCustomID");
         Assert.assertTrue(bean instanceof ProfileAction);
-        Assert.assertTrue(bean instanceof WebFlowProfileActionAdaptor);
         Assert.assertEquals(((ProfileAction) bean).getId(), "CustomID");
+    }
+
+    @Test public void testPostProcessAfterInitialization() {
+        Object bean = null;
+
+        bean = applicationContext.getBean("IdPActionWithDefaultID");
+        Assert.assertFalse(bean instanceof WebFlowProfileActionAdaptor);
+
+        bean = applicationContext.getBean("IdPActionWithCustomID");
+        Assert.assertFalse(bean instanceof WebFlowProfileActionAdaptor);
+
+        bean = applicationContext.getBean("OpenSAMLActionWithDefaultID");
+        Assert.assertTrue(bean instanceof WebFlowProfileActionAdaptor);
+        Assert.assertTrue(((WebFlowProfileActionAdaptor) bean).isInitialized());
+
+        bean = applicationContext.getBean("OpenSAMLActionWithCustomID");
+        Assert.assertTrue(bean instanceof WebFlowProfileActionAdaptor);
+        Assert.assertTrue(((WebFlowProfileActionAdaptor) bean).isInitialized());
+        
+        // TODO Test throwing ComponentInitializationException ?
     }
 
 }
