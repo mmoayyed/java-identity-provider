@@ -126,4 +126,6 @@ public class SignAssertionsTest extends OpenSAMLInitBaseTestCase {
     }
 
     // TODO Test that assertion was signed correctly ?
+
+    // TODO Test event id when signing throws an exception.
 }
