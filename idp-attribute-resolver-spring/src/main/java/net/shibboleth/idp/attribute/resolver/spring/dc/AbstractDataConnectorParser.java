@@ -36,6 +36,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
+import net.shibboleth.utilities.java.support.xml.XmlConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,10 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
+
+import com.google.common.base.Strings;
 
 /**
  * Base spring bean definition parser for data connectors. DataConnector implementations should provide a custom
@@ -113,6 +117,26 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
      */
     @Nonnull protected BeanFactory createBeanFactory(@Nonnull final Element springBeans) {
 
+        // Pull in the closest xsi:schemaLocation attribute we can find.
+        if (!springBeans.hasAttributeNS(XmlConstants.XSI_SCHEMA_LOCATION_ATTRIB_NAME.getNamespaceURI(),
+                XmlConstants.XSI_SCHEMA_LOCATION_ATTRIB_NAME.getLocalPart())) {
+            Node parent = springBeans.getParentNode();
+            while (parent != null && parent.getNodeType() == Node.ELEMENT_NODE) {
+                final String schemaLoc = ((Element) parent).getAttributeNS(
+                        XmlConstants.XSI_SCHEMA_LOCATION_ATTRIB_NAME.getNamespaceURI(),
+                        XmlConstants.XSI_SCHEMA_LOCATION_ATTRIB_NAME.getLocalPart());
+                if (!Strings.isNullOrEmpty(schemaLoc)) {
+                    springBeans.setAttributeNS(XmlConstants.XSI_SCHEMA_LOCATION_ATTRIB_NAME.getNamespaceURI(),
+                            XmlConstants.XSI_SCHEMA_LOCATION_ATTRIB_NAME.getPrefix() + ':'
+                                + XmlConstants.XSI_SCHEMA_LOCATION_ATTRIB_NAME.getLocalPart(),
+                            schemaLoc);
+                    break;
+                } else {
+                    parent = parent.getParentNode();
+                }
+            }
+        }
+        
         GenericApplicationContext ctx = new GenericApplicationContext();
         final XmlBeanDefinitionReader definitionReader = new XmlBeanDefinitionReader(ctx);
         definitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
