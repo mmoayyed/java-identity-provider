@@ -52,6 +52,7 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
                 TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         
         action = new SelectAuthenticationFlow();
+        action.setId("test");
         action.initialize();
     }
     

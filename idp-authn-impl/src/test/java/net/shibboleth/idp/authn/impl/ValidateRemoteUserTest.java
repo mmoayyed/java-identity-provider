@@ -50,6 +50,7 @@ public class ValidateRemoteUserTest extends PopulateAuthenticationContextTest {
         action.setBlacklistedUsernames(Arrays.asList("foo"));
         action.setMatchExpression(Pattern.compile("^ba(r|z|n)$"));
         action.setHttpServletRequest((HttpServletRequest) src.getExternalContext().getNativeRequest());
+        action.setId("test");
         action.initialize();
     }
 
@@ -131,6 +132,7 @@ public class ValidateRemoteUserTest extends PopulateAuthenticationContextTest {
     private void doExtract(ProfileRequestContext prc) throws Exception {
         final ExtractRemoteUser extract = new ExtractRemoteUser();
         extract.setHttpServletRequest(action.getHttpServletRequest());
+        extract.setId("extract");
         extract.initialize();
         extract.execute(src);
     }

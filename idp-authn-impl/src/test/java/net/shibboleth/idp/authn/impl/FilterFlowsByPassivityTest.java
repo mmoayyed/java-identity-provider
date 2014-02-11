@@ -36,6 +36,7 @@ public class FilterFlowsByPassivityTest extends PopulateAuthenticationContextTes
         super.setUp();
         
         action = new FilterFlowsByPassivity();
+        action.setId("test");
         action.initialize();
     }
     

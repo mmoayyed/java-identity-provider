@@ -36,6 +36,7 @@ public class FilterFlowsByForceAuthnTest extends PopulateAuthenticationContextTe
         super.setUp();
         
         action = new FilterFlowsByForcedAuthn();
+        action.setId("test");
         action.initialize();
     }
     

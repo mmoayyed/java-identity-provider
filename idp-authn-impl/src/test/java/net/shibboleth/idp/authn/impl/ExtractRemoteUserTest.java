@@ -43,6 +43,7 @@ public class ExtractRemoteUserTest extends PopulateAuthenticationContextTest {
         
         action = new ExtractRemoteUser();
         action.setHttpServletRequest(new MockHttpServletRequest());
+        action.setId("test");
     }
 
     @Test public void testNoConfig() {

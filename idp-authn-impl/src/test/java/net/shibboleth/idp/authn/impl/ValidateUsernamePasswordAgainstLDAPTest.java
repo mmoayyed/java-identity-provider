@@ -124,6 +124,7 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
         action.setClassifiedMessages(mappings);
 
         action.setHttpServletRequest(new MockHttpServletRequest());
+        action.setId("test");
     }
 
     @Test public void testMissingFlow() throws Exception {
@@ -380,6 +381,7 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
     private void doExtract(ProfileRequestContext prc) throws Exception {
         ExtractUsernamePasswordFromFormRequest extract = new ExtractUsernamePasswordFromFormRequest();
         extract.setHttpServletRequest(action.getHttpServletRequest());
+        extract.setId("extract");
         extract.initialize();
         extract.execute(src);
     }

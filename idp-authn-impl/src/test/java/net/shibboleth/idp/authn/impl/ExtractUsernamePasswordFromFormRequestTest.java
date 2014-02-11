@@ -41,6 +41,7 @@ public class ExtractUsernamePasswordFromFormRequestTest extends PopulateAuthenti
         action.setUsernameFieldName("j_username");
         action.setPasswordFieldName("j_password");
         action.setHttpServletRequest(new MockHttpServletRequest());
+        action.setId("test");
         action.initialize();
     }
     

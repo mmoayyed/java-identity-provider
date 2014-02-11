@@ -42,6 +42,7 @@ public class FinalizeAuthenticationTest extends PopulateAuthenticationContextTes
         super.setUp();
         
         action = new FinalizeAuthentication();
+        action.setId("test");
         action.initialize();
     }
     

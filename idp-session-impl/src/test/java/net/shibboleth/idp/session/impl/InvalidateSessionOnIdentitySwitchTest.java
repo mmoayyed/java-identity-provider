@@ -65,6 +65,7 @@ public class InvalidateSessionOnIdentitySwitchTest extends SessionManagerBaseTes
 
         action = new InvalidateSessionOnIdentitySwitch();
         action.setSessionManager(sessionManager);
+        action.setId("test");
         action.initialize();
     }
 

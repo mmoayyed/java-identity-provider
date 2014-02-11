@@ -41,6 +41,7 @@ public class ExtractUsernamePasswordFromBasicAuthTest extends PopulateAuthentica
         
         action = new ExtractUsernamePasswordFromBasicAuth();
         action.setHttpServletRequest(new MockHttpServletRequest());
+        action.setId("test");
         action.initialize();
     }
     

@@ -40,6 +40,7 @@ public class ExtractUserAgentIdntifierTest extends PopulateAuthenticationContext
         
         action = new ExtractUserAgentIdentifier();
         action.setHttpServletRequest(new MockHttpServletRequest());
+        action.setId("test");
         action.initialize();
     }
     

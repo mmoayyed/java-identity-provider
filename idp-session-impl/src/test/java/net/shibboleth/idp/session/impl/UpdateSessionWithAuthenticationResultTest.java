@@ -69,6 +69,7 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
 
         action = new UpdateSessionWithAuthenticationResult();
         action.setSessionManager(sessionManager);
+        action.setId("test");
         action.initialize();
     }
     

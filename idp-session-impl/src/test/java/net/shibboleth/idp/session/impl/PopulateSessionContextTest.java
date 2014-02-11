@@ -54,6 +54,7 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
         action.setHttpServletRequest(requestProxy);
         action.setHttpServletResponse(responseProxy);
         action.setSessionResolver(sessionManager);
+        action.setId("test");
         action.initialize();
     }
     
