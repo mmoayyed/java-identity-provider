@@ -7,3 +7,11 @@ classpath\:/schema/cs-sstc-schema-assertion-01.xsd = schema/cs-sstc-schema-asser
 classpath\:/schema/cs-sstc-schema-protocol-01.xsd = schema/cs-sstc-schema-protocol-01.xsd
 classpath\:/schema/cs-sstc-schema-assertion-1.1.xsd = schema/cs-sstc-schema-assertion-1.1.xsd
 classpath\:/schema/cs-sstc-schema-protocol-1.1.xsd = schema/cs-sstc-schema-protocol-1.1.xsd
+
+http\://docs.oasis-open.org/security/saml/v2.0/saml-schema-assertion-2.0.xsd = schema/saml-schema-assertion-2.0.xsd
+http\://docs.oasis-open.org/security/saml/v2.0/saml-schema-protocol-2.0.xsd = schema/saml-schema-protocol-2.0.xsd
+http\://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd = schema/saml-schema-metadata-2.0.xsd
+
+classpath\:/schema/saml-schema-assertion-2.0.xsd = schema/saml-schema-assertion-2.0.xsd
+classpath\:/schema/saml-schema-protocol-2.0.xsd = schema/saml-schema-protocol-2.0.xsd
+classpath\:/schema/saml-schema-metadata-2.0.xsd = schema/saml-schema-metadata-2.0.xsd
