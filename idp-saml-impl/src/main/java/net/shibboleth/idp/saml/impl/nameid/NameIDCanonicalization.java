@@ -63,9 +63,6 @@ import com.google.common.base.Predicate;
  */
 public class NameIDCanonicalization extends AbstractSubjectCanonicalizationAction implements InitializingBean {
 
-    /** The custom Principal to operate on. */
-    @Nullable private String decodedPrincipal;
-
     /** Supplies logic for pre-execute test. */
     @Nonnull private final ActivationCondition embeddedPredicate;
 
@@ -111,33 +108,29 @@ public class NameIDCanonicalization extends AbstractSubjectCanonicalizationActio
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
 
-        if (embeddedPredicate.apply(profileRequestContext, c14nContext, true)) {
-
-            final Set<NameIDPrincipal> nameIDs = c14nContext.getSubject().getPrincipals(NameIDPrincipal.class);
-            final NameID nameID = nameIDs.iterator().next().getNameID();
-
-            try {
-                decodedPrincipal = decoder.decode(nameID, c14nContext.getResponderId(), c14nContext.getRequesterId());
-            } catch (SubjectCanonicalizationException e) {
-                c14nContext.setException(e);
-                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-                return false;
-            } catch (NameDecoderException e) {
-                c14nContext.setException(e);
-                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);
-                return false;
-            }
-            return super.doPreExecute(profileRequestContext, c14nContext);
-        } else {
+        if (!embeddedPredicate.apply(profileRequestContext, c14nContext, true)) {
             return false;
         }
+        return super.doPreExecute(profileRequestContext, c14nContext);
     }
 
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
 
-        c14nContext.setPrincipalName(decodedPrincipal);
+        final Set<NameIDPrincipal> nameIDs = c14nContext.getSubject().getPrincipals(NameIDPrincipal.class);
+        final NameID nameID = nameIDs.iterator().next().getNameID();
+
+        try {
+            c14nContext.setPrincipalName(decoder.decode(nameID, c14nContext.getResponderId(),
+                    c14nContext.getRequesterId()));
+        } catch (SubjectCanonicalizationException e) {
+            c14nContext.setException(e);
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+        } catch (NameDecoderException e) {
+            c14nContext.setException(e);
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);
+        }
     }
 
     /** {@inheritDoc} */
@@ -179,7 +172,7 @@ public class NameIDCanonicalization extends AbstractSubjectCanonicalizationActio
             final SubjectCanonicalizationFlowDescriptor flowDescriptor = c14nContext.getAttemptedFlow();
 
             log.debug("Attempting to match format {}", format);
-            
+
             if (null == flowDescriptor) {
                 log.error("Supplied Context has no active FlowDescriptor");
                 return false;
