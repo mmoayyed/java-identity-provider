@@ -14,10 +14,7 @@
 	<bean id="SAML2TransientDecoder" class="net.shibboleth.idp.saml.impl.nameid.NameID"
 		scope="prototype" p:id="SAML2TransientDecoder" p:idStore-ref="shibboleth.StorageService" />
 
-	<bean id="SAML2TransientCanonicalization"
-		class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization"
-		scope="prototype" 
-		c:condition-ref="SubjectC14NFlow/SAML2/Transient/Condition" 
-		p:decoder-ref="SAML2TransientDecoder"/>
+	<bean id="SAML2TransientCanonicalization" class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization"
+		scope="prototype" p:decoder-ref="SAML2TransientDecoder" />
 
 </beans>

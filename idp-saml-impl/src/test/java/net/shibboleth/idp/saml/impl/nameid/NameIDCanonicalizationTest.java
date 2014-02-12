@@ -29,8 +29,8 @@ import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
-import net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
+import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.saml.nameid.NameIDDecoder;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -53,8 +53,8 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
 
     private NameIDBuilder builder;
     
-    private ActivationCondition condition;
-
+    private NameIDCanonicalizationFlowDescriptor flowDescriptor;
+    
     private static final String REQUESTER = "TestRequest";
 
     private static final String RESPONDER = "TestResp";
@@ -70,10 +70,10 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
     @BeforeMethod public void setUp() throws Exception {
         prc = new ProfileRequestContext<>();
         
-        condition = new ActivationCondition();
-        condition.setFormats(formats);
+        flowDescriptor = new NameIDCanonicalizationFlowDescriptor("C14NDesc");
+        flowDescriptor.setFormats(formats);
         
-        action = new NameIDCanonicalization(condition);
+        action = new NameIDCanonicalization();
         action.setId("test");
         action.setDecoder(new NameIDDecoder() {
 
@@ -99,6 +99,7 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
         if (responder != null) {
             scc.setResponderId(responder);
         }
+        scc.setAttemptedFlow(flowDescriptor);
     }
 
     private NameID nameId(String value, String format, String nameQualifier, String nameSPQualifier) {
@@ -117,11 +118,11 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void testFormatCount() {
-        Assert.assertEquals(condition.getFormats().size(), 2);
+        Assert.assertEquals(flowDescriptor.getFormats().size(), 2);
     }
 
     @Test(expectedExceptions = {UnsupportedOperationException.class}) public void testFormatSet() {
-        condition.getFormats().add("bar");
+        flowDescriptor.getFormats().add("bar");
     }
 
     @Test public void testNoContext() throws ProfileException {

@@ -31,8 +31,8 @@ import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.saml.impl.attribute.encoding.SAML2StringNameIDEncoder;
 import net.shibboleth.idp.saml.impl.attribute.resolver.TransientIdAttributeDefinition;
-import net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
+import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.saml.nameid.TransientIdParameters;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -158,10 +158,10 @@ public class TransientDecoderTest {
         final SAML2StringNameIDEncoder encoder = new SAML2StringNameIDEncoder();
         encoder.setNameFormat("https://example.org/");
         final NameID nameid = encoder.encode(result);
-        
-        final ActivationCondition condition = new ActivationCondition();
-        condition.setFormats(Collections.singleton("https://example.org/"));
-        final NameIDCanonicalization canon = new NameIDCanonicalization(condition);
+
+        NameIDCanonicalizationFlowDescriptor descriptor = new NameIDCanonicalizationFlowDescriptor("NameIdFlowDescriptor");
+        descriptor.setFormats(Collections.singleton("https://example.org/"));
+        final NameIDCanonicalization canon = new NameIDCanonicalization();
         canon.setId("test");
        
         final TransientNameIDDecoder decoder = new TransientNameIDDecoder();
@@ -176,6 +176,7 @@ public class TransientDecoderTest {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIDPrincipal(nameid));
         scc.setSubject(subject);
+        scc.setAttemptedFlow(descriptor);
         
         scc.setRequesterId(TestSources.SP_ENTITY_ID);
         scc.setResponderId(TestSources.IDP_ENTITY_ID);

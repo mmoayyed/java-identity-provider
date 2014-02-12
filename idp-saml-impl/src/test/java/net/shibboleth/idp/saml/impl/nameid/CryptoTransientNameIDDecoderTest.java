@@ -33,8 +33,8 @@ import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.saml.impl.attribute.resolver.CryptoTransientIdAttributeDefinition;
-import net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
+import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.DataSealerException;
@@ -182,10 +182,10 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
         nameID.setSPNameQualifier(TestSources.SP_ENTITY_ID);
         nameID.setValue(code);
 
-        ActivationCondition condition = new ActivationCondition();
-        condition.setFormats(Collections.singleton("https://example.org/"));
+        NameIDCanonicalizationFlowDescriptor desc = new NameIDCanonicalizationFlowDescriptor("C14NDesc");
+        desc.setFormats(Collections.singleton("https://example.org/"));
         
-        final NameIDCanonicalization canon = new NameIDCanonicalization(condition);
+        final NameIDCanonicalization canon = new NameIDCanonicalization();
         canon.setId("test");
         canon.setDecoder(decoder);
         canon.initialize();
@@ -196,6 +196,7 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
 
         subject.getPrincipals().add(new NameIDPrincipal(nameID));
         scc.setSubject(subject);
+        scc.setAttemptedFlow(desc);
 
         scc.setRequesterId(TestSources.SP_ENTITY_ID);
         scc.setResponderId(TestSources.IDP_ENTITY_ID);
