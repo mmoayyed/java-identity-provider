@@ -26,6 +26,7 @@ import net.shibboleth.idp.saml.impl.attribute.resolver.StoredIDDataConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -51,25 +52,35 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder, "storedId");
         log.debug("doParse {}", config);
-        builder.addPropertyValue("dataSource", getDataSource(config));
+        final Element springBeans = getSpringBeansElement(config);
+        if (springBeans == null) {
+            builder.addPropertyValue("dataSource", getv2DataSource(config));            
+        } else {
+            builder.addPropertyValue("dataSource", getDataSource(springBeans));
+        }
         // TODO set queryTimeout?
     }
 
     /**
      * Get the dataSource from the configuration.
      * 
+     * @param springBeans the DOM element under consideration.
+     * @return the DataSource
+     */
+    protected DataSource getDataSource(@Nonnull Element springBeans) {
+        final BeanFactory beanFactory = createBeanFactory(springBeans);
+        return beanFactory.getBean(DataSource.class);
+    }
+
+    /**
+     * Get the dataSource from a v2 configuration.
+     * 
      * @param config the DOM element under consideration.
      * @return the DataSource
      */
-    protected DataSource getDataSource(@Nonnull Element config) {
-        final Element springBeans = getSpringBeansElement(config);
-        if (springBeans == null) {
-            log.debug("parsing v2 configuration");
-            final ManagedConnectionParser parser = new ManagedConnectionParser(config);
-            return parser.createDataSource();
-        } else {
-            final BeanFactory beanFactory = createBeanFactory(springBeans);
-            return beanFactory.getBean(DataSource.class);
-        }
+    protected BeanDefinition getv2DataSource(@Nonnull Element config) {
+        log.debug("parsing v2 configuration");
+        final ManagedConnectionParser parser = new ManagedConnectionParser(config);
+        return parser.createDataSource();
     }
 }

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resolver:AttributeResolver 
+            xmlns="http://www.springframework.org/schema/beans"
+            xmlns:p="http://www.springframework.org/schema/p"
+            xmlns:resolver="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xmlns:dc="urn:mace:shibboleth:2.0:resolver:dc" xmlns:enc="urn:mace:shibboleth:2.0:attribute:encoder"
+            xmlns:context="http://www.springframework.org/schema/context"
+            xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd
+                                urn:mace:shibboleth:2.0:resolver:dc http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-dc.xsd
+                                http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <resolver:DataConnector id="myDatabase" xsi:type="dc:RelationalDatabase">
+      <beans>
+        <bean class="com.mchange.v2.c3p0.ComboPooledDataSource"
+              destroy-method="close"
+              p:driverClass="${datasource.driverClass}"
+              p:jdbcUrl="${datasource.jdbcUrl}"
+              p:user="${datasource.user}"
+              p:password="${datasource.password}"
+              p:acquireIncrement="${datasource.acquireIncrement}"
+              p:acquireRetryAttempts="${datasource.acquireRetryAttempts}"
+              p:acquireRetryDelay="${datasource.acquireRetryDelay}"
+              p:breakAfterAcquireFailure="${datasource.breakAfterAcquireFailure}"
+              p:minPoolSize="${datasource.minPoolSize}"
+              p:maxPoolSize="${datasource.maxPoolSize}"
+              p:maxIdleTime="${datasource.maxIdleTime}"
+              p:idleConnectionTestPeriod="${datasource.idleConnectionTestPeriod}"/>
+        <bean id="cacheBuilder"
+              class="com.google.common.cache.CacheBuilder"
+              factory-method="from">
+            <constructor-arg value="${cache.cacheBuilderSpec}"/>
+        </bean>
+        <bean id="cache"
+              class="com.google.common.cache.Cache"
+              factory-bean="cacheBuilder"
+              factory-method="build"/>
+        <bean class="net.shibboleth.idp.attribute.resolver.impl.dc.rdbms.FormatExecutableStatementBuilder">
+          <constructor-arg index="0" value="${statementBuilder.selectStatement}"/>
+        </bean>
+        <context:property-placeholder
+            location="classpath:net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-v3.properties"
+            ignore-unresolvable="true" />
+      </beans>
+    </resolver:DataConnector>
+    
+</resolver:AttributeResolver>

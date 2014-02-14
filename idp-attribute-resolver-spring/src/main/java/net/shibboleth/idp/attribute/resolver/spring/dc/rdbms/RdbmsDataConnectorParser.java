@@ -17,14 +17,11 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc.rdbms;
 
-import java.util.Map;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.impl.dc.rdbms.RdbmsDataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.dc.rdbms.TemplatedExecutableStatementBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
@@ -34,16 +31,16 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.ManagedConnectionParser;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
+import net.shibboleth.utilities.java.support.xml.DomTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
-
-import com.google.common.cache.Cache;
 
 /** Bean definition Parser for a {@link RdbmsDataConnector}. */
 public class RdbmsDataConnectorParser extends AbstractDataConnectorParser {
@@ -115,22 +112,19 @@ public class RdbmsDataConnectorParser extends AbstractDataConnectorParser {
 
         builder.addPropertyValue("DataSource", v2Parser.createDataSource());
 
-        final BeanDefinitionBuilder templateBuilder = v2Parser.createTemplateBuilder();
-        builder.addPropertyValue("executableSearchBuilder", templateBuilder.getBeanDefinition());
+        builder.addPropertyValue("executableSearchBuilder", v2Parser.createTemplateBuilder());
 
-        final Cache<String, Map<String, IdPAttribute>> cache = v2Parser.createCache();
-        if (cache != null) {
-            builder.addPropertyValue("resultsCache", cache);
-        }
+        builder.addPropertyValue("resultsCache", v2Parser.createCache());
 
-        if (v2Parser.isNoResultAnError()) {
-            builder.addPropertyValue("noResultAnError", true);
+        final String noResultIsError = AttributeSupport.getAttributeValue(config, new QName("noResultIsError"));
+        if (noResultIsError != null) {
+            builder.addPropertyValue("noResultAnError", noResultIsError);
         }
         builder.setInitMethodName("initialize");
     }
 
     /** Utility class for parsing v2 schema configuration. */
-    protected class V2Parser {
+    protected static class V2Parser {
 
         /** Base XML element. */
         private final Element configElement;
@@ -146,23 +140,11 @@ public class RdbmsDataConnectorParser extends AbstractDataConnectorParser {
         }
 
         /**
-         * Returns whether the noResultIsError attribute exists and is true.
+         * Create the data source bean definition. See {@link ManagedConnectionParser}.
          *
-         * @return whether the noResultIsError attribute exists and is true
+         * @return data source bean definition
          */
-        public boolean isNoResultAnError() {
-            final Boolean noResultAnError =
-                    AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(configElement, new QName(
-                            "noResultIsError")));
-            return noResultAnError != null ? noResultAnError.booleanValue() : false;
-        }
-
-        /**
-         * Create the data source. See {@link ManagedConnectionParser}.
-         *
-         * @return data source
-         */
-        @Nonnull public DataSource createDataSource() {
+        @Nonnull public BeanDefinition createDataSource() {
             final ManagedConnectionParser parser = new ManagedConnectionParser(configElement);
             return parser.createDataSource();
         }
@@ -172,8 +154,8 @@ public class RdbmsDataConnectorParser extends AbstractDataConnectorParser {
          * 
          * @return the bean definition for the template search builder.
          */
-        @Nonnull public BeanDefinitionBuilder createTemplateBuilder() {
-            BeanDefinitionBuilder templateBuilder =
+        @Nonnull public BeanDefinition createTemplateBuilder() {
+            final BeanDefinitionBuilder templateBuilder =
                     BeanDefinitionBuilder.genericBeanDefinition(TemplatedExecutableStatementBuilder.class);
 
             String velocityEngineRef = StringSupport.trimOrNull(configElement.getAttribute("templateEngine"));
@@ -184,13 +166,16 @@ public class RdbmsDataConnectorParser extends AbstractDataConnectorParser {
 
             templateBuilder.addPropertyValue("v2Compatibility", true);
 
-            Long queryTimeout =
-                    AttributeSupport.getDurationAttributeValueAsLong(AttributeSupport.getAttribute(configElement,
-                            new QName("queryTimeout")));
-            if (queryTimeout == null) {
-                queryTimeout = Long.valueOf(5000);
+            final String queryTimeout = AttributeSupport.getAttributeValue(configElement, new QName("queryTimeout"));
+            if (queryTimeout != null) {
+                final BeanDefinitionBuilder duration =
+                        BeanDefinitionBuilder.rootBeanDefinition(V2Parser.class, "buildDuration");
+                duration.addConstructorArgValue(queryTimeout);
+                duration.addConstructorArgValue(1);
+                templateBuilder.addPropertyValue("queryTimeout", duration.getBeanDefinition());
+            } else {
+                templateBuilder.addPropertyValue("queryTimeout", 5000);
             }
-            templateBuilder.addPropertyValue("queryTimeout", queryTimeout.intValue());
 
             final Element queryTemplate =
                     ElementSupport.getFirstChildElement(configElement, new QName(
@@ -199,7 +184,7 @@ public class RdbmsDataConnectorParser extends AbstractDataConnectorParser {
             templateBuilder.addPropertyValue("templateText", queryText);
 
             templateBuilder.setInitMethodName("initialize");
-            return templateBuilder;
+            return templateBuilder.getBeanDefinition();
         }
 
         /**
@@ -207,9 +192,22 @@ public class RdbmsDataConnectorParser extends AbstractDataConnectorParser {
          *
          * @return results cache
          */
-        @Nullable public Cache createCache() {
+        @Nullable public BeanDefinition createCache() {
             final CacheConfigParser parser = new CacheConfigParser(configElement);
             return parser.createCache();
+        }
+
+        /**
+         * Converts the supplied duration to milliseconds and divides it by the divisor. Useful for modifying durations
+         * while resolving property replacement.
+         * 
+         * @param duration string format
+         * @param divisor to modify the duration with
+         * 
+         * @return result of the division
+         */
+        public static long buildDuration(final String duration, final long divisor) {
+            return DomTypeSupport.durationToLong(duration) / divisor;
         }
     }
 }

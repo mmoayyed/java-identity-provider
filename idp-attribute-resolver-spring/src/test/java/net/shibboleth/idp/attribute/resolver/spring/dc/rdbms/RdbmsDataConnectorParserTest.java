@@ -67,26 +67,42 @@ public class RdbmsDataConnectorParserTest {
     
     @Test public void v2Config() throws ComponentInitializationException, ServiceException, ResolutionException {
         RdbmsDataConnector dataConnector =
-                getRdbmsDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-v2.xml", false);
+                getRdbmsDataConnector(false, "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-v2.xml");
+        Assert.assertNotNull(dataConnector);
+        doTest(dataConnector);
+    }
+
+    @Test public void v2PropsConfig() throws ComponentInitializationException, ServiceException, ResolutionException {
+        RdbmsDataConnector dataConnector =
+                getRdbmsDataConnector(
+                        true,
+                        "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-v2-props.xml",
+                        "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/PropertyPlaceholder.xml");
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
     }
 
     @Test public void springConfig() throws ComponentInitializationException, ServiceException, ResolutionException {
         RdbmsDataConnector dataConnector =
-                getRdbmsDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-spring.xml", true);
+                getRdbmsDataConnector(true, "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-spring.xml");
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
     }
 
-    protected RdbmsDataConnector getRdbmsDataConnector(final String springContext, boolean supressValidation) {
+    @Test public void springPropsConfig() throws ComponentInitializationException, ServiceException, ResolutionException {
+        RdbmsDataConnector dataConnector =
+                getRdbmsDataConnector(true, "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-spring-props.xml");
+        Assert.assertNotNull(dataConnector);
+        doTest(dataConnector);
+    }
+
+    protected RdbmsDataConnector getRdbmsDataConnector(boolean supressValidation, final String... beanDefinitions) {
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + RdbmsDataConnectorParserTest.class);
 
         XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
 
         configReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/velocity.xml");
-        context.refresh();
         
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
@@ -94,7 +110,8 @@ public class RdbmsDataConnectorParserTest {
         if (supressValidation) {
             beanDefinitionReader.setValidating(false);
         }
-        beanDefinitionReader.loadBeanDefinitions(springContext);
+        beanDefinitionReader.loadBeanDefinitions(beanDefinitions);
+        context.refresh();
 
         return (RdbmsDataConnector) context.getBean("myDatabase");
     }

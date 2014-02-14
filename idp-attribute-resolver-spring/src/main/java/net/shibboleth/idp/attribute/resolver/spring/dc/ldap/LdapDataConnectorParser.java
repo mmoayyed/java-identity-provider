@@ -17,9 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc.ldap;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 
@@ -27,7 +25,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.LdapDataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.TemplatedExecutableSearchFilterBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
@@ -36,6 +33,7 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.DataConnectorNamespaceHan
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
+import net.shibboleth.utilities.java.support.xml.DomTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.ldaptive.BindConnectionInitializer;
@@ -44,10 +42,11 @@ import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchFilter;
-import org.ldaptive.SearchScope;
+import org.ldaptive.SearchRequest;
 import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.handler.CaseChangeEntryHandler.CaseChange;
 import org.ldaptive.handler.MergeAttributeEntryHandler;
+import org.ldaptive.handler.SearchEntryHandler;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
@@ -64,11 +63,13 @@ import org.opensaml.security.x509.X509Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import com.google.common.cache.Cache;
+import com.google.common.collect.Lists;
 
 /** Bean definition Parser for a {@link LdapDataConnector}. */
 public class LdapDataConnectorParser extends AbstractDataConnectorParser {
@@ -117,12 +118,10 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
         final BeanFactory beanFactory = createBeanFactory(springBeans);
         addPropertyDescriptorValues(builder, beanFactory, LdapDataConnector.class);
 
-        final Boolean noResultAnError =
-                AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(config, new QName(
-                        "noResultIsError")));
+        final String noResultAnError = AttributeSupport.getAttributeValue(config, new QName("noResultIsError"));
         log.debug("parsed noResultAnError {}", noResultAnError);
-        if (noResultAnError != null && noResultAnError.booleanValue()) {
-            builder.addPropertyValue("noResultAnError", true);
+        if (noResultAnError != null) {
+            builder.addPropertyValue("noResultAnError", noResultAnError);
         }
         builder.setInitMethodName("initialize");
     }
@@ -139,20 +138,25 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
 
         final V2Parser v2Parser = new V2Parser(config);
 
-        final ConnectionConfig connectionConfig = v2Parser.createConnectionConfig();
-        final DefaultConnectionFactory connectionFactory = new DefaultConnectionFactory(connectionConfig);
-        final String connectionStrategy = AttributeSupport.getAttributeValue(config, new QName("connectionStrategy"));
-        if (connectionStrategy != null) {
-            final ConnectionStrategy strategy = ConnectionStrategy.valueOf(connectionStrategy);
-            if (strategy != null) {
-                connectionFactory.getProvider().getProviderConfig().setConnectionStrategy(strategy);
-            } else {
-                connectionFactory.getProvider().getProviderConfig()
-                        .setConnectionStrategy(ConnectionStrategy.ACTIVE_PASSIVE);
-            }
-        }
+        final BeanDefinitionBuilder connectionFactory =
+                BeanDefinitionBuilder.genericBeanDefinition(DefaultConnectionFactory.class);
+        connectionFactory.addConstructorArgValue(v2Parser.createConnectionConfig());
 
-        final Map<String, Object> props = new HashMap<String, Object>();
+        final BeanDefinitionBuilder provider =
+                BeanDefinitionBuilder.genericBeanDefinition(DefaultConnectionFactory.getDefaultProvider().getClass());
+        final BeanDefinitionBuilder providerConfig =
+                BeanDefinitionBuilder.genericBeanDefinition(DefaultConnectionFactory.getDefaultProvider()
+                        .getProviderConfig().getClass());
+        String connectionStrategy = AttributeSupport.getAttributeValue(config, new QName("connectionStrategy"));
+        if (connectionStrategy == null) {
+            connectionStrategy = ConnectionStrategy.ACTIVE_PASSIVE.name();
+        }
+        final BeanDefinitionBuilder strategy =
+                BeanDefinitionBuilder.rootBeanDefinition(ConnectionStrategy.class, "valueOf");
+        strategy.addConstructorArgValue(connectionStrategy);
+        providerConfig.addPropertyValue("connectionStrategy", strategy.getBeanDefinition());
+
+        final ManagedMap<String, String> props = new ManagedMap<>();
         final List<Element> propertyElements =
                 ElementSupport.getChildElements(config, new QName(DataConnectorNamespaceHandler.NAMESPACE,
                         "LDAPProperty"));
@@ -160,38 +164,36 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
             props.put(AttributeSupport.getAttributeValue(e, new QName("name")),
                     AttributeSupport.getAttributeValue(e, new QName("value")));
         }
-        if (!props.isEmpty()) {
-            connectionFactory.getProvider().getProviderConfig().setProperties(props);
-        }
+        providerConfig.addPropertyValue("properties", props);
+        provider.addPropertyValue("providerConfig", providerConfig.getBeanDefinition());
+        connectionFactory.addPropertyValue("provider", provider.getBeanDefinition());
 
-        final BeanDefinitionBuilder templateBuilder = v2Parser.createTemplateBuilder();
-        builder.addPropertyValue("executableSearchBuilder", templateBuilder.getBeanDefinition());
+        builder.addPropertyValue("executableSearchBuilder", v2Parser.createTemplatedExecutableSearchFilterBuilder());
 
-        final BlockingConnectionPool connectionPool = v2Parser.createConnectionPool();
+        final BeanDefinition connectionPool = v2Parser.createConnectionPool(connectionFactory.getBeanDefinition());
         if (connectionPool != null) {
-            connectionPool.setConnectionFactory(connectionFactory);
-            connectionPool.initialize();
-            builder.addPropertyValue("connectionFactory", new PooledConnectionFactory(connectionPool));
+            final BeanDefinitionBuilder pooledConnectionFactory =
+                    BeanDefinitionBuilder.genericBeanDefinition(PooledConnectionFactory.class);
+            pooledConnectionFactory.addConstructorArgValue(connectionPool);
+            builder.addPropertyValue("connectionFactory", pooledConnectionFactory.getBeanDefinition());
         } else {
             builder.addPropertyValue("connectionFactory", connectionFactory);
         }
 
-        final SearchExecutor searchExecutor = v2Parser.createSearchExecutor();
+        final BeanDefinition searchExecutor = v2Parser.createSearchExecutor();
         builder.addPropertyValue("searchExecutor", searchExecutor);
 
-        final Cache<String, Map<String, IdPAttribute>> cache = v2Parser.createCache();
-        if (cache != null) {
-            builder.addPropertyValue("resultsCache", cache);
-        }
+        builder.addPropertyValue("resultsCache", v2Parser.createCache());
 
-        if (v2Parser.isNoResultAnError()) {
-            builder.addPropertyValue("noResultAnError", true);
+        final String noResultIsError = AttributeSupport.getAttributeValue(config, new QName("noResultIsError"));
+        if (noResultIsError != null) {
+            builder.addPropertyValue("noResultAnError", noResultIsError);
         }
         builder.setInitMethodName("initialize");
     }
 
     /** Utility class for parsing v2 schema configuration. */
-    protected class V2Parser {
+    protected static class V2Parser {
 
         /** LDAPDirectory XML element. */
         private final Element configElement;
@@ -207,60 +209,50 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
         }
 
         /**
-         * Returns whether the noResultIsError attribute exists and is true.
+         * Creates a connection config bean definition from a v2 XML configuration.
          * 
-         * @return whether the noResultIsError attribute exists and is true
+         * @return connection config bean definition
          */
-        public boolean isNoResultAnError() {
-            final Boolean noResultAnError =
-                    AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(configElement, new QName(
-                            "noResultIsError")));
-            return noResultAnError != null ? noResultAnError.booleanValue() : false;
-        }
-
-        /**
-         * Creates a connection config from a v2 XML configuration.
-         * 
-         * @return connection config
-         */
-        @Nonnull public ConnectionConfig createConnectionConfig() {
+        @Nonnull public BeanDefinition createConnectionConfig() {
             final String url = AttributeSupport.getAttributeValue(configElement, new QName("ldapURL"));
-            final Boolean useStartTLS =
-                    AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(configElement, new QName(
-                            "useStartTLS")));
+            final String useStartTLS = AttributeSupport.getAttributeValue(configElement, new QName("useStartTLS"));
             final String principal = AttributeSupport.getAttributeValue(configElement, new QName("principal"));
             final String principalCredential =
                     AttributeSupport.getAttributeValue(configElement, new QName("principalCredential"));
             final String authenticationType =
                     AttributeSupport.getAttributeValue(configElement, new QName("authenticationType"));
 
-            final ConnectionConfig connectionConfig = new ConnectionConfig();
-            connectionConfig.setLdapUrl(url);
-            if (useStartTLS != null && useStartTLS.booleanValue()) {
-                connectionConfig.setUseStartTLS(true);
+            final BeanDefinitionBuilder connectionConfig =
+                    BeanDefinitionBuilder.genericBeanDefinition(ConnectionConfig.class);
+            connectionConfig.addPropertyValue("ldapUrl", url);
+            if (useStartTLS != null) {
+                connectionConfig.addPropertyValue("useStartTLS", useStartTLS);
             }
             final SslConfig sslConfig = new SslConfig();
             sslConfig.setCredentialConfig(createCredentialConfig());
-            connectionConfig.setSslConfig(sslConfig);
-            final BindConnectionInitializer connectionInitializer = new BindConnectionInitializer();
+            connectionConfig.addPropertyValue("sslConfig", sslConfig);
+            final BeanDefinitionBuilder connectionInitializer =
+                    BeanDefinitionBuilder.genericBeanDefinition(BindConnectionInitializer.class);
             if (principal != null) {
-                connectionInitializer.setBindDn(principal);
+                connectionInitializer.addPropertyValue("bindDn", principal);
             }
             if (principalCredential != null) {
-                connectionInitializer.setBindCredential(new Credential(principalCredential));
+                final BeanDefinitionBuilder credential = BeanDefinitionBuilder.genericBeanDefinition(Credential.class);
+                credential.addConstructorArgValue(principalCredential);
+                connectionInitializer.addPropertyValue("bindCredential", credential.getBeanDefinition());
             }
             if (authenticationType != null) {
                 final Mechanism mechanism = Mechanism.valueOf(authenticationType);
                 if (mechanism != null) {
                     final SaslConfig config = new SaslConfig();
                     config.setMechanism(mechanism);
-                    connectionInitializer.setBindSaslConfig(config);
+                    connectionInitializer.addPropertyValue("bindSaslConfig", config);
                 }
             }
-            if (!connectionInitializer.isEmpty()) {
-                connectionConfig.setConnectionInitializer(connectionInitializer);
+            if (principal != null || principalCredential != null || authenticationType != null) {
+                connectionConfig.addPropertyValue("connectionInitializer", connectionInitializer.getBeanDefinition());
             }
-            return connectionConfig;
+            return connectionConfig.getBeanDefinition();
         }
 
         /**
@@ -297,8 +289,8 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
          * 
          * @return the bean definition for the template search builder.
          */
-        @Nonnull public BeanDefinitionBuilder createTemplateBuilder() {
-            BeanDefinitionBuilder templateBuilder =
+        @Nonnull public BeanDefinition createTemplatedExecutableSearchFilterBuilder() {
+            final BeanDefinitionBuilder templateBuilder =
                     BeanDefinitionBuilder.genericBeanDefinition(TemplatedExecutableSearchFilterBuilder.class);
 
             String velocityEngineRef = StringSupport.trimOrNull(configElement.getAttribute("templateEngine"));
@@ -320,51 +312,47 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
             templateBuilder.addPropertyValue("templateText", filter);
 
             templateBuilder.setInitMethodName("initialize");
-            return templateBuilder;
+            return templateBuilder.getBeanDefinition();
         }
 
         /**
-         * Creates a new search executor from a v2 XML configuration.
+         * Creates a new search executor bean definition from a v2 XML configuration.
          * 
-         * @return search executor
+         * @return search executor bean definition
          */
         // CheckStyle: CyclomaticComplexity OFF
-        @Nonnull public SearchExecutor createSearchExecutor() {
+        @Nonnull public BeanDefinition createSearchExecutor() {
             final String baseDn = AttributeSupport.getAttributeValue(configElement, new QName("baseDN"));
             final String searchScope = AttributeSupport.getAttributeValue(configElement, new QName("searchScope"));
             final String searchTimeLimit =
                     AttributeSupport.getAttributeValue(configElement, new QName("searchTimeLimit"));
             final String maxResultSize = AttributeSupport.getAttributeValue(configElement, new QName("maxResultSize"));
-            final Boolean mergeResults =
-                    AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(configElement, new QName(
-                            "mergeResults")));
-            final Boolean lowercaseAttributeNames =
-                    AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(configElement, new QName(
-                            "lowercaseAttributeNames")));
+            final String mergeResults = AttributeSupport.getAttributeValue(configElement, new QName("mergeResults"));
+            final String lowercaseAttributeNames =
+                    AttributeSupport.getAttributeValue(configElement, new QName("lowercaseAttributeNames"));
 
-            final SearchExecutor searchExecutor = new SearchExecutor();
-            searchExecutor.setBaseDn(baseDn);
+            final BeanDefinitionBuilder searchExecutor =
+                    BeanDefinitionBuilder.genericBeanDefinition(SearchExecutor.class);
+            searchExecutor.addPropertyValue("baseDn", baseDn);
             if (searchScope != null) {
-                searchExecutor.setSearchScope(SearchScope.valueOf(searchScope));
+                searchExecutor.addPropertyValue("searchScope", searchScope);
             }
             if (searchTimeLimit != null) {
-                searchExecutor.setTimeLimit(Long.valueOf(searchTimeLimit));
+                searchExecutor.addPropertyValue("timeLimit", searchTimeLimit);
             } else {
-                searchExecutor.setTimeLimit(3000);
+                searchExecutor.addPropertyValue("timeLimit", 3000);
             }
             if (maxResultSize != null) {
-                searchExecutor.setSizeLimit(Long.valueOf(maxResultSize));
+                searchExecutor.addPropertyValue("sizeLimit", maxResultSize);
             } else {
-                searchExecutor.setSizeLimit(1);
+                searchExecutor.addPropertyValue("sizeLimit", 1);
             }
-            if (mergeResults != null && mergeResults.booleanValue()) {
-                searchExecutor.setSearchEntryHandlers(new MergeAttributeEntryHandler());
-            }
-            if (lowercaseAttributeNames != null && lowercaseAttributeNames.booleanValue()) {
-                final CaseChangeEntryHandler entryHandler = new CaseChangeEntryHandler();
-                entryHandler.setAttributeNameCaseChange(CaseChange.LOWER);
-                searchExecutor.setSearchEntryHandlers(entryHandler);
-            }
+
+            final BeanDefinitionBuilder handlers =
+                    BeanDefinitionBuilder.rootBeanDefinition(V2Parser.class, "buildSearchEntryHandlers");
+            handlers.addConstructorArgValue(mergeResults);
+            handlers.addConstructorArgValue(lowercaseAttributeNames);
+            searchExecutor.addPropertyValue("searchEntryHandlers", handlers.getBeanDefinition());
 
             List<String> returnAttrs = null;
             final Element returnAttrsElement =
@@ -373,29 +361,33 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
             if (returnAttrsElement != null) {
                 returnAttrs = ElementSupport.getElementContentAsList(returnAttrsElement);
                 if (returnAttrs != null && !returnAttrs.isEmpty()) {
-                    searchExecutor.setReturnAttributes(returnAttrs.toArray(new String[returnAttrs.size()]));
+                    searchExecutor.addPropertyValue("returnAttributes", returnAttrs);
                 }
             }
 
-            String filter = "";
             final Element filterElement =
                     ElementSupport.getFirstChildElement(configElement, new QName(
                             DataConnectorNamespaceHandler.NAMESPACE, "FilterTemplate"));
             if (filterElement != null) {
-                filter = filterElement.getTextContent().trim();
-                searchExecutor.setSearchFilter(new SearchFilter(filter));
+                final BeanDefinitionBuilder searchFilter =
+                        BeanDefinitionBuilder.genericBeanDefinition(SearchFilter.class);
+                searchFilter.addConstructorArgValue(filterElement.getTextContent().trim());
+                searchExecutor.addPropertyValue("searchFilter", searchFilter.getBeanDefinition());
             }
 
-            return searchExecutor;
+            return searchExecutor.getBeanDefinition();
         }
+
         // CheckStyle: CyclomaticComplexity ON
 
         /**
-         * Creates a new connection pool from a v2 XML configuration.
+         * Creates a new connection pool bean definition from a v2 XML configuration.
          * 
-         * @return connection pool
+         * @param connectionFactory used by the connection pool
+         * 
+         * @return connection pool bean definition
          */
-        @Nullable public BlockingConnectionPool createConnectionPool() {
+        @Nullable public BeanDefinition createConnectionPool(final BeanDefinition connectionFactory) {
             final Element poolConfigElement =
                     ElementSupport.getFirstChildElement(configElement, new QName(
                             DataConnectorNamespaceHandler.NAMESPACE, "ConnectionPool"));
@@ -403,58 +395,69 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
                 return null;
             }
 
-            final Long blockWaitTime =
-                    AttributeSupport.getDurationAttributeValueAsLong(AttributeSupport.getAttribute(poolConfigElement,
-                            new QName("blockWaitTime")));
-            final Long expirationTime =
-                    AttributeSupport.getDurationAttributeValueAsLong(AttributeSupport.getAttribute(poolConfigElement,
-                            new QName("expirationTime")));
+            final String blockWaitTime =
+                    AttributeSupport.getAttributeValue(poolConfigElement, new QName("blockWaitTime"));
+            final String expirationTime =
+                    AttributeSupport.getAttributeValue(poolConfigElement, new QName("expirationTime"));
 
-            BlockingConnectionPool pool = null;
-            final Boolean blockWhenEmpty =
-                    AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(configElement, new QName(
-                            "blockWhenEmpty")));
-            if (blockWhenEmpty != null) {
-                if (blockWhenEmpty.booleanValue()) {
-                    pool = new BlockingConnectionPool();
-                } else {
-                    pool = new SoftLimitConnectionPool();
-                }
-            } else {
-                pool = new BlockingConnectionPool();
-            }
+            final BeanDefinitionBuilder pool =
+                    BeanDefinitionBuilder.rootBeanDefinition(V2Parser.class, "buildConnectionPool");
+            pool.addConstructorArgValue(AttributeSupport.getAttributeValue(configElement, new QName("blockWhenEmpty")));
             if (blockWaitTime != null) {
-                pool.setBlockWaitTime(blockWaitTime);
+                final BeanDefinitionBuilder duration =
+                        BeanDefinitionBuilder.rootBeanDefinition(V2Parser.class, "buildDuration");
+                duration.addConstructorArgValue(blockWaitTime);
+                duration.addConstructorArgValue(1);
+                pool.addPropertyValue("blockWaitTime", duration.getBeanDefinition());
             }
             if (expirationTime != null) {
-                pool.setPruneStrategy(new IdlePruneStrategy(expirationTime / 2000, expirationTime / 1000));
+                final BeanDefinitionBuilder period =
+                        BeanDefinitionBuilder.rootBeanDefinition(V2Parser.class, "buildDuration");
+                period.addConstructorArgValue(expirationTime);
+                period.addConstructorArgValue(2000);
+                final BeanDefinitionBuilder idle =
+                        BeanDefinitionBuilder.rootBeanDefinition(V2Parser.class, "buildDuration");
+                idle.addConstructorArgValue(expirationTime);
+                idle.addConstructorArgValue(1000);
+                final BeanDefinitionBuilder strategy =
+                        BeanDefinitionBuilder.genericBeanDefinition(IdlePruneStrategy.class);
+                strategy.addConstructorArgValue(period.getBeanDefinition());
+                strategy.addConstructorArgValue(idle.getBeanDefinition());
+                pool.addPropertyValue("pruneStrategy", strategy.getBeanDefinition());
             }
 
-            final PoolConfig poolConfig = createPoolConfig();
-            pool.setPoolConfig(poolConfig);
+            pool.addPropertyValue("poolConfig", createPoolConfig());
 
             final String validateDN = AttributeSupport.getAttributeValue(poolConfigElement, new QName("validateDN"));
             final String validateFilter =
                     AttributeSupport.getAttributeValue(poolConfigElement, new QName("validateFilter"));
 
-            final SearchValidator validator = new SearchValidator();
+            final BeanDefinitionBuilder searchRequest =
+                    BeanDefinitionBuilder.genericBeanDefinition(SearchRequest.class);
             if (validateDN != null) {
-                validator.getSearchRequest().setBaseDn(validateDN);
+                searchRequest.addPropertyValue("baseDn", validateDN);
             }
             if (validateFilter != null) {
-                validator.getSearchRequest().setSearchFilter(new SearchFilter(validateFilter));
+                final BeanDefinitionBuilder searchFilter =
+                        BeanDefinitionBuilder.genericBeanDefinition(SearchFilter.class);
+                searchFilter.addConstructorArgValue(validateFilter);
+                searchRequest.addPropertyValue("searchFilter", searchFilter.getBeanDefinition());
             }
-            pool.setValidator(validator);
+            final BeanDefinitionBuilder validator = BeanDefinitionBuilder.genericBeanDefinition(SearchValidator.class);
+            validator.addPropertyValue("searchRequest", searchRequest.getBeanDefinition());
+            pool.addPropertyValue("validator", validator.getBeanDefinition());
 
-            return pool;
+            pool.addPropertyValue("connectionFactory", connectionFactory);
+            pool.setInitMethodName("initialize");
+            return pool.getBeanDefinition();
         }
 
         /**
-         * Creates a new pool config from a v2 XML configuration.
+         * Creates a new pool config bean definition from a v2 XML configuration.
          * 
-         * @return pool config
+         * @return pool config bean definition
          */
-        @Nullable protected PoolConfig createPoolConfig() {
+        @Nullable protected BeanDefinition createPoolConfig() {
             final Element poolConfigElement =
                     ElementSupport.getFirstChildElement(configElement, new QName(
                             DataConnectorNamespaceHandler.NAMESPACE, "ConnectionPool"));
@@ -464,55 +467,108 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
 
             final String minPoolSize = AttributeSupport.getAttributeValue(poolConfigElement, new QName("minPoolSize"));
             final String maxPoolSize = AttributeSupport.getAttributeValue(poolConfigElement, new QName("maxPoolSize"));
-            final Boolean validatePeriodically =
-                    AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(poolConfigElement,
-                            new QName("validatePeriodically")));
-            final Long validateTimerPeriod =
-                    AttributeSupport.getDurationAttributeValueAsLong(AttributeSupport.getAttribute(poolConfigElement,
-                            new QName("validateTimerPeriod")));
+            final String validatePeriodically =
+                    AttributeSupport.getAttributeValue(poolConfigElement, new QName("validatePeriodically"));
+            final String validateTimerPeriod =
+                    AttributeSupport.getAttributeValue(poolConfigElement, new QName("validateTimerPeriod"));
 
-            final PoolConfig poolConfig = new PoolConfig();
+            final BeanDefinitionBuilder poolConfig = BeanDefinitionBuilder.genericBeanDefinition(PoolConfig.class);
             if (minPoolSize == null) {
                 final String poolInitialSize =
                         AttributeSupport.getAttributeValue(configElement, new QName("poolInitialSize"));
                 if (poolInitialSize != null) {
-                    poolConfig.setMinPoolSize(Integer.parseInt(poolInitialSize));
+                    poolConfig.addPropertyValue("minPoolSize", poolInitialSize);
                 } else {
-                    poolConfig.setMinPoolSize(0);
+                    poolConfig.addPropertyValue("minPoolSize", 0);
                 }
             } else {
-                poolConfig.setMinPoolSize(Integer.parseInt(minPoolSize));
+                poolConfig.addPropertyValue("minPoolSize", minPoolSize);
             }
             if (maxPoolSize == null) {
                 final String poolMaxIdleSize =
                         AttributeSupport.getAttributeValue(configElement, new QName("poolMaxIdleSize"));
                 if (poolMaxIdleSize != null) {
-                    poolConfig.setMaxPoolSize(Integer.parseInt(poolMaxIdleSize));
+                    poolConfig.addPropertyValue("maxPoolSize", poolMaxIdleSize);
                 } else {
-                    poolConfig.setMaxPoolSize(3);
+                    poolConfig.addPropertyValue("maxPoolSize", 3);
                 }
             } else {
-                poolConfig.setMaxPoolSize(Integer.parseInt(maxPoolSize));
+                poolConfig.addPropertyValue("maxPoolSize", maxPoolSize);
             }
-            if (validatePeriodically != null && validatePeriodically.booleanValue()) {
-                poolConfig.setValidatePeriodically(true);
+            if (validatePeriodically != null) {
+                poolConfig.addPropertyValue("validatePeriodically", validatePeriodically);
             }
             if (validateTimerPeriod != null) {
-                poolConfig.setValidatePeriod(validateTimerPeriod / 1000);
+                final BeanDefinitionBuilder period =
+                        BeanDefinitionBuilder.rootBeanDefinition(V2Parser.class, "buildDuration");
+                period.addConstructorArgValue(validateTimerPeriod);
+                period.addConstructorArgValue(1000);
+                poolConfig.addPropertyValue("validatePeriod", period.getBeanDefinition());
             } else {
-                poolConfig.setValidatePeriod(1800);
+                poolConfig.addPropertyValue("validatePeriod", 1800);
             }
-            return poolConfig;
+            return poolConfig.getBeanDefinition();
         }
 
         /**
-         * Create the results cache. See {@link CacheConfigParser}.
+         * Create a results cache bean definition. See {@link CacheConfigParser}.
          * 
-         * @return results cache
+         * @return results cache bean definition
          */
-        @Nullable public Cache createCache() {
+        @Nullable public BeanDefinition createCache() {
             final CacheConfigParser parser = new CacheConfigParser(configElement);
             return parser.createCache();
+        }
+
+        /**
+         * Converts the supplied duration to milliseconds and divides it by the divisor. Useful for modifying durations
+         * while resolving property replacement.
+         * 
+         * @param duration string format
+         * @param divisor to modify the duration with
+         * 
+         * @return result of the division
+         */
+        public static long buildDuration(final String duration, final long divisor) {
+            return DomTypeSupport.durationToLong(duration) / divisor;
+        }
+
+        /**
+         * Returns a soft limit connection pool if blockWhenEmpty is false, otherwise return a blocking connection pool.
+         * 
+         * @param blockWhenEmpty boolean string indicating the type of blocking connection pool
+         * 
+         * @return soft limit or blocking connection pool
+         */
+        public static BlockingConnectionPool buildConnectionPool(final String blockWhenEmpty) {
+            BlockingConnectionPool pool = null;
+            if (blockWhenEmpty == null || Boolean.valueOf(blockWhenEmpty)) {
+                pool = new BlockingConnectionPool();
+            } else {
+                pool = new SoftLimitConnectionPool();
+            }
+            return pool;
+        }
+
+        /**
+         * Factory method for handling spring property replacement.
+         * 
+         * @param mergeResults boolean string value
+         * @param lowercaseAttributeNames boolean string value
+         * @return possibly empty list of search entry handlers
+         */
+        public static List<SearchEntryHandler> buildSearchEntryHandlers(final String mergeResults,
+                final String lowercaseAttributeNames) {
+            final List<SearchEntryHandler> handlers = Lists.newArrayList();
+            if (Boolean.valueOf(mergeResults)) {
+                handlers.add(new MergeAttributeEntryHandler());
+            }
+            if (Boolean.valueOf(lowercaseAttributeNames)) {
+                final CaseChangeEntryHandler entryHandler = new CaseChangeEntryHandler();
+                entryHandler.setAttributeNameCaseChange(CaseChange.LOWER);
+                handlers.add(entryHandler);
+            }
+            return handlers;
         }
     }
 }

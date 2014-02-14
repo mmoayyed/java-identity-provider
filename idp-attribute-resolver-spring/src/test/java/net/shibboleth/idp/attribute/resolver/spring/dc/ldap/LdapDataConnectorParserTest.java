@@ -101,7 +101,25 @@ public class LdapDataConnectorParserTest {
 
     @Test public void v2Config() throws ComponentInitializationException, ServiceException, ResolutionException {
         LdapDataConnector dataConnector =
-                getLdapDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-v2.xml", false);
+                getLdapDataConnector(
+                        new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-v2.xml"}, false);
+        Assert.assertNotNull(dataConnector);
+        doTest(dataConnector);
+
+        dataConnector.initialize();
+        AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
+        Assert.assertNotNull(attrs);
+    }
+
+    @Test public void v2PropsConfig() throws ComponentInitializationException, ServiceException, ResolutionException {
+        LdapDataConnector dataConnector =
+                getLdapDataConnector(
+                        new String[] {
+                        "net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-v2-props.xml",
+                        "net/shibboleth/idp/attribute/resolver/spring/dc/ldap/PropertyPlaceholder.xml"}, true);
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
 
@@ -115,7 +133,23 @@ public class LdapDataConnectorParserTest {
 
     @Test public void springConfig() throws ComponentInitializationException, ServiceException, ResolutionException {
         LdapDataConnector dataConnector =
-                getLdapDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-spring.xml", true);
+                getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-spring.xml"}, true);
+        Assert.assertNotNull(dataConnector);
+        doTest(dataConnector);
+
+        dataConnector.initialize();
+        AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
+        Assert.assertNotNull(attrs);
+    }
+
+    @Test public void springPropsConfig() throws ComponentInitializationException, ServiceException, ResolutionException {
+        LdapDataConnector dataConnector =
+                getLdapDataConnector(
+                        new String[] {
+                        "net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-spring-props.xml"}, true);
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
 
@@ -157,14 +191,13 @@ public class LdapDataConnectorParserTest {
 
     }
 
-    protected LdapDataConnector getLdapDataConnector(final String springContext, boolean suppressValidation) {
+    protected LdapDataConnector getLdapDataConnector(final String[] beanDefinitions, boolean suppressValidation) {
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + LdapDataConnectorParserTest.class);
 
         XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
 
         configReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/velocity.xml");
-        context.refresh();
 
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
@@ -172,7 +205,8 @@ public class LdapDataConnectorParserTest {
             beanDefinitionReader.setValidating(false);
         }
 
-        beanDefinitionReader.loadBeanDefinitions(springContext);
+        beanDefinitionReader.loadBeanDefinitions(beanDefinitions);
+        context.refresh();
 
         return (LdapDataConnector) context.getBean("myLDAP");
     }

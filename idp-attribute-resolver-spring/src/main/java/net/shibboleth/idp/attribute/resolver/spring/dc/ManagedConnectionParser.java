@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
-import java.beans.PropertyVetoException;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,15 +34,15 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.ManagedMap;
 import org.w3c.dom.Element;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 /** Utility class for parsing v2 managed connection configuration. */
 public class ManagedConnectionParser {
-
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ManagedConnectionParser.class);
 
     /** Data source XML element. */
     private final Element configElement;
@@ -58,11 +58,11 @@ public class ManagedConnectionParser {
     }
 
     /**
-     * Creates a data source from a v2 XML configuration.
+     * Creates a data source bean definition from a v2 XML configuration.
      * 
-     * @return data source
+     * @return data source bean definition
      */
-    public DataSource createDataSource() {
+    public BeanDefinition createDataSource() {
         final Element containerManagedElement =
                 ElementSupport.getFirstChildElement(configElement, new QName(DataConnectorNamespaceHandler.NAMESPACE,
                         "ContainerManagedConnection"));
@@ -77,138 +77,169 @@ public class ManagedConnectionParser {
     }
 
     /**
-     * Creates a container managed data source.
+     * Creates a container managed data source bean definition.
      * 
      * @param containerManagedElement to parse
      * 
-     * @return data source
+     * @return data source bean definition
      */
-    @Nullable protected DataSource createContainerManagedDataSource(@Nonnull final Element containerManagedElement) {
+    @Nonnull protected BeanDefinition createContainerManagedDataSource(@Nonnull final Element containerManagedElement) {
         Constraint.isNotNull(containerManagedElement, "ContainerManagedConnection element cannot be null");
 
         final String resourceName =
                 AttributeSupport.getAttributeValue(containerManagedElement, new QName("resourceName"));
 
-        final Hashtable<String, String> ctxProps = new Hashtable<String, String>();
+        final ManagedMap<String, String> props = new ManagedMap<>();
         final Element propertyElement =
                 ElementSupport.getFirstChildElement(containerManagedElement, new QName(
                         DataConnectorNamespaceHandler.NAMESPACE, "JNDIConnectionProperty"));
         final List<Element> elements = ElementSupport.getChildElements(propertyElement);
         for (Element e : elements) {
-            ctxProps.put(AttributeSupport.getAttributeValue(e, new QName("name")),
+            props.put(AttributeSupport.getAttributeValue(e, new QName("name")),
                     AttributeSupport.getAttributeValue(e, new QName("value")));
         }
 
+        final BeanDefinitionBuilder dataSource =
+                BeanDefinitionBuilder.rootBeanDefinition(ManagedConnectionParser.class, "buildDataSource");
+        dataSource.addConstructorArgValue(props);
+        dataSource.addConstructorArgValue(resourceName);
+        return dataSource.getBeanDefinition();
+    }
+
+    /**
+     * Creates an application managed data source bean definition.
+     * 
+     * @param applicationManagedElement to parse
+     * 
+     * @return data source bean definition
+     */
+    // Checkstyle: CyclomaticComplexity OFF
+    // Checkstyle: MethodLength OFF
+    @Nonnull protected BeanDefinition createApplicationManagedDataSource(
+            @Nonnull final Element applicationManagedElement) {
+        Constraint.isNotNull(applicationManagedElement, "ApplicationManagedConnection element cannot be null");
+        final BeanDefinitionBuilder dataSource =
+                BeanDefinitionBuilder.genericBeanDefinition(ComboPooledDataSource.class);
+
+        final BeanDefinitionBuilder jdbcDriver =
+                BeanDefinitionBuilder.rootBeanDefinition(ManagedConnectionParser.class, "loadJdbcDriver");
+        jdbcDriver.addConstructorArgValue(AttributeSupport.getAttributeValue(applicationManagedElement, new QName(
+                "jdbcDriver")));
+        dataSource.addPropertyValue("driverClass", jdbcDriver.getBeanDefinition());
+        dataSource.addPropertyValue("jdbcUrl",
+                AttributeSupport.getAttributeValue(applicationManagedElement, new QName("jdbcURL")));
+        dataSource.addPropertyValue("user",
+                AttributeSupport.getAttributeValue(applicationManagedElement, new QName("jdbcUserName")));
+        dataSource.addPropertyValue("password",
+                AttributeSupport.getAttributeValue(applicationManagedElement, new QName("jdbcPassword")));
+
+        final String poolAcquireIncrement =
+                AttributeSupport.getAttributeValue(applicationManagedElement, new QName("poolAcquireIncrement"));
+        if (poolAcquireIncrement != null) {
+            dataSource.addPropertyValue("acquireIncrement", poolAcquireIncrement);
+        } else {
+            dataSource.addPropertyValue("acquireIncrement", 3);
+        }
+
+        final String poolAcquireRetryAttempts =
+                AttributeSupport.getAttributeValue(applicationManagedElement, new QName("poolAcquireRetryAttempts"));
+        if (poolAcquireRetryAttempts != null) {
+            dataSource.addPropertyValue("acquireRetryAttempts", poolAcquireRetryAttempts);
+        } else {
+            dataSource.addPropertyValue("acquireRetryAttempts", 36);
+        }
+
+        final String poolAcquireRetryDelay =
+                AttributeSupport.getAttributeValue(applicationManagedElement, new QName("poolAcquireRetryDelay"));
+        if (poolAcquireRetryDelay != null) {
+            dataSource.addPropertyValue("acquireRetryDelay", poolAcquireRetryDelay);
+        } else {
+            dataSource.addPropertyValue("acquireRetryDelay", 5000);
+        }
+
+        final String poolBreakAfterAcquireFailure =
+                AttributeSupport
+                        .getAttributeValue(applicationManagedElement, new QName("poolBreakAfterAcquireFailure"));
+        if (poolBreakAfterAcquireFailure != null) {
+            dataSource.addPropertyValue("breakAfterAcquireFailure", poolBreakAfterAcquireFailure);
+        } else {
+            dataSource.addPropertyValue("breakAfterAcquireFailure", true);
+        }
+
+        final String poolMinSize =
+                AttributeSupport.getAttributeValue(applicationManagedElement, new QName("poolMinSize"));
+        if (poolMinSize != null) {
+            dataSource.addPropertyValue("minPoolSize", poolMinSize);
+        } else {
+            dataSource.addPropertyValue("minPoolSize", 2);
+        }
+
+        final String poolMaxSize =
+                AttributeSupport.getAttributeValue(applicationManagedElement, new QName("poolMaxSize"));
+        if (poolMaxSize != null) {
+            dataSource.addPropertyValue("maxPoolSize", poolMaxSize);
+        } else {
+            dataSource.addPropertyValue("maxPoolSize", 50);
+        }
+
+        final String poolMaxIdleTime =
+                AttributeSupport.getAttributeValue(applicationManagedElement, new QName("poolMaxIdleTime"));
+        if (poolMaxIdleTime != null) {
+            dataSource.addPropertyValue("maxIdleTime", poolMaxIdleTime);
+        } else {
+            dataSource.addPropertyValue("maxIdleTime", 600);
+        }
+
+        final String poolIdleTestPeriod =
+                AttributeSupport.getAttributeValue(applicationManagedElement, new QName("poolIdleTestPeriod"));
+        if (poolIdleTestPeriod != null) {
+            dataSource.addPropertyValue("idleConnectionTestPeriod", poolIdleTestPeriod);
+        } else {
+            dataSource.addPropertyValue("idleConnectionTestPeriod", 180);
+        }
+
+        return dataSource.getBeanDefinition();
+    }
+
+    // Checkstyle: MethodLength ON
+    // Checkstyle: CyclomaticComplexity ON
+
+    /**
+     * Factory builder a container managed datasource.
+     *
+     * @param props to create an {@link InitialContext} with
+     * @param resourceName of the data source
+     *
+     * @return data source or null if the data source cannot be looked up
+     */
+    @Nullable public static DataSource buildDataSource(final Map<String, String> props, final String resourceName) {
         try {
-            final InitialContext initCtx = new InitialContext(ctxProps);
+            final InitialContext initCtx = new InitialContext(new Hashtable<String, String>(props));
             final DataSource dataSource = (DataSource) initCtx.lookup(resourceName);
             return dataSource;
         } catch (NamingException e) {
+            final Logger log = LoggerFactory.getLogger(ManagedConnectionParser.class);
+            log.error("Managed data source could not be found", e);
             return null;
         }
     }
 
     /**
-     * Creates an application managed data source.
-     * 
-     * @param applicationManagedElement to parse
-     * 
-     * @return data source
+     * Loads the supplied JDBC driver class into the classloader for this class.
+     *
+     * @param jdbcDriver to load
+     *
+     * @return the jdbc driver supplied to the method
      */
-    // Checkstyle: CyclomaticComplexity OFF
-    // Checkstyle: MethodLength OFF
-    @Nonnull protected DataSource createApplicationManagedDataSource(@Nonnull final Element applicationManagedElement) {
-        Constraint.isNotNull(applicationManagedElement, "ApplicationManagedConnection element cannot be null");
-        final ComboPooledDataSource datasource = new ComboPooledDataSource();
-
-        final String jdbcDriver =
-                AttributeSupport.getAttributeValue(applicationManagedElement, new QName("jdbcDriver"));
+    public static String loadJdbcDriver(final String jdbcDriver) {
         // JDBC driver must be loaded in order to register itself
-        final ClassLoader classLoader = getClass().getClassLoader();
+        final ClassLoader classLoader = ManagedConnectionParser.class.getClassLoader();
         try {
             classLoader.loadClass(jdbcDriver);
         } catch (ClassNotFoundException e) {
-            log.error("JDBC driver could not be found");
+            final Logger log = LoggerFactory.getLogger(ManagedConnectionParser.class);
+            log.error("JDBC driver could not be found", e);
         }
-        try {
-            datasource.setDriverClass(jdbcDriver);
-            datasource.setJdbcUrl(AttributeSupport.getAttributeValue(applicationManagedElement, new QName("jdbcURL")));
-            datasource
-                    .setUser(AttributeSupport.getAttributeValue(applicationManagedElement, new QName("jdbcUserName")));
-            datasource.setPassword(AttributeSupport.getAttributeValue(applicationManagedElement, new QName(
-                    "jdbcPassword")));
-
-            final String poolAcquireIncrement =
-                    AttributeSupport.getAttributeValue(applicationManagedElement, new QName("poolAcquireIncrement"));
-            if (poolAcquireIncrement != null) {
-                datasource.setAcquireIncrement(Integer.parseInt(poolAcquireIncrement));
-            } else {
-                datasource.setAcquireIncrement(3);
-            }
-
-            final String poolAcquireRetryAttempts =
-                    AttributeSupport
-                            .getAttributeValue(applicationManagedElement, new QName("poolAcquireRetryAttempts"));
-            if (poolAcquireRetryAttempts != null) {
-                datasource.setAcquireRetryAttempts(Integer.parseInt(poolAcquireRetryAttempts));
-            } else {
-                datasource.setAcquireRetryAttempts(36);
-            }
-
-            final String poolAcquireRetryDelay =
-                    AttributeSupport.getAttributeValue(applicationManagedElement, new QName("poolAcquireRetryDelay"));
-            if (poolAcquireRetryDelay != null) {
-                datasource.setAcquireRetryDelay(Integer.parseInt(poolAcquireRetryDelay));
-            } else {
-                datasource.setAcquireRetryDelay(5000);
-            }
-
-            final Boolean poolBreakAfterAcquireFailure =
-                    AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(
-                            applicationManagedElement, new QName("poolBreakAfterAcquireFailure")));
-            if (poolBreakAfterAcquireFailure != null) {
-                datasource.setBreakAfterAcquireFailure(poolBreakAfterAcquireFailure);
-            } else {
-                datasource.setBreakAfterAcquireFailure(true);
-            }
-
-            final String poolMinSize =
-                    AttributeSupport.getAttributeValue(applicationManagedElement, new QName("poolMinSize"));
-            if (poolMinSize != null) {
-                datasource.setMinPoolSize(Integer.parseInt(poolMinSize));
-            } else {
-                datasource.setMinPoolSize(2);
-            }
-
-            final String poolMaxSize =
-                    AttributeSupport.getAttributeValue(applicationManagedElement, new QName("poolMaxSize"));
-            if (poolMaxSize != null) {
-                datasource.setMaxPoolSize(Integer.parseInt(poolMaxSize));
-            } else {
-                datasource.setMaxPoolSize(50);
-            }
-
-            final String poolMaxIdleTime =
-                    AttributeSupport.getAttributeValue(applicationManagedElement, new QName("poolMaxIdleTime"));
-            if (poolMaxIdleTime != null) {
-                datasource.setMaxIdleTime(Integer.parseInt(poolMaxIdleTime));
-            } else {
-                datasource.setMaxIdleTime(600);
-            }
-
-            final String poolIdleTestPeriod =
-                    AttributeSupport.getAttributeValue(applicationManagedElement, new QName("poolIdleTestPeriod"));
-            if (poolIdleTestPeriod != null) {
-                datasource.setIdleConnectionTestPeriod(Integer.parseInt(poolIdleTestPeriod));
-            } else {
-                datasource.setIdleConnectionTestPeriod(180);
-            }
-        } catch (PropertyVetoException e) {
-            log.error("Error setting data source property", e);
-        }
-
-        return datasource;
+        return jdbcDriver;
     }
-    // Checkstyle: MethodLength ON
-    // Checkstyle: CyclomaticComplexity ON
 }

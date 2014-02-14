@@ -27,8 +27,11 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
+import net.shibboleth.utilities.java.support.xml.DomTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.w3c.dom.Element;
 
 import com.google.common.cache.Cache;
@@ -51,32 +54,47 @@ public class CacheConfigParser {
     }
 
     /**
-     * Creates a new cache from a v2 XML configuration.
+     * Creates a new cache bean definition from a v2 XML configuration.
      * 
+     * @return cache bean definition
+     */
+    @Nonnull public BeanDefinition createCache() {
+        final String defaultCache = AttributeSupport.getAttributeValue(configElement, new QName("cacheResults"));
+        String timeToLive = null;
+        String maximumSize = null;
+        final Element cacheElement =
+                ElementSupport.getFirstChildElement(configElement, new QName(DataConnectorNamespaceHandler.NAMESPACE,
+                        "ResultCache"));
+        if (cacheElement != null) {
+            timeToLive = AttributeSupport.getAttributeValue(cacheElement, new QName("elementTimeToLive"));
+            maximumSize = AttributeSupport.getAttributeValue(cacheElement, new QName("maximumCachedElements"));
+        }
+        final BeanDefinitionBuilder cache =
+                BeanDefinitionBuilder.rootBeanDefinition(CacheConfigParser.class, "buildCache");
+        cache.addConstructorArgValue(defaultCache);
+        cache.addConstructorArgValue(timeToLive);
+        cache.addConstructorArgValue(maximumSize);
+        return cache.getBeanDefinition();
+    }
+
+    /**
+     * Factory method to leverage spring property replacement functionality. The default cache produced has a max size
+     * of 500 and an expiration time of 4 hours.
+     * 
+     * @param defaultCache boolean string indicating whether a default cache should be returned
+     * @param timeToLive duration string
+     * @param maximumSize long string
      * @return cache
      */
-    @Nullable public Cache<String, Map<String, IdPAttribute>> createCache() {
-        final Element cacheElement =
-                ElementSupport.getFirstChildElement(configElement, new QName(
-                        DataConnectorNamespaceHandler.NAMESPACE, "ResultCache"));
-        if (cacheElement == null) {
-            final Boolean cacheResults =
-                    AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(configElement,
-                            new QName("cacheResults")));
-            if (cacheResults != null && cacheResults.booleanValue()) {
-                return CacheBuilder.newBuilder().maximumSize(500).expireAfterAccess(4 * 60 * 60, TimeUnit.SECONDS)
-                        .build();
-            } else {
-                return null;
-            }
+    @Nullable public static Cache<String, Map<String, IdPAttribute>> buildCache(final String defaultCache,
+            final String timeToLive, final String maximumSize) {
+        if (Boolean.valueOf(defaultCache)) {
+            return CacheBuilder.newBuilder().maximumSize(500).expireAfterAccess(4, TimeUnit.HOURS).build();
         }
-
-        final Long timeToLive =
-                AttributeSupport.getDurationAttributeValueAsLong(AttributeSupport.getAttribute(cacheElement,
-                        new QName("elementTimeToLive")));
-        final String maximumSize =
-                AttributeSupport.getAttributeValue(cacheElement, new QName("maximumCachedElements"));
-        return CacheBuilder.newBuilder().maximumSize(Long.parseLong(maximumSize))
-                .expireAfterAccess(timeToLive, TimeUnit.MILLISECONDS).build();
+        if (timeToLive != null && maximumSize != null) {
+            return CacheBuilder.newBuilder().maximumSize(Long.parseLong(maximumSize))
+                    .expireAfterAccess(DomTypeSupport.durationToLong(timeToLive), TimeUnit.MILLISECONDS).build();
+        }
+        return null;
     }
 }
