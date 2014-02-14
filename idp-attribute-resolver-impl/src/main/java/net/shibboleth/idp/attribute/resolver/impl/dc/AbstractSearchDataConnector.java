@@ -164,11 +164,13 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
      * 
      * @param cache cache used to cache search results
      */
-    public void setResultsCache(@Nonnull final Cache<String, Map<String, IdPAttribute>> cache) {
+    public void setResultsCache(@Nullable final Cache<String, Map<String, IdPAttribute>> cache) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        cache.invalidateAll();
+        if (cache != null) {
+            cache.invalidateAll();
+        }
         resultsCache = cache;
     }
 
