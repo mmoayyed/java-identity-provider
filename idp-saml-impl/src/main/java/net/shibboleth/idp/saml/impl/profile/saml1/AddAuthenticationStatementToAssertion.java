@@ -78,7 +78,7 @@ import com.google.common.base.Functions;
  * @event {@link IdPEventIds#INVALID_PROFILE_CONFIG}
  * @event {@link AuthnEventIds#INVALID_AUTHN_CTX}
  */
-public class AddAuthenticationStatementToAssertion extends AbstractAuthenticationAction<Object, Response> {
+public class AddAuthenticationStatementToAssertion extends AbstractAuthenticationAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AddAuthenticationStatementToAssertion.class);
@@ -95,7 +95,7 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
     @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
 
     /** Strategy used to locate the {@link Response} to operate on. */
-    @Nonnull private Function<ProfileRequestContext<Object,Response>, Response> responseLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext, Response> responseLookupStrategy;
 
     /** Strategy used to determine the AuthenticationMethod attribute. */
     @Nonnull private Function<ProfileRequestContext, AuthenticationMethodPrincipal> methodLookupStrategy;
@@ -115,7 +115,7 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
 
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
         responseLookupStrategy =
-                Functions.compose(new MessageLookup<Response>(), new OutboundMessageContextLookup<Response>());
+                Functions.compose(new MessageLookup<>(Response.class), new OutboundMessageContextLookup());
         methodLookupStrategy = new DefaultPrincipalDeterminationStrategy<>(AuthenticationMethodPrincipal.class,
                 new AuthenticationMethodPrincipal(AuthenticationStatement.UNSPECIFIED_AUTHN_METHOD));
     }
@@ -154,7 +154,7 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
      * @param strategy strategy used to locate the {@link Response} to operate on
      */
     public synchronized void setResponseLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext<Object,Response>, Response> strategy) {
+            @Nonnull final Function<ProfileRequestContext, Response> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         responseLookupStrategy = Constraint.isNotNull(strategy, "Response lookup strategy cannot be null");
@@ -174,8 +174,7 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
     
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(
-            @Nonnull final ProfileRequestContext<Object, Response> profileRequestContext,
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         log.debug("{} Attempting to add an AuthenticationStatement to outgoing Response", getLogPrefix());
 
@@ -210,8 +209,7 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
     
     /** {@inheritDoc} */
     @Override
-    protected void doExecute(
-            @Nonnull final ProfileRequestContext<Object, Response> profileRequestContext,
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
         final Assertion assertion = getStatementAssertion();
@@ -227,7 +225,7 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
      * 
      * @return the assertion to which the attribute statement will be added
      */
-    private Assertion getStatementAssertion() {
+    @Nonnull private Assertion getStatementAssertion() {
         if (statementInOwnAssertion || response.getAssertions().isEmpty()) {
             return SAML1ActionSupport.addAssertionToResponse(this, relyingPartyCtx, response);
         } else {

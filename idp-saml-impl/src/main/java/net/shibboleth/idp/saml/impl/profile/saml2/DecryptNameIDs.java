@@ -97,7 +97,7 @@ public class DecryptNameIDs extends AbstractProfileAction {
     public DecryptNameIDs() {
         errorFatal = true;
         securityParamsLookupStrategy = new ChildContextLookup<>(SecurityParametersContext.class, false);
-        messageLookupStrategy = Functions.compose(new MessageLookup(), new InboundMessageContextLookup());
+        messageLookupStrategy = Functions.compose(new MessageLookup<>(Object.class), new InboundMessageContextLookup());
     }
     
     /**
@@ -165,7 +165,7 @@ public class DecryptNameIDs extends AbstractProfileAction {
         return super.doPreExecute(profileRequestContext);
     }
     
-    // Checkstyle: CyclomaticComplexity OFF
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
@@ -203,7 +203,7 @@ public class DecryptNameIDs extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, SAMLEventIds.DECRYPT_NAMEID_FAILED);
         }
     }
-    // Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity ON
     
     /**
      * Decrypt an {@link EncryptedID} and return the result.

@@ -77,7 +77,7 @@ import com.google.common.collect.Lists;
  * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
  * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CONFIG}
  */
-public class AddStatusToResponse extends AbstractProfileAction<Object, Response> {
+public class AddStatusToResponse extends AbstractProfileAction {
 
     /** Class logger. */
     @Nonnull private Logger log = LoggerFactory.getLogger(AddStatusToResponse.class);
@@ -88,7 +88,7 @@ public class AddStatusToResponse extends AbstractProfileAction<Object, Response>
     @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
 
     /** Strategy used to locate the {@link Response} to operate on. */
-    @Nonnull private Function<ProfileRequestContext<Object,Response>, Response> responseLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext, Response> responseLookupStrategy;
     
     /** One or more status codes to insert. */
     @Nonnull @NonnullElements private List<String> statusCodes;
@@ -112,7 +112,7 @@ public class AddStatusToResponse extends AbstractProfileAction<Object, Response>
     public AddStatusToResponse() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
         responseLookupStrategy =
-                Functions.compose(new MessageLookup<Response>(), new OutboundMessageContextLookup<Response>());
+                Functions.compose(new MessageLookup<>(Response.class), new OutboundMessageContextLookup());
         statusCodes = Collections.emptyList();
         statusMessageFromEvent = true;
         detailedStatus = false;
@@ -139,7 +139,7 @@ public class AddStatusToResponse extends AbstractProfileAction<Object, Response>
      * @param strategy strategy used to locate the {@link Response} to operate on
      */
     public synchronized void setResponseLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext<Object,Response>, Response> strategy) {
+            @Nonnull final Function<ProfileRequestContext, Response> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         responseLookupStrategy = Constraint.isNotNull(strategy, "Response lookup strategy cannot be null");
@@ -186,8 +186,7 @@ public class AddStatusToResponse extends AbstractProfileAction<Object, Response>
     
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext<Object, Response> profileRequestContext)
-            throws ProfileException {
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         response = responseLookupStrategy.apply(profileRequestContext);
@@ -218,8 +217,7 @@ public class AddStatusToResponse extends AbstractProfileAction<Object, Response>
     
     /** {@inheritDoc} */
     @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext<Object, Response> profileRequestContext)
-            throws ProfileException {
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
         final SAMLObjectBuilder<Status> statusBuilder = (SAMLObjectBuilder<Status>)
                 XMLObjectProviderRegistrySupport.getBuilderFactory().<Status>getBuilderOrThrow(Status.TYPE_NAME);

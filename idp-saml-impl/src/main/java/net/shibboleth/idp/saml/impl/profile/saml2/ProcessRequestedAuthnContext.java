@@ -61,13 +61,13 @@ import com.google.common.collect.Lists;
  * 
  * @post ProfileRequestContext.
  */
-public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction<AuthnRequest, Object> {
+public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ProcessRequestedAuthnContext.class);
     
     /** Lookup strategy function for obtaining {@link AuthnRequest}. */
-    @Nonnull private Function<ProfileRequestContext<AuthnRequest, Object>, AuthnRequest> authnRequestLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext, AuthnRequest> authnRequestLookupStrategy;
 
     /** The request message to read from. */
     @Nullable private AuthnRequest authnRequest;
@@ -75,7 +75,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction<A
     /** Constructor. */
     public ProcessRequestedAuthnContext() {
         authnRequestLookupStrategy =
-                Functions.compose(new MessageLookup<AuthnRequest>(), new InboundMessageContextLookup<AuthnRequest>());
+                Functions.compose(new MessageLookup<>(AuthnRequest.class), new InboundMessageContextLookup());
     }
 
     /**
@@ -84,7 +84,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction<A
      * @param strategy lookup strategy
      */
     public synchronized void setAuthnRequestLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext<AuthnRequest,Object>, AuthnRequest> strategy) {
+            @Nonnull final Function<ProfileRequestContext, AuthnRequest> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         authnRequestLookupStrategy = Constraint.isNotNull(strategy, "AuthnRequest lookup strategy cannot be null");
@@ -92,7 +92,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction<A
     
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext<AuthnRequest, Object> profileRequestContext,
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 

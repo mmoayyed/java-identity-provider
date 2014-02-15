@@ -65,7 +65,7 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
     @Positive @Duration private final long sessionLifetime;
     
     /** Response lookup strategy. */
-    @Nonnull private Function<ProfileRequestContext<Object, Response>, Response> responseLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext, Response> responseLookupStrategy;
     
     /**
      * Constructor.
@@ -76,7 +76,7 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
     public SAML2SPSessionCreationStrategy(@Positive @Duration final long lifetime) {
         sessionLifetime = Constraint.isGreaterThan(0, lifetime, "Lifetime must be greater than 0");
         responseLookupStrategy =
-                Functions.compose(new MessageLookup<Response>(), new OutboundMessageContextLookup<Response>());
+                Functions.compose(new MessageLookup<>(Response.class), new OutboundMessageContextLookup());
     }
 
     /** {@inheritDoc} */
