@@ -28,9 +28,6 @@
     <!-- Do not log exception when bean definition class is a property and root level is DEBUG. -->
     <logger name="org.springframework.beans.factory.support.DefaultListableBeanFactory" level="INFO" />
 
-    <!-- Do not log exception when schemaLocation begins with 'classpath:' and root level is DEBUG. -->
-    <logger name="org.springframework.beans.factory.xml.ResourceEntityResolver" level="INFO" />
-
     <!-- Do not log exception when bean definition class is a property and root level is DEBUG. -->
     <logger name="org.springframework.context.annotation.ConfigurationClassUtils" level="INFO" />
 
