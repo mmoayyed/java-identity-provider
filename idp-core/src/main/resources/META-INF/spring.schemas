@@ -2,9 +2,6 @@
 http\://shibboleth.net/schema/idp/shibboleth-security.xsd = schema/shibboleth-security.xsd
 classpath\:/schema/shibboleth-2.0-security.xsd = schema/shibboleth-security.xsd
 
-# This mapping seems to be missing from SWF jar.
-http\://www.springframework.org/schema/webflow/spring-webflow.xsd = org/springframework/webflow/engine/model/builder/xml/spring-webflow-2.0.xsd
-
 # These need to be somewhere, leaving here for want of a better choice for now.
 
 http\://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd = schema/xmldsig-core-schema.xsd
