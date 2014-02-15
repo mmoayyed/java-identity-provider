@@ -60,13 +60,17 @@ import com.google.common.collect.Maps;
  * A base class for authentication related actions that validate credentials and produce an
  * {@link AuthenticationResult}.
  * 
+ * @param <InboundMessageType> type of in-bound message
+ * @param <OutboundMessageType> type of out-bound message
+ * 
  * @event {@link AuthnEventIds#REQUEST_UNSUPPORTED}
  */
-public abstract class AbstractValidationAction extends AbstractAuthenticationAction
-    implements PrincipalSupportingComponent {
+public abstract class AbstractValidationAction<InboundMessageType, OutboundMessageType>
+        extends AbstractAuthenticationAction<InboundMessageType, OutboundMessageType>
+            implements PrincipalSupportingComponent {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AbstractValidationAction.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractValidationAction.class);
     
     /** Basis for {@link AuthenticationResult}. */
     @Nonnull private final Subject authenticatedSubject;
@@ -85,8 +89,6 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
     
     /** Constructor. */
     public AbstractValidationAction() {
-        super();
-
         authenticatedSubject = new Subject();
         clearErrorContext = true;
         classifiedMessages = Collections.emptyMap();
@@ -141,6 +143,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
     }
     
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NonnullElements @Unmodifiable @NotLive public <T extends Principal> Set<T> getSupportedPrincipals(
             @Nonnull final Class<T> c) {
         return authenticatedSubject.getPrincipals(c);
@@ -173,7 +176,8 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
 
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+    protected boolean doPreExecute(
+            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         
         // If the request mandates particular principals, evaluate this validating component to see if it
@@ -226,7 +230,8 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * 
      * @throws AuthenticationException thrown if there is a problem performing the authentication action
      */
-    protected void buildAuthenticationResult(@Nonnull final ProfileRequestContext profileRequestContext,
+    protected void buildAuthenticationResult(
+            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
         
         if (!principalsAdded && authenticationContext.getAttemptedFlow() != null) {
@@ -277,7 +282,8 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @param eventId the event to "return" via an {@link org.opensaml.profile.context.EventContext} if
      *  the exception message is not classified
      */
-    protected void handleError(@Nonnull final ProfileRequestContext profileRequestContext,
+    protected void handleError(
+            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext, @Nonnull final Exception e,
             @Nonnull @NotEmpty final String eventId) {
 
@@ -303,7 +309,8 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @param eventId the event to "return" via an {@link org.opensaml.profile.context.EventContext} if
      *  the message is not classified
      */
-    protected void handleError(@Nonnull final ProfileRequestContext profileRequestContext,
+    protected void handleError(
+            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext, @Nonnull @NotEmpty final String message,
             @Nonnull @NotEmpty final String eventId) {
         
@@ -344,7 +351,8 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @param eventId the event to "return" via an {@link org.opensaml.profile.context.EventContext} if
      *  the message is not classified
      */
-    protected void handleWarning(@Nonnull final ProfileRequestContext profileRequestContext,
+    protected void handleWarning(
+            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext, @Nonnull @NotEmpty final String message,
             @Nonnull @NotEmpty final String eventId) {
         

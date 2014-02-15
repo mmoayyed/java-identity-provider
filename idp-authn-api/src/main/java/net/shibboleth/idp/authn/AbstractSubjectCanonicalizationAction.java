@@ -54,12 +54,16 @@ import com.google.common.base.Function;
  * Authentication action implementations should override
  * {@link #doExecute(ProfileRequestContext, SubjectCanonicalizationContext)}
  * 
+ * @param <InboundMessageType> type of in-bound message
+ * @param <OutboundMessageType> type of out-bound message
+ * 
  * @event {@link AuthnEventIds#INVALID_SUBJECT_C14N_CTX}
  */
-public abstract class AbstractSubjectCanonicalizationAction extends AbstractProfileAction {
+public abstract class AbstractSubjectCanonicalizationAction<InboundMessageType, OutboundMessageType>
+        extends AbstractProfileAction<InboundMessageType, OutboundMessageType> {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AbstractSubjectCanonicalizationAction.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractSubjectCanonicalizationAction.class);
     
     /**
      * Strategy used to find the {@link SubjectCanonicalizationContext} from the
@@ -156,7 +160,9 @@ public abstract class AbstractSubjectCanonicalizationAction extends AbstractProf
     
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected boolean doPreExecute(
+            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
+                    throws ProfileException {
         scContext = scCtxLookupStrategy.apply(profileRequestContext);
         if (scContext == null) {
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
@@ -181,14 +187,17 @@ public abstract class AbstractSubjectCanonicalizationAction extends AbstractProf
      * 
      * @throws SubjectCanonicalizationException thrown if there is a problem performing the authentication action
      */
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+    protected boolean doPreExecute(
+            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
             @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
         return c14nContext.getSubject() != null;
     }
     
     /** {@inheritDoc} */
     @Override
-    protected final void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected final void doExecute(
+            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
+                    throws ProfileException {
         doExecute(profileRequestContext, scContext);
     }
 
@@ -200,7 +209,8 @@ public abstract class AbstractSubjectCanonicalizationAction extends AbstractProf
      * 
      * @throws SubjectCanonicalizationException thrown if there is a problem performing the authentication action
      */
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+    protected void doExecute(
+            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
             @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
         throw new UnsupportedOperationException("This action is not implemented");
     }

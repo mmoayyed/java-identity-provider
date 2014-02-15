@@ -40,12 +40,16 @@ import org.slf4j.LoggerFactory;
  * A base class for authentication actions that extract usernames for subsequent use.
  * 
  * <p>The base class adds a common mechanism for applying regular expression transforms to
- * the username prior to being added to the context tree. 
+ * the username prior to being added to the context tree.</p>
+ *  
+ * @param <InboundMessageType> type of in-bound message
+ * @param <OutboundMessageType> type of out-bound message
  */
-public abstract class AbstractExtractionAction extends AbstractAuthenticationAction {
+public abstract class AbstractExtractionAction<InboundMessageType, OutboundMessageType>
+        extends AbstractAuthenticationAction<InboundMessageType, OutboundMessageType> {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AbstractExtractionAction.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractExtractionAction.class);
     
     /** Match patterns and replacement strings to apply. */
     @Nonnull @NonnullElements private List<Pair<Pattern,String>> transforms;
@@ -61,8 +65,6 @@ public abstract class AbstractExtractionAction extends AbstractAuthenticationAct
     
     /** Constructor. */
     public AbstractExtractionAction() {
-        super();
-
         transforms = Collections.emptyList();
         
         uppercase = false;
