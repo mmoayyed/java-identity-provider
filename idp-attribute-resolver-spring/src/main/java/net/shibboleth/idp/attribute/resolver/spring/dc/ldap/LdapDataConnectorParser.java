@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc.ldap;
 
-import java.util.List;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -84,11 +84,13 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
     private final Logger log = LoggerFactory.getLogger(LdapDataConnectorParser.class);
 
     /** {@inheritDoc} */
+    @Override
     protected Class<LdapDataConnector> getBeanClass(@Nullable final Element element) {
         return LdapDataConnector.class;
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
@@ -177,7 +179,7 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
             pooledConnectionFactory.addConstructorArgValue(connectionPool);
             builder.addPropertyValue("connectionFactory", pooledConnectionFactory.getBeanDefinition());
         } else {
-            builder.addPropertyValue("connectionFactory", connectionFactory);
+            builder.addPropertyValue("connectionFactory", connectionFactory.getBeanDefinition());
         }
 
         final BeanDefinition searchExecutor = v2Parser.createSearchExecutor();
