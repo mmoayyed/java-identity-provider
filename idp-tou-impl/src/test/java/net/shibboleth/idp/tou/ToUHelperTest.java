@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
  */
 
 @ContextConfiguration("classpath:/tou-test-context.xml")
-@Test(dataProviderClass = TestData.class)
+@Test(dataProviderClass = TestData.class, enabled=false)
 public class ToUHelperTest extends AbstractTestNGSpringContextTests {
 
     @Resource(name = "tou.config.touMap")

@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
 @Test(dataProviderClass = TestData.class)
 public class UserTest {
 
-    @Test(dataProvider = "userRelyingPartyIdAttributesDateAttributes")
+    @Test(dataProvider = "userRelyingPartyIdAttributesDateAttributes", enabled=false)
     public void hasApprovedAttributes(final User user, final String relyingPartyId,
             final Collection<IdPAttribute> approvedAttributes, final DateTime date,
             final Collection<IdPAttribute> notApprovedAttributes) {

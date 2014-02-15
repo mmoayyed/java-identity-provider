@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
  * Tests ToU.
  */
 
-@Test
+@Test(enabled=false)
 @ContextConfiguration("classpath:/tou-test-context.xml")
 public class ToUTest extends AbstractTestNGSpringContextTests {
 

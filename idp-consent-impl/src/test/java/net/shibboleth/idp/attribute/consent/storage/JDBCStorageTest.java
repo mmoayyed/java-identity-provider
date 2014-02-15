@@ -58,7 +58,7 @@ public class JDBCStorageTest extends AbstractStorageTest {
 
     /** {@inheritDoc} */
     @Override
-    @Test(dependsOnMethods = {"setup"})
+    @Test(dependsOnMethods = {"setup"}, enabled=false)
     public void initialization() {
         setStorage(jdbcStorage);
     }

@@ -40,7 +40,7 @@ import org.testng.annotations.Test;
  */
 
 @ContextConfiguration("classpath:/consent-test-context.xml")
-@Test(dataProviderClass = TestData.class)
+@Test(dataProviderClass = TestData.class, enabled=false)
 public class LocalizationHelperTest extends AbstractTestNGSpringContextTests {
 
     @Resource(name = "consent.config.localizationHelper")
@@ -72,7 +72,7 @@ public class LocalizationHelperTest extends AbstractTestNGSpringContextTests {
         assertNull(localizationHelper.selectLocale(availableLocales, Locale.ITALIAN));
     }
 
-    @Test(dataProvider = "metadataProviderRelyingPartyId")
+    @Test(dataProvider = "metadataProviderRelyingPartyId", enabled=false)
     public void getRelyingPartyNameAndDescription(MetadataResolver metadataResolver, String relyingPartyId) {
 
         localizationHelper.setPreferredLocale(Locale.ENGLISH);
@@ -95,7 +95,7 @@ public class LocalizationHelperTest extends AbstractTestNGSpringContextTests {
         assertEquals("", localizationHelper.getRelyingPartyDescription(relyingPartyId, Locale.GERMAN));
     }
 
-    @Test(dataProvider = "attributesLocaleLocale")
+    @Test(dataProvider = "attributesLocaleLocale", enabled=false)
     public void getAttributeNameAndDescription(Collection<IdPAttribute> attributes, Locale locale, Locale otherLocale) {
         localizationHelper.setLocaleEnforcement(false);
 

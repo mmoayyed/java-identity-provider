@@ -38,7 +38,7 @@ public class ToUAcceptanceTest extends AbstractTestNGSpringContextTests {
     @javax.annotation.Resource(name = "tou")
     private ToU tou;
 
-    @Test(dataProvider = "date")
+    @Test(dataProvider = "date", enabled=false)
     public void createToUAcceptance(final DateTime date) {
         final ToUAcceptance touAcceptance = ToUAcceptance.createToUAcceptance(tou, date);
         assertEquals(tou.getVersion(), touAcceptance.getVersion());
@@ -47,6 +47,7 @@ public class ToUAcceptanceTest extends AbstractTestNGSpringContextTests {
         assertEquals(date, touAcceptance.getAcceptanceDate());
     }
 
+    @Test(enabled=false)
     public void emptyToUAcceptance() {
         final ToUAcceptance touAcceptance = ToUAcceptance.emptyToUAcceptance();
         assertEquals("", touAcceptance.getVersion());
@@ -54,7 +55,7 @@ public class ToUAcceptanceTest extends AbstractTestNGSpringContextTests {
         assertNull(touAcceptance.getAcceptanceDate());
     }
 
-    @Test(dataProvider = "touAcceptance")
+    @Test(dataProvider = "touAcceptance", enabled=false)
     public void contains(final ToUAcceptance otherToUAcceptance) {
         final ToUAcceptance touAcceptance = ToUAcceptance.createToUAcceptance(tou, new DateTime());
         final ToUAcceptance emptyToUAcceptance = ToUAcceptance.emptyToUAcceptance();

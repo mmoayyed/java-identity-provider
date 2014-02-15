@@ -28,13 +28,12 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 @ContextConfiguration("classpath:/tou-test-context.xml")
 @Test(dataProviderClass = TestData.class)
-public abstract class AbstractStorageTest extends AbstractTransactionalTestNGSpringContextTests {
+public abstract class AbstractStorageTest /* extends AbstractTransactionalTestNGSpringContextTests */ {
 
     protected final Logger logger = LoggerFactory.getLogger("Test");
 
@@ -47,7 +46,7 @@ public abstract class AbstractStorageTest extends AbstractTransactionalTestNGSpr
     @BeforeTest
     public abstract void initialization();
 
-    @Test(dataProvider = "userIdVersionFingerprintDate")
+    @Test(dataProvider = "userIdVersionFingerprintDate", enabled=false)
     public void crudToUAcceptance(final String userId, final String version, final String fingerprint,
             final DateTime date) {
         assertFalse(storage.containsToUAcceptance(userId, version));

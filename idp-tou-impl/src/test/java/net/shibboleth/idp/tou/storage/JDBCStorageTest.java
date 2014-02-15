@@ -33,12 +33,8 @@ package net.shibboleth.idp.tou.storage;
  * limitations under the License.
  */
 
-import javax.annotation.Resource;
-
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.Test;
+import org.testng.annotations.BeforeTest;
 
 /**
  * Tests JDBC storage using the Spring JDBC framework.
@@ -47,20 +43,12 @@ import org.testng.annotations.Test;
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 public class JDBCStorageTest extends AbstractStorageTest {
 
-    @Resource(name = "tou.storage.jdbc")
-    private JDBCStorage jdbcStorage;
-
-    @Parameters("tou.schema")
-    @Rollback(false)
-    public void setup(final String jdbcSchema) {
-        super.executeSqlScript(jdbcSchema, false);
-    }
-
     /** {@inheritDoc} */
     @Override
-    @Test(dependsOnMethods = {"setup"})
-    public void initialization() {
-        setStorage(jdbcStorage);
+    @BeforeTest public void initialization() {
+        // TODO Auto-generated method stub
+        
     }
+ 
 
 }

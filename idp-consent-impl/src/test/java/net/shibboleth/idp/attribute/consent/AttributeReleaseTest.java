@@ -36,7 +36,7 @@ import org.testng.annotations.Test;
 @Test(dataProviderClass = TestData.class)
 public class AttributeReleaseTest {
 
-    @Test(dataProvider = "attributesDate")
+    @Test(dataProvider = "attributesDate", enabled=false)
     public void createAttributeReleases(Collection<IdPAttribute> attributes, DateTime date) {
         Collection<AttributeRelease> attributeReleases = AttributeRelease.createAttributeReleases(attributes, date);
 
@@ -51,7 +51,7 @@ public class AttributeReleaseTest {
         }
     }
 
-    @Test(dataProvider = "attributesDateAttribute")
+    @Test(dataProvider = "attributesDateAttribute", enabled=false)
     public void contains(Collection<IdPAttribute> attributes, DateTime date, IdPAttribute otherAttribute) {
         Collection<AttributeRelease> attributeReleases = AttributeRelease.createAttributeReleases(attributes, date);
 

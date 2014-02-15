@@ -41,7 +41,7 @@ import org.testng.annotations.Test;
  */
 
 @ContextConfiguration("classpath:/consent-test-context.xml")
-@Test(dataProviderClass = TestData.class)
+@Test(dataProviderClass = TestData.class, enabled=false)
 public class ConsentHelperTest extends AbstractTestNGSpringContextTests {
 
     @Resource(name = "consent.config.attributeSortOrder")
@@ -56,7 +56,7 @@ public class ConsentHelperTest extends AbstractTestNGSpringContextTests {
     @Resource(name = "consent.config.userIdAttribute")
     private String userIdAttribute;
 
-    @Test(dataProvider = "attributesAttributesWithUserIdAttribute")
+    @Test(dataProvider = "attributesAttributesWithUserIdAttribute", enabled=false)
     public void findUserId(Collection<IdPAttribute> attributesExludingUserId,
             Collection<IdPAttribute> attributesIncludingUserId) {
         String userId = ConsentHelper.findUserId(userIdAttribute, attributesIncludingUserId);
@@ -98,7 +98,7 @@ public class ConsentHelperTest extends AbstractTestNGSpringContextTests {
 
     }
 
-    @Test(dataProvider = "numberedAttributes")
+    @Test(dataProvider = "numberedAttributes", enabled=false)
     public void removeBlacklistedAttributes(Collection<IdPAttribute> allAttributes) {
         Collection<IdPAttribute> attributes =
                 ConsentHelper.removeBlacklistedAttributes(attributeBlacklist, allAttributes);
@@ -109,7 +109,7 @@ public class ConsentHelperTest extends AbstractTestNGSpringContextTests {
         }
     }
 
-    @Test(dataProvider = "numberedAttributes")
+    @Test(dataProvider = "numberedAttributes", enabled=false)
     public void sortAttributes(Collection<IdPAttribute> unsortedAttributes) {
 
         SortedSet<IdPAttribute> attributes = ConsentHelper.sortAttributes(attributeSortOrder, unsortedAttributes);

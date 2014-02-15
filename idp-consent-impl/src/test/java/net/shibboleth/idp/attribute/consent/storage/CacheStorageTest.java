@@ -46,6 +46,7 @@ import org.testng.annotations.Test;
 /**
  * Tests the cache storage.
  */
+@Test(enabled=false)
 public class CacheStorageTest extends AbstractStorageTest {
 
     @Resource(name = "consent.storage.cache")

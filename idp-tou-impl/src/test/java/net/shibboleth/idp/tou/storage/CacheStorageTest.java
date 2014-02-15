@@ -57,7 +57,9 @@ public class CacheStorageTest extends AbstractStorageTest {
     private Cache<String, ConcurrentMap> cache;
 
     public void setup() {
-        cache = cacheManager.getCache("tou");
+        if (cacheStorage != null) {
+            cache = cacheManager.getCache("tou");
+        }
     }
 
     @BeforeMethod
@@ -65,12 +67,14 @@ public class CacheStorageTest extends AbstractStorageTest {
         if (cache != null) {
             cache.clear();
         }
-        cacheStorage.initialize();
+        if (cacheStorage != null) {
+            cacheStorage.initialize();
+        }
     }
 
     /** {@inheritDoc} */
     @Override
-    @Test(dependsOnMethods = {"setup"})
+    @Test(dependsOnMethods = {"setup"}, enabled=false)
     public void initialization() {
         setStorage(cacheStorage);
     }

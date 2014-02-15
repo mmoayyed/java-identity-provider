@@ -37,7 +37,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 @ContextConfiguration("classpath:/consent-test-context.xml")
-@Test(dataProviderClass = TestData.class)
+@Test(dataProviderClass = TestData.class, enabled=false)
 public abstract class AbstractStorageTest extends AbstractTransactionalTestNGSpringContextTests {
 
     protected final Logger logger = LoggerFactory.getLogger("Test");
@@ -51,7 +51,7 @@ public abstract class AbstractStorageTest extends AbstractTransactionalTestNGSpr
     @BeforeTest
     public abstract void initialization();
 
-    @Test(dataProvider = "userIdGlobalConsent")
+    @Test(dataProvider = "userIdGlobalConsent", enabled=false)
     public void crudUser(String userId, boolean globalConsent) {
         assertFalse(storage.containsUser(userId));
         assertNull(storage.readUser(userId));
@@ -71,7 +71,7 @@ public abstract class AbstractStorageTest extends AbstractTransactionalTestNGSpr
         assertEquals(!globalConsent, user.hasGlobalConsent());
     }
 
-    @Test(dataProvider = "userRelyingPartyIdAttributeIdHashDate")
+    @Test(dataProvider = "userRelyingPartyIdAttributeIdHashDate", enabled=false)
     public void crudAttributeRelease(final User user, final String relyingPartyId, final String attributeId,
             final String hash, final DateTime date) {
         AttributeRelease attributeRelease = new AttributeRelease(attributeId, hash, date);
