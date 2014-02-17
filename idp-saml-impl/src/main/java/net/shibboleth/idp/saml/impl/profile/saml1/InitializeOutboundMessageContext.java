@@ -18,6 +18,7 @@
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
@@ -26,7 +27,6 @@ import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
@@ -51,22 +51,33 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * @event {@link EventIds#INVALID_MSG_CTX}
  */
 // TODO Finish Javadoc.
+// I think this is going to be an OpenSAML action, assuming we're not setting any security related info here.
 public class InitializeOutboundMessageContext extends AbstractProfileAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(InitializeOutboundMessageContext.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(InitializeOutboundMessageContext.class);
 
     // TODO Remove autowired credential
     /** Test signing credential. */
     @Autowired @Qualifier("idp.Credential") private Credential testSigningCredential;
 
+    /** Inbound {@link SAMLPeerEntityContext}. */
+    @Nullable private SAMLPeerEntityContext inboundPeerEntityCtx;
+    
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext)
             throws ProfileException {
 
-        MessageContext inboundMessageContext = profileRequestContext.getInboundMessageContext();
+        final MessageContext inboundMessageContext = profileRequestContext.getInboundMessageContext();
         if (inboundMessageContext == null) {
             log.debug("{} No inbound message context", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
+            return false;
+        }
+        
+        inboundPeerEntityCtx = inboundMessageContext.getSubcontext(SAMLPeerEntityContext.class, false);
+        if (inboundPeerEntityCtx == null) {
+            log.debug("{} No inbound SAML peer entity context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
             return false;
         }
@@ -82,21 +93,22 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
 
         // TODO Incomplete, see https://wiki.shibboleth.net/confluence/display/IDP30/SAML+1.1+Browser+SSO
 
-        final MessageContext<SAMLObject> msgCtx = new MessageContext<SAMLObject>();
+        final MessageContext msgCtx = new MessageContext();
         profileRequestContext.setOutboundMessageContext(msgCtx);
 
         final SAMLPeerEntityContext peerContext = msgCtx.getSubcontext(SAMLPeerEntityContext.class, true);
-        peerContext.setEntityId(getPeerEntityId(profileRequestContext));
-
-        SAMLEndpointContext endpointContext = peerContext.getSubcontext(SAMLEndpointContext.class, true);
-        // TODO not correct
-        endpointContext.setEndpoint(buildSpAcsEndpoint(getBindingURI(profileRequestContext),
-                "https://sp.example.org/ACSURL"));
+        peerContext.setEntityId(inboundPeerEntityCtx.getEntityId());
 
         final SAMLBindingContext bindingCtx = msgCtx.getSubcontext(SAMLBindingContext.class, true);
-        bindingCtx.setBindingUri(getBindingURI(profileRequestContext));
         bindingCtx.setRelayState(SAMLBindingSupport.getRelayState(profileRequestContext.getInboundMessageContext()));
 
+        // TODO this will be handled by a separate action, leaving for now to keep testbed working
+        final SAMLEndpointContext endpointContext = peerContext.getSubcontext(SAMLEndpointContext.class, true);
+        endpointContext.setEndpoint(buildSpAcsEndpoint(getBindingURI(profileRequestContext),
+                "https://sp.example.org/ACSURL"));
+        bindingCtx.setBindingUri(getBindingURI(profileRequestContext));
+
+        // TODO this will be handled by a separate action, leaving for now to keep testbed working
         final SecurityParametersContext secParamCtx = msgCtx.getSubcontext(SecurityParametersContext.class, true);
         secParamCtx.setSignatureSigningParameters(getSignatureSigningParameters(profileRequestContext));
 
@@ -132,17 +144,6 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
     }
 
     /**
-     * Get the peer entity id.
-     * 
-     * @param profileRequestContext the current IdP profile request context
-     * @return the peer entity id
-     */
-    @Nonnull private String getPeerEntityId(@Nonnull final ProfileRequestContext profileRequestContext) {
-        // TODO Get peer entity id from somewhere
-        return "http://sp.example.org";
-    }
-
-    /**
      * Get the signing credential.
      * 
      * @param profileRequestContext the current IdP profile request context
@@ -163,6 +164,11 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
             @Nonnull final ProfileRequestContext profileRequestContext) {
 
         final Credential signingCredential = getSigningCredential(profileRequestContext);
+        
+        // TODO: check for null to allow testing without Spring auto-wiring.
+        if (signingCredential == null) {
+            return new SignatureSigningParameters();
+        }
 
         final KeyInfoGenerator kiGenerator =
                 SecurityConfigurationSupport.getGlobalXMLSecurityConfiguration().getKeyInfoGeneratorManager()
