@@ -20,14 +20,8 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
-
-import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.AbstractProfileAction;
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
-
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -40,6 +34,10 @@ import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml1.core.Response;
@@ -66,7 +64,7 @@ import com.google.common.base.Function;
  * @post ProfileRequestContext.getOutboundMessageContext().getSubcontext(
  *  BasicMessageMetadataContext.class, false) != null
  */
-public class AddResponseShell extends AbstractProfileAction<Object, Response> {
+public class AddResponseShell extends AbstractProfileAction {
 
     /** Class logger. */
     @Nonnull private Logger log = LoggerFactory.getLogger(AddResponseShell.class);
@@ -77,8 +75,8 @@ public class AddResponseShell extends AbstractProfileAction<Object, Response> {
     @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
 
     /** Profile configuration for request. */
-    @Nullable private ProfileConfiguration profileConfig; 
-    
+    @Nullable private ProfileConfiguration profileConfig;
+
     /** Constructor. */
     public AddResponseShell() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
@@ -98,15 +96,14 @@ public class AddResponseShell extends AbstractProfileAction<Object, Response> {
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
-    
+
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext<Object, Response> profileRequestContext)
-            throws ProfileException {
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
         
         final MessageContext<Response> outboundMessageCtx = profileRequestContext.getOutboundMessageContext();
         if (outboundMessageCtx == null) {
-            log.debug("{} Outbound message context did not exist", getLogPrefix());
+            log.debug("{} No outbound message context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
             return false;
         } else if (outboundMessageCtx.getMessage() != null) {
@@ -117,25 +114,24 @@ public class AddResponseShell extends AbstractProfileAction<Object, Response> {
 
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyCtx == null) {
-            log.debug("{} No relying party context located in current profile request context", getLogPrefix());
+            log.debug("{} No relying party context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
             return false;
         }
 
         profileConfig = relyingPartyCtx.getProfileConfig();
         if (profileConfig == null || profileConfig.getSecurityConfiguration() == null) {
-            log.debug("{} No profile/security configuration located in current relying party context", getLogPrefix());
+            log.debug("{} No profile/security configuration", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
             return false;
         }
-        
+
         return super.doPreExecute(profileRequestContext);
     }
-    
+
     /** {@inheritDoc} */
     @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext<Object, Response> profileRequestContext)
-            throws ProfileException {
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
         final XMLObjectBuilderFactory bf = XMLObjectProviderRegistrySupport.getBuilderFactory();
         final SAMLObjectBuilder<StatusCode> statusCodeBuilder =

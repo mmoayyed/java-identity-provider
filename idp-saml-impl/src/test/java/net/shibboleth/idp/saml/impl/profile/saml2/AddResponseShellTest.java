@@ -17,22 +17,24 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml2;
 
-import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.ActionTestingSupport;
-import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
-
+import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.profile.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.saml.profile.saml2.SAML2ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -41,20 +43,21 @@ import org.testng.annotations.Test;
 public class AddResponseShellTest extends OpenSAMLInitBaseTestCase {
 
     private AddResponseShell action;
-    
+
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         action = new AddResponseShell();
         action.setId("test");
         action.initialize();
     }
-    
-    @Test public void testAddResponse() throws ProfileException, ComponentInitializationException {
-        final ProfileRequestContext prc =
-                new RequestContextBuilder().setRelyingPartyProfileConfigurations(
-                        SAML2ActionTestingSupport.buildProfileConfigurations()).buildProfileRequestContext();
 
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+    @Test public void testAddResponse() throws ProfileException, ComponentInitializationException {
+        final RequestContext rc =
+                new RequestContextBuilder().setRelyingPartyProfileConfigurations(
+                        SAML2ActionTestingSupport.buildProfileConfigurations()).buildRequestContext();
+        final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
+
+        final Event event = action.execute(rc);
+        ActionTestingSupport.assertProceedEvent(event);
 
         final MessageContext<Response> outMsgCtx = prc.getOutboundMessageContext();
         final Response response = outMsgCtx.getMessage();
@@ -63,7 +66,7 @@ public class AddResponseShellTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNotNull(response.getID());
         Assert.assertNotNull(response.getIssueInstant());
         Assert.assertEquals(response.getVersion(), SAMLVersion.VERSION_20);
-        
+
         Assert.assertNotNull(response.getIssuer());
         Assert.assertEquals(response.getIssuer().getValue(), ActionTestingSupport.OUTBOUND_MSG_ISSUER);
 
@@ -79,14 +82,15 @@ public class AddResponseShellTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(messageMetadata.getMessageIssueInstant(), response.getIssueInstant().getMillis());
     }
 
-    @Test public void testAddResponseWhenResponseAlreadyExist() throws ProfileException, ComponentInitializationException {
-        ProfileRequestContext prc =
+    @Test public void testAddResponseWhenResponseAlreadyExist() throws ProfileException,
+            ComponentInitializationException {
+        final RequestContext rc =
                 new RequestContextBuilder().setOutboundMessage(SAML2ActionTestingSupport.buildResponse())
                         .setRelyingPartyProfileConfigurations(SAML2ActionTestingSupport.buildProfileConfigurations())
-                        .buildProfileRequestContext();
+                        .buildRequestContext();
 
-        action.execute(prc);
-        ActionTestingSupport.assertEvent(prc, EventIds.INVALID_MSG_CTX);
+        final Event event = action.execute(rc);
+        ActionTestingSupport.assertEvent(event, EventIds.INVALID_MSG_CTX);
     }
 
 }
