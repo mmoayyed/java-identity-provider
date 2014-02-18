@@ -25,6 +25,8 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.relyingparty.RelyingPartyContext;
+import net.shibboleth.idp.saml.profile.config.saml2.BrowserSSOProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -41,6 +43,7 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
+import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.binding.BindingDescriptor;
 import org.opensaml.saml.common.binding.DefaultEndpointResolver;
 import org.opensaml.saml.common.binding.EndpointResolver;
@@ -53,10 +56,12 @@ import org.opensaml.saml.common.profile.SAMLEventIds;
 import org.opensaml.saml.criterion.BindingCriterion;
 import org.opensaml.saml.criterion.EndpointCriterion;
 import org.opensaml.saml.criterion.RoleDescriptorCriterion;
+import org.opensaml.saml.criterion.SignedRequestCriterion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.IndexedEndpoint;
+import org.opensaml.xmlsec.signature.SignableXMLObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,6 +103,9 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     
     /** List of possible bindings, in preference order. */
     @Nonnull @NonnullElements private List<BindingDescriptor> bindingDescriptors;
+
+    /** Strategy function for access to {@link RelyingPartyContext}. */
+    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
     
     /** Strategy function for access to {@link SAMLMetadataContext} for input to resolver. */
     @Nonnull private Function<ProfileRequestContext,SAMLMetadataContext> metadataContextLookupStrategy;
@@ -117,11 +125,15 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     /** Optional metadata for use in endpoint derivation/validation. */
     @Nullable private SAMLMetadataContext mdContext;
     
+    private boolean skipValidationWhenSigned;
+    
     /** Constructor. */
     public PopulateBindingAndEndpointContexts() {
         endpointType = AssertionConsumerService.DEFAULT_ELEMENT_NAME;
         endpointResolver = new DefaultEndpointResolver();
         bindingDescriptors = Collections.emptyList();
+        
+        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         
         // Default: outbound msg context -> SAMLPeerEntityContext -> SAMLMetadataContext
         metadataContextLookupStrategy = Functions.compose(
@@ -172,6 +184,17 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         Constraint.isNotNull(bindings, "Binding descriptor list cannot be null");
         
         bindingDescriptors = Lists.newArrayList(Collections2.filter(bindings, Predicates.notNull()));
+    }
+
+    /**
+     * Set lookup strategy for {@link RelyingPartyContext}.
+     * 
+     * @param strategy  lookup strategy
+     */
+    public void setRelyingPartyContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
+        relyingPartyContextLookupStrategy = Constraint.isNotNull(strategy,
+                "RelyingPartyContext lookup strategy cannot be null");
     }
     
     /**
@@ -230,6 +253,13 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
             inboundMessage = profileRequestContext.getInboundMessageContext().getMessage();
         }
         
+        final RelyingPartyContext rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
+        if (rpContext != null && rpContext.getProfileConfig() != null
+                && rpContext.getProfileConfig() instanceof BrowserSSOProfileConfiguration) {
+            skipValidationWhenSigned =
+                    ((BrowserSSOProfileConfiguration) rpContext.getProfileConfig()).skipEndpointValidationWhenSigned();
+        }
+        
         if (profileRequestContext.getOutboundMessageContext() == null) {
             log.debug("{} No outbound message context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
@@ -263,12 +293,18 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         }
         
         // Build criteria for the resolver.
-        CriteriaSet criteria = new CriteriaSet(new EndpointCriterion(buildTemplateEndpoint()),
+        final CriteriaSet criteria = new CriteriaSet(new EndpointCriterion(buildTemplateEndpoint()),
                 new BindingCriterion(bindings));
+        
         if (mdContext != null && mdContext.getRoleDescriptor() != null) {
             criteria.add(new RoleDescriptorCriterion(mdContext.getRoleDescriptor()));
         } else {
             log.debug("{} No metadata available for endpoint resolution", getLogPrefix());
+        }
+        
+        if (skipValidationWhenSigned && inboundMessage instanceof AuthnRequest
+                && ((AuthnRequest) inboundMessage).isSigned()) {
+            criteria.add(new SignedRequestCriterion());
         }
         
         // Attempt resolution.
