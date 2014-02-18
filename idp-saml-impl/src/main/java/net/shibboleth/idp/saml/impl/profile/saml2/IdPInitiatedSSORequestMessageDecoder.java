@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.saml.impl.profile.BaseIdPInitiatedSSORequestMessageDecoder;
-import net.shibboleth.idp.saml.impl.profile.IdPInitatedSSORequest;
+import net.shibboleth.idp.saml.impl.profile.IdPInitiatedSSORequest;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
@@ -65,7 +65,7 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
     private final SAMLObjectBuilder<NameIDPolicy> nipBuilder;
     
     /** The IdP-initiated request structure parsed from the inbound request. */
-    @Nullable private IdPInitatedSSORequest ssoRequest;
+    @Nullable private IdPInitiatedSSORequest ssoRequest;
 
     /** Constructor. */
     public IdPInitiatedSSORequestMessageDecoder() {
@@ -86,11 +86,11 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
     }
     
     /**
-     * Get the internally constructed instance of {@link IdPInitatedSSORequest}.
+     * Get the internally constructed instance of {@link IdPInitiatedSSORequest}.
      * 
      * @return the internal SSO request instance
      */
-    @Nullable protected IdPInitatedSSORequest getIdPInitiatedSSORequest() {
+    @Nullable protected IdPInitiatedSSORequest getIdPInitiatedSSORequest() {
        return ssoRequest; 
     }
     

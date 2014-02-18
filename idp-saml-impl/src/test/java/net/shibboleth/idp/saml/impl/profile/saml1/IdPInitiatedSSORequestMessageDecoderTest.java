@@ -18,7 +18,7 @@
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
 import net.shibboleth.idp.saml.impl.profile.BaseIdPInitiatedSSORequestMessageDecoder;
-import net.shibboleth.idp.saml.impl.profile.IdPInitatedSSORequest;
+import net.shibboleth.idp.saml.impl.profile.IdPInitiatedSSORequest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.joda.time.DateTime;
@@ -79,9 +79,9 @@ public class IdPInitiatedSSORequestMessageDecoderTest {
         
         decoder.decode();
         
-        MessageContext<IdPInitatedSSORequest> messageContext = decoder.getMessageContext();
+        MessageContext<IdPInitiatedSSORequest> messageContext = decoder.getMessageContext();
         Assert.assertNotNull(messageContext);
-        IdPInitatedSSORequest ssoRequest = messageContext.getMessage();
+        IdPInitiatedSSORequest ssoRequest = messageContext.getMessage();
         Assert.assertNotNull(ssoRequest);
         
         Assert.assertEquals(ssoRequest.getEntityId(), entityId, "Incorrect decoded entityId value");

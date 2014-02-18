@@ -18,13 +18,16 @@
 package net.shibboleth.idp.saml.impl.profile;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.profile.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.saml.impl.profile.InitializeAuthenticationContext;
 
-import org.opensaml.profile.RequestContextBuilder;
-import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.impl.AuthnRequestBuilder;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -33,16 +36,18 @@ public class InitializeAuthenticationContextTest {
 
     /** Test that the action functions properly if there is no inbound message context. */
     @Test public void testNoInboundMessageContext() throws Exception {
-        ProfileRequestContext profileCtx = new ProfileRequestContext();
+        final RequestContext requestCtx = new RequestContextBuilder().buildRequestContext();
+        final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(requestCtx);
+        prc.setInboundMessageContext(null);
 
-        InitializeAuthenticationContext action = new InitializeAuthenticationContext();
+        final InitializeAuthenticationContext action = new InitializeAuthenticationContext();
         action.setId("test");
         action.initialize();
 
-        action.execute(profileCtx);
-        ActionTestingSupport.assertProceedEvent(profileCtx);
+        final Event event = action.execute(requestCtx);
+        ActionTestingSupport.assertProceedEvent(event);
 
-        AuthenticationContext authnCtx = profileCtx.getSubcontext(AuthenticationContext.class);
+        final AuthenticationContext authnCtx = prc.getSubcontext(AuthenticationContext.class);
         Assert.assertNotNull(authnCtx);
         Assert.assertFalse(authnCtx.isForceAuthn());
         Assert.assertFalse(authnCtx.isPassive());
@@ -50,17 +55,17 @@ public class InitializeAuthenticationContextTest {
 
     /** Test that the action functions properly if there is no inbound message. */
     @Test public void testNoInboundMessage() throws Exception {
-        ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setInboundMessage(null).buildProfileRequestContext();
+        final RequestContext requestCtx = new RequestContextBuilder().setInboundMessage(null).buildRequestContext();
+        final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(requestCtx);
 
-        InitializeAuthenticationContext action = new InitializeAuthenticationContext();
+        final InitializeAuthenticationContext action = new InitializeAuthenticationContext();
         action.setId("test");
         action.initialize();
 
-        action.execute(profileCtx);
-        ActionTestingSupport.assertProceedEvent(profileCtx);
+        final Event event = action.execute(requestCtx);
+        ActionTestingSupport.assertProceedEvent(event);
 
-        AuthenticationContext authnCtx = profileCtx.getSubcontext(AuthenticationContext.class);
+        final AuthenticationContext authnCtx = prc.getSubcontext(AuthenticationContext.class);
         Assert.assertNotNull(authnCtx);
         Assert.assertFalse(authnCtx.isForceAuthn());
         Assert.assertFalse(authnCtx.isPassive());
@@ -68,19 +73,20 @@ public class InitializeAuthenticationContextTest {
 
     /** Test that the action functions properly if the inbound message is not a SAML 2 AuthnRequest. */
     @Test public void testSAML1AuthnRequest() throws Exception {
-        ProfileRequestContext profileCtx =
+        final RequestContext requestCtx =
                 new RequestContextBuilder().setInboundMessage(
-                        new IdPInitatedSSORequest("https://sp.example.org/sp", null, null, null)
-                        ).buildProfileRequestContext();
+                        new IdPInitiatedSSORequest("https://sp.example.org/sp", null, null, null)
+                        ).buildRequestContext();
+        final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(requestCtx);
 
-        InitializeAuthenticationContext action = new InitializeAuthenticationContext();
+        final InitializeAuthenticationContext action = new InitializeAuthenticationContext();
         action.setId("test");
         action.initialize();
 
-        action.execute(profileCtx);
-        ActionTestingSupport.assertProceedEvent(profileCtx);
+        final Event event = action.execute(requestCtx);
+        ActionTestingSupport.assertProceedEvent(event);
 
-        AuthenticationContext authnCtx = profileCtx.getSubcontext(AuthenticationContext.class);
+        AuthenticationContext authnCtx = prc.getSubcontext(AuthenticationContext.class);
         Assert.assertNotNull(authnCtx);
         Assert.assertFalse(authnCtx.isForceAuthn());
         Assert.assertFalse(authnCtx.isPassive());
@@ -88,21 +94,22 @@ public class InitializeAuthenticationContextTest {
 
     /** Test that the action proceeds properly if the inbound message is a SAML2 AuthnRequest. */
     @Test public void testCreateAuthenticationContext() throws Exception {
-        AuthnRequest authnRequest = new AuthnRequestBuilder().buildObject();
+        final AuthnRequest authnRequest = new AuthnRequestBuilder().buildObject();
         authnRequest.setIsPassive(true);
         authnRequest.setForceAuthn(true);
 
-        ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setInboundMessage(authnRequest).buildProfileRequestContext();
+        final RequestContext requestCtx =
+                new RequestContextBuilder().setInboundMessage(authnRequest).buildRequestContext();
+        final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(requestCtx);
 
-        InitializeAuthenticationContext action = new InitializeAuthenticationContext();
+        final InitializeAuthenticationContext action = new InitializeAuthenticationContext();
         action.setId("test");
         action.initialize();
 
-        action.execute(profileCtx);
-        ActionTestingSupport.assertProceedEvent(profileCtx);
+        final Event event = action.execute(requestCtx);
+        ActionTestingSupport.assertProceedEvent(event);
         
-        AuthenticationContext authnCtx = profileCtx.getSubcontext(AuthenticationContext.class);
+        final AuthenticationContext authnCtx = prc.getSubcontext(AuthenticationContext.class);
         Assert.assertNotNull(authnCtx);
         Assert.assertTrue(authnCtx.isForceAuthn());
         Assert.assertTrue(authnCtx.isPassive());

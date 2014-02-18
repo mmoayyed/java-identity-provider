@@ -77,10 +77,10 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder<RequestType> exte
      * @return the new SSO request structure
      * @throws MessageDecodingException if the request doesn't contain an entityID
      */
-    @Nonnull protected IdPInitatedSSORequest buildIdPInitiatedSSORequest() throws MessageDecodingException {
+    @Nonnull protected IdPInitiatedSSORequest buildIdPInitiatedSSORequest() throws MessageDecodingException {
         final HttpServletRequest request = getHttpServletRequest();
         
-        return new IdPInitatedSSORequest(getEntityId(request), getAcsUrl(request), getTarget(request),
+        return new IdPInitiatedSSORequest(getEntityId(request), getAcsUrl(request), getTarget(request),
                 getTime(request));
     }
 

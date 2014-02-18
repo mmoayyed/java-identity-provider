@@ -21,10 +21,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.profile.AbstractProfileAction;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.slf4j.Logger;
@@ -88,4 +88,5 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
 
         log.debug("{} Created authentication context {}", getLogPrefix(), authnCtx);
     }
+    
 }

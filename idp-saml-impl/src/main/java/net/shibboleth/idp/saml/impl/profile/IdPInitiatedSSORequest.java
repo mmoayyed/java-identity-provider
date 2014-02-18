@@ -41,7 +41,7 @@ import com.google.common.base.Objects;
  * authentication request should be used by SAML 2 service providers wishing to initiate authentication.
  */
 @ThreadSafe
-public class IdPInitatedSSORequest {
+public class IdPInitiatedSSORequest {
     
     /** The entityID of the requesting service provider. */
     @Nonnull @NotEmpty private final String entityId;
@@ -68,7 +68,7 @@ public class IdPInitatedSSORequest {
      * @param target opaque value to be returned to the SP with the response
      * @param newTime current time at the SP, in milliseconds since the epoch, must be greater than zero
      */
-    public IdPInitatedSSORequest(@Nonnull @NotEmpty final String newEntityId, @Nullable final String url,
+    public IdPInitiatedSSORequest(@Nonnull @NotEmpty final String newEntityId, @Nullable final String url,
             @Nullable final String target, @Nullable @Positive final Long newTime) {
         
         entityId = Constraint.isNotNull(StringSupport.trimOrNull(newEntityId),
@@ -167,11 +167,11 @@ public class IdPInitatedSSORequest {
             return false;
         }
 
-        if (!(obj instanceof IdPInitatedSSORequest)) {
+        if (!(obj instanceof IdPInitiatedSSORequest)) {
             return false;
         }
 
-        IdPInitatedSSORequest other = (IdPInitatedSSORequest) obj;
+        IdPInitiatedSSORequest other = (IdPInitiatedSSORequest) obj;
         return Objects.equal(entityId, other.entityId) && Objects.equal(acsURL, other.acsURL)
                 && Objects.equal(relayState, other.relayState) && time == other.time;
     }

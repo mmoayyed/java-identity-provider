@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.saml.impl.profile.BaseIdPInitiatedSSORequestMessageDecoder;
-import net.shibboleth.idp.saml.impl.profile.IdPInitatedSSORequest;
+import net.shibboleth.idp.saml.impl.profile.IdPInitiatedSSORequest;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 import org.joda.time.DateTime;
@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 /** Decodes an incoming Shibboleth Authentication Request message. */
 public class IdPInitiatedSSORequestMessageDecoder extends 
-        BaseIdPInitiatedSSORequestMessageDecoder<IdPInitatedSSORequest> {
+        BaseIdPInitiatedSSORequestMessageDecoder<IdPInitiatedSSORequest> {
     
     /** Protocol binding implemented by this decoder. */
     @Nonnull @NotEmpty private static final String BINDING_URI = "urn:mace:shibboleth:1.0:profiles:AuthnRequest";
@@ -56,9 +56,9 @@ public class IdPInitiatedSSORequestMessageDecoder extends
     /** {@inheritDoc} */
     @Override
     protected void doDecode() throws MessageDecodingException {
-        IdPInitatedSSORequest ssoRequest = buildIdPInitiatedSSORequest();
+        IdPInitiatedSSORequest ssoRequest = buildIdPInitiatedSSORequest();
 
-        MessageContext<IdPInitatedSSORequest> messageContext = new MessageContext<>();
+        MessageContext<IdPInitiatedSSORequest> messageContext = new MessageContext<>();
         messageContext.setMessage(ssoRequest);
         
         messageContext.getSubcontext(SAMLPeerEntityContext.class, true).setEntityId(ssoRequest.getEntityId());
@@ -77,7 +77,7 @@ public class IdPInitiatedSSORequestMessageDecoder extends
      * 
      * @param messageContext the current message context
      */
-    protected void populateBindingContext(@Nonnull final MessageContext<IdPInitatedSSORequest> messageContext) {
+    protected void populateBindingContext(@Nonnull final MessageContext<IdPInitiatedSSORequest> messageContext) {
         final String relayState = messageContext.getMessage().getRelayState();
         log.debug("Decoded SAML relay state: {}", relayState);
         
