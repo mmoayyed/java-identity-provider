@@ -17,14 +17,13 @@
 
 package net.shibboleth.idp.saml.profile;
 
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.saml1.core.Response;
 
-public class ActionTestSupportAction extends AbstractProfileAction<Object, Response> {
+public class ActionTestSupportAction extends AbstractProfileAction {
 
     public ActionTestSupportAction() throws ComponentInitializationException {
         setId("Test Component");

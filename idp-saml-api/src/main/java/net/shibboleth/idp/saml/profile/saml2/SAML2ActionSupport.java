@@ -19,11 +19,11 @@ package net.shibboleth.idp.saml.profile.saml2;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
-import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml2.core.Assertion;
