@@ -321,6 +321,9 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
             return;
         }
         
+        log.debug("{} Resolved endpoint at location {} using binding {}",
+                new Object[] {getLogPrefix(), resolvedEndpoint.getLocation(), resolvedEndpoint.getBinding(),});
+        
         // Transfer results to contexts.
         
         final SAMLEndpointContext endpointContext = endpointContextLookupStrategy.apply(profileRequestContext);

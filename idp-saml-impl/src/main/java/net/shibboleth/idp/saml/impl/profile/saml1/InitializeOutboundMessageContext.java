@@ -20,19 +20,14 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.common.binding.SAMLBindingSupport;
-import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
-import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
+import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
-import org.opensaml.saml.common.xml.SAMLConstants;
-import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.xmlsec.SecurityConfigurationSupport;
 import org.opensaml.xmlsec.SignatureSigningParameters;
@@ -98,51 +93,24 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
 
         final SAMLPeerEntityContext peerContext = msgCtx.getSubcontext(SAMLPeerEntityContext.class, true);
         peerContext.setEntityId(inboundPeerEntityCtx.getEntityId());
-
-        final SAMLBindingContext bindingCtx = msgCtx.getSubcontext(SAMLBindingContext.class, true);
-        bindingCtx.setRelayState(SAMLBindingSupport.getRelayState(profileRequestContext.getInboundMessageContext()));
-
-        // TODO this will be handled by a separate action, leaving for now to keep testbed working
-        final SAMLEndpointContext endpointContext = peerContext.getSubcontext(SAMLEndpointContext.class, true);
-        endpointContext.setEndpoint(buildSpAcsEndpoint(getBindingURI(profileRequestContext),
-                "https://sp.example.org/ACSURL"));
-        bindingCtx.setBindingUri(getBindingURI(profileRequestContext));
+        
+        // There's no defined third-party request mechanism, so copy the metadata context, if any,
+        // from inbound to outbound.
+        final SAMLMetadataContext inboundMetadataCtx =
+                inboundPeerEntityCtx.getSubcontext(SAMLMetadataContext.class, false);
+        if (inboundMetadataCtx != null) {
+            final SAMLMetadataContext outboundMetadataCtx = peerContext.getSubcontext(SAMLMetadataContext.class, true);
+            outboundMetadataCtx.setEntityDescriptor(inboundMetadataCtx.getEntityDescriptor());
+            outboundMetadataCtx.setRoleDescriptor(inboundMetadataCtx.getRoleDescriptor());
+        }
 
         // TODO this will be handled by a separate action, leaving for now to keep testbed working
         final SecurityParametersContext secParamCtx = msgCtx.getSubcontext(SecurityParametersContext.class, true);
         secParamCtx.setSignatureSigningParameters(getSignatureSigningParameters(profileRequestContext));
 
-        log.debug("{} Initialized outbound message context", this.getLogPrefix());
+        log.debug("{} Initialized outbound message context", getLogPrefix());
     }
-
-    /**
-     * TODO not correct
-     * 
-     * @param binding
-     * @param destination
-     * @return
-     */
-    private AssertionConsumerService buildSpAcsEndpoint(String binding, String destination) {
-        // TODO wrong
-        AssertionConsumerService acsEndpoint =
-                (AssertionConsumerService) XMLObjectSupport.getBuilder(AssertionConsumerService.DEFAULT_ELEMENT_NAME)
-                        .buildObject(AssertionConsumerService.DEFAULT_ELEMENT_NAME);
-        acsEndpoint.setBinding(binding);
-        acsEndpoint.setLocation(destination);
-        return acsEndpoint;
-    }
-
-    /**
-     * Get the binding URI.
-     * 
-     * @param profileRequestContext the current IdP profile request context
-     * @return the binding URI
-     */
-    @Nonnull private String getBindingURI(@Nonnull final ProfileRequestContext profileRequestContext) {
-        // TODO Get binding URI from somewhere
-        return SAMLConstants.SAML1_POST_BINDING_URI;
-    }
-
+    
     /**
      * Get the signing credential.
      * 
@@ -185,4 +153,5 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
 
         return signingParameters;
     }
+    
 }

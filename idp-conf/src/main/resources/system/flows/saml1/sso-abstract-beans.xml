@@ -25,14 +25,42 @@
         c:messageHandler-ref="inboundMessageHandlerChain"
         c:executionDirection="INBOUND" />
 
+    <!-- TODO: remove once we get real metadata config in place -->
+    <bean id="ExampleMetadata" class="org.springframework.core.io.FileSystemResource" c:path="${idp.home}/metadata/example-metadata.xml" />
+
     <bean
         id="inboundMessageHandlerChain"
         class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain"
         scope="prototype">
         <property name="handlers">
             <util:list>
-                <bean
-                    class="org.opensaml.saml.common.binding.security.MessageReplaySecurityHandler"
+
+                <bean class="org.opensaml.saml.common.binding.SAMLProtocolAndRoleHandler">
+                    <property name="protocol">
+                        <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML11P_NS" />
+                    </property>
+                    <property name="role">
+                        <util:constant static-field="org.opensaml.saml.saml2.metadata.SPSSODescriptor.DEFAULT_ELEMENT_NAME" />
+                    </property>
+                </bean>
+                
+                <!-- TODO: need to poke metadata source in from relying party config later -->
+                <bean class="org.opensaml.saml.common.binding.SAMLMetadataLookupHandler">
+                    <property name="roleDescriptorResolver">
+                        <bean class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver">
+                            <constructor-arg>
+                                <bean class="org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolver"
+                                        p:parserPool-ref="shibboleth.ParserPool">
+                                    <constructor-arg>
+                                        <util:property-path path="ExampleMetadata.File" />
+                                    </constructor-arg>
+                                </bean>
+                            </constructor-arg>
+                        </bean>
+                    </property>
+                </bean>
+            
+                <bean class="org.opensaml.saml.common.binding.security.MessageReplaySecurityHandler"
                     p:replayCache-ref="shibboleth.ReplayCache" />
                 <bean class="org.opensaml.saml.common.binding.security.MessageLifetimeSecurityHandler" />
             </util:list>
@@ -144,6 +172,13 @@
         id="InitializeOutboundMessageContext"
         class="net.shibboleth.idp.saml.impl.profile.saml1.InitializeOutboundMessageContext"
         scope="prototype" />
+
+    <bean
+        id="PopulateBindingAndEndpointContexts"
+        class="net.shibboleth.idp.saml.impl.profile.PopulateBindingAndEndpointContexts"
+        scope="prototype"
+        p:endpointResolver-ref="shibboleth.EndpointResolver"
+        p:bindings-ref="shibboleth.OutgoingSAML1Bindings" />
 
     <bean
         id="AddResponseShell"

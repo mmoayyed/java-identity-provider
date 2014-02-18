@@ -39,6 +39,11 @@
 
     <action-state id="InitializeOutboundMessageContext">
         <evaluate expression="InitializeOutboundMessageContext" />
+        <transition on="proceed" to="PopulateBindingAndEndpointContexts" />
+    </action-state>
+    
+    <action-state id="PopulateBindingAndEndpointContexts">
+        <evaluate expression="PopulateBindingAndEndpointContexts" />
         <transition on="proceed" to="InitializeAuthenticationContext" />
     </action-state>
 
@@ -157,6 +162,7 @@
 
     <global-transitions>
         <transition on="NoPotentialFlow" to="error" />
+        <transition on="EndpointResolutionFailed" to="error" />
         <transition on="#{currentEvent.id.startsWith('Unable')}" to="error" />
         <transition on="#{currentEvent.id.startsWith('Invalid')}" to="error" />
     </global-transitions>

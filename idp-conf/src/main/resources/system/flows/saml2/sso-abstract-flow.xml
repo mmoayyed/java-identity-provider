@@ -124,6 +124,7 @@
     
     <global-transitions>
         <transition on="NoPotentialFlow" to="error" />
+        <transition on="EndpointResolutionFailed" to="error" />
         <transition on="#{currentEvent.id.startsWith('Unable')}" to="error" />
         <transition on="#{currentEvent.id.startsWith('Invalid')}" to="error" />
     </global-transitions>
