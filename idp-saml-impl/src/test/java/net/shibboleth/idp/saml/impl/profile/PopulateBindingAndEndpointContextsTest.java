@@ -41,6 +41,7 @@ import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.binding.BindingDescriptor;
+import org.opensaml.saml.common.binding.DefaultEndpointResolver;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
@@ -86,12 +87,19 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         
         action = new PopulateBindingAndEndpointContexts();
         action.setId("test");
+        action.setEndpointResolver(new DefaultEndpointResolver());
         final List<BindingDescriptor> bindings = Lists.newArrayList();
         bindings.add(new BindingDescriptor(SAMLConstants.SAML2_POST_BINDING_URI));
         action.setBindings(bindings);
         action.initialize();
     }
 
+    @Test(expectedExceptions = ComponentInitializationException.class)
+    public void testNoResolver() throws ComponentInitializationException {
+        final PopulateBindingAndEndpointContexts badaction = new PopulateBindingAndEndpointContexts();
+        badaction.initialize();
+    }
+    
     @Test(expectedExceptions = ComponentInitializationException.class)
     public void testBadEndpointType() throws ComponentInitializationException {
         final PopulateBindingAndEndpointContexts badaction = new PopulateBindingAndEndpointContexts();
@@ -113,6 +121,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         binding.setActivationCondition(Predicates.<ProfileRequestContext>alwaysFalse());
         final PopulateBindingAndEndpointContexts badaction = new PopulateBindingAndEndpointContexts();
         badaction.setId("test");
+        badaction.setEndpointResolver(new DefaultEndpointResolver());
         badaction.setBindings(Collections.singletonList(binding));
         badaction.initialize();
         

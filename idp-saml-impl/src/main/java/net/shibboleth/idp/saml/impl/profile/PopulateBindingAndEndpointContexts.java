@@ -43,9 +43,7 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
-import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.binding.BindingDescriptor;
-import org.opensaml.saml.common.binding.DefaultEndpointResolver;
 import org.opensaml.saml.common.binding.EndpointResolver;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
@@ -61,7 +59,6 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.IndexedEndpoint;
-import org.opensaml.xmlsec.signature.SignableXMLObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,7 +96,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     @Nonnull private QName endpointType;
 
     /** Endpoint resolver. */
-    @Nonnull private EndpointResolver<?> endpointResolver;
+    @NonnullAfterInit private EndpointResolver<?> endpointResolver;
     
     /** List of possible bindings, in preference order. */
     @Nonnull @NonnullElements private List<BindingDescriptor> bindingDescriptors;
@@ -125,12 +122,12 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     /** Optional metadata for use in endpoint derivation/validation. */
     @Nullable private SAMLMetadataContext mdContext;
     
+    /** Whether to bypass endpoint validation when message is signed. */
     private boolean skipValidationWhenSigned;
     
     /** Constructor. */
     public PopulateBindingAndEndpointContexts() {
         endpointType = AssertionConsumerService.DEFAULT_ELEMENT_NAME;
-        endpointResolver = new DefaultEndpointResolver();
         bindingDescriptors = Collections.emptyList();
         
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
@@ -234,6 +231,10 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
+
+        if (endpointResolver == null) {
+            throw new ComponentInitializationException("EndpointResolver cannot be null");
+        }
         
         endpointBuilder = XMLObjectSupport.getBuilder(endpointType);
         if (endpointBuilder == null) {
@@ -242,8 +243,6 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
             throw new ComponentInitializationException("Builder for endpoint type " + endpointType
                     + " did not result in Endpoint object");
         }
-        
-        endpointResolver.initialize();
     }
     
     /** {@inheritDoc} */
@@ -272,6 +271,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
+// Checkstyle: CyclomaticComplexity OFF
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext)
             throws ProfileException {
         
@@ -330,7 +330,8 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         bindingCtx.setRelayState(SAMLBindingSupport.getRelayState(profileRequestContext.getInboundMessageContext()));
         bindingCtx.setBindingUri(resolvedEndpoint.getBinding());
     }
-
+ // Checkstyle: CyclomaticComplexity ON
+    
     /**
      * Build a template Endpoint object to use as input criteria to the resolution process.
      * 
