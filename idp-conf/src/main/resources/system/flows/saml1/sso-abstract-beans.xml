@@ -153,11 +153,13 @@
     <bean
         id="ResolveAttributes"
         class="net.shibboleth.idp.profile.impl.ResolveAttributes"
+        scope="prototype"
         c:resolverService-ref="shibboleth.AttributeResolverService" />
 
     <bean
         id="FilterAttributes"
         class="net.shibboleth.idp.profile.impl.FilterAttributes"
+        scope="prototype"
         c:service-ref="shibboleth.AttributeFilterService" />
 
     <bean
@@ -264,7 +266,8 @@
 
     <bean
         id="RecordResponseComplete"
-        class="net.shibboleth.idp.profile.impl.RecordResponseComplete" />
+        class="net.shibboleth.idp.profile.impl.RecordResponseComplete"
+        scope="prototype" />
 
 
     <!-- TODO The following are temporary. -->
