@@ -75,7 +75,7 @@ public class TransientDecoderTest {
 
     }
 
-    @Test(expectedExceptions={NameDecoderException.class,}) public void testExpired() throws ProfileException, ComponentInitializationException, IOException {
+    @Test(expectedExceptions={NameDecoderException.class, SubjectCanonicalizationException.class}) public void testExpired() throws ProfileException, ComponentInitializationException, IOException {
 
         final StorageService store = new MemoryStorageService();
         store.initialize();
@@ -100,7 +100,7 @@ public class TransientDecoderTest {
     }
 
 
-    @Test(expectedExceptions={NameDecoderException.class,})  public void testNotFound() throws ProfileException, ComponentInitializationException, IOException {
+    @Test(expectedExceptions={SubjectCanonicalizationException.class,})  public void testNotFound() throws ProfileException, ComponentInitializationException, IOException {
 
         final StorageService store = new MemoryStorageService();
         store.initialize();
