@@ -74,24 +74,26 @@ public class SelectSubjectCanonicalizationFlow extends AbstractSubjectCanonicali
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
         
-        final SubjectCanonicalizationFlowDescriptor flow = getUnattemptedFlow(profileRequestContext, c14nContext);
+        final SubjectCanonicalizationFlowDescriptor flow = selectUnattemptedFlow(profileRequestContext, c14nContext);
         if (flow == null) {
             log.error("{} no potential flows left to choose from, canonicalization will fail", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_POTENTIAL_FLOW);
             return;
         }
-        selectFlow(profileRequestContext, c14nContext, flow);
+
+        log.debug("{} selecting canonicalization flow {}", getLogPrefix(), flow.getId());
+        ActionSupport.buildEvent(profileRequestContext, flow.getId());
     }
 
     /**
-     * Return the first potential flow not found in the intermediate flows collection,
-     * and that is applicable to the context. 
+     * Select the first potential flow not found in the intermediate flows collection,
+     * and that is applicable to the context.
      * 
      * @param profileRequestContext the current IdP profile request context
      * @param c14nContext the current c14n context
      * @return an eligible flow, or null
      */
-    @Nullable private SubjectCanonicalizationFlowDescriptor getUnattemptedFlow(
+    @Nullable private SubjectCanonicalizationFlowDescriptor selectUnattemptedFlow(
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final SubjectCanonicalizationContext c14nContext) {
         for (final SubjectCanonicalizationFlowDescriptor flow : c14nContext.getPotentialFlows().values()) {
@@ -102,7 +104,6 @@ public class SelectSubjectCanonicalizationFlow extends AbstractSubjectCanonicali
                 if (flow.apply(profileRequestContext)) {
                     return flow;
                 }
-                c14nContext.setAttemptedFlow(null);
                 log.debug("{} Canonicalization flow {} was not applicable to this request", getLogPrefix(),
                         flow.getId());
                 
@@ -112,22 +113,6 @@ public class SelectSubjectCanonicalizationFlow extends AbstractSubjectCanonicali
         }
         
         return null;
-    }
-
-    /**
-     * Selects an applicable flow and completes processing.
-     * 
-     * @param profileRequestContext the current IdP profile request context
-     * @param c14nContext the current authentication context
-     * @param descriptor the flow to select
-     */
-    private void selectFlow(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final SubjectCanonicalizationContext c14nContext,
-            @Nonnull final SubjectCanonicalizationFlowDescriptor descriptor) {
-
-        log.debug("{} selecting canonicalization flow {}", getLogPrefix(), descriptor.getId());
-        c14nContext.setAttemptedFlow(descriptor);
-        ActionSupport.buildEvent(profileRequestContext, descriptor.getId());
     }
         
 }
