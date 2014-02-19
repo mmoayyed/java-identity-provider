@@ -171,7 +171,7 @@ public class NameIDCanonicalization extends AbstractSubjectCanonicalizationActio
 
             final SubjectCanonicalizationFlowDescriptor flowDescriptor = c14nContext.getAttemptedFlow();
 
-            log.debug("Attempting to match format {}", format);
+            log.debug("Attempting to match format '{}'", format);
 
             if (null == flowDescriptor) {
                 log.error("Supplied Context has no active FlowDescriptor");
