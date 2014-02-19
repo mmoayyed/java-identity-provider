@@ -105,7 +105,7 @@ public abstract class BaseTransientDecoder extends AbstractIdentifiableInitializ
             final StorageRecord record = idStore.read(TransientIdParameters.CONTEXT, transientId);
 
             if (null == record) {
-                throw new NameDecoderException(getLogPrefix() + " Could not find transient Identifier");
+                throw new SubjectCanonicalizationException(getLogPrefix() + " Could not find transient Identifier");
             }
 
             if (record.getExpiration() < System.currentTimeMillis()) {
