@@ -172,7 +172,7 @@
 
     <bean
         id="InitializeOutboundMessageContext"
-        class="net.shibboleth.idp.saml.impl.profile.saml1.InitializeOutboundMessageContext"
+        class="net.shibboleth.idp.saml.impl.profile.InitializeOutboundMessageContext"
         scope="prototype" />
 
     <bean
