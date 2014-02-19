@@ -46,7 +46,17 @@
     
     <action-state id="SelectProfileConfiguration">
         <evaluate expression="SelectProfileConfiguration" />
-        <transition on="proceed" to="InitializeAuthenticationContext"/>
+        <transition on="proceed" to="InitializeOutboundMessageContext" />
+    </action-state>
+
+    <action-state id="InitializeOutboundMessageContext">
+        <evaluate expression="InitializeOutboundMessageContext" />
+        <transition on="proceed" to="PopulateBindingAndEndpointContexts" />
+    </action-state>
+    
+    <action-state id="PopulateBindingAndEndpointContexts">
+        <evaluate expression="PopulateBindingAndEndpointContexts" />
+        <transition on="proceed" to="InitializeAuthenticationContext" />
     </action-state>
         
     <action-state id="InitializeAuthenticationContext">
@@ -78,11 +88,6 @@
        
     <action-state id="BuildResponse">
         <evaluate expression="BuildResponse" />
-        <transition on="proceed" to="PrepareOutboundMessageContext" />
-    </action-state>
-    
-    <action-state id="PrepareOutboundMessageContext">
-        <evaluate expression="PrepareOutboundMessageContext" />
         <transition on="proceed" to="AddAttributeStatementToAssertion" />
     </action-state>
     

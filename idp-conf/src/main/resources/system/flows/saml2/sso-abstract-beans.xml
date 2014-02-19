@@ -108,8 +108,6 @@
     
     <bean id="BuildResponse" class="idp.BuildMockSaml2Response" />
     
-    <bean id="PrepareOutboundMessageContext" class="idp.PrepareOutboundMessageContext" />
-    
     <bean id="outboundMessageHandlerChain" class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
         <property name="handlers">
             <util:list>
@@ -191,6 +189,18 @@
     <bean id="FilterAttributes" class="net.shibboleth.idp.profile.impl.FilterAttributes" >
        <constructor-arg ref="shibboleth.AttributeFilterService"/>
     </bean>
+
+    <bean
+        id="InitializeOutboundMessageContext"
+        class="net.shibboleth.idp.saml.impl.profile.InitializeOutboundMessageContext"
+        scope="prototype" />
+
+    <bean
+        id="PopulateBindingAndEndpointContexts"
+        class="net.shibboleth.idp.saml.impl.profile.PopulateBindingAndEndpointContexts"
+        scope="prototype"
+        p:endpointResolver-ref="shibboleth.EndpointResolver"
+        p:bindings-ref="shibboleth.OutgoingSAML2SSOBindings" />
 
     <!-- TODO replace with eventual relying-party.xml config -->
     <bean id="RelyingPartyConfiguration" class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"
