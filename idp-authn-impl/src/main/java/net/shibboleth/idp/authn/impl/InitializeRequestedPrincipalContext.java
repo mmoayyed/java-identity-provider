@@ -109,7 +109,7 @@ public class InitializeRequestedPrincipalContext extends AbstractAuthenticationA
         
         authenticationProfileConfig = (AuthenticationProfileConfiguration) config;
         if (authenticationProfileConfig.getDefaultAuthenticationMethods().isEmpty()) {
-            log.debug("{} Profile configuration does not include any default authentication methods");
+            log.debug("{} Profile configuration does not include any default authentication methods", getLogPrefix());
             return false;
         }
         
