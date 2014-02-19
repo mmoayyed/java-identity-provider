@@ -21,9 +21,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractSubjectCanonicalizationAction;
+import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor;
-import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 
 import org.opensaml.profile.action.ActionSupport;
@@ -98,9 +98,11 @@ public class SelectSubjectCanonicalizationFlow extends AbstractSubjectCanonicali
             if (!c14nContext.getIntermediateFlows().containsKey(flow.getId())) {
                 log.debug("{} Checking canonicalization flow {} for applicability...", getLogPrefix(),
                         flow.getId());
+                c14nContext.setAttemptedFlow(flow);
                 if (flow.apply(profileRequestContext)) {
                     return flow;
                 }
+                c14nContext.setAttemptedFlow(null);
                 log.debug("{} Canonicalization flow {} was not applicable to this request", getLogPrefix(),
                         flow.getId());
                 
