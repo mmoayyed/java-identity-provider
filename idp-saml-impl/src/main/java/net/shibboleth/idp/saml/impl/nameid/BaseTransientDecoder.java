@@ -94,7 +94,7 @@ public abstract class BaseTransientDecoder extends AbstractIdentifiableInitializ
     /** {@inheritDoc} */
     @Nonnull public String decode(@Nonnull String transientId, @Nullable String issuerId, @Nullable String requesterId)
             throws SubjectCanonicalizationException, NameDecoderException {
-        Constraint.isNotNull(requesterId, "Supplied requested should be null");
+        Constraint.isNotNull(requesterId, "Supplied requested should not be null");
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         if (null == transientId) {
