@@ -26,7 +26,7 @@ package net.shibboleth.idp.profile;
 public final class IdPEventIds {
 
     /**
-     * ID of event returned if the {@link net.shibboleth.idp.relyingparty.RelyingPartyContext} is missing or corrupt.
+     * ID of event returned if the {@link net.shibboleth.idp.profile.context.RelyingPartyContext} is missing or corrupt.
      */
     public static final String INVALID_RELYING_PARTY_CTX = "InvalidRelyingPartyContext";
 

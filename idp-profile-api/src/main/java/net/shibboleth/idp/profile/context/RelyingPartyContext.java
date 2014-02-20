@@ -15,18 +15,19 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.relyingparty;
+package net.shibboleth.idp.profile.context;
 
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
 
 /**
- * {@link BaseContext} containing relying party specific information. This is usually a
- * subcontext of an {@link org.opensaml.profile.context.ProfileRequestContext}.
+ * {@link BaseContext} containing relying party specific information, usually a
+ * subcontext of {@link org.opensaml.profile.context.ProfileRequestContext}.
  */
 public final class RelyingPartyContext extends BaseContext {
 
@@ -92,4 +93,5 @@ public final class RelyingPartyContext extends BaseContext {
     public void setProfileConfig(@Nullable final ProfileConfiguration config) {
         profileConfiguration = config;
     }
+    
 }

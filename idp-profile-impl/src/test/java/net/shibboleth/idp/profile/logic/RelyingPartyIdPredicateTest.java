@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile.logic;
 
 import java.util.Collections;
 
-import net.shibboleth.idp.relyingparty.RelyingPartyContext;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.profile.context.ProfileRequestContext;

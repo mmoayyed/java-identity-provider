@@ -18,7 +18,7 @@
 package net.shibboleth.idp.saml.profile.saml2;
 
 import net.shibboleth.idp.profile.RequestContextBuilder;
-import net.shibboleth.idp.relyingparty.RelyingPartyContext;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.ActionTestSupportAction;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
