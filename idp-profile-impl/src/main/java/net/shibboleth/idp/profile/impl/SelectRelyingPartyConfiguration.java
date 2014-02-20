@@ -50,7 +50,7 @@ import com.google.common.base.Function;
  * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CONFIG}
  * 
  * @post If a {@link ReplyingPartyContext} is located, it will be populated with a non-null result of applying
- * the supplied relying party config {@link Resolver} to to the {@link ProfileRequestContext}.
+ * the supplied {@link RelyingPartyConfigurationResolver} to the {@link ProfileRequestContext}.
  */
 public final class SelectRelyingPartyConfiguration extends AbstractProfileAction {
 
@@ -119,7 +119,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
             return false;
         }
         
-        return true;
+        return super.doPreExecute(profileRequestContext);
     }
     
     /** {@inheritDoc} */

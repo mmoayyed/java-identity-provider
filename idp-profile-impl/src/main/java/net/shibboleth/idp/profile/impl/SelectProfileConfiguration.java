@@ -47,7 +47,7 @@ import com.google.common.base.Function;
  * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CONFIG}
  * @event {@link IdPEventIds#INVALID_PROFILE_CONFIG}
  * 
- * @post ProfileRequestContext.getSubcontext(RelyingPartyContext.class, false).getProfileConfiguration() != null
+ * @post ProfileRequestContext.getSubcontext(RelyingPartyContext.class).getProfileConfiguration() != null
  */
 public class SelectProfileConfiguration extends AbstractProfileAction {
 

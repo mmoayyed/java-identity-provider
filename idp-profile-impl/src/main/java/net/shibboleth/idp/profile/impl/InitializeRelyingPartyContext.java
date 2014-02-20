@@ -20,54 +20,72 @@ package net.shibboleth.idp.profile.impl;
 import javax.annotation.Nonnull;
 
 import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
-import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 
 /**
- * Action that adds a {@link RelyingPartyContext} to the current {@link ProfileRequestContext}.
- * The relying party ID is set to the inbound message issuer as determined by
+ * Action that adds a {@link RelyingPartyContext} to the current {@link ProfileRequestContext} tree
+ * via a creation function. The relying party ID is set via a lookup strategy, defaulting to
  * {@link BasicMessageMetadataContext#getMessageIssuer()} via {@link ProfileRequestContext#getInboundMessageContext()}.
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @post ProfileRequestContext.getSubcontext(RelyingPartyContext.class, false) != null
- * @post ProfileRequestContext.getSubcontext(RelyingPartyContext.class, false).getRelyingPartyId() is set per above.
+ * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
+ * @post ProfileRequestContext.getSubcontext(RelyingPartyContext.class) != null
+ * @post ProfileRequestContext.getSubcontext(RelyingPartyContext.class).getRelyingPartyId() is set per above.
  */
 public class InitializeRelyingPartyContext extends AbstractProfileAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(InitializeRelyingPartyContext.class);
 
-    /**
-     * Strategy used to look up the {@link BasicMessageMetadataContext} associated with the inbound message context.
-     */
-    @Nonnull private Function<MessageContext, BasicMessageMetadataContext> messageMetadataContextLookupStrategy;
+    /** Strategy that will return or create a {@link RelyingPartyContext}. */
+    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextCreationStrategy;
+    
+    /** Strategy used to look up the {@link BasicMessageMetadataContext} to draw from. */
+    @Nonnull private Function<ProfileRequestContext,BasicMessageMetadataContext> messageMetadataContextLookupStrategy;
 
     /** Constructor. */
     public InitializeRelyingPartyContext() {
-        messageMetadataContextLookupStrategy = new ChildContextLookup<>(BasicMessageMetadataContext.class, false);
+        relyingPartyContextCreationStrategy = new ChildContextLookup<>(RelyingPartyContext.class, true);
+        messageMetadataContextLookupStrategy = Functions.compose(
+                new ChildContextLookup<>(BasicMessageMetadataContext.class), new InboundMessageContextLookup());
     }
 
     /**
-     * Set the strategy used to look up the {@link BasicMessageMetadataContext} associated with the inbound message
-     * context.
+     * Set the strategy used to return or create the {@link RelyingPartyContext}.
      * 
-     * @param strategy strategy used to look up the {@link BasicMessageMetadataContext} associated with the inbound
-     *            message context
+     * @param strategy creation strategy
+     */
+    public void setRelyingPartyContextCreationStrategy(
+            @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        relyingPartyContextCreationStrategy =
+                Constraint.isNotNull(strategy, "RelyingPartyContext creation strategy cannot be null");
+    }
+    
+    /**
+     * Set the strategy used to look up the {@link BasicMessageMetadataContext} to draw from.
+     * 
+     * @param strategy strategy used to look up the {@link BasicMessageMetadataContext}
      */
     public void setMessageMetadataContextLookupStrategy(
-            @Nonnull final Function<MessageContext, BasicMessageMetadataContext> strategy) {
+            @Nonnull final Function<ProfileRequestContext, BasicMessageMetadataContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         messageMetadataContextLookupStrategy =
@@ -78,14 +96,21 @@ public class InitializeRelyingPartyContext extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
-        final RelyingPartyContext rpContext = profileRequestContext.getSubcontext(RelyingPartyContext.class, true);
+        final RelyingPartyContext rpContext = relyingPartyContextCreationStrategy.apply(profileRequestContext);
+        if (rpContext == null) {
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+            return;
+        }
+        
         final BasicMessageMetadataContext messageSubcontext =
-                messageMetadataContextLookupStrategy.apply(profileRequestContext.getInboundMessageContext());
+                messageMetadataContextLookupStrategy.apply(profileRequestContext);
         if (messageSubcontext != null) {
             log.debug("{} Attaching RelyingPartyContext with relying party ID {} to ProfileRequestContext",
                     getLogPrefix(), messageSubcontext.getMessageIssuer());
-    
             rpContext.setRelyingPartyId(messageSubcontext.getMessageIssuer());
+        } else {
+            log.debug("{} Attaching RelyingPartyContext with no relying party ID to ProfileRequestContext",
+                    getLogPrefix());
         }
     }
     
