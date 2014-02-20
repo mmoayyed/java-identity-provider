@@ -48,6 +48,7 @@
         <!-- C14N methods. -->
         <webflow:flow-location id="SubjectC14NFlow/Simple" path="/c14n/simple-subject-c14n-flow.xml" />
         <webflow:flow-location id="SubjectC14NFlow/SAML2/Transient" path="/c14n/saml2-transient-subject-c14n-flow.xml"  />
+        <webflow:flow-location id="SubjectC14NFlow/SAML2/CryptoTransient" path="/c14n/saml2-crypto-transient-subject-c14n-flow.xml"  />
         <webflow:flow-location id="SubjectC14NFlow/LegacyPrincipalConnector" path="/c14n/legacy-pc-subject-c14n-flow.xml"  />
                 
     </webflow:flow-registry>

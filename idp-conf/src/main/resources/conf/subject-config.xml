@@ -47,6 +47,20 @@
                 </util:list>
             </property>
         </bean>
+        
+        <bean c:id="SubjectC14NFlow/SAML2/CryptoTransient" class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor"> 
+            <property name="activationCondition">
+                <bean
+                    class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition" />
+            </property>
+            <property name="formats">
+                <util:list>
+                    <value>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</value>
+                    <value>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</value>
+                </util:list>
+            </property>
+        </bean>
+        
 
         <bean c:id="SubjectC14NFlow/LegacyPrincipalConnector" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
             <property name="activationCondition">
