@@ -17,11 +17,11 @@
 
     <action-state id="HandleInboundMessage">
         <evaluate expression="HandleInboundMessage" />
-        <transition on="proceed" to="InitializeRelyingPartyContext" />
+        <transition on="proceed" to="InitializeRelyingPartyContexFromSAMLPeer" />
     </action-state>
 
-    <action-state id="InitializeRelyingPartyContext">
-        <evaluate expression="InitializeRelyingPartyContext" />
+    <action-state id="InitializeRelyingPartyContexFromSAMLPeer">
+        <evaluate expression="InitializeRelyingPartyContexFromSAMLPeer" />
         <transition on="proceed" to="SelectRelyingPartyConfiguration" />
     </action-state>
 

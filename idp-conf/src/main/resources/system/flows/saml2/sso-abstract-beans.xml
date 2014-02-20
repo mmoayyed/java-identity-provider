@@ -178,7 +178,7 @@
     
     <bean id="AddBasicMessageMetadataContext" class="idp.AddBasicMessageMetadataContext" />
     
-    <bean id="InitializeRelyingPartyContext" class="net.shibboleth.idp.profile.impl.InitializeRelyingPartyContext" />
+    <bean id="InitializeRelyingPartyContexFromSAMLPeer" class="net.shibboleth.idp.saml.impl.profile.InitializeRelyingPartyContextFromSAMLPeer" />
             
     <bean id="CheckMandatoryIssuer" class="org.opensaml.profile.action.impl.CheckMandatoryIssuer" />
     

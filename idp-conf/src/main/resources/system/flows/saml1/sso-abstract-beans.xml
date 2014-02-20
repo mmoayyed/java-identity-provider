@@ -95,8 +95,8 @@
         p:profileId="#{T(net.shibboleth.idp.saml.profile.config.saml1.BrowserSSOProfileConfiguration).PROFILE_ID}" />
 
     <bean
-        id="InitializeRelyingPartyContext"
-        class="net.shibboleth.idp.profile.impl.InitializeRelyingPartyContext"
+        id="InitializeRelyingPartyContexFromSAMLPeer"
+        class="net.shibboleth.idp.saml.impl.profile.InitializeRelyingPartyContextFromSAMLPeer"
         scope="prototype" />
 
     <bean
