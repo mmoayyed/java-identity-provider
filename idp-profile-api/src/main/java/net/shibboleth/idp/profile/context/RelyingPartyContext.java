@@ -58,8 +58,10 @@ public final class RelyingPartyContext extends BaseContext {
         
         if (relyingPartyId != null) {
             return relyingPartyId;
-        } else {
+        } else if (relyingPartyIdLookupStrategy != null) {
             return relyingPartyIdLookupStrategy.apply(this);
+        } else {
+            return null;
         }
     }
 
