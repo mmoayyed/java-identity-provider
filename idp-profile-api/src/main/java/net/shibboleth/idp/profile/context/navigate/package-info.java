@@ -19,4 +19,4 @@
  * Functions dealing with traversing and extracting data from
  * Spring or Web Flow context objects.
  */
-package net.shibboleth.idp.profile.navigate;
+package net.shibboleth.idp.profile.context.navigate;

@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.profile.context.SpringRequestContext;
-import net.shibboleth.idp.profile.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 

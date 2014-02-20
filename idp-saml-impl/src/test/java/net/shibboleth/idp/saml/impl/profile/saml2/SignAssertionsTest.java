@@ -21,7 +21,7 @@ import java.security.KeyPair;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
-import net.shibboleth.idp.profile.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.saml.profile.SAMLEventIds;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 

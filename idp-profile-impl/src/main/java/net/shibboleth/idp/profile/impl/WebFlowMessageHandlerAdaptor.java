@@ -20,7 +20,7 @@ package net.shibboleth.idp.profile.impl;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;

@@ -20,7 +20,7 @@ package net.shibboleth.idp.saml.impl.profile;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
-import net.shibboleth.idp.profile.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.saml.impl.profile.InitializeAuthenticationContext;
 
 import org.opensaml.profile.context.ProfileRequestContext;
