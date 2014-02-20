@@ -36,9 +36,8 @@ import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
+import org.opensaml.messaging.context.navigate.RootContextLookup;
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -125,7 +124,10 @@ public class FilterAttributes extends AbstractProfileAction {
                 new ChildContextLookup<>(SAMLMetadataContext.class),
                 Functions.compose(new ChildContextLookup<>(SAMLPeerEntityContext.class),
                         new InboundMessageContextLookup()));
-        metadataFromFilterLookupStrategy = new MetadataLookupFromFilterContext(metadataContextLookupStrategy);
+        
+        // This is always set to navigate to the root context and then apply the previous function.
+        metadataFromFilterLookupStrategy = Functions.compose(metadataContextLookupStrategy,
+                new RootContextLookup<AttributeFilterContext,ProfileRequestContext>());
     }
 
     /**
@@ -185,7 +187,8 @@ public class FilterAttributes extends AbstractProfileAction {
 
         metadataContextLookupStrategy =
                 Constraint.isNotNull(strategy, "MetadataContext lookup strategy cannot be null");
-        metadataFromFilterLookupStrategy = new MetadataLookupFromFilterContext(metadataContextLookupStrategy);        
+        metadataFromFilterLookupStrategy = Functions.compose(metadataContextLookupStrategy,
+                new RootContextLookup<AttributeFilterContext,ProfileRequestContext>());
     }
 
 
@@ -285,52 +288,6 @@ public class FilterAttributes extends AbstractProfileAction {
             if (null != component) {
                 component.unpinComponent();
             }
-        }
-    }
-
-    /**
-     * Class to go from a {@link AttributeFilterContext} to a {@link SAMLMetadataContext). We know how to get to a
-     * 
-     * @link ProfileRequestContext) from a {@link AttributeFilterContext} because we set it up, and we are told how to
-     *       get to a {@link SAMLMetadataContext} from a {@link ProfileRequestContext}, so we plug them together.
-     * 
-     */
-    protected class MetadataLookupFromFilterContext implements
-            ContextDataLookupFunction<AttributeFilterContext, SAMLMetadataContext> {
-
-        /**
-         * How to get from the profile to the SAMLMetadataContext.
-         */
-        private final Function<ProfileRequestContext, SAMLMetadataContext> profileLookupStrategy;
-
-        /**
-         * Constructor.
-         * 
-         * @param strategy how to get to the {@link SAMLMetadataContext) from a {@link ProfileRequestContext}.
-         */
-        public MetadataLookupFromFilterContext(Function<ProfileRequestContext, SAMLMetadataContext> strategy) {
-            profileLookupStrategy = strategy;
-        }
-
-        /** {@inheritDoc} */
-        @Override @Nullable public SAMLMetadataContext apply(@Nullable AttributeFilterContext input) {
-            if (null == input) {
-                return null;
-            }
-            BaseContext parent = input.getParent();
-
-            if (parent == null) {
-                log.error("{} provided filter context was orphan", getLogPrefix());
-                return null;
-            }
-
-            if (parent instanceof ProfileRequestContext<?, ?>) {
-                ProfileRequestContext<?, ?> profileCtx = (ProfileRequestContext<?, ?>) parent;
-                return profileLookupStrategy.apply(profileCtx);
-            }
-            log.error("{} parent of provided filter context was of wrong type {}", getLogPrefix(), parent.getClass()
-                    .getName());
-            return null;
         }
     }
 
