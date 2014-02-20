@@ -58,20 +58,21 @@ public final class AttributeFilterContext extends BaseContext {
     /** The principal associated with the filtering. */
     private String principal;
 
-    /** The local entityID. */
+    /** The attribute source identity. */
     @Nullable private String attributeIssuerID;
 
-    /** The other entityID. */
+    /** The attribute recipient identity. */
     @Nullable private String attributeRecipientID;
 
     /** How was the principal Authenticated? */
     @Nullable private String principalAuthenticationMethod;
 
     /** Cache of the metadata context. */
-    private SAMLMetadataContext requesterMetadataContext;
+    @Nullable private SAMLMetadataContext requesterMetadataContext;
 
     /** How to get from hus to the SP metadata context. */
-    private Function<AttributeFilterContext, SAMLMetadataContext> requesterMetadataContextLookupStrategy;
+    @NonnullAfterInit
+    private Function<AttributeFilterContext,SAMLMetadataContext> requesterMetadataContextLookupStrategy;
 
     /** Constructor. */
     public AttributeFilterContext() {
@@ -96,14 +97,14 @@ public final class AttributeFilterContext extends BaseContext {
      * @param attributes attributes which are to be filtered
      */
     public void setPrefilteredIdPAttributes(@Nullable @NullableElements final Collection<IdPAttribute> attributes) {
-        Collection<IdPAttribute> checkedAttributes = new ArrayList<IdPAttribute>();
+        Collection<IdPAttribute> checkedAttributes = new ArrayList<>();
         CollectionSupport.addIf(checkedAttributes, attributes, Predicates.notNull());
 
         prefilteredAttributes =
                 MapConstraints.constrainedMap(new HashMap<String, IdPAttribute>(checkedAttributes.size()),
                         MapConstraints.notNull());
 
-        for (IdPAttribute attribute : checkedAttributes) {
+        for (final IdPAttribute attribute : checkedAttributes) {
             prefilteredAttributes.put(attribute.getId(), attribute);
         }
     }
@@ -123,14 +124,14 @@ public final class AttributeFilterContext extends BaseContext {
      * @param attributes attributes that have been filtered
      */
     public void setFilteredIdPAttributes(@Nullable @NullableElements final Collection<IdPAttribute> attributes) {
-        Collection<IdPAttribute> checkedAttributes = new ArrayList<IdPAttribute>();
+        Collection<IdPAttribute> checkedAttributes = new ArrayList<>();
         CollectionSupport.addIf(checkedAttributes, attributes, Predicates.notNull());
 
         filteredAttributes =
                 MapConstraints.constrainedMap(new HashMap<String, IdPAttribute>(checkedAttributes.size()),
                         MapConstraints.notNull());
 
-        for (IdPAttribute attribute : checkedAttributes) {
+        for (final IdPAttribute attribute : checkedAttributes) {
             filteredAttributes.put(attribute.getId(), attribute);
         }
     }
@@ -190,7 +191,7 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @param value the attribute issuer associated with this resolution.
      */
-    @Nullable public void setAttributeIssuerID(@Nullable String value) {
+    @Nullable public void setAttributeIssuerID(@Nullable final String value) {
         attributeIssuerID = value;
     }
 
@@ -208,7 +209,7 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @param value the attribute recipient associated with this resolution.
      */
-    @Nullable public void setAttributeRecipientID(@Nullable String value) {
+    @Nullable public void setAttributeRecipientID(@Nullable final String value) {
         attributeRecipientID = value;
     }
 
@@ -226,7 +227,7 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @param method The principalAuthenticationMethod to set.
      */
-    public void setPrincipalAuthenticationMethod(@Nullable String method) {
+    public void setPrincipalAuthenticationMethod(@Nullable final String method) {
         principalAuthenticationMethod = method;
     }
 
@@ -246,7 +247,7 @@ public final class AttributeFilterContext extends BaseContext {
      * @param strategy The requesterMetadataContextLookupStrategy to set.
      */
     public void setRequesterMetadataContextLookupStrategy(
-            @Nonnull Function<AttributeFilterContext, SAMLMetadataContext> strategy) {
+            @Nonnull final Function<AttributeFilterContext, SAMLMetadataContext> strategy) {
         requesterMetadataContextLookupStrategy =
                 Constraint.isNotNull(strategy, "MetadataContext lookup strategy cannot be null");
     }
@@ -260,4 +261,5 @@ public final class AttributeFilterContext extends BaseContext {
         }
         return requesterMetadataContext;
     }
+    
 }
