@@ -37,18 +37,19 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
-import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 
 /**
  * Action that invokes the {@link AttributeFilter} for the current request.
@@ -118,7 +119,12 @@ public class FilterAttributes extends AbstractProfileAction {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
         subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class, false);
         authnContextLookupStrategy = new ChildContextLookup<>(AuthenticationContext.class, false);
-        metadataContextLookupStrategy = new DefaultMetadataLookup();
+        
+        // Default: inbound msg context -> SAMLPeerEntityContext -> SAMLMetadataContext
+        metadataContextLookupStrategy = Functions.compose(
+                new ChildContextLookup<>(SAMLMetadataContext.class),
+                Functions.compose(new ChildContextLookup<>(SAMLPeerEntityContext.class),
+                        new InboundMessageContextLookup()));
         metadataFromFilterLookupStrategy = new MetadataLookupFromFilterContext(metadataContextLookupStrategy);
     }
 
@@ -279,37 +285,6 @@ public class FilterAttributes extends AbstractProfileAction {
             if (null != component) {
                 component.unpinComponent();
             }
-        }
-    }
-
-    /**
-     * Default implementation of the lookup from Profile Request to SAML Metadata.
-     * 
-     */
-    protected static class DefaultMetadataLookup implements
-            ContextDataLookupFunction<ProfileRequestContext, SAMLMetadataContext> {
-
-        /**
-         * By default the SAML Metadata Context is the child of the incoming MessageContext's SAMLPeerEntityContext
-         * child.
-         * 
-         * TODO(rdw) This navigation is subject to change
-         * 
-         * {@inheritDoc}
-         */
-        @Override @Nullable public SAMLMetadataContext apply(@Nullable final ProfileRequestContext input) {
-            if (null == input) {
-                return null;
-            }
-            final MessageContext<?> messageContext = input.getInboundMessageContext();
-            if (null == messageContext) {
-                return null;
-            }
-            SAMLPeerEntityContext peerContext = messageContext.getSubcontext(SAMLPeerEntityContext.class, false);
-            if (null == peerContext) {
-                return null;
-            }
-            return peerContext.getSubcontext(SAMLMetadataContext.class, false);
         }
     }
 
