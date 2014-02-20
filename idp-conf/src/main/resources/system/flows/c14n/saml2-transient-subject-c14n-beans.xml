@@ -11,7 +11,7 @@
 
 	<bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
-	<bean id="SAML2TransientDecoder" class="net.shibboleth.idp.saml.impl.nameid.NameID"
+	<bean id="SAML2TransientDecoder" class="net.shibboleth.idp.saml.impl.nameid.TransientNameIDDecoder"
 		scope="prototype" p:id="SAML2TransientDecoder" p:idStore-ref="shibboleth.StorageService" />
 
 	<bean id="SAML2TransientCanonicalization" class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization"
