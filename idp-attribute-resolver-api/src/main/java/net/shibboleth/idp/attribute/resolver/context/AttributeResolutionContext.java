@@ -53,10 +53,10 @@ public class AttributeResolutionContext extends BaseContext {
     /** The principal associated with this resolution. */
     @Nullable private String principal;
 
-    /** The local entityID. */
+    /** The attribute source identity. */
     @Nullable private String attributeIssuerID;
 
-    /** The other entityID. */
+    /** The attribute recipient identity. */
     @Nullable private String attributeRecipientID;
 
     /** How was the principal Authenticated? */
