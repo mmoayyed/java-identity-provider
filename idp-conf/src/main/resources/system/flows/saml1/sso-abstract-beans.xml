@@ -103,11 +103,11 @@
         id="SelectRelyingPartyConfiguration"
         class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration"
         scope="prototype"
-        c:resolver-ref="RelyingPartyConfigurationResolver" />
+        p:relyingPartyConfigurationResolver-ref="RelyingPartyConfigurationResolver" />
 
     <bean
         id="RelyingPartyConfigurationResolver"
-        class="net.shibboleth.idp.relyingparty.impl.RelyingPartyConfigurationResolver"
+        class="net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver"
         scope="prototype"
         p:id="RelyingPartyConfigurationResolver"
         p:relyingPartyConfigurations-ref="RelyingPartyConfiguration" />

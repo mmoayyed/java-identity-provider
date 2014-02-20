@@ -27,10 +27,12 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.resolver.Resolver;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -56,7 +58,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
     @Nonnull private final Logger log = LoggerFactory.getLogger(SelectRelyingPartyConfiguration.class);
 
     /** Resolver used to look up relying party configurations. */
-    @Nonnull private final Resolver<RelyingPartyConfiguration, ProfileRequestContext> rpConfigResolver;
+    @NonnullAfterInit private RelyingPartyConfigurationResolver rpConfigResolver;
 
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
@@ -66,40 +68,24 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
     /** The {@link RelyingPartyContext} to manipulate. */
     @Nullable private RelyingPartyContext relyingPartyCtx;
     
-    /**
-     * Constructor.
-     * 
-     * @param resolver resolver used to look up relying party configurations
-     */
-    public SelectRelyingPartyConfiguration(
-            @Nonnull final Resolver<RelyingPartyConfiguration, ProfileRequestContext> resolver) {
-
-        rpConfigResolver = Constraint.isNotNull(resolver, "Relying party configuration resolver cannot be null");
+    /** Constructor. */
+    public SelectRelyingPartyConfiguration() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
     }
 
     /**
-     * Gets the resolver used to look up relying party configuration.
+     * Set the relying party config resolver to use.
      * 
-     * @return resolver used to look up relying party configuration, never null after initialization
+     * @param resolver  the resolver to use
      */
-    @Nonnull public Resolver<RelyingPartyConfiguration, ProfileRequestContext> getRelyingPartyConfigurationResolver() {
-        return rpConfigResolver;
+    public void setRelyingPartyConfigurationResolver(@Nonnull final RelyingPartyConfigurationResolver resolver) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        rpConfigResolver = Constraint.isNotNull(resolver, "Relying party configuration resolver cannot be null");
     }
-
+    
     /**
-     * Gets the strategy used to locate the {@link RelyingPartyContext} associated with a given
-     * {@link ProfileRequestContext}.
-     * 
-     * @return strategy used to locate the {@link RelyingPartyContext} associated with a given
-     *         {@link ProfileRequestContext}
-     */
-    @Nonnull public Function<ProfileRequestContext, RelyingPartyContext> getRelyingPartyContextLookupStrategy() {
-        return relyingPartyContextLookupStrategy;
-    }
-
-    /**
-     * Sets the strategy used to locate the {@link RelyingPartyContext} associated with a given
+     * Set the strategy used to locate the {@link RelyingPartyContext} associated with a given
      * {@link ProfileRequestContext}.
      * 
      * @param strategy strategy used to locate the {@link RelyingPartyContext} associated with a given
@@ -115,10 +101,20 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
 
     /** {@inheritDoc} */
     @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (rpConfigResolver == null) {
+            throw new ComponentInitializationException("RelyingPartyConfigurationResolver cannot be null");
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
         relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyCtx == null) {
-            log.debug("{} No relying party context available for this request", getLogPrefix());
+            log.debug("{} No relying party context available", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
             return false;
         }
@@ -138,7 +134,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
                 return;
             }
 
-            log.debug("{} Found relying party configuration for request", getLogPrefix());
+            log.debug("{} Found relying party configuration {} for request", getLogPrefix(), config.getId());
             relyingPartyCtx.setConfiguration(config);
         } catch (ResolverException e) {
             log.error(getLogPrefix() + " Error trying to resolve relying party configuration", e);

@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
@@ -36,7 +37,6 @@ import net.shibboleth.utilities.java.support.component.AbstractIdentifiableIniti
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.resolver.Resolver;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.slf4j.Logger;
@@ -46,6 +46,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Retrieves a per-relying party configuration for a given profile request based on the request context.
@@ -53,17 +54,17 @@ import com.google.common.collect.Lists;
  * <p>Note that this resolver does not permit more than one {@link RelyingPartyConfiguration}
  * with the same ID.</p>
  */
-public class RelyingPartyConfigurationResolver extends AbstractIdentifiableInitializableComponent implements
-        Resolver<RelyingPartyConfiguration, ProfileRequestContext> {
+public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiableInitializableComponent
+        implements RelyingPartyConfigurationResolver {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(RelyingPartyConfigurationResolver.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(DefaultRelyingPartyConfigurationResolver.class);
 
     /** Registered relying party configurations. */
     private Collection<RelyingPartyConfiguration> rpConfigurations;
 
     /** Constructor. */
-    public RelyingPartyConfigurationResolver() {
+    public DefaultRelyingPartyConfigurationResolver() {
         rpConfigurations = Collections.emptyList();
     }
     
@@ -103,8 +104,8 @@ public class RelyingPartyConfigurationResolver extends AbstractIdentifiableIniti
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        final HashSet<String> configIds = new HashSet<>(rpConfigurations.size());
-        for (RelyingPartyConfiguration config : rpConfigurations) {
+        final HashSet<String> configIds = Sets.newHashSetWithExpectedSize(rpConfigurations.size());
+        for (final RelyingPartyConfiguration config : rpConfigurations) {
             if (configIds.contains(config.getId())) {
                 throw new ComponentInitializationException("Multiple replying party configurations with ID "
                         + config.getId() + " detected. Configuration IDs must be unique.");
@@ -115,8 +116,8 @@ public class RelyingPartyConfigurationResolver extends AbstractIdentifiableIniti
     
     /** {@inheritDoc} */
     @Override
-    public Iterable<RelyingPartyConfiguration> resolve(@Nullable final ProfileRequestContext context)
-            throws ResolverException {
+    @Nonnull @NonnullElements public Iterable<RelyingPartyConfiguration> resolve(
+            @Nullable final ProfileRequestContext context) throws ResolverException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         if (context == null) {
@@ -125,9 +126,9 @@ public class RelyingPartyConfigurationResolver extends AbstractIdentifiableIniti
 
         log.debug("Resolving relying party configurations for profile request {}", context.getId());
 
-        final ArrayList<RelyingPartyConfiguration> matches = new ArrayList<>();
+        final ArrayList<RelyingPartyConfiguration> matches = Lists.newArrayList();
 
-        for (RelyingPartyConfiguration configuration : rpConfigurations) {
+        for (final RelyingPartyConfiguration configuration : rpConfigurations) {
             log.debug("Checking if relying party configuration {} is applicable to profile request {}",
                     configuration.getId(), context.getId());
             if (configuration.apply(context)) {
@@ -145,7 +146,7 @@ public class RelyingPartyConfigurationResolver extends AbstractIdentifiableIniti
 
     /** {@inheritDoc} */
     @Override
-    public RelyingPartyConfiguration resolveSingle(@Nullable final ProfileRequestContext context)
+    @Nullable public RelyingPartyConfiguration resolveSingle(@Nullable final ProfileRequestContext context)
             throws ResolverException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         

@@ -221,7 +221,7 @@
         </property>
     </bean>
 
-    <bean id="RelyingPartyConfigurationResolver" p:id="RelyingPartyConfigurationResolver" class="net.shibboleth.idp.relyingparty.impl.RelyingPartyConfigurationResolver">
+    <bean id="RelyingPartyConfigurationResolver" p:id="RelyingPartyConfigurationResolver" class="net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver">
         <property name="relyingPartyConfigurations">
             <util:list>
                 <ref bean="RelyingPartyConfiguration" />
@@ -229,9 +229,8 @@
         </property>
     </bean>
 
-    <bean id="SelectRelyingPartyConfiguration" class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration" scope="prototype">
-        <constructor-arg ref="RelyingPartyConfigurationResolver" />
-    </bean>
+    <bean id="SelectRelyingPartyConfiguration" class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration" scope="prototype"
+        p:relyingPartyConfigurationResolver-ref="RelyingPartyConfigurationResolver" />
 
     <bean id="SelectProfileConfiguration" class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration" scope="prototype"/>
 

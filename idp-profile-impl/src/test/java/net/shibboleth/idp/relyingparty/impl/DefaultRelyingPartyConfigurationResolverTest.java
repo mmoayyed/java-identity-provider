@@ -30,8 +30,8 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 
-/** Unit test for {@link RelyingPartyConfigurationResolver}. */
-public class RelyingPartyConfigurationResolverTest {
+/** Unit test for {@link DefaultRelyingPartyConfigurationResolver}. */
+public class DefaultRelyingPartyConfigurationResolverTest {
 
     @Test public void testConstruction() throws ComponentInitializationException {
         RelyingPartyConfiguration one = new RelyingPartyConfiguration();
@@ -55,18 +55,18 @@ public class RelyingPartyConfigurationResolverTest {
         
         ArrayList<RelyingPartyConfiguration> rpConfigs = Lists.newArrayList(one, two, three);
 
-        RelyingPartyConfigurationResolver resolver = new RelyingPartyConfigurationResolver();
+        DefaultRelyingPartyConfigurationResolver resolver = new DefaultRelyingPartyConfigurationResolver();
         resolver.setId("test");
         resolver.setRelyingPartyConfigurations(rpConfigs);
         Assert.assertEquals(resolver.getId(), "test");
         Assert.assertEquals(resolver.getRelyingPartyConfigurations().size(), 3);
 
-        resolver = new RelyingPartyConfigurationResolver();
+        resolver = new DefaultRelyingPartyConfigurationResolver();
         resolver.setId("test");
         Assert.assertEquals(resolver.getId(), "test");
         Assert.assertEquals(resolver.getRelyingPartyConfigurations().size(), 0);
 
-        resolver = new RelyingPartyConfigurationResolver();
+        resolver = new DefaultRelyingPartyConfigurationResolver();
         resolver.setId("test");
         Assert.assertEquals(resolver.getId(), "test");
         Assert.assertEquals(resolver.getRelyingPartyConfigurations().size(), 0);
@@ -96,7 +96,7 @@ public class RelyingPartyConfigurationResolverTest {
         
         ArrayList<RelyingPartyConfiguration> rpConfigs = Lists.newArrayList(one, two, three);
 
-        RelyingPartyConfigurationResolver resolver = new RelyingPartyConfigurationResolver();
+        DefaultRelyingPartyConfigurationResolver resolver = new DefaultRelyingPartyConfigurationResolver();
         resolver.setId("test");
         resolver.setRelyingPartyConfigurations(rpConfigs);
         resolver.initialize();
