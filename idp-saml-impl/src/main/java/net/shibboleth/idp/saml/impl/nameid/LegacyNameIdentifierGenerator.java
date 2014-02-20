@@ -24,6 +24,7 @@ import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
+import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.nameid.NameIdentifierAttributeEncoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
@@ -39,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
@@ -79,8 +81,11 @@ public class LegacyNameIdentifierGenerator<NameIdType extends SAMLObject>
         super.setId(getClass().getName());
         
         activationCondition = Predicates.alwaysTrue();
-        attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class);
         encoderType = Constraint.isNotNull(clazz, "Encoder class type cannot be null");
+
+        // ProfileRequestContext -> RelyingPartyContext -> AttributeContext
+        attributeContextLookupStrategy = Functions.compose(new ChildContextLookup<>(AttributeContext.class),
+                new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
     }
 
     /** {@inheritDoc} */

@@ -27,6 +27,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.impl.attribute.encoding.SAML2StringNameIDEncoder;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -63,7 +64,7 @@ public class LegacySAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
         NameID outputNameId = generator.generate(prc, NameID.X509_SUBJECT);
         Assert.assertNull(outputNameId);
 
-        prc.getSubcontext(AttributeContext.class, true);
+        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true);
         outputNameId = generator.generate(prc, NameID.X509_SUBJECT);
         Assert.assertNull(outputNameId);
     }
@@ -76,7 +77,8 @@ public class LegacySAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
         encoder.setNameFormat(NameIdentifier.EMAIL);
         inputAttribute.setEncoders(Collections.<AttributeEncoder<?>>singleton(encoder));
         
-        prc.getSubcontext(AttributeContext.class, true).setIdPAttributes(Collections.singleton(inputAttribute));
+        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setIdPAttributes(
+                Collections.singleton(inputAttribute));
         
         NameID outputNameId = generator.generate(prc, NameID.X509_SUBJECT);
         Assert.assertNull(outputNameId);
@@ -89,7 +91,8 @@ public class LegacySAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
-        prc.getSubcontext(AttributeContext.class, true).setIdPAttributes(Collections.singleton(inputAttribute));
+        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setIdPAttributes(
+                Collections.singleton(inputAttribute));
         
         NameID outputNameId = generator.generate(prc, NameID.X509_SUBJECT);
         Assert.assertNull(outputNameId);
@@ -107,7 +110,8 @@ public class LegacySAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
         encoder.setNameFormat(NameID.EMAIL);
         inputAttribute.setEncoders(Collections.<AttributeEncoder<?>>singleton(encoder));
         
-        prc.getSubcontext(AttributeContext.class, true).setIdPAttributes(Collections.singleton(inputAttribute));
+        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setIdPAttributes(
+                Collections.singleton(inputAttribute));
         
         NameID outputNameId = generator.generate(prc, NameID.X509_SUBJECT);
         Assert.assertNull(outputNameId);
@@ -125,7 +129,8 @@ public class LegacySAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
         encoder.setNameFormat(NameID.EMAIL);
         inputAttribute.setEncoders(Collections.<AttributeEncoder<?>>singleton(encoder));
 
-        prc.getSubcontext(AttributeContext.class, true).setIdPAttributes(Collections.singleton(inputAttribute));
+        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setIdPAttributes(
+                Collections.singleton(inputAttribute));
         
         NameID outputNameId = generator.generate(prc, NameID.EMAIL);
         Assert.assertNotNull(outputNameId);
@@ -149,7 +154,8 @@ public class LegacySAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
         encoder.setNameFormat(NameID.X509_SUBJECT);
         inputAttribute.setEncoders(Arrays.<AttributeEncoder<?>>asList(encoder, encoder2));
 
-        prc.getSubcontext(AttributeContext.class, true).setIdPAttributes(Collections.singleton(inputAttribute));
+        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setIdPAttributes(
+                Collections.singleton(inputAttribute));
         
         NameID outputNameId = generator.generate(prc, NameID.X509_SUBJECT);
         Assert.assertNotNull(outputNameId);

@@ -112,8 +112,8 @@ public class DefaultSAML1NameIdentifierGeneratorTest extends OpenSAMLInitBaseTes
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
-        prc.getSubcontext(RelyingPartyContext.class, false).getSubcontext(AttributeContext.class, true)
-                .setIdPAttributes(Collections.singleton(inputAttribute));
+        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setIdPAttributes(
+                Collections.singleton(inputAttribute));
 
         generator.setAttributeSourceIds(Collections.singletonList(ATTR_NAME));
         generator.initialize();

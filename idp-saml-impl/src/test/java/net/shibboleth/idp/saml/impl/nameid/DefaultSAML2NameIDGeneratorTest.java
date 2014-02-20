@@ -114,7 +114,8 @@ public class DefaultSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
-        prc.getSubcontext(AttributeContext.class, true).setIdPAttributes(Collections.singleton(inputAttribute));
+        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setIdPAttributes(
+                Collections.singleton(inputAttribute));
 
         generator.setAttributeSourceIds(Collections.singletonList(ATTR_NAME));
         generator.initialize();
@@ -127,7 +128,8 @@ public class DefaultSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
                 Collections.singletonList(saml2NameIdFor(NAME_1));
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
-        prc.getSubcontext(AttributeContext.class, true).setIdPAttributes(Collections.singleton(inputAttribute));
+        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setIdPAttributes(
+                Collections.singleton(inputAttribute));
 
         generator.setFormat(NameID.EMAIL);
         generator.setAttributeSourceIds(Collections.singletonList(ATTR_NAME));
