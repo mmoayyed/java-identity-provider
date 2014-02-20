@@ -50,6 +50,10 @@ public abstract class AbstractPrincipalConnectorParser extends AbstractSingleBea
     /** {@inheritDoc} */
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
+        
+        builder.setInitMethodName("initialize");
+        //TODO builder.setDestroyMethodName("destroy");
+        
         super.doParse(config, parserContext, builder);
 
         // First up, add the per type decoders
