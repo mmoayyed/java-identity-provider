@@ -122,8 +122,13 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
      * If we auto-generate a name then we issue a warning so users can (1) correct this, but also so they can make sense
      * of the logging in the filters which uses the id extensively.
      */
+    @Override
     protected void doParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
+        
+        builder.setInitMethodName("initialize");
+        //TODO builder.setDestroyMethodName("destroy");
+
         super.doParse(element, parserContext, builder);
 
         final String suppliedId = StringSupport.trimOrNull(element.getAttributeNS(null, "id"));
@@ -142,6 +147,7 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty protected String resolveId(@Nonnull final Element configElement,
             @Nonnull final AbstractBeanDefinition beanDefinition, @Nonnull final ParserContext parserContext) {
         return beanDefinition.getAttribute("qualifiedId").toString();

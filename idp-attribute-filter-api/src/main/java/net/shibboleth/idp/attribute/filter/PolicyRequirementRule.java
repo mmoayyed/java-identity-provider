@@ -22,28 +22,29 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
+import net.shibboleth.utilities.java.support.component.InitializableComponent;
 
 /**
  * Java definition of PolicyRequirementRule.
  * 
  * This is a specific mapping of a MatchFunctor as used in an {@link AttributeFilterPolicy}
- *
- * All function can return {@link Tristate#TRUE} or {@link Tristate#FALSE} (as expected), 
- * but if something odd happens during enumeration (like not being able to find something
- * in the context) then they return {@link Tristate#FAIL}.
+ * 
+ * All function can return {@link Tristate#TRUE} or {@link Tristate#FALSE} (as expected), but if something odd happens
+ * during enumeration (like not being able to find something in the context) then they return {@link Tristate#FAIL}.
  */
 @ThreadSafe
-public interface PolicyRequirementRule extends IdentifiableComponent {
+public interface PolicyRequirementRule extends IdentifiableComponent, InitializableComponent {
 
     /**
      * Representation of the three outcomes of a PolicyRequirementRule.
      */
     public enum Tristate {
         /** Match. */
-        TRUE, 
+        TRUE,
         /** No match. */
-        FALSE, 
+        FALSE,
         /** Match operation failed. */
         FAIL
     };
@@ -51,36 +52,57 @@ public interface PolicyRequirementRule extends IdentifiableComponent {
     /** A {@link PolicyRequirementRule} that returns true matched. */
     public static final PolicyRequirementRule MATCHES_ALL = new PolicyRequirementRule() {
 
-        public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
+        @Override public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
             return Tristate.TRUE;
         }
 
-        @Nullable public String getId() {
+        @Override @Nullable public String getId() {
             return "MATCHES_ALL";
+        }
+
+        @Override public boolean isInitialized() {
+            return true;
+        }
+
+        @Override public void initialize() throws ComponentInitializationException {
         }
     };
 
     /** A {@link PolicyRequirementRule} that returns false as matched. */
     public static final PolicyRequirementRule MATCHES_NONE = new PolicyRequirementRule() {
 
-        public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
+        @Override public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
             return Tristate.FALSE;
         }
 
-        @Nullable public String getId() {
+        @Override @Nullable public String getId() {
             return "MATCHES_NONE";
+        }
+
+        @Override public boolean isInitialized() {
+            return true;
+        }
+
+        @Override public void initialize() throws ComponentInitializationException {
         }
     };
 
     /** A {@link PolicyRequirementRule} that returns failed. */
     public static final PolicyRequirementRule REQUIREMENT_RULE_FAILS = new PolicyRequirementRule() {
 
-        public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
+        @Override public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
             return Tristate.FAIL;
         }
 
-        @Nullable public String getId() {
+        @Override @Nullable public String getId() {
             return "REQUIREMENT_RULE_FAILS";
+        }
+
+        @Override public boolean isInitialized() {
+            return true;
+        }
+
+        @Override public void initialize() throws ComponentInitializationException {
         }
     };
 

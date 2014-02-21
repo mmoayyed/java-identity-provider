@@ -63,16 +63,21 @@ public class AttributeFilterPolicyGroupParser extends AbstractSingleBeanDefiniti
     private final Logger log = LoggerFactory.getLogger(AttributeFilterPolicyGroupParser.class);
 
     /** {@inheritDoc} */
+    @Override
     protected Class<AttributeFilterImpl> getBeanClass(@Nullable Element element) {
         return AttributeFilterImpl.class;
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doParse(Element config, ParserContext context, BeanDefinitionBuilder builder) {
 
         String policyId = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
 
         log.debug("Parsing attribute filter policy group {}", policyId);
+
+        builder.setInitMethodName("initialize");
+        //TODO builder.setDestroyMethodName("destroy");
 
         List<Element> children;
         Map<QName, List<Element>> childrenMap = ElementSupport.getIndexedChildElements(config);

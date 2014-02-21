@@ -95,6 +95,9 @@ public abstract class BaseAttributeValueMatcherParser extends BaseFilterParser {
 
         if (isPolicyRule(element)) {
             BeanDefinitionBuilder childBuilder = BeanDefinitionBuilder.genericBeanDefinition(getNativeBeanClass());
+            
+            childBuilder.setInitMethodName("initialize");
+            //TODO childBuilder.setDestroyMethodName("destroy");
 
             doNativeParse(element, parserContext, childBuilder);
             childBuilder.addPropertyValue("id", "PMId:" + myId);
@@ -106,7 +109,11 @@ public abstract class BaseAttributeValueMatcherParser extends BaseFilterParser {
         } else if (hasAttributeId(element)) {
             // Bean inside PolicyFromMatcherId inside MatcherFromPolicy
             BeanDefinitionBuilder childBuilder = BeanDefinitionBuilder.genericBeanDefinition(PolicyFromMatcherId.class);
+            childBuilder.setInitMethodName("initialize");
+            //TODO childBuilder.setDestroyMethodName("destroy");
             BeanDefinitionBuilder grandChildBuilder = BeanDefinitionBuilder.genericBeanDefinition(getNativeBeanClass());
+            grandChildBuilder.setInitMethodName("initialize");
+            //TODO grandChildBuilder.setDestroyMethodName("destroy");
 
             doNativeParse(element, parserContext, grandChildBuilder);
             grandChildBuilder.addPropertyValue("id", "PMId:" + myId);

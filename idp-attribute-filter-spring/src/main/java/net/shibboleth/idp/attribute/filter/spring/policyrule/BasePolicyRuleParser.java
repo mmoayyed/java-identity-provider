@@ -54,6 +54,7 @@ public abstract class BasePolicyRuleParser extends BaseFilterParser {
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {
         if (isPolicyRule(element)) {
             return getNativeBeanClass();
@@ -65,6 +66,7 @@ public abstract class BasePolicyRuleParser extends BaseFilterParser {
     /**
      * Parse bean definition. If needs be inject it into a parent bean. {@inheritDoc}
      */
+    @Override
     protected void doParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
@@ -78,6 +80,9 @@ public abstract class BasePolicyRuleParser extends BaseFilterParser {
         } else {
 
             BeanDefinitionBuilder childBuilder = BeanDefinitionBuilder.genericBeanDefinition(getNativeBeanClass());
+
+//            childBuilder.setInitMethodName("initialize");
+            //TODO childBuilder.setDestroyMethodName("destroy");
 
             doNativeParse(element, parserContext, childBuilder);
             childBuilder.addPropertyValue("id", "PMId:" + myId);
