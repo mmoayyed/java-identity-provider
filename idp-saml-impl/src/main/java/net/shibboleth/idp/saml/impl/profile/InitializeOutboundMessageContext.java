@@ -20,11 +20,16 @@ package net.shibboleth.idp.saml.impl.profile;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.profile.IdPEventIds;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+
+import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
@@ -39,14 +44,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import com.google.common.base.Function;
+
 /**
- * Action that adds an outbound {@link MessageContext} to the current {@link ProfileRequestContext}.
+ * Action that adds an outbound {@link MessageContext} and related SAML contexts to the
+ * {@link ProfileRequestContext} based on the identity of a relying party accessed via
+ * a lookup strategy, by default an immediate child of the profile request context.
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @event {@link EventIds#INVALID_MSG_CTX}
+ * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
  */
 // TODO Finish Javadoc.
-// I think this is going to be an OpenSAML action, assuming we're not setting any security related info here.
 public class InitializeOutboundMessageContext extends AbstractProfileAction {
 
     /** Class logger. */
@@ -56,35 +64,54 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
     /** Test signing credential. */
     @Autowired @Qualifier("idp.Credential") private Credential testSigningCredential;
 
-    /** Inbound {@link SAMLPeerEntityContext}. */
-    @Nullable private SAMLPeerEntityContext inboundPeerEntityCtx;
+    /** Relying party context lookup strategy. */
+    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
+    
+    /** The {@link SAMLPeerEntityContext} to base the outbound context on. */
+    @Nullable private SAMLPeerEntityContext peerEntityCtx;
+    
+    /** Constructor. */
+    public InitializeOutboundMessageContext() {
+        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
+    }
+    
+    /**
+     * Set the relying party context lookup strategy.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setRelyingPartyContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
+        relyingPartyContextLookupStrategy =
+                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
+    }
     
     /** {@inheritDoc} */
-    @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext)
-            throws ProfileException {
+    @Override
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
-        final MessageContext inboundMessageContext = profileRequestContext.getInboundMessageContext();
-        if (inboundMessageContext == null) {
-            log.debug("{} No inbound message context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
+        final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
+        if (relyingPartyCtx == null) {
+            log.debug("{} No relying party context", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
             return false;
         }
         
-        inboundPeerEntityCtx = inboundMessageContext.getSubcontext(SAMLPeerEntityContext.class, false);
-        if (inboundPeerEntityCtx == null) {
-            log.debug("{} No inbound SAML peer entity context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
+        final BaseContext identifyingCtx = relyingPartyCtx.getRelyingPartyIdContextTree();
+        if (identifyingCtx == null || !(identifyingCtx instanceof SAMLPeerEntityContext)) {
+            log.debug("{} No SAML peer entity context found via relying party context", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
             return false;
         }
-
-        // TODO incomplete
-
+        
+        peerEntityCtx = (SAMLPeerEntityContext) identifyingCtx;
+        
         return super.doPreExecute(profileRequestContext);
     }
 
     /** {@inheritDoc} */
-    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext)
-            throws ProfileException {
+    @Override
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
         // TODO Incomplete, see https://wiki.shibboleth.net/confluence/display/IDP30/SAML+1.1+Browser+SSO
 
@@ -92,12 +119,9 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
         profileRequestContext.setOutboundMessageContext(msgCtx);
 
         final SAMLPeerEntityContext peerContext = msgCtx.getSubcontext(SAMLPeerEntityContext.class, true);
-        peerContext.setEntityId(inboundPeerEntityCtx.getEntityId());
+        peerContext.setEntityId(peerEntityCtx.getEntityId());
         
-        // There's no defined third-party request mechanism, so copy the metadata context, if any,
-        // from inbound to outbound.
-        final SAMLMetadataContext inboundMetadataCtx =
-                inboundPeerEntityCtx.getSubcontext(SAMLMetadataContext.class, false);
+        final SAMLMetadataContext inboundMetadataCtx = peerEntityCtx.getSubcontext(SAMLMetadataContext.class);
         if (inboundMetadataCtx != null) {
             final SAMLMetadataContext outboundMetadataCtx = peerContext.getSubcontext(SAMLMetadataContext.class, true);
             outboundMetadataCtx.setEntityDescriptor(inboundMetadataCtx.getEntityDescriptor());

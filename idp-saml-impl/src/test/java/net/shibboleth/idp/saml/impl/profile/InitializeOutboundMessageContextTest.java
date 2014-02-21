@@ -17,18 +17,22 @@
 
 package net.shibboleth.idp.saml.impl.profile;
 
+import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.idp.profile.IdPEventIds;
+import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.saml.impl.profile.InitializeOutboundMessageContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.RequestContextBuilder;
-import org.opensaml.profile.action.ActionTestingSupport;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.saml1.core.Request;
 import org.opensaml.saml.saml1.profile.SAML1ActionTestingSupport;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -36,6 +40,8 @@ import org.testng.annotations.Test;
 /** {@link InitializeOutboundMessageContext} unit test. */
 public class InitializeOutboundMessageContextTest extends OpenSAMLInitBaseTestCase {
 
+    private RequestContext src;
+    
     private ProfileRequestContext prc;
     
     private Request attributeQuery;
@@ -45,49 +51,49 @@ public class InitializeOutboundMessageContextTest extends OpenSAMLInitBaseTestCa
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         attributeQuery = SAML1ActionTestingSupport.buildAttributeQueryRequest(
                 SAML1ActionTestingSupport.buildSubject("jdoe"));
-        prc = new RequestContextBuilder().setInboundMessage(attributeQuery).buildProfileRequestContext();
+        src = new RequestContextBuilder().setInboundMessage(attributeQuery).buildRequestContext();
+        prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         prc.setOutboundMessageContext(null);
         action = new InitializeOutboundMessageContext();
         action.setId("test");
         action.initialize();
     }
 
-    @Test public void testNoInboundContext() throws ProfileException {
-        final ProfileRequestContext localprc = new ProfileRequestContext();
+    @Test public void testNoRelyingPartyContext() throws ProfileException {
+        prc.removeSubcontext(RelyingPartyContext.class);
 
-        action.execute(localprc);
-        ActionTestingSupport.assertEvent(localprc, EventIds.INVALID_MSG_CTX);
-        Assert.assertNull(localprc.getOutboundMessageContext());
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+        Assert.assertNull(prc.getOutboundMessageContext());
     }
 
     @Test public void testNoPeerEntityContext() throws ProfileException {
-        action.execute(prc);
-
-        ActionTestingSupport.assertEvent(prc, EventIds.INVALID_MSG_CTX);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_RELYING_PARTY_CTX);
         Assert.assertNull(prc.getOutboundMessageContext());
     }
 
     @Test public void testPeerEntityContextNoIssuer() throws ProfileException {
-        prc.getInboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
+        SAMLPeerEntityContext ctx = prc.getInboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
+        prc.getSubcontext(RelyingPartyContext.class).setRelyingPartyIdContextTree(ctx);
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNotNull(prc.getOutboundMessageContext());
-        final SAMLPeerEntityContext ctx =
-                prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, false);
+        ctx = prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class);
         Assert.assertNotNull(ctx);
         Assert.assertNull(ctx.getEntityId());
     }
 
     @Test public void testPeerEntityContextIssuer() throws ProfileException {
-        prc.getInboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
+        SAMLPeerEntityContext ctx = prc.getInboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
+        prc.getSubcontext(RelyingPartyContext.class).setRelyingPartyIdContextTree(ctx);
         attributeQuery.getAttributeQuery().setResource("issuer");
         
-        action.execute(prc);
-        ActionTestingSupport.assertProceedEvent(prc);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNotNull(prc.getOutboundMessageContext());
-        final SAMLPeerEntityContext ctx =
-                prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, false);
+        ctx = prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class);
         Assert.assertNotNull(ctx);
         Assert.assertEquals(ctx.getEntityId(), "issuer");
     }
