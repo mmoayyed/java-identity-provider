@@ -5,8 +5,8 @@
 
     <!-- This is a one-step subflow that does NameID Subject Canonicalization. -->
     
-    <action-state id="SAML2TransientSubjectCanonicalization">
-        <evaluate expression="SAML2TransientCanonicalization" />
+    <action-state id="LegacyPrincipalConnectorCanonicalization">
+        <evaluate expression="LegacyPrincipalConnectorCanonicalization" />
     </action-state>
 
     <bean-import resource="legacy-pc-subject-c14n-beans.xml" />
