@@ -19,6 +19,8 @@ package net.shibboleth.idp.profile.config;
 
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.handler.MessageHandler;
+
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 
 /** Represents the configuration of a particular communication profile. */
@@ -29,12 +31,26 @@ public interface ProfileConfiguration extends IdentifiableComponent {
      * 
      * @return whether this profile is enabled for use
      */
-    public boolean isEnabled();
+    boolean isEnabled();
+    
+    /**
+     * Get the inbound message handler to execute at the beginning of profile processing.
+     * 
+     * @return  a message handler, or null
+     */
+    @Nullable MessageHandler getInboundMessageHandler();
+    
+    /**
+     * Get the outbound message handler to execute at the end of profile processing.
+     * 
+     * @return  a message handler, or null
+     */
+    @Nullable MessageHandler getOutboundMessageHandler();
     
     /**
      * Get the {@link SecurityConfiguration} to use with this profile.
      * 
      * @return security configuration to use with this profile
      */
-    @Nullable public SecurityConfiguration getSecurityConfiguration();
+    @Nullable SecurityConfiguration getSecurityConfiguration();
 }

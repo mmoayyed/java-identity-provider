@@ -20,6 +20,8 @@ package net.shibboleth.idp.profile.config;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.handler.MessageHandler;
+
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -35,6 +37,12 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
     /** Whether this profile is enabled. */
     private boolean enabled;
 
+    /** Inbound message handler. */
+    @Nullable private MessageHandler inboundHandler;
+
+    /** Outbound message handler. */
+    @Nullable private MessageHandler outboundHandler;
+    
     /** The security configuration for this profile. */
     @Nullable private SecurityConfiguration securityConfiguration;
 
@@ -82,6 +90,36 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
      */
     public void setSecurityConfiguration(@Nullable final SecurityConfiguration configuration) {
         securityConfiguration = configuration;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Nullable public MessageHandler getInboundMessageHandler() {
+        return inboundHandler;
+    }
+
+    /**
+     * Set the inbound message handler to run.
+     * 
+     * @param handler inbound message handler
+     */
+    public void setInboundHandler(@Nullable final MessageHandler handler) {
+        inboundHandler = handler;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Nullable public MessageHandler getOutboundMessageHandler() {
+        return outboundHandler;
+    }
+
+    /**
+     * Set the outbound message handler to run.
+     * 
+     * @param handler outbound message handler
+     */
+    public void setOutboundHandler(@Nullable final MessageHandler handler) {
+        outboundHandler = handler;
     }
 
     /** {@inheritDoc} */
