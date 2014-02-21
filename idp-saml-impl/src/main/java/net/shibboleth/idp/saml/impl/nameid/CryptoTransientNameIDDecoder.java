@@ -56,7 +56,7 @@ public class CryptoTransientNameIDDecoder extends BaseCryptoTransientDecoder imp
         final String nameQualifier = nameID.getNameQualifier();
 
         if (null != nameQualifier && null != responderId && !nameQualifier.equals(responderId)) {
-            log.debug("NameQualifier '{}' does not match responderId'{}'", spNameQualifier, requesterId);
+            log.debug("NameQualifier '{}' does not match responderId'{}'", nameQualifier, requesterId);
             throw new SubjectCanonicalizationException("NameQualifier does not match responderId");
         }
 
