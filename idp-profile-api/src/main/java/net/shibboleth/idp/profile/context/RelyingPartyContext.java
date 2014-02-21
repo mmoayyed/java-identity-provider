@@ -40,7 +40,7 @@ public final class RelyingPartyContext extends BaseContext {
     /** A pointer to a context tree containing identifying material for the relying party. */
     @Nullable private BaseContext relyingPartyIdContextTree;
     
-    /** A lookup stratgy for deriving a relying party ID based on contained information. */
+    /** A lookup strategy for deriving a relying party ID based on contained information. */
     @Nullable private ContextDataLookupFunction<RelyingPartyContext,String> relyingPartyIdLookupStrategy;
     
     /** The relying party configuration. */
