@@ -7,6 +7,7 @@
                         urn:mace:shibboleth:2.0:resolver:dc http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-dc.xsd
                         urn:mace:shibboleth:2.0:attribute:encoder http://shibboleth.net/schema/idp/shibboleth-attribute-encoder.xsd
                         urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd">
+    <resolver:Dependency xmlns:resolver="urn:mace:shibboleth:2.0:resolver" ref="TheOrphan" />
 	<ad:ValueMap>
 		<ad:ReturnValue>return</ad:ReturnValue>
 		<ad:SourceValue>source</ad:SourceValue>
@@ -16,5 +17,4 @@
 		<ad:ReturnValue>return1</ad:ReturnValue>
 		<ad:SourceValue>source2</ad:SourceValue>
 	</ad:ValueMap>
-
 </resolver:AttributeDefintion>

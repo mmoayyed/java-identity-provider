@@ -51,6 +51,7 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         String id = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
@@ -59,6 +60,8 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
         if (null != id) {
             defnId = id;
         }
+        builder.setInitMethodName("initialize");
+        //TODO builder.setDestroyMethodName("destroy");
 
         List<Element> dependencyElements =
                 ElementSupport.getChildElements(config, ResolverPluginDependencyParser.ELEMENT_NAME);

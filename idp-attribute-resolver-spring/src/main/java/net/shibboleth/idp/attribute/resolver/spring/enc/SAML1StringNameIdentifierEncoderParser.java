@@ -37,21 +37,20 @@ public class SAML1StringNameIdentifierEncoderParser extends AbstractSingleBeanDe
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeEncoderNamespaceHandler.NAMESPACE,
             "SAML1StringNameIdentifier");
-    
+
     /** Local name of name format attribute. */
     public static final String FORMAT_ATTRIBUTE_NAME = "nameFormat";
 
     /** Local name of name qualifier attribute. */
     public static final String NAMEQUALIFIER_ATTRIBUTE_NAME = "nameQualifier";
-    
+
     /** {@inheritDoc} */
-    protected Class<SAML1StringNameIdentifierEncoder> getBeanClass(@Nullable Element element) {
+    @Override protected Class<SAML1StringNameIdentifierEncoder> getBeanClass(@Nullable Element element) {
         return SAML1StringNameIdentifierEncoder.class;
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
@@ -59,13 +58,14 @@ public class SAML1StringNameIdentifierEncoderParser extends AbstractSingleBeanDe
         if (config.hasAttributeNS(null, FORMAT_ATTRIBUTE_NAME)) {
             format = StringSupport.trimOrNull(config.getAttributeNS(null, FORMAT_ATTRIBUTE_NAME));
         }
+        builder.setInitMethodName(null);
         builder.addPropertyValue("nameFormat", format);
 
         builder.addPropertyValue("nameQualifier", config.getAttributeNS(null, NAMEQUALIFIER_ATTRIBUTE_NAME));
     }
-    
+
     /** {@inheritDoc} */
-    public boolean shouldGenerateId() {
+    @Override public boolean shouldGenerateId() {
         return true;
     }
 

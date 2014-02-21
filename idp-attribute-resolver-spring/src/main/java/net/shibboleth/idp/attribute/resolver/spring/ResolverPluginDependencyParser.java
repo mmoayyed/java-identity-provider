@@ -41,12 +41,12 @@ public class ResolverPluginDependencyParser extends AbstractSingleBeanDefinition
     private final Logger log = LoggerFactory.getLogger(ResolverPluginDependencyParser.class);
 
     /** {@inheritDoc} */
-    protected Class<ResolverPluginDependency> getBeanClass(@Nullable Element element) {
+    @Override protected Class<ResolverPluginDependency> getBeanClass(@Nullable Element element) {
         return ResolverPluginDependency.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         final String pluginId = StringSupport.trimOrNull(config.getAttributeNS(null, "ref"));
         log.info("Parsing configuration for {} with pluginId : {}", config.getLocalName(), pluginId);
@@ -54,7 +54,7 @@ public class ResolverPluginDependencyParser extends AbstractSingleBeanDefinition
     }
 
     /** {@inheritDoc} */
-    protected boolean shouldGenerateId() {
+    @Override protected boolean shouldGenerateId() {
         return true;
     }
 }

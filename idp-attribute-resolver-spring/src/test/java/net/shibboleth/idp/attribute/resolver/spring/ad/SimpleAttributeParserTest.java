@@ -25,8 +25,6 @@ import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.impl.ad.SimpleAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
-import net.shibboleth.idp.attribute.resolver.spring.ad.SimpleAttributeDefinitionParser;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -46,7 +44,7 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
         Assert.assertFalse(attrDef.isDependencyOnly(), "isDependencyOnly");
         Assert.assertTrue(attrDef.getDisplayDescriptions().isEmpty(),"getDisplayDescriptions().isEmpty()");
         Assert.assertTrue(attrDef.getDisplayNames().isEmpty(),"getDisplayNames().isEmpty()");
-        Assert.assertTrue(attrDef.getDependencies().isEmpty(),"getDependencies().isEmpty()");
+        Assert.assertEquals(attrDef.getDependencies().size(), 1);
         Assert.assertTrue(attrDef.getAttributeEncoders().isEmpty(),"getgetAttributeEncoders().isEmpty()");
 }
     

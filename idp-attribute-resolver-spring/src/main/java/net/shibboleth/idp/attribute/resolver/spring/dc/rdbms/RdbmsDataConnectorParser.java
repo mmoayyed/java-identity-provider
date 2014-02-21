@@ -19,7 +19,6 @@ package net.shibboleth.idp.attribute.resolver.spring.dc.rdbms;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.sql.DataSource;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.impl.dc.rdbms.RdbmsDataConnector;
@@ -55,11 +54,13 @@ public class RdbmsDataConnectorParser extends AbstractDataConnectorParser {
     private final Logger log = LoggerFactory.getLogger(RdbmsDataConnectorParser.class);
 
     /** {@inheritDoc} */
+    @Override
     protected Class<RdbmsDataConnector> getBeanClass(@Nullable final Element element) {
         return RdbmsDataConnector.class;
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
@@ -157,6 +158,8 @@ public class RdbmsDataConnectorParser extends AbstractDataConnectorParser {
         @Nonnull public BeanDefinition createTemplateBuilder() {
             final BeanDefinitionBuilder templateBuilder =
                     BeanDefinitionBuilder.genericBeanDefinition(TemplatedExecutableStatementBuilder.class);
+            templateBuilder.setInitMethodName("initialize");
+            //TODO templateBuilder.setDestroyMethodName("destroy");
 
             String velocityEngineRef = StringSupport.trimOrNull(configElement.getAttribute("templateEngine"));
             if (null == velocityEngineRef) {

@@ -31,14 +31,11 @@ import net.shibboleth.utilities.java.support.security.DataExpiredException;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.DataSealerException;
 
-import org.springframework.beans.factory.InitializingBean;
-
 /**
  * An abstract action which contains the logic to do crypto transient decoding matching. This reverses the work done by
  * {@link net.shibboleth.idp.attribute.resolver.impl.ad.CryptoTransientIdAttributeDefinition}
  */
-public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableInitializableComponent implements
-        InitializingBean {
+public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableInitializableComponent {
 
     /** Object used to protect and encrypt the data. */
     @NonnullAfterInit private DataSealer dataSealer;
@@ -68,11 +65,6 @@ public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableIni
     /** {@inheritDoc} */
     @Override public synchronized void setId(String componentId) {
         super.setId(componentId);
-    }
-
-    /** {@inheritDoc} */
-    @Override public void afterPropertiesSet() throws Exception {
-        initialize();
     }
 
     /**

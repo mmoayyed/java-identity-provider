@@ -28,13 +28,11 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.opensaml.saml.saml2.core.NameID;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 
 /**
  * class to implement the direct transform from a {@link NameID}.
  */
-public class DirectNameIDDecoder extends AbstractIdentifiableInitializableComponent implements NameIDDecoder,
-        InitializingBean {
+public class DirectNameIDDecoder extends AbstractIdentifiableInitializableComponent implements NameIDDecoder {
 
     /**
      * {@inheritDoc}. The decoded value just the input. We do not police any values
@@ -50,11 +48,6 @@ public class DirectNameIDDecoder extends AbstractIdentifiableInitializableCompon
     /** {@inheritDoc} */
     @Override public void setId(@Nonnull String componentId) {
         super.setId(componentId);
-    }
-
-    /** {@inheritDoc} */
-    @Override public void afterPropertiesSet() throws Exception {
-        initialize();
     }
 
     /** {@inheritDoc} */

@@ -67,6 +67,8 @@ public class AttributeResolverParser extends AbstractSingleBeanDefinitionParser 
             // Compatibility with V2
             id = "Shibboleth.Resolver";
         }
+        builder.setInitMethodName("initialize");
+        //TODO builder.setDestroyMethodName("destroy");
 
         builder.addConstructorArgValue(id);
 
@@ -80,6 +82,7 @@ public class AttributeResolverParser extends AbstractSingleBeanDefinitionParser 
         children = configChildren.get(new QName(AttributeResolverNamespaceHandler.NAMESPACE, "PrincipalConnector"));
         BeanDefinitionBuilder childBuilder =
                 BeanDefinitionBuilder.genericBeanDefinition(PrinicpalConnectorCanonicalizer.class);
+
         childBuilder.addConstructorArgValue(SpringSupport.parseCustomElements(children, context));
         builder.addConstructorArgValue(childBuilder.getBeanDefinition());
 

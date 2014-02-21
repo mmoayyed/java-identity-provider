@@ -294,6 +294,8 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
         @Nonnull public BeanDefinition createTemplatedExecutableSearchFilterBuilder() {
             final BeanDefinitionBuilder templateBuilder =
                     BeanDefinitionBuilder.genericBeanDefinition(TemplatedExecutableSearchFilterBuilder.class);
+            templateBuilder.setInitMethodName("initialize");
+            //TODO templateBuilder.setDestroyMethodName("destroy");
 
             String velocityEngineRef = StringSupport.trimOrNull(configElement.getAttribute("templateEngine"));
             if (null == velocityEngineRef) {

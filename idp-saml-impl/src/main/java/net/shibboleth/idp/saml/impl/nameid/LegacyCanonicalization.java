@@ -40,14 +40,13 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 
 import com.google.common.base.Predicate;
 
 /**
  * Action to perform C14N based on the contents of the attribute-resolver.xml file.
  */
-public class LegacyCanonicalization extends AbstractSubjectCanonicalizationAction implements InitializingBean {
+public class LegacyCanonicalization extends AbstractSubjectCanonicalizationAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(LegacyCanonicalization.class);
@@ -65,11 +64,6 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
      */
     public LegacyCanonicalization(@Nonnull final ReloadableService<AttributeResolver> resolverService) {
         attributeResolverService = Constraint.isNotNull(resolverService, "AttributeResolver cannot be null");
-    }
-
-    /** {@inheritDoc} */
-    @Override public void afterPropertiesSet() throws Exception {
-        initialize();
     }
 
     /** {@inheritDoc} */

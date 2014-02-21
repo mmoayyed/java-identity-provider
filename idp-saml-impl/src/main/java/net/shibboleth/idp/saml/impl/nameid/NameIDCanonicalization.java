@@ -42,7 +42,6 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.profile.SAML2ObjectSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 
 import com.google.common.base.Predicate;
 
@@ -61,7 +60,7 @@ import com.google.common.base.Predicate;
  * SubjectCanonicalizationContext.getPrincipalName() != null || SubjectCanonicalizationContext.getException() != null
  * </pre>
  */
-public class NameIDCanonicalization extends AbstractSubjectCanonicalizationAction implements InitializingBean {
+public class NameIDCanonicalization extends AbstractSubjectCanonicalizationAction {
 
     /** Supplies logic for pre-execute test. */
     @Nonnull private final ActivationCondition embeddedPredicate;
@@ -131,11 +130,6 @@ public class NameIDCanonicalization extends AbstractSubjectCanonicalizationActio
             c14nContext.setException(e);
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override public void afterPropertiesSet() throws Exception {
-        initialize();
     }
 
     /** A predicate that determines if this action can run or not. */

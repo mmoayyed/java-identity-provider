@@ -53,6 +53,7 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
     }
     
     /** {@inheritDoc} */
+    @Override
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
 
@@ -61,10 +62,13 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
             throw new BeanCreationException("Attribute encoder must contain a name property");
         }
         
+        builder.setInitMethodName("initialize");
+        //TODO builder.setDestroyMethodName("destroy");
         builder.addPropertyValue("name", attributeName);
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean shouldGenerateId() {
         return true;
     }

@@ -42,14 +42,14 @@ public class SourceValueParser extends AbstractSingleBeanDefinitionParser {
     private Logger log = LoggerFactory.getLogger(SourceValueParser.class);
 
     /** {@inheritDoc} */
-    protected Class<SourceValue> getBeanClass(@Nullable final Element element) {
+    @Override protected Class<SourceValue> getBeanClass(@Nullable final Element element) {
         return SourceValue.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
-         super.doParse(config, parserContext, builder);
+        super.doParse(config, parserContext, builder);
 
         boolean ignoreCase = false;
 
@@ -73,7 +73,7 @@ public class SourceValueParser extends AbstractSingleBeanDefinitionParser {
     }
 
     /** {@inheritDoc} */
-    protected boolean shouldGenerateId() {
+    @Override protected boolean shouldGenerateId() {
         return true;
     }
 }

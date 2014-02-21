@@ -44,6 +44,7 @@ public class SAML2StringNameIDEncoderParser extends AbstractSingleBeanDefinition
     public static final String NAMEQUALIFIER_ATTRIBUTE_NAME = "nameQualifier";
     
     /** {@inheritDoc} */
+    @Override
     protected Class<SAML2StringNameIDEncoder> getBeanClass(@Nullable Element element) {
         return SAML2StringNameIDEncoder.class;
     }
@@ -58,12 +59,14 @@ public class SAML2StringNameIDEncoderParser extends AbstractSingleBeanDefinition
         if (config.hasAttributeNS(null, FORMAT_ATTRIBUTE_NAME)) {
             namespace = StringSupport.trimOrNull(config.getAttributeNS(null, FORMAT_ATTRIBUTE_NAME));
         }
+        builder.setInitMethodName(null);
         builder.addPropertyValue("nameFormat", namespace);
         
         builder.addPropertyValue("nameQualifier", config.getAttributeNS(null, NAMEQUALIFIER_ATTRIBUTE_NAME));
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean shouldGenerateId() {
         return true;
     }

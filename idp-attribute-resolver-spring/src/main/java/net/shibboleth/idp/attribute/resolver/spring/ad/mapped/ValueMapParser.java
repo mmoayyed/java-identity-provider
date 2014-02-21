@@ -53,14 +53,14 @@ public class ValueMapParser extends AbstractSingleBeanDefinitionParser {
     private Logger log = LoggerFactory.getLogger(ValueMapParser.class);
 
     /** {@inheritDoc} */
-    protected Class<ValueMap> getBeanClass(@Nullable final Element element) {
+    @Override protected Class<ValueMap> getBeanClass(@Nullable final Element element) {
         return ValueMap.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
-         super.doParse(config, parserContext, builder);
+        super.doParse(config, parserContext, builder);
 
         final List<Element> returnElems = ElementSupport.getChildElements(config, RETURN_VALUE_ELEMENT_NAME);
         String returnValue = null;
@@ -73,8 +73,7 @@ public class ValueMapParser extends AbstractSingleBeanDefinitionParser {
             throw new BeanCreationException("Attribute Definition: ValueMap must have a ReturnValue");
         }
 
-        final List<Element> sourceValueElements =
-                ElementSupport.getChildElements(config, SourceValueParser.TYPE_NAME);
+        final List<Element> sourceValueElements = ElementSupport.getChildElements(config, SourceValueParser.TYPE_NAME);
 
         if (null == sourceValueElements || sourceValueElements.size() == 0) {
             throw new BeanCreationException("Attribute Definition: ValueMap must have at least one SourceValue");
@@ -83,7 +82,7 @@ public class ValueMapParser extends AbstractSingleBeanDefinitionParser {
         ManagedList<BeanDefinition> sourceValues =
                 SpringSupport.parseCustomElements(sourceValueElements, parserContext);
 
-        log.debug("AttributeDefinition(ValueMap): return value: {}, {} source values ", returnValue, 
+        log.debug("AttributeDefinition(ValueMap): return value: {}, {} source values ", returnValue,
                 sourceValues.size());
         log.trace("AttributeDefinition(ValueMap): source values: {}", sourceValues);
 
@@ -92,7 +91,7 @@ public class ValueMapParser extends AbstractSingleBeanDefinitionParser {
     }
 
     /** {@inheritDoc} */
-    protected boolean shouldGenerateId() {
+    @Override protected boolean shouldGenerateId() {
         return true;
     }
 }
