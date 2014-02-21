@@ -22,11 +22,14 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.authn.AbstractSubjectCanonicalizationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
+import net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
+import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -37,6 +40,8 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml1.profile.SAML1ObjectSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
 
@@ -55,10 +60,7 @@ import com.google.common.base.Predicate;
  * SubjectCanonicalizationContext.getPrincipalName() != null || SubjectCanonicalizationContext.getException() != null
  * </pre>
  */
-public class NameIdentifierCanonicalization extends AbstractSAMLNameCanonicalization {
-
-    /** The custom Principal to operate on. */
-    @Nullable private String transientPrincipal;
+public class NameIdentifierCanonicalization extends AbstractSubjectCanonicalizationAction {
 
     /** Supplies logic for pre-execute test. */
     @Nonnull private final ActivationCondition embeddedPredicate;
@@ -100,64 +102,42 @@ public class NameIdentifierCanonicalization extends AbstractSAMLNameCanonicaliza
         super.doInitialize();
     }
 
-    /**
-     * Check the format against the format list. If we are in the action then we log the error into the C14N context and
-     * add the appropriate event to the ProfileRequest context
-     * 
-     * @param format the format to check
-     * @param profileRequestContext the current profile request context
-     * @param c14nContext the current c14n context
-     * @return true if the format matches.
-     */
-    protected boolean formatMatches(@Nonnull String format, @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final SubjectCanonicalizationContext c14nContext) {
-
-        for (String testFormat : getFormats()) {
-            if (SAML1ObjectSupport.areNameIdentifierFormatsEquivalent(testFormat, format)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
 
-        if (embeddedPredicate.apply(profileRequestContext, c14nContext, true)) {
-
-            final Set<NameIdentifierPrincipal> nameIdentifiers =
-                    c14nContext.getSubject().getPrincipals(NameIdentifierPrincipal.class);
-            final NameIdentifier nameIdentifier = nameIdentifiers.iterator().next().getNameIdentifier();
-
-            try {
-                transientPrincipal =
-                        decoder.decode(nameIdentifier, c14nContext.getResponderId(), c14nContext.getRequesterId());
-            } catch (SubjectCanonicalizationException e) {
-                c14nContext.setException(e);
-                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-                return false;
-            } catch (NameDecoderException e) {
-                c14nContext.setException(e);
-                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);
-                return false;
-            }
-            return super.doPreExecute(profileRequestContext, c14nContext);
-        } else {
+        if (!embeddedPredicate.apply(profileRequestContext, c14nContext, true)) {
             return false;
         }
+
+        return super.doPreExecute(profileRequestContext, c14nContext);
     }
 
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
 
-        c14nContext.setPrincipalName(transientPrincipal);
+        final Set<NameIdentifierPrincipal> nameIdentifiers =
+                c14nContext.getSubject().getPrincipals(NameIdentifierPrincipal.class);
+        final NameIdentifier nameIdentifier = nameIdentifiers.iterator().next().getNameIdentifier();
+
+        try {
+            c14nContext.setPrincipalName(decoder.decode(nameIdentifier, c14nContext.getResponderId(),
+                    c14nContext.getRequesterId()));
+        } catch (SubjectCanonicalizationException e) {
+            c14nContext.setException(e);
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+        } catch (NameDecoderException e) {
+            c14nContext.setException(e);
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);
+        }
     }
 
     /** A predicate that determines if this action can run or not. */
-    public class ActivationCondition implements Predicate<ProfileRequestContext> {
+    public static class ActivationCondition implements Predicate<ProfileRequestContext> {
+
+        /** Logger. */
+        private Logger log = LoggerFactory.getLogger(ActivationCondition.class);
 
         /** {@inheritDoc} */
         @Override public boolean apply(@Nullable final ProfileRequestContext input) {
@@ -170,6 +150,46 @@ public class NameIdentifierCanonicalization extends AbstractSAMLNameCanonicaliza
                 }
             }
 
+            return false;
+        }
+
+        /**
+         * Check the format against the format list. If we are in the action then we log the error into the C14N context
+         * and add the appropriate event to the ProfileRequest context
+         * 
+         * @param format the format to check
+         * @param c14nContext the current c14n context
+         * @return true if the format matches.
+         */
+        protected boolean formatMatches(@Nonnull String format,
+                @Nonnull final SubjectCanonicalizationContext c14nContext) {
+
+            final SubjectCanonicalizationFlowDescriptor flowDescriptor = c14nContext.getAttemptedFlow();
+
+            log.debug("Attempting to match format '{}'", format);
+
+            if (null == flowDescriptor) {
+                log.error("Supplied Context has no active FlowDescriptor");
+                return false;
+            }
+
+            if (!(flowDescriptor instanceof NameIDCanonicalizationFlowDescriptor)) {
+                log.error("Flow Descriptor named {} is not appropriate for NameID canonicalization.  Use class=\"{}\"",
+                        flowDescriptor.getId(), NameIDCanonicalizationFlowDescriptor.class.getCanonicalName());
+                return false;
+            }
+
+            final NameIDCanonicalizationFlowDescriptor nameIDDescriptor =
+                    (NameIDCanonicalizationFlowDescriptor) flowDescriptor;
+
+            for (String testFormat : nameIDDescriptor.getFormats()) {
+                if (SAML1ObjectSupport.areNameIdentifierFormatsEquivalent(testFormat, format)) {
+                    log.debug("NameID Flow Descriptor {}:  format matches {}", nameIDDescriptor.getId(), testFormat);
+                    return true;
+                }
+            }
+
+            log.debug("NameID Flow Descriptor {}:  No format matches", nameIDDescriptor.getId());
             return false;
         }
 
@@ -205,19 +225,18 @@ public class NameIdentifierCanonicalization extends AbstractSAMLNameCanonicaliza
                     ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
                     return false;
                 } else if (!formatMatches(nameIdentifiers.iterator().next().getNameIdentifier().getFormat(),
-                        profileRequestContext, c14nContext)) {
+                        c14nContext)) {
                     c14nContext.setException(new SubjectCanonicalizationException("Format not supported"));
                     ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
                     return false;
                 }
                 return true;
             }
-
+            // Not in an action, so do the same but without the context side effects
             if (nameIdentifiers == null || nameIdentifiers.size() != 1) {
                 return false;
             }
-            return formatMatches(nameIdentifiers.iterator().next().getNameIdentifier().getFormat(),
-                    profileRequestContext, c14nContext);
+            return formatMatches(nameIdentifiers.iterator().next().getNameIdentifier().getFormat(), c14nContext);
         }
     }
 }

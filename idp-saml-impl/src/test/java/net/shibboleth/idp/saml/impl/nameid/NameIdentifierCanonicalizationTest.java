@@ -29,6 +29,7 @@ import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
+import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -46,6 +47,8 @@ import org.testng.annotations.Test;
 public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase {
 
     private ProfileRequestContext prc;
+    
+    private NameIDCanonicalizationFlowDescriptor flowDescriptor;
 
     private NameIdentifierCanonicalization action;
 
@@ -65,9 +68,12 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
 
     @BeforeMethod public void setUp() throws Exception {
         prc = new ProfileRequestContext<>();
+        
+        flowDescriptor = new NameIDCanonicalizationFlowDescriptor("C14NDesc");
+        flowDescriptor.setFormats(formats);
+        
         action = new NameIdentifierCanonicalization();
         action.setId("test");
-        action.setFormats(formats);
         action.setDecoder(new NameIdentifierDecoder() {
 
             @Override @Nonnull public String decode(@Nullable NameIdentifier nameIdentifier, @Nonnull String issuerId,
@@ -92,6 +98,7 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
         if (responder != null) {
             scc.setResponderId(responder);
         }
+        scc.setAttemptedFlow(flowDescriptor);
     }
 
     private NameIdentifier nameId(String value, String format, String nameQualifier) {
@@ -107,15 +114,6 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
     private NameIdentifier nameId(String value, String format) {
 
         return nameId(value, format, RESPONDER);
-    }
-
-
-    @Test public void testFormatCount() {
-        Assert.assertEquals(action.getFormats().size(), 2);
-    }
-
-    @Test(expectedExceptions={UnsupportedOperationException.class}) public void testFormatSet() {
-        action.getFormats().add("bar");
     }
 
     @Test public void testNoContext() throws ProfileException {
@@ -198,7 +196,6 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
         subject.getPrincipals().add(new UsernamePrincipal("foo@osu.edu"));
         subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("works", NameIdentifier.EMAIL)));
         setSubContext(subject, RESPONDER, REQUESTER);
-
 
         action.execute(prc);
 
