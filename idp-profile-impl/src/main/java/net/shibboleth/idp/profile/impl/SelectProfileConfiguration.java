@@ -107,8 +107,8 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
         final RelyingPartyConfiguration rpConfig = rpCtx.getConfiguration();
 
         final ProfileConfiguration profileConfiguration = rpConfig.getProfileConfiguration(profileId);
-        if (profileConfiguration == null) {
-            log.debug("{} Profile {} is not configured for relying party configuration {}",
+        if (profileConfiguration == null || !profileConfiguration.isEnabled()) {
+            log.debug("{} Profile {} is not enabled for relying party configuration {}",
                     new Object[] {getLogPrefix(), profileId, rpConfig.getId(),});
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
             return;
