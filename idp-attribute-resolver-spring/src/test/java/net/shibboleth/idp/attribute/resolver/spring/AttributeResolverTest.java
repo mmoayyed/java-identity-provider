@@ -134,7 +134,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         Map<String, IdPAttribute> resolvedAttributes = resolutionContext.getResolvedIdPAttributes();
         log.debug("resolved attributes '{}'", resolvedAttributes);
 
-        Assert.assertEquals(resolvedAttributes.size(), 12);
+        Assert.assertEquals(resolvedAttributes.size(), 13);
 
         // Static
         IdPAttribute attribute = resolvedAttributes.get("eduPersonAffiliation");

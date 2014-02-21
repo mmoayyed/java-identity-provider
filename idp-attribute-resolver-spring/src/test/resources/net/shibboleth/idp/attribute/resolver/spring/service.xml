@@ -23,6 +23,7 @@
         <property name="serviceConfigurations">
             <util:list>
             	<value>net/shibboleth/idp/attribute/resolver/spring/velocity.xml</value>
+                <value>net/shibboleth/idp/attribute/resolver/spring/storageService.xml</value>
                 <value>net/shibboleth/idp/attribute/resolver/spring/attribute-resolver.xml</value>
             </util:list>
         </property>
