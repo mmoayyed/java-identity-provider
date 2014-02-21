@@ -31,7 +31,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Class to look inside a {@link NameID} check that its {@link NameID#getNameQualifier()} and
- * {@link NameID#getSPNameQualifier()} are correct and the decode the {@link NameID#getValue()}.
+ * {@link NameID#getSPNameQualifier()} are correct and the decode the {@link NameID#getValue()} 
+ * with help of the base class (reversing the work done by
+ * {@link net.shibboleth.idp.attribute.resolver.impl.ad.CryptoTransientIdAttributeDefinition}).
  */
 public class CryptoTransientNameIDDecoder extends BaseCryptoTransientDecoder implements NameIDDecoder {
 

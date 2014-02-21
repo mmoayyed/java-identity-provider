@@ -30,7 +30,8 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.slf4j.LoggerFactory;
 
 /**
- * class to implement the direct transform from a {@link NameID}.
+ * class to implement the direct transform from a {@link NameID}. The decode 
+ * operation returns the input.
  */
 public class DirectNameIDDecoder extends AbstractIdentifiableInitializableComponent implements NameIDDecoder {
 
