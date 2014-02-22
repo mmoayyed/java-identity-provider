@@ -18,10 +18,14 @@
 package net.shibboleth.idp.attribute.resolver.spring.pc;
 
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
+import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.saml.impl.attribute.principalconnector.PrincipalConnector;
 import net.shibboleth.idp.saml.impl.nameid.DirectNameIDDecoder;
 import net.shibboleth.idp.saml.impl.nameid.DirectNameIdentifierDecoder;
+import net.shibboleth.idp.saml.nameid.NameDecoderException;
 
+import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -30,13 +34,19 @@ import org.testng.annotations.Test;
  */
 public class DirectTest extends BaseAttributeDefinitionParserTest {
 
-    @Test public void simple() {
+    @Test public void simple() throws SubjectCanonicalizationException, NameDecoderException {
         PrincipalConnector connector = getPrincipalConnector("direct.xml");
         
         Assert.assertTrue(connector.getNameIDDecoder() instanceof DirectNameIDDecoder);
         Assert.assertTrue(connector.getNameIdentifierDecoder() instanceof DirectNameIdentifierDecoder);
-        Assert.assertEquals(connector.getFormat(), "urn:mace:shibboleth:1.0:nameIdentifier");
+        Assert.assertEquals(connector.getFormat(), "https://example.org/direct");
         Assert.assertTrue(connector.getRelyingParties().isEmpty());
+        
+        NameID id = new NameIDBuilder().buildObject();
+        id.setFormat("https://example.org/sealer");
+        id.setValue("The_value");
+        
+        Assert.assertEquals(connector.decode(id, "", ""), "The_value");
     }
     
     @Test public void relyingParties() {

@@ -24,7 +24,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * test for direct principal connector parsers.
+ * test for transient principal connector parsers.
  */
 public class TransientTest extends BaseAttributeDefinitionParserTest {
 
