@@ -3,12 +3,12 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
       parent="SubjectC14N.Abstract">
 
-    <!-- This is a one-step subflow that does direct NameID Subject Canonicalization. -->
+    <!-- This is a one-step subflow that does direct NameIdenitifer Subject Canonicalization-->
     
-    <action-state id="SAML2DirectSubjectCanonicalization">
-        <evaluate expression="SAML2DirectCanonicalization" />
+    <action-state id="SAML1DirectSubjectCanonicalization">
+        <evaluate expression="SAML1DirectCanonicalization" />
     </action-state>
 
-    <bean-import resource="saml2-direct-subject-c14n-beans.xml" />
+    <bean-import resource="saml1-direct-subject-c14n-beans.xml" />
 
 </flow>
