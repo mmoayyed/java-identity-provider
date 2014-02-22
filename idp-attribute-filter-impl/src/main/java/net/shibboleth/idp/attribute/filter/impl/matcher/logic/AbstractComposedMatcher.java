@@ -32,9 +32,7 @@ import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
@@ -45,7 +43,7 @@ import com.google.common.collect.Iterables;
  * {@link Matcher}s.
  */
 public abstract class AbstractComposedMatcher extends AbstractDestructableIdentifiableInitializableComponent implements
-        Matcher, UnmodifiableComponent, ValidatableComponent {
+        Matcher, UnmodifiableComponent {
 
     /** The composed matchers. */
     private final List<Matcher> matchers;
@@ -76,21 +74,7 @@ public abstract class AbstractComposedMatcher extends AbstractDestructableIdenti
     }
 
     /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
-        if (!isInitialized()) {
-            throw new ComponentValidationException("Matcher not initialized");
-        }
-
-        if (isDestroyed()) {
-            throw new ComponentValidationException("Matcher has been destroyed");
-        }
-
-        for (Matcher matcher : matchers) {
-            ComponentSupport.validate(matcher);
-        }
-    }
-
-    /** {@inheritDoc} */
+    @Override
     protected void doDestroy() {
         for (Matcher matcher : matchers) {
             ComponentSupport.destroy(matcher);
@@ -100,6 +84,7 @@ public abstract class AbstractComposedMatcher extends AbstractDestructableIdenti
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
@@ -109,6 +94,7 @@ public abstract class AbstractComposedMatcher extends AbstractDestructableIdenti
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setId(String id) {
         super.setId(id);
     }

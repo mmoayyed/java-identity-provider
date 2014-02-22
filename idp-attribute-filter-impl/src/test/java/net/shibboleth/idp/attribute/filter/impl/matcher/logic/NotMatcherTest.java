@@ -27,7 +27,6 @@ import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractMatcherPolicyRuleTest;
 import net.shibboleth.idp.attribute.filter.impl.matcher.MockValuePredicateMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
@@ -81,8 +80,7 @@ public class NotMatcherTest extends AbstractMatcherPolicyRuleTest {
         }
     }
 
-    @Test public void testInitValidateDestroy() throws ComponentInitializationException,
-            ComponentValidationException {
+    @Test public void testInitValidateDestroy() throws ComponentInitializationException {
         AbstractComposedMatcherTest.TestMatcher inMatcher = new AbstractComposedMatcherTest.TestMatcher();
         NotMatcher matcher = new NotMatcher(inMatcher);
 
@@ -93,46 +91,18 @@ public class NotMatcherTest extends AbstractMatcherPolicyRuleTest {
             // expect this
         }
         Assert.assertFalse(inMatcher.isInitialized());
-        Assert.assertFalse(inMatcher.getValidateCount() > 0);
         Assert.assertFalse(inMatcher.isDestroyed());
-
-        try {
-            matcher.validate();
-            Assert.fail();
-        } catch (UninitializedComponentException e) {
-            // expect this
-        }
 
         matcher.setId("test");
         matcher.initialize();
         Assert.assertTrue(inMatcher.isInitialized());
-        Assert.assertFalse(inMatcher.getValidateCount() > 0);
-
-        matcher.validate();
-        Assert.assertTrue(inMatcher.isInitialized());
-        Assert.assertTrue(inMatcher.getValidateCount() > 0);
-        Assert.assertFalse(inMatcher.isDestroyed());
-
-        inMatcher.setFailValidate(true);
-        try {
-            matcher.validate();
-        } catch (ComponentValidationException e) {
-            // OK
-        }
 
         matcher.destroy();
         Assert.assertTrue(inMatcher.isDestroyed());
         Assert.assertTrue(inMatcher.isInitialized());
-        Assert.assertTrue(inMatcher.getValidateCount() > 0);
-
+        
         try {
             matcher.initialize();
-        } catch (DestroyedComponentException e) {
-            // OK
-        }
-
-        try {
-            matcher.validate();
         } catch (DestroyedComponentException e) {
             // OK
         }

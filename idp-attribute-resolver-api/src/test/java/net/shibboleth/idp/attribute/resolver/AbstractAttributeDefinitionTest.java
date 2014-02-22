@@ -32,7 +32,6 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -216,7 +215,7 @@ public class AbstractAttributeDefinitionTest {
         Assert.assertEquals(depends.iterator().next().getDependencyAttributeId(), "source");
     }
     
-    @Test public void initDestroyValidate() throws ComponentInitializationException, ComponentValidationException {
+    @Test public void initDestroyValidate() throws ComponentInitializationException {
         MockAttributeEncoder encoder = new MockAttributeEncoder("foo", "baz");
         MockAttributeDefinition definition = new MockAttributeDefinition("foo", (IdPAttribute) null);
         

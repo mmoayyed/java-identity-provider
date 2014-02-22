@@ -32,9 +32,7 @@ import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Predicates;
@@ -45,9 +43,8 @@ import com.google.common.collect.Iterables;
  * Base class for {@link PolicyRequirementRule} implementations that are compositions of other
  * {@link PolicyRequirementRule}s.
  */
-public abstract class AbstractComposedPolicyRule 
-        extends AbstractDestructableIdentifiableInitializableComponent
-        implements PolicyRequirementRule, UnmodifiableComponent, ValidatableComponent {
+public abstract class AbstractComposedPolicyRule extends AbstractDestructableIdentifiableInitializableComponent
+        implements PolicyRequirementRule, UnmodifiableComponent {
 
     /** The composed matchers. */
     private final List<PolicyRequirementRule> rules;
@@ -57,8 +54,7 @@ public abstract class AbstractComposedPolicyRule
      * 
      * @param composedRules matchers being composed
      */
-    public AbstractComposedPolicyRule(
-            @Nullable @NullableElements final Collection<PolicyRequirementRule> composedRules) {
+    public AbstractComposedPolicyRule(@Nullable @NullableElements final Collection<PolicyRequirementRule> composedRules) {
         ArrayList<PolicyRequirementRule> checkedMatchers = new ArrayList<PolicyRequirementRule>();
 
         if (composedRules != null) {
@@ -78,22 +74,7 @@ public abstract class AbstractComposedPolicyRule
     }
 
     /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
-        if (!isInitialized()) {
-            throw new ComponentValidationException("Matcher not initialized");
-        }
-
-        if (isDestroyed()) {
-            throw new ComponentValidationException("Matcher has been destroyed");
-        }
-
-        for (PolicyRequirementRule matcher : rules) {
-            ComponentSupport.validate(matcher);
-        }
-    }
-
-    /** {@inheritDoc} */
-    protected void doDestroy() {
+    @Override protected void doDestroy() {
         for (PolicyRequirementRule matcher : rules) {
             ComponentSupport.destroy(matcher);
         }
@@ -102,7 +83,7 @@ public abstract class AbstractComposedPolicyRule
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         for (PolicyRequirementRule matcher : rules) {
@@ -111,12 +92,12 @@ public abstract class AbstractComposedPolicyRule
     }
 
     /** {@inheritDoc} */
-    public void setId(String id) {
+    @Override public void setId(String id) {
         super.setId(id);
     }
 
     /** {@inheritDoc} */
-    public String toString() {
+    @Override public String toString() {
         return Objects.toStringHelper(this).add("Composed Rules : ", getComposedRules()).toString();
     }
 }

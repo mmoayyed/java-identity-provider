@@ -24,7 +24,6 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -60,7 +59,7 @@ public class BaseBridgingClassTester {
         return filterContext;
     }
 
-    @Test public void baseClass() throws ComponentInitializationException, ComponentValidationException {
+    @Test public void baseClass() throws ComponentInitializationException {
         
         BaseBridgingClass base = new BaseBridgingClass(new Object()) {};
         

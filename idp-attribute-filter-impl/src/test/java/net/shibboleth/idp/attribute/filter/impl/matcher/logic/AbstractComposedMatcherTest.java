@@ -29,13 +29,11 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.utilities.java.support.component.AbstractDestructableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
-import net.shibboleth.utilities.java.support.component.CountingDestructableInitializableValidatableComponent;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -44,7 +42,7 @@ import org.testng.annotations.Test;
 public class AbstractComposedMatcherTest {
 
     @Test
-    public void testInitDestroy() throws ComponentInitializationException, ComponentValidationException {
+    public void testInitDestroy() throws ComponentInitializationException {
         List<Matcher> firstList = new ArrayList<Matcher>(2);
         ComposedMatcher matcher = new ComposedMatcher(Collections.EMPTY_LIST);
         
@@ -55,14 +53,6 @@ public class AbstractComposedMatcherTest {
         matcher.destroy();
         
         boolean thrown = false;
-        try {
-            matcher.validate();
-        } catch (ComponentValidationException e) {
-            thrown = true;
-        }
-        Assert.assertTrue(thrown, "Validate after destroy");
-
-        thrown = false;
         try {
             matcher.initialize();
         } catch (DestroyedComponentException e) {
@@ -81,14 +71,6 @@ public class AbstractComposedMatcherTest {
         
         thrown = false;
         try {
-            matcher.validate();
-        } catch (ComponentValidationException e) {
-            thrown = true;
-        }
-        Assert.assertTrue(thrown, "Validate before initialize");
-
-        thrown = false;
-        try {
             matcher.getComposedMatchers().add(new TestMatcher());
         } catch (UnsupportedOperationException e) {
             thrown = true;
@@ -101,23 +83,7 @@ public class AbstractComposedMatcherTest {
         for (int i = 0; i < 2;i++) {
             Assert.assertTrue(((InitializableComponent)firstList.get(i)).isInitialized(), "Element should be initialized");
             Assert.assertFalse(((DestructableComponent)firstList.get(i)).isDestroyed(), "Element should not be destroyed");
-            Assert.assertFalse(((TestMatcher)firstList.get(i)).getValidateCount() > 0, "Element should not be validated");
         }
-        
-        matcher.validate();
-        
-        for (int i = 0; i < 2;i++) {
-            Assert.assertTrue(((TestMatcher)firstList.get(i)).getValidateCount() > 0, "Element should be validated");
-        }
-        
-        ((TestMatcher)firstList.get(1)).setFailValidate(true);
-        thrown = false;
-        try {
-            matcher.validate();
-        } catch (ComponentValidationException  e) {
-            thrown = true;
-        }
-        Assert.assertTrue(thrown);
         
         matcher.destroy();
 
@@ -132,13 +98,6 @@ public class AbstractComposedMatcherTest {
             thrown = true;
         }
 
-        thrown = false;
-        try {
-            matcher.validate();
-        } catch (ComponentValidationException  e) {
-            thrown = true;
-        }
-        
         Assert.assertTrue(thrown, "Initialize after destroy");
 
         matcher.destroy();
@@ -194,14 +153,16 @@ public class AbstractComposedMatcherTest {
             super(composedMatchers);
         }
 
+        @Override
         public Set<IdPAttributeValue<?>> getMatchingValues(IdPAttribute attribute, AttributeFilterContext filterContext) {
             return null;
         }
 
     }
     
-    public static class TestMatcher extends CountingDestructableInitializableValidatableComponent implements  Matcher, DestructableComponent, InitializableComponent, ValidatableComponent {
+    public static class TestMatcher extends AbstractDestructableInitializableComponent implements  Matcher, DestructableComponent, InitializableComponent {
 
+        @Override
         public Set<IdPAttributeValue<?>> getMatchingValues(IdPAttribute attribute, AttributeFilterContext filterContext) {
             return null;
         }
@@ -211,6 +172,7 @@ public class AbstractComposedMatcherTest {
         }
 
         /** {@inheritDoc} */
+        @Override
         @Nullable public String getId() {
             return "99";
         }

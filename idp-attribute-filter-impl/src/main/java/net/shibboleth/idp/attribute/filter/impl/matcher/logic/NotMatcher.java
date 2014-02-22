@@ -33,7 +33,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import com.google.common.base.Objects;
@@ -73,6 +72,7 @@ public final class NotMatcher extends AbstractDestructableIdentifiableInitializa
      * A given attribute value is considered to have matched if it is not returned by the composed {@link Matcher}.
      * {@inheritDoc}
      */
+    @Override
     @Nullable @NonnullElements public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull final IdPAttribute attribute,
             @Nonnull final AttributeFilterContext filterContext) {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
@@ -99,34 +99,27 @@ public final class NotMatcher extends AbstractDestructableIdentifiableInitializa
         return Collections.unmodifiableSet(attributeValues);
     }
 
-    /**
-     * Validate the sub component.
-     * 
-     * @throws ComponentValidationException if any of the child validates failed.
-     */
-    public void validate() throws ComponentValidationException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        ComponentSupport.validate(negatedMatcher);
-    }
-
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return Objects.toStringHelper(this).add("negatedMatcher", negatedMatcher).toString();
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doDestroy() {
         ComponentSupport.destroy(negatedMatcher);
         super.doDestroy();
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         ComponentSupport.initialize(negatedMatcher);
     }
     /** {@inheritDoc} */
+    @Override
     public void setId(String id) {
         super.setId(id);
     }

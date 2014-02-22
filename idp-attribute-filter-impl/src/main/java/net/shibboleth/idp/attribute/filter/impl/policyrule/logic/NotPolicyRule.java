@@ -25,7 +25,6 @@ import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import com.google.common.base.Objects;
@@ -61,6 +60,7 @@ public final class NotPolicyRule extends AbstractDestructableIdentifiableInitial
     }
 
     /** {@inheritDoc} */
+    @Override
     public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -76,34 +76,27 @@ public final class NotPolicyRule extends AbstractDestructableIdentifiableInitial
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setId(String id) {
         super.setId(id);
     }
 
-    /**
-     * Validate the sub component.
-     * 
-     * @throws ComponentValidationException if any of the child validates failed.
-     */
-    public void validate() throws ComponentValidationException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        ComponentSupport.validate(negatedRule);
-    }
-
     /** {@inheritDoc} */
+    @Override
     protected void doDestroy() {
         ComponentSupport.destroy(negatedRule);
         super.doDestroy();
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         ComponentSupport.initialize(negatedRule);
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return Objects.toStringHelper(this).add("Negated Policy Rule", negatedRule).toString();
     }

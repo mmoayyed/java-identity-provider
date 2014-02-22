@@ -22,7 +22,6 @@ import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractMatcherPolicyRuleTest;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
@@ -62,8 +61,7 @@ public class NotPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         }
     }
 
-    @Test public void testInitValidateDestroy() throws ComponentInitializationException,
-            ComponentValidationException {
+    @Test public void testInitValidateDestroy() throws ComponentInitializationException {
         AbstractComposedPolicyRuleTest.TestMatcher inMatcher = new AbstractComposedPolicyRuleTest.TestMatcher();
         NotPolicyRule rule = new NotPolicyRule(inMatcher);
 
@@ -74,37 +72,15 @@ public class NotPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
             // expect this
         }
         Assert.assertFalse(inMatcher.isInitialized());
-        Assert.assertFalse(inMatcher.getValidateCount() > 0);
         Assert.assertFalse(inMatcher.isDestroyed());
-
-        try {
-            rule.validate();
-            Assert.fail();
-        } catch (UninitializedComponentException e) {
-            // expect this
-        }
 
         rule.setId("test");
         rule.initialize();
         Assert.assertTrue(inMatcher.isInitialized());
-        Assert.assertFalse(inMatcher.getValidateCount() > 0);
-
-        rule.validate();
-        Assert.assertTrue(inMatcher.isInitialized());
-        Assert.assertTrue(inMatcher.getValidateCount() > 0);
-        Assert.assertFalse(inMatcher.isDestroyed());
-
-        inMatcher.setFailValidate(true);
-        try {
-            rule.validate();
-        } catch (ComponentValidationException e) {
-            // OK
-        }
 
         rule.destroy();
         Assert.assertTrue(inMatcher.isDestroyed());
         Assert.assertTrue(inMatcher.isInitialized());
-        Assert.assertTrue(inMatcher.getValidateCount() > 0);
 
         try {
             rule.initialize();
@@ -112,11 +88,6 @@ public class NotPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
             // OK
         }
 
-        try {
-            rule.validate();
-        } catch (DestroyedComponentException e) {
-            // OK
-        }
     }
 
     @Test public void testPredicate() throws ComponentInitializationException {

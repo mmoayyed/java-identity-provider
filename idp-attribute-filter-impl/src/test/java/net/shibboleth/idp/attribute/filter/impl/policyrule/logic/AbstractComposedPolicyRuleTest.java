@@ -25,13 +25,11 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.utilities.java.support.component.AbstractDestructableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
-import net.shibboleth.utilities.java.support.component.CountingDestructableInitializableValidatableComponent;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -41,7 +39,7 @@ import org.testng.annotations.Test;
 public class AbstractComposedPolicyRuleTest {
 
     @Test
-    public void testInitDestroy() throws ComponentInitializationException, ComponentValidationException {
+    public void testInitDestroy() throws ComponentInitializationException {
         List<PolicyRequirementRule> firstList = new ArrayList<PolicyRequirementRule>(2);
         ComposedPolicyRule rule = new ComposedPolicyRule(Collections.EMPTY_LIST);
         
@@ -52,14 +50,6 @@ public class AbstractComposedPolicyRuleTest {
         rule.destroy();
         
         boolean thrown = false;
-        try {
-            rule.validate();
-        } catch (ComponentValidationException e) {
-            thrown = true;
-        }
-        Assert.assertTrue(thrown, "Validate after destroy");
-
-        thrown = false;
         try {
             rule.initialize();
         } catch (DestroyedComponentException e) {
@@ -78,14 +68,6 @@ public class AbstractComposedPolicyRuleTest {
         
         thrown = false;
         try {
-            rule.validate();
-        } catch (ComponentValidationException e) {
-            thrown = true;
-        }
-        Assert.assertTrue(thrown, "Validate before initialize");
-
-        thrown = false;
-        try {
             rule.getComposedRules().add(new TestMatcher());
         } catch (UnsupportedOperationException e) {
             thrown = true;
@@ -98,23 +80,7 @@ public class AbstractComposedPolicyRuleTest {
         for (int i = 0; i < 2;i++) {
             Assert.assertTrue(((InitializableComponent)firstList.get(i)).isInitialized(), "Element should be initialized");
             Assert.assertFalse(((DestructableComponent)firstList.get(i)).isDestroyed(), "Element should not be destroyed");
-            Assert.assertFalse(((TestMatcher)firstList.get(i)).getValidateCount() > 0, "Element should not be validated");
         }
-        
-        rule.validate();
-        
-        for (int i = 0; i < 2;i++) {
-            Assert.assertTrue(((TestMatcher)firstList.get(i)).getValidateCount() > 0, "Element should be validated");
-        }
-        
-        ((TestMatcher)firstList.get(1)).setFailValidate(true);
-        thrown = false;
-        try {
-            rule.validate();
-        } catch (ComponentValidationException  e) {
-            thrown = true;
-        }
-        Assert.assertTrue(thrown);
         
         rule.destroy();
 
@@ -128,15 +94,6 @@ public class AbstractComposedPolicyRuleTest {
         } catch (DestroyedComponentException  e) {
             thrown = true;
         }
-
-        thrown = false;
-        try {
-            rule.validate();
-        } catch (ComponentValidationException  e) {
-            thrown = true;
-        }
-        
-        Assert.assertTrue(thrown, "Initialize after destroy");
 
         rule.destroy();
     }
@@ -192,18 +149,21 @@ public class AbstractComposedPolicyRuleTest {
             super(composedMatchers);
         }
 
+        @Override
         public Tristate matches(@Nullable AttributeFilterContext arg0) {
             return Tristate.FALSE;
         }
     }
     
-    public static class TestMatcher extends CountingDestructableInitializableValidatableComponent implements  PolicyRequirementRule, DestructableComponent, InitializableComponent, ValidatableComponent {
+    public static class TestMatcher extends AbstractDestructableInitializableComponent implements  PolicyRequirementRule, DestructableComponent, InitializableComponent {
 
+        @Override
         public Tristate matches(@Nullable AttributeFilterContext arg0) {
             return Tristate.FALSE;
         }
 
         /** {@inheritDoc} */
+        @Override
         @Nullable public String getId() {
             return "99";
         }

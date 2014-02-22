@@ -25,7 +25,6 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
@@ -93,7 +92,7 @@ public class ResolvedDataConnectorTest {
 
     }
 
-    @Test public void noops() throws ComponentInitializationException, ComponentValidationException,
+    @Test public void noops() throws ComponentInitializationException ,
             ResolutionException {
         MockStaticDataConnector dc = new MockStaticDataConnector();
         dc.setValues(Arrays.asList(new IdPAttribute("attr")));

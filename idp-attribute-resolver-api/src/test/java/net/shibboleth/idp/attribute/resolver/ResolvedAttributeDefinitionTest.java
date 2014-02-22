@@ -21,7 +21,6 @@ import java.util.Collections;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
@@ -88,7 +87,7 @@ public class ResolvedAttributeDefinitionTest {
 
     }
 
-    @Test public void noops() throws ComponentInitializationException, ComponentValidationException {
+    @Test public void noops() throws ComponentInitializationException {
 
         IdPAttribute attribute = new IdPAttribute("foo");
         MockStaticAttributeDefinition attrDef = new MockStaticAttributeDefinition();
