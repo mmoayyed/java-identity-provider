@@ -81,8 +81,8 @@ public abstract class BasePolicyRuleParser extends BaseFilterParser {
 
             BeanDefinitionBuilder childBuilder = BeanDefinitionBuilder.genericBeanDefinition(getNativeBeanClass());
 
-//            childBuilder.setInitMethodName("initialize");
-            //TODO childBuilder.setDestroyMethodName("destroy");
+            childBuilder.setInitMethodName("initialize");
+            childBuilder.setDestroyMethodName("destroy");
 
             doNativeParse(element, parserContext, childBuilder);
             childBuilder.addPropertyValue("id", "PMId:" + myId);
