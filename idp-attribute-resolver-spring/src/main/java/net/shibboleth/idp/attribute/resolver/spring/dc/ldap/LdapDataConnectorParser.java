@@ -126,6 +126,7 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
             builder.addPropertyValue("noResultAnError", noResultAnError);
         }
         builder.setInitMethodName("initialize");
+        builder.setDestroyMethodName("destroy");
     }
 
     /**
@@ -192,6 +193,7 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
             builder.addPropertyValue("noResultAnError", noResultIsError);
         }
         builder.setInitMethodName("initialize");
+        builder.setDestroyMethodName("destroy");
     }
 
     /** Utility class for parsing v2 schema configuration. */
@@ -295,7 +297,6 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
             final BeanDefinitionBuilder templateBuilder =
                     BeanDefinitionBuilder.genericBeanDefinition(TemplatedExecutableSearchFilterBuilder.class);
             templateBuilder.setInitMethodName("initialize");
-            //TODO templateBuilder.setDestroyMethodName("destroy");
 
             String velocityEngineRef = StringSupport.trimOrNull(configElement.getAttribute("templateEngine"));
             if (null == velocityEngineRef) {
@@ -315,7 +316,6 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
 
             templateBuilder.addPropertyValue("templateText", filter);
 
-            templateBuilder.setInitMethodName("initialize");
             return templateBuilder.getBeanDefinition();
         }
 

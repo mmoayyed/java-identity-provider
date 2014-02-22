@@ -63,7 +63,7 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
         }
         
         builder.setInitMethodName("initialize");
-        //TODO builder.setDestroyMethodName("destroy");
+        builder.setDestroyMethodName("destroy");
         builder.addPropertyValue("name", attributeName);
     }
 

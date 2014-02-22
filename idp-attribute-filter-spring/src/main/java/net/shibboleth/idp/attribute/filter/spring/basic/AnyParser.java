@@ -24,6 +24,8 @@ import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
@@ -35,10 +37,21 @@ public class AnyParser extends BaseFilterParser {
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "ANY");
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {
         if (isPolicyRule(element)) {
             return PolicyRequirementRule.MATCHES_ALL.getClass();
         }
         return Matcher.MATCHES_ALL.getClass();
+    }
+    
+    @Override protected void doParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
+        super.doParse(element, parserContext, builder);
+        //
+        // This one is neither initializable not destructable
+        //
+        builder.setInitMethodName(null);
+        builder.setDestroyMethodName(null);
     }
 }

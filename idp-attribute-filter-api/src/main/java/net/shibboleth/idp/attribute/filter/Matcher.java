@@ -30,11 +30,10 @@ import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
-import net.shibboleth.utilities.java.support.component.InitializableComponent;
 
 /** Java definition of MatchFunctorType as applied to value filtering. */
 @ThreadSafe
-public interface Matcher extends IdentifiedComponent, InitializableComponent {
+public interface Matcher extends IdentifiedComponent {
 
     /** A {@link Matcher} that returns true/all attribute values as matched. */
     public static final Matcher MATCHES_ALL = new Matcher() {
@@ -49,12 +48,6 @@ public interface Matcher extends IdentifiedComponent, InitializableComponent {
             return "MATCHES_ALL";
         }
 
-        @Override public void initialize() {
-        }
-
-        @Override public boolean isInitialized() {
-            return true;
-        }
     };
 
     /** A {@link Matcher} that returns false/no attribute values as matched. */
@@ -70,12 +63,6 @@ public interface Matcher extends IdentifiedComponent, InitializableComponent {
             return "MATCHES_NONE";
         }
 
-        @Override public void initialize() {
-        }
-
-        @Override public boolean isInitialized() {
-            return true;
-        }
     };
 
     /** A {@link Matcher} that fails. targetted primarily at testing, but also at odd corners of parsing. */
@@ -91,12 +78,6 @@ public interface Matcher extends IdentifiedComponent, InitializableComponent {
             return "MATCHER_FAILS";
         }
 
-        @Override public void initialize() {
-        }
-
-        @Override public boolean isInitialized() {
-            return true;
-        }
     };
 
     /**

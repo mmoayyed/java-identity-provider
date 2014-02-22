@@ -42,7 +42,8 @@ public class DirectConnectorParser extends AbstractPrincipalConnectorParser {
 
         BeanDefinitionBuilder subBuilder = BeanDefinitionBuilder.genericBeanDefinition(DirectNameIDDecoder.class);
         subBuilder.setInitMethodName("initialize");
-        //TODO subBuilder.setDestroyMethodName("destroy");
+        subBuilder.setDestroyMethodName("destroy");
+        
         final String id = config.getAttributeNS(null, "id");
         subBuilder.addPropertyValue("id", id);
         builder.addConstructorArgValue(subBuilder.getBeanDefinition());
@@ -50,7 +51,8 @@ public class DirectConnectorParser extends AbstractPrincipalConnectorParser {
 
         subBuilder = BeanDefinitionBuilder.genericBeanDefinition(DirectNameIdentifierDecoder.class);
         subBuilder.setInitMethodName("initialize");
-        //TODO subBuilder.setDestroyMethodName("destroy");
+        subBuilder.setDestroyMethodName("destroy");
+        
         subBuilder.addPropertyValue("id", id);
         builder.addConstructorArgValue(subBuilder.getBeanDefinition());
     }

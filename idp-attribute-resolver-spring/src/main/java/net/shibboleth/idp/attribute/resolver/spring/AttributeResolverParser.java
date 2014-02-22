@@ -68,7 +68,7 @@ public class AttributeResolverParser extends AbstractSingleBeanDefinitionParser 
             id = "Shibboleth.Resolver";
         }
         builder.setInitMethodName("initialize");
-        //TODO builder.setDestroyMethodName("destroy");
+        builder.setDestroyMethodName("destroy");
 
         builder.addConstructorArgValue(id);
 

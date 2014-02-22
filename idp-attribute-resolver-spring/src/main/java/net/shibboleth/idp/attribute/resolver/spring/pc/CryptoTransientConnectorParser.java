@@ -51,7 +51,8 @@ public class CryptoTransientConnectorParser extends AbstractPrincipalConnectorPa
         BeanDefinitionBuilder subBuilder =
                 BeanDefinitionBuilder.genericBeanDefinition(CryptoTransientNameIDDecoder.class);
         subBuilder.setInitMethodName("initialize");
-        // TODO subBuilder.setDestroyMethodName("destroy");
+        subBuilder.setDestroyMethodName("destroy");
+        
         subBuilder.addPropertyReference("dataSealer", dataSealer);
         final String id = config.getAttributeNS(null, "id");
         subBuilder.addPropertyValue("id", id);
@@ -61,7 +62,8 @@ public class CryptoTransientConnectorParser extends AbstractPrincipalConnectorPa
         // NameIdentifier
         subBuilder = BeanDefinitionBuilder.genericBeanDefinition(CryptoTransientNameIdentifierDecoder.class);
         subBuilder.setInitMethodName("initialize");
-        // TODO subBuilder.setDestroyMethodName("destroy");
+        subBuilder.setDestroyMethodName("destroy");
+        
         subBuilder.addPropertyReference("dataSealer", dataSealer);
         subBuilder.addPropertyValue("id", id);
         builder.addConstructorArgValue(subBuilder.getBeanDefinition());

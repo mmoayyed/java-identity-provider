@@ -52,7 +52,7 @@ public abstract class AbstractPrincipalConnectorParser extends AbstractSingleBea
             @Nonnull final BeanDefinitionBuilder builder) {
         
         builder.setInitMethodName("initialize");
-        //TODO builder.setDestroyMethodName("destroy");
+        builder.setDestroyMethodName("destroy");
         
         super.doParse(config, parserContext, builder);
 

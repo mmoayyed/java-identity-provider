@@ -77,7 +77,7 @@ public class AttributeFilterPolicyGroupParser extends AbstractSingleBeanDefiniti
         log.debug("Parsing attribute filter policy group {}", policyId);
 
         builder.setInitMethodName("initialize");
-        //TODO builder.setDestroyMethodName("destroy");
+        builder.setDestroyMethodName("destroy");
 
         List<Element> children;
         Map<QName, List<Element>> childrenMap = ElementSupport.getIndexedChildElements(config);

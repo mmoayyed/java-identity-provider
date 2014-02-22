@@ -97,6 +97,7 @@ public class RdbmsDataConnectorParser extends AbstractDataConnectorParser {
             builder.addPropertyValue("noResultAnError", true);
         }
         builder.setInitMethodName("initialize");
+        builder.setDestroyMethodName("destroy");
     }
 
     /**
@@ -122,6 +123,7 @@ public class RdbmsDataConnectorParser extends AbstractDataConnectorParser {
             builder.addPropertyValue("noResultAnError", noResultIsError);
         }
         builder.setInitMethodName("initialize");
+        builder.setDestroyMethodName("destroy");
     }
 
     /** Utility class for parsing v2 schema configuration. */
@@ -159,7 +161,7 @@ public class RdbmsDataConnectorParser extends AbstractDataConnectorParser {
             final BeanDefinitionBuilder templateBuilder =
                     BeanDefinitionBuilder.genericBeanDefinition(TemplatedExecutableStatementBuilder.class);
             templateBuilder.setInitMethodName("initialize");
-            //TODO templateBuilder.setDestroyMethodName("destroy");
+            templateBuilder.setDestroyMethodName("destroy");
 
             String velocityEngineRef = StringSupport.trimOrNull(configElement.getAttribute("templateEngine"));
             if (null == velocityEngineRef) {
@@ -187,6 +189,7 @@ public class RdbmsDataConnectorParser extends AbstractDataConnectorParser {
             templateBuilder.addPropertyValue("templateText", queryText);
 
             templateBuilder.setInitMethodName("initialize");
+            templateBuilder.setDestroyMethodName("destroy");
             return templateBuilder.getBeanDefinition();
         }
 

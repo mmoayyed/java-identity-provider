@@ -61,7 +61,7 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
             defnId = id;
         }
         builder.setInitMethodName("initialize");
-        //TODO builder.setDestroyMethodName("destroy");
+        builder.setDestroyMethodName("destroy");
 
         List<Element> dependencyElements =
                 ElementSupport.getChildElements(config, ResolverPluginDependencyParser.ELEMENT_NAME);

@@ -22,9 +22,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
-import net.shibboleth.utilities.java.support.component.InitializableComponent;
 
 /**
  * Java definition of PolicyRequirementRule.
@@ -35,7 +33,7 @@ import net.shibboleth.utilities.java.support.component.InitializableComponent;
  * during enumeration (like not being able to find something in the context) then they return {@link Tristate#FAIL}.
  */
 @ThreadSafe
-public interface PolicyRequirementRule extends IdentifiedComponent, InitializableComponent {
+public interface PolicyRequirementRule extends IdentifiedComponent {
 
     /**
      * Representation of the three outcomes of a PolicyRequirementRule.
@@ -60,12 +58,6 @@ public interface PolicyRequirementRule extends IdentifiedComponent, Initializabl
             return "MATCHES_ALL";
         }
 
-        @Override public boolean isInitialized() {
-            return true;
-        }
-
-        @Override public void initialize() throws ComponentInitializationException {
-        }
     };
 
     /** A {@link PolicyRequirementRule} that returns false as matched. */
@@ -79,12 +71,6 @@ public interface PolicyRequirementRule extends IdentifiedComponent, Initializabl
             return "MATCHES_NONE";
         }
 
-        @Override public boolean isInitialized() {
-            return true;
-        }
-
-        @Override public void initialize() throws ComponentInitializationException {
-        }
     };
 
     /** A {@link PolicyRequirementRule} that returns failed. */
@@ -98,12 +84,6 @@ public interface PolicyRequirementRule extends IdentifiedComponent, Initializabl
             return "REQUIREMENT_RULE_FAILS";
         }
 
-        @Override public boolean isInitialized() {
-            return true;
-        }
-
-        @Override public void initialize() throws ComponentInitializationException {
-        }
     };
 
     /**
