@@ -21,18 +21,13 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
-import net.shibboleth.utilities.java.support.component.DestructableComponent;
-import net.shibboleth.utilities.java.support.component.InitializableComponent;
 
 /** A simple, mock implementation of {@link Matcher}. */
 public class MockPolicyRequirementRule extends AbstractIdentifiedInitializableComponent implements
-        PolicyRequirementRule, InitializableComponent, DestructableComponent {
+        PolicyRequirementRule {
 
     /** state variable */
     private boolean initialized;
-
-    /** state variable */
-    private boolean destroyed;
 
     /** to return from matcher(). */
     private Tristate retVal;
@@ -47,17 +42,6 @@ public class MockPolicyRequirementRule extends AbstractIdentifiedInitializableCo
         setId("Mock");
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean isDestroyed() {
-        return destroyed;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void destroy() {
-        destroyed = true;
-    }
 
     /** {@inheritDoc} */
     @Override

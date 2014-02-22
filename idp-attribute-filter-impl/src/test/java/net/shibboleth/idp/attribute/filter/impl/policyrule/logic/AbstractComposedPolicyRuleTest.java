@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.utilities.java.support.component.AbstractDestructableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
@@ -155,7 +155,7 @@ public class AbstractComposedPolicyRuleTest {
         }
     }
     
-    public static class TestMatcher extends AbstractDestructableInitializableComponent implements  PolicyRequirementRule, DestructableComponent, InitializableComponent {
+    public static class TestMatcher extends AbstractInitializableComponent implements  PolicyRequirementRule, DestructableComponent, InitializableComponent {
 
         @Override
         public Tristate matches(@Nullable AttributeFilterContext arg0) {

@@ -26,15 +26,13 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
-import net.shibboleth.utilities.java.support.component.DestructableComponent;
-import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Objects;
 
 /** A simple, mock implementation of {@link Matcher}. */
-public class MockMatcher extends AbstractIdentifiedInitializableComponent implements Matcher, InitializableComponent, DestructableComponent { 
+public class MockMatcher extends AbstractIdentifiedInitializableComponent implements Matcher { 
 
     /** ID of the attribute to which this matcher applies. */
     private String matchingAttribute;
@@ -45,9 +43,7 @@ public class MockMatcher extends AbstractIdentifiedInitializableComponent implem
     /** state variable */
     private boolean initialized;
 
-    /** state variable */
-    private boolean destroyed;
-    
+   
     /** do we fail when validate is called? do we fail when we are called?*/
     private boolean fails;
 
@@ -104,17 +100,6 @@ public class MockMatcher extends AbstractIdentifiedInitializableComponent implem
         return values;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean isDestroyed() {
-        return destroyed;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void destroy() {
-        destroyed = true;        
-    }
 
     /** {@inheritDoc} */
     @Override

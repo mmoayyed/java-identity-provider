@@ -26,7 +26,7 @@ import javax.script.SimpleScriptContext;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiedInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
@@ -44,7 +44,7 @@ import com.google.common.base.Objects;
  * 
  */
 @ThreadSafe
-public class ScriptedPolicyRule extends AbstractDestructableIdentifiedInitializableComponent implements
+public class ScriptedPolicyRule extends AbstractIdentifiedInitializableComponent implements
         PolicyRequirementRule, UnmodifiableComponent {
 
     /** Class logger. */
@@ -101,6 +101,7 @@ public class ScriptedPolicyRule extends AbstractDestructableIdentifiedInitializa
      * </p>
      * {@inheritDoc}
      */
+    @Override
     public Tristate matches(@Nonnull final AttributeFilterContext filterContext) {
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 

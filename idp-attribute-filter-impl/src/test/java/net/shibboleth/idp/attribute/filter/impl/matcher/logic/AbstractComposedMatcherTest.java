@@ -29,7 +29,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.utilities.java.support.component.AbstractDestructableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
@@ -160,7 +160,7 @@ public class AbstractComposedMatcherTest {
 
     }
     
-    public static class TestMatcher extends AbstractDestructableInitializableComponent implements  Matcher, DestructableComponent, InitializableComponent {
+    public static class TestMatcher extends AbstractInitializableComponent implements  Matcher, DestructableComponent, InitializableComponent {
 
         @Override
         public Set<IdPAttributeValue<?>> getMatchingValues(IdPAttribute attribute, AttributeFilterContext filterContext) {

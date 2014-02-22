@@ -22,7 +22,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiedInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -35,7 +35,7 @@ import com.google.common.base.Objects;
  * if FAIL then FAIL else if TRUE then FALSE else TRUE<br/>
  */
 @ThreadSafe
-public final class NotPolicyRule extends AbstractDestructableIdentifiedInitializableComponent implements
+public final class NotPolicyRule extends AbstractIdentifiedInitializableComponent implements
         PolicyRequirementRule {
 
     /** The matcher we are negating. */

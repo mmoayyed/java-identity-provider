@@ -34,7 +34,7 @@ import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiedInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
@@ -51,8 +51,8 @@ import com.google.common.base.Objects;
  * 
  */
 @ThreadSafe
-public class ScriptedMatcher extends AbstractDestructableIdentifiedInitializableComponent implements Matcher,
-        UnmodifiableComponent {
+public class ScriptedMatcher extends AbstractIdentifiedInitializableComponent implements Matcher, 
+    UnmodifiableComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ScriptedMatcher.class);
@@ -73,6 +73,7 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiedInitializable
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setId(@Nullable final String id) {
         super.setId(id);
         // clear cache
@@ -112,6 +113,7 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiedInitializable
      * </p>
      * {@inheritDoc}
      */
+    @Override
     @Nullable @NonnullElements @Unmodifiable public Set<IdPAttributeValue<?>> getMatchingValues(
             @Nonnull final IdPAttribute attribute, @Nonnull final AttributeFilterContext filterContext) {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
@@ -146,11 +148,13 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiedInitializable
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doDestroy() {
         super.doDestroy();
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
@@ -162,6 +166,7 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiedInitializable
 
     // TODO : Do we still need these?
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -181,11 +186,13 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiedInitializable
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return Objects.hashCode(script, getId());
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return Objects.toStringHelper(this).add("Script", getScript()).toString();
     }

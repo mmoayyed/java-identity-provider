@@ -45,7 +45,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
-import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiedInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -68,61 +68,70 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 /**
- * Implementation of {@link SessionManager} and {@link SessionResolver} interfaces that relies on
- * a {@link StorageService} for persistence and lifecycle management of data.
+ * Implementation of {@link SessionManager} and {@link SessionResolver} interfaces that relies on a
+ * {@link StorageService} for persistence and lifecycle management of data.
  * 
- * <p>The storage layout here is to store most data in a context named for the session ID.
- * Within that context, the master {@link IdPSession} record lives under a key called "_session",
- * with an expiration based on the session timeout value plus a configurable amount of "slop" to
- * prevent premature disappearance in case of logout.</p>
+ * <p>
+ * The storage layout here is to store most data in a context named for the session ID. Within that context, the master
+ * {@link IdPSession} record lives under a key called "_session", with an expiration based on the session timeout value
+ * plus a configurable amount of "slop" to prevent premature disappearance in case of logout.
+ * </p>
  * 
- * <p>Each {@link net.shibboleth.idp.authn.AuthenticationResult} is stored in a record keyed by the flow ID.
- * The expiration is set based on the underlying flow's timeout.</p>
+ * <p>
+ * Each {@link net.shibboleth.idp.authn.AuthenticationResult} is stored in a record keyed by the flow ID. The expiration
+ * is set based on the underlying flow's timeout.
+ * </p>
  * 
- * <p>Each {@link SPSession} is stored in a record keyed by the service ID. The expiration
- * is set based on the SPSession's own expiration plus the "slop" value.</p>
+ * <p>
+ * Each {@link SPSession} is stored in a record keyed by the service ID. The expiration is set based on the SPSession's
+ * own expiration plus the "slop" value.
+ * </p>
  * 
- * <p>For cross-referencing, lists of flow and service IDs are tracked within the master "_session"
- * record, so adding either requires an update to the master record plus the creation of a new one.
- * Post-creation, there are no updates to the AuthenticationResult or SPSession records, but
- * the expiration of the result records can be updated to reflect activity updates.</p>
+ * <p>
+ * For cross-referencing, lists of flow and service IDs are tracked within the master "_session" record, so adding
+ * either requires an update to the master record plus the creation of a new one. Post-creation, there are no updates to
+ * the AuthenticationResult or SPSession records, but the expiration of the result records can be updated to reflect
+ * activity updates.
+ * </p>
  * 
- * <p>When a SPSession is added, it may expose an optional secondary "key". If set, this is a
- * signal to add a secondary lookup of the SPSession. This is a record containing a list of
- * relevant IdPSession IDs stored under a context/key pair consisting of the Service ID and the
- * exposed secondary key from the object. The expiration of this record is set based on the larger
- * of the current list expiration, if any, and the expiration of the SPSession plus the configured
- * slop value. In other words, the lifetime of the index record is pushed out as far as needed to
- * avoid premature expiration while any of the SPSessions producing it remain around.</p>
+ * <p>
+ * When a SPSession is added, it may expose an optional secondary "key". If set, this is a signal to add a secondary
+ * lookup of the SPSession. This is a record containing a list of relevant IdPSession IDs stored under a context/key
+ * pair consisting of the Service ID and the exposed secondary key from the object. The expiration of this record is set
+ * based on the larger of the current list expiration, if any, and the expiration of the SPSession plus the configured
+ * slop value. In other words, the lifetime of the index record is pushed out as far as needed to avoid premature
+ * expiration while any of the SPSessions producing it remain around.
+ * </p>
  * 
- * <p>The primary purpose of the secondary list is SAML logout, and is an optional feature that can be
- * disabled. In the case of a SAML 2 session, the secondary key is some form of the NameID issued
- * to the service.</p>
+ * <p>
+ * The primary purpose of the secondary list is SAML logout, and is an optional feature that can be disabled. In the
+ * case of a SAML 2 session, the secondary key is some form of the NameID issued to the service.
+ * </p>
  */
-public class StorageBackedSessionManager extends AbstractDestructableIdentifiedInitializableComponent implements
-        SessionManager, SessionResolver {
+public class StorageBackedSessionManager extends AbstractIdentifiedInitializableComponent implements SessionManager,
+        SessionResolver {
 
     /** Storage key of master session records. */
     @Nonnull @NotEmpty public static final String SESSION_MASTER_KEY = "_session";
 
     /** Default cookie name for session tracking. */
     @Nonnull @NotEmpty protected static final String DEFAULT_COOKIE_NAME = "shib_idp_session";
-    
+
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(StorageBackedSessionManager.class);
-    
+
     /** Servlet request to read from. */
     @Nullable private HttpServletRequest httpRequest;
 
     /** Servlet response to write to. */
     @Nullable private HttpServletResponse httpResponse;
-    
+
     /** Inactivity timeout for sessions in milliseconds. */
     @Duration @Positive private long sessionTimeout;
-    
+
     /** Amount of time in milliseconds to defer expiration of records for better handling of logout. */
     @Duration @NonNegative private long sessionSlop;
-    
+
     /** Indicates that storage service failures should be masked as much as possible. */
     private boolean maskStorageFailure;
 
@@ -131,16 +140,16 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
 
     /** Indicates whether to secondary-index SPSessions. */
     private boolean secondaryServiceIndex;
-    
+
     /** Indicates whether sessions are bound to client addresses. */
     private boolean consistentAddress;
 
     /** Manages creation of cookies. */
     @NonnullAfterInit private CookieManager cookieManager;
-    
+
     /** Name of cookie used to track sessions. */
     @Nonnull @NotEmpty private String cookieName;
-    
+
     /** The back-end for managing data. */
     @NonnullAfterInit private StorageService storageService;
 
@@ -149,16 +158,16 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
 
     /** Serializer for sessions. */
     @Nonnull private final StorageBackedIdPSessionSerializer serializer;
-    
+
     /** Flows that could potentially be used to authenticate the user. */
     @Nonnull @NonnullElements private final Map<String, AuthenticationFlowDescriptor> flowDescriptorMap;
-    
+
     /** Mappings between a SPSession type and a serializer implementation. */
     @Nullable private SPSessionSerializerRegistry spSessionSerializerRegistry;
-    
+
     /**
      * Constructor.
-     *
+     * 
      */
     public StorageBackedSessionManager() {
         sessionTimeout = 60 * 60 * 1000;
@@ -166,16 +175,14 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
         flowDescriptorMap = new HashMap();
         consistentAddress = true;
         cookieName = DEFAULT_COOKIE_NAME;
-        
+
         setId(UUID.randomUUID().toString());
     }
-    
+
     /** {@inheritDoc} */
-    @Override
-    public void setId(@Nonnull @NotEmpty final String componentId) {
+    @Override public void setId(@Nonnull @NotEmpty final String componentId) {
         super.setId(componentId);
     }
-    
 
     /**
      * Get the servlet request to read from.
@@ -185,7 +192,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
     @Nullable HttpServletRequest getHttpServletRequest() {
         return httpRequest;
     }
-    
+
     /**
      * Set the servlet request to read from.
      * 
@@ -193,7 +200,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
      */
     public void setHttpServletRequest(@Nullable final HttpServletRequest request) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         httpRequest = request;
     }
 
@@ -205,7 +212,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
     @Nullable HttpServletResponse getHttpServletResponse() {
         return httpResponse;
     }
-    
+
     /**
      * Set the servlet response to write to.
      * 
@@ -213,19 +220,19 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
      */
     public void setHttpServletResponse(@Nullable final HttpServletResponse response) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         httpResponse = response;
     }
-    
+
     /**
      * Get the session inactivity timeout policy in milliseconds.
      * 
-     * @return  inactivity timeout
+     * @return inactivity timeout
      */
     @Positive public long getSessionTimeout() {
         return sessionTimeout;
     }
-    
+
     /**
      * Set the session inactivity timeout policy in milliseconds, must be greater than zero.
      * 
@@ -233,19 +240,19 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
      */
     public void setSessionTimeout(@Duration @Positive final long timeout) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         sessionTimeout = Constraint.isGreaterThan(0, timeout, "Timeout must be greater than zero");
     }
 
     /**
      * Get the amount of time in milliseconds to defer expiration of records.
      * 
-     * @return  expiration deferrence time
+     * @return expiration deferrence time
      */
     @Positive public long getSessionSlop() {
         return sessionSlop;
     }
-    
+
     /**
      * Set the amount of time in milliseconds to defer expiration of records.
      * 
@@ -253,10 +260,10 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
      */
     public void setSessionSlop(@Duration @NonNegative final long slop) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         sessionSlop = Constraint.isGreaterThanOrEqual(0, slop, "Slop must be greater than or equal to zero");
     }
-    
+
     /**
      * Get whether to mask StorageService failures where possible.
      * 
@@ -273,10 +280,10 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
      */
     public void setMaskStorageFailure(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         maskStorageFailure = flag;
     }
-    
+
     /**
      * Get whether to track SPSessions.
      * 
@@ -289,13 +296,15 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
     /**
      * Set whether to track SPSessions.
      * 
-     * <p>This feature requires a StorageService that is not client-side because of space limitations.</p> 
+     * <p>
+     * This feature requires a StorageService that is not client-side because of space limitations.
+     * </p>
      * 
      * @param flag flag to set
      */
     public void setTrackSPSessions(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         trackSPSessions = flag;
     }
 
@@ -311,25 +320,27 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
     /**
      * Set whether to create a secondary index for SPSession lookup.
      * 
-     * <p>This feature requires a StorageService that is not client-side.</p> 
+     * <p>
+     * This feature requires a StorageService that is not client-side.
+     * </p>
      * 
      * @param flag flag to set
      */
     public void setSecondaryServiceIndex(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         secondaryServiceIndex = flag;
     }
-    
+
     /**
      * Get whether sessions are bound to client addresses.
      * 
-     * @return true iff sessions should be bound to client addresses 
+     * @return true iff sessions should be bound to client addresses
      */
     public boolean isConsistentAddress() {
         return consistentAddress;
     }
-    
+
     /**
      * Set whether sessions are bound to client addresses.
      * 
@@ -337,7 +348,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
      */
     public void setConsistentAddress(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         consistentAddress = flag;
     }
 
@@ -348,7 +359,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
      */
     public void setCookieName(@Nonnull @NotEmpty final String name) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         cookieName = Constraint.isNotNull(StringSupport.trimOrNull(name), "Cookie name cannot be null or empty");
     }
 
@@ -359,19 +370,19 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
      */
     public void setCookieManager(@Nonnull final CookieManager manager) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         cookieManager = Constraint.isNotNull(manager, "CookieManager cannot be null");
     }
-    
+
     /**
      * Get the {@link StorageService} back-end to use.
      * 
      * @return the back-end to use
      */
     @Nonnull public StorageService getStorageService() {
-       return storageService;
+        return storageService;
     }
-    
+
     /**
      * Set the {@link StorageService} back-end to use.
      * 
@@ -379,7 +390,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
      */
     public void setStorageService(@Nonnull final StorageService storage) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         storageService = Constraint.isNotNull(storage, "StorageService cannot be null");
     }
 
@@ -390,14 +401,14 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
      */
     public void setIDGenerator(@Nonnull final IdentifierGenerationStrategy newIDGenerator) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         idGenerator = Constraint.isNotNull(newIDGenerator, "IdentifierGenerationStrategy cannot be null");
     }
-    
+
     /**
      * Get the serializer for the {@link IdPSession} objects managed by this implementation.
      * 
-     * @return  the serializer to use when writing back session objects
+     * @return the serializer to use when writing back session objects
      */
     @Nonnull public StorageSerializer<StorageBackedIdPSession> getStorageSerializer() {
         return serializer;
@@ -410,11 +421,11 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
      * 
      * @return the matching flow descriptor, or null
      */
-    @Nullable public AuthenticationFlowDescriptor getAuthenticationFlowDescriptor(
-            @Nonnull @NotEmpty final String flowId) {
+    @Nullable public AuthenticationFlowDescriptor
+            getAuthenticationFlowDescriptor(@Nonnull @NotEmpty final String flowId) {
         return flowDescriptorMap.get(flowId);
     }
-    
+
     /**
      * Set the {@link AuthenticationFlowDescriptor} collection active in the system.
      * 
@@ -424,13 +435,13 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
             @Nonnull @NonnullElements final Iterable<AuthenticationFlowDescriptor> flows) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(flows, "Flow collection cannot be null");
-        
+
         flowDescriptorMap.clear();
         for (AuthenticationFlowDescriptor desc : Iterables.filter(flows, Predicates.notNull())) {
             flowDescriptorMap.put(desc.getId(), desc);
         }
     }
-    
+
     /**
      * Get the attached {@link spSessionSerializerRegistry}.
      * 
@@ -439,23 +450,22 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
     @Nullable public SPSessionSerializerRegistry getSPSessionSerializerRegistry() {
         return spSessionSerializerRegistry;
     }
-    
+
     /**
      * Set the {@link SPSessionSerializerRegistry} to use.
      * 
-     * @param registry  a registry of SPSession class to serializer mappings
+     * @param registry a registry of SPSession class to serializer mappings
      */
     public void setSPSessionSerializerRegistry(@Nullable final SPSessionSerializerRegistry registry) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         spSessionSerializerRegistry = registry;
     }
-    
+
     /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        
+
         if (storageService == null) {
             throw new ComponentInitializationException(
                     "Initialization of StorageBackedSessionManager requires non-null StorageService");
@@ -465,22 +475,20 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
         } else if (cookieManager == null) {
             throw new ComponentInitializationException(
                     "Initialization of StorageBackedSessionManager requires non-null CookieManager");
-        } else if ((trackSPSessions || secondaryServiceIndex)
-                && storageService instanceof RequestScopedStorageService) {
-            throw new ComponentInitializationException(
-                    "Tracking SPSessions requires a server-side StorageService");
+        } else if ((trackSPSessions || secondaryServiceIndex) && storageService 
+                instanceof RequestScopedStorageService) {
+            throw new ComponentInitializationException("Tracking SPSessions requires a server-side StorageService");
         } else if (trackSPSessions && spSessionSerializerRegistry == null) {
-            throw new ComponentInitializationException(
-                    "Tracking SPSessions requires a spSessionSerializerRegistry");
+            throw new ComponentInitializationException("Tracking SPSessions requires a spSessionSerializerRegistry");
         }
-        
+
         // This is our private instance, so we initialize it.
         serializer.initialize();
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull public IdPSession createSession(@Nonnull @NotEmpty final String principalName) throws SessionException {
+    @Override @Nonnull public IdPSession createSession(@Nonnull @NotEmpty final String principalName)
+            throws SessionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         String remoteAddr = null;
@@ -493,16 +501,16 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
                 throw new SessionException("No client address to bind");
             }
         }
-        
+
         String sessionId = idGenerator.generateIdentifier(false);
         if (sessionId.length() > storageService.getCapabilities().getContextSize()) {
             throw new SessionException("Session IDs are too large for StorageService, check configuration");
         }
-        
-        StorageBackedIdPSession newSession = new StorageBackedIdPSession(this, sessionId, principalName,
-                System.currentTimeMillis());
+
+        StorageBackedIdPSession newSession =
+                new StorageBackedIdPSession(this, sessionId, principalName, System.currentTimeMillis());
         newSession.doBindToAddress(remoteAddr);
-        
+
         try {
             if (!storageService.create(sessionId, SESSION_MASTER_KEY, newSession, serializer,
                     newSession.getCreationInstant() + sessionTimeout + sessionSlop)) {
@@ -514,22 +522,21 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
                 throw new SessionException("Exception while storing new session", e);
             }
         }
-        
+
         log.info("Created new session {} for principal {}", sessionId, principalName);
         cookieManager.addCookie(cookieName, sessionId);
         return newSession;
     }
-    
+
     /** {@inheritDoc} */
-    @Override
-    public void destroySession(@Nonnull @NotEmpty final String sessionId) throws SessionException {
+    @Override public void destroySession(@Nonnull @NotEmpty final String sessionId) throws SessionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
+
         // Note that this can leave entries in the secondary SPSession records, but those
         // will eventually expire outright, or can be cleaned up if the index is searched.
-        
+
         cookieManager.unsetCookie(cookieName);
-        
+
         try {
             storageService.deleteContext(sessionId);
             log.info("Destroyed session {}", sessionId);
@@ -540,14 +547,14 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull @NonnullElements public Iterable<IdPSession> resolve(@Nullable final CriteriaSet criteria)
+    // Checkstyle: CyclomaticComplexity OFF
+    @Override @Nonnull @NonnullElements public Iterable<IdPSession> resolve(@Nullable final CriteriaSet criteria)
             throws ResolverException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
+
         // We support either session ID lookup, or secondary lookup by service ID and key, if
         // a secondary index is being maintained.
-        
+
         if (criteria != null) {
             HttpServletRequestCriterion requestCriterion = criteria.get(HttpServletRequestCriterion.class);
             if (requestCriterion != null) {
@@ -568,7 +575,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
                     throw new ResolverException("HttpServletRequest is null");
                 }
             }
-            
+
             SessionIdCriterion sessionIdCriterion = criteria.get(SessionIdCriterion.class);
             if (sessionIdCriterion != null) {
                 IdPSession session = lookupBySessionId(sessionIdCriterion.getSessionId());
@@ -578,28 +585,28 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
                     return ImmutableList.of();
                 }
             }
-            
+
             SPSessionCriterion serviceCriterion = criteria.get(SPSessionCriterion.class);
             if (serviceCriterion != null) {
                 if (!secondaryServiceIndex) {
                     throw new ResolverException("Secondary service index is disabled");
                 }
-                
+
                 return lookupBySPSession(serviceCriterion);
             }
         }
-        
+
         throw new ResolverException("No supported criterion supplied");
     }
-
+    // Checkstyle: CyclomaticComplexity On
+    
     /** {@inheritDoc} */
-    @Override
-    @Nullable public IdPSession resolveSingle(@Nullable final CriteriaSet criteria) throws ResolverException {
+    @Override @Nullable public IdPSession resolveSingle(@Nullable final CriteriaSet criteria) throws ResolverException {
         Iterator<IdPSession> i = resolve(criteria).iterator();
         if (i != null && i.hasNext()) {
             return i.next();
         }
-        
+
         return null;
     }
 
@@ -612,8 +619,8 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
      * 
      * @throws SessionException if a fatal error occurs
      */
-    protected void indexBySPSession(@Nonnull final IdPSession idpSession,
-            @Nonnull final SPSession spSession, final int attempts) throws SessionException {
+    protected void indexBySPSession(@Nonnull final IdPSession idpSession, @Nonnull final SPSession spSession,
+            final int attempts) throws SessionException {
         if (attempts <= 0) {
             log.error("Exceeded retry attempts while adding to secondary index");
             if (!maskStorageFailure) {
@@ -626,10 +633,10 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
                 return;
             }
             log.debug("Maintaining secondary index for service ID {} and key {}", serviceId, serviceKey);
-    
+
             int contextSize = storageService.getCapabilities().getContextSize();
             int keySize = storageService.getCapabilities().getKeySize();
-            
+
             // Truncate context and key if needed.
             if (serviceId.length() > contextSize) {
                 serviceId = serviceId.substring(0, contextSize);
@@ -637,9 +644,9 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
             if (serviceKey.length() > keySize) {
                 serviceKey = serviceKey.substring(0, keySize);
             }
-    
+
             StorageRecord sessionList = null;
-            
+
             try {
                 sessionList = storageService.read(serviceId, serviceKey);
             } catch (IOException e) {
@@ -648,19 +655,19 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
                     throw new SessionException("Exception while querying based on SPSession", e);
                 }
             }
-    
+
             try {
                 if (sessionList != null && !sessionList.getValue().contains(idpSession.getId() + ',')) {
                     // Need to update record.
                     String updated = sessionList.getValue() + idpSession.getId() + ',';
                     if (storageService.updateWithVersion(sessionList.getVersion(), serviceId, serviceKey, updated,
-                            Math.max(sessionList.getExpiration(),
-                                    spSession.getExpirationInstant() + sessionSlop)) == null) {
+                            Math.max(sessionList.getExpiration(), 
+                                     spSession.getExpirationInstant() + sessionSlop)) == null) {
                         log.info("Secondary index record disappeared, retrying as insert");
                         indexBySPSession(idpSession, spSession, attempts - 1);
                     }
                 } else if (!storageService.create(serviceId, serviceKey, idpSession.getId() + ',',
-                            spSession.getExpirationInstant() + sessionSlop)) {
+                        spSession.getExpirationInstant() + sessionSlop)) {
                     log.info("Secondary index record appeared, retrying as update");
                     indexBySPSession(idpSession, spSession, attempts - 1);
                 }
@@ -687,7 +694,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
      */
     @Nullable private IdPSession lookupBySessionId(@Nonnull @NotEmpty final String sessionId) throws ResolverException {
         log.debug("Performing primary lookup on session ID {}", sessionId);
-        
+
         try {
             StorageRecord<StorageBackedIdPSession> sessionRecord = storageService.read(sessionId, SESSION_MASTER_KEY);
             if (sessionRecord != null) {
@@ -701,10 +708,10 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
                 throw new ResolverException("Exception while querying for session", e);
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * Performs a lookup and deserializes records potentially matching a SPSession.
      * 
@@ -713,12 +720,12 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
      * @return collection of zero or more sessions
      * @throws ResolverException if an error occurs during lookup
      */
-    @Nonnull @NonnullElements private Iterable<IdPSession> lookupBySPSession(
-            @Nonnull final SPSessionCriterion criterion) throws ResolverException {
-        
+    @Nonnull @NonnullElements private Iterable<IdPSession>
+            lookupBySPSession(@Nonnull final SPSessionCriterion criterion) throws ResolverException {
+
         int contextSize = storageService.getCapabilities().getContextSize();
         int keySize = storageService.getCapabilities().getKeySize();
-        
+
         String serviceId = criterion.getServiceId();
         String serviceKey = criterion.getSPSessionKey();
         log.debug("Performing secondary lookup on service ID {} and key {}", serviceId, serviceKey);
@@ -732,7 +739,7 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
         }
 
         StorageRecord sessionList = null;
-        
+
         try {
             sessionList = storageService.read(serviceId, serviceKey);
         } catch (IOException e) {
@@ -747,10 +754,10 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
             return ImmutableList.of();
         }
 
-        ImmutableList.Builder builder = ImmutableList.<IdPSession>builder();
-        
+        ImmutableList.Builder builder = ImmutableList.<IdPSession> builder();
+
         StringBuilder writeBackSessionList = new StringBuilder(sessionList.getValue().length());
-        
+
         for (String sessionId : sessionList.getValue().split(",")) {
             IdPSession session = lookupBySessionId(sessionId);
             if (session != null) {
@@ -760,21 +767,21 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiedI
                 writeBackSessionList.append(',');
             }
         }
-        
+
         try {
             String writeBackValue = writeBackSessionList.toString();
             if (writeBackValue.length() == 0) {
                 storageService.deleteWithVersion(sessionList.getVersion(), serviceId, serviceKey);
             } else if (!writeBackValue.equals(sessionList.getValue())) {
-                storageService.updateWithVersion(sessionList.getVersion(), serviceId, serviceKey,
-                        writeBackValue, sessionList.getExpiration());
+                storageService.updateWithVersion(sessionList.getVersion(), serviceId, serviceKey, writeBackValue,
+                        sessionList.getExpiration());
             }
         } catch (IOException e) {
             log.warn("Ignoring exception while updating secondary index", e);
         } catch (VersionMismatchException e) {
             log.debug("Ignoring version mismatch while updating secondary index");
         }
-        
+
         return builder.build();
     }
 }
