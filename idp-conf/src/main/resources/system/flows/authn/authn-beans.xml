@@ -15,6 +15,7 @@
     <context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
     
     <bean id="PopulateAuthenticationContext" class="net.shibboleth.idp.authn.impl.PopulateAuthenticationContext" scope="prototype"
         p:availableFlows="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'AuthenticationFlow/(${idp.authn.flows})']}"

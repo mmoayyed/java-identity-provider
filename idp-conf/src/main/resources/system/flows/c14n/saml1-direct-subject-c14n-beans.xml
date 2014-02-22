@@ -9,7 +9,8 @@
 
 	default-init-method="initialize" default-destroy-method="destroy">
 
-	<bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
 
 	<bean id="SAML1DirectDecoder" class="net.shibboleth.idp.saml.impl.nameid.DirectNameIdentifierDecoder"
 		scope="prototype" p:id="SAML1DirectDecoder"  />

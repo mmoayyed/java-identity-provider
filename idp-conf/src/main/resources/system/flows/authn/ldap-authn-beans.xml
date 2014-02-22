@@ -15,6 +15,7 @@
     <import resource="../../../conf/ldap-authn-config.xml" />
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
 
     <bean id="ExtractUsernamePasswordFromBasicAuth" class="net.shibboleth.idp.authn.impl.ExtractUsernamePasswordFromBasicAuth" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"

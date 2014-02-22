@@ -17,6 +17,7 @@
     <!-- Note: The DecodeMessage and EncodeMessage actions are defined in the non-abstract beans definition file. -->
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
 
     <bean
         id="HandleInboundMessage"

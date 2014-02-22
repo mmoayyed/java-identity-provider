@@ -19,30 +19,24 @@ package net.shibboleth.idp.profile.impl;
 
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.opensaml.profile.action.AbstractProfileAction;
 import org.opensaml.profile.action.ProfileAction;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.webflow.execution.Action;
 
 /**
- * Pre-processes {@link AbstractProfileAction} beans by setting their ID to their bean name.
- * <p>
  * Post-processes {@link ProfileAction} beans by wrapping them in a Spring Web Flow adaptor.
  */
 public class ProfileActionBeanPostProcessor implements BeanPostProcessor {
 
     /** {@inheritDoc} */
+    @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) {
-        if (bean instanceof AbstractProfileAction) {
-            if (((AbstractProfileAction) bean).getId() == null) {
-                ((AbstractProfileAction) bean).setId(beanName);
-            }
-        }
         return bean;
     }
 
     /** {@inheritDoc} */
+    @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) {
         if (bean instanceof ProfileAction && !(bean instanceof Action)) {
             final WebFlowProfileActionAdaptor wrapper = new WebFlowProfileActionAdaptor((ProfileAction) bean);

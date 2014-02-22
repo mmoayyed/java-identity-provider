@@ -6,6 +6,9 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"       
        default-init-method="initialize"
        default-destroy-method="destory">
+
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
     
     <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
         <constructor-arg>

@@ -24,6 +24,9 @@
         </property>
     </bean>
 
+    <!-- This BeanPostProcessor auto-sets identifiable beans with the bean name (if not already set). -->
+    <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
+
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
             p:cacheSeconds="300" p:basename="file://${idp.home}/conf/messages" />
 

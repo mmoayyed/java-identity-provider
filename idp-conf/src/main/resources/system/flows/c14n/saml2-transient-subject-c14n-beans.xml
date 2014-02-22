@@ -9,7 +9,8 @@
 
 	default-init-method="initialize" default-destroy-method="destroy">
 
-	<bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
 
 	<bean id="SAML2TransientDecoder" class="net.shibboleth.idp.saml.impl.nameid.TransientNameIDDecoder"
 		scope="prototype" p:id="SAML2TransientDecoder" p:idStore-ref="shibboleth.StorageService" />

@@ -13,6 +13,7 @@
        default-destroy-method="destroy">
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
     
     <bean id="SimpleSubjectCanonicalization" class="net.shibboleth.idp.authn.impl.SimpleSubjectCanonicalization" scope="prototype" />
     

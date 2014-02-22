@@ -16,6 +16,7 @@
     <!-- Note: Don't define DecodeMessage action here, that is defined in beans definition for concrete flow. -->
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
     
     <!--
     <bean class="idp.LoggingBeanPostProcessor" />

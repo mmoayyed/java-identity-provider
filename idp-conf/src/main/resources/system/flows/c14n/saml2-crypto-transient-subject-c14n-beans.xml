@@ -9,7 +9,8 @@
 
 	default-init-method="initialize" default-destroy-method="destroy">
 
-	<bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
 
 	<bean id="SAML2CryptoTransientDecoder" class="net.shibboleth.idp.saml.impl.nameid.CryptoTransientNameIDDecoder"
 		scope="prototype" p:id="SAML2CryptoTransientDecoder" p:dataSealer-ref="shibboleth.DataSealer" />
