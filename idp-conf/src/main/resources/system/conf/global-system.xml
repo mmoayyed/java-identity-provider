@@ -31,6 +31,7 @@
             p:cacheSeconds="300" p:basename="file://${idp.home}/conf/messages" />
 
     <import resource="session-manager.xml" />
+    <import resource="saml-binding-config.xml" />
     
     <bean id="shibboleth.TaskTimer" class="java.util.Timer" destroy-method="cancel"/> <!--  only needed if you do reloading -->
     
@@ -131,6 +132,10 @@
     
     <bean id="shibboleth.ReplayCache" class="org.opensaml.storage.ReplayCache" depends-on="shibboleth.LogbackLogging"
         p:storage-ref="shibboleth.StorageService" p:strict="true" />
+
+    <bean id="shibboleth.SAMLArtifactMap" depends-on="shibboleth.StorageService"
+        class="org.opensaml.saml.common.binding.artifact.StorageServiceSAMLArtifactMap"
+        p:storageService-ref="shibboleth.StorageService" />
 
     <bean id="shibboleth.AttributeFilterService" class="net.shibboleth.idp.service.ReloadableSpringService" depends-on="shibboleth.VelocityEngine"
         c:claz="net.shibboleth.idp.attribute.filter.AttributeFilter"

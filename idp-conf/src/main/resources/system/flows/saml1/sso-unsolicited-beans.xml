@@ -15,14 +15,4 @@
         </constructor-arg>
     </bean>
     
-    <!-- TODO Not correct. Note : the init-method="" avoids setting the MessageContext -->
-    <bean id="EncodeMessage" class="org.opensaml.profile.action.impl.EncodeMessage" scope="prototype">
-        <constructor-arg>
-            <bean id="messageEncoder" class="org.opensaml.saml.saml1.binding.encoding.HTTPPostEncoder" scope="prototype" init-method="">
-                <property name="httpServletResponse" ref="shibboleth.HttpServletResponse" />
-                <property name="velocityEngine" ref="shibboleth.VelocityEngine" />
-            </bean>
-        </constructor-arg>
-    </bean>
-
 </beans>

@@ -89,6 +89,10 @@
         </property>
     </bean>
 
+    <!-- This is used with the "encoder selected via lookup component" style. -->
+    <bean id="EncodeMessage" class="idp.EncodeSAMLMessageFromBindingURI" scope="prototype"
+        p:bindings-ref="shibboleth.OutgoingSAML1SSOBindings" />
+
     <bean
         id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext"
@@ -180,7 +184,7 @@
         class="net.shibboleth.idp.saml.impl.profile.PopulateBindingAndEndpointContexts"
         scope="prototype"
         p:endpointResolver-ref="shibboleth.EndpointResolver"
-        p:bindings-ref="shibboleth.OutgoingSAML1Bindings" />
+        p:bindings-ref="shibboleth.OutgoingSAML1SSOBindings" />
 
     <bean
         id="AddResponseShell"

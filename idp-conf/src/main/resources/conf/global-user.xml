@@ -14,7 +14,6 @@
 	<import resource="authn-comparison.xml" />
 	<import resource="authn-flow-descriptors.xml" />
     <import resource="subject-config.xml" />
-    <import resource="saml-binding-config.xml" />
 	<import resource="attribute-params-config.xml" />
 
 </beans>
