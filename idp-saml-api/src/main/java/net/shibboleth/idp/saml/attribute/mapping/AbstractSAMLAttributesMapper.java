@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -50,7 +50,7 @@ import com.google.common.collect.Multimap;
  */
 
 public abstract class AbstractSAMLAttributesMapper<InType extends Attribute, OutType extends IdPAttribute> extends
-        AbstractIdentifiableInitializableComponent implements AttributesMapper<InType, OutType> {
+        AbstractIdentifiedInitializableComponent implements AttributesMapper<InType, OutType> {
 
     /** Log. */
     private final Logger log = LoggerFactory.getLogger(AbstractSAMLAttributesMapper.class);

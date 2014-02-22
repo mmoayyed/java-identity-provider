@@ -33,7 +33,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -54,7 +54,7 @@ import com.google.common.collect.Sets;
  * <p>Note that this resolver does not permit more than one {@link RelyingPartyConfiguration}
  * with the same ID.</p>
  */
-public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiableInitializableComponent
+public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiedInitializableComponent
         implements RelyingPartyConfigurationResolver {
 
     /** Class logger. */

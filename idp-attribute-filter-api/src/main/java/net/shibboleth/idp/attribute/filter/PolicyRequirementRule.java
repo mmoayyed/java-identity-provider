@@ -23,7 +23,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
+import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 
 /**
@@ -35,7 +35,7 @@ import net.shibboleth.utilities.java.support.component.InitializableComponent;
  * during enumeration (like not being able to find something in the context) then they return {@link Tristate#FAIL}.
  */
 @ThreadSafe
-public interface PolicyRequirementRule extends IdentifiableComponent, InitializableComponent {
+public interface PolicyRequirementRule extends IdentifiedComponent, InitializableComponent {
 
     /**
      * Representation of the three outcomes of a PolicyRequirementRule.

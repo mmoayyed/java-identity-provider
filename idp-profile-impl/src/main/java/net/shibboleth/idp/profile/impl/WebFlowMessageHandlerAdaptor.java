@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -62,7 +62,7 @@ import com.google.common.base.Function;
  * @event {@link EventIds#INVALID_MSG_CTX}
  */
 public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageType> 
-        extends AbstractIdentifiableInitializableComponent implements Action {
+        extends AbstractIdentifiedInitializableComponent implements Action {
     
     /** Used to indicate the target message context for invocation of the adapted message handler. */
     public enum Direction {

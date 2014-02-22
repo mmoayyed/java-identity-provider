@@ -29,7 +29,7 @@ import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * <br/>
  */
 
-public abstract class AbstractMatcher extends AbstractIdentifiableInitializableComponent implements Matcher {
+public abstract class AbstractMatcher extends AbstractIdentifiedInitializableComponent implements Matcher {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractMatcher.class);

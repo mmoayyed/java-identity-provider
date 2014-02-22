@@ -31,7 +31,7 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
@@ -145,7 +145,7 @@ public class SelectRelyingPartyConfigurationTest {
     }
 
     /** A resolver that returns a relying party configuration or throws an exception. */
-    private class MockResolver extends AbstractIdentifiableInitializableComponent implements
+    private class MockResolver extends AbstractIdentifiedInitializableComponent implements
             RelyingPartyConfigurationResolver {
 
         /** The relying party configuration to be returned. */

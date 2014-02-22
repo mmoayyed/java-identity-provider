@@ -45,7 +45,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
-import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -99,7 +99,7 @@ import com.google.common.collect.Iterables;
  * disabled. In the case of a SAML 2 session, the secondary key is some form of the NameID issued
  * to the service.</p>
  */
-public class StorageBackedSessionManager extends AbstractDestructableIdentifiableInitializableComponent implements
+public class StorageBackedSessionManager extends AbstractDestructableIdentifiedInitializableComponent implements
         SessionManager, SessionResolver {
 
     /** Storage key of master session records. */

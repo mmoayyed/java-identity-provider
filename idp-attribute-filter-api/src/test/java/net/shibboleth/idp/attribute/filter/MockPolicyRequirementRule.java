@@ -20,12 +20,12 @@ package net.shibboleth.idp.attribute.filter;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 
 /** A simple, mock implementation of {@link Matcher}. */
-public class MockPolicyRequirementRule extends AbstractIdentifiableInitializableComponent implements
+public class MockPolicyRequirementRule extends AbstractIdentifiedInitializableComponent implements
         PolicyRequirementRule, InitializableComponent, DestructableComponent {
 
     /** state variable */

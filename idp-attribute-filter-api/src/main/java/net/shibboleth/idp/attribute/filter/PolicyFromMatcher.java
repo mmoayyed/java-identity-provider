@@ -25,7 +25,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
-import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
+import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * If any value of any attribute matches then this is true, otherwise false.
  */
 public class PolicyFromMatcher extends BaseBridgingClass implements PolicyRequirementRule,
-        IdentifiableComponent, DestructableComponent {
+        IdentifiedComponent, DestructableComponent {
 
     /** The rule we are shadowing. */
     private final Matcher matcher;

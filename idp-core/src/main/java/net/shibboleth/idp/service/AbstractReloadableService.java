@@ -27,7 +27,7 @@ import net.shibboleth.idp.log.EventLogger;
 import net.shibboleth.idp.log.PerformanceEvent;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
@@ -50,7 +50,7 @@ import org.springframework.beans.factory.BeanInitializationException;
  * 
  * @param <T> The sort of service this implements.
  */
-public abstract class AbstractReloadableService<T> extends AbstractDestructableIdentifiableInitializableComponent
+public abstract class AbstractReloadableService<T> extends AbstractDestructableIdentifiedInitializableComponent
         implements ReloadableService<T>, UnmodifiableComponent {
 
     /** Class logger. */

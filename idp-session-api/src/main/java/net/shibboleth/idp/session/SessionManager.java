@@ -22,7 +22,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
-import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
+import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 
 /**
@@ -30,7 +30,7 @@ import net.shibboleth.utilities.java.support.component.InitializableComponent;
  */
 @ThreadSafe
 public interface SessionManager extends
-    InitializableComponent, DestructableComponent, IdentifiableComponent {
+    InitializableComponent, DestructableComponent, IdentifiedComponent {
 
     /**
      * Create and return a new {@link IdPSession} object for a subject.

@@ -31,7 +31,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
-import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -52,7 +52,7 @@ import com.google.common.collect.ImmutableSet;
  */
 @ThreadSafe
 public abstract class AbstractResolverPlugin<ResolvedType> extends
-        AbstractDestructableIdentifiableInitializableComponent implements ResolverPlugin<ResolvedType>, DisposableBean {
+        AbstractDestructableIdentifiedInitializableComponent implements ResolverPlugin<ResolvedType>, DisposableBean {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractResolverPlugin.class);

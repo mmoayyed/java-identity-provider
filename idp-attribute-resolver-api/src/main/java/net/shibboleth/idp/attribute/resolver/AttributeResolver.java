@@ -26,7 +26,7 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
-import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
+import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 
 /**
@@ -39,7 +39,7 @@ import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
  * {@link net.shibboleth.utilities.java.support.resolver.Criterion}s.
  * */
 @ThreadSafe
-public interface AttributeResolver extends DestructableComponent, IdentifiableComponent, UnmodifiableComponent {
+public interface AttributeResolver extends DestructableComponent, IdentifiedComponent, UnmodifiableComponent {
 
     /**
      * Gets the collection of attribute definitions for this resolver.

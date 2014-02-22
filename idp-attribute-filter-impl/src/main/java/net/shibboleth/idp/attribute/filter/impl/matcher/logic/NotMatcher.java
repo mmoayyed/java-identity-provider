@@ -30,7 +30,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -44,7 +44,7 @@ import com.google.common.base.Objects;
  * predicate is the logical NOT of the composed {@link Matcher}. If the matcher fails then failure is returned.
  */
 @ThreadSafe
-public final class NotMatcher extends AbstractDestructableIdentifiableInitializableComponent implements Matcher {
+public final class NotMatcher extends AbstractDestructableIdentifiedInitializableComponent implements Matcher {
 
     /** The matcher we are negating. */
     private final Matcher negatedMatcher;

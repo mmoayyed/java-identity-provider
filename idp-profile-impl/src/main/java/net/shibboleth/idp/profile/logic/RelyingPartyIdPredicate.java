@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -45,7 +45,7 @@ import com.google.common.collect.Sets;
  * a {@link RelyingPartyContext} with a relying party ID that matches one of
  * a designated set.
  */
-public class RelyingPartyIdPredicate extends AbstractIdentifiableInitializableComponent
+public class RelyingPartyIdPredicate extends AbstractIdentifiedInitializableComponent
         implements Predicate<ProfileRequestContext> {
 
     /** Strategy function to lookup RelyingPartyContext. */

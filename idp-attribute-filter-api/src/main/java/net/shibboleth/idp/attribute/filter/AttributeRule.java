@@ -29,7 +29,7 @@ import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  </code>
  */
 @ThreadSafe
-public class AttributeRule extends AbstractDestructableIdentifiableInitializableComponent implements
+public class AttributeRule extends AbstractDestructableIdentifiedInitializableComponent implements
         UnmodifiableComponent {
 
     /** Class logger. */

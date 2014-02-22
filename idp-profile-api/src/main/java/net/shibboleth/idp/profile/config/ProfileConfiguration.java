@@ -21,10 +21,10 @@ import javax.annotation.Nullable;
 
 import org.opensaml.messaging.handler.MessageHandler;
 
-import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
+import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 
 /** Represents the configuration of a particular communication profile. */
-public interface ProfileConfiguration extends IdentifiableComponent {
+public interface ProfileConfiguration extends IdentifiedComponent {
     
     /**
      * Get whether this profile is enabled for use.

@@ -19,12 +19,12 @@ package net.shibboleth.idp.relyingparty;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
+import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import net.shibboleth.utilities.java.support.resolver.Resolver;
 
 /** Resolves a {@link RelyingPartyConfiguration} for a given profile request context. */
 public interface RelyingPartyConfigurationResolver extends Resolver<RelyingPartyConfiguration, ProfileRequestContext>,
-        IdentifiableComponent, InitializableComponent {
+        IdentifiedComponent, InitializableComponent {
 
 }

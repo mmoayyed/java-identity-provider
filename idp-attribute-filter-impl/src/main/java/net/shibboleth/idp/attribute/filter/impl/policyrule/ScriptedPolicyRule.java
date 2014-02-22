@@ -26,7 +26,7 @@ import javax.script.SimpleScriptContext;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
@@ -44,7 +44,7 @@ import com.google.common.base.Objects;
  * 
  */
 @ThreadSafe
-public class ScriptedPolicyRule extends AbstractDestructableIdentifiableInitializableComponent implements
+public class ScriptedPolicyRule extends AbstractDestructableIdentifiedInitializableComponent implements
         PolicyRequirementRule, UnmodifiableComponent {
 
     /** Class logger. */

@@ -23,7 +23,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
-import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
+import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 
 /**
  * Describes a session with a service in turn associated with an {@link IdPSession}.
@@ -32,7 +32,7 @@ import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
  * particular protocols used to establish sessions.
  */
 @ThreadSafe
-public interface SPSession extends IdentifiableComponent {
+public interface SPSession extends IdentifiedComponent {
 
     /**
      * Get the time, in milliseconds since the epoch, when this session was created.

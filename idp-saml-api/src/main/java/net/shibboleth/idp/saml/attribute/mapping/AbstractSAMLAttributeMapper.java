@@ -32,7 +32,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -54,7 +54,7 @@ import com.google.common.collect.ImmutableList;
  * @param <OutType> the output (IdP Attribute) type
  */
 public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutType extends IdPAttribute>
-        extends AbstractIdentifiableInitializableComponent implements AttributeMapper<InType, OutType> {
+        extends AbstractIdentifiedInitializableComponent implements AttributeMapper<InType, OutType> {
 
     /** log. */
     private final Logger log = LoggerFactory.getLogger(AbstractSAMLAttributeMapper.class);

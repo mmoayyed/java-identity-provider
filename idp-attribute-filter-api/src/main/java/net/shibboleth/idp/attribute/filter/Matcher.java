@@ -29,12 +29,12 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
+import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 
 /** Java definition of MatchFunctorType as applied to value filtering. */
 @ThreadSafe
-public interface Matcher extends IdentifiableComponent, InitializableComponent {
+public interface Matcher extends IdentifiedComponent, InitializableComponent {
 
     /** A {@link Matcher} that returns true/all attribute values as matched. */
     public static final Matcher MATCHES_ALL = new Matcher() {

@@ -28,7 +28,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
-import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
+import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * 
  * If the rule is true then we return all values, else we return none. If the rule fails we return null.
  */
-public class MatcherFromPolicy extends BaseBridgingClass implements Matcher, IdentifiableComponent,
+public class MatcherFromPolicy extends BaseBridgingClass implements Matcher, IdentifiedComponent,
         DestructableComponent {
 
     /** The rule we are shadowing. */

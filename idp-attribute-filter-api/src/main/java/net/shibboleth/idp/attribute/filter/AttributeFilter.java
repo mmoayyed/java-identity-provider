@@ -26,12 +26,12 @@ import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
-import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
+import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 
 /** Interface that filters out attributes and values based upon loaded policies. */
 @ThreadSafe
-public interface AttributeFilter extends DestructableComponent, UnmodifiableComponent, IdentifiableComponent {
+public interface AttributeFilter extends DestructableComponent, UnmodifiableComponent, IdentifiedComponent {
 
     /**
      * Gets the immutable collection of filter policies.

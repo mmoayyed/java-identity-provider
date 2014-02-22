@@ -31,7 +31,7 @@ import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.slf4j.Logger;
@@ -43,7 +43,7 @@ import com.google.common.collect.Multimap;
  * Matcher that checks whether an attribute is enumerated in an SP's metadata as a required or optional attribute. Also
  * supports simple value filtering.
  */
-public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializableComponent implements Matcher {
+public class AttributeInMetadataPolicyRule extends AbstractIdentifiedInitializableComponent implements Matcher {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeInMetadataPolicyRule.class);

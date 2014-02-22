@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * Class to implement the direct transform from a {@link NameIdentifier}. The decode 
  * operation returns the input.
  */
-public class DirectNameIdentifierDecoder extends AbstractIdentifiableInitializableComponent implements
+public class DirectNameIdentifierDecoder extends AbstractIdentifiedInitializableComponent implements
         NameIdentifierDecoder {
 
     /**

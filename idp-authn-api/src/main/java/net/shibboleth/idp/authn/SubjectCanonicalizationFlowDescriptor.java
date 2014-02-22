@@ -26,7 +26,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
@@ -38,7 +38,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  * content of the {@link ProfileRequestContext}, particularly the required
  * {@link net.shibboleth.idp.authn.context.SubjectCanonicalizationContext} child context.</p>
  */
-public class SubjectCanonicalizationFlowDescriptor extends AbstractIdentifiableInitializableComponent
+public class SubjectCanonicalizationFlowDescriptor extends AbstractIdentifiedInitializableComponent
         implements Predicate<ProfileRequestContext> {
     
     /** Predicate that must be true for this flow to be usable for a given request. */

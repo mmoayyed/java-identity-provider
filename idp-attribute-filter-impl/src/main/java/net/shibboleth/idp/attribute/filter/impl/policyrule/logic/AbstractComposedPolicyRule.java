@@ -29,7 +29,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
-import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
@@ -43,7 +43,7 @@ import com.google.common.collect.Iterables;
  * Base class for {@link PolicyRequirementRule} implementations that are compositions of other
  * {@link PolicyRequirementRule}s.
  */
-public abstract class AbstractComposedPolicyRule extends AbstractDestructableIdentifiableInitializableComponent
+public abstract class AbstractComposedPolicyRule extends AbstractDestructableIdentifiedInitializableComponent
         implements PolicyRequirementRule, UnmodifiableComponent {
 
     /** The composed matchers. */

@@ -29,14 +29,14 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
+import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 
 
 /**
  * An identity provider session belonging to a particular subject and client device.
  */
 @ThreadSafe
-public interface IdPSession extends IdentifiableComponent {
+public interface IdPSession extends IdentifiedComponent {
 
     /** Name of {@link org.slf4j.MDC} attribute that holds the current session ID: <code>idp.session.id</code>. */
     public static final String MDC_ATTRIBUTE = "idp.session.id";

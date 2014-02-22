@@ -28,7 +28,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
-import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
+import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 
@@ -41,7 +41,7 @@ import com.google.common.base.Predicate;
  */
 @ThreadSafe
 public interface ResolverPlugin<ResolvedType> extends UnmodifiableComponent,
-        InitializableComponent, DestructableComponent, IdentifiableComponent {
+        InitializableComponent, DestructableComponent, IdentifiedComponent {
 
     /**
      * Get whether an {@link AttributeResolutionContext} that occurred resolving attributes will be re-thrown. Doing so

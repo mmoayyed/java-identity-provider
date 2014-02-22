@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
@@ -29,7 +29,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
  * <br/>
  */
 
-public abstract class AbstractPolicyRule extends AbstractIdentifiableInitializableComponent implements
+public abstract class AbstractPolicyRule extends AbstractIdentifiedInitializableComponent implements
         PolicyRequirementRule {
 
     /** The String used to prefix log message. */

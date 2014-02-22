@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
+import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -41,7 +41,7 @@ public final class ActionSupport {
      * 
      * @return the proceed event
      */
-    @Nonnull public static Event buildProceedEvent(@Nonnull final IdentifiableComponent source) {
+    @Nonnull public static Event buildProceedEvent(@Nonnull final IdentifiedComponent source) {
         return buildEvent(source, EventIds.PROCEED_EVENT_ID);
     }
 
@@ -53,7 +53,7 @@ public final class ActionSupport {
      * 
      * @return the constructed event
      */
-    @Nonnull public static Event buildEvent(@Nonnull final IdentifiableComponent source,
+    @Nonnull public static Event buildEvent(@Nonnull final IdentifiedComponent source,
             @Nonnull final String eventId) {
         
         return buildEvent(source, eventId, null);
@@ -68,7 +68,7 @@ public final class ActionSupport {
      * 
      * @return the constructed {@link Event}
      */
-    @Nonnull public static Event buildEvent(@Nonnull final IdentifiableComponent source, @Nonnull final String eventId,
+    @Nonnull public static Event buildEvent(@Nonnull final IdentifiedComponent source, @Nonnull final String eventId,
             @Nonnull final AttributeMap eventAttributes) {
         Constraint.isNotNull(source, "Component may not be null");
 

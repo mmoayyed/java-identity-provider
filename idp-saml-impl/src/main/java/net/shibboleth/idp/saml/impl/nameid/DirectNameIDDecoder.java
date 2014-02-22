@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.saml.nameid.NameIDDecoder;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * class to implement the direct transform from a {@link NameID}. The decode 
  * operation returns the input.
  */
-public class DirectNameIDDecoder extends AbstractIdentifiableInitializableComponent implements NameIDDecoder {
+public class DirectNameIDDecoder extends AbstractIdentifiedInitializableComponent implements NameIDDecoder {
 
     /**
      * {@inheritDoc}. The decoded value just the input. We do not police any values

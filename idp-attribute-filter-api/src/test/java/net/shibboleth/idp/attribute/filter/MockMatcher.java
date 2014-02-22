@@ -25,7 +25,7 @@ import java.util.Set;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -34,7 +34,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import com.google.common.base.Objects;
 
 /** A simple, mock implementation of {@link Matcher}. */
-public class MockMatcher extends AbstractIdentifiableInitializableComponent implements Matcher, InitializableComponent, DestructableComponent { 
+public class MockMatcher extends AbstractIdentifiedInitializableComponent implements Matcher, InitializableComponent, DestructableComponent { 
 
     /** ID of the attribute to which this matcher applies. */
     private String matchingAttribute;
