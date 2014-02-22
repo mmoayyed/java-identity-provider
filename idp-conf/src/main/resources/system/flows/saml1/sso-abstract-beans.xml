@@ -110,7 +110,6 @@
         id="RelyingPartyConfigurationResolver"
         class="net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver"
         scope="prototype"
-        p:id="RelyingPartyConfigurationResolver"
         p:relyingPartyConfigurations-ref="RelyingPartyConfiguration" />
 
     <bean

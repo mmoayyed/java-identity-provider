@@ -9,10 +9,7 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
-    <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
-   
-    <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
+   <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
         <constructor-arg>
             <bean id="messageDecoder" class="org.opensaml.saml.saml2.binding.decoding.HTTPPostDecoder" scope="prototype">
                 <property name="parserPool" ref="shibboleth.ParserPool" />

@@ -13,7 +13,7 @@
     <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
 
 	<bean id="SAML1DirectDecoder" class="net.shibboleth.idp.saml.impl.nameid.DirectNameIdentifierDecoder"
-		scope="prototype" p:id="SAML1DirectDecoder"  />
+		scope="prototype" />
 
 	<bean id="SAML1DirectCanonicalization" class="net.shibboleth.idp.saml.impl.nameid.NameIdentifierCanonicalization"
 		scope="prototype" p:decoder-ref="SAML1DirectDecoder" />
