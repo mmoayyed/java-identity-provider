@@ -29,7 +29,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
@@ -42,7 +42,7 @@ import com.google.common.collect.Iterables;
  * Base class for {@link Matcher} implementations that are compositions of two or more other
  * {@link Matcher}s.
  */
-public abstract class AbstractComposedMatcher extends AbstractIdentifiedInitializableComponent implements
+public abstract class AbstractComposedMatcher extends AbstractIdentifiableInitializeableComponent implements
         Matcher, UnmodifiableComponent {
 
     /** The composed matchers. */
@@ -91,12 +91,6 @@ public abstract class AbstractComposedMatcher extends AbstractIdentifiedInitiali
         for (Matcher matcher : matchers) {
             ComponentSupport.initialize(matcher);
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setId(String id) {
-        super.setId(id);
     }
 
 }

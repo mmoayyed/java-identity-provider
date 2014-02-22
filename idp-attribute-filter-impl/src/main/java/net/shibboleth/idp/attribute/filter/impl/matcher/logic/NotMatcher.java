@@ -30,7 +30,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -44,7 +44,7 @@ import com.google.common.base.Objects;
  * predicate is the logical NOT of the composed {@link Matcher}. If the matcher fails then failure is returned.
  */
 @ThreadSafe
-public final class NotMatcher extends AbstractIdentifiedInitializableComponent implements Matcher {
+public final class NotMatcher extends AbstractIdentifiableInitializeableComponent implements Matcher {
 
     /** The matcher we are negating. */
     private final Matcher negatedMatcher;
@@ -67,14 +67,12 @@ public final class NotMatcher extends AbstractIdentifiedInitializableComponent i
         return negatedMatcher;
     }
 
-
     /**
      * A given attribute value is considered to have matched if it is not returned by the composed {@link Matcher}.
      * {@inheritDoc}
      */
-    @Override
-    @Nullable @NonnullElements public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull final IdPAttribute attribute,
-            @Nonnull final AttributeFilterContext filterContext) {
+    @Override @Nullable @NonnullElements public Set<IdPAttributeValue<?>> getMatchingValues(
+            @Nonnull final IdPAttribute attribute, @Nonnull final AttributeFilterContext filterContext) {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 
@@ -85,7 +83,7 @@ public final class NotMatcher extends AbstractIdentifiedInitializableComponent i
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         Set<IdPAttributeValue<?>> attributeValues = new HashSet<>(attribute.getValues());
-        
+
         Set<IdPAttributeValue<?>> matches = currentMatcher.getMatchingValues(attribute, filterContext);
         if (null == matches) {
             return matches;
@@ -100,29 +98,20 @@ public final class NotMatcher extends AbstractIdentifiedInitializableComponent i
     }
 
     /** {@inheritDoc} */
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return Objects.toStringHelper(this).add("negatedMatcher", negatedMatcher).toString();
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doDestroy() {
+    @Override protected void doDestroy() {
         ComponentSupport.destroy(negatedMatcher);
         super.doDestroy();
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         ComponentSupport.initialize(negatedMatcher);
     }
-    /** {@inheritDoc} */
-    @Override
-    public void setId(String id) {
-        super.setId(id);
-    }
-
 
 }

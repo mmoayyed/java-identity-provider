@@ -18,13 +18,12 @@
 package net.shibboleth.idp.attribute.filter;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
-import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
+import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
@@ -34,8 +33,8 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  * 
  * This code takes care of the mundane aspects of #getId() and initialize, validate and destroy.
  */
-public abstract class BaseBridgingClass extends AbstractIdentifiedInitializableComponent implements
-        IdentifiedComponent, DestructableComponent {
+public abstract class BaseBridgingClass extends AbstractIdentifiableInitializeableComponent implements
+        IdentifiableComponent, DestructableComponent {
 
     /** The object we are bridging to. */
     private final Object bridgedObject;
@@ -49,18 +48,6 @@ public abstract class BaseBridgingClass extends AbstractIdentifiedInitializableC
      */
     public BaseBridgingClass(@Nonnull Object base) {
         bridgedObject = Constraint.isNotNull(base, "base rule can not be null");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Nullable public String getId() {
-        return super.getId();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setId(@Nonnull String componentId) {
-        super.setId(componentId);
     }
 
     /** {@inheritDoc} */

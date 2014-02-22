@@ -24,11 +24,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -50,7 +49,7 @@ import com.google.common.collect.Multimap;
  */
 
 public abstract class AbstractSAMLAttributesMapper<InType extends Attribute, OutType extends IdPAttribute> extends
-        AbstractIdentifiedInitializableComponent implements AttributesMapper<InType, OutType> {
+        AbstractIdentifiableInitializeableComponent implements AttributesMapper<InType, OutType> {
 
     /** Log. */
     private final Logger log = LoggerFactory.getLogger(AbstractSAMLAttributesMapper.class);
@@ -79,17 +78,13 @@ public abstract class AbstractSAMLAttributesMapper<InType extends Attribute, Out
         mappers = Constraint.isNotNull(theMappers, "mappers list must be non null");
     }
 
-    /** {@inheritDoc} */
-    public void setId(@Nullable String id) {
-        super.setId(id);
-    }
-
     /**
      * Map the SAML attributes into IdP attributes.
      * 
      * @param prototypes the SAML attributes
      * @return a map from IdP AttributeId to RequestedAttributes (or NULL).
      */
+    @Override
     public Multimap<String, OutType> mapAttributes(@Nonnull @NonnullElements List<InType> prototypes) {
 
         Multimap<String, OutType> result = ArrayListMultimap.create();

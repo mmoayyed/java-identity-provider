@@ -18,7 +18,6 @@
 package net.shibboleth.idp.attribute.filter.impl.policyrule;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
@@ -26,7 +25,7 @@ import javax.script.SimpleScriptContext;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
@@ -44,8 +43,8 @@ import com.google.common.base.Objects;
  * 
  */
 @ThreadSafe
-public class ScriptedPolicyRule extends AbstractIdentifiedInitializableComponent implements
-        PolicyRequirementRule, UnmodifiableComponent {
+public class ScriptedPolicyRule extends AbstractIdentifiableInitializeableComponent implements PolicyRequirementRule,
+        UnmodifiableComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ScriptedPolicyRule.class);
@@ -64,11 +63,6 @@ public class ScriptedPolicyRule extends AbstractIdentifiedInitializableComponent
     public ScriptedPolicyRule(@Nonnull final EvaluableScript matchingScript) {
         setScript(matchingScript);
     }
-
-    /** {@inheritDoc} */
-    public void setId(@Nullable final String id) {
-        super.setId(id);
-    };
 
     /**
      * Gets the script to be evaluated.
@@ -101,8 +95,7 @@ public class ScriptedPolicyRule extends AbstractIdentifiedInitializableComponent
      * </p>
      * {@inheritDoc}
      */
-    @Override
-    public Tristate matches(@Nonnull final AttributeFilterContext filterContext) {
+    @Override public Tristate matches(@Nonnull final AttributeFilterContext filterContext) {
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 
         final EvaluableScript currentScript = script;

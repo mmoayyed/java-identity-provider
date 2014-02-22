@@ -27,7 +27,7 @@ import net.shibboleth.idp.log.EventLogger;
 import net.shibboleth.idp.log.PerformanceEvent;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
@@ -50,8 +50,8 @@ import org.springframework.beans.factory.BeanInitializationException;
  * 
  * @param <T> The sort of service this implements.
  */
-public abstract class AbstractReloadableService<T> extends AbstractIdentifiedInitializableComponent
-        implements ReloadableService<T>, UnmodifiableComponent {
+public abstract class AbstractReloadableService<T> extends AbstractIdentifiableInitializeableComponent implements
+        ReloadableService<T>, UnmodifiableComponent {
 
     /** Class logger. */
     private Logger log = LoggerFactory.getLogger(AbstractReloadableService.class);
@@ -142,11 +142,6 @@ public abstract class AbstractReloadableService<T> extends AbstractIdentifiedIni
     /** {@inheritDoc} */
     @Override @Nullable public Throwable getReloadFailureCause() {
         return reloadFailureCause;
-    }
-
-    /** {@inheritDoc}. */
-    @Override public void setId(String id) {
-        super.setId(id);
     }
 
     /**

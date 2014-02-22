@@ -22,7 +22,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -35,8 +35,7 @@ import com.google.common.base.Objects;
  * if FAIL then FAIL else if TRUE then FALSE else TRUE<br/>
  */
 @ThreadSafe
-public final class NotPolicyRule extends AbstractIdentifiedInitializableComponent implements
-        PolicyRequirementRule {
+public final class NotPolicyRule extends AbstractIdentifiableInitializeableComponent implements PolicyRequirementRule {
 
     /** The matcher we are negating. */
     private final PolicyRequirementRule negatedRule;
@@ -60,8 +59,7 @@ public final class NotPolicyRule extends AbstractIdentifiedInitializableComponen
     }
 
     /** {@inheritDoc} */
-    @Override
-    public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
+    @Override public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
@@ -72,32 +70,23 @@ public final class NotPolicyRule extends AbstractIdentifiedInitializableComponen
             return Tristate.TRUE;
         } else {
             return Tristate.FALSE;
-        }   
+        }
     }
 
     /** {@inheritDoc} */
-    @Override
-    public void setId(String id) {
-        super.setId(id);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void doDestroy() {
+    @Override protected void doDestroy() {
         ComponentSupport.destroy(negatedRule);
         super.doDestroy();
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         ComponentSupport.initialize(negatedRule);
     }
 
     /** {@inheritDoc} */
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return Objects.toStringHelper(this).add("Negated Policy Rule", negatedRule).toString();
     }
 }

@@ -31,7 +31,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -51,8 +51,8 @@ import com.google.common.collect.ImmutableSet;
  * @param <ResolvedType> object type this plug-in resolves to
  */
 @ThreadSafe
-public abstract class AbstractResolverPlugin<ResolvedType> extends
-        AbstractIdentifiedInitializableComponent implements ResolverPlugin<ResolvedType>, DisposableBean {
+public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdentifiableInitializeableComponent
+        implements ResolverPlugin<ResolvedType>, DisposableBean {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractResolverPlugin.class);
@@ -66,23 +66,13 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends
     /** IDs of the {@link ResolutionPlugIn}s this plug-in depends on. */
     @Nonnull @NonnullElements private Set<ResolverPluginDependency> dependencies = Collections.emptySet();
 
-    /** {@inheritDoc} */
-    @Override
-    public void setId(final String componentId) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-
-        super.setId(componentId);
-    }
-
     /**
      * Get whether an {@link AttributeResolutionContext} that occurred resolving attributes will be re-thrown. Doing so
      * will cause the entire attribute resolution request to fail.
      * 
      * @return true if {@link ResolutionException}s are propagated, false if not
      */
-    @Override
-    public boolean isPropagateResolutionExceptions() {
+    @Override public boolean isPropagateResolutionExceptions() {
         return propagateResolutionExceptions;
     }
 
@@ -104,8 +94,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends
      * 
      * @return criteria that must be met for this plugin to be active for a given request, never null
      */
-    @Override
-    @Nonnull public Predicate<AttributeResolutionContext> getActivationCriteria() {
+    @Override @Nonnull public Predicate<AttributeResolutionContext> getActivationCriteria() {
         return activationCriteria;
     }
 
@@ -125,8 +114,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends
      * 
      * @return unmodifiable list of dependencies for this plugin, never null
      */
-    @Override
-    @Nonnull @NonnullElements @Unmodifiable public Set<ResolverPluginDependency> getDependencies() {
+    @Override @Nonnull @NonnullElements @Unmodifiable public Set<ResolverPluginDependency> getDependencies() {
         return dependencies;
     }
 
@@ -161,19 +149,18 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends
      * 
      * @throws ResolutionException thrown if there was a problem resolving the attributes
      */
-    @Override
-    @Nullable public final ResolvedType resolve(@Nonnull final AttributeResolutionContext resolutionContext)
+    @Override @Nullable public final ResolvedType resolve(@Nonnull final AttributeResolutionContext resolutionContext)
             throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        
+
         Constraint.isNotNull(resolutionContext, "AttributeResolutionContext cannot be null");
-        
+
         if (!activationCriteria.apply(resolutionContext)) {
             log.debug("Resolver plugin '{}': activation criteria not met, nothing to do", getId());
             return null;
         }
-        
+
         final AttributeResolverWorkContext workContext =
                 resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
         Constraint.isNotNull(workContext, "AttributeResolverWorkContext cannot be null");
@@ -196,8 +183,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doDestroy() {
+    @Override protected void doDestroy() {
         ComponentSupport.destroy(activationCriteria);
         activationCriteria = Predicates.alwaysFalse();
         dependencies = Collections.emptySet();
@@ -206,8 +192,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         // rebuild the hash set - we may have modified the dependencies in the
@@ -219,14 +204,12 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends
     }
 
     /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         return Objects.hashCode(getId());
     }
 
     /** {@inheritDoc} */
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -255,7 +238,6 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends
      * @see AbstractResolverPlugin#resolve(AttributeResolutionContext)
      */
     @Nullable protected abstract ResolvedType doResolve(@Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final AttributeResolverWorkContext workContext)
-            throws ResolutionException;
-    
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException;
+
 }

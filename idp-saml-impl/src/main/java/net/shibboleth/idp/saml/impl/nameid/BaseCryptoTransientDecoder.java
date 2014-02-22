@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -35,7 +35,7 @@ import net.shibboleth.utilities.java.support.security.DataSealerException;
  * An abstract action which contains the logic to do crypto transient decoding matching. This reverses the work done by
  * {@link net.shibboleth.idp.attribute.resolver.impl.ad.CryptoTransientIdAttributeDefinition}
  */
-public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiedInitializableComponent {
+public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableInitializeableComponent {
 
     /** Object used to protect and encrypt the data. */
     @NonnullAfterInit private DataSealer dataSealer;
@@ -60,11 +60,6 @@ public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiedIniti
     public void setDataSealer(@Nonnull final DataSealer sealer) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         dataSealer = Constraint.isNotNull(sealer, "DataSealer cannot be null");
-    }
-
-    /** {@inheritDoc} */
-    @Override public synchronized void setId(String componentId) {
-        super.setId(componentId);
     }
 
     /**

@@ -25,20 +25,18 @@ import java.util.HashSet;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.opensaml.profile.context.ProfileRequestContext;
-
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,11 +49,12 @@ import com.google.common.collect.Sets;
 /**
  * Retrieves a per-relying party configuration for a given profile request based on the request context.
  * 
- * <p>Note that this resolver does not permit more than one {@link RelyingPartyConfiguration}
- * with the same ID.</p>
+ * <p>
+ * Note that this resolver does not permit more than one {@link RelyingPartyConfiguration} with the same ID.
+ * </p>
  */
-public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiedInitializableComponent
-        implements RelyingPartyConfigurationResolver {
+public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiableInitializeableComponent implements
+        RelyingPartyConfigurationResolver {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(DefaultRelyingPartyConfigurationResolver.class);
@@ -67,20 +66,14 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentified
     public DefaultRelyingPartyConfigurationResolver() {
         rpConfigurations = Collections.emptyList();
     }
-    
-    /** {@inheritDoc} */
-    @Override
-    public synchronized void setId(@Nonnull @NotEmpty final String componentId) {
-        super.setId(componentId);
-    }
 
     /**
      * Get an unmodifiable list of registered relying party configurations.
      * 
      * @return unmodifiable list of registered relying party configurations
      */
-    @Nonnull @NonnullElements @Unmodifiable @NotLive
-    public Collection<RelyingPartyConfiguration> getRelyingPartyConfigurations() {
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public Collection<RelyingPartyConfiguration>
+            getRelyingPartyConfigurations() {
         return ImmutableList.copyOf(rpConfigurations);
     }
 
@@ -100,8 +93,7 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentified
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         final HashSet<String> configIds = Sets.newHashSetWithExpectedSize(rpConfigurations.size());
@@ -113,13 +105,12 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentified
             configIds.add(config.getId());
         }
     }
-    
+
     /** {@inheritDoc} */
-    @Override
-    @Nonnull @NonnullElements public Iterable<RelyingPartyConfiguration> resolve(
+    @Override @Nonnull @NonnullElements public Iterable<RelyingPartyConfiguration> resolve(
             @Nullable final ProfileRequestContext context) throws ResolverException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
+
         if (context == null) {
             return Collections.emptyList();
         }
@@ -132,8 +123,8 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentified
             log.debug("Checking if relying party configuration {} is applicable to profile request {}",
                     configuration.getId(), context.getId());
             if (configuration.apply(context)) {
-                log.debug("Relying party configuration {} is applicable to profile request {}",
-                        configuration.getId(), context.getId());
+                log.debug("Relying party configuration {} is applicable to profile request {}", configuration.getId(),
+                        context.getId());
                 matches.add(configuration);
             } else {
                 log.debug("Relying party configuration {} is not applicable to profile request {}",
@@ -145,11 +136,10 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentified
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable public RelyingPartyConfiguration resolveSingle(@Nullable final ProfileRequestContext context)
+    @Override @Nullable public RelyingPartyConfiguration resolveSingle(@Nullable final ProfileRequestContext context)
             throws ResolverException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
+
         if (context == null) {
             return null;
         }
@@ -159,8 +149,8 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentified
             log.debug("Checking if relying party configuration {} is applicable to profile request {}",
                     configuration.getId(), context.getId());
             if (configuration.apply(context)) {
-                log.debug("Relying party configuration {} is applicable to profile request {}",
-                        configuration.getId(), context.getId());
+                log.debug("Relying party configuration {} is applicable to profile request {}", configuration.getId(),
+                        context.getId());
                 return configuration;
             } else {
                 log.debug("Relying party configuration {} is not applicable to profile request {}",

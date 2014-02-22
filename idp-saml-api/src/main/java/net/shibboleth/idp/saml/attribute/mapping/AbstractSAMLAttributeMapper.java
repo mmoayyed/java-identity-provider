@@ -25,14 +25,14 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -53,8 +53,8 @@ import com.google.common.collect.ImmutableList;
  * @param <InType> the input (SAML2 attribute) type
  * @param <OutType> the output (IdP Attribute) type
  */
-public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutType extends IdPAttribute>
-        extends AbstractIdentifiedInitializableComponent implements AttributeMapper<InType, OutType> {
+public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutType extends IdPAttribute> extends
+        AbstractIdentifiableInitializeableComponent implements AttributeMapper<InType, OutType> {
 
     /** log. */
     private final Logger log = LoggerFactory.getLogger(AbstractSAMLAttributeMapper.class);
@@ -134,11 +134,6 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
         return valueMapper;
     }
 
-    /** {@inheritDoc} */
-    public void setId(@Nullable String id) {
-        super.setId(id);
-    }
-
     /**
      * Sets the (optional) attribute format.
      * 
@@ -158,6 +153,7 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         if (null == theSAMLName) {
@@ -167,8 +163,7 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
             throw new ComponentInitializationException(getLogPrefix() + " No value mapper present");
         }
         if (attributeIds.isEmpty()) {
-            throw new ComponentInitializationException(getLogPrefix() + 
-                    " At least one attribute Id should be provided");
+            throw new ComponentInitializationException(getLogPrefix() + " At least one attribute Id should be provided");
         }
         logPrefix = null;
         valueMapper.setLogPrefix(getLogPrefix());
@@ -222,7 +217,7 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
      * @return the appropriate map of names to output type
      * 
      */
-    @Nonnull @NullableElements public Map<String, OutType> mapAttribute(@Nonnull InType prototype) {
+    @Override @Nonnull @NullableElements public Map<String, OutType> mapAttribute(@Nonnull InType prototype) {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
@@ -285,6 +280,7 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
     /**
      * {@inheritDoc}. The identity is not part of equality of hash
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -306,6 +302,7 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
     /**
      * {@inheritDoc}. The identity is not part of equality of hash
      */
+    @Override
     public int hashCode() {
         String myFormat = getAttributeFormat();
         if (null == myFormat) {

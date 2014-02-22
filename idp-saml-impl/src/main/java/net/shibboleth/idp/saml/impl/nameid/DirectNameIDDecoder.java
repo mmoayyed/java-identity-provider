@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.saml.nameid.NameIDDecoder;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
@@ -30,10 +30,9 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.slf4j.LoggerFactory;
 
 /**
- * class to implement the direct transform from a {@link NameID}. The decode 
- * operation returns the input.
+ * class to implement the direct transform from a {@link NameID}. The decode operation returns the input.
  */
-public class DirectNameIDDecoder extends AbstractIdentifiedInitializableComponent implements NameIDDecoder {
+public class DirectNameIDDecoder extends AbstractIdentifiableInitializeableComponent implements NameIDDecoder {
 
     /**
      * {@inheritDoc}. The decoded value just the input. We do not police any values
@@ -44,11 +43,6 @@ public class DirectNameIDDecoder extends AbstractIdentifiedInitializableComponen
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         return nameID.getValue();
-    }
-
-    /** {@inheritDoc} */
-    @Override public void setId(@Nonnull String componentId) {
-        super.setId(componentId);
     }
 
     /** {@inheritDoc} */

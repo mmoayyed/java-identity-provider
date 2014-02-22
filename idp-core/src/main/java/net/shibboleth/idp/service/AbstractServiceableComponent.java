@@ -37,8 +37,8 @@ import org.springframework.context.ConfigurableApplicationContext;
  * 
  * @param <T> The type of service.
  */
-public abstract class AbstractServiceableComponent<T> extends AbstractIdentifiedInitializableComponent
-        implements ServiceableComponent<T>, ApplicationContextAware {
+public abstract class AbstractServiceableComponent<T> extends AbstractIdentifiedInitializableComponent implements
+        ServiceableComponent<T>, ApplicationContextAware {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractServiceableComponent.class);
@@ -53,8 +53,7 @@ public abstract class AbstractServiceableComponent<T> extends AbstractIdentified
     private final ReentrantReadWriteLock serviceLock = new ReentrantReadWriteLock(false);
 
     /** {@inheritDoc} */
-    @Override
-    public void setApplicationContext(ApplicationContext context) {
+    @Override public void setApplicationContext(ApplicationContext context) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         applicationContext = context;
     }
@@ -71,26 +70,22 @@ public abstract class AbstractServiceableComponent<T> extends AbstractIdentified
     /**
      * {@inheritDoc}.
      */
-    @Override
-    @Nonnull public abstract T getComponent();
+    @Override @Nonnull public abstract T getComponent();
 
     /**
      * {@inheritDoc} Grab the service lock shared. This will block unloads until {@link #unpinComponent()} is called.
      */
-    @Override
-    public void pinComponent() {
+    @Override public void pinComponent() {
         serviceLock.readLock().lock();
     }
 
     /** {@inheritDoc} drop the shared lock. */
-    @Override
-    public void unpinComponent() {
+    @Override public void unpinComponent() {
         serviceLock.readLock().unlock();
     }
 
     /** {@inheritDoc}. Grab the service lock ex and then call spring to tear everything down. */
-    @Override
-    public void unloadComponent() {
+    @Override public void unloadComponent() {
         if (null == applicationContext) {
             log.debug("Component '{}': Component already unloaded", getId());
             return;
@@ -118,16 +113,14 @@ public abstract class AbstractServiceableComponent<T> extends AbstractIdentified
      * {@inheritDoc}. Force unload; this will usually be a no-op since the component should have been explicitly
      * unloaded, but we do the unload here so that error cases also clean up.
      */
-    @Override
-    protected void doDestroy() {
+    @Override protected void doDestroy() {
         unloadComponent();
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        if (applicationContext != null &&  !(applicationContext instanceof ConfigurableApplicationContext)) {
+        if (applicationContext != null && !(applicationContext instanceof ConfigurableApplicationContext)) {
             throw new ComponentInitializationException(getId()
                     + ": Application context did not implement ConfigurableApplicationContext");
         }

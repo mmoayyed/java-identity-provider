@@ -25,20 +25,20 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.opensaml.profile.context.ProfileRequestContext;
-
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
+import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -47,32 +47,26 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 /** The configuration that applies to a given relying party. */
-public class RelyingPartyConfiguration extends AbstractIdentifiedInitializableComponent
-        implements IdentifiedComponent, Predicate<ProfileRequestContext> {
+public class RelyingPartyConfiguration extends AbstractIdentifiableInitializeableComponent implements
+        IdentifiedComponent, Predicate<ProfileRequestContext> {
 
     /** The entity ID of the IdP. */
     @NonnullAfterInit @NotEmpty private String responderId;
-    
+
     /** Controls whether detailed information about errors should be exposed. */
-    private boolean detailedErrors; 
+    private boolean detailedErrors;
 
     /** Registered and usable communication profile configurations for this relying party. */
     @Nonnull @NonnullElements private Map<String, ProfileConfiguration> profileConfigurations;
 
     /** Predicate that must be true for this configuration to be active for a given request. */
     @Nonnull private Predicate<ProfileRequestContext> activationCondition;
-    
+
     /** Constructor. */
     public RelyingPartyConfiguration() {
         super.setId(UUID.randomUUID().toString());
         activationCondition = Predicates.alwaysTrue();
         profileConfigurations = Collections.emptyMap();
-    }
-    
-    /** {@inheritDoc} */
-    @Override
-    public void setId(@Nonnull @NotEmpty final String id) {
-        super.setId(id);
     }
 
     /**
@@ -83,7 +77,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiedInitializableCo
     @Nonnull @NotEmpty public String getResponderId() {
         return responderId;
     }
-    
+
     /**
      * Set the self-referential ID to use when responding to requests.
      * 
@@ -91,11 +85,12 @@ public class RelyingPartyConfiguration extends AbstractIdentifiedInitializableCo
      */
     public void setResponderId(@Nonnull @NotEmpty final String responder) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        responderId = Constraint.isNotNull(StringSupport.trimOrNull(responder),
-                "Responder entity ID cannot be null or empty");
+
+        responderId =
+                Constraint
+                        .isNotNull(StringSupport.trimOrNull(responder), "Responder entity ID cannot be null or empty");
     }
-    
+
     /**
      * Get whether detailed information about errors should be exposed.
      * 
@@ -104,7 +99,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiedInitializableCo
     public boolean isDetailedErrors() {
         return detailedErrors;
     }
-    
+
     /**
      * Set whether detailed information about errors should be exposed.
      * 
@@ -112,7 +107,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiedInitializableCo
      */
     public void setDetailedErrors(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         detailedErrors = flag;
     }
 
@@ -121,8 +116,8 @@ public class RelyingPartyConfiguration extends AbstractIdentifiedInitializableCo
      * 
      * @return unmodifiable set of profile configurations for this relying party, never null
      */
-    @Nonnull @NonnullElements @Unmodifiable @NotLive
-    public Map<String, ProfileConfiguration> getProfileConfigurations() {
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public Map<String, ProfileConfiguration>
+            getProfileConfigurations() {
         return ImmutableMap.copyOf(profileConfigurations);
     }
 
@@ -144,25 +139,25 @@ public class RelyingPartyConfiguration extends AbstractIdentifiedInitializableCo
 
         return profileConfigurations.get(trimmedId);
     }
-    
+
     /**
      * Set the profile configurations for this relying party.
      * 
      * @param configs the configurations to set
      */
-    public void setProfileConfigurations(
-            @Nonnull @NonnullElements final Collection<ProfileConfiguration> configs) {
+    public void setProfileConfigurations(@Nonnull @NonnullElements final Collection<ProfileConfiguration> configs) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(configs, "ProfileConfiguration collection cannot be null");
-        
+
         profileConfigurations = Maps.newHashMap();
         for (ProfileConfiguration config : Collections2.filter(configs, Predicates.notNull())) {
-            final String trimmedId = Constraint.isNotNull(StringSupport.trimOrNull(config.getId()),
-                    "ID of profile configuration class " + config.getClass().getName() + " cannot be null");
+            final String trimmedId =
+                    Constraint.isNotNull(StringSupport.trimOrNull(config.getId()), "ID of profile configuration class "
+                            + config.getClass().getName() + " cannot be null");
             profileConfigurations.put(trimmedId, config);
         }
     }
-    
+
     /**
      * Set the condition under which the relying party configuration should be active.
      * 
@@ -170,27 +165,25 @@ public class RelyingPartyConfiguration extends AbstractIdentifiedInitializableCo
      */
     public void setActivationCondition(@Nonnull final Predicate<ProfileRequestContext> condition) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        activationCondition = Constraint.isNotNull(condition,
-                "Relying partying configuration activation condition cannot be null");
+
+        activationCondition =
+                Constraint.isNotNull(condition, "Relying partying configuration activation condition cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        
+
         if (responderId == null) {
             throw new ComponentInitializationException("Responder ID cannot be null or empty");
         }
     }
-    
+
     /** {@inheritDoc} */
-    @Override
-    public boolean apply(@Nullable final ProfileRequestContext input) {
+    @Override public boolean apply(@Nullable final ProfileRequestContext input) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
+
         return activationCondition.apply(input);
     }
-    
+
 }

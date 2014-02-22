@@ -31,7 +31,7 @@ import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.slf4j.Logger;
@@ -43,7 +43,7 @@ import com.google.common.collect.Multimap;
  * Matcher that checks whether an attribute is enumerated in an SP's metadata as a required or optional attribute. Also
  * supports simple value filtering.
  */
-public class AttributeInMetadataPolicyRule extends AbstractIdentifiedInitializableComponent implements Matcher {
+public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializeableComponent implements Matcher {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeInMetadataPolicyRule.class);
@@ -56,7 +56,7 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiedInitializab
 
     /** The String used to prefix log message. */
     private String logPrefix;
-    
+
     /**
      * Gets whether optionally requested attributes should be matched.
      * 
@@ -94,14 +94,7 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiedInitializab
     }
 
     /** {@inheritDoc} */
-    @Override
-    public void setId(@Nullable final String id) {
-        super.setId(id);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Nonnull public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull final IdPAttribute attribute,
+    @Override @Nonnull public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull final IdPAttribute attribute,
             @Nonnull final AttributeFilterContext filterContext) {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);

@@ -29,7 +29,7 @@ import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * <br/>
  */
 
-public abstract class AbstractMatcher extends AbstractIdentifiedInitializableComponent implements Matcher {
+public abstract class AbstractMatcher extends AbstractIdentifiableInitializeableComponent implements Matcher {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractMatcher.class);
@@ -49,12 +49,7 @@ public abstract class AbstractMatcher extends AbstractIdentifiedInitializableCom
     private String logPrefix;
 
     /** {@inheritDoc} */
-    public void setId(String id) {
-        super.setId(id);
-    }
-
-    /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         // Id is now definitive, reset log prefix
         logPrefix = null;
@@ -63,7 +58,7 @@ public abstract class AbstractMatcher extends AbstractIdentifiedInitializableCom
     /**
      * {@inheritDoc}
      */
-    @Nonnull @NonnullElements @Unmodifiable public Set<IdPAttributeValue<?>> getMatchingValues(
+    @Override @Nonnull @NonnullElements @Unmodifiable public Set<IdPAttributeValue<?>> getMatchingValues(
             @Nonnull final IdPAttribute attribute, @Nonnull final AttributeFilterContext filterContext) {
 
         final HashSet matchedValues = new HashSet();

@@ -29,7 +29,7 @@ import net.shibboleth.idp.saml.nameid.NameIDDecoder;
 import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -44,7 +44,7 @@ import com.google.common.collect.Iterables;
 /**
  * The concrete representation of a &lt;PrincipalConnector&gt;.
  */
-public class PrincipalConnector extends AbstractIdentifiedInitializableComponent implements NameIdentifierDecoder,
+public class PrincipalConnector extends AbstractIdentifiableInitializeableComponent implements NameIdentifierDecoder,
         NameIDDecoder {
 
     /** The {@link NameID} decoder. */
@@ -90,11 +90,6 @@ public class PrincipalConnector extends AbstractIdentifiedInitializableComponent
      */
     @Nonnull public NameIdentifierDecoder getNameIdentifierDecoder() {
         return nameIdentifierDecoder;
-    }
-
-    /** {@inheritDoc} */
-    @Override public synchronized void setId(@Nonnull String componentId) {
-        super.setId(componentId);
     }
 
     /**

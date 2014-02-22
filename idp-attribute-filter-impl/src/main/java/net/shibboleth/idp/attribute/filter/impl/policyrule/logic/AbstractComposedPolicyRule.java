@@ -29,7 +29,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
@@ -43,8 +43,8 @@ import com.google.common.collect.Iterables;
  * Base class for {@link PolicyRequirementRule} implementations that are compositions of other
  * {@link PolicyRequirementRule}s.
  */
-public abstract class AbstractComposedPolicyRule extends AbstractIdentifiedInitializableComponent
-        implements PolicyRequirementRule, UnmodifiableComponent {
+public abstract class AbstractComposedPolicyRule extends AbstractIdentifiableInitializeableComponent implements
+        PolicyRequirementRule, UnmodifiableComponent {
 
     /** The composed matchers. */
     private final List<PolicyRequirementRule> rules;
@@ -54,8 +54,7 @@ public abstract class AbstractComposedPolicyRule extends AbstractIdentifiedIniti
      * 
      * @param composedRules matchers being composed
      */
-    public AbstractComposedPolicyRule(@Nullable @NullableElements final 
-                Collection<PolicyRequirementRule> composedRules) {
+    public AbstractComposedPolicyRule(@Nullable @NullableElements final Collection<PolicyRequirementRule> composedRules) {
         ArrayList<PolicyRequirementRule> checkedMatchers = new ArrayList<PolicyRequirementRule>();
 
         if (composedRules != null) {
@@ -90,11 +89,6 @@ public abstract class AbstractComposedPolicyRule extends AbstractIdentifiedIniti
         for (PolicyRequirementRule matcher : rules) {
             ComponentSupport.initialize(matcher);
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override public void setId(String id) {
-        super.setId(id);
     }
 
     /** {@inheritDoc} */

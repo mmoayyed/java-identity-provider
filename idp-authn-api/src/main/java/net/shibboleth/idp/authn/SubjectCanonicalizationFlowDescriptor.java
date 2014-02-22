@@ -18,6 +18,11 @@
 package net.shibboleth.idp.authn;
 
 import javax.annotation.Nonnull;
+import javax.security.auth.Subject;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -25,25 +30,22 @@ import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
 /**
  * A descriptor for a subject canonicalication flow.
  * 
- * <p>A flow models a sequence of profile actions that performs canonicalization of a {@link Subject}
- * into a string-form principal name. Flows can do essentially anything, including interact with the
- * subject, but must include an activation predicate to indicate their suitability based on the
- * content of the {@link ProfileRequestContext}, particularly the required
- * {@link net.shibboleth.idp.authn.context.SubjectCanonicalizationContext} child context.</p>
+ * <p>
+ * A flow models a sequence of profile actions that performs canonicalization of a {@link Subject} into a string-form
+ * principal name. Flows can do essentially anything, including interact with the subject, but must include an
+ * activation predicate to indicate their suitability based on the content of the {@link ProfileRequestContext},
+ * particularly the required {@link net.shibboleth.idp.authn.context.SubjectCanonicalizationContext} child context.
+ * </p>
  */
-public class SubjectCanonicalizationFlowDescriptor extends AbstractIdentifiedInitializableComponent
-        implements Predicate<ProfileRequestContext> {
-    
+public class SubjectCanonicalizationFlowDescriptor extends AbstractIdentifiableInitializeableComponent implements
+        Predicate<ProfileRequestContext> {
+
     /** Predicate that must be true for this flow to be usable for a given request. */
     @Nonnull private Predicate<ProfileRequestContext> activationCondition;
-    
+
     /**
      * Constructor.
      * 
@@ -51,19 +53,13 @@ public class SubjectCanonicalizationFlowDescriptor extends AbstractIdentifiedIni
      */
     public SubjectCanonicalizationFlowDescriptor(@Nonnull @NotEmpty final String id) {
         super.setId(id);
-        
+
         activationCondition = Predicates.alwaysTrue();
     }
-    
-    /** {@inheritDoc} */
-    @Override
-    public void setId(@Nonnull @NotEmpty final String id) {
-        super.setId(id);
-    }
-    
+
     /**
-     * Set the activation condition in the form of a {@link Predicate} such that iff the condition
-     * evaluates to true should the corresponding flow be allowed/possible.
+     * Set the activation condition in the form of a {@link Predicate} such that iff the condition evaluates to true
+     * should the corresponding flow be allowed/possible.
      * 
      * @param condition predicate that controls activation of the flow
      */
@@ -72,20 +68,17 @@ public class SubjectCanonicalizationFlowDescriptor extends AbstractIdentifiedIni
     }
 
     /** {@inheritDoc} */
-    @Override
-    public boolean apply(ProfileRequestContext input) {
+    @Override public boolean apply(ProfileRequestContext input) {
         return activationCondition.apply(input);
     }
 
     /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         return getId().hashCode();
     }
 
     /** {@inheritDoc} */
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         if (obj == null) {
             return false;
         }
@@ -102,8 +95,7 @@ public class SubjectCanonicalizationFlowDescriptor extends AbstractIdentifiedIni
     }
 
     /** {@inheritDoc} */
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return Objects.toStringHelper(this).add("flowId", getId()).toString();
     }
 

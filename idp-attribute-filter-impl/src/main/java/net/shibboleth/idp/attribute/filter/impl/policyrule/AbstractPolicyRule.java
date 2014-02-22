@@ -17,11 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter.impl.policyrule;
 
-import javax.annotation.Nonnull;
-
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
@@ -29,18 +26,14 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
  * <br/>
  */
 
-public abstract class AbstractPolicyRule extends AbstractIdentifiedInitializableComponent implements
+public abstract class AbstractPolicyRule extends AbstractIdentifiableInitializeableComponent implements
         PolicyRequirementRule {
 
     /** The String used to prefix log message. */
     private String logPrefix;
 
     /** {@inheritDoc} */
-    public void setId(@Nonnull @NotEmpty String id) {
-        super.setId(id);
-    }
-
-    /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         // Id is now definitive, reset log prefix
@@ -48,7 +41,7 @@ public abstract class AbstractPolicyRule extends AbstractIdentifiedInitializable
 
     }
 
-   /**
+    /**
      * Return a string which is to be prepended to all log messages.
      * 
      * @return "Attribute Filter '<filterID>' :"
