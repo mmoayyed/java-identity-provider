@@ -27,8 +27,8 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -225,22 +225,14 @@ public class AbstractAttributeDefinitionTest {
         definition.setAttributeEncoders(encoders);
         
         Assert.assertFalse(encoder.isInitialized());
-        Assert.assertFalse(encoder.getValidateCount() > 0);
         Assert.assertFalse(encoder.isDestroyed());
 
         definition.initialize();
         Assert.assertTrue(encoder.isInitialized());
-        Assert.assertFalse(encoder.getValidateCount() > 0);
         Assert.assertFalse(encoder.isDestroyed());
 
-        definition.validate();
+                definition.destroy();
         Assert.assertTrue(encoder.isInitialized());
-        Assert.assertTrue(encoder.getValidateCount() > 0);
-        Assert.assertFalse(encoder.isDestroyed());
-
-        definition.destroy();
-        Assert.assertTrue(encoder.isInitialized());
-        Assert.assertTrue(encoder.getValidateCount() > 0);
         Assert.assertTrue(encoder.isDestroyed());
         
         

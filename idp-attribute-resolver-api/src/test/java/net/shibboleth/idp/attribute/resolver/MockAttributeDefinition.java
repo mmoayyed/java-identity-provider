@@ -25,24 +25,16 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 /** An attribute definition that simply returns a static value. */
 @ThreadSafe
-public class MockAttributeDefinition extends AbstractAttributeDefinition implements ValidatableComponent {
+public class MockAttributeDefinition extends AbstractAttributeDefinition {
 
-    /** Whether this connector fails validation. */
-    private boolean invalid;
-    
     /** Number of times {@link #destroy()} was called. */
     private int destroyCount;
 
     /** Number of times {@link #initialize()} was called. */
     private int initializeCount;
-
-    /** Number of times {@link #validate()} was called. */
-    private int validateCount;
 
     /** Static value returned by this definition. */
     private IdPAttribute staticValue;
@@ -58,7 +50,6 @@ public class MockAttributeDefinition extends AbstractAttributeDefinition impleme
      */
     public MockAttributeDefinition(final String id, final IdPAttribute value) {
         setId(id);
-        invalid = false;
         staticValue = value;
     }
 
@@ -70,17 +61,7 @@ public class MockAttributeDefinition extends AbstractAttributeDefinition impleme
      */
     public MockAttributeDefinition(final String id, final ResolutionException exception) {
         setId(id);
-        invalid = false;
         resolutionException = exception;
-    }
-
-    /**
-     * Sets whether this data connector is considered invalid.
-     * 
-     * @param isInvalid whether this data connector is considered invalid
-     */
-    public void setInvalid(boolean isInvalid) {
-        invalid = isInvalid;
     }
 
     /** {@inheritDoc} */
@@ -95,15 +76,6 @@ public class MockAttributeDefinition extends AbstractAttributeDefinition impleme
         return staticValue;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void doValidate() throws ComponentValidationException {
-        if (invalid) {
-            throw new ComponentValidationException();
-        }
-        validateCount += 1;
-    }
-    
     /** {@inheritDoc} */
     @Override
     public void doDestroy() {
@@ -141,15 +113,5 @@ public class MockAttributeDefinition extends AbstractAttributeDefinition impleme
      */
     public int getInitializeCount() {
         return initializeCount;
-    }
-
-    /**
-     * Gets the number of times {@link #validate()} was called.
-     * 
-     * @return number of times {@link #validate()} was called
-     */
-    public int getValidateCount() {
-        return validateCount;
-    }
-    
+    }    
 }

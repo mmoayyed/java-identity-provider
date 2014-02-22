@@ -23,10 +23,8 @@ import javax.annotation.Nullable;
 import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
@@ -37,7 +35,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  * This code takes care of the mundane aspects of #getId() and initialize, validate and destroy.
  */
 public abstract class BaseBridgingClass extends AbstractDestructableIdentifiableInitializableComponent implements
-        IdentifiableComponent, ValidatableComponent, DestructableComponent {
+        IdentifiableComponent, DestructableComponent {
 
     /** The object we are bridging to. */
     private final Object bridgedObject;
@@ -54,27 +52,26 @@ public abstract class BaseBridgingClass extends AbstractDestructableIdentifiable
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nullable public String getId() {
         return super.getId();
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setId(@Nonnull String componentId) {
         super.setId(componentId);
     }
 
     /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
-        ComponentSupport.validate(bridgedObject);
-    }
-
-    /** {@inheritDoc} */
+    @Override
     protected void doDestroy() {
         ComponentSupport.destroy(bridgedObject);
         super.doDestroy();
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         ComponentSupport.initialize(bridgedObject);
         super.doInitialize();

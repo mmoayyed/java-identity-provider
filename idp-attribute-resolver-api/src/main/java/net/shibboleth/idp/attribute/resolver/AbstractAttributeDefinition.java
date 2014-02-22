@@ -29,8 +29,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -40,7 +40,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
@@ -82,6 +81,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
      * 
      * @return true if this attribute is only used as a dependency, false otherwise
      */
+    @Override
     public boolean isDependencyOnly() {
         return dependencyOnly;
     }
@@ -104,6 +104,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
      * 
      * @return human readable descriptions of attribute
      */
+    @Override
     @Nonnull @NonnullElements @Unmodifiable public Map<Locale, String> getDisplayDescriptions() {
         return displayDescriptions;
     }
@@ -134,6 +135,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
      * 
      * @return human readable names of the attribute
      */
+    @Override
     @Nonnull @NonnullElements @Unmodifiable public Map<Locale, String> getDisplayNames() {
         return displayNames;
     }
@@ -165,6 +167,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
      * 
      * @return encoders used to encode the values of this attribute in to protocol specific formats, never null
      */
+    @Override
     @Nonnull @NonnullElements @Unmodifiable public Set<AttributeEncoder<?>> getAttributeEncoders() {
         return encoders;
     }
@@ -234,16 +237,6 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
 
         for (AttributeEncoder encoder : encoders) {
             ComponentSupport.initialize(encoder);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void doValidate() throws ComponentValidationException {
-        super.doValidate();
-
-        for (AttributeEncoder encoder : encoders) {
-            ComponentSupport.validate(encoder);
         }
     }
 

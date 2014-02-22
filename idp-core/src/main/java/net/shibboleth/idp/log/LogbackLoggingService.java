@@ -26,7 +26,6 @@ import net.shibboleth.idp.service.AbstractReloadableService;
 import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 
 import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
@@ -82,15 +81,7 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> {
     }
 
     /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
-        super.validate();
-        if (!configurationResource.exists()) {
-            throw new ComponentValidationException("Logging service configuration resource "
-                    + configurationResource.getDescription() + " does not exist.");
-        }
-    }
-
-    /** {@inheritDoc} */
+    @Override
     protected synchronized boolean shouldReload() {
         try {
             final DateTime lastReload = getLastSuccessfulReloadInstant();
@@ -107,6 +98,7 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected synchronized void doReload() throws ServiceException {
 
         loadLoggingConfiguration();
@@ -179,6 +171,7 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         if (configurationResource == null) {
             throw new ComponentInitializationException("Logging configuration must be specified.");
@@ -200,6 +193,7 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> {
 
     /** {@inheritDoc}.
      * This service does not support a ServiceableComponent, so return null. */
+    @Override
     @Nullable public ServiceableComponent<Object> getServiceableComponent() {
         return null;
     }

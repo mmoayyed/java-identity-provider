@@ -26,17 +26,15 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Objects;
 
 /** A simple, mock implementation of {@link Matcher}. */
-public class MockMatcher extends AbstractIdentifiableInitializableComponent implements Matcher, InitializableComponent, DestructableComponent, ValidatableComponent{ 
+public class MockMatcher extends AbstractIdentifiableInitializableComponent implements Matcher, InitializableComponent, DestructableComponent { 
 
     /** ID of the attribute to which this matcher applies. */
     private String matchingAttribute;
@@ -49,9 +47,6 @@ public class MockMatcher extends AbstractIdentifiableInitializableComponent impl
 
     /** state variable */
     private boolean destroyed;
-    
-    /** state variable */
-    private boolean validated;
     
     /** do we fail when validate is called? do we fail when we are called?*/
     private boolean fails;
@@ -86,6 +81,7 @@ public class MockMatcher extends AbstractIdentifiableInitializableComponent impl
     }
 
     /** {@inheritDoc} */
+    @Override
     public Set<IdPAttributeValue<?>> getMatchingValues(IdPAttribute attribute, AttributeFilterContext filterContext) {
         if (fails) {
             return null;
@@ -109,33 +105,25 @@ public class MockMatcher extends AbstractIdentifiableInitializableComponent impl
     }
 
     /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
-        if (fails) {
-            throw new ComponentValidationException();
-        }
-        validated = true; 
-    }
-    
-    public boolean getValidated() {
-        return validated;
-    }
-
-    /** {@inheritDoc} */
+    @Override
     public boolean isDestroyed() {
         return destroyed;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void destroy() {
         destroyed = true;        
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isInitialized() {
         return initialized;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void doInitialize()  {
         initialized = true;
     }

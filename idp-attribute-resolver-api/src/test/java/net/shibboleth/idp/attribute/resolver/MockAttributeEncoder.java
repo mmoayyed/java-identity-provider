@@ -17,13 +17,13 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.utilities.java.support.component.CountingDestructableInitializableValidatableComponent;
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.utilities.java.support.component.AbstractDestructableInitializableComponent;
 
 /** Mock implementation of {@link AttributeEncoder}. */
-public class MockAttributeEncoder extends CountingDestructableInitializableValidatableComponent implements AttributeEncoder<String> {
+public class MockAttributeEncoder extends AbstractDestructableInitializableComponent implements AttributeEncoder<String> {
 
     /** Static protocol value for this encoder. */
     private final String staticProtocol;
@@ -43,11 +43,13 @@ public class MockAttributeEncoder extends CountingDestructableInitializableValid
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getProtocol() {
         return staticProtocol;
     }
 
     /** {@inheritDoc} */
+    @Override
     public String encode(IdPAttribute attribute) throws AttributeEncodingException {
         return staticValue;
     }

@@ -48,7 +48,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.CookieManager;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -477,14 +476,6 @@ public class StorageBackedSessionManager extends AbstractDestructableIdentifiabl
         
         // This is our private instance, so we initialize it.
         serializer.initialize();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void validate() throws ComponentValidationException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
-        storageService.validate();
     }
 
     /** {@inheritDoc} */

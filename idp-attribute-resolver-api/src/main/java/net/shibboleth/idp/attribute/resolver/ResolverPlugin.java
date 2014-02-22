@@ -31,7 +31,6 @@ import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 import com.google.common.base.Predicate;
 
@@ -41,7 +40,7 @@ import com.google.common.base.Predicate;
  * @param <ResolvedType> object type this plug-in resolves to
  */
 @ThreadSafe
-public interface ResolverPlugin<ResolvedType> extends ValidatableComponent, UnmodifiableComponent,
+public interface ResolverPlugin<ResolvedType> extends UnmodifiableComponent,
         InitializableComponent, DestructableComponent, IdentifiableComponent {
 
     /**

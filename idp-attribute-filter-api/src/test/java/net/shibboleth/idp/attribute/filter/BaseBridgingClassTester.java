@@ -19,15 +19,15 @@ package net.shibboleth.idp.attribute.filter;
 
 import java.util.HashSet;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 /**
  * Base for the various XXX from YYY test clases
@@ -69,7 +69,6 @@ public class BaseBridgingClassTester {
         Assert.assertEquals(base.getLogPrefix(), s);
         base.initialize();
         Assert.assertNotEquals(base.getLogPrefix(), s);
-        base.validate();
         base.destroy();
         
     }

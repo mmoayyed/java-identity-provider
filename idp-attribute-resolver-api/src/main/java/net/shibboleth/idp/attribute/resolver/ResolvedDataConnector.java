@@ -28,7 +28,6 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import com.google.common.base.Predicate;
@@ -148,13 +147,6 @@ public final class ResolvedDataConnector extends AbstractDataConnector {
      */
     @Nonnull public DataConnector getResolvedConnector() {
         return resolvedConnector;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void doValidate() throws ComponentValidationException {
-        super.doValidate();
-        return;
     }
 
     /** {@inheritDoc} */

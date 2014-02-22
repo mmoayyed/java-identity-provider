@@ -32,7 +32,6 @@ import net.shibboleth.idp.attribute.resolver.impl.dc.ValidationException;
 import net.shibboleth.idp.attribute.resolver.impl.dc.Validator;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;
@@ -103,7 +102,7 @@ public class RdbmsDataConnector extends AbstractSearchDataConnector<ExecutableSt
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         if (dataSource == null) {
@@ -120,17 +119,6 @@ public class RdbmsDataConnector extends AbstractSearchDataConnector<ExecutableSt
         }
     }
 
-    /** {@inheritDoc} */
-    protected void doValidate() throws ComponentValidationException {
-        try {
-            getValidator().validate();
-        } catch (ValidationException e) {
-            log.error("Data connector '{}': invalid connector configuration", getId(), e);
-            throw new ComponentValidationException("Data connector '" + getId() + "': invalid connector configuration",
-                    e);
-        }
-    }
-
     /**
      * Attempts to retrieve the attribute from the database.
      * 
@@ -141,7 +129,7 @@ public class RdbmsDataConnector extends AbstractSearchDataConnector<ExecutableSt
      * @throws ResolutionException thrown if there is a problem retrieving data from the database or transforming that
      *             data into {@link IdPAttribute}s
      */
-    protected Map<String, IdPAttribute> retrieveAttributes(final ExecutableStatement statement)
+    @Override protected Map<String, IdPAttribute> retrieveAttributes(final ExecutableStatement statement)
             throws ResolutionException {
 
         if (statement == null) {
@@ -187,7 +175,7 @@ public class RdbmsDataConnector extends AbstractSearchDataConnector<ExecutableSt
     public class DefaultValidator implements Validator {
 
         /** {@inheritDoc} */
-        public void validate() throws ValidationException {
+        @Override public void validate() throws ValidationException {
             Connection connection = null;
             try {
                 connection = dataSource.getConnection();

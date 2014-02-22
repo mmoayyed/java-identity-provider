@@ -123,6 +123,5 @@ public class ResolvedDataConnectorTest {
         resolvedDataConnector.setPropagateResolutionExceptions(true);
         Assert.assertFalse(resolvedDataConnector.isPropagateResolutionExceptions());
 
-        resolvedDataConnector.doValidate();
     }
 }

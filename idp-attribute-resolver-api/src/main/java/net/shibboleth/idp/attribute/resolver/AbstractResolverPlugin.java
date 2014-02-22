@@ -34,7 +34,6 @@ import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;
@@ -82,6 +81,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends
      * 
      * @return true if {@link ResolutionException}s are propagated, false if not
      */
+    @Override
     public boolean isPropagateResolutionExceptions() {
         return propagateResolutionExceptions;
     }
@@ -104,6 +104,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends
      * 
      * @return criteria that must be met for this plugin to be active for a given request, never null
      */
+    @Override
     @Nonnull public Predicate<AttributeResolutionContext> getActivationCriteria() {
         return activationCriteria;
     }
@@ -124,6 +125,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends
      * 
      * @return unmodifiable list of dependencies for this plugin, never null
      */
+    @Override
     @Nonnull @NonnullElements @Unmodifiable public Set<ResolverPluginDependency> getDependencies() {
         return dependencies;
     }
@@ -159,6 +161,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends
      * 
      * @throws ResolutionException thrown if there was a problem resolving the attributes
      */
+    @Override
     @Nullable public final ResolvedType resolve(@Nonnull final AttributeResolutionContext resolutionContext)
             throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -194,14 +197,6 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends
 
     /** {@inheritDoc} */
     @Override
-    public final synchronized void validate() throws ComponentValidationException {
-        ComponentSupport.validate(activationCriteria);
-
-        doValidate();
-    }
-
-    /** {@inheritDoc} */
-    @Override
     protected void doDestroy() {
         ComponentSupport.destroy(activationCriteria);
         activationCriteria = Predicates.alwaysFalse();
@@ -221,15 +216,6 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends
         dependencies = ImmutableSet.copyOf(checkedDeps);
 
         ComponentSupport.initialize(activationCriteria);
-    }
-
-    /**
-     * Performs implementation specific validation. Default implementation of this method is a no-op.
-     * 
-     * @throws ComponentValidationException thrown if the component is not valid
-     */
-    protected void doValidate() throws ComponentValidationException {
-
     }
 
     /** {@inheritDoc} */

@@ -21,23 +21,18 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 /** A simple, mock implementation of {@link Matcher}. */
 public class MockPolicyRequirementRule extends AbstractIdentifiableInitializableComponent implements
-        PolicyRequirementRule, InitializableComponent, DestructableComponent, ValidatableComponent {
+        PolicyRequirementRule, InitializableComponent, DestructableComponent {
 
     /** state variable */
     private boolean initialized;
 
     /** state variable */
     private boolean destroyed;
-
-    /** state variable */
-    private boolean validated;
 
     /** to return from matcher(). */
     private Tristate retVal;
@@ -53,33 +48,25 @@ public class MockPolicyRequirementRule extends AbstractIdentifiableInitializable
     }
 
     /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
-        if (fails) {
-            throw new ComponentValidationException();
-        }
-        validated = true;
-    }
-
-    public boolean getValidated() {
-        return validated;
-    }
-
-    /** {@inheritDoc} */
+    @Override
     public boolean isDestroyed() {
         return destroyed;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void destroy() {
         destroyed = true;
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isInitialized() {
         return initialized;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void doInitialize() {
         initialized = true;
     }
@@ -99,6 +86,7 @@ public class MockPolicyRequirementRule extends AbstractIdentifiableInitializable
     }
 
     /** {@inheritDoc} */
+    @Override
     public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
         if (fails) {
             return Tristate.FAIL;

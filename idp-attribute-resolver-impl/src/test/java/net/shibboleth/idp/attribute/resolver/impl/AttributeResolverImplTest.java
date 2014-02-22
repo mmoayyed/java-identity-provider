@@ -39,9 +39,7 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
-import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +55,7 @@ public class AttributeResolverImplTest {
     private final Logger log = LoggerFactory.getLogger(AttributeResolverImplTest.class);
 
     /** Test post-instantiation state. */
-    @Test public void initVerifyDestroy() throws Exception {
+    @Test public void initDestroy() throws Exception {
         MockAttributeDefinition attrDef = new MockAttributeDefinition("foo", new IdPAttribute("test"));
         MockDataConnector dataCon = new MockDataConnector("bar", (Map) null);
         AttributeResolverImpl resolver =
@@ -65,31 +63,14 @@ public class AttributeResolverImplTest {
                         Collections.singleton((DataConnector) dataCon), null);
 
         Assert.assertFalse(attrDef.isInitialized());
-        Assert.assertFalse(attrDef.getValidateCount() > 0);
         Assert.assertFalse(attrDef.isDestroyed());
         Assert.assertFalse(dataCon.isInitialized());
-        Assert.assertFalse(dataCon.getValidateCount() > 0);
-        Assert.assertFalse(dataCon.isDestroyed());
-
-        try {
-            resolver.validate();
-            Assert.fail();
-        } catch (UninitializedComponentException e) {
-            // OK
-        }
-        Assert.assertFalse(attrDef.isInitialized());
-        Assert.assertFalse(attrDef.getValidateCount() > 0);
-        Assert.assertFalse(attrDef.isDestroyed());
-        Assert.assertFalse(dataCon.isInitialized());
-        Assert.assertFalse(dataCon.getValidateCount() > 0);
         Assert.assertFalse(dataCon.isDestroyed());
 
         resolver.initialize();
         Assert.assertTrue(attrDef.isInitialized());
-        Assert.assertFalse(attrDef.getValidateCount() > 0);
         Assert.assertFalse(attrDef.isDestroyed());
         Assert.assertTrue(dataCon.isInitialized());
-        Assert.assertFalse(dataCon.getValidateCount() > 0);
         Assert.assertFalse(dataCon.isDestroyed());
 
         Assert.assertEquals(resolver.getId(), "toto");
@@ -98,20 +79,10 @@ public class AttributeResolverImplTest {
         Assert.assertEquals(resolver.getDataConnectors().size(), 1);
         Assert.assertTrue(resolver.getDataConnectors().containsKey("bar"));
 
-        resolver.validate();
-        Assert.assertTrue(attrDef.isInitialized());
-        Assert.assertTrue(attrDef.getValidateCount() > 0);
-        Assert.assertFalse(attrDef.isDestroyed());
-        Assert.assertTrue(dataCon.isInitialized());
-        Assert.assertTrue(dataCon.getValidateCount() > 0);
-        Assert.assertFalse(dataCon.isDestroyed());
-
         resolver.destroy();
         Assert.assertTrue(attrDef.isInitialized());
-        Assert.assertTrue(attrDef.getValidateCount() > 0);
         Assert.assertTrue(attrDef.isDestroyed());
         Assert.assertTrue(dataCon.isInitialized());
-        Assert.assertTrue(dataCon.getValidateCount() > 0);
         Assert.assertTrue(dataCon.isDestroyed());
 
         try {
@@ -121,12 +92,6 @@ public class AttributeResolverImplTest {
             // OK
         }
 
-        try {
-            resolver.validate();
-            Assert.fail();
-        } catch (DestroyedComponentException e) {
-            // OK
-        }
     }
 
     /** Test getting, setting, overwriting, defensive collection copy. */
@@ -394,12 +359,10 @@ public class AttributeResolverImplTest {
         Assert.assertEquals(context.getResolvedIdPAttributes().size(), 2);
 
         MockDataConnector dcfail1 = new MockDataConnector("failer1", new ResolutionException());
-        dcfail1.setInvalid(true);
         dcfail1.setPropagateResolutionExceptions(false);
         ResolverPluginDependency depFail1 = new ResolverPluginDependency("failer1");
         MockDataConnector dcfail2 = new MockDataConnector("failer2", new ResolutionException());
         dcfail2.setFailoverDataConnectorId("failer1");
-        dcfail2.setInvalid(true);
         ResolverPluginDependency depFail2 = new ResolverPluginDependency("failer2");
 
         connectors = new LazySet<DataConnector>();
@@ -420,13 +383,6 @@ public class AttributeResolverImplTest {
 
         resolver = new AttributeResolverImpl("failoverTest", definitions, connectors, null);
         resolver.initialize();
-
-        try {
-            resolver.validate();
-            Assert.fail();
-        } catch (ComponentValidationException e) {
-            // OK
-        }
 
     }
 
@@ -540,122 +496,6 @@ public class AttributeResolverImplTest {
         resolver.resolveAttributes(context);
 
         Assert.assertTrue(context.getResolvedIdPAttributes().isEmpty());
-    }
-
-    /** Test a simple, expected-to-be-valid, configuration. */
-    @Test public void simpleValidate() throws Exception {
-        MockDataConnector dc1 = new MockDataConnector("dc1", (Map) null);
-
-        ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1");
-        MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new IdPAttribute("test"));
-        ad1.setDependencies(Sets.newHashSet(dep1));
-
-        MockAttributeDefinition ad2 = new MockAttributeDefinition("ad2", new IdPAttribute("test"));
-
-        ResolverPluginDependency dep2 = new ResolverPluginDependency("ad1");
-        ResolverPluginDependency dep3 = new ResolverPluginDependency("ad2");
-        MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", new IdPAttribute("test"));
-        ad0.setDependencies(Sets.newHashSet(dep2, dep3));
-
-        LazySet<DataConnector> connectors = new LazySet<DataConnector>();
-        connectors.add(dc1);
-
-        LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
-        definitions.add(ad0);
-        definitions.add(ad1);
-        definitions.add(ad2);
-
-        AttributeResolverImpl resolver = new AttributeResolverImpl("foo", definitions, connectors, null);
-        resolver.initialize();
-
-        resolver.validate();
-    }
-
-    /** Test validation when a plugin throws a validation exception. */
-    @Test public void invalidPluginValidate() throws Exception {
-        MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", new IdPAttribute("test"));
-        MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", (IdPAttribute) null);
-        ad1.setInvalid(true);
-
-        LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
-        definitions.add(ad0);
-        definitions.add(ad1);
-
-        AttributeResolverImpl resolver = new AttributeResolverImpl("foo", definitions, null, null);
-        resolver.initialize();
-
-        try {
-            resolver.validate();
-            Assert.fail("resolver with invalid plugin didn't fail validation");
-        } catch (ComponentValidationException e) {
-            // expected this
-        }
-    }
-
-    /** Tests that an invalid data connector fails over to the failover connector if its invalid. */
-    @Test public void dataConnectorFailoverDuringValidate() throws Exception {
-        MockDataConnector dc0 = new MockDataConnector("dc0", (Map) null);
-        MockDataConnector dc1 = new MockDataConnector("dc1", (Map) null);
-        dc1.setInvalid(true);
-        dc1.setFailoverDataConnectorId("dc0");
-
-        LazySet<DataConnector> connectors = new LazySet<DataConnector>();
-        connectors.add(dc0);
-        connectors.add(dc1);
-
-        AttributeResolverImpl resolver = new AttributeResolverImpl("foo", null, connectors, null);
-        resolver.initialize();
-
-        resolver.validate();
-    }
-
-    @Test public void dataConnectorFailovertoInvalid() throws Exception {
-        MockDataConnector dc1 = new MockDataConnector("dc1", (Map) null);
-        dc1.setInvalid(true);
-        dc1.setFailoverDataConnectorId("dc0");
-
-        LazySet<DataConnector> connectors = new LazySet<DataConnector>();
-        connectors.add(dc1);
-
-        AttributeResolverImpl resolver = new AttributeResolverImpl("foo", null, connectors, null);
-        resolver.initialize();
-
-        try {
-            resolver.validate();
-            Assert.fail("resolver with invalid plugin didn't fail validation");
-        } catch (ComponentValidationException e) {
-            // expected this
-        }
-
-        MockDataConnector dc0 = new MockDataConnector("dc0", (Map) null);
-        dc0.setInvalid(true);
-        dc1 = new MockDataConnector("dc1", (Map) null);
-        dc1.setInvalid(true);
-        dc1.setFailoverDataConnectorId("dc0");
-
-        connectors = new LazySet<DataConnector>();
-        connectors.add(dc1);
-        connectors.add(dc0);
-
-        resolver = new AttributeResolverImpl("foo", null, connectors, null);
-        resolver.initialize();
-
-        try {
-            resolver.validate();
-            Assert.fail("resolver with invalid plugin didn't fail validation");
-        } catch (ComponentValidationException e) {
-            // expected this
-        }
-
-        //
-        // try again to provoke a different error path
-        //
-        try {
-            resolver.validate();
-            Assert.fail("resolver with invalid plugin didn't fail validation");
-        } catch (ComponentValidationException e) {
-            // expected this
-        }
     }
 
     /** Test that validation fails when a plugin depends on a non-existent plugin. */

@@ -23,16 +23,15 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Bridging class to go from a {@link PolicyRequirementRule} to a {@link Matcher}.
@@ -41,7 +40,7 @@ import net.shibboleth.utilities.java.support.component.ValidatableComponent;
  * If the rule is true then we return all values, else we return none. If the rule fails we return null.
  */
 public class MatcherFromPolicy extends BaseBridgingClass implements Matcher, IdentifiableComponent,
-        ValidatableComponent, DestructableComponent {
+        DestructableComponent {
 
     /** The rule we are shadowing. */
     private final PolicyRequirementRule rule;
@@ -60,6 +59,7 @@ public class MatcherFromPolicy extends BaseBridgingClass implements Matcher, Ide
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nullable public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull IdPAttribute attribute,
             @Nonnull AttributeFilterContext filterContext) {
 

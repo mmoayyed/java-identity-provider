@@ -35,12 +35,9 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
-import net.shibboleth.utilities.java.support.collection.LazyList;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,31 +83,6 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
      */
     @Override @Nonnull @NonnullElements @Unmodifiable public List<AttributeFilterPolicy> getFilterPolicies() {
         return filterPolicies;
-    }
-
-    /** {@inheritDoc} */
-    @Override public void validate() throws ComponentValidationException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-
-        final LazyList<String> invalidPolicyIds = new LazyList<String>();
-        final List<AttributeFilterPolicy> policies = getFilterPolicies();
-        for (AttributeFilterPolicy policy : policies) {
-            try {
-                log.debug("Attribute filtering engine '{}': checking if policy '{}' is valid", getId(), policy.getId());
-                policy.validate();
-                log.debug("Attribute filtering engine '{}': policy '{}' is valid", getId(), policy.getId());
-            } catch (ComponentValidationException e) {
-                log.warn("Attribute filtering engine '{}': filter policy '{}' is not valid", new Object[] {
-                        this.getId(), policy.getId(), e,});
-                invalidPolicyIds.add(policy.getId());
-            }
-        }
-
-        if (!invalidPolicyIds.isEmpty()) {
-            throw new ComponentValidationException("The following attribute filter policies were invalid: "
-                    + StringSupport.listToStringValue(invalidPolicyIds, ", "));
-        }
     }
 
     /**

@@ -50,9 +50,7 @@ import net.shibboleth.utilities.java.support.collection.LazyList;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -161,45 +159,6 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      */
     @Override @Nonnull @NonnullElements @Unmodifiable public Map<String, DataConnector> getDataConnectors() {
         return dataConnectors;
-    }
-
-    /**
-     * This method checks if each registered data connector and attribute definition is valid (via
-     * {@link ResolverPlugin#validate()} and checks to see if there are any loops in the dependency for all registered
-     * plugins.
-     * 
-     * {@inheritDoc}
-     */
-    @Override public void validate() throws ComponentValidationException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-
-        final LazyList<String> invalidDataConnectors = new LazyList<String>();
-        for (DataConnector plugin : dataConnectors.values()) {
-            log.debug("{} checking if data connector {} is valid", logPrefix, plugin.getId());
-            if (!validateDataConnector(plugin, invalidDataConnectors)) {
-                invalidDataConnectors.add(plugin.getId());
-            }
-        }
-
-        final LazyList<String> invalidAttributeDefinitions = new LazyList<String>();
-        for (AttributeDefinition plugin : attributeDefinitions.values()) {
-            log.debug("{} checking if attribute definition {} is valid", logPrefix, plugin.getId());
-            try {
-                plugin.validate();
-                log.debug("{} attribute definition {} is valid", logPrefix, plugin.getId());
-            } catch (ComponentValidationException e) {
-                log.warn("{} attribute definition {} is not valid", new Object[] {logPrefix, plugin.getId(), e,});
-                invalidAttributeDefinitions.add(plugin.getId());
-            }
-        }
-
-        if (!invalidDataConnectors.isEmpty() || !invalidAttributeDefinitions.isEmpty()) {
-            throw new ComponentValidationException(logPrefix + " the following attribute definitions were invalid ["
-                    + StringSupport.listToStringValue(invalidAttributeDefinitions, ", ")
-                    + "] and the following data connectors were invalid ["
-                    + StringSupport.listToStringValue(invalidDataConnectors, ", ") + "]");
-        }
     }
 
     /** {@inheritDoc} */
@@ -462,60 +421,6 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         }
 
         resolutionContext.setResolvedIdPAttributes(resolvedAttributes);
-    }
-
-    /**
-     * Validates the given data connector.
-     * 
-     * @param connector connector to valid
-     * @param invalidDataConnectors data connectors which have already been validated
-     * 
-     * @return whether the given data connector is valid
-     */
-    protected boolean validateDataConnector(@Nonnull DataConnector connector,
-            @Nonnull LazyList<String> invalidDataConnectors) {
-        Constraint.isNotNull(connector, "To-be-validated connector can no be null");
-        Constraint.isNotNull(invalidDataConnectors, "List of invalid data connectors cannot be null");
-
-        final String failoverId = connector.getFailoverDataConnectorId();
-        if (null != failoverId) {
-            if (!dataConnectors.containsKey(failoverId)) {
-                log.warn("{} failover data connector {} for {} cannot be found", new Object[] {logPrefix, failoverId,
-                        connector.getId(),});
-                return false;
-            }
-        }
-
-        boolean returnValue;
-        try {
-            connector.validate();
-            log.debug("{} data connector {} is valid", logPrefix, connector.getId());
-            returnValue = true;
-        } catch (ComponentValidationException e) {
-            if (null != failoverId) {
-                if (invalidDataConnectors.contains(failoverId)) {
-                    log.warn("{} data connector {} is not valid for the following reason and"
-                            + " failover data connector {} has already been found to be inavlid", new Object[] {
-                            logPrefix, connector.getId(), failoverId, e,});
-                    invalidDataConnectors.add(connector.getId());
-                    returnValue = false;
-                } else {
-                    log.warn("{} data connector {} is not valid for the following reason {},"
-                            + " checking if failover data connector {} is valid",
-                            new Object[] {logPrefix, connector.getId(), e, failoverId,});
-                    returnValue = validateDataConnector(dataConnectors.get(failoverId), invalidDataConnectors);
-                    if (!returnValue) {
-                        invalidDataConnectors.add(failoverId);
-                    }
-                }
-            } else {
-
-                log.warn("{} data connector {} is not valid and has not failover connector", new Object[] {logPrefix,
-                        connector.getId(), e,});
-                returnValue = false;
-            }
-        }
-        return returnValue;
     }
 
     /** {@inheritDoc} */

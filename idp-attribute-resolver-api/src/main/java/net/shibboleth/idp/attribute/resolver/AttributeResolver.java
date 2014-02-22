@@ -28,7 +28,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 /**
  * A component that resolves the attributes for a particular subject.
@@ -40,8 +39,7 @@ import net.shibboleth.utilities.java.support.component.ValidatableComponent;
  * {@link net.shibboleth.utilities.java.support.resolver.Criterion}s.
  * */
 @ThreadSafe
-public interface AttributeResolver extends DestructableComponent, IdentifiableComponent, ValidatableComponent,
-        UnmodifiableComponent {
+public interface AttributeResolver extends DestructableComponent, IdentifiableComponent, UnmodifiableComponent {
 
     /**
      * Gets the collection of attribute definitions for this resolver.

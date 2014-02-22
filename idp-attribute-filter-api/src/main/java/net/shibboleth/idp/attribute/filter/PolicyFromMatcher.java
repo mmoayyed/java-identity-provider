@@ -26,7 +26,6 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * If any value of any attribute matches then this is true, otherwise false.
  */
 public class PolicyFromMatcher extends BaseBridgingClass implements PolicyRequirementRule,
-        IdentifiableComponent, ValidatableComponent, DestructableComponent {
+        IdentifiableComponent, DestructableComponent {
 
     /** The rule we are shadowing. */
     private final Matcher matcher;
@@ -56,6 +55,7 @@ public class PolicyFromMatcher extends BaseBridgingClass implements PolicyRequir
     }
 
     /** {@inheritDoc} */
+    @Override
     public Tristate matches(@Nonnull AttributeFilterContext context) {
         
         log.info("{} Applying matcher supplied as policy to all values of all attributes", getLogPrefix());

@@ -28,7 +28,6 @@ import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
@@ -155,33 +154,6 @@ public class AttributeFilterPolicyTest {
         policy.initialize();
         Assert.assertEquals(policy.getAttributeRules().size(), 1);
         Assert.assertTrue(policy.getAttributeRules().contains(valuePolicy));
-    }
-
-    @Test public void testValidate() throws ComponentInitializationException, ComponentValidationException {
-        AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, policyMatcher, Arrays.asList(valuePolicy));
-
-        boolean thrown = false;
-        try {
-            policy.validate();
-        } catch (UninitializedComponentException e) {
-            thrown = true;
-        }
-        Assert.assertTrue(thrown);
-
-        policy.initialize();
-        policy.validate();
-        Assert.assertTrue(policyMatcher.getValidated());
-        Assert.assertTrue(valueMatcher.getValidated());
-
-        thrown = false;
-        policyMatcher.setFailValidate(true);
-        try {
-            policy.validate();
-        } catch (ComponentValidationException e) {
-            thrown = true;
-        }
-        Assert.assertTrue(thrown);
-
     }
 
     private AttributeFilterContext apply(Tristate state) throws AttributeFilterException, ComponentInitializationException {

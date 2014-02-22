@@ -32,7 +32,6 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;
@@ -227,17 +226,6 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
         if (mappingStrategy == null) {
             throw new ComponentInitializationException("Data connector '" + getId()
                     + "': no mapping strategy was configured");
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override protected void doValidate() throws ComponentValidationException {
-        try {
-            connectorValidator.validate();
-        } catch (ValidationException e) {
-            log.error("Data connector '{}': invalid connector configuration", getId(), e);
-            throw new ComponentValidationException("Data connector '" + getId() + "': invalid connector configuration",
-                    e);
         }
     }
 }

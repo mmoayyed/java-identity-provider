@@ -30,9 +30,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
@@ -49,10 +47,11 @@ import org.springframework.beans.factory.BeanInitializationException;
  * {@link net.shibboleth.utilities.java.support.component.DestructableComponent}
  * 
  * This class does <em>not</em> deal with any synchronization. That is left to implementing classes.
+ * 
  * @param <T> The sort of service this implements.
  */
 public abstract class AbstractReloadableService<T> extends AbstractDestructableIdentifiableInitializableComponent
-        implements ValidatableComponent, ReloadableService<T>, UnmodifiableComponent {
+        implements ReloadableService<T>, UnmodifiableComponent {
 
     /** Class logger. */
     private Logger log = LoggerFactory.getLogger(AbstractReloadableService.class);
@@ -131,22 +130,22 @@ public abstract class AbstractReloadableService<T> extends AbstractDestructableI
     }
 
     /** {@inheritDoc} */
-    @Nullable public DateTime getLastReloadAttemptInstant() {
+    @Override @Nullable public DateTime getLastReloadAttemptInstant() {
         return lastReloadInstant;
     }
 
     /** {@inheritDoc} */
-    @Nullable public DateTime getLastSuccessfulReloadInstant() {
+    @Override @Nullable public DateTime getLastSuccessfulReloadInstant() {
         return lastSuccessfulReleaseIntant;
     }
 
     /** {@inheritDoc} */
-    @Nullable public Throwable getReloadFailureCause() {
+    @Override @Nullable public Throwable getReloadFailureCause() {
         return reloadFailureCause;
     }
 
     /** {@inheritDoc}. */
-    public void setId(String id) {
+    @Override public void setId(String id) {
         super.setId(id);
     }
 
@@ -170,7 +169,7 @@ public abstract class AbstractReloadableService<T> extends AbstractDestructableI
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         log.info("{} Performing initial load", getLogPrefix());
@@ -200,14 +199,7 @@ public abstract class AbstractReloadableService<T> extends AbstractDestructableI
     }
 
     /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
-        if (reloadCheckDelay > 0 && reloadTaskTimer == null) {
-            throw new ComponentValidationException(getLogPrefix() + " Reload task timer cannot be null");
-        }
-    }
-
-    /** {@inheritDoc} */
-    public final void start() {
+    @Override public final void start() {
         if (isInitialized()) {
             return;
         }
@@ -222,7 +214,7 @@ public abstract class AbstractReloadableService<T> extends AbstractDestructableI
      * {@inheritDoc}
      * 
      */
-    public final void reload() {
+    @Override public final void reload() {
         final PerformanceEvent perfEvent = new PerformanceEvent(getId() + ".reload");
         perfEvent.startTime();
 
@@ -244,7 +236,7 @@ public abstract class AbstractReloadableService<T> extends AbstractDestructableI
     }
 
     /** {@inheritDoc} */
-    public final void stop() {
+    @Override public final void stop() {
         log.info("{} Starting shutdown", getLogPrefix());
         destroy();
         log.info("{} Completing shutdown", getLogPrefix());
@@ -254,7 +246,7 @@ public abstract class AbstractReloadableService<T> extends AbstractDestructableI
     }
 
     /** {@inheritDoc}. */
-    public boolean isRunning() {
+    @Override public boolean isRunning() {
         return isInitialized() && !isDestroyed();
     }
 
@@ -306,7 +298,7 @@ public abstract class AbstractReloadableService<T> extends AbstractDestructableI
     protected class ServiceReloadTask extends TimerTask {
 
         /** {@inheritDoc} */
-        public void run() {
+        @Override public void run() {
 
             if (shouldReload()) {
                 reload();

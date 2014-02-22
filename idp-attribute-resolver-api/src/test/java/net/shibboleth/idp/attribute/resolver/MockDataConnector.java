@@ -27,24 +27,16 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 /** A data connector that just returns a static collection of attributes. */
 @ThreadSafe
-public class MockDataConnector extends AbstractDataConnector implements ValidatableComponent {
+public class MockDataConnector extends AbstractDataConnector {
 
-    /** Whether this connector fails validation. */
-    private boolean invalid;
-    
     /** Number of times {@link #destroy()} was called. */
     private int destroyCount;
 
     /** Number of times {@link #initialize()} was called. */
     private int initializeCount;
-
-    /** Number of times {@link #validate()} was called. */
-    private int validateCount;
 
     /** Static collection of values returned by this connector. */
     private Map<String, IdPAttribute> values;
@@ -71,17 +63,7 @@ public class MockDataConnector extends AbstractDataConnector implements Validata
      */
     public MockDataConnector(final String id, final ResolutionException exception) {
         setId(id);
-        invalid = false;
         resolutionException = exception;
-    }
-
-    /**
-     * Sets whether this data connector is considered invalid.
-     * 
-     * @param isInvalid whether this data connector is considered invalid
-     */
-    public void setInvalid(boolean isInvalid) {
-        invalid = isInvalid;
     }
 
     /** {@inheritDoc} */
@@ -96,15 +78,6 @@ public class MockDataConnector extends AbstractDataConnector implements Validata
         return values;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void doValidate() throws ComponentValidationException {
-        if (invalid) {
-            throw new ComponentValidationException();
-        }
-        validateCount += 1;
-    }
-    
     /** {@inheritDoc} */
     @Override
     public void doDestroy() {
@@ -144,13 +117,4 @@ public class MockDataConnector extends AbstractDataConnector implements Validata
         return initializeCount;
     }
 
-    /**
-     * Gets the number of times {@link #validate()} was called.
-     * 
-     * @return number of times {@link #validate()} was called
-     */
-    public int getValidateCount() {
-        return validateCount;
-    }
-    
 }

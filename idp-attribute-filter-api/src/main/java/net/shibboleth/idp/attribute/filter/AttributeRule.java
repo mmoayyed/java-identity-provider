@@ -32,9 +32,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -52,7 +50,7 @@ import org.slf4j.LoggerFactory;
  */
 @ThreadSafe
 public class AttributeRule extends AbstractDestructableIdentifiableInitializableComponent implements
-        ValidatableComponent, UnmodifiableComponent {
+        UnmodifiableComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeRule.class);
@@ -152,13 +150,6 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         isDenyRule = isDeny;
-    }
-
-    /** {@inheritDoc} */
-    @Override public void validate() throws ComponentValidationException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        ComponentSupport.validate(matcher);
     }
 
     /**

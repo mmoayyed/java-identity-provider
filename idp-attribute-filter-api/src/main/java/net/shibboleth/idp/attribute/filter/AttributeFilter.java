@@ -28,12 +28,10 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 /** Interface that filters out attributes and values based upon loaded policies. */
 @ThreadSafe
-public interface AttributeFilter extends 
-        ValidatableComponent, DestructableComponent, UnmodifiableComponent, IdentifiableComponent {
+public interface AttributeFilter extends DestructableComponent, UnmodifiableComponent, IdentifiableComponent {
 
     /**
      * Gets the immutable collection of filter policies.

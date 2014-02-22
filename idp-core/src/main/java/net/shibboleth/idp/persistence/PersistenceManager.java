@@ -18,14 +18,13 @@
 package net.shibboleth.idp.persistence;
 
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 /**
  * Interface describing behavior for IdP components that persist and manage a particular type of stored data.
  * 
  * @param <ItemType> type of item stored and managed
  */
-public interface PersistenceManager<ItemType> extends IdentifiableComponent, ValidatableComponent {
+public interface PersistenceManager<ItemType> extends IdentifiableComponent {
 
     /**
      * Determines if an item with the given ID is exists within the persistence store.

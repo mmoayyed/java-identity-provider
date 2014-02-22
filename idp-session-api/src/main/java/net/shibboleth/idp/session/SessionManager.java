@@ -24,14 +24,13 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 /**
  * Component that manages sessions between the IdP and client devices.
  */
 @ThreadSafe
 public interface SessionManager extends
-    InitializableComponent, DestructableComponent, IdentifiableComponent, ValidatableComponent {
+    InitializableComponent, DestructableComponent, IdentifiableComponent {
 
     /**
      * Create and return a new {@link IdPSession} object for a subject.

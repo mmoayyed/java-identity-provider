@@ -28,7 +28,6 @@ import net.shibboleth.idp.attribute.filter.context.AttributeFilterWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
-import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
@@ -192,7 +191,7 @@ public class AttributeValueFilterPolicyTest {
 
     }
 
-    @Test public void testValidateApply() throws ComponentInitializationException, ComponentValidationException { 
+    @Test public void testApply() throws ComponentInitializationException, ComponentValidationException { 
         MockMatcher matcher = new MockMatcher();
 
         final StringAttributeValue aStringAttributeValue = new StringAttributeValue("a");
@@ -214,29 +213,9 @@ public class AttributeValueFilterPolicyTest {
         policy.setMatcher(matcher);
         policy.setIsDenyRule(false);
         policy.setAttributeId(ATTR_NAME);
-
-        boolean thrown = false;
-        try {
-            policy.validate();
-        } catch (UninitializedComponentException e) {
-            thrown = true;
-        }
-        Assert.assertTrue(thrown, "Validate before init");
-
-        thrown = false;
-        try {
-            policy.apply(new IdPAttribute(ATTR_NAME), new AttributeFilterContext());
-        } catch (UninitializedComponentException e) {
-            thrown = true;
-        }
-        Assert.assertTrue(thrown, "Validate before init");
-
         policy.initialize();
 
-        policy.validate();
-        Assert.assertTrue(matcher.getValidated(), "Validated");
-
-        thrown = false;
+        boolean thrown = false;
         try {
             policy.apply(null, new AttributeFilterContext());
         } catch (ConstraintViolationException e) {
@@ -284,14 +263,6 @@ public class AttributeValueFilterPolicyTest {
         Assert.assertNull(workCtx.getPermittedIdPAttributeValues().get(ATTR_NAME));
 
         policy.destroy();
-
-        thrown = false;
-        try {
-            policy.validate();
-        } catch (DestroyedComponentException e) {
-            thrown = true;
-        }
-        Assert.assertTrue(thrown, "validate after destroy");
 
         thrown = false;
         try {

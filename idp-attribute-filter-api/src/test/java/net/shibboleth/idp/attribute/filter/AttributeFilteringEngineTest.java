@@ -25,16 +25,10 @@ import java.util.Set;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
-import net.shibboleth.idp.attribute.filter.AttributeFilter;
-import net.shibboleth.idp.attribute.filter.AttributeRule;
-import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
-import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
@@ -368,42 +362,4 @@ public class AttributeFilteringEngineTest {
         }
     }
 
-    @Test public void testValidate() throws ComponentInitializationException, ComponentValidationException {
-        MockMatcher matcher = new MockMatcher();
-        AttributeRule filterPolicy = new AttributeRule();
-        filterPolicy.setId("filterPolicy");
-        filterPolicy.setAttributeId("attribute1");
-        filterPolicy.setMatcher(matcher);
-        filterPolicy.setIsDenyRule(false);
-
-        MockPolicyRequirementRule policyRule = new MockPolicyRequirementRule();
-        AttributeFilterPolicy policy = new AttributeFilterPolicy("Id", policyRule, Arrays.asList(filterPolicy));
-
-        AttributeFilter engine = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
-        Assert.assertFalse(policyRule.getValidated());
-        Assert.assertFalse(matcher.getValidated());
-
-        try {
-            engine.validate();
-            Assert.fail();
-        } catch (UninitializedComponentException e) {
-            // OK
-        }
-        Assert.assertFalse(policyRule.getValidated());
-        Assert.assertFalse(matcher.getValidated());
-
-        ComponentSupport.initialize(engine);
-        engine.validate();
-        Assert.assertTrue(policyRule.getValidated());
-        Assert.assertTrue(matcher.getValidated());
-
-        policyRule.setFailValidate(true);
-        try {
-            engine.validate();
-            Assert.fail();
-        } catch (ComponentValidationException e) {
-            // OK
-        }
-
-    }
 }

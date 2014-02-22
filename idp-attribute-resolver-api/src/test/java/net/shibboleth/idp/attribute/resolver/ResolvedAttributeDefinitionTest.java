@@ -118,6 +118,5 @@ public class ResolvedAttributeDefinitionTest {
         resolvedAttributeDefinition.setPropagateResolutionExceptions(true);
         Assert.assertFalse(resolvedAttributeDefinition.isPropagateResolutionExceptions());
 
-        resolvedAttributeDefinition.doValidate();
     }
 }
