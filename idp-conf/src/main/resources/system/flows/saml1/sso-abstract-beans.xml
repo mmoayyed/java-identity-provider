@@ -89,9 +89,12 @@
         </property>
     </bean>
 
-    <!-- This is used with the "encoder selected via lookup component" style. -->
-    <bean id="EncodeMessage" class="idp.EncodeSAMLMessageFromBindingURI" scope="prototype"
-        p:bindings-ref="shibboleth.OutgoingSAML1SSOBindings" />
+    <bean id="EncodeMessage" class="org.opensaml.profile.action.impl.EncodeMessage" scope="prototype">
+        <property name="messageEncoderFactory">
+            <bean class="net.shibboleth.idp.saml.impl.profile.SpringAwareMessageEncoderFactory"
+                p:bindings-ref="shibboleth.OutgoingSAML1SSOBindings" />
+        </property>
+    </bean>
 
     <bean
         id="InitializeProfileRequestContext"
