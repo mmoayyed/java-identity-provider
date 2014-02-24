@@ -101,10 +101,10 @@ public class AbstractSAMLProfileConfigurationTest {
 
     @Test public void testIncludeNotBefore() {
         MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
-        Assert.assertFalse(config.includeConditionsNotBefore());
-
-        config.setIncludeConditionsNotBefore(true);
         Assert.assertTrue(config.includeConditionsNotBefore());
+
+        config.setIncludeConditionsNotBefore(false);
+        Assert.assertFalse(config.includeConditionsNotBefore());
     }
     
     @Test public void testAdditionalAudiencesForAssertion() {
