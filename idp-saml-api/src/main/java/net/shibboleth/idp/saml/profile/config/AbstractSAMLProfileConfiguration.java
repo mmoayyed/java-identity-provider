@@ -73,6 +73,7 @@ public abstract class AbstractSAMLProfileConfiguration
     public AbstractSAMLProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
         
+        includeConditionsNotBefore = true;
         signedRequestsPredicate = Predicates.alwaysFalse();
         signResponsesPredicate = Predicates.alwaysTrue();
         signAssertionsPredicate = Predicates.alwaysFalse();
