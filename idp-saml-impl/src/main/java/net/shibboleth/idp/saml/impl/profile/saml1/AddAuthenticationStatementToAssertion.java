@@ -36,7 +36,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
 
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
-import net.shibboleth.idp.saml.profile.saml1.SAML1ActionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -50,6 +49,7 @@ import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.AuthenticationStatement;
 import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.saml.saml1.core.SubjectLocality;
+import org.opensaml.saml.saml1.profile.SAML1ActionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -227,7 +227,9 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
      */
     @Nonnull private Assertion getStatementAssertion() {
         if (statementInOwnAssertion || response.getAssertions().isEmpty()) {
-            return SAML1ActionSupport.addAssertionToResponse(this, relyingPartyCtx, response);
+            return SAML1ActionSupport.addAssertionToResponse(this, response,
+                    relyingPartyCtx.getProfileConfig().getSecurityConfiguration().getIdGenerator(),
+                    relyingPartyCtx.getConfiguration().getResponderId());
         } else {
             return response.getAssertions().get(0);
         }

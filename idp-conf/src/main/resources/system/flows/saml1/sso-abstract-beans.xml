@@ -253,7 +253,7 @@
 
     <bean
         id="AddNotBeforeConditionToAssertions"
-        class="net.shibboleth.idp.saml.impl.profile.saml1.AddNotBeforeConditionToAssertions"
+        class="org.opensaml.saml.saml1.profile.impl.AddNotBeforeConditionToAssertions"
         scope="prototype" />
 
     <bean
