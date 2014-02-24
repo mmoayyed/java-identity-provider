@@ -55,7 +55,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
      * @return ID of the {@link AbstractDataConnector} whose values will be used in the event that this data connector
      *         experiences an error
      */
-    @Nullable public String getFailoverDataConnectorId() {
+    @Override @Nullable public String getFailoverDataConnectorId() {
         return failoverDataConnectorId;
     }
 
@@ -79,8 +79,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
      * This method delegates to {@link #doDataConnectorResolve(AttributeResolutionContext)}. It serves as a future
      * extension point for introducing new common behavior.
      */
-    @Override
-    @Nullable public final Map<String, IdPAttribute> doResolve(
+    @Override @Nullable public final Map<String, IdPAttribute> doResolve(
             @Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
         Map<String, IdPAttribute> result = doDataConnectorResolve(resolutionContext, workContext);
@@ -101,8 +100,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
 
         super.doInitialize();
 

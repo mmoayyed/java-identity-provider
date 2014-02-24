@@ -226,11 +226,13 @@ public class AbstractAttributeDefinitionTest {
         Assert.assertFalse(encoder.isInitialized());
         Assert.assertFalse(encoder.isDestroyed());
 
+        encoder.initialize();
         definition.initialize();
         Assert.assertTrue(encoder.isInitialized());
         Assert.assertFalse(encoder.isDestroyed());
 
-                definition.destroy();
+        definition.destroy();
+        encoder.destroy();
         Assert.assertTrue(encoder.isInitialized());
         Assert.assertTrue(encoder.isDestroyed());
         

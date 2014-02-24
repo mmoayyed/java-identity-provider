@@ -184,7 +184,6 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
 
     /** {@inheritDoc} */
     @Override protected void doDestroy() {
-        ComponentSupport.destroy(activationCriteria);
         activationCriteria = Predicates.alwaysFalse();
         dependencies = Collections.emptySet();
 
@@ -199,8 +198,6 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
         // child class initialization.
         HashSet<ResolverPluginDependency> checkedDeps = new HashSet<>(dependencies);
         dependencies = ImmutableSet.copyOf(checkedDeps);
-
-        ComponentSupport.initialize(activationCriteria);
     }
 
     /** {@inheritDoc} */

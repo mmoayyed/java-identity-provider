@@ -66,52 +66,44 @@ public final class ResolvedAttributeDefinition extends AbstractAttributeDefiniti
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable protected IdPAttribute doAttributeDefinitionResolve(
+    @Override @Nullable protected IdPAttribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
         return resolvedAttribute;
     }
 
     /** {@inheritDoc} */
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         return resolvedDefinition.equals(obj);
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull @NonnullElements public Set<AttributeEncoder<?>> getAttributeEncoders() {
+    @Override @Nonnull @NonnullElements public Set<AttributeEncoder<?>> getAttributeEncoders() {
         return resolvedDefinition.getAttributeEncoders();
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull @NonnullElements public Set<ResolverPluginDependency> getDependencies() {
+    @Override @Nonnull @NonnullElements public Set<ResolverPluginDependency> getDependencies() {
         return resolvedDefinition.getDependencies();
     }
-    
+
     /** {@inheritDoc} */
-    @Override
-    @Nonnull @NonnullElements public Map<Locale, String> getDisplayDescriptions() {
+    @Override @Nonnull @NonnullElements public Map<Locale, String> getDisplayDescriptions() {
         return resolvedDefinition.getDisplayDescriptions();
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull @NonnullElements public Map<Locale, String> getDisplayNames() {
+    @Override @Nonnull @NonnullElements public Map<Locale, String> getDisplayNames() {
         return resolvedDefinition.getDisplayNames();
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull public Predicate<AttributeResolutionContext> getActivationCriteria() {
+    @Override @Nonnull public Predicate<AttributeResolutionContext> getActivationCriteria() {
         return Predicates.alwaysTrue();
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull public String getId() {
+    @Override @Nonnull public String getId() {
         return resolvedDefinition.getId();
     }
 
@@ -125,50 +117,42 @@ public final class ResolvedAttributeDefinition extends AbstractAttributeDefiniti
     }
 
     /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         return resolvedDefinition.hashCode();
     }
 
     /** {@inheritDoc} */
-    @Override
-    public boolean isDependencyOnly() {
+    @Override public boolean isDependencyOnly() {
         return resolvedDefinition.isDependencyOnly();
     }
 
     /** {@inheritDoc} */
-    @Override
-    public boolean isPropagateResolutionExceptions() {
+    @Override public boolean isPropagateResolutionExceptions() {
         return resolvedDefinition.isPropagateResolutionExceptions();
     }
 
     /** {@inheritDoc} */
-    @Override
-    public void setDependencyOnly(boolean isDependencyOnly) {
+    @Override public void setDependencyOnly(boolean isDependencyOnly) {
         return;
     }
 
     /** {@inheritDoc} */
-    @Override
-    public void setDisplayDescriptions(Map<Locale, String> descriptions) {
+    @Override public void setDisplayDescriptions(Map<Locale, String> descriptions) {
         return;
     }
 
     /** {@inheritDoc} */
-    @Override
-    public void setDisplayNames(Map<Locale, String> names) {
+    @Override public void setDisplayNames(Map<Locale, String> names) {
         return;
     }
 
     /** {@inheritDoc} */
-    @Override
-    public void setPropagateResolutionExceptions(boolean propagate) {
+    @Override public void setPropagateResolutionExceptions(boolean propagate) {
         return;
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull public String toString() {
+    @Override @Nonnull public String toString() {
         return resolvedDefinition.toString();
     }
 
@@ -182,8 +166,7 @@ public final class ResolvedAttributeDefinition extends AbstractAttributeDefiniti
     }
 
     /** {@inheritDoc} */
-    @Override
-    public boolean isInitialized() {
+    @Override public boolean isInitialized() {
         return true;
     }
 

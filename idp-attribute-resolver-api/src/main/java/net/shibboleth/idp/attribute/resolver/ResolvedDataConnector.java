@@ -60,74 +60,63 @@ public final class ResolvedDataConnector extends AbstractDataConnector {
         resolvedConnector = Constraint.isNotNull(connector, "Resolved data connector cannot be null");
         resolvedAttributes = attributes;
         Constraint.isTrue(connector.isInitialized(), "Provided connector should be initialized");
-        Constraint.isFalse(connector.isDestroyed(), "Provided connector must not be destroyed");    
-        }
+        Constraint.isFalse(connector.isDestroyed(), "Provided connector must not be destroyed");
+    }
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(
+    @Override @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(
             @Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
         return resolvedAttributes;
     }
 
     /** {@inheritDoc} */
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         return resolvedConnector.equals(obj);
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull @NonnullElements public Set<ResolverPluginDependency> getDependencies() {
+    @Override @Nonnull @NonnullElements public Set<ResolverPluginDependency> getDependencies() {
         return resolvedConnector.getDependencies();
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull public Predicate<AttributeResolutionContext> getActivationCriteria() {
+    @Override @Nonnull public Predicate<AttributeResolutionContext> getActivationCriteria() {
         return Predicates.alwaysTrue();
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable public String getFailoverDataConnectorId() {
+    @Override @Nullable public String getFailoverDataConnectorId() {
         return null;
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull public String getId() {
+    @Override @Nonnull public String getId() {
         return resolvedConnector.getId();
     }
 
     /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         return resolvedConnector.hashCode();
     }
 
     /** {@inheritDoc} */
-    @Override
-    public boolean isPropagateResolutionExceptions() {
+    @Override public boolean isPropagateResolutionExceptions() {
         return resolvedConnector.isPropagateResolutionExceptions();
     }
 
     /** {@inheritDoc} */
-    @Override
-    public void setFailoverDataConnectorId(String id) {
+    @Override public void setFailoverDataConnectorId(String id) {
         return;
     }
 
     /** {@inheritDoc} */
-    @Override
-    public void setPropagateResolutionExceptions(boolean propagate) {
+    @Override public void setPropagateResolutionExceptions(boolean propagate) {
         return;
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull public String toString() {
+    @Override @Nonnull public String toString() {
         return resolvedConnector.toString();
     }
 
@@ -150,9 +139,8 @@ public final class ResolvedDataConnector extends AbstractDataConnector {
     }
 
     /** {@inheritDoc} */
-    @Override
-    public boolean isInitialized() {
+    @Override public boolean isInitialized() {
         return true;
     }
-    
+
 }

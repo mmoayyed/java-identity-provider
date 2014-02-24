@@ -207,20 +207,6 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
 
     /** {@inheritDoc} */
     @Override
-    protected void doDestroy() {
-        for (AttributeEncoder encoder : encoders) {
-            ComponentSupport.destroy(encoder);
-        }
-
-        encoders = Collections.emptySet();
-        displayDescriptions = Collections.emptyMap();
-        displayNames = Collections.emptyMap();
-
-        super.doDestroy();
-    }
-
-    /** {@inheritDoc} */
-    @Override
     protected void doInitialize() throws ComponentInitializationException {
 
         // Set up the dependencies first. Then the initialize in the parent
@@ -234,10 +220,6 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
 
         // The Id is now definitive. Just in case it was used prior to that, reset the getPrefixCache
         logPrefix = null;
-
-        for (AttributeEncoder encoder : encoders) {
-            ComponentSupport.initialize(encoder);
-        }
     }
 
     /**
