@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+	default-init-method="initialize" default-destroy-method="destroy">
+
+	<bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
+
+	<bean id="IdentifiedBean"
+		class="net.shibboleth.idp.spring.BeanPostProcessorTest$Identified"
+		scope="prototype" />
+
+	<bean id="IdentifiableBean"
+		class="net.shibboleth.idp.spring.BeanPostProcessorTest$Identifiable"
+		scope="prototype" />
+
+
+	<bean id="NonDefaultIdentifiedBean"
+		class="net.shibboleth.idp.spring.BeanPostProcessorTest$Identified"
+		scope="prototype" p:id="NameForAnIdentifiedBean" />
+
+	<bean id="NonDefaultIdentifiableBean"
+		class="net.shibboleth.idp.spring.BeanPostProcessorTest$Identifiable"
+		scope="prototype" p:id="NameForAnIdentifiableBean" />
+
+	<bean id="TautologousName"
+		class="net.shibboleth.idp.spring.BeanPostProcessorTest$Identifiable"
+		scope="prototype" p:id="TautologousName" />
+
+</beans>

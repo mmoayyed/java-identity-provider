@@ -39,7 +39,8 @@ public class IdentifiableBeanPostProcessor implements BeanPostProcessor {
             if (component.getId() == null) {
                 component.setId(beanName);
             } else if (component.getId().equals(beanName)) {
-                log.error("Bean Named {} is initialized to the bean name.  This is redundant", beanName);
+                log.error("Bean Named {} has the component identifier set to be the bean name.  This is redundant",
+                        beanName);
             }
         }
         return bean;

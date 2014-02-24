@@ -6,6 +6,7 @@
     <logger name="net.shibboleth.idp.predicate" level="DEBUG"/>
     <logger name="net.shibboleth.idp.service" level="TRACE"/>
     <logger name="net.shibboleth.idp.spring" level="DEBUG"/>
+        <logger name="org.springframework" level="DEBUG"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
