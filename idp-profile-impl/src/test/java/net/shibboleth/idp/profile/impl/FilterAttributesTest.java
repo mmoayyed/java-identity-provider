@@ -138,6 +138,9 @@ public class FilterAttributesTest {
                         Lists.newArrayList(attribute1Policy));
 
         final AttributeFilterImpl engine = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        policy.initialize();
+        attribute1Policy.initialize();
+        attribute1Matcher.initialize();
         engine.initialize();
 
         prc.getSubcontext(SubjectContext.class, true);
@@ -195,6 +198,9 @@ public class FilterAttributesTest {
                         Lists.newArrayList(attribute1Policy));
 
         final AttributeFilterImpl engine = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        policy.initialize();
+        attribute1Policy.initialize();
+        attribute1Matcher.initialize();
         engine.initialize();
 
         prc.getSubcontext(SubjectContext.class, true);
@@ -252,6 +258,9 @@ public class FilterAttributesTest {
                         Lists.newArrayList(attribute1Policy));
 
         final AttributeFilterImpl engine = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        policy.initialize();
+        attribute1Policy.initialize();
+        attribute1Matcher.initialize();
         engine.initialize();
 
         prc.getSubcontext(SubjectContext.class, true);
@@ -308,6 +317,7 @@ public class FilterAttributesTest {
         }
 
         /** Always throws exception. */
+        @Override
         public IdPAttribute clone() throws CloneNotSupportedException {
             throw new CloneNotSupportedException();
         }
@@ -323,6 +333,7 @@ public class FilterAttributesTest {
         }
 
         /** {@inheritDoc} */
+        @Override
         @Nullable public ServiceableComponent<AttributeFilter> getServiceableComponent() {
             if (null == component) {
                 return null;
@@ -332,6 +343,7 @@ public class FilterAttributesTest {
         }
 
         /** {@inheritDoc} */
+        @Override
         protected boolean shouldReload() {
             return false;
         }

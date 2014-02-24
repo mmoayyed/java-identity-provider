@@ -53,6 +53,7 @@ public class AttributeValueFilterPolicyTest {
         policy.setId("id");
         policy.setAttributeId("foo");
         policy.initialize();
+        matcher.initialize();
 
         Assert.assertTrue(policy.isInitialized(), "Initialized");
         Assert.assertTrue(matcher.isInitialized(), "Initialized");
@@ -60,6 +61,7 @@ public class AttributeValueFilterPolicyTest {
         Assert.assertFalse(matcher.isDestroyed(), "Initialized - not destroyed");
 
         policy.destroy();
+        matcher.destroy();
         Assert.assertTrue(policy.isDestroyed(), "Destroyed");
         Assert.assertTrue(matcher.isDestroyed(), "Destroyed");
 

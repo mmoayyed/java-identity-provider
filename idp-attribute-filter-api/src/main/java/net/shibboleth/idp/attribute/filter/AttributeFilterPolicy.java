@@ -175,24 +175,7 @@ public class AttributeFilterPolicy extends AbstractIdentifiedInitializableCompon
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-
-        ComponentSupport.initialize(rule);
-
-        for (AttributeRule valuePolicy : valuePolicies) {
-            valuePolicy.initialize();
-        }
         logPrefix = null;
-    }
-
-    /** {@inheritDoc} */
-    @Override protected void doDestroy() {
-        ComponentSupport.destroy(rule);
-
-        for (AttributeRule valuePolicy : valuePolicies) {
-            valuePolicy.destroy();
-        }
-
-        super.doDestroy();
     }
 
     /**

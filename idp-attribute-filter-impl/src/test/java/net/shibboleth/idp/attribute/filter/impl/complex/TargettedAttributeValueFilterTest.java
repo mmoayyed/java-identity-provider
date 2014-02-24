@@ -95,6 +95,8 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
 
         final AttributeFilter engine = new AttributeFilterImpl("engine", Collections.singleton(policy));
 
+        ComponentSupport.initialize(attributeValueFilterPolicy);
+        ComponentSupport.initialize(policy);
         ComponentSupport.initialize(engine);
 
         AttributeFilterContext context = new AttributeFilterContext();
@@ -147,6 +149,8 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
 
         final AttributeFilter engine = new AttributeFilterImpl("engine", Collections.singleton(policy));
 
+        ComponentSupport.initialize(attributeValueFilterPolicy);
+        ComponentSupport.initialize(policy);
         ComponentSupport.initialize(engine);
 
         AttributeFilterContext context = new AttributeFilterContext();

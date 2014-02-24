@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * Bridging class to go from a {@link Matcher} to a {@link PolicyRequirementRule}.
  * <p>
  * 
- * If any value of the supplied attribute matches then this is true, otherwise false.
+ * If the value of the supplied attribute matches then this is true, otherwise false.
  */
 public class PolicyFromMatcherId extends BaseBridgingClass implements PolicyRequirementRule,
         IdentifiedComponent, DestructableComponent {

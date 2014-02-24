@@ -21,10 +21,10 @@ import java.util.Collections;
 import java.util.Map;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.filter.AttributeFilterImpl;
-import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
+import net.shibboleth.idp.attribute.filter.AttributeFilterImpl;
+import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filter.AttributeRule;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.PolicyFromMatcher;
@@ -90,6 +90,8 @@ public class UntargettedAttributeValueFilterTest extends BaseComplexAttributeFil
 
         final AttributeFilter engine = new AttributeFilterImpl("engine", Collections.singleton(policy));
 
+        ComponentSupport.initialize(attributeValueFilterPolicy);
+        ComponentSupport.initialize(policy);
         ComponentSupport.initialize(engine);
 
         AttributeFilterContext context = new AttributeFilterContext();
@@ -142,6 +144,8 @@ public class UntargettedAttributeValueFilterTest extends BaseComplexAttributeFil
 
         final AttributeFilter engine = new AttributeFilterImpl("engine", Collections.singleton(policy));
 
+        ComponentSupport.initialize(attributeValueFilterPolicy);
+        ComponentSupport.initialize(policy);
         ComponentSupport.initialize(engine);
         AttributeFilterContext context = new AttributeFilterContext();
         context.setPrefilteredIdPAttributes(getIdPAttributes("epa-uidwithjsmith.xml").values());

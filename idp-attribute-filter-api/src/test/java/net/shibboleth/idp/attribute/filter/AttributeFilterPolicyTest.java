@@ -53,7 +53,7 @@ public class AttributeFilterPolicyTest {
 
     private final String ID = "foo";
 
-    @BeforeMethod public void setUp() {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         policyMatcher = new MockPolicyRequirementRule();
         valueMatcher = new MockMatcher();
         valuePolicy = new AttributeRule();
@@ -61,6 +61,9 @@ public class AttributeFilterPolicyTest {
         valuePolicy.setAttributeId(ATTR_NAME);
         valuePolicy.setMatcher(valueMatcher);
         valuePolicy.setIsDenyRule(false);
+        policyMatcher.initialize();
+        valuePolicy.initialize();
+        valueMatcher.initialize();
     }
 
     @Test public void testPostConstructionState() {
@@ -106,8 +109,6 @@ public class AttributeFilterPolicyTest {
     @Test public void testInitDestroy() throws ComponentInitializationException {
         AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, policyMatcher, Arrays.asList(valuePolicy));
         Assert.assertFalse(policy.isInitialized(), "Created");
-        Assert.assertFalse(policyMatcher.isInitialized(), "Created");
-        Assert.assertFalse(valueMatcher.isInitialized(), "Created");
 
         Assert.assertFalse(policy.isDestroyed(), "Created");
         Assert.assertFalse(policyMatcher.isDestroyed(), "Created");
@@ -124,6 +125,8 @@ public class AttributeFilterPolicyTest {
         Assert.assertFalse(valueMatcher.isDestroyed(), "Initialized");
 
         policy.destroy();
+        policyMatcher.destroy();
+        valueMatcher.destroy();
         Assert.assertTrue(policy.isDestroyed(), "Destroyed");
         Assert.assertTrue(policyMatcher.isDestroyed(), "Destroyed");
         Assert.assertTrue(valueMatcher.isDestroyed(), "Destroyed");

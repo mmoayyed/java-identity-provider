@@ -191,12 +191,6 @@ public class AttributeRule extends AbstractIdentifiableInitializeableComponent i
     }
 
     /** {@inheritDoc} */
-    @Override protected void doDestroy() {
-        ComponentSupport.destroy(matcher);
-        super.doDestroy();
-    }
-
-    /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         logPrefix = null;
@@ -209,8 +203,6 @@ public class AttributeRule extends AbstractIdentifiableInitializeableComponent i
         if (matcher == null) {
             throw new ComponentInitializationException(getLogPrefix() + " Must have a permit rule or a deny rule");
         }
-
-        ComponentSupport.initialize(matcher);
     }
 
     /**

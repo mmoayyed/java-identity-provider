@@ -174,20 +174,6 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         logPrefix = null;
-
-        for (AttributeFilterPolicy policy : filterPolicies) {
-            policy.initialize();
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override protected void doDestroy() {
-        final List<AttributeFilterPolicy> policies = getFilterPolicies();
-        for (AttributeFilterPolicy policy : policies) {
-            policy.destroy();
-        }
-
-        super.doDestroy();
     }
 
     /**
