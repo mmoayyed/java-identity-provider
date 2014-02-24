@@ -19,7 +19,6 @@ package net.shibboleth.idp.profile.impl;
 
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.opensaml.profile.action.ProfileAction;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
@@ -29,26 +28,6 @@ import org.testng.annotations.Test;
 /** {@link ProfileActionBeanPostProcessor} unit test. */
 @ContextConfiguration({"ProfileActionBeanPostProcessorTest.xml"})
 public class ProfileActionBeanPostProcessorTest extends AbstractTestNGSpringContextTests {
-
-    @Test public void testPostProcessBeforeInitialization() {
-        Object bean = null;
-
-        bean = applicationContext.getBean("IdPActionWithDefaultID");
-        Assert.assertTrue(bean instanceof ProfileAction);
-        Assert.assertEquals(((ProfileAction) bean).getId(), "IdPActionWithDefaultID");
-
-        bean = applicationContext.getBean("IdPActionWithCustomID");
-        Assert.assertTrue(bean instanceof ProfileAction);
-        Assert.assertEquals(((ProfileAction) bean).getId(), "CustomID");
-
-        bean = applicationContext.getBean("OpenSAMLActionWithDefaultID");
-        Assert.assertTrue(bean instanceof ProfileAction);
-        Assert.assertEquals(((ProfileAction) bean).getId(), "OpenSAMLActionWithDefaultID");
-
-        bean = applicationContext.getBean("OpenSAMLActionWithCustomID");
-        Assert.assertTrue(bean instanceof ProfileAction);
-        Assert.assertEquals(((ProfileAction) bean).getId(), "CustomID");
-    }
 
     @Test public void testPostProcessAfterInitialization() {
         Object bean = null;
@@ -81,6 +60,7 @@ public class ProfileActionBeanPostProcessorTest extends AbstractTestNGSpringCont
     }
 
     public static class MockOpenSAMLExceptionAction extends org.opensaml.profile.action.AbstractProfileAction {
+        @Override
         protected void doInitialize() throws ComponentInitializationException {
             throw new ComponentInitializationException();
         }
