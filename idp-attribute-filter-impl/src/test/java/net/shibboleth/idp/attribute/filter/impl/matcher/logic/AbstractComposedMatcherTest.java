@@ -41,34 +41,33 @@ import org.testng.annotations.Test;
 /** unit tests for {@link AbstractComposedMatcher}. */
 public class AbstractComposedMatcherTest {
 
-    @Test
-    public void testInitDestroy() throws ComponentInitializationException {
+    @Test public void testInitDestroy() throws ComponentInitializationException {
         List<Matcher> firstList = new ArrayList<Matcher>(2);
         ComposedMatcher matcher = new ComposedMatcher(Collections.EMPTY_LIST);
-        
-        for (int i = 0; i < 2;i++) {
+
+        for (int i = 0; i < 2; i++) {
             firstList.add(new TestMatcher());
         }
-        
+
         matcher.destroy();
-        
+
         boolean thrown = false;
         try {
             matcher.initialize();
         } catch (DestroyedComponentException e) {
             thrown = true;
         }
-        
+
         Assert.assertTrue(thrown, "Initialize after destroy");
 
-        for (int i = 0; i < 2;i++) {
+        for (int i = 0; i < 2; i++) {
             firstList.add(new TestMatcher());
         }
         firstList.add(null);
         matcher = new ComposedMatcher(firstList);
-        
-        Assert.assertEquals(firstList.size()-1, matcher.getComposedMatchers().size());
-        
+
+        Assert.assertEquals(firstList.size() - 1, matcher.getComposedMatchers().size());
+
         thrown = false;
         try {
             matcher.getComposedMatchers().add(new TestMatcher());
@@ -77,48 +76,25 @@ public class AbstractComposedMatcherTest {
         }
         Assert.assertTrue(thrown, "Set into the returned list");
         matcher.setId("Test");
-        
+
         matcher.initialize();
-        
-        for (int i = 0; i < 2;i++) {
-            Assert.assertTrue(((InitializableComponent)firstList.get(i)).isInitialized(), "Element should be initialized");
-            Assert.assertFalse(((DestructableComponent)firstList.get(i)).isDestroyed(), "Element should not be destroyed");
-        }
-        
-        matcher.destroy();
-
-        for (int i = 0; i < 2;i++) {
-            Assert.assertTrue(((InitializableComponent)firstList.get(i)).isInitialized(), "Element should be initialized");
-            Assert.assertTrue(((DestructableComponent)firstList.get(i)).isDestroyed(), "Element should  be destroyed");
-        }
-        thrown = false;
-        try {
-            matcher.initialize();
-        } catch (DestroyedComponentException  e) {
-            thrown = true;
-        }
-
-        Assert.assertTrue(thrown, "Initialize after destroy");
-
-        matcher.destroy();
     }
-    
-    @Test
-    public void testParams() throws ComponentInitializationException {
+
+    @Test public void testParams() throws ComponentInitializationException {
         ComposedMatcher matcher = new ComposedMatcher(null);
 
         Assert.assertTrue(matcher.getComposedMatchers().isEmpty(), "Initial state - no matchers");
         Assert.assertTrue(matcher.getComposedMatchers().isEmpty(), "Add null - no matchers");
-        
+
         List<Matcher> list = new ArrayList<Matcher>();
-        
+
         for (int i = 0; i < 30; i++) {
             list.add(null);
         }
-        
+
         matcher = new ComposedMatcher(list);
         Assert.assertTrue(matcher.getComposedMatchers().isEmpty(), "Add List<null> - no matchers");
-        
+
         list.set(2, new TestMatcher());
         list.set(3, new TestMatcher());
         list.set(7, new TestMatcher());
@@ -132,7 +108,7 @@ public class AbstractComposedMatcherTest {
 
         matcher = new ComposedMatcher(list);
         Assert.assertEquals(matcher.getComposedMatchers().size(), 9, "Add a List with nulls");
-        
+
         list.clear();
         Assert.assertEquals(matcher.getComposedMatchers().size(), 9, "Change to input list");
 
@@ -140,30 +116,30 @@ public class AbstractComposedMatcherTest {
         Assert.assertTrue(matcher.getComposedMatchers().isEmpty(), "Empty list");
 
     }
-    
-    
+
     private class ComposedMatcher extends AbstractComposedMatcher {
 
         /**
          * Constructor.
-         *
+         * 
          * @param composedMatchers
          */
         public ComposedMatcher(Collection<Matcher> composedMatchers) {
             super(composedMatchers);
         }
 
-        @Override
-        public Set<IdPAttributeValue<?>> getMatchingValues(IdPAttribute attribute, AttributeFilterContext filterContext) {
+        @Override public Set<IdPAttributeValue<?>> getMatchingValues(IdPAttribute attribute,
+                AttributeFilterContext filterContext) {
             return null;
         }
 
     }
-    
-    public static class TestMatcher extends AbstractInitializableComponent implements  Matcher, DestructableComponent, InitializableComponent {
 
-        @Override
-        public Set<IdPAttributeValue<?>> getMatchingValues(IdPAttribute attribute, AttributeFilterContext filterContext) {
+    public static class TestMatcher extends AbstractInitializableComponent implements Matcher, DestructableComponent,
+            InitializableComponent {
+
+        @Override public Set<IdPAttributeValue<?>> getMatchingValues(IdPAttribute attribute,
+                AttributeFilterContext filterContext) {
             return null;
         }
 
@@ -172,10 +148,9 @@ public class AbstractComposedMatcherTest {
         }
 
         /** {@inheritDoc} */
-        @Override
-        @Nullable public String getId() {
+        @Override @Nullable public String getId() {
             return "99";
         }
-        
+
     }
 }

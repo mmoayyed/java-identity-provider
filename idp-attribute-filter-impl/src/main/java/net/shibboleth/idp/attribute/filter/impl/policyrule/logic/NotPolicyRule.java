@@ -23,7 +23,6 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -71,18 +70,6 @@ public final class NotPolicyRule extends AbstractIdentifiableInitializeableCompo
         } else {
             return Tristate.FALSE;
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override protected void doDestroy() {
-        ComponentSupport.destroy(negatedRule);
-        super.doDestroy();
-    }
-
-    /** {@inheritDoc} */
-    @Override protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-        ComponentSupport.initialize(negatedRule);
     }
 
     /** {@inheritDoc} */

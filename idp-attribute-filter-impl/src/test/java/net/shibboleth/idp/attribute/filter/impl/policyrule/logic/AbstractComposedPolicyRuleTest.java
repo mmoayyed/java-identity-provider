@@ -77,24 +77,6 @@ public class AbstractComposedPolicyRuleTest {
         
         rule.initialize();
         
-        for (int i = 0; i < 2;i++) {
-            Assert.assertTrue(((InitializableComponent)firstList.get(i)).isInitialized(), "Element should be initialized");
-            Assert.assertFalse(((DestructableComponent)firstList.get(i)).isDestroyed(), "Element should not be destroyed");
-        }
-        
-        rule.destroy();
-
-        for (int i = 0; i < 2;i++) {
-            Assert.assertTrue(((InitializableComponent)firstList.get(i)).isInitialized(), "Element should be initialized");
-            Assert.assertTrue(((DestructableComponent)firstList.get(i)).isDestroyed(), "Element should  be destroyed");
-        }
-        thrown = false;
-        try {
-            rule.initialize();
-        } catch (DestroyedComponentException  e) {
-            thrown = true;
-        }
-
         rule.destroy();
     }
     

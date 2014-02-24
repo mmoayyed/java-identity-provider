@@ -30,8 +30,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NullableEleme
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 
 import com.google.common.base.Predicates;
@@ -71,26 +69,6 @@ public abstract class AbstractComposedMatcher extends AbstractIdentifiableInitia
      */
     @Nonnull @NonnullElements @Unmodifiable public List<Matcher> getComposedMatchers() {
         return matchers;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void doDestroy() {
-        for (Matcher matcher : matchers) {
-            ComponentSupport.destroy(matcher);
-        }
-
-        super.doDestroy();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-
-        for (Matcher matcher : matchers) {
-            ComponentSupport.initialize(matcher);
-        }
     }
 
 }

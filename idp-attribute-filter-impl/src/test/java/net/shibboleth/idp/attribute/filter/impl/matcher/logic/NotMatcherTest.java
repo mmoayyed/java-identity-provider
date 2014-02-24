@@ -80,7 +80,7 @@ public class NotMatcherTest extends AbstractMatcherPolicyRuleTest {
         }
     }
 
-    @Test public void testInitValidateDestroy() throws ComponentInitializationException {
+    @Test public void testInitDestroy() throws ComponentInitializationException {
         AbstractComposedMatcherTest.TestMatcher inMatcher = new AbstractComposedMatcherTest.TestMatcher();
         NotMatcher matcher = new NotMatcher(inMatcher);
 
@@ -95,11 +95,8 @@ public class NotMatcherTest extends AbstractMatcherPolicyRuleTest {
 
         matcher.setId("test");
         matcher.initialize();
-        Assert.assertTrue(inMatcher.isInitialized());
 
         matcher.destroy();
-        Assert.assertTrue(inMatcher.isDestroyed());
-        Assert.assertTrue(inMatcher.isInitialized());
         
         try {
             matcher.initialize();
@@ -135,6 +132,7 @@ public class NotMatcherTest extends AbstractMatcherPolicyRuleTest {
 
         matcher.setId("Test");
         matcher.initialize();
+        orMatcher.initialize();
 
         result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNotNull(result);

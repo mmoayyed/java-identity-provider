@@ -31,7 +31,6 @@ import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -101,17 +100,4 @@ public final class NotMatcher extends AbstractIdentifiableInitializeableComponen
     @Override public String toString() {
         return Objects.toStringHelper(this).add("negatedMatcher", negatedMatcher).toString();
     }
-
-    /** {@inheritDoc} */
-    @Override protected void doDestroy() {
-        ComponentSupport.destroy(negatedMatcher);
-        super.doDestroy();
-    }
-
-    /** {@inheritDoc} */
-    @Override protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-        ComponentSupport.initialize(negatedMatcher);
-    }
-
 }

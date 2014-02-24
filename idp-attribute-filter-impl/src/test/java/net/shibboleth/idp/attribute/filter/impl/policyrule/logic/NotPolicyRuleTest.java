@@ -61,7 +61,7 @@ public class NotPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         }
     }
 
-    @Test public void testInitValidateDestroy() throws ComponentInitializationException {
+    @Test public void testInitDestroy() throws ComponentInitializationException {
         AbstractComposedPolicyRuleTest.TestMatcher inMatcher = new AbstractComposedPolicyRuleTest.TestMatcher();
         NotPolicyRule rule = new NotPolicyRule(inMatcher);
 
@@ -76,11 +76,8 @@ public class NotPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
 
         rule.setId("test");
         rule.initialize();
-        Assert.assertTrue(inMatcher.isInitialized());
 
         rule.destroy();
-        Assert.assertTrue(inMatcher.isDestroyed());
-        Assert.assertTrue(inMatcher.isInitialized());
 
         try {
             rule.initialize();

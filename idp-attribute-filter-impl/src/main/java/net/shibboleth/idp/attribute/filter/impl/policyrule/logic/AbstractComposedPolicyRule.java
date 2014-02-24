@@ -30,8 +30,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NullableEleme
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 
 import com.google.common.base.Objects;
@@ -52,13 +50,13 @@ public abstract class AbstractComposedPolicyRule extends AbstractIdentifiableIni
     /**
      * Constructor.
      * 
-     * @param composedRules matchers being composed
+     * @param theRules matchers being composed
      */
-    public AbstractComposedPolicyRule(@Nullable @NullableElements final Collection<PolicyRequirementRule> composedRules) {
+    public AbstractComposedPolicyRule(@Nullable @NullableElements final Collection<PolicyRequirementRule> theRules) {
         ArrayList<PolicyRequirementRule> checkedMatchers = new ArrayList<PolicyRequirementRule>();
 
-        if (composedRules != null) {
-            CollectionSupport.addIf(checkedMatchers, composedRules, Predicates.notNull());
+        if (theRules != null) {
+            CollectionSupport.addIf(checkedMatchers, theRules, Predicates.notNull());
         }
 
         rules = ImmutableList.copyOf(Iterables.filter(checkedMatchers, Predicates.notNull()));
@@ -71,24 +69,6 @@ public abstract class AbstractComposedPolicyRule extends AbstractIdentifiableIni
      */
     @Nonnull @NonnullElements @Unmodifiable public List<PolicyRequirementRule> getComposedRules() {
         return rules;
-    }
-
-    /** {@inheritDoc} */
-    @Override protected void doDestroy() {
-        for (PolicyRequirementRule matcher : rules) {
-            ComponentSupport.destroy(matcher);
-        }
-
-        super.doDestroy();
-    }
-
-    /** {@inheritDoc} */
-    @Override protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-
-        for (PolicyRequirementRule matcher : rules) {
-            ComponentSupport.initialize(matcher);
-        }
     }
 
     /** {@inheritDoc} */

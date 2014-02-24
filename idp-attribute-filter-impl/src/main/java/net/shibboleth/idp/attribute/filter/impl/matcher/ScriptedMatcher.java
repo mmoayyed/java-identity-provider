@@ -139,11 +139,6 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializeableComponent
     }
 
     /** {@inheritDoc} */
-    @Override protected void doDestroy() {
-        super.doDestroy();
-    }
-
-    /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
