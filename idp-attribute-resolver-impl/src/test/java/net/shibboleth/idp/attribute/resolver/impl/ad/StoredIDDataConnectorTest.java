@@ -143,6 +143,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         AttributeResolver resolver = constructResolver(1);
 
         ComponentSupport.initialize(resolver);
+        ComputedIDDataConnectorTest.connectorFromResolver(resolver).initialize();
 
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
@@ -183,6 +184,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
             StoredIDException, ResolutionException {
         AttributeResolver resolver = constructResolver(1);
 
+        ComputedIDDataConnectorTest.connectorFromResolver(resolver).initialize();
         ComponentSupport.initialize(resolver);
 
         AttributeResolutionContext context =
@@ -202,9 +204,11 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
         resolver = constructResolver(1);
 
-        ComponentSupport.initialize(resolver);
+        
         StoredIDDataConnector connector =
                 (StoredIDDataConnector) ComputedIDDataConnectorTest.connectorFromResolver(resolver);
+        ComponentSupport.initialize(resolver);
+        connector.initialize();
         connector.getStoredIDStore().deactivatePersistentId(ComputedIDDataConnectorTest.RESULT, null);
 
         context =
@@ -230,6 +234,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         AttributeResolver resolver = ComputedIDDataConnectorTest.constructResolverWithNonString(connector, "nonString");
 
         ComponentSupport.initialize(resolver);
+        ComputedIDDataConnectorTest.connectorFromResolver(resolver).initialize();
 
         connector.getStoredIDStore().deactivatePersistentId(ComputedIDDataConnectorTest.RESULT, null);
 
@@ -259,6 +264,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         // Precharge the store with a duplicate persisent ID
         //
 
+        connector.initialize();
         ComponentSupport.initialize(resolver);
         PersistentIdEntry idEntry = new PersistentIdEntry();
         idEntry.setAttributeIssuerId(TestSources.IDP_ENTITY_ID);

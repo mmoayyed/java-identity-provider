@@ -25,8 +25,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
@@ -188,8 +188,7 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable protected IdPAttribute doAttributeDefinitionResolve(
+    @Override @Nullable protected IdPAttribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -227,16 +226,14 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doDestroy() {
+    @Override protected void doDestroy() {
         valueMaps = null;
 
         super.doDestroy();
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         if (getDependencies().isEmpty()) {
@@ -249,5 +246,5 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
                     + "': no value mappings were configured");
         }
     }
-    
+
 }

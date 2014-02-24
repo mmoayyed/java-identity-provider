@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import java.util.HashSet;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -49,10 +50,12 @@ public class MockDataConnector extends AbstractDataConnector {
      * 
      * @param id unique ID for this data connector
      * @param connectorValues static collection of values returned by this connector
+     * @throws ComponentInitializationException 
      */
-    public MockDataConnector(String id, Map<String, IdPAttribute> connectorValues) {
+    public MockDataConnector(String id, Map<String, IdPAttribute> connectorValues) throws ComponentInitializationException {
         setId(id);
         values = connectorValues;
+        initialize();
     }
 
     /**
@@ -64,6 +67,21 @@ public class MockDataConnector extends AbstractDataConnector {
     public MockDataConnector(final String id, final ResolutionException exception) {
         setId(id);
         resolutionException = exception;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param id
+     * @param map
+     * @param newHashSet
+     * @throws ComponentInitializationException 
+     */
+    public MockDataConnector(String id, Map<String, IdPAttribute> connectorValues, HashSet<ResolverPluginDependency> newHashSet) throws ComponentInitializationException {
+        setDependencies(newHashSet);
+        setId(id);
+        values = connectorValues;
+        initialize();
     }
 
     /** {@inheritDoc} */

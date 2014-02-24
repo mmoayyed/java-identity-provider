@@ -90,9 +90,11 @@ public class ResolveAttributesTest {
         attribute.getValues().add(new StringAttributeValue("value1"));
 
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
-        definitions.add(new MockAttributeDefinition("ad1", attribute));
+        AttributeDefinition ad1 = new MockAttributeDefinition("ad1", attribute);
+        definitions.add(ad1);
 
         final AttributeResolverImpl resolver = new AttributeResolverImpl("resolver", definitions, null, null);
+        ad1.initialize();
         resolver.initialize();
 
         final ResolveAttributes action = new ResolveAttributes(new AttributeService(resolver));
@@ -123,9 +125,11 @@ public class ResolveAttributesTest {
         attribute.getValues().add(new StringAttributeValue("value1"));
 
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
-        definitions.add(new MockAttributeDefinition("ad1", attribute));
+        AttributeDefinition ad1 = new MockAttributeDefinition("ad1", attribute);
+        definitions.add(ad1);
 
         final AttributeResolverImpl resolver = new AttributeResolverImpl("resolver", definitions, null, null);
+        ad1.initialize();
         resolver.initialize();
 
         AttributeResolutionContext attributeResolutionCtx = new AttributeResolutionContext();
@@ -181,9 +185,11 @@ public class ResolveAttributesTest {
         attribute.getValues().add(new StringAttributeValue("value1"));
 
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
-        definitions.add(new MockAttributeDefinition("ad1", new ResolutionException()));
+        AttributeDefinition ad1 = new MockAttributeDefinition("ad1", new ResolutionException());
+        definitions.add(ad1);
 
         final AttributeResolverImpl resolver = new AttributeResolverImpl("resolver", definitions, null, null);
+        ad1.initialize();
         resolver.initialize();
 
         final ResolveAttributes action = new ResolveAttributes(new AttributeService(resolver));

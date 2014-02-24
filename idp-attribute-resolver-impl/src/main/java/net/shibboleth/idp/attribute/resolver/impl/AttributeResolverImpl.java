@@ -161,17 +161,6 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         return dataConnectors;
     }
 
-    /** {@inheritDoc} */
-    @Override protected void doDestroy() {
-        for (ResolverPlugin plugin : attributeDefinitions.values()) {
-            plugin.destroy();
-        }
-
-        for (ResolverPlugin plugin : dataConnectors.values()) {
-            plugin.destroy();
-        }
-    }
-
     /**
      * Resolves the attribute for the give request. Note, if attributes are requested,
      * {@link AttributeResolutionContext#getRequestedIdPAttributes()}, the resolver will <strong>not</strong> fail if
@@ -428,13 +417,6 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         super.doInitialize();
 
         HashSet<String> dependencyVerifiedPlugins = new HashSet<String>();
-        for (DataConnector plugin : dataConnectors.values()) {
-            ComponentSupport.initialize(plugin);
-        }
-        for (AttributeDefinition plugin : attributeDefinitions.values()) {
-            ComponentSupport.initialize(plugin);
-        }
-
         for (DataConnector plugin : dataConnectors.values()) {
             log.debug("{} checking if data connector {} is has a circular dependency", logPrefix, plugin.getId());
             checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);

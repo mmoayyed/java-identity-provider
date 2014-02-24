@@ -149,6 +149,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         Set<ResolverPluginDependency> dependencySet = new LazySet<>();
         dependencySet.add(TestSources.makeResolverPluginDependency(TEST_ATTRIBUTE_NAME, null));
         defn2.setDependencies(dependencySet);
+        defn2.initialize();
 
         // And resolve
         Set<AttributeDefinition> am = new LazySet<>();

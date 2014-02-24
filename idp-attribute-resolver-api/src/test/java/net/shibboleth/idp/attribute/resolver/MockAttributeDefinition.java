@@ -47,8 +47,9 @@ public class MockAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @param id unique ID of this attribute definition
      * @param value static value returned by this definition
+     * @throws ComponentInitializationException 
      */
-    public MockAttributeDefinition(final String id, final IdPAttribute value) {
+    public MockAttributeDefinition(final String id, final IdPAttribute value) throws ComponentInitializationException {
         setId(id);
         staticValue = value;
     }

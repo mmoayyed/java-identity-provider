@@ -96,7 +96,9 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         final AttributeResolverImpl resolver =
                 new AttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector), null);
 
+        simple.initialize();
         resolver.initialize();
+        connector.initialize();
 
         final AttributeResolutionContext context =
                 TestSources.createResolutionContext(null, null, TestSources.SP_ENTITY_ID);
@@ -150,6 +152,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         simple.setId(OUTPUT_ATTRIBUTE_NAME);
         simple.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency(TEST_CONNECTOR_NAME,
                 TEST_CONNECTOR_NAME)));
+        simple.initialize();
 
         Set<AttributeDefinition> set = new HashSet<AttributeDefinition>(2);
         set.add(simple);
@@ -175,7 +178,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         simple.setId(OUTPUT_ATTRIBUTE_NAME);
         simple.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency(TEST_CONNECTOR_NAME,
                 TEST_CONNECTOR_NAME)));
-
+        simple.initialize();
         Set<AttributeDefinition> set = new HashSet<AttributeDefinition>(3);
         set.add(simple);
         set.add(TestSources.populatedStaticAttribute(TestSources.STATIC_ATTRIBUTE_NAME,
@@ -192,7 +195,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
     //TODO: fix assertion on line 218, see IDP-357
     @Test(enabled = false) public void altDataConnector() throws ComponentInitializationException, ResolutionException {
         AttributeResolver resolver = constructResolver(1);
-
+        connectorFromResolver(resolver).initialize();
         ComponentSupport.initialize(resolver);
 
         AttributeResolutionContext context = TestSources.createResolutionContext(null, null, TestSources.SP_ENTITY_ID);;
@@ -207,7 +210,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         // now do it again with more values
         //
         resolver = constructResolver(3);
-
+        connectorFromResolver(resolver).initialize();
         ComponentSupport.initialize(resolver);
 
         context = TestSources.createResolutionContext(null, null, TestSources.SP_ENTITY_ID);;
@@ -223,6 +226,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         //
         resolver = constructResolver(1);
 
+        connectorFromResolver(resolver).initialize();
         ComponentSupport.initialize(resolver);
 
         context = TestSources.createResolutionContext(null, null, "foo");
@@ -239,7 +243,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         AttributeResolver resolver = constructResolver(3);
 
         connectorFromResolver(resolver).setSourceAttributeId(TestSources.STATIC_ATTRIBUTE_NAME + "1");
-
+        connectorFromResolver(resolver).initialize();
         ComponentSupport.initialize(resolver);
 
         AttributeResolutionContext context = TestSources.createResolutionContext(null, null, TestSources.SP_ENTITY_ID);;
@@ -247,6 +251,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNull(context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME));
 
         resolver = constructResolver(0);
+        connectorFromResolver(resolver).initialize();
         ComponentSupport.initialize(resolver);
 
 
@@ -256,12 +261,14 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
         resolver = constructResolver(1);
 
+        connectorFromResolver(resolver).initialize();
         ComponentSupport.initialize(resolver);
 
         resolver.resolveAttributes(TestSources.createResolutionContext(null, null, null));
         Assert.assertNull(context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME));
 
         resolver = constructResolverWithNonString("nonString");
+        connectorFromResolver(resolver).initialize();
         ComponentSupport.initialize(resolver);
 
         context = TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);

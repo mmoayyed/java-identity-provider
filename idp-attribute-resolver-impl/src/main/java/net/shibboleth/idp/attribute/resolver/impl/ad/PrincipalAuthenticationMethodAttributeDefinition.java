@@ -28,7 +28,6 @@ import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
@@ -58,10 +57,4 @@ public class PrincipalAuthenticationMethodAttributeDefinition extends AbstractAt
         attribute.setValues(Collections.singleton(new StringAttributeValue(method)));
         return attribute;
     }
-
-    /** {@inheritDoc} */
-    @Override protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-    }
-    
 }

@@ -114,8 +114,7 @@ public class StoredIDDataConnector extends AbstractComputedIDDataConnector {
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         if (null == dataSource) {
             throw new ComponentInitializationException(getLogPrefix() + " No database connection provided");
@@ -131,6 +130,12 @@ public class StoredIDDataConnector extends AbstractComputedIDDataConnector {
         store.setQueryTimeout(queryTimeout);
         store.initialize();
         pidStore = store;
+    }
+
+    /** {@inheritDoc} */
+    @Override protected void doDestroy() {
+        ComponentSupport.destroy(pidStore);
+        super.doDestroy();
     }
 
     /**
@@ -230,8 +235,7 @@ public class StoredIDDataConnector extends AbstractComputedIDDataConnector {
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(
+    @Override @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(
             @Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
 
@@ -256,8 +260,7 @@ public class StoredIDDataConnector extends AbstractComputedIDDataConnector {
             return null;
         }
 
-        final String attributeRecipientID =
-                StringSupport.trimOrNull(resolutionContext.getAttributeRecipientID());
+        final String attributeRecipientID = StringSupport.trimOrNull(resolutionContext.getAttributeRecipientID());
         if (null == attributeRecipientID) {
             log.warn("{} Could not get attribute recipient ID, skipping ID creation", getLogPrefix());
             return null;
@@ -265,5 +268,5 @@ public class StoredIDDataConnector extends AbstractComputedIDDataConnector {
 
         return encodeAsAttribute(getStoredId(principal, attributeIssuerID, attributeRecipientID, localId));
     }
-    
+
 }

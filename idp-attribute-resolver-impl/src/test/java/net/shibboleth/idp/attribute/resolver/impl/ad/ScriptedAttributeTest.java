@@ -355,6 +355,8 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final Set<AttributeDefinition> attrDefinitions = Collections.singleton((AttributeDefinition) scripted);
 
         final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, dataDefinitions, null);
+        connector.initialize();
+        scripted.initialize();
         resolver.initialize();
 
         final AttributeResolutionContext context =

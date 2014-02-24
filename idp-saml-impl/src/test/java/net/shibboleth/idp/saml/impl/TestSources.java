@@ -175,7 +175,7 @@ public final class TestSources {
         return definition;
     }
     
-    public static AttributeDefinition nonStringAttributeDefiniton(String name) {
+    public static AttributeDefinition nonStringAttributeDefiniton(String name) throws ComponentInitializationException {
         final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();
         defn.setId(name);
 
@@ -183,6 +183,7 @@ public final class TestSources {
         ResolverPluginDependency depend = new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME);
         depend.setDependencyAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
         defn.setDependencies(Collections.singleton(depend));
+        defn.initialize();
         return defn;
     }
 
