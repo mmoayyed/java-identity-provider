@@ -28,6 +28,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.Conditions;
 import org.opensaml.saml.saml1.core.Response;
+import org.opensaml.saml.saml1.profile.SAML1ActionSupport;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -65,10 +66,14 @@ public class SAML1ActionSupportTest extends OpenSAMLInitBaseTestCase {
         RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
 
         Assert.assertEquals(response.getAssertions().size(), 0, "Expected zarro assertions before insert");
-        Assertion assertion = SAML1ActionSupport.addAssertionToResponse(action, relyingPartyCtx, response);
+        Assertion assertion = SAML1ActionSupport.addAssertionToResponse(action, response,
+                relyingPartyCtx.getProfileConfig().getSecurityConfiguration().getIdGenerator(),
+                relyingPartyCtx.getConfiguration().getResponderId());
         Assert.assertEquals(response.getAssertions().size(), 1, "Expected but one assertion after insert");
         Assert.assertTrue(response.getAssertions().contains(assertion), "Inserted assertion should be there");
-        Assertion second = SAML1ActionSupport.addAssertionToResponse(action, relyingPartyCtx, response);
+        Assertion second = SAML1ActionSupport.addAssertionToResponse(action, response,
+                relyingPartyCtx.getProfileConfig().getSecurityConfiguration().getIdGenerator(),
+                relyingPartyCtx.getConfiguration().getResponderId());
         Assert.assertEquals(response.getAssertions().size(), 2, "Expected two assertions after two inserts");
         Assert.assertTrue(response.getAssertions().contains(assertion), "Inserted assertion should be there");
         Assert.assertNotSame(second, assertion, "Two separate assertions should have been added");
