@@ -34,7 +34,7 @@ import org.testng.annotations.Test;
  * A test for {@link IdentifiableBeanPostProcessor}.
  */
 @ContextConfiguration({"identifiableBeanPostProcessorTest.xml"})
-public class BeanPostProcessorTest extends AbstractTestNGSpringContextTests {
+public class IdentifiableBeanPostProcessorTest extends AbstractTestNGSpringContextTests {
 
     @Test(expectedExceptions = {ComponentInitializationException.class, BeanCreationException.class,}) public void
             defaultedIdentified() {
@@ -49,7 +49,6 @@ public class BeanPostProcessorTest extends AbstractTestNGSpringContextTests {
     @Test public void nonDefaultedIdentified() {
         IdentifiedComponent bean = applicationContext.getBean("NonDefaultIdentifiedBean", Identified.class);
         Assert.assertEquals("NameForAnIdentifiedBean", bean.getId());
-
     }
 
     @Test public void nonDefaultedIdentifiable() {
@@ -60,7 +59,6 @@ public class BeanPostProcessorTest extends AbstractTestNGSpringContextTests {
     @Test public void TautologousTest() {
         IdentifiedComponent bean = applicationContext.getBean("TautologousName", Identifiable.class);
         Assert.assertEquals("TautologousName", bean.getId());
-
     }
 
     public static class Identified extends AbstractIdentifiedInitializableComponent {
