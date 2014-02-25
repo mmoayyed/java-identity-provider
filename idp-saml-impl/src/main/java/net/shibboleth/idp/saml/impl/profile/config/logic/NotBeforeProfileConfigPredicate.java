@@ -32,8 +32,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
 /**
- * A predicate implementation that supports the legacy V2 configuration options of
- * "always", "conditional", and "never" for encryption.
+ * A predicate that returns {@link SAMLProfileConfiguration#includeConditionsNotBefore()}
+ * if such a profile is available from a {@link RelyingPartyContext} obtained via a lookup function,
+ * by defaul a child of the {@link ProfileRequestContext}.
  */
 public class NotBeforeProfileConfigPredicate implements Predicate<ProfileRequestContext> {
     
