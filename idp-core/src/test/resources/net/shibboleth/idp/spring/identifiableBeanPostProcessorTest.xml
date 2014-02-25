@@ -7,24 +7,23 @@
 	<bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
 
 	<bean id="IdentifiedBean"
-		class="net.shibboleth.idp.spring.BeanPostProcessorTest$Identified"
+		class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessorTest$Identified"
 		scope="prototype" />
 
 	<bean id="IdentifiableBean"
-		class="net.shibboleth.idp.spring.BeanPostProcessorTest$Identifiable"
+		class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessorTest$Identifiable"
 		scope="prototype" />
 
-
 	<bean id="NonDefaultIdentifiedBean"
-		class="net.shibboleth.idp.spring.BeanPostProcessorTest$Identified"
+		class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessorTest$Identified"
 		scope="prototype" p:id="NameForAnIdentifiedBean" />
 
 	<bean id="NonDefaultIdentifiableBean"
-		class="net.shibboleth.idp.spring.BeanPostProcessorTest$Identifiable"
+		class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessorTest$Identifiable"
 		scope="prototype" p:id="NameForAnIdentifiableBean" />
 
 	<bean id="TautologousName"
-		class="net.shibboleth.idp.spring.BeanPostProcessorTest$Identifiable"
+		class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessorTest$Identifiable"
 		scope="prototype" p:id="TautologousName" />
 
 </beans>
