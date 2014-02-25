@@ -267,8 +267,13 @@
 
     <bean
         id="AddNotOnOrAfterConditionToAssertions"
-        class="net.shibboleth.idp.saml.impl.profile.saml1.AddNotOnOrAfterConditionToAssertions"
-        scope="prototype" />
+        class="org.opensaml.saml.saml1.profile.impl.AddNotOnOrAfterConditionToAssertions"
+        scope="prototype"
+        p:defaultAssertionLifetime="PT5M">
+        <property name="assertionLifetimeStrategy">
+            <bean class="net.shibboleth.idp.saml.impl.profile.config.navigate.AssertionLifetimeLookupFunction" />
+        </property>
+    </bean>
 
     <bean
         id="AddAudienceRestrictionToAssertions"

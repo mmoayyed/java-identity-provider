@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.impl.profile.config.logic;
+package net.shibboleth.idp.saml.impl.profile.config.navigate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,24 +29,23 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 
 /**
- * A predicate that returns {@link SAMLProfileConfiguration#includeConditionsNotBefore()}
+ * A function that returns {@link SAMLProfileConfiguration#getAssertionLifetime()}
  * if such a profile is available from a {@link RelyingPartyContext} obtained via a lookup function,
  * by default a child of the {@link ProfileRequestContext}.
  * 
- * <p>If unable to locate a specific setting, the predicate is true.</p>
+ * <p>If a specific setting is unavailable, a null value is returned.</p>
  */
-public class NotBeforeProfileConfigPredicate implements Predicate<ProfileRequestContext> {
-    
+public class AssertionLifetimeLookupFunction implements Function<ProfileRequestContext, Long> {
+
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
      */
     @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
     
     /** Constructor. */
-    public NotBeforeProfileConfigPredicate() {
+    public AssertionLifetimeLookupFunction() {
         relyingPartyContextLookupStrategy =
                 new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class, false);
     }
@@ -66,18 +65,18 @@ public class NotBeforeProfileConfigPredicate implements Predicate<ProfileRequest
 
     /** {@inheritDoc} */
     @Override
-    public boolean apply(@Nullable final ProfileRequestContext input) {
+    @Nullable public Long apply(@Nullable final ProfileRequestContext input) {
         if (input != null) {
             final RelyingPartyContext rpc = relyingPartyContextLookupStrategy.apply(input);
             if (rpc != null) {
                 final ProfileConfiguration pc = rpc.getProfileConfig();
                 if (pc != null && pc instanceof SAMLProfileConfiguration) {
-                    return ((SAMLProfileConfiguration) pc).includeConditionsNotBefore();
+                    return ((SAMLProfileConfiguration) pc).getAssertionLifetime();
                 }
             }
         }
         
-        return true;
+        return null;
     }
 
 }
