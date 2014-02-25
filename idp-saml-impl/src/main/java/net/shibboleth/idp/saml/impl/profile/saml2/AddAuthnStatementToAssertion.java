@@ -40,7 +40,6 @@ import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
 import net.shibboleth.idp.saml.profile.config.saml2.BrowserSSOProfileConfiguration;
-import net.shibboleth.idp.saml.profile.saml2.SAML2ActionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -55,6 +54,7 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.profile.SAML2ActionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -235,7 +235,9 @@ public class AddAuthnStatementToAssertion extends AbstractAuthenticationAction {
      */
     @Nonnull private Assertion getStatementAssertion() {
         if (statementInOwnAssertion || response.getAssertions().isEmpty()) {
-            return SAML2ActionSupport.addAssertionToResponse(this, relyingPartyCtx, response);
+            return SAML2ActionSupport.addAssertionToResponse(this, response,
+                    relyingPartyCtx.getProfileConfig().getSecurityConfiguration().getIdGenerator(),
+                    relyingPartyCtx.getConfiguration().getResponderId());
         } else {
             return response.getAssertions().get(0);
         }

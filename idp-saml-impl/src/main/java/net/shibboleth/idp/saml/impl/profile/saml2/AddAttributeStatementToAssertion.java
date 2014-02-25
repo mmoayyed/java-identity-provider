@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
@@ -35,7 +36,6 @@ import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML2AttributeEncoder;
 import net.shibboleth.idp.saml.profile.SAMLEventIds;
-import net.shibboleth.idp.saml.profile.saml2.SAML2ActionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -49,6 +49,7 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.profile.SAML2ActionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
@@ -88,10 +89,11 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
      */
     private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
 
+    /** RelyingPartyContext to access. */
+    @Nullable private RelyingPartyContext relyingPartyCtx;
+    
     /** Constructor. */
     public AddAttributeStatementToAssertion() {
-        super();
-
         statementInOwnAssertion = false;
 
         relyingPartyContextLookupStrategy =
@@ -153,7 +155,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
             @Nonnull final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
         log.debug("Action {}: Attempting to add an AttributeStatement to outgoing Response", getId());
 
-        final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
+        relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyCtx == null) {
             log.error("Action {}: No relying party context located in current profile request context", getId());
             return ActionSupport.buildEvent(this, IdPEventIds.INVALID_RELYING_PARTY_CTX);
@@ -174,8 +176,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
             }
 
             final Assertion assertion =
-                    getStatementAssertion(relyingPartyCtx, profileRequestContext.getOutboundMessageContext()
-                            .getMessage());
+                    getStatementAssertion(profileRequestContext.getOutboundMessageContext().getMessage());
             assertion.getAttributeStatements().add(statement);
 
             log.debug("Action {}: Adding constructed AttributeStatement to Assertion {} ", getId(), assertion.getID());
@@ -188,20 +189,18 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
     /**
      * Gets the assertion to which the attribute statement will be added.
      * 
-     * @param relyingPartyContext current relying party information
      * @param response current response
      * 
      * @return the assertion to which the attribute statement will be added
      */
-    private Assertion getStatementAssertion(RelyingPartyContext relyingPartyContext, Response response) {
-        final Assertion assertion;
+    private Assertion getStatementAssertion(Response response) {
         if (statementInOwnAssertion || response.getAssertions().isEmpty()) {
-            assertion = SAML2ActionSupport.addAssertionToResponse(this, relyingPartyContext, response);
+            return SAML2ActionSupport.addAssertionToResponse(this, response,
+                    relyingPartyCtx.getProfileConfig().getSecurityConfiguration().getIdGenerator(),
+                    relyingPartyCtx.getConfiguration().getResponderId());
         } else {
-            assertion = response.getAssertions().get(0);
+            return response.getAssertions().get(0);
         }
-
-        return assertion;
     }
 
     /**
