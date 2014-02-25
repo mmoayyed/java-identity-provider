@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.spring;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 
 import org.slf4j.Logger;
@@ -24,13 +26,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
 /**
- * Pre-processes {@link IdentifiableComponent} beans by setting their ID to their bean name.
- * <p>
+ * Pre-processes {@link IdentifiableComponent} beans by setting the bean ID to the bean name.
  */
 public class IdentifiableBeanPostProcessor implements BeanPostProcessor {
 
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger(IdentifiableBeanPostProcessor.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(IdentifiableBeanPostProcessor.class);
 
     /** {@inheritDoc} */
     @Override public Object postProcessBeforeInitialization(Object bean, String beanName) {
@@ -38,9 +39,12 @@ public class IdentifiableBeanPostProcessor implements BeanPostProcessor {
             final IdentifiableComponent component = (IdentifiableComponent) bean;
             if (component.getId() == null) {
                 component.setId(beanName);
-            } else if (component.getId().equals(beanName)) {
-                log.error("Bean Named {} has the component identifier set to be the bean name.  This is redundant",
-                        beanName);
+            } else if (log.isDebugEnabled()) {
+                if (component.getId().equals(beanName)) {
+                    log.debug("The 'id' property is redundant for bean with 'id' attribute '{}'", beanName);
+                } else {
+                    log.debug("The 'id' property is not the same as the 'id' attribute for bean '{}'", beanName);
+                }
             }
         }
         return bean;
