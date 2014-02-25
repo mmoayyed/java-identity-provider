@@ -89,7 +89,9 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         action.setId("test");
         action.setEndpointResolver(new DefaultEndpointResolver());
         final List<BindingDescriptor> bindings = Lists.newArrayList();
-        bindings.add(new BindingDescriptor(SAMLConstants.SAML2_POST_BINDING_URI));
+        bindings.add(new BindingDescriptor());
+        bindings.get(0).setId(SAMLConstants.SAML2_POST_BINDING_URI);
+        bindings.get(0).initialize();
         action.setBindings(bindings);
         action.initialize();
     }
@@ -117,8 +119,10 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
 
     @Test
     public void testNoBindings() throws ProfileException, ComponentInitializationException {
-        final BindingDescriptor binding = new BindingDescriptor(SAMLConstants.SAML2_POST_BINDING_URI);
+        final BindingDescriptor binding = new BindingDescriptor();
+        binding.setId(SAMLConstants.SAML2_POST_BINDING_URI);
         binding.setActivationCondition(Predicates.<ProfileRequestContext>alwaysFalse());
+        binding.initialize();
         final PopulateBindingAndEndpointContexts badaction = new PopulateBindingAndEndpointContexts();
         badaction.setId("test");
         badaction.setEndpointResolver(new DefaultEndpointResolver());

@@ -17,10 +17,8 @@
 
 package net.shibboleth.idp.saml.binding;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Subclass that adds awareness of a Spring bean ID for a binding's {@link MessageEncoder}. */
@@ -29,15 +27,6 @@ public class BindingDescriptor extends org.opensaml.saml.common.binding.BindingD
     /** Spring bean ID of message encoder. */
     @Nullable private String encoderBeanId;
     
-    /**
-     * Constructor.
-     * 
-     * @param id unique ID of this binding
-     */
-    public BindingDescriptor(@Nonnull @NotEmpty final String id) {
-        super(id);
-    }
-
     /**
      * Get the Spring bean ID of the binding's {@link MessageEncoder}.
      * 
