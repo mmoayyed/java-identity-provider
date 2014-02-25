@@ -47,8 +47,11 @@ public class PopulateSubjectCanonicalizationContextTest {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(new Subject());
 
-        c14nFlows = ImmutableList.of(new SubjectCanonicalizationFlowDescriptor("test1"),
-                new SubjectCanonicalizationFlowDescriptor("test2"), new SubjectCanonicalizationFlowDescriptor("test3"));
+        c14nFlows = ImmutableList.of(new SubjectCanonicalizationFlowDescriptor(),
+                new SubjectCanonicalizationFlowDescriptor(), new SubjectCanonicalizationFlowDescriptor());
+        c14nFlows.get(0).setId("test1");
+        c14nFlows.get(1).setId("test2");
+        c14nFlows.get(2).setId("test3");
 
         PopulateSubjectCanonicalizationContext action = new PopulateSubjectCanonicalizationContext();
         action.setAvailableFlows(c14nFlows);

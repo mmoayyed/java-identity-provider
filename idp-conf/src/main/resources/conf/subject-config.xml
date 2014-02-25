@@ -30,14 +30,14 @@
     -->
     <util:list id="shibboleth.AvailableSubjectCanonicalizationFlows">
         
-        <bean c:id="SubjectC14NFlow/Simple" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
+        <bean id="SubjectC14NFlow/Simple" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
             <property name="activationCondition">
                 <bean class="net.shibboleth.idp.authn.impl.SimpleSubjectCanonicalization.ActivationCondition" />
             </property>
         </bean>
         
        
-        <bean c:id="SubjectC14NFlow/SAML2/Transient" class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor"> 
+        <bean id="SubjectC14NFlow/SAML2/Transient" class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor"> 
             <property name="activationCondition">
                 <bean class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition" />
             </property>
@@ -48,7 +48,7 @@
             </property>
         </bean>
         
-        <bean c:id="SubjectC14NFlow/SAML2/CryptoTransient" class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor"> 
+        <bean id="SubjectC14NFlow/SAML2/CryptoTransient" class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor"> 
             <property name="activationCondition">
                 <bean class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition" />
             </property>
@@ -59,7 +59,7 @@
             </property>
         </bean>
         
-        <bean c:id="SubjectC14NFlow/SAML2/Direct" class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor"> 
+        <bean id="SubjectC14NFlow/SAML2/Direct" class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor"> 
             <property name="activationCondition">
                 <bean class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition" />
             </property>
@@ -71,7 +71,7 @@
         </bean>
         
                
-        <bean c:id="SubjectC14NFlow/SAML1/Transient" class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor"> 
+        <bean id="SubjectC14NFlow/SAML1/Transient" class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor"> 
             <property name="activationCondition">
                 <bean class="net.shibboleth.idp.saml.impl.nameid.NameIdentifierCanonicalization.ActivationCondition" />
             </property>
@@ -82,7 +82,7 @@
             </property>
         </bean>
 
-        <bean c:id="SubjectC14NFlow/SAML1/CryptoTransient" class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor"> 
+        <bean id="SubjectC14NFlow/SAML1/CryptoTransient" class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor"> 
             <property name="activationCondition">
                 <bean class="net.shibboleth.idp.saml.impl.nameid.NameIdentifierCanonicalization.ActivationCondition" />
             </property>
@@ -93,7 +93,7 @@
             </property>
         </bean>
 
-        <bean c:id="SubjectC14NFlow/SAML1/Direct" class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor"> 
+        <bean id="SubjectC14NFlow/SAML1/Direct" class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor"> 
             <property name="activationCondition">
                 <bean class="net.shibboleth.idp.saml.impl.nameid.NameIdentifierCanonicalization.ActivationCondition" />
             </property>
@@ -109,7 +109,7 @@
         resolver to map SAML Subjects back into principals. If you don't use those (or this is a new install)
         you can disable this.
         -->
-        <bean c:id="SubjectC14NFlow/LegacyPrincipalConnector" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
+        <bean id="SubjectC14NFlow/LegacyPrincipalConnector" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
             <property name="activationCondition">
                 <bean class="net.shibboleth.idp.saml.impl.nameid.LegacyCanonicalization.ActivationCondition" 
                     c:service-ref="shibboleth.AttributeResolverService"/>

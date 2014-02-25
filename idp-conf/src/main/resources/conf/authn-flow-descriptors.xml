@@ -44,7 +44,7 @@
     <!-- Now the actual list. -->
     <util:list id="shibboleth.AvailableAuthenticationFlows">
         
-        <bean c:id="AuthenticationFlow/IPAddress" parent="shibboleth.AbstractAuthenticationFlowBean"
+        <bean id="AuthenticationFlow/IPAddress" parent="shibboleth.AbstractAuthenticationFlowBean"
                 p:passiveAuthenticationSupported="true"
                 p:lifetime="PT60S" p:inactivityTimeout="PT60S">
             <property name="supportedPrincipals">
@@ -55,13 +55,13 @@
             </property>
         </bean>
         
-        <bean c:id="AuthenticationFlow/RemoteUser" parent="shibboleth.AbstractAuthenticationFlowBean" />
+        <bean id="AuthenticationFlow/RemoteUser" parent="shibboleth.AbstractAuthenticationFlowBean" />
 
-        <bean c:id="AuthenticationFlow/JAAS" parent="shibboleth.AbstractAuthenticationFlowBean"
+        <bean id="AuthenticationFlow/JAAS" parent="shibboleth.AbstractAuthenticationFlowBean"
                 p:passiveAuthenticationSupported="true"
                 p:forcedAuthenticationSupported="true" />
 
-        <bean c:id="AuthenticationFlow/LDAP" parent="shibboleth.AbstractAuthenticationFlowBean"
+        <bean id="AuthenticationFlow/LDAP" parent="shibboleth.AbstractAuthenticationFlowBean"
                 p:passiveAuthenticationSupported="true"
                 p:forcedAuthenticationSupported="true" />
 

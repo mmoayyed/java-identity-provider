@@ -69,8 +69,10 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
     @BeforeMethod public void setUp() throws Exception {
         prc = new ProfileRequestContext<>();
         
-        flowDescriptor = new NameIDCanonicalizationFlowDescriptor("C14NDesc");
+        flowDescriptor = new NameIDCanonicalizationFlowDescriptor();
+        flowDescriptor.setId("C14NDesc");
         flowDescriptor.setFormats(formats);
+        flowDescriptor.initialize();
         
         action = new NameIdentifierCanonicalization();
         action.setId("test");

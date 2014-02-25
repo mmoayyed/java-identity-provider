@@ -43,8 +43,11 @@ public class PopulateAuthenticationContextTest {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         prc.addSubcontext(new AuthenticationContext(), true);
 
-        authenticationFlows = ImmutableList.of(new AuthenticationFlowDescriptor("test1"),
-                new AuthenticationFlowDescriptor("test2"), new AuthenticationFlowDescriptor("test3"));
+        authenticationFlows = ImmutableList.of(new AuthenticationFlowDescriptor(),
+                new AuthenticationFlowDescriptor(), new AuthenticationFlowDescriptor());
+        authenticationFlows.get(0).setId("test1");
+        authenticationFlows.get(1).setId("test2");
+        authenticationFlows.get(2).setId("test3");
 
         PopulateAuthenticationContext action = new PopulateAuthenticationContext();
         action.setAvailableFlows(authenticationFlows);

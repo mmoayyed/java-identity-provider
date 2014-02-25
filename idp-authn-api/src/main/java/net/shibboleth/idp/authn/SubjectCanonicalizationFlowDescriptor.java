@@ -18,9 +18,7 @@
 package net.shibboleth.idp.authn;
 
 import javax.annotation.Nonnull;
-import javax.security.auth.Subject;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -34,10 +32,11 @@ import com.google.common.base.Predicates;
  * A descriptor for a subject canonicalication flow.
  * 
  * <p>
- * A flow models a sequence of profile actions that performs canonicalization of a {@link Subject} into a string-form
- * principal name. Flows can do essentially anything, including interact with the subject, but must include an
- * activation predicate to indicate their suitability based on the content of the {@link ProfileRequestContext},
- * particularly the required {@link net.shibboleth.idp.authn.context.SubjectCanonicalizationContext} child context.
+ * A flow models a sequence of profile actions that performs canonicalization of a {@link javax.security.auth.Subject}
+ * into a string-form principal name. Flows can do essentially anything, including interact with the subject, but must
+ * include an activation predicate to indicate their suitability based on the content of the
+ * {@link ProfileRequestContext}, particularly the required
+ * {@link net.shibboleth.idp.authn.context.SubjectCanonicalizationContext} child context.
  * </p>
  */
 public class SubjectCanonicalizationFlowDescriptor extends AbstractIdentifiableInitializeableComponent implements
@@ -46,14 +45,8 @@ public class SubjectCanonicalizationFlowDescriptor extends AbstractIdentifiableI
     /** Predicate that must be true for this flow to be usable for a given request. */
     @Nonnull private Predicate<ProfileRequestContext> activationCondition;
 
-    /**
-     * Constructor.
-     * 
-     * @param id unique ID of this flow, cannot be null or empty
-     */
-    public SubjectCanonicalizationFlowDescriptor(@Nonnull @NotEmpty final String id) {
-        super.setId(id);
-
+    /** Constructor. */
+    public SubjectCanonicalizationFlowDescriptor() {
         activationCondition = Predicates.alwaysTrue();
     }
 

@@ -53,7 +53,7 @@ public class AuthenticationContextTest {
     @Test public void testActiveResults() throws Exception {
         final AuthenticationResult result = new AuthenticationResult("test", new Subject());
 
-        AuthenticationContext ctx = new AuthenticationContext();
+        final AuthenticationContext ctx = new AuthenticationContext();
         Assert.assertTrue(ctx.getActiveResults().isEmpty());
         
         ctx.setActiveResults(Arrays.asList(result));
@@ -67,7 +67,8 @@ public class AuthenticationContextTest {
         AuthenticationContext ctx = new AuthenticationContext();
         Assert.assertTrue(ctx.getPotentialFlows().isEmpty());
 
-        AuthenticationFlowDescriptor descriptor = new AuthenticationFlowDescriptor("test");
+        final AuthenticationFlowDescriptor descriptor = new AuthenticationFlowDescriptor();
+        descriptor.setId("test");
         ctx = new AuthenticationContext();
         ctx.getPotentialFlows().put(descriptor.getId(), descriptor);
         Assert.assertEquals(ctx.getPotentialFlows().size(), 1);
@@ -76,17 +77,18 @@ public class AuthenticationContextTest {
 
     /** Tests mutating attempted flow. */
     @Test public void testAttemptedFlow() throws Exception {
-        AuthenticationContext ctx = new AuthenticationContext();
+        final AuthenticationContext ctx = new AuthenticationContext();
         Assert.assertNull(ctx.getAttemptedFlow());
 
-        AuthenticationFlowDescriptor descriptor = new AuthenticationFlowDescriptor("test");
+        final AuthenticationFlowDescriptor descriptor = new AuthenticationFlowDescriptor();
+        descriptor.setId("test");
         ctx.setAttemptedFlow(descriptor);
         Assert.assertEquals(ctx.getAttemptedFlow(), descriptor);
     }
 
     /** Tests setting completion instant. */
     @Test public void testCompletionInstant() throws Exception {
-        AuthenticationContext ctx = new AuthenticationContext();
+        final AuthenticationContext ctx = new AuthenticationContext();
         Assert.assertEquals(ctx.getCompletionInstant(), 0);
 
         long now = System.currentTimeMillis();
@@ -96,4 +98,5 @@ public class AuthenticationContextTest {
         ctx.setCompletionInstant();
         Assert.assertTrue(ctx.getCompletionInstant() > now);
     }
+    
 }

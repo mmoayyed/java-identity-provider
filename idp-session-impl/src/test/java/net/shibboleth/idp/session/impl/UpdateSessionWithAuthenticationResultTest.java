@@ -78,7 +78,8 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         StorageSerializer<AuthenticationResult> resultSerializer = new DefaultAuthenticationResultSerializer();
         resultSerializer.initialize();
 
-        flowDescriptor = new AuthenticationFlowDescriptor("test1");
+        flowDescriptor = new AuthenticationFlowDescriptor();
+        flowDescriptor.setId("test1");
         flowDescriptor.setResultSerializer(resultSerializer);
         flowDescriptor.initialize();
         sessionManager.setAuthenticationFlowDescriptors(Arrays.asList(flowDescriptor));

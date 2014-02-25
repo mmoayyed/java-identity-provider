@@ -159,8 +159,10 @@ public class TransientDecoderTest {
         encoder.setNameFormat("https://example.org/");
         final NameID nameid = encoder.encode(result);
 
-        NameIDCanonicalizationFlowDescriptor descriptor = new NameIDCanonicalizationFlowDescriptor("NameIdFlowDescriptor");
+        NameIDCanonicalizationFlowDescriptor descriptor = new NameIDCanonicalizationFlowDescriptor();
         descriptor.setFormats(Collections.singleton("https://example.org/"));
+        descriptor.setId("NameIdFlowDescriptor");
+        descriptor.initialize();
         final NameIDCanonicalization canon = new NameIDCanonicalization();
         canon.setId("test");
        

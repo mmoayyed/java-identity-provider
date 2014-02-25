@@ -44,15 +44,6 @@ public class NameIDCanonicalizationFlowDescriptor extends SubjectCanonicalizatio
     @NonnullAfterInit @Unmodifiable private Set<String> formats;
 
     /**
-     * Constructor.
-     * 
-     * @param id the identity of the Flow.
-     */
-    public NameIDCanonicalizationFlowDescriptor(String id) {
-        super(id);
-    }
-
-    /**
      * Return the set of acceptable formats.
      * 
      * @return Returns the formats. Never empty after initialization.
@@ -83,4 +74,5 @@ public class NameIDCanonicalizationFlowDescriptor extends SubjectCanonicalizatio
                     + " Should specify one or more formats");
         }
     }
+    
 }

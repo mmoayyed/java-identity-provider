@@ -69,13 +69,15 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
         StorageSerializer<AuthenticationResult> resultSerializer = new DefaultAuthenticationResultSerializer();
         resultSerializer.initialize();
         
-        AuthenticationFlowDescriptor foo = new AuthenticationFlowDescriptor("AuthenticationFlow/Foo");
+        AuthenticationFlowDescriptor foo = new AuthenticationFlowDescriptor();
+        foo.setId("AuthenticationFlow/Foo");
         foo.setLifetime(60 * 1000);
         foo.setInactivityTimeout(60 * 1000);
         foo.setResultSerializer(resultSerializer);
         foo.initialize();
         
-        AuthenticationFlowDescriptor bar = new AuthenticationFlowDescriptor("AuthenticationFlow/Bar");
+        AuthenticationFlowDescriptor bar = new AuthenticationFlowDescriptor();
+        bar.setId("AuthenticationFlow/Bar");
         bar.setLifetime(60 * 1000);
         bar.setInactivityTimeout(60 * 1000);
         bar.setResultSerializer(resultSerializer);
@@ -87,6 +89,7 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void adjustProperties() {
         sessionManager.setAuthenticationFlowDescriptors(flowDescriptors);
         sessionManager.setTrackSPSessions(true);

@@ -32,7 +32,8 @@ public class AuthenticationFlowDescriptorTest {
     private AuthenticationFlowDescriptor descriptor;
     
     @BeforeMethod public void setUp() {
-        descriptor = new AuthenticationFlowDescriptor("test");
+        descriptor = new AuthenticationFlowDescriptor();
+        descriptor.setId("test");
     }
 
     
@@ -41,27 +42,6 @@ public class AuthenticationFlowDescriptorTest {
         Assert.assertEquals(descriptor.getId(), "test");
         Assert.assertFalse(descriptor.isForcedAuthenticationSupported());
         Assert.assertFalse(descriptor.isPassiveAuthenticationSupported());
-
-        try {
-            new AuthenticationFlowDescriptor(null);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
-
-        try {
-            new AuthenticationFlowDescriptor("");
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
-
-        try {
-            new AuthenticationFlowDescriptor("  ");
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
     }
 
     /** Tests mutating lifetime. */
