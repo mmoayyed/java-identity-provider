@@ -195,6 +195,11 @@
         scope="prototype" />
 
     <bean
+        id="AddInResponseToToResponse"
+        class="org.opensaml.saml.common.profile.impl.AddInResponseToToResponse"
+        scope="prototype" />
+
+    <bean
         id="AddAuthenticationStatementToAssertion"
         class="net.shibboleth.idp.saml.impl.profile.saml1.AddAuthenticationStatementToAssertion"
         scope="prototype" />

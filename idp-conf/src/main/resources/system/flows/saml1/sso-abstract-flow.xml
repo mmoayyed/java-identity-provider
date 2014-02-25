@@ -80,6 +80,11 @@
 
     <action-state id="AddResponseShell">
         <evaluate expression="AddResponseShell" />
+        <transition on="proceed" to="AddInResponseToToResponse" />
+    </action-state>
+
+    <action-state id="AddInResponseToToResponse">
+        <evaluate expression="AddInResponseToToResponse" />
         <transition on="proceed" to="AddAuthenticationStatementToAssertion" />
     </action-state>
 
