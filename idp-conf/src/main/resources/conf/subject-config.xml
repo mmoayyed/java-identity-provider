@@ -20,11 +20,13 @@
 
     <!--
     This is a list of Subject Canonicalization flows that turn arbitrary Subject data into a string-based
-    principal name that the rest of the IdP can operate on.
+    principal name that the rest of the IdP can operate on. They're used both after authentication and
+    during operations like SAML attribute queries, to map the SAML Subject name into a principal name. 
     
     Flows are described with an ID that corresponds to a Spring Web Flow subflow name, and an optional
-    predicate function that tells the IdP whether the flow can be run or not on a particular Subject
-    for a particular profile request. 
+    activation function that tells the IdP whether the flow can be run or not on a particular Subject
+    for a particular profile request. The default functions do simple checking for compatible syntax
+    and data to operate on, to avoid wasted effort. 
     -->
     <util:list id="shibboleth.AvailableSubjectCanonicalizationFlows">
         
@@ -37,12 +39,10 @@
        
         <bean c:id="SubjectC14NFlow/SAML2/Transient" class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor"> 
             <property name="activationCondition">
-                <bean
-                    class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition" />
+                <bean class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition" />
             </property>
             <property name="formats">
                 <util:list>
-                    <value>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</value>
                     <value>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</value>
                 </util:list>
             </property>
@@ -50,12 +50,10 @@
         
         <bean c:id="SubjectC14NFlow/SAML2/CryptoTransient" class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor"> 
             <property name="activationCondition">
-                <bean
-                    class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition" />
+                <bean class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition" />
             </property>
             <property name="formats">
                 <util:list>
-                    <value>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</value>
                     <value>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</value>
                 </util:list>
             </property>
@@ -63,13 +61,11 @@
         
         <bean c:id="SubjectC14NFlow/SAML2/Direct" class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor"> 
             <property name="activationCondition">
-                <bean
-                    class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition" />
+                <bean class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition" />
             </property>
             <property name="formats">
                 <util:list>
                     <value>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</value>
-                    <value>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</value>
                 </util:list>
             </property>
         </bean>
@@ -77,47 +73,46 @@
                
         <bean c:id="SubjectC14NFlow/SAML1/Transient" class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor"> 
             <property name="activationCondition">
-                <bean
-                    class="net.shibboleth.idp.saml.impl.nameid.NameIdentifierCanonicalization.ActivationCondition" />
+                <bean class="net.shibboleth.idp.saml.impl.nameid.NameIdentifierCanonicalization.ActivationCondition" />
             </property>
             <property name="formats">
                 <util:list>
-                    <value>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</value>
-                    <value>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</value>
+                    <value>urn:mace:shibboleth:1.0:nameIdentifier</value>
                 </util:list>
             </property>
         </bean>
 
         <bean c:id="SubjectC14NFlow/SAML1/CryptoTransient" class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor"> 
             <property name="activationCondition">
-                <bean
-                    class="net.shibboleth.idp.saml.impl.nameid.NameIdentifierCanonicalization.ActivationCondition" />
+                <bean class="net.shibboleth.idp.saml.impl.nameid.NameIdentifierCanonicalization.ActivationCondition" />
             </property>
             <property name="formats">
                 <util:list>
-                    <value>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</value>
-                    <value>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</value>
+                    <value>urn:mace:shibboleth:1.0:nameIdentifier</value>
                 </util:list>
             </property>
         </bean>
 
         <bean c:id="SubjectC14NFlow/SAML1/Direct" class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor"> 
             <property name="activationCondition">
-                <bean
-                    class="net.shibboleth.idp.saml.impl.nameid.NameIdentifierCanonicalization.ActivationCondition" />
+                <bean class="net.shibboleth.idp.saml.impl.nameid.NameIdentifierCanonicalization.ActivationCondition" />
             </property>
             <property name="formats">
                 <util:list>
                     <value>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</value>
-                    <value>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</value>
                 </util:list>
             </property>
         </bean>
 
+        <!--
+        This is installed to support the old mechanism of using PrincipalConnectors in the attribute
+        resolver to map SAML Subjects back into principals. If you don't use those (or this is a new install)
+        you can disable this.
+        -->
         <bean c:id="SubjectC14NFlow/LegacyPrincipalConnector" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
             <property name="activationCondition">
                 <bean class="net.shibboleth.idp.saml.impl.nameid.LegacyCanonicalization.ActivationCondition" 
-                c:service-ref="shibboleth.AttributeResolverService"/>
+                    c:service-ref="shibboleth.AttributeResolverService"/>
             </property>
         </bean>
 
