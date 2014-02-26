@@ -32,6 +32,6 @@
         <transition on="ReselectFlow" to="SelectSubjectCanonicalizationFlow" />
     </subflow-state>
 
-    <bean-import resource="subject-c14n-beans.xml" />
+    <bean-import resource="subject-c14n-authn-beans.xml" />
 
 </flow>

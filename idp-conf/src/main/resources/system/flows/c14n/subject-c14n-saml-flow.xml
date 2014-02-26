@@ -1,0 +1,37 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
+      parent="SubjectC14N.Abstract">
+
+    <!--
+    This is the SubjectCanonicalization subflow. It handles set up and eventual selection of a
+    c14n subflow before returning control to the calling flow.
+    -->
+    
+    <action-state id="PopulateSubjectCanonicalizationContext">
+        <evaluate expression="PopulateSubjectCanonicalizationContext" />
+        <transition on="proceed" to="SelectSubjectCanonicalizationFlow" />
+    </action-state>
+    
+    <!--
+    The Select action is the "dispatching" step. Anything starting with "SubjectC14NFlow/"
+    is a flow descriptor that we send control to.
+    -->
+    <action-state id="SelectSubjectCanonicalizationFlow">
+        <evaluate expression="SelectSubjectCanonicalizationFlow" />
+
+        <!-- Call a subflow with the same ID as the event. -->
+        <transition on="#{currentEvent.id.startsWith('SubjectC14NFlow/')}" to="CallSubjectCanonicalizationFlow" />
+    </action-state>
+
+    <!--
+    This invokes a c14n flow. Anything but proceed is an error, otherwise control passes to the caller,
+    except for a ReselectFlow signal to loop back up and try another.
+    -->
+    <subflow-state id="CallSubjectCanonicalizationFlow" subflow="#{currentEvent.id}">
+        <transition on="ReselectFlow" to="SelectSubjectCanonicalizationFlow" />
+    </subflow-state>
+
+    <bean-import resource="subject-c14n-saml-beans.xml" />
+
+</flow>

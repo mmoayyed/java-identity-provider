@@ -64,7 +64,7 @@
     </subflow-state>
 
     <!-- This runs a canonicalization step on the result of the authentication. -->
-    <subflow-state id="CallSubjectCanonicalization" subflow="SubjectC14N">
+    <subflow-state id="CallSubjectCanonicalization" subflow="SubjectC14N/Authn">
         <transition on="proceed" to="InvalidateSessionOnIdentitySwitch" />
     </subflow-state>
 
