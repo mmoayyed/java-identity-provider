@@ -5,7 +5,7 @@
 
     <!-- This is a one-step subflow that does direct NameID Subject Canonicalization. -->
     
-    <action-state id="SAML2DirectSubjectCanonicalization">
+    <action-state id="SAML2DirectCanonicalization">
         <evaluate expression="SAML2DirectCanonicalization" />
     </action-state>
 

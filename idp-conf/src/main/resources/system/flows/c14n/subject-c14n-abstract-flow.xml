@@ -13,6 +13,7 @@
     <end-state id="InvalidSubject" />
     <end-state id="InvalidSubjectCanonicalizationContext" />
     <end-state id="ReselectFlow" />
+    <end-state id="NoPotentialFlow" />
     <end-state id="SubjectCanonicalizationError" />
 
     <!-- Default is to turn any event into its own end-state, except InvalidSubject, which triggers a Reselect. -->

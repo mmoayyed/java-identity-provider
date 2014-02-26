@@ -5,7 +5,7 @@
 
     <!-- This is a one-step subflow that does NameIdenitifer Subject Canonicalization for TransientNameidentifiers -->
     
-    <action-state id="SAML1TransientSubjectCanonicalization">
+    <action-state id="SAML1TransientCanonicalization">
         <evaluate expression="SAML1TransientCanonicalization" />
     </action-state>
 
