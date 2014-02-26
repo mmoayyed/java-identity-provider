@@ -12,7 +12,7 @@
 	<context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
 
 	<import resource="authn-comparison.xml" />
-	<import resource="authn-flow-descriptors.xml" />
+	<import resource="general-authn-config.xml" />
     <import resource="subject-config.xml" />
 	<import resource="attribute-params-config.xml" />
 
