@@ -51,7 +51,7 @@ public class CryptoTransientNameIDDecoder extends BaseCryptoTransientDecoder imp
         final String spNameQualifier = nameID.getSPNameQualifier();
 
         if (null != spNameQualifier && null != requesterId && !spNameQualifier.equals(requesterId)) {
-            log.debug("SPNameQualifier '{}' does not match requesterId '{}'",
+            log.debug("{} SPNameQualifier '{}' does not match requesterId '{}'",
                     new Object[] {getLogPrefix(), spNameQualifier, requesterId,});
             throw new SubjectCanonicalizationException("SPNameQualifier does not match requesterId");
         }
@@ -59,7 +59,7 @@ public class CryptoTransientNameIDDecoder extends BaseCryptoTransientDecoder imp
         final String nameQualifier = nameID.getNameQualifier();
 
         if (null != nameQualifier && null != responderId && !nameQualifier.equals(responderId)) {
-            log.debug("NameQualifier '{}' does not match responderId '{}'",
+            log.debug("{} NameQualifier '{}' does not match responderId '{}'",
                     new Object[] {getLogPrefix(), nameQualifier, responderId,});
             throw new SubjectCanonicalizationException("NameQualifier does not match responderId");
         }
