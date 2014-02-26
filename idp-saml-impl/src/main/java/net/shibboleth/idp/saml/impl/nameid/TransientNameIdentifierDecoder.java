@@ -30,26 +30,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Class to look inside a {@link NameIdentifier} check that its {@link NameIdentifier#getNameQualifier()} and
- * {@link NameIdentifier#getSPNameQualifier()} are correct and the decode the {@link NameIdentifier#getValue()} 
- *  * with help of the base class (reversing the work done by
+ * Processes a transient {@link NameIdentifier}, checks that its {@link NameIdentifier#getNameQualifier()} is
+ * correct, and decodes {@link NameIdentifier#getNameIdentifier()} via the base class (reversing the work done by
  * {@link net.shibboleth.idp.attribute.resolver.impl.ad.TransientIdAttributeDefinition}).
  */
 public class TransientNameIdentifierDecoder extends BaseTransientDecoder implements NameIdentifierDecoder {
 
-    /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(TransientNameIdentifierDecoder.class);
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(TransientNameIdentifierDecoder.class);
 
     /** {@inheritDoc} */
-    @Override @Nonnull public String decode(@Nonnull NameIdentifier nameIdentifier, @Nullable String responderId,
-            @Nullable String requesterId) throws SubjectCanonicalizationException, NameDecoderException {
-
+    @Override
+    @Nonnull public String decode(@Nonnull final NameIdentifier nameIdentifier, @Nullable final String responderId,
+            @Nullable final String requesterId) throws SubjectCanonicalizationException, NameDecoderException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         final String nameQualifier = nameIdentifier.getNameQualifier();
 
         if (null != nameQualifier && null != responderId && !nameQualifier.equals(responderId)) {
-            log.debug("NameQualifier '{}' does not match responderId'{}'", nameQualifier, responderId);
+            log.debug("{} NameQualifier '{}' does not match responderId '{}'",
+                    new Object[] {getLogPrefix(), nameQualifier, responderId,});
             throw new SubjectCanonicalizationException("NameQualifier does not match responderId");
         }
 

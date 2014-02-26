@@ -20,8 +20,9 @@ package net.shibboleth.idp.saml.impl.nameid;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.SubjectCanonicalizationException;
+import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -36,13 +37,17 @@ public class DirectNameIdentifierDecoder extends AbstractIdentifiableInitializea
         NameIdentifierDecoder {
 
     /**
-     * {@inheritDoc}. The decoded value just the input. We do not police any values
+     * {@inheritDoc}
+     * 
+     * The decoded value is just the input. We do not police any values.
      */
-    @Override @Nonnull public String decode(@Nonnull NameIdentifier nameIdentifier, @Nullable String responderId,
-            @Nullable String requesterId) throws SubjectCanonicalizationException {
-
+    @Override @Nonnull @NotEmpty public String decode(@Nonnull final NameIdentifier nameIdentifier,
+            @Nullable final String responderId, @Nullable final String requesterId) throws NameDecoderException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
+        if (nameIdentifier.getNameIdentifier() == null) {
+            throw new NameDecoderException("NameIdentifier value was null");
+        }
         return nameIdentifier.getNameIdentifier();
     }
 
@@ -51,4 +56,5 @@ public class DirectNameIdentifierDecoder extends AbstractIdentifiableInitializea
         super.doInitialize();
         LoggerFactory.getLogger(DirectNameIdentifierDecoder.class).debug("Direct Transform {}", getId());
     }
+    
 }

@@ -116,5 +116,6 @@
             </property>
         </bean>
 
-    </util:list>   
+    </util:list>
+    
 </beans>

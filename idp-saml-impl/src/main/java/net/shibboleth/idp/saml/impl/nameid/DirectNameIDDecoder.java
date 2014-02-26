@@ -20,8 +20,9 @@ package net.shibboleth.idp.saml.impl.nameid;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.SubjectCanonicalizationException;
+import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.NameIDDecoder;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -35,14 +36,18 @@ import org.slf4j.LoggerFactory;
 public class DirectNameIDDecoder extends AbstractIdentifiableInitializeableComponent implements NameIDDecoder {
 
     /**
-     * {@inheritDoc}. The decoded value just the input. We do not police any values
+     * {@inheritDoc}
+     * 
+     * The decoded value is just the input. We do not police any values.
      */
-    @Override @Nonnull public String decode(@Nonnull NameID nameID, @Nullable String responderId,
-            @Nullable String requesterId) throws SubjectCanonicalizationException {
-
+    @Override @Nonnull @NotEmpty public String decode(@Nonnull final NameID nameIdentifier,
+            @Nullable final String responderId, @Nullable final String requesterId) throws NameDecoderException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
-        return nameID.getValue();
+        if (nameIdentifier.getValue() == null) {
+            throw new NameDecoderException("NameID value was null");
+        }
+        return nameIdentifier.getValue();
     }
 
     /** {@inheritDoc} */

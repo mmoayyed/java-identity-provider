@@ -26,6 +26,7 @@ import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.TransientIdParameters;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -73,20 +74,20 @@ public abstract class BaseTransientDecoder extends AbstractIdentifiableInitializ
      * Convert the transient Id into the principal.
      * 
      * @param transientId the transientID
-     * @param issuerId The issuer (not used)
+     * @param issuerId the issuer (not used)
      * @param requesterId the requested (SP)
-     * @return the decoded entity.
-     * @throws NameDecoderException if a decode error occurs.
-     * @throws SubjectCanonicalizationException if a mismatch occurs.
+     * 
+     * @return the decoded principal
+     * @throws NameDecoderException if a decode error occurs
+     * @throws SubjectCanonicalizationException if a mismatch occurs
      */
-    /** {@inheritDoc} */
-    @Nonnull public String decode(@Nonnull String transientId, @Nullable String issuerId, @Nullable String requesterId)
-            throws SubjectCanonicalizationException, NameDecoderException {
-        Constraint.isNotNull(requesterId, "Supplied requested should not be null");
+    @Nonnull @NotEmpty public String decode(@Nonnull final String transientId, @Nullable final String issuerId,
+            @Nullable final String requesterId) throws SubjectCanonicalizationException, NameDecoderException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        Constraint.isNotNull(requesterId, "Requester ID cannot be null");
 
         if (null == transientId) {
-            throw new NameDecoderException(getLogPrefix() + " transient Identifier was null");
+            throw new NameDecoderException(getLogPrefix() + " transient identifier was null");
         }
 
         try {
@@ -108,7 +109,7 @@ public abstract class BaseTransientDecoder extends AbstractIdentifiableInitializ
             }
 
             return param.getPrincipal();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new SubjectCanonicalizationException(e);
         }
     }
@@ -128,7 +129,7 @@ public abstract class BaseTransientDecoder extends AbstractIdentifiableInitializ
      * 
      * @return a string for insertion at the beginning of any log messages
      */
-    @Nonnull protected String getLogPrefix() {
+    @Nonnull @NotEmpty protected String getLogPrefix() {
         // local cache of cached entry to allow unsynchronised clearing.
         String prefix = logPrefix;
         if (null == prefix) {

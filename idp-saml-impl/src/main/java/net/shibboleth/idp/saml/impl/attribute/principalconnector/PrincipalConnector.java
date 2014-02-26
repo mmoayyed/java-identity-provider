@@ -27,8 +27,11 @@ import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.NameIDDecoder;
 import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -42,7 +45,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
- * The concrete representation of a &lt;PrincipalConnector&gt;.
+ * The concrete representation of a &lt;PrincipalConnector&gt;, delegates actual work to decoders.
  */
 public class PrincipalConnector extends AbstractIdentifiableInitializeableComponent implements NameIdentifierDecoder,
         NameIDDecoder {
@@ -56,26 +59,28 @@ public class PrincipalConnector extends AbstractIdentifiableInitializeableCompon
     /** The format we match against. */
     @Nonnull @NotEmpty private final String format;
 
-    /** The sp we match against. */
-    @Nonnull private Collection<String> relyingParties = Collections.EMPTY_SET;
+    /** The relying parties we support. */
+    @Nonnull private Collection<String> relyingParties;
 
     /**
      * Constructor.
      * 
-     * @param decoderNameID the decoder for {@link NameID}
-     * @param decodernameIdentifier for {@link NameIdentifier}
-     * @param theFormat the format to match on.
+     * @param saml2Decoder the decoder for a {@link NameID}
+     * @param saml1Decoder the decoder for a {@link NameIdentifier}
+     * @param theFormat the format to match on
      */
-    public PrincipalConnector(@Nonnull NameIDDecoder decoderNameID,
-            @Nonnull NameIdentifierDecoder decodernameIdentifier, @Nonnull String theFormat) {
-        nameIDDecoder = Constraint.isNotNull(decoderNameID, "provided NameIDDecoder must not be null");
-        nameIdentifierDecoder =
-                Constraint.isNotNull(decodernameIdentifier, "provided NameIdentifierDecoder must not be null");
-        format = Constraint.isNotNull(StringSupport.trimOrNull(theFormat), "provided format must not be empty or null");
+    public PrincipalConnector(@Nonnull final NameIDDecoder saml2Decoder,
+            @Nonnull final NameIdentifierDecoder saml1Decoder, @Nonnull @NotEmpty final String theFormat) {
+        
+        nameIDDecoder = Constraint.isNotNull(saml2Decoder, "NameIDDecoder cannot be null");
+        nameIdentifierDecoder = Constraint.isNotNull(saml1Decoder, "NameIdentifierDecoder cannot be null");
+        format = Constraint.isNotNull(StringSupport.trimOrNull(theFormat),
+                "Name identifier format cannot be empty or null");
+        relyingParties = Collections.emptySet();
     }
 
     /**
-     * Get the {@link NameID} decoder.
+     * Get the {@link NameIDDecoder}.
      * 
      * @return the decoder
      */
@@ -84,7 +89,7 @@ public class PrincipalConnector extends AbstractIdentifiableInitializeableCompon
     }
 
     /**
-     * Get the {@link NameIdentifierDecoder} decoder.
+     * Get the {@link NameIdentifierDecoder}.
      * 
      * @return the decoder
      */
@@ -95,27 +100,27 @@ public class PrincipalConnector extends AbstractIdentifiableInitializeableCompon
     /**
      * Get the format we support.
      * 
-     * @return the format we support.
+     * @return the format we support
      */
     @Nonnull public String getFormat() {
         return format;
     }
 
     /**
-     * The supported relying Parties.
+     * Get the supported relying parties.
      * 
-     * @return the RPs
+     * @return the supporred relying parties
      */
-    @Nonnull public Collection<String> getRelyingParties() {
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<String> getRelyingParties() {
         return relyingParties;
     }
 
     /**
-     * Sets the relying parties we are interested in.
+     * Set the supported relying parties.
      * 
-     * @param rps the relying parties.
+     * @param rps the supported relying parties
      */
-    public void setRelyingParties(@Nullable @NullableElements Collection<String> rps) {
+    public void setRelyingParties(@Nullable @NullableElements final Collection<String> rps) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         if (null != rps) {
             relyingParties = ImmutableSet.copyOf(Iterables.filter(rps, Predicates.notNull()));
@@ -123,25 +128,28 @@ public class PrincipalConnector extends AbstractIdentifiableInitializeableCompon
     }
 
     /**
-     * Does the supplier requester (relying party match out configuration).
+     * Does the supplier requester (relying party) match our configuration?
      * 
-     * @param requester the requester.
-     * @return true if no relyingParties were configured or if the requester matches.
+     * @param requester the requester
+     * @return true iff no relyingParties were configured or the requester matches
      */
-    public boolean requesterMatches(@Nullable String requester) {
-
+    public boolean requesterMatches(@Nullable final String requester) {
         return null == requester || relyingParties.isEmpty() || relyingParties.contains(requester);
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull public String decode(@Nonnull NameID nameID, @Nullable String responderId,
-            @Nullable String requesterId) throws SubjectCanonicalizationException, NameDecoderException {
+    @Override
+    @Nonnull @NotEmpty public String decode(@Nonnull final NameID nameID, @Nullable final String responderId,
+            @Nullable final String requesterId) throws SubjectCanonicalizationException, NameDecoderException {
         return nameIDDecoder.decode(nameID, responderId, requesterId);
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull public String decode(@Nonnull NameIdentifier nameIdentifier, @Nullable String responderId,
-            @Nullable String requesterId) throws SubjectCanonicalizationException, NameDecoderException {
+    @Override
+    @Nonnull @NotEmpty public String decode(@Nonnull final NameIdentifier nameIdentifier,
+            @Nullable final String responderId, @Nullable final String requesterId)
+                    throws SubjectCanonicalizationException, NameDecoderException {
         return nameIdentifierDecoder.decode(nameIdentifier, responderId, requesterId);
     }
+    
 }

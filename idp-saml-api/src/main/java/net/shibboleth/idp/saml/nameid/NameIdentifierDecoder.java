@@ -21,27 +21,29 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 import org.opensaml.saml.saml1.core.NameIdentifier;
 
-/** Interface for converting back a {@link NameIdentifier} into a single Principal. */
+/** Interface for converting a {@link NameIdentifier} back into a principal name. */
 public interface NameIdentifierDecoder {
 
     /**
      * Decode the provided {@link NameIdentifier}, testing or otherwise using either or both of the issuer and
      * requester.
      * 
-     * @param nameIdentifier {@link org.opensaml.saml.saml2.core.NameID} or
-     *            {@link org.opensaml.saml.saml1.core.NameIdentifier}
-     * @param responderId the entityID of the which issued (and is looking at and responding to) the value
-     * @param requesterId the entityID of the which is providing the and which asking for information based on it.
+     * <p>If relevant, the implementation is expected to test the {@link NameIdentifier#getNameQualifier()}
+     * against the responder, as well as any stored or decrypted values.</p>
+     * 
+     * @param nameIdentifier object to decode
+     * @param responderId the entityID that issued (and is looking at and responding to) the value
+     * @param requesterId the entityID that provided the name and is asking for information based on it
+     * 
      * @return the principal decoded from the value
-     * @throws SubjectCanonicalizationException if match conditions failed.
-     * @throws NameDecoderException if an error occurred during translation. <br>
-     *             If relevant, the implementation is expected to test the {@link NameIdentifier#getNameQualifier()}
-     *             against the responder, as well as any stored or decrypted values.
+     * @throws SubjectCanonicalizationException if match conditions failed
+     * @throws NameDecoderException if an error occurred during translation
      */
-    @Nonnull public String decode(@Nonnull NameIdentifier nameIdentifier, @Nullable String responderId,
-            @Nullable String requesterId) throws SubjectCanonicalizationException, NameDecoderException;
+    @Nonnull @NotEmpty String decode(@Nonnull final NameIdentifier nameIdentifier, @Nullable final String responderId,
+            @Nullable final String requesterId) throws SubjectCanonicalizationException, NameDecoderException;
 
 }

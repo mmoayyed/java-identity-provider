@@ -44,15 +44,14 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Predicate;
 
 /**
- * Action to perform C14N based on the contents of the attribute-resolver.xml file.
+ * Action to perform C14N based on the contents of the attribute-resolver.xml file, this
+ * delegates the work to an {@link AttributeResolver} instance that supports the
+ * {@link LegacyPrincipalDecoder} interface.
  */
 public class LegacyCanonicalization extends AbstractSubjectCanonicalizationAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(LegacyCanonicalization.class);
-
-    /** The custom Principal to operate on. */
-    @Nullable private String decodedPrincipal;
 
     /** Service used to get the resolver used to fetch attributes. */
     @Nonnull private final ReloadableService<AttributeResolver> attributeResolverService;
@@ -67,7 +66,7 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
     }
 
     /** {@inheritDoc} */
-    @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
 
         ServiceableComponent<AttributeResolver> component = null;
@@ -79,7 +78,7 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
                 c14nContext.setException(new SubjectCanonicalizationException(
                         "Error resolving PrincipalConnectore: Invalid Attribute resolver configuration."));
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-                return false;
+                return;
             }
 
             final AttributeResolver attributeResolver = component.getComponent();
@@ -88,38 +87,30 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
                 c14nContext.setException(new SubjectCanonicalizationException(
                         "Attribute Resolver did not implement LegacyPrincipalDecoder."));
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-                return false;
+                return;
             }
 
             LegacyPrincipalDecoder<SubjectCanonicalizationContext> decoder =
                     (LegacyPrincipalDecoder<SubjectCanonicalizationContext>) attributeResolver;
 
-            decodedPrincipal = decoder.canonicalize(c14nContext);
+            final String decodedPrincipal = decoder.canonicalize(c14nContext);
             if (null == decodedPrincipal) {
                 log.info("{} Legacy Principal Decoding returned no value", getLogPrefix());
                 c14nContext.setException(new SubjectCanonicalizationException(
                         "Legacy Principal Decoding returned no value"));
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-                return false;
+                return;
             }
+            
+            c14nContext.setPrincipalName(decodedPrincipal);
         } catch (ResolutionException e) {
             c14nContext.setException(e);
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);
-            return false;
         } finally {
             if (null != component) {
                 component.unpinComponent();
             }
         }
-
-        return true;
-    }
-
-    /** {@inheritDoc} */
-    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
-
-        c14nContext.setPrincipalName(decodedPrincipal);
     }
     
     /**
@@ -141,17 +132,19 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
         }
 
         /**
-         * {@inheritDoc}. Iff there is a valid service and there are no parsing errors and the service does understand
-         * principal connectors and there were some configures we will proceed.
+         * {@inheritDoc}
+         * 
+         * <p>Iff there is a valid service and there are no parsing errors and the service does understand
+         * principal connectors and there were some configured we will proceed.</p>
          */
         @Override public boolean apply(@Nullable final ProfileRequestContext input) {
 
             if (null == input) {
                 return false;
             }
-            final SubjectCanonicalizationContext c14nContext =
-                    input.getSubcontext(SubjectCanonicalizationContext.class, false);
             
+            final SubjectCanonicalizationContext c14nContext =
+                    input.getSubcontext(SubjectCanonicalizationContext.class);
             if (null == c14nContext) {
                 return false;
             }
@@ -160,6 +153,7 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
             if (null == subject) {
                 return false;
             }
+            
             final Set<NameIDPrincipal> nameIDs = subject.getPrincipals(NameIDPrincipal.class);
             final Set<NameIdentifierPrincipal> nameIdentifiers = subject.getPrincipals(NameIdentifierPrincipal.class);
             if (1 != nameIDs.size() + nameIdentifiers.size()) {

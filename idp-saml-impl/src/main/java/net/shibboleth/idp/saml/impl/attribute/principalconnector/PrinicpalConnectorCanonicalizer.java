@@ -31,6 +31,7 @@ import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -46,117 +47,34 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
- * This code implements the canonicalization defined by a series of &ltPrincipalConnectors&gt in an attribute resolver
- * file.
+ * Implements SAML subject canonicalization using a series of {@link PrincipalConnector} instances.
  */
 public class PrinicpalConnectorCanonicalizer implements LegacyPrincipalDecoder<SubjectCanonicalizationContext>  {
 
-    /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(PrinicpalConnectorCanonicalizer.class);
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(PrinicpalConnectorCanonicalizer.class);
 
     /** The connectors. */
-    @Nonnull private final Collection<PrincipalConnector> principalConnectors;
+    @Nonnull @NonnullElements private final Collection<PrincipalConnector> principalConnectors;
 
     /**
      * Constructor.
      * 
      * @param connectors the connectors we care about.
      */
-    public PrinicpalConnectorCanonicalizer(@Nullable @NullableElements Collection<PrincipalConnector> connectors) {
+    public PrinicpalConnectorCanonicalizer(
+            @Nullable @NullableElements final Collection<PrincipalConnector> connectors) {
 
         if (null != connectors) {
             principalConnectors = ImmutableSet.copyOf(Iterables.filter(connectors, Predicates.notNull()));
         } else {
-            principalConnectors = Collections.EMPTY_SET;
+            principalConnectors = Collections.emptySet();
         }
     }
 
-    /**
-     * Canonicalize the provided {@link NameIdentifier} with respect to the provided
-     * {@link SubjectCanonicalizationContext}.<br/>
-     * We iterate over all the connectors to see whether anything matches.
-     * 
-     * @param nameIdentifier the {@link NameIdentifier}
-     * @param c14nContext the {@link SubjectCanonicalizationContext}
-     * @return the Principal, or null if we could not match
-     * @throws ResolutionException if we get a fatal error during decoding.
-     */
-    @Nullable protected String canonicalize(NameIdentifier nameIdentifier, SubjectCanonicalizationContext c14nContext)
-            throws ResolutionException {
-
-        for (PrincipalConnector connector : principalConnectors) {
-
-            log.trace("Legacy Principal Decoder: looking at connector {}", connector.getId());
-
-            if (connector.requesterMatches(c14nContext.getRequesterId())
-                    && SAML1ObjectSupport.areNameIdentifierFormatsEquivalent(connector.getFormat(),
-                            nameIdentifier.getFormat())) {
-
-                try {
-                    final String result =
-                            connector
-                                    .decode(nameIdentifier, c14nContext.getResponderId(), c14nContext.getRequesterId());
-                    if (null != result) {
-                        log.trace("Legacy Principal Decoder: decoded to {}", result);
-                        return result;
-                    }
-                    log.trace("Legacy Principal Decoder: decode provided no results");
-                } catch (SubjectCanonicalizationException e) {
-                    //
-                    // Not us, continue
-                    //
-                    continue;
-                } catch (NameDecoderException e) {
-                    throw new ResolutionException(e);
-                }
-            } else {
-                log.trace("Legacy Principal Decoder: format or relying party mismatch");
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Canonicalize the provided {@link NameID} with respect to the provided {@link SubjectCanonicalizationContext}.
-     * <br/>
-     * We iterate over all the connectors to see whether anything matches.
-     * 
-     * @param nameID the {@link NameID}
-     * @param c14nContext the {@link SubjectCanonicalizationContext}
-     * @return the Principal, or null if we could not match
-     * @throws ResolutionException if we get a fatal error during decoding.
-     */
-    @Nullable protected String canonicalize(NameID nameID, SubjectCanonicalizationContext c14nContext)
-            throws ResolutionException {
-        for (PrincipalConnector connector : principalConnectors) {
-
-            log.trace("Legacy Principal Decoder: looking at connector {}", connector.getId());
-
-            if (connector.requesterMatches(c14nContext.getRequesterId()) &&
-                    SAML2ObjectSupport.areNameIdentifierFormatsEquivalent(connector.getFormat(), nameID.getFormat())) {
-
-                try {
-                    final String result =
-                            connector.decode(nameID, c14nContext.getResponderId(), c14nContext.getRequesterId());
-                    if (null != result) {
-                        log.trace("Legacy Principal Decoder: decoded to {}", result);
-                        return result;
-                    }
-                    log.trace("Legacy Principal Decoder: decode provided no results");
-                } catch (SubjectCanonicalizationException e) {
-                    //
-                    // Not us, continue
-                    //
-                    continue;
-                } catch (NameDecoderException e) {
-                    throw new ResolutionException(e);
-                }
-
-            } else {
-                log.trace("Legacy Principal Decoder: format or relying party mismatch");
-            }
-        }
-        return null;
+    /** {@inheritDoc} */
+    @Override public boolean hasValidConnectors() {
+        return !principalConnectors.isEmpty();
     }
 
     /**
@@ -171,15 +89,15 @@ public class PrinicpalConnectorCanonicalizer implements LegacyPrincipalDecoder<S
      *             forth) This will be turned into a {@link net.shibboleth.idp.authn.AuthnEventIds#SUBJECT_C14N_ERROR}
      *             event
      */
-    @Override @Nullable public String canonicalize(SubjectCanonicalizationContext c14nContext)
+    @Override @Nullable public String canonicalize(@Nonnull final SubjectCanonicalizationContext c14nContext)
             throws ResolutionException {
-
-        Constraint.isNotNull(c14nContext, "Context must be nonnull");
-
+    
+        Constraint.isNotNull(c14nContext, "Context cannot be null");
+    
         if (c14nContext.getSubject() == null) {
             return null;
         }
-
+    
         final Set<NameIdentifierPrincipal> nameIdentifierPrincipals =
                 c14nContext.getSubject().getPrincipals(NameIdentifierPrincipal.class);
         if (nameIdentifierPrincipals != null && !nameIdentifierPrincipals.isEmpty()) {
@@ -189,9 +107,8 @@ public class PrinicpalConnectorCanonicalizer implements LegacyPrincipalDecoder<S
                 return canonicalize(nameIdentifierPrincipals.iterator().next().getNameIdentifier(), c14nContext);
             }
         }
-
+    
         final Set<NameIDPrincipal> nameIDPrincipals = c14nContext.getSubject().getPrincipals(NameIDPrincipal.class);
-
         if (nameIDPrincipals != null && !nameIDPrincipals.isEmpty()) {
             if (nameIDPrincipals.size() > 1) {
                 log.debug("Legacy Principal Decoder: too many NameIDPrincipals");
@@ -199,11 +116,101 @@ public class PrinicpalConnectorCanonicalizer implements LegacyPrincipalDecoder<S
                 return canonicalize(nameIDPrincipals.iterator().next().getNameID(), c14nContext);
             }
         }
+        
+        return null;
+    }
+    
+
+    /**
+     * Canonicalize the provided {@link NameIdentifier} with respect to the provided
+     * {@link SubjectCanonicalizationContext}.
+     * 
+     * <p>We iterate over all the connectors to see whether anything matches.</p>
+     * 
+     * @param nameIdentifier the {@link NameIdentifier}
+     * @param c14nContext the {@link SubjectCanonicalizationContext}
+     * 
+     * @return the Principal, or null if we could not match
+     * @throws ResolutionException if we get a fatal error during decoding.
+     */
+    @Nullable protected String canonicalize(@Nonnull final NameIdentifier nameIdentifier,
+            @Nonnull final SubjectCanonicalizationContext c14nContext) throws ResolutionException {
+
+        for (final PrincipalConnector connector : principalConnectors) {
+
+            log.trace("Legacy Principal Decoder: looking at connector {}", connector.getId());
+
+            if (connector.requesterMatches(c14nContext.getRequesterId())
+                    && SAML1ObjectSupport.areNameIdentifierFormatsEquivalent(connector.getFormat(),
+                            nameIdentifier.getFormat())) {
+
+                try {
+                    final String result = connector.decode(
+                            nameIdentifier, c14nContext.getResponderId(), c14nContext.getRequesterId());
+                    if (null != result) {
+                        log.trace("Legacy Principal Decoder: decoded to {}", result);
+                        return result;
+                    }
+                    log.trace("Legacy Principal Decoder: decode provided no results");
+                } catch (final SubjectCanonicalizationException e) {
+                    //
+                    // Not us, continue
+                    //
+                    continue;
+                } catch (final NameDecoderException e) {
+                    throw new ResolutionException(e);
+                }
+            } else {
+                log.trace("Legacy Principal Decoder: format or relying party mismatch");
+            }
+        }
+        
         return null;
     }
 
-    /** {@inheritDoc} */
-    @Override public boolean hasValidConnectors() {
-        return !principalConnectors.isEmpty();
+    /**
+     * Canonicalize the provided {@link NameID} with respect to the provided {@link SubjectCanonicalizationContext}.
+     * <br/>
+     * We iterate over all the connectors to see whether anything matches.
+     * 
+     * @param nameID the {@link NameID}
+     * @param c14nContext the {@link SubjectCanonicalizationContext}
+     * @return the Principal, or null if we could not match
+     * @throws ResolutionException if we get a fatal error during decoding.
+     */
+    @Nullable protected String canonicalize(@Nonnull final NameID nameID,
+            @Nonnull final SubjectCanonicalizationContext c14nContext) throws ResolutionException {
+        
+        for (final PrincipalConnector connector : principalConnectors) {
+
+            log.trace("Legacy Principal Decoder: looking at connector {}", connector.getId());
+
+            if (connector.requesterMatches(c14nContext.getRequesterId()) &&
+                    SAML2ObjectSupport.areNameIdentifierFormatsEquivalent(connector.getFormat(), nameID.getFormat())) {
+
+                try {
+                    final String result =
+                            connector.decode(nameID, c14nContext.getResponderId(), c14nContext.getRequesterId());
+                    if (null != result) {
+                        log.trace("Legacy Principal Decoder: decoded to {}", result);
+                        return result;
+                    }
+                    log.trace("Legacy Principal Decoder: decode provided no results");
+                } catch (final SubjectCanonicalizationException e) {
+                    //
+                    // Not us, continue
+                    //
+                    continue;
+                } catch (final NameDecoderException e) {
+                    throw new ResolutionException(e);
+                }
+
+            } else {
+                log.trace("Legacy Principal Decoder: format or relying party mismatch");
+            }
+        }
+        
+        return null;
     }
+    
 }
