@@ -27,6 +27,7 @@ import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.idp.saml.impl.profile.config.navigate.IdentifierGenerationStrategyLookupFunction;
 import net.shibboleth.idp.saml.profile.config.saml1.BrowserSSOProfileConfiguration;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -35,6 +36,7 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.saml.saml1.core.Status;
 import org.opensaml.saml.saml1.core.StatusCode;
+import org.opensaml.saml.saml1.profile.impl.AddResponseShell;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.NoSuchMessageException;
@@ -69,6 +71,7 @@ public class AddStatusToResponseTest extends OpenSAMLInitBaseTestCase {
 
         addResponse = new AddResponseShell();
         addResponse.setId("test");
+        addResponse.setIdentifierGeneratorLookupStrategy(new IdentifierGenerationStrategyLookupFunction());
         addResponse.initialize();
         addResponse.execute(prc);
         
