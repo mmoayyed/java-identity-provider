@@ -141,6 +141,8 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializeableComponent
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
+        // Clear name cache  now name is definitive
+        logPrefix = null;
 
         if (null == script) {
             // never met so long as we have the assert in the constructor
