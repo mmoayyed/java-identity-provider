@@ -281,8 +281,12 @@
 
     <bean
         id="AddAudienceRestrictionToAssertions"
-        class="net.shibboleth.idp.saml.impl.profile.saml1.AddAudienceRestrictionToAssertions"
-        scope="prototype" />
+        class="org.opensaml.saml.saml1.profile.impl.AddAudienceRestrictionToAssertions"
+        scope="prototype">
+        <property name="audienceRestrictionsLookupStrategy">
+            <bean class="net.shibboleth.idp.saml.impl.profile.config.navigate.AudienceRestrictionsLookupFunction" />
+        </property>
+    </bean>
 
     <bean
         id="SignAssertions"
