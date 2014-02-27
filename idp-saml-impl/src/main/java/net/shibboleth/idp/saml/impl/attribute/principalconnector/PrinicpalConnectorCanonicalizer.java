@@ -49,7 +49,7 @@ import com.google.common.collect.Iterables;
 /**
  * Implements SAML subject canonicalization using a series of {@link PrincipalConnector} instances.
  */
-public class PrinicpalConnectorCanonicalizer implements LegacyPrincipalDecoder<SubjectCanonicalizationContext>  {
+public class PrinicpalConnectorCanonicalizer implements LegacyPrincipalDecoder  {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(PrinicpalConnectorCanonicalizer.class);

@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.resolver;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.opensaml.messaging.context.BaseContext;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 
 /**
  * Definition of the legacy Principal Connectors. <br/>
@@ -29,9 +29,8 @@ import org.opensaml.messaging.context.BaseContext;
  * Code will only be implemented by the legacy parsing of the &lt;PrinicipalConnector&gt; statements and will consume
  * CanonicalizationContexts.
  * 
- * @param <ConsumedContext> The type of context which is expected.
  */
-public interface LegacyPrincipalDecoder<ConsumedContext extends BaseContext> {
+public interface LegacyPrincipalDecoder {
 
     /**
      * Resolve the principal with respect to the provided context. This is expected to strip out the
@@ -43,7 +42,7 @@ public interface LegacyPrincipalDecoder<ConsumedContext extends BaseContext> {
      * @throws ResolutionException if we recognise the definition but could not decode it (data out of date and so
      *             forth)
      */
-    @Nullable String canonicalize(@Nonnull final ConsumedContext context) throws ResolutionException;
+    @Nullable String canonicalize(@Nonnull final  SubjectCanonicalizationContext context) throws ResolutionException;
     
     /** 
      * Report on whether this decoder has any configured connectors.

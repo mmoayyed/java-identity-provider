@@ -72,7 +72,7 @@ import com.google.common.collect.ImmutableMap;
  * */
 @ThreadSafe
 public class AttributeResolverImpl extends AbstractServiceableComponent<AttributeResolver> implements
-        AttributeResolver, LegacyPrincipalDecoder<SubjectCanonicalizationContext> {
+        AttributeResolver, LegacyPrincipalDecoder {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeResolverImpl.class);
@@ -87,7 +87,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     @NonnullAfterInit private final String logPrefix;
 
     /** The Principal mapper. */
-    @Nullable private final LegacyPrincipalDecoder<SubjectCanonicalizationContext> principalConnector;
+    @Nullable private final LegacyPrincipalDecoder principalConnector;
 
     /**
      * Constructor.
@@ -100,7 +100,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     public AttributeResolverImpl(@Nonnull @NotEmpty String resolverId,
             @Nullable @NullableElements Collection<AttributeDefinition> definitions,
             @Nullable @NullableElements Collection<DataConnector> connectors,
-            @Nullable LegacyPrincipalDecoder<SubjectCanonicalizationContext> principalResolver) {
+            @Nullable LegacyPrincipalDecoder principalResolver) {
         setId(resolverId);
 
         logPrefix = new StringBuilder("Attribute Resolver '").append(getId()).append("':").toString();

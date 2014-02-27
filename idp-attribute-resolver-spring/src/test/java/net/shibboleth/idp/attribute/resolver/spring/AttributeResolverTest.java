@@ -213,13 +213,13 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         values = attribute.getValues();
         Assert.assertEquals(values.size(), 1);
         Assert.assertTrue(values.contains(new StringAttributeValue("#4321")));
-        
+
         final NameID nameId = new NameIDBuilder().buildObject();
         nameId.setFormat("urn:mace:shibboleth:1.0:nameIdentifier");
         nameId.setValue("MyHovercraftIsFullOfEels");
         final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIDPrincipal(nameId));
-        
+
         SubjectCanonicalizationContext ctx = new SubjectCanonicalizationContext();
         ctx.setSubject(subject);
         ctx.setRequesterId("REQ");
@@ -229,11 +229,10 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
             serviceableComponent = attributeResolverService.getServiceableComponent();
 
             final AttributeResolver resolver = serviceableComponent.getComponent();
-            LegacyPrincipalDecoder<SubjectCanonicalizationContext> decoder =
-                    (LegacyPrincipalDecoder<SubjectCanonicalizationContext>) resolver;
+            LegacyPrincipalDecoder decoder = (LegacyPrincipalDecoder) resolver;
             Assert.assertTrue(decoder.hasValidConnectors());
             Assert.assertEquals(decoder.canonicalize(ctx), "MyHovercraftIsFullOfEels");
-            
+
         } finally {
             if (null != serviceableComponent) {
                 serviceableComponent.unpinComponent();
@@ -269,13 +268,13 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
                 serviceableComponent.unpinComponent();
             }
         }
-        
+
         final NameID nameId = new NameIDBuilder().buildObject();
         nameId.setFormat("urn:mace:shibboleth:1.0:nameIdentifier");
         nameId.setValue("MyHovercraftIsFullOfEels");
         final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIDPrincipal(nameId));
-        
+
         SubjectCanonicalizationContext ctx = new SubjectCanonicalizationContext();
         ctx.setSubject(subject);
         ctx.setRequesterId("REQ");
@@ -285,11 +284,10 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
             serviceableComponent = attributeResolverService.getServiceableComponent();
 
             final AttributeResolver resolver = serviceableComponent.getComponent();
-            LegacyPrincipalDecoder<SubjectCanonicalizationContext> decoder =
-                    (LegacyPrincipalDecoder<SubjectCanonicalizationContext>) resolver;
+            LegacyPrincipalDecoder decoder = (LegacyPrincipalDecoder) resolver;
             Assert.assertFalse(decoder.hasValidConnectors());
             Assert.assertNull(decoder.canonicalize(ctx));
-            
+
         } finally {
             if (null != serviceableComponent) {
                 serviceableComponent.unpinComponent();

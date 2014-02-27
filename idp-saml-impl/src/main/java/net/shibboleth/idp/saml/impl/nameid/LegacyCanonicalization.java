@@ -90,8 +90,7 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
                 return;
             }
 
-            LegacyPrincipalDecoder<SubjectCanonicalizationContext> decoder =
-                    (LegacyPrincipalDecoder<SubjectCanonicalizationContext>) attributeResolver;
+            LegacyPrincipalDecoder decoder = (LegacyPrincipalDecoder) attributeResolver;
 
             final String decodedPrincipal = decoder.canonicalize(c14nContext);
             if (null == decodedPrincipal) {

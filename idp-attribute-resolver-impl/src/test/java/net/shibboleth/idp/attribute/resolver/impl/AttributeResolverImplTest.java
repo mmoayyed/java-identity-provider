@@ -621,7 +621,7 @@ public class AttributeResolverImplTest {
 
         resolver =
                 new AttributeResolverImpl("foo", definitions, null,
-                        new LegacyPrincipalDecoder<SubjectCanonicalizationContext>() {
+                        new LegacyPrincipalDecoder() {
 
                             @Override @Nullable public String canonicalize(SubjectCanonicalizationContext context)
                                     throws ResolutionException {
