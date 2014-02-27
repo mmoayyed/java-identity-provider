@@ -108,7 +108,7 @@ public class SAML1ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         XMLObject child = children.get(0);
         Assert.assertEquals(child.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME);
 
-        Assert.assertTrue(child instanceof XSString, "Child of result attribute shoulld be a string");
+        Assert.assertTrue(child instanceof XSString, "Child of result attribute should be a string");
 
         XSString childAsString = (XSString) child;
 
@@ -136,7 +136,7 @@ public class SAML1ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         XMLObject child = children.get(0);
         Assert.assertEquals(child.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
-        Assert.assertTrue(child instanceof XSString, "Child of result attribute shoulld be a string");
+        Assert.assertTrue(child instanceof XSString, "Child of result attribute should be a string");
 
         XSString childAsString = (XSString) child;
         Assert.assertEquals(child.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
@@ -144,7 +144,7 @@ public class SAML1ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         final byte[] res0 = Base64.decode(childAsString.getValue());
 
         child = children.get(1);
-        Assert.assertTrue(child instanceof XSString, "Child of result attribute shoulld be a string");
+        Assert.assertTrue(child instanceof XSString, "Child of result attribute should be a string");
 
         childAsString = (XSString) child;
         final byte[] res1 = Base64.decode(childAsString.getValue());

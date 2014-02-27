@@ -109,7 +109,7 @@ public class SAML1StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(child.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
 
-        Assert.assertTrue(child instanceof XSString, "Child of result attribute shoulld be a string");
+        Assert.assertTrue(child instanceof XSString, "Child of result attribute should be a string");
 
         final XSString childAsString = (XSString) child;
 
@@ -132,7 +132,7 @@ public class SAML1StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(children.size(), 2, "Encoding two entries");
 
         Assert.assertTrue(children.get(0) instanceof XSString && children.get(1) instanceof XSString,
-                "Child of result attribute shoulld be a string");
+                "Child of result attribute should be a string");
 
         final XSString child1 = (XSString) children.get(0);
         Assert.assertEquals(child1.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
