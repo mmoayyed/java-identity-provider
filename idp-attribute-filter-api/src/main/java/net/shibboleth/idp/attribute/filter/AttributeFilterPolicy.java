@@ -130,7 +130,7 @@ public class AttributeFilterPolicy extends AbstractIdentifiedInitializableCompon
 
         if (isActive == Tristate.FAIL) {
             log.warn("{} Policy requirement rule failed for this request", getLogPrefix());
-        } else if (isActive == Tristate.FALSE) {
+        } else if (isActive == Tristate.TRUE) {
             log.debug("{} Policy is active for this request", getLogPrefix());
         } else {
             log.debug("{} Policy is not active for this request", getLogPrefix());
