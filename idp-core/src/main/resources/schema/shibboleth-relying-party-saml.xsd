@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:samlrp="urn:mace:shibboleth:2.0:relying-party:saml" xmlns:rp="urn:mace:shibboleth:2.0:relying-party" targetNamespace="urn:mace:shibboleth:2.0:relying-party:saml" elementFormDefault="qualified">
+
+    <import namespace="urn:mace:shibboleth:2.0:relying-party" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-relying-party.xsd"/>
+
+    <complexType name="SAML2ArtifactResolutionProfile">
+        <annotation>
+            <documentation>SAML 2.0 artifact query communication profile configuration.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="samlrp:SAML2ProfileConfigurationType">
+                <attribute name="securityPolicyRef" type="string" default="shibboleth.SAML2ArtifactResolutionSecurityPolicy">
+                    <annotation>
+                        <documentation>
+                            Reference, by ID, to the security policy to use for this profile.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML2AttributeQueryProfile">
+        <annotation>
+            <documentation>SAML 2.0 attribute query communication profile configuration.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="samlrp:SAML2ProfileConfigurationType">
+                <attribute name="securityPolicyRef" type="string" default="shibboleth.SAML2AttributeQuerySecurityPolicy">
+                    <annotation>
+                        <documentation>
+                            Reference, by ID, to the security policy to use for this profile.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML2LogoutRequestProfile">
+        <annotation>
+            <documentation>SAML 2.0 logout request communication profile configuration.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="samlrp:SAML2ProfileConfigurationType">
+                <attribute name="securityPolicyRef" type="string" default="shibboleth.SAML2SLOSecurityPolicy">
+                    <annotation>
+                        <documentation>
+                            Reference, by ID, to the security policy to use for this profile.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML2ECPProfile">
+        <annotation>
+            <documentation>SAML 2.0 ECP single sign-on communication profile configuration.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="samlrp:SAML2SSOProfile"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML2SSOProfile">
+        <annotation>
+            <documentation>SAML 2.0 single sign-on communication profile configuration.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="samlrp:SAML2ProfileConfigurationType">
+                <attribute name="localityAddress" type="string">
+                    <annotation>
+                        <documentation>
+                            Deprecated, never implemented.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="localityDNSName" type="string">
+                    <annotation>
+                        <documentation>
+                            Deprecated, never implemented.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="includeAttributeStatement" type="boolean">
+                    <annotation>
+                        <documentation>
+                            Boolean flag indicating whether an attribute statement should be included with the
+                            authentication statement in the response sent back to the relying party.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="securityPolicyRef" type="string" default="shibboleth.SAML2SSOSecurityPolicy">
+                    <annotation>
+                        <documentation>
+                            Reference, by ID, to the security policy to use for this profile.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maximumSPSessionLifetime" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum amount of time the service provider should maintain a session
+                            for the user based on the authentication assertion.  This attribute is converted into the 
+                            SessionNotOnOrAfter attribute of the AuthnStatement. If no value is supplied then the
+                            SessionNotOnOrAfter attribute is not sent within the AuthnStatement.
+                            
+                            Lifetime is expressed in ISO8601 duration notation.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="skipEndpointValidationWhenSigned" type="boolean">
+                    <annotation>
+                        <documentation>
+                            If true, allows signed AuthnRequests to bypass validation of the response
+                            location against metadata, if a location is specified in the request.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML2ProfileConfigurationType" abstract="true">
+        <annotation>
+            <documentation>Base type for SAML 2.0 communication profile configurations.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="samlrp:SAMLProfileConfigurationType">
+                <sequence>
+                    <element name="ProxyAudience" type="string" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>List of audiences for proxied assertions.</documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+                <attribute name="encryptNameIds" type="samlrp:cryptoReqType">
+                    <annotation>
+                        <documentation>A flag indicating whether NameIDs should be encrypted.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="encryptAssertions" type="samlrp:cryptoReqType">
+                    <annotation>
+                        <documentation>A flag indicating whether assertions should be encrypted.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="assertionProxyCount" type="nonNegativeInteger">
+                    <annotation>
+                        <documentation>The maximum number of times an assertion may be proxied.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="attributeAuthority" type="string" default="shibboleth.SAML2AttributeAuthority">
+                    <annotation>
+                        <documentation>
+                            Name of the attribute authority component to make available within this configuration.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML1ArtifactResolutionProfile">
+        <annotation>
+            <documentation>SAML 1.0 and 1.1 artifact query communication profile configurations.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="samlrp:SAML1ProfileConfigurationType">
+                <attribute name="securityPolicyRef" type="string" default="shibboleth.SAML1ArtifactResolutionSecurityPolicy">
+                    <annotation>
+                        <documentation>
+                            Reference, by ID, to the security policy to use for this profile.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML1AttributeQueryProfile">
+        <annotation>
+            <documentation>SAML 1.0 and 1.1 attribute query communication profile configurations.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="samlrp:SAML1ProfileConfigurationType">
+                <attribute name="securityPolicyRef" type="string" default="shibboleth.SAML1AttributeQuerySecurityPolicy">
+                    <annotation>
+                        <documentation>
+                            Reference, by ID, to the security policy to use for this profile.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ShibbolethSSOProfile">
+        <annotation>
+            <documentation>Shibboleth 1 single sign-on communication profile configurations.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="samlrp:SAML1ProfileConfigurationType">
+                <attribute name="localityAddress" type="string">
+                    <annotation>
+                        <documentation>
+                            Deprecated, never implemented.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="localityDNSName" type="string">
+                    <annotation>
+                        <documentation>
+                            Deprecated, never implemented.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="includeAttributeStatement" type="boolean">
+                    <annotation>
+                        <documentation>
+                            Boolean flag indicating whether an attribute statement should be included with the
+                            authentication statement in the response sent back to the relying party.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="securityPolicyRef" type="string" default="shibboleth.ShibbolethSSOSecurityPolicy">
+                    <annotation>
+                        <documentation>
+                            Reference, by ID, to the security policy to use for this profile.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML1ProfileConfigurationType" abstract="true">
+        <annotation>
+            <documentation>Base type for SAML 1.0 and 1.1 communication profile configurations.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="samlrp:SAMLProfileConfigurationType">
+                <attribute name="attributeAuthority" type="string" default="shibboleth.SAML1AttributeAuthority">
+                    <annotation>
+                        <documentation>
+                            Name of the attribute authority component to make available within this configuration.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAMLProfileConfigurationType" abstract="true">
+        <annotation>
+            <documentation>Base type for SAML (1.0, 1.1, and 2.0) communication profile configurations.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="rp:ProfileConfigurationType">
+                <sequence>
+                    <element name="Audience" type="string" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>List of audiences for issued assertions.</documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+                <attribute name="assertionLifetime" type="string">
+                    <annotation>
+                        <documentation>
+                            The amount of time before an issued assertion expires.
+                            
+                            Lifetime is expressed in ISO8601 duration notation.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="includeConditionsNotBefore" type="boolean">
+                    <annotation>
+                        <documentation>
+                            Boolean flag indicating whether a NotBefore condition should be included in any
+                            assertions sent back to the relying party.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="outboundArtifactType" type="integer">
+                    <annotation>
+                        <documentation>The artifact type to use when sending an outbound, artifact encoded, message.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="signingCredentialRef" type="string">
+                    <annotation>
+                        <documentation>ID of the credential to use to sign SAML assertions.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="signAssertions" type="samlrp:cryptoReqType">
+                    <annotation>
+                        <documentation>
+                            A flag indicating whether issued assertions should be signed. If no signing
+                            credential is provided on this configuration and no default signing credential is provided
+                            on the relying party configuration then signing will not occur regardless of this setting.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="signRequests" type="samlrp:cryptoReqType">
+                    <annotation>
+                        <documentation>
+                            A flag indicating whether protocol requests should be signed. If no signing
+                            credential is provided on this configuration and no default signing credential is provided
+                            on the relying party configuration then signing will not occur regardless of this setting.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="signResponses" type="samlrp:cryptoReqType">
+                    <annotation>
+                        <documentation>
+                            A flag indicating whether protocol responses should be signed. If no signing
+                            credential is provided on this configuration and no default signing credential is provided
+                            on the relying party configuration then signing will not occur regardless of this setting.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <simpleType name="cryptoReqType">
+        <annotation>
+            <documentation>Requirement level for crypto functions like signing and encryption</documentation>
+        </annotation>
+        <restriction base="string">
+            <enumeration value="always"/>
+            <enumeration value="conditional"/>
+            <enumeration value="never"/>
+        </restriction>
+    </simpleType>
+</schema>
