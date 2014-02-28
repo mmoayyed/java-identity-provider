@@ -76,23 +76,15 @@ public class ScriptedIdPAttribute {
                 new StringBuilder(prefix).append(" scripted attribute '").append(attribute.getId()).append("':")
                         .toString();
     }
-
+    
     /**
-     * Return all the values, but with {@link StringAttributeValue} values returned as strings.<br/>
-     * This method is a helper method for V2 compatibility.
-     * 
-     * @return a modifiable collection of the string attributes (not the String
-     * @throws ResolutionException if the script has called {@link #getNativeAttribute()}
+     *  We use an internal list of attribute values to allow the legacy use of 
+     *  getValues().add().
      */
-    @Nullable @NonnullElements public Collection<Object> getValues() throws ResolutionException {
-        if (calledGetNativeAttribute) {
-            throw new ResolutionException(getLogPrefix()
-                    + " cannot call getNativeAttribute() and getValues() on the same attribute()");
-        }
+    private void setupAttributeValues() {
         if (null != attributeValues) {
-            return attributeValues;
+            return;
         }
-
         log.debug("{} values being prepared", getLogPrefix());
 
         // NOTE. This has to be a List - the examples use get(0)
@@ -106,7 +98,25 @@ public class ScriptedIdPAttribute {
         }
         attributeValues = newValues;
         log.debug("{} values are : {}", getLogPrefix(), newValues);
-        return newValues;
+    }
+
+    /**
+     * Return all the values, but with {@link StringAttributeValue} values returned as strings.<br/>
+     * This method is a helper method for V2 compatibility.
+     * 
+     * @return a modifiable collection of the string attributes (not the String
+     * @throws ResolutionException if the script has called {@link #getNativeAttribute()}
+     */
+    @Nullable @NonnullElements public Collection<Object> getValues() throws ResolutionException {
+        if (calledGetNativeAttribute) {
+            throw new ResolutionException(getLogPrefix()
+                    + " cannot call getNativeAttribute() and getValues() or addValues() on the same attribute()");
+        }
+        if (null == attributeValues) {
+            setupAttributeValues();
+        }
+
+        return attributeValues;
     }
 
     /**
@@ -118,7 +128,7 @@ public class ScriptedIdPAttribute {
     @Nonnull public IdPAttribute getNativeAttribute() throws ResolutionException {
         if (null != attributeValues) {
             throw new ResolutionException(getLogPrefix()
-                    + "': cannot call getNativeAttribute() and getValues() on the same attribute()");
+                    + "': cannot call getNativeAttribute() and getValues()/setValues() on the same attribute()");
         }
         calledGetNativeAttribute = true;
         return encapsulatedAttribute;
@@ -172,12 +182,11 @@ public class ScriptedIdPAttribute {
     public void addValue(@Nullable final Object what) throws ResolutionException {
         policeValueType(what);
 
-        if (null != attributeValues) {
-            // We have called getValues - this is what we will keep up to date
-            attributeValues.add(what);
-        } else {
-            addValue(encapsulatedAttribute.getValues(), what);
+        if (null == attributeValues) {
+            setupAttributeValues();
         }
+        
+        attributeValues.add(what);
     }
 
     /**
