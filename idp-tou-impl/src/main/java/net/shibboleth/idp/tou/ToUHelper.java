@@ -27,13 +27,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 
+import org.cryptacular.util.CodecUtil;
+import org.cryptacular.util.HashUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import edu.vt.middleware.crypt.digest.DigestAlgorithm;
-import edu.vt.middleware.crypt.digest.SHA256;
-import edu.vt.middleware.crypt.util.Converter;
-import edu.vt.middleware.crypt.util.HexConverter;
 
 /**
  * Terms of use helper class.
@@ -132,10 +129,7 @@ public final class ToUHelper {
      * @return Returns the terms of use fingerprint.
      */
     public static String getToUFingerprint(final ToU tou) {
-        final DigestAlgorithm digestAlgorithm = new SHA256();
-        final Converter converter = new HexConverter(true);
-
-        return digestAlgorithm.digest(tou.getText().getBytes(), converter);
+        return CodecUtil.hex(HashUtil.sha256(tou.getText().getBytes()), true);
     }
 
     /**

@@ -50,8 +50,8 @@
             <artifactId>velocity</artifactId>
         </dependency>
         <dependency>
-            <groupId>edu.vt.middleware</groupId>
-            <artifactId>vt-crypt</artifactId>
+            <groupId>org.cryptacular</groupId>
+            <artifactId>cryptacular</artifactId>
         </dependency>
 
         <!-- Provided Dependencies -->
