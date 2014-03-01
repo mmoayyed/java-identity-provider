@@ -121,25 +121,21 @@
 
     <bean
         id="SecurityConfiguration"
-        class="net.shibboleth.idp.profile.config.SecurityConfiguration"
-        scope="prototype" />
+        class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
 
     <bean
         id="SAML1BrowserSSOProfileConfiguration"
         class="net.shibboleth.idp.saml.profile.config.saml1.BrowserSSOProfileConfiguration"
-        scope="prototype"
         p:securityConfiguration-ref="SecurityConfiguration" />
 
     <!-- TODO replace with eventual relying-party.xml config -->
     <bean
         id="RelyingPartyConfiguration"
         class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"
-        scope="prototype"
         p:id="ActivatedRelyingPartyConfiguration"
         p:responderId="https://idp.example.org"
         p:detailedErrors="true"
-        p:profileConfigurations-ref="SAML1BrowserSSOProfileConfiguration"
-        p:activationCondition-ref="AlwaysTruePredicate" />
+        p:profileConfigurations-ref="SAML1BrowserSSOProfileConfiguration" />
 
     <bean
         id="SelectProfileConfiguration"
@@ -214,38 +210,13 @@
         scope="prototype" />
 
     <bean
-        id="DefaultSAML1NameIdentifierGenerator"
-        class="net.shibboleth.idp.saml.impl.nameid.DefaultSAML1NameIdentifierGenerator"
-        scope="prototype"
-        p:format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">
-        <property name="attributeSourceIds">
-            <util:list>
-                <value>uid</value>
-            </util:list>
-        </property>
-    </bean>
-
-    <bean
-        id="SAML1NameIdentifierGenerator"
-        class="net.shibboleth.idp.saml.impl.nameid.DefaultSAML1NameIdentifierGenerator"
-        scope="prototype"
-        p:format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress">
-        <property name="attributeSourceIds">
-            <util:list>
-                <value>email</value>
-            </util:list>
-        </property>
-    </bean>
-
-    <bean
         id="AddNameIdentifierToSubjects"
         class="org.opensaml.saml.saml1.profile.impl.AddNameIdentifierToSubjects"
         scope="prototype"
-        p:defaultNameIDGenerator-ref="DefaultSAML1NameIdentifierGenerator">
-        <property name="nameIdentifierGenerators">
-            <util:list>
-                <ref bean="SAML1NameIdentifierGenerator" />
-            </util:list>
+        p:defaultNameIDGenerator="#{getObject('shibboleth.LegacySAML1NameIdentifierGenerator')}"
+        p:nameIdentifierGenerators-ref="shibboleth.SAML1NameIdentifierGenerators">
+        <property name="formatLookupStrategy">
+            <bean class="net.shibboleth.idp.saml.impl.profile.logic.DefaultNameIdentifierFormatStrategy" />
         </property>
     </bean>
 
@@ -298,12 +269,5 @@
         class="net.shibboleth.idp.profile.impl.RecordResponseComplete"
         scope="prototype" />
 
-
-    <!-- TODO The following are temporary. -->
-
-    <bean
-        id="AlwaysTruePredicate"
-        class="com.google.common.base.Predicates"
-        factory-method="alwaysTrue" />
 
 </beans>

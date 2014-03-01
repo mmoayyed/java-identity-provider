@@ -55,13 +55,13 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
 /**
- * Default generator for {@link NameIdentifier} objects based on {@link IdPAttribute} data.
+ * Generator for {@link NameIdentifier} objects based on {@link IdPAttribute} data.
  */
 @ThreadSafeAfterInit
-public class DefaultSAML1NameIdentifierGenerator extends AbstractSAML1NameIdentifierGenerator {
+public class AttributeSourcedSAML1NameIdentifierGenerator extends AbstractSAML1NameIdentifierGenerator {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(DefaultSAML1NameIdentifierGenerator.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeSourcedSAML1NameIdentifierGenerator.class);
     
     /** Strategy function to lookup RelyingPartyContext. */
     @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
@@ -73,7 +73,7 @@ public class DefaultSAML1NameIdentifierGenerator extends AbstractSAML1NameIdenti
     @Nonnull @NonnullElements private List<String> attributeSourceIds;
     
     /** Constructor. */
-    public DefaultSAML1NameIdentifierGenerator() {
+    public AttributeSourcedSAML1NameIdentifierGenerator() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         attributeContextLookupStrategy = Functions.compose(
                 new ChildContextLookup<RelyingPartyContext, AttributeContext>(AttributeContext.class),

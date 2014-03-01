@@ -20,8 +20,8 @@ package net.shibboleth.idp.saml.impl.nameid;
 import java.util.Collection;
 import java.util.Collections;
 
-import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
@@ -43,8 +43,8 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
 
-/** Unit test for {@link DefaultSAML2NameIdentifierGenerator}. */
-public class DefaultSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
+/** Unit test for {@link AttributeSourcedSAML1NameIdentifierGenerator}. */
+public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLInitBaseTestCase {
 
     /** The name we give the test attribute. */
     private final static String ATTR_NAME = "foo";
@@ -64,7 +64,7 @@ public class DefaultSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
         NameIdentifier id = saml1Builder.buildObject();
 
         id.setNameIdentifier(ident);
-        id.setFormat(NameID.X509_SUBJECT);
+        id.setFormat(NameIdentifier.X509_SUBJECT);
         id.setNameQualifier(QUALIFIER);
         return new XMLObjectAttributeValue(id);
     }
@@ -78,25 +78,25 @@ public class DefaultSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
         return new XMLObjectAttributeValue(id);
     }
 
-    private DefaultSAML2NameIDGenerator generator;
-    
+    private AttributeSourcedSAML1NameIdentifierGenerator generator;
+
     private ProfileRequestContext prc;
 
     @BeforeMethod public void initTest() throws ComponentInitializationException {
 
-        generator = new DefaultSAML2NameIDGenerator();
+        generator = new AttributeSourcedSAML1NameIdentifierGenerator();
         generator.setId("test");
-        generator.setFormat(NameID.X509_SUBJECT);
+        generator.setFormat(NameIdentifier.X509_SUBJECT);
         saml1Builder = new NameIdentifierBuilder();
         saml2Builder = new NameIDBuilder();
         prc = new RequestContextBuilder().buildProfileRequestContext();
     }
-    
+
     @Test(expectedExceptions = {ComponentInitializationException.class,}) public void testInvalidConfig()
             throws Exception {
         generator.initialize();
     }
-    
+
     @Test public void testNoSource() throws ComponentInitializationException, ProfileException {
         generator.setAttributeSourceIds(Collections.singletonList("bar"));
         generator.initialize();
@@ -105,13 +105,11 @@ public class DefaultSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void testWrongType() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
-        final Collection<? extends IdPAttributeValue<?>> values =
-                Lists.newArrayList(
-                        new IdPAttributeValue<Object>() {
-                            public Object getValue() {
-                                return intArray;
-                            }
-                        }, saml1NameIdFor(OTHERID));
+        final Collection<? extends IdPAttributeValue<?>> values = Lists.newArrayList(new IdPAttributeValue<Object>() {
+            public Object getValue() {
+                return intArray;
+            }
+        }, saml2NameIdFor(OTHERID));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
@@ -120,27 +118,25 @@ public class DefaultSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
 
         generator.setAttributeSourceIds(Collections.singletonList(ATTR_NAME));
         generator.initialize();
-        
+
         Assert.assertNull(generator.generate(prc, generator.getFormat()));
     }
 
     @Test public void testWrongFormat() throws Exception {
-        final Collection<? extends IdPAttributeValue<?>> values =
-                Collections.singletonList(saml2NameIdFor(NAME_1));
+        final Collection<? extends IdPAttributeValue<?>> values = Collections.singletonList(saml1NameIdFor(NAME_1));
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
         prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setIdPAttributes(
                 Collections.singleton(inputAttribute));
 
-        generator.setFormat(NameID.EMAIL);
+        generator.setFormat(NameIdentifier.EMAIL);
         generator.setAttributeSourceIds(Collections.singletonList(ATTR_NAME));
         generator.initialize();
         Assert.assertNull(generator.generate(prc, generator.getFormat()));
     }
-    
-    @Test public void testNameIDValued() throws Exception {
-        final Collection<? extends IdPAttributeValue<?>> values =
-                Collections.singletonList(saml2NameIdFor(NAME_1));
+
+    @Test public void testNameIdentifierValued() throws Exception {
+        final Collection<? extends IdPAttributeValue<?>> values = Collections.singletonList(saml1NameIdFor(NAME_1));
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
         prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setIdPAttributes(
@@ -148,15 +144,15 @@ public class DefaultSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
 
         generator.setAttributeSourceIds(Collections.singletonList(ATTR_NAME));
         generator.initialize();
-        final NameID outputNameId = generator.generate(prc, generator.getFormat());
+        final NameIdentifier outputNameId = generator.generate(prc, generator.getFormat());
 
         Assert.assertNotNull(outputNameId);
-        Assert.assertEquals(outputNameId.getValue(), NAME_1);
-        Assert.assertEquals(outputNameId.getFormat(), NameID.X509_SUBJECT);
+        Assert.assertEquals(outputNameId.getNameIdentifier(), NAME_1);
+        Assert.assertEquals(outputNameId.getFormat(), NameIdentifier.X509_SUBJECT);
         Assert.assertEquals(outputNameId.getNameQualifier(), QUALIFIER);
     }
 
-    @Test public void testMultiNameIDValued() throws Exception {
+    @Test public void testMultiNameIdentifierValued() throws Exception {
         final Collection<? extends IdPAttributeValue<?>> values =
                 Lists.newArrayList(saml2NameIdFor(OTHERID), saml1NameIdFor(NAME_1));
 
@@ -167,14 +163,14 @@ public class DefaultSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
 
         generator.setAttributeSourceIds(Collections.singletonList(ATTR_NAME));
         generator.initialize();
-        final NameID outputNameId = generator.generate(prc, generator.getFormat());
+        final NameIdentifier outputNameId = generator.generate(prc, generator.getFormat());
 
         Assert.assertNotNull(outputNameId);
-        Assert.assertEquals(outputNameId.getValue(), OTHERID);
-        Assert.assertEquals(outputNameId.getFormat(), NameID.X509_SUBJECT);
+        Assert.assertEquals(outputNameId.getNameIdentifier(), NAME_1);
+        Assert.assertEquals(outputNameId.getFormat(), NameIdentifier.X509_SUBJECT);
         Assert.assertEquals(outputNameId.getNameQualifier(), QUALIFIER);
     }
-    
+
     @Test public void testStringValued() throws Exception {
         final Collection<? extends IdPAttributeValue<?>> values =
                 Collections.singletonList(new StringAttributeValue(NAME_1));
@@ -186,13 +182,13 @@ public class DefaultSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
 
         generator.setAttributeSourceIds(Collections.singletonList(ATTR_NAME));
         generator.initialize();
-        final NameID outputNameId = generator.generate(prc, generator.getFormat());
+        final NameIdentifier outputNameId = generator.generate(prc, generator.getFormat());
 
         Assert.assertNotNull(outputNameId);
-        Assert.assertEquals(outputNameId.getValue(), NAME_1);
-        Assert.assertEquals(outputNameId.getFormat(), NameID.X509_SUBJECT);
-        Assert.assertEquals(outputNameId.getNameQualifier(),
-                prc.getSubcontext(RelyingPartyContext.class).getConfiguration().getResponderId());
+        Assert.assertEquals(outputNameId.getNameIdentifier(), NAME_1);
+        Assert.assertEquals(outputNameId.getFormat(), NameIdentifier.X509_SUBJECT);
+        Assert.assertEquals(outputNameId.getNameQualifier(), prc.getSubcontext(RelyingPartyContext.class)
+                .getConfiguration().getResponderId());
     }
 
     @Test public void testScopeValued() throws Exception {
@@ -206,14 +202,12 @@ public class DefaultSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
 
         generator.setAttributeSourceIds(Collections.singletonList(ATTR_NAME));
         generator.initialize();
-        final NameID outputNameId = generator.generate(prc, generator.getFormat());
+        final NameIdentifier outputNameId = generator.generate(prc, generator.getFormat());
 
         Assert.assertNotNull(outputNameId);
-        Assert.assertEquals(outputNameId.getValue(), NAME_1 + '@' + QUALIFIER);
-        Assert.assertEquals(outputNameId.getFormat(), NameID.X509_SUBJECT);
-        Assert.assertEquals(outputNameId.getNameQualifier(),
-                prc.getSubcontext(RelyingPartyContext.class).getConfiguration().getResponderId());
-        Assert.assertEquals(outputNameId.getSPNameQualifier(),
-                prc.getSubcontext(RelyingPartyContext.class).getRelyingPartyId());
+        Assert.assertEquals(outputNameId.getNameIdentifier(), NAME_1 + '@' + QUALIFIER);
+        Assert.assertEquals(outputNameId.getFormat(), NameIdentifier.X509_SUBJECT);
+        Assert.assertEquals(outputNameId.getNameQualifier(), prc.getSubcontext(RelyingPartyContext.class)
+                .getConfiguration().getResponderId());
     }
 }

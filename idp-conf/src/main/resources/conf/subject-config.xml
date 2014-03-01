@@ -15,8 +15,43 @@
     <!--
     This file provisions the IdP with information about the configured mechanisms used for managing
     subject identity information, including canonicalizing technology-specific subject names into principal
-    names, and turning principal names back into technology-specific forms like SAML NameIDs.
+    names, and turning principal names into technology-specific forms like SAML NameIDs.
     -->
+
+    <!-- ========================= SAML NameID Generation ========================= -->
+
+    <!--
+    These beans enable legacy support for NameID generation in the Attribute Resolver.
+    If you don't need that (or this is a new install) you can remove them.
+    -->
+    <bean id="shibboleth.LegacySAML1NameIdentifierGenerator"
+        class="net.shibboleth.idp.saml.impl.nameid.LegacySAML1NameIdentifierGenerator" />
+    <bean id="shibboleth.LegacySAML2NameIDGenerator"
+        class="net.shibboleth.idp.saml.impl.nameid.LegacySAML2NameIDGenerator" />
+    
+    <!-- SAML 2 NameID Generation -->
+    <util:list id="shibboleth.SAML2NameIDGenerators">
+    
+        <!-- TODO: add transient/persistent generators -->
+    
+        <bean id="email" class="net.shibboleth.idp.saml.impl.nameid.AttributeSourcedSAML2NameIDGenerator"
+                p:format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
+                p:attributeSourceIds="#{ {'email'} }" />
+                
+    </util:list>
+
+    <!-- SAML 1 NameIdentifier Generation -->
+    <util:list id="shibboleth.SAML1NameIdentifierGenerators">
+    
+        <!-- TODO: add transient/persistent generators -->
+
+        <bean id="email" class="net.shibboleth.idp.saml.impl.nameid.AttributeSourcedSAML1NameIdentifierGenerator"
+                p:format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
+                p:attributeSourceIds="#{ {'email'} }" />
+                
+    </util:list>
+    
+    <!-- ========================= Java Subject -> Principal Mapping ========================= -->
 
     <!--
     These are lists of Subject Canonicalization flows that turn arbitrary Subject data into a string-based
@@ -46,9 +81,9 @@
     <util:list id="shibboleth.SAMLSubjectCanonicalizationFlows">
 
         <!--
-        This is installed to support the old mechanism of using PrincipalConnectors in the attribute
-        resolver to map SAML Subjects back into principals. If you don't use those (or this is a new install)
-        you can remove this.
+        This is installed to support the old mechanism of using PrincipalConnectors in the attribute resolver
+        to map SAML Subjects back into principals. If you don't use those (or this is a new install) you can
+        remove this.
         -->
         <ref bean="SubjectC14NFlow/LegacyPrincipalConnector" />
         

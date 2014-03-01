@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.impl.nameid;
 import net.shibboleth.idp.saml.nameid.SAML1NameIdentifierAttributeEncoder;
 
 import org.opensaml.saml.saml1.core.NameIdentifier;
+import org.opensaml.saml.saml1.profile.SAML1NameIdentifierGenerator;
 
 /**
  * Legacy generator of {@link NameIdentifier} objects that relies on resolved attributes having
@@ -27,7 +28,8 @@ import org.opensaml.saml.saml1.core.NameIdentifier;
  * 
  * <p>See the base class for additional detail.</p>
  */
-public class LegacySAML1NameIdentifierGenerator extends LegacyNameIdentifierGenerator<NameIdentifier> {
+public class LegacySAML1NameIdentifierGenerator extends LegacyNameIdentifierGenerator<NameIdentifier>
+        implements SAML1NameIdentifierGenerator {
     
     /** Constructor. */
     protected LegacySAML1NameIdentifierGenerator() {
