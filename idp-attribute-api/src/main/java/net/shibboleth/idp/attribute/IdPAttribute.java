@@ -41,7 +41,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Constraints;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -81,7 +80,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
         displayNames = Collections.emptyMap();
         displayDescriptions = Collections.emptyMap();
 
-        values = Constraints.constrainedSet(new LinkedHashSet<IdPAttributeValue<?>>(), Constraints.notNull());
+        values = Collections.EMPTY_SET;
         encoders = Collections.emptySet();
     }
 
@@ -160,7 +159,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      * 
      * @return values of the attribute.
      */
-    @Nonnull @NonnullElements public Set<IdPAttributeValue<?>> getValues() {
+    @Nonnull @NonnullElements @Unmodifiable public Set<IdPAttributeValue<?>> getValues() {
         return values;
     }
 
@@ -170,10 +169,9 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      * @param newValues the new values for this attribute
      */
     public void setValues(@Nullable @NullableElements final Collection<? extends IdPAttributeValue<?>> newValues) {
-        Set<IdPAttributeValue<?>> checkedValues =
-                Constraints.constrainedSet(new LinkedHashSet<IdPAttributeValue<?>>(), Constraints.notNull());
+        Set<IdPAttributeValue<?>> checkedValues = new LinkedHashSet<>();
         CollectionSupport.addIf(checkedValues, newValues, Predicates.<IdPAttributeValue> notNull());
-        values = checkedValues;
+        values = ImmutableSet.copyOf(checkedValues);
     }
 
     /**
@@ -197,6 +195,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int compareTo(final IdPAttribute other) {
         return getId().compareTo(other.getId());
     }
@@ -207,6 +206,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      * 
      * {@inheritDoc}
      */
+    @Override
     @Nonnull public IdPAttribute clone() throws CloneNotSupportedException {
         IdPAttribute clone = (IdPAttribute) super.clone();
         clone.setDisplayDescriptions(getDisplayDescriptions());
@@ -218,11 +218,13 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return Objects.hashCode(id, values);
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
@@ -241,6 +243,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull public String toString() {
         return Objects.toStringHelper(this).add("id", getId()).add("displayNames", displayNames)
                 .add("displayDescriptions", displayDescriptions).add("encoders", encoders).add("values", values)

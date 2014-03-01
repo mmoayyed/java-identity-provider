@@ -86,7 +86,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         final IdPAttribute test = new IdPAttribute(TEST_ATTRIBUTE_NAME);
 
-        test.getValues().add(new StringAttributeValue(SIMPLE_VALUE));
+        test.setValues(Collections.singleton(new StringAttributeValue(SIMPLE_VALUE)));
 
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
         Assert.assertNull(attr.getScript());
@@ -116,7 +116,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         final IdPAttribute test = new IdPAttribute(TEST_ATTRIBUTE_NAME);
 
-        test.getValues().add(new StringAttributeValue(SIMPLE_VALUE));
+        test.setValues(Collections.singleton(new StringAttributeValue(SIMPLE_VALUE)));
 
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
         Assert.assertNull(attr.getScript());
@@ -137,9 +137,9 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
             ScriptException, IOException {
 
         final IdPAttribute test = new IdPAttribute(TEST_ATTRIBUTE_NAME);
-        final IdPAttributeValue attributeValue = new StringAttributeValue(SIMPLE_VALUE);
+        final IdPAttributeValue<?> attributeValue = new StringAttributeValue(SIMPLE_VALUE);
 
-        test.getValues().add(attributeValue);
+        test.setValues(Collections.singleton(attributeValue));
 
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
         Assert.assertNull(attr.getScript());

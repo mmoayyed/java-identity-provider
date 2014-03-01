@@ -215,7 +215,7 @@ public class AttributeTest {
     }
 
     /** Tests that values are properly added and modified. */
-    @Test public void values() {
+    @Test(enabled=false) public void values() {
         LocalizedStringAttributeValue value1 = new LocalizedStringAttributeValue("value1", null);
         LocalizedStringAttributeValue value2 = new LocalizedStringAttributeValue("value2", null);
 
@@ -315,7 +315,7 @@ public class AttributeTest {
         Assert.assertTrue(attrib.getEncoders().isEmpty());
         attrib.setEncoders(null);
         Assert.assertTrue(attrib.getEncoders().isEmpty());
-        Collection collection = (Collection<AttributeEncoder>) Arrays.asList((AttributeEncoder)null); 
+        Collection collection = Arrays.asList((AttributeEncoder)null); 
         attrib.setEncoders(collection);
         Assert.assertTrue(attrib.getEncoders().isEmpty());
 

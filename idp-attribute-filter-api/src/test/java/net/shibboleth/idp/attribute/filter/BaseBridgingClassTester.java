@@ -28,14 +28,16 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Sets;
+
 /**
  * Base for the various XXX from YYY test clases
  */
 public class BaseBridgingClassTester {
     
-    protected final IdPAttributeValue VALUE1 = new StringAttributeValue("value1");
-    protected final IdPAttributeValue VALUE2 = new StringAttributeValue("value2");
-    protected final IdPAttributeValue VALUE3 = new StringAttributeValue("value3");
+    protected final IdPAttributeValue<?> VALUE1 = new StringAttributeValue("value1");
+    protected final IdPAttributeValue<?> VALUE2 = new StringAttributeValue("value2");
+    protected final IdPAttributeValue<?> VALUE3 = new StringAttributeValue("value3");
     
     protected final String NAME1 = "foo";
     protected final String NAME2 = "bar";
@@ -44,13 +46,12 @@ public class BaseBridgingClassTester {
         HashSet<IdPAttribute> attributes = new HashSet<IdPAttribute>(2);
 
         IdPAttribute attribute = new IdPAttribute(NAME1);
-        attribute.getValues().add(VALUE1);
-        attribute.getValues().add(VALUE2);
+        attribute.setValues(Sets.newHashSet(VALUE1, VALUE2));
         attributes.add(attribute);
+        
 
         attribute = new IdPAttribute(NAME2);
-        attribute.getValues().add(VALUE1);
-        attribute.getValues().add(VALUE3);
+        attribute.setValues(Sets.newHashSet(VALUE1, VALUE3));
         attributes.add(attribute);
         AttributeFilterContext filterContext = new AttributeFilterContext();
 

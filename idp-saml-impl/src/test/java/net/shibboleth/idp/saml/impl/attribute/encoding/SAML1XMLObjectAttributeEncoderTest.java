@@ -18,12 +18,13 @@
 package net.shibboleth.idp.saml.impl.attribute.encoding;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
@@ -82,7 +83,7 @@ public class SAML1XMLObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
         final IdPAttribute inputAttribute;
 
         inputAttribute = new IdPAttribute(ATTR_NAME);
-        inputAttribute.getValues().add(new StringAttributeValue(value));
+        inputAttribute.setValues(Collections.singleton(new StringAttributeValue(value)));
         try {
             return new XMLObjectAttributeValue(strEncoder.encode(inputAttribute));
         } catch (AttributeEncodingException e) {
@@ -126,6 +127,7 @@ public class SAML1XMLObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
         final Collection<? extends IdPAttributeValue<?>> values =
                 Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         new ScopedStringAttributeValue("foo", "bar"), new IdPAttributeValue<Object>() {
+                            @Override
                             public Object getValue() {
                                 return intArray;
                             }

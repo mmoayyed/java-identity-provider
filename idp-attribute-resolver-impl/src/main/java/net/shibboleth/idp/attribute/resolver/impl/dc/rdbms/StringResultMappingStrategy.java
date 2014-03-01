@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.impl.dc.rdbms;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,6 +45,7 @@ public class StringResultMappingStrategy implements ResultMappingStrategy {
     private final Logger log = LoggerFactory.getLogger(StringResultMappingStrategy.class);
 
     /** {@inheritDoc} */
+    @Override
     @Nullable public Map<String, IdPAttribute> map(@Nonnull final ResultSet results)
             throws ResolutionException {
         Constraint.isNotNull(results, "Result set can not be null");
@@ -60,7 +62,7 @@ public class StringResultMappingStrategy implements ResultMappingStrategy {
             IdPAttribute attribute;
             for (int i = 1; i <= resultMetadata.getColumnCount(); i++) {
                 attribute = new IdPAttribute(resultMetadata.getColumnName(i));
-                attribute.getValues().add(new StringAttributeValue(results.getString(i)));
+                attribute.setValues(Collections.singleton(new StringAttributeValue(results.getString(i))));
                 attributes.put(attribute.getId(), attribute);
             }
 

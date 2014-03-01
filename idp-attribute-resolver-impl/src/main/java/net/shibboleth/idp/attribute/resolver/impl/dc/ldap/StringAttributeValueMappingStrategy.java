@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.impl.dc.ldap;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -47,7 +48,7 @@ public class StringAttributeValueMappingStrategy implements SearchResultMappingS
     private final Logger log = LoggerFactory.getLogger(StringAttributeValueMappingStrategy.class);
 
     /** {@inheritDoc} */
-    @Nullable public Map<String, IdPAttribute> map(@Nonnull final SearchResult results)
+    @Override @Nullable public Map<String, IdPAttribute> map(@Nonnull final SearchResult results)
             throws ResolutionException {
         Constraint.isNotNull(results, "Results can not be null");
 
@@ -55,9 +56,12 @@ public class StringAttributeValueMappingStrategy implements SearchResultMappingS
         for (LdapEntry entry : results.getEntries()) {
             for (LdapAttribute attr : entry.getAttributes()) {
                 final IdPAttribute attribute = new IdPAttribute(attr.getName());
+                final LinkedHashSet<StringAttributeValue> hs = new LinkedHashSet<>(attr.getStringValues().size());
+
                 for (String value : attr.getStringValues()) {
-                    attribute.getValues().add(new StringAttributeValue(value));
+                    hs.add(new StringAttributeValue(value));
                 }
+                attribute.setValues(hs);
                 attributes.put(attribute.getId(), attribute);
             }
         }

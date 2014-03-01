@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -104,7 +105,7 @@ public class RegexSplitAttributeDefinition extends AbstractAttributeDefinition {
             if (matcher.matches()) {
                 log.debug("{} computed the value '{}' by apply regexp '{}' to input value '{}'", new Object[] {
                         getLogPrefix(), matcher.group(1), regexp.pattern(), dependencyValue.getValue(),});
-                resultantAttribute.getValues().add(new StringAttributeValue(matcher.group(1)));
+                resultantAttribute.setValues(Collections.singleton(new StringAttributeValue(matcher.group(1))));
             } else {
                 log.debug("{} Regexp '{}' did not match anything in input value '{}'", new Object[] {getLogPrefix(),
                         regexp.pattern(), dependencyValue.getValue(),});

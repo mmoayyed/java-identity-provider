@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.resolver.impl.ad.mapped;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -207,10 +208,11 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
             if (null != defaultValue) {
                 log.debug("Attribute Definition {}: Default value of {} added as the value for this attribute",
                         getId(), defaultValue);
-                resultAttribute.getValues().add(defaultValue);
+                resultAttribute.setValues(Collections.singleton(defaultValue));
             }
         } else {
 
+            final LinkedHashSet<IdPAttributeValue<?>> hs = new LinkedHashSet<>();
             for (IdPAttributeValue unmappedValue : unmappedResults) {
                 if (!(unmappedValue instanceof StringAttributeValue)) {
                     throw new ResolutionException(new UnsupportedAttributeTypeException("Attribute definition '"
@@ -218,9 +220,9 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
                             + unmappedValue.getClass().getName()));
                 }
 
-                Set<IdPAttributeValue<?>> mappingResult = mapValue(((StringAttributeValue) unmappedValue).getValue());
-                resultAttribute.getValues().addAll(mappingResult);
+                hs.addAll(mapValue(((StringAttributeValue) unmappedValue).getValue()));
             }
+            resultAttribute.setValues(hs);
         }
         return resultAttribute;
     }

@@ -36,6 +36,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Sets;
+
 /** A work in progress to test the attribute resolver service. */
 // TODO incomplete
 public class AttributeFilterServiceTest {
@@ -55,7 +57,7 @@ public class AttributeFilterServiceTest {
      * @throws ServiceException if an error occurs loading the service
      */
     public static AttributeFilter getFilter(String name) throws ServiceException {
-        final Resource resource = new ClassPathResource(SERVICE_CONFIG_DIR + name); 
+        final Resource resource = new ClassPathResource(SERVICE_CONFIG_DIR + name);
         GenericApplicationContext context = SpringSupport.newContext(name, Collections.singletonList(resource), null);
         return context.getBean(AttributeFilter.class);
     }
@@ -65,22 +67,22 @@ public class AttributeFilterServiceTest {
         attributesToBeFiltered = new HashMap<>();
 
         IdPAttribute firstName = new IdPAttribute("firstName");
-        firstName.getValues().add(new StringAttributeValue("john"));
+        firstName.setValues(Collections.singleton(new StringAttributeValue("john")));
         attributesToBeFiltered.put(firstName.getId(), firstName);
 
         IdPAttribute lastName = new IdPAttribute("lastName");
-        lastName.getValues().add(new StringAttributeValue("smith"));
+        lastName.setValues(Collections.singleton(new StringAttributeValue("smith")));
         attributesToBeFiltered.put(lastName.getId(), lastName);
 
         IdPAttribute email = new IdPAttribute("email");
-        email.getValues().add(new StringAttributeValue("jsmith@example.edu"));
-        email.getValues().add(new StringAttributeValue("john.smith@example.edu"));
+        email.setValues(Sets.newHashSet(new StringAttributeValue("jsmith@example.edu"), new StringAttributeValue(
+                "john.smith@example.edu")));
         attributesToBeFiltered.put(email.getId(), email);
 
         IdPAttribute affiliation = new IdPAttribute("affiliation");
-        affiliation.getValues().add(new StringAttributeValue("employee"));
-        affiliation.getValues().add(new StringAttributeValue("staff"));
-        affiliation.getValues().add(new StringAttributeValue("illegalValue"));
+        affiliation.setValues(Sets.newHashSet(new StringAttributeValue("employee"), new StringAttributeValue("staff"),
+                new StringAttributeValue("illegalValue")));
+
         attributesToBeFiltered.put(affiliation.getId(), affiliation);
     }
 
@@ -142,7 +144,6 @@ public class AttributeFilterServiceTest {
     @Test public void testPolicy4() throws ServiceException, AttributeFilterException {
 
         final AttributeFilter filter = getFilter("policy4.xml");
-
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());

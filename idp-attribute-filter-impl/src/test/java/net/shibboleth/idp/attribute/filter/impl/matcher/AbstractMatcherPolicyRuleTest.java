@@ -23,6 +23,9 @@ import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 
+import com.google.common.collect.Sets;
+
+
 /** Base class for {@link Matcher} and {@link PolicyRequirementRule} unit tests. */
 public abstract class AbstractMatcherPolicyRuleTest {
 
@@ -50,9 +53,8 @@ public abstract class AbstractMatcherPolicyRuleTest {
         value3 = new StringAttributeValue("value3");
 
         attribute = new IdPAttribute("foo");
-        attribute.getValues().add(value1);
-        attribute.getValues().add(value2);
-        attribute.getValues().add(value3);
+        
+        attribute.setValues(Sets.newHashSet(value1, value2, value3));
 
         filterContext = new AttributeFilterContext();
     }

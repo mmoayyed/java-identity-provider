@@ -47,6 +47,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 
 /** Basic data sources for testing the attribute generators. */
 public final class TestSources {
@@ -58,33 +59,47 @@ public final class TestSources {
 
     /** The name of the attribute we use as source. */
     public static final String DEPENDS_ON_ATTRIBUTE_NAME_ATTR = "at1";
+
     public static final String DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR = "ac1";
-    
+
     /** The name of another attribute we use as source. */
     public static final String DEPENDS_ON_SECOND_ATTRIBUTE_NAME = "at2";
 
     /** Another attributes values. */
     public static final String[] SECOND_ATTRIBUTE_VALUE_STRINGS = {"at2-Val1", "at2-Val2"};
-    public static final StringAttributeValue[] SECOND_ATTRIBUTE_VALUE_RESULTS = {new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[0]),new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[0]),};
+
+    public static final StringAttributeValue[] SECOND_ATTRIBUTE_VALUE_RESULTS = {
+            new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[0]),
+            new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[0]),};
 
     /** A value from both providers. */
     public static final String COMMON_ATTRIBUTE_VALUE_STRING = "at1-Data";
-    public static final StringAttributeValue COMMON_ATTRIBUTE_VALUE_RESULT = new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING);
+
+    public static final StringAttributeValue COMMON_ATTRIBUTE_VALUE_RESULT = new StringAttributeValue(
+            COMMON_ATTRIBUTE_VALUE_STRING);
 
     /** A value from the connector. */
     public static final String CONNECTOR_ATTRIBUTE_VALUE_STRING = "at1-Connector";
-    public static final StringAttributeValue CONNECTOR_ATTRIBUTE_VALUE_RESULT = new StringAttributeValue(CONNECTOR_ATTRIBUTE_VALUE_STRING);
+
+    public static final StringAttributeValue CONNECTOR_ATTRIBUTE_VALUE_RESULT = new StringAttributeValue(
+            CONNECTOR_ATTRIBUTE_VALUE_STRING);
 
     /** A value from the attribute. */
     public static final String ATTRIBUTE_ATTRIBUTE_VALUE_STRING = "at1-Attribute";
-    public static final StringAttributeValue ATTRIBUTE_ATTRIBUTE_VALUE_RESULT = new StringAttributeValue(ATTRIBUTE_ATTRIBUTE_VALUE_STRING);
+
+    public static final StringAttributeValue ATTRIBUTE_ATTRIBUTE_VALUE_RESULT = new StringAttributeValue(
+            ATTRIBUTE_ATTRIBUTE_VALUE_STRING);
 
     /** Regexp. for CONNECTOR_ATTRIBUTE_VALUE (for map & regexp testing). */
-    
+
     public static final String CONNECTOR_ATTRIBUTE_VALUE_REGEXP = "at1-(.+)or";
-    public static final Pattern CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN = Pattern.compile(CONNECTOR_ATTRIBUTE_VALUE_REGEXP);
-    public static final StringAttributeValue CONNECTOR_ATTRIBUTE_VALUE_REGEXP_RESULT = new StringAttributeValue("Connect");
-    
+
+    public static final Pattern CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN = Pattern
+            .compile(CONNECTOR_ATTRIBUTE_VALUE_REGEXP);
+
+    public static final StringAttributeValue CONNECTOR_ATTRIBUTE_VALUE_REGEXP_RESULT = new StringAttributeValue(
+            "Connect");
+
     /** Principal name for Principal method tests */
     public static final String TEST_PRINCIPAL = "PrincipalName";
 
@@ -100,7 +115,6 @@ public final class TestSources {
 
     public static final String SP_ENTITY_ID = DatabaseTestingSupport.SP_ENTITY_ID;
 
-
     /** Constructor. */
     private TestSources() {
     }
@@ -114,24 +128,19 @@ public final class TestSources {
     public static DataConnector populatedStaticConnector() throws ComponentInitializationException {
         IdPAttribute attr;
         Set<IdPAttribute> attributeSet;
-        Set<IdPAttributeValue<?>> valuesSet;
 
-        valuesSet = new LazySet<>();
         attributeSet = new LazySet<IdPAttribute>();
 
-        valuesSet.add(new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING));
-        valuesSet.add(new StringAttributeValue(CONNECTOR_ATTRIBUTE_VALUE_STRING));
         attr = new IdPAttribute(DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
-        attr.setValues(valuesSet);
+        attr.setValues(Sets.newHashSet(new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING),
+                new StringAttributeValue(CONNECTOR_ATTRIBUTE_VALUE_STRING)));
         attributeSet.add(attr);
 
         attr = new IdPAttribute(DEPENDS_ON_SECOND_ATTRIBUTE_NAME);
-        valuesSet = new LazySet<>();
-        valuesSet.add(new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[0]));
-        valuesSet.add(new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[1]));
-        attr.setValues(valuesSet);
+        attr.setValues(Sets.newHashSet(new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[0]),
+                new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[1])));
         attributeSet.add(attr);
-        
+
         StaticDataConnector connector = new StaticDataConnector();
         connector.setId(STATIC_CONNECTOR_NAME);
         connector.setValues(attributeSet);
@@ -150,7 +159,8 @@ public final class TestSources {
         return populatedStaticAttribute(STATIC_ATTRIBUTE_NAME, DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 2);
     }
 
-    public static AttributeDefinition populatedStaticAttribute(String definitionName, String attributeName, int attributeCount) throws ComponentInitializationException {
+    public static AttributeDefinition populatedStaticAttribute(String definitionName, String attributeName,
+            int attributeCount) throws ComponentInitializationException {
         IdPAttribute attr;
         Set<IdPAttributeValue<?>> valuesSet;
 
@@ -167,14 +177,14 @@ public final class TestSources {
         }
         attr = new IdPAttribute(attributeName);
         attr.setValues(valuesSet);
-        
+
         StaticAttributeDefinition definition = new StaticAttributeDefinition();
         definition.setId(definitionName);
         definition.setValue(attr);
         definition.initialize();
         return definition;
     }
-    
+
     public static AttributeDefinition nonStringAttributeDefiniton(String name) throws ComponentInitializationException {
         final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();
         defn.setId(name);
@@ -187,25 +197,25 @@ public final class TestSources {
         return defn;
     }
 
-    public static AttributeResolutionContext createResolutionContext(String principal, String issuerID, String recipientId) {
+    public static AttributeResolutionContext createResolutionContext(String principal, String issuerID,
+            String recipientId) {
         AttributeResolutionContext retVal = new AttributeResolutionContext();
-        
+
         retVal.setAttributeIssuerID(issuerID);
         retVal.setAttributeRecipientID(recipientId);
         retVal.setPrincipal(principal);
-        
+
         retVal.getSubcontext(AttributeResolverWorkContext.class, true);
         return retVal;
     }
-    
+
     public static ResolverPluginDependency makeResolverPluginDependency(String pluginId, String attributeId) {
         ResolverPluginDependency retVal = new ResolverPluginDependency(pluginId);
         retVal.setDependencyAttributeId(attributeId);
         return retVal;
     }
-    
-    private static class StaticAttributeDefinition extends AbstractAttributeDefinition {
 
+    private static class StaticAttributeDefinition extends AbstractAttributeDefinition {
 
         /** Static value returned by this definition. */
         @NonnullAfterInit private IdPAttribute value;
@@ -235,7 +245,7 @@ public final class TestSources {
         @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
                 final AttributeResolutionContext resolutionContext,
                 @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
-                return value;
+            return value;
         }
 
         /** {@inheritDoc} */
@@ -247,7 +257,7 @@ public final class TestSources {
             }
         }
     }
-    
+
     private static class StaticDataConnector extends AbstractDataConnector {
 
         /** Static collection of values returned by this connector. */
@@ -286,22 +296,20 @@ public final class TestSources {
         }
 
         /** {@inheritDoc} */
-        @Override
-        @Nonnull protected Map<String, IdPAttribute> doDataConnectorResolve(
+        @Override @Nonnull protected Map<String, IdPAttribute> doDataConnectorResolve(
                 @Nonnull final AttributeResolutionContext resolutionContext,
                 @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
             return attributes;
         }
 
         /** {@inheritDoc} */
-        @Override
-        protected void doInitialize() throws ComponentInitializationException {
+        @Override protected void doInitialize() throws ComponentInitializationException {
             super.doInitialize();
 
             if (null == attributes) {
                 throw new ComponentInitializationException(getLogPrefix() + " No values set up.");
             }
         }
-        
+
     }
 }

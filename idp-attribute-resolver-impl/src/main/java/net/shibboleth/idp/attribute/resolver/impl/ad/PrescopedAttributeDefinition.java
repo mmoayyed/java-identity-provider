@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -93,6 +94,7 @@ public class PrescopedAttributeDefinition extends AbstractAttributeDefinition {
         log.debug("{} Dependencies {} provided unmapped values of {}", new Object[] {getLogPrefix(), getDependencies(),
                 dependencyValues,});
 
+        final LinkedHashSet<ScopedStringAttributeValue> valueSet = new LinkedHashSet<>(dependencyValues.size());
         for (final IdPAttributeValue<?> dependencyValue : dependencyValues) {
             if (!(dependencyValue instanceof StringAttributeValue)) {
                 throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
@@ -101,9 +103,9 @@ public class PrescopedAttributeDefinition extends AbstractAttributeDefinition {
                         + dependencyValue.getClass().getName()));
             }
 
-            resultantAttribute.getValues().add(buildScopedStringAttributeValue((StringAttributeValue) dependencyValue));
+            valueSet.add(buildScopedStringAttributeValue((StringAttributeValue) dependencyValue));
         }
-
+        resultantAttribute.setValues(valueSet);
         return resultantAttribute;
     }
 

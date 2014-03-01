@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext;
 
 import java.util.Collections;
+import java.util.HashSet;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -106,10 +107,12 @@ public class NumOfAttributeValuesPolicyRuleTest {
 
     private AttributeFilterContext manufactureWith(String name, int howMany) {
         final IdPAttribute attr = new IdPAttribute(name);
+        final HashSet<StringAttributeValue> hs = new HashSet<>(howMany);
         
         for (int i = 0; i < howMany; i++) {
-            attr.getValues().add(new StringAttributeValue(Integer.toString(i)));
+            hs.add(new StringAttributeValue(Integer.toString(i)));
         }
+        attr.setValues(hs);
         final AttributeFilterContext context = new AttributeFilterContext();
         context.setPrefilteredIdPAttributes(Collections.singleton(attr));
         return context;

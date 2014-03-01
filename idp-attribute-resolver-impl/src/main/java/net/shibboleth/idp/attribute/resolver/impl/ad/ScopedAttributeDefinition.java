@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -83,6 +84,8 @@ public class ScopedAttributeDefinition extends AbstractAttributeDefinition {
         final Set<IdPAttributeValue<?>> dependencyValues =
                 PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies());
 
+        final LinkedHashSet<StringAttributeValue> hs = new LinkedHashSet<>(dependencyValues.size());
+
         for (final IdPAttributeValue dependencyValue : dependencyValues) {
             if (!(dependencyValue instanceof StringAttributeValue)) {
                 throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
@@ -91,10 +94,9 @@ public class ScopedAttributeDefinition extends AbstractAttributeDefinition {
                         + dependencyValue.getClass().getName()));
             }
 
-            resultantAttribute.getValues().add(
-                    new ScopedStringAttributeValue((String) dependencyValue.getValue(), scope));
+           hs.add(new ScopedStringAttributeValue((String) dependencyValue.getValue(), scope));
         }
-
+        resultantAttribute.setValues(hs);
         return resultantAttribute;
     }
 

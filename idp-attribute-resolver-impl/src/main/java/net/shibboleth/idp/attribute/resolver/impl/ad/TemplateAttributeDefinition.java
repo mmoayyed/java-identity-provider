@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.impl.ad;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -171,6 +172,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
         // build velocity context
         VelocityContext velocityContext;
         String templateResult;
+        final LinkedHashSet<StringAttributeValue> hs = new LinkedHashSet<>(valueCount);
 
         for (int i = 0; i < valueCount; i++) {
             log.debug("{} determing value {}", getLogPrefix(), i + 1);
@@ -194,13 +196,14 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
                 log.debug("{} evaluating template", getLogPrefix());
                 templateResult = template.merge(velocityContext);
                 log.debug("{} result of template evaluating was '{}'", getLogPrefix(), templateResult);
-                resultantAttribute.getValues().add(new StringAttributeValue(templateResult));
+                hs.add(new StringAttributeValue(templateResult));
             } catch (final VelocityException e) {
                 // uncovered path
                 log.error(getLogPrefix() + " unable to evaluate velocity template", e);
                 throw new ResolutionException("Unable to evaluate template", e);
             }
         }
+        resultantAttribute.setValues(hs);
 
         return resultantAttribute;
     }

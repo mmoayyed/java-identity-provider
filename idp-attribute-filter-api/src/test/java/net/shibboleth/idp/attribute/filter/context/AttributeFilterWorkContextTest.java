@@ -28,6 +28,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /** Unit test for {@link AttributeFilterContext}. */
 public class AttributeFilterWorkContextTest {
@@ -46,8 +47,7 @@ public class AttributeFilterWorkContextTest {
         AttributeFilterWorkContext context = parent.getSubcontext(AttributeFilterWorkContext.class, true);
 
         IdPAttribute attribute1 = new IdPAttribute("one");
-        attribute1.getValues().add(aStringAttributeValue);
-        attribute1.getValues().add(bStringAttributeValue);
+        attribute1.setValues(Sets.newHashSet(aStringAttributeValue, bStringAttributeValue));
         parent.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
         context.addPermittedIdPAttributeValues("one", Lists.newArrayList(aStringAttributeValue));
@@ -97,8 +97,7 @@ public class AttributeFilterWorkContextTest {
         AttributeFilterWorkContext context = parent.getSubcontext(AttributeFilterWorkContext.class, true);
 
         IdPAttribute attribute1 = new IdPAttribute("one");
-        attribute1.getValues().add(aStringAttributeValue);
-        attribute1.getValues().add(bStringAttributeValue);
+        attribute1.setValues(Sets.newHashSet(aStringAttributeValue, bStringAttributeValue));
         parent.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
         context.addDeniedIdPAttributeValues("one", Lists.newArrayList(aStringAttributeValue));
