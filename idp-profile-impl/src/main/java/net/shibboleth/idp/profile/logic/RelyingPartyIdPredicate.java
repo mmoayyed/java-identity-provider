@@ -29,14 +29,13 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 
 /**
@@ -54,7 +53,6 @@ public class RelyingPartyIdPredicate extends AbstractIdentifiableInitializeableC
 
     /** Constructor. */
     public RelyingPartyIdPredicate() {
-        super.setId(getClass().getName());
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         relyingPartyIds = Collections.emptySet();
     }
@@ -80,8 +78,14 @@ public class RelyingPartyIdPredicate extends AbstractIdentifiableInitializeableC
     public synchronized void setRelyingPartyIds(@Nonnull @NonnullElements final Collection<String> ids) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(ids, "Relying party ID collection cannot be null");
-
-        relyingPartyIds = Sets.newHashSet(Collections2.filter(ids, Predicates.notNull()));
+        
+        relyingPartyIds = Sets.newHashSet();
+        for (final String id : ids) {
+            final String trimmed = StringSupport.trimOrNull(id);
+            if (trimmed != null) {
+                relyingPartyIds.add(trimmed);
+            }
+        }
     }
 
     /** {@inheritDoc} */
