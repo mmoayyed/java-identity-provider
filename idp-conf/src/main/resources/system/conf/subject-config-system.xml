@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <bean id="SubjectC14NFlow/LegacyPrincipalConnector" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
+        <property name="activationCondition">
+            <bean class="net.shibboleth.idp.saml.impl.nameid.LegacyCanonicalization.ActivationCondition" 
+                c:service-ref="shibboleth.AttributeResolverService"/>
+        </property>
+    </bean>
+
+    <bean id="shibboleth.AbstractSAML1C14NFlowBean" abstract="true"
+            class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor">
+        <property name="activationCondition">
+            <bean class="net.shibboleth.idp.saml.impl.nameid.NameIdentifierCanonicalization.ActivationCondition" />
+        </property>
+    </bean>
+
+    <bean id="shibboleth.AbstractSAML2C14NFlowBean" abstract="true"
+            class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor">
+        <property name="activationCondition">
+            <bean class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition" />
+        </property>
+    </bean>
+
+    <bean id="SubjectC14NFlow/SAML2/Transient" parent="shibboleth.AbstractSAML2C14NFlowBean"
+        p:formats="#{ {'urn:oasis:names:tc:SAML:2.0:nameid-format:transient'} }" />
+    
+    <bean id="SubjectC14NFlow/SAML2/CryptoTransient" parent="shibboleth.AbstractSAML2C14NFlowBean"
+        p:formats="#{ {'urn:oasis:names:tc:SAML:2.0:nameid-format:transient'} }" />
+
+    <bean id="SubjectC14NFlow/SAML1/Transient" parent="shibboleth.AbstractSAML1C14NFlowBean"
+        p:formats="#{ {'urn:mace:shibboleth:1.0:nameIdentifier'} }" /> 
+
+    <bean id="SubjectC14NFlow/SAML1/CryptoTransient" parent="shibboleth.AbstractSAML1C14NFlowBean" 
+        p:formats="#{ {'urn:mace:shibboleth:1.0:nameIdentifier'} }" /> 
+
+    <bean id="SubjectC14NFlow/SAML2/Direct" parent="shibboleth.AbstractSAML2C14NFlowBean"
+            p:formats-ref="shibboleth.DirectNameFormats">
+        <property name="activationCondition">
+            <bean class="com.google.common.base.Predicates" factory-method="and">
+                <constructor-arg>
+                    <util:list>
+                        <bean class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition" />
+                        <ref bean="shibboleth.DirectNamePredicate" />
+                    </util:list>
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
+               
+    <bean id="SubjectC14NFlow/SAML1/Direct" parent="shibboleth.AbstractSAML1C14NFlowBean"
+            p:formats-ref="shibboleth.DirectNameFormats"> 
+        <property name="activationCondition">
+            <bean class="com.google.common.base.Predicates" factory-method="and">
+                <constructor-arg>
+                    <util:list>
+                        <bean class="net.shibboleth.idp.saml.impl.nameid.NameIdentifierCanonicalization.ActivationCondition" />
+                        <ref bean="shibboleth.DirectNamePredicate" />
+                    </util:list>
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
+            
+</beans>

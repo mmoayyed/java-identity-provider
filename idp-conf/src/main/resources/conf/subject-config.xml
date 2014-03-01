@@ -22,11 +22,7 @@
     These are lists of Subject Canonicalization flows that turn arbitrary Subject data into a string-based
     principal name that the rest of the IdP can operate on. They're used both after authentication and
     during operations like SAML attribute queries, to map the SAML Subject name into a principal name. 
-    
-    Flows are described with an ID that corresponds to a Spring Web Flow subflow name, and an optional
-    activation function that tells the IdP whether the flow can be run or not on a particular Subject
-    for a particular profile request. The default functions do simple checking for compatible syntax
-    and data to operate on, to avoid wasted effort.
+    Flows are identified with an ID that corresponds to a Spring Web Flow subflow name.
     -->
 
     <!-- Flows used after authentication to produce canonical principal name. -->
@@ -43,64 +39,50 @@
         </bean>
     </util:list>
     
-    <!-- Flows used during SAML queries and related cases to reverse SAML NameIdentifier/NameIDs. -->
-
-    <bean id="shibboleth.AbstractSAML1C14NFlowBean" abstract="true"
-            class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor">
-        <property name="activationCondition">
-            <bean class="net.shibboleth.idp.saml.impl.nameid.NameIdentifierCanonicalization.ActivationCondition" />
-        </property>
-    </bean>
-
-    <bean id="shibboleth.AbstractSAML2C14NFlowBean" abstract="true"
-            class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor">
-        <property name="activationCondition">
-            <bean class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition" />
-        </property>
-    </bean>
-    
+    <!--
+    Flows used during SAML queries to reverse map NameIdentifier/NameIDs. The actual beans defining these
+    flows are in a system file. Below the list are some settings that might be necessary to adjust.
+    -->
     <util:list id="shibboleth.SAMLSubjectCanonicalizationFlows">
-        
-        <bean id="SubjectC14NFlow/SAML2/Transient" parent="shibboleth.AbstractSAML2C14NFlowBean"
-            p:formats="#{ {'urn:oasis:names:tc:SAML:2.0:nameid-format:transient'} }" />
-        
-        <bean id="SubjectC14NFlow/SAML2/CryptoTransient" parent="shibboleth.AbstractSAML2C14NFlowBean"
-            p:formats="#{ {'urn:oasis:names:tc:SAML:2.0:nameid-format:transient'} }" />
-        
-        <bean id="SubjectC14NFlow/SAML2/Direct" parent="shibboleth.AbstractSAML2C14NFlowBean"> 
-            <property name="formats">
-                <util:list>
-                    <value>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</value>
-                </util:list>
-            </property>
-        </bean>
-               
-        <bean id="SubjectC14NFlow/SAML1/Transient" parent="shibboleth.AbstractSAML1C14NFlowBean"
-            p:formats="#{ {'urn:mace:shibboleth:1.0:nameIdentifier'} }" /> 
-
-        <bean id="SubjectC14NFlow/SAML1/CryptoTransient" parent="shibboleth.AbstractSAML1C14NFlowBean" 
-            p:formats="#{ {'urn:mace:shibboleth:1.0:nameIdentifier'} }" /> 
-
-        <bean id="SubjectC14NFlow/SAML1/Direct" parent="shibboleth.AbstractSAML1C14NFlowBean"> 
-            <property name="formats">
-                <util:list>
-                    <value>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</value>
-                </util:list>
-            </property>
-        </bean>
 
         <!--
         This is installed to support the old mechanism of using PrincipalConnectors in the attribute
         resolver to map SAML Subjects back into principals. If you don't use those (or this is a new install)
-        you can disable this.
+        you can remove this.
         -->
-        <bean id="SubjectC14NFlow/LegacyPrincipalConnector" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
-            <property name="activationCondition">
-                <bean class="net.shibboleth.idp.saml.impl.nameid.LegacyCanonicalization.ActivationCondition" 
-                    c:service-ref="shibboleth.AttributeResolverService"/>
-            </property>
-        </bean>
-
+        <ref bean="SubjectC14NFlow/LegacyPrincipalConnector" />
+        
+        <!-- The next four are for handling transient IDs (in-storage and stateless variants). -->
+        <ref bean="SubjectC14NFlow/SAML2/Transient" />
+        <ref bean="SubjectC14NFlow/SAML2/CryptoTransient" />
+        <ref bean="SubjectC14NFlow/SAML1/Transient" /> 
+        <ref bean="SubjectC14NFlow/SAML1/CryptoTransient" /> 
+        
+        <!--
+        Finally we have beans for decoding arbitrary SAML formats directly. By default, these are turned off,
+        having *no* relying parties for which they apply (see shibboleth.DirectNamePredicate below).
+        -->
+        <ref bean="SubjectC14NFlow/SAML2/Direct" />
+        <ref bean="SubjectC14NFlow/SAML1/Direct" />
     </util:list>
     
+    <!-- What SAML formats do you want to support direct mapping for? -->
+    <util:list id="shibboleth.DirectNameFormats">
+        <value>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</value>
+        <value>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</value>
+        <value>urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName</value>
+        <value>urn:oasis:names:tc:SAML:1.1:nameid-format:WindowsDomainQualifiedName</value>
+        <value>urn:oasis:names:tc:SAML:2.0:nameid-format:kerberos</value>
+    </util:list>
+
+    <!-- Under what conditions should direct mapping be allowed? By default, never. -->
+    <!-- TODO: can we override this from the tests so we can remove it here? -->
+    <bean id="shibboleth.DirectNamePredicate" class="net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate">
+        <property name="relyingPartyIds">
+            <util:list>
+                <value>https://sp.example.org</value>
+            </util:list>
+        </property>
+    </bean>
+            
 </beans>

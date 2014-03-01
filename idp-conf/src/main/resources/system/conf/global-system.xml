@@ -32,6 +32,7 @@
 
     <import resource="session-manager.xml" />
     <import resource="saml-binding-config.xml" />
+    <import resource="subject-config-system.xml" />
     
     <bean id="shibboleth.TaskTimer" class="java.util.Timer" destroy-method="cancel"/> <!--  only needed if you do reloading -->
     
