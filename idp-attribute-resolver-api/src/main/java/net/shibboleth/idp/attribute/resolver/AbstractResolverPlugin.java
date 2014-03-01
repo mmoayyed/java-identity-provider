@@ -31,7 +31,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -51,7 +51,7 @@ import com.google.common.collect.ImmutableSet;
  * @param <ResolvedType> object type this plug-in resolves to
  */
 @ThreadSafe
-public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdentifiableInitializeableComponent
+public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdentifiableInitializableComponent
         implements ResolverPlugin<ResolvedType>, DisposableBean {
 
     /** Class logger. */

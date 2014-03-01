@@ -31,7 +31,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
@@ -47,7 +47,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 /** The configuration that applies to a given relying party. */
-public class RelyingPartyConfiguration extends AbstractIdentifiableInitializeableComponent implements
+public class RelyingPartyConfiguration extends AbstractIdentifiableInitializableComponent implements
         IdentifiedComponent, Predicate<ProfileRequestContext> {
 
     /** The entity ID of the IdP. */

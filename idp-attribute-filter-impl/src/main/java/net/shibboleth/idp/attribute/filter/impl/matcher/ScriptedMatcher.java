@@ -34,7 +34,7 @@ import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
@@ -51,7 +51,7 @@ import com.google.common.base.Objects;
  * 
  */
 @ThreadSafe
-public class ScriptedMatcher extends AbstractIdentifiableInitializeableComponent implements Matcher,
+public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent implements Matcher,
         UnmodifiableComponent {
 
     /** Class logger. */

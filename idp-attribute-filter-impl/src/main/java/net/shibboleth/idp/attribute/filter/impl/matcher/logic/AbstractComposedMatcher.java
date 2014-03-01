@@ -29,7 +29,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 
 import com.google.common.base.Predicates;
@@ -40,7 +40,7 @@ import com.google.common.collect.Iterables;
  * Base class for {@link Matcher} implementations that are compositions of two or more other
  * {@link Matcher}s.
  */
-public abstract class AbstractComposedMatcher extends AbstractIdentifiableInitializeableComponent implements
+public abstract class AbstractComposedMatcher extends AbstractIdentifiableInitializableComponent implements
         Matcher, UnmodifiableComponent {
 
     /** The composed matchers. */

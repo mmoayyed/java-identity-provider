@@ -27,7 +27,7 @@ import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.nameid.NameIdentifierAttributeEncoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -58,7 +58,7 @@ import com.google.common.base.Predicates;
  * @param <NameIdType> type of identifier object
  */
 public class LegacyNameIdentifierGenerator<NameIdType extends SAMLObject>
-        extends AbstractIdentifiableInitializeableComponent implements NameIdentifierGenerator<NameIdType> {
+        extends AbstractIdentifiableInitializableComponent implements NameIdentifierGenerator<NameIdType> {
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(LegacyNameIdentifierGenerator.class);

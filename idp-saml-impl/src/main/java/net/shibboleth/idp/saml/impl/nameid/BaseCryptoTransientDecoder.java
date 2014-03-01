@@ -24,7 +24,7 @@ import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -36,7 +36,7 @@ import net.shibboleth.utilities.java.support.security.DataSealerException;
  * An abstract action which contains the logic to do crypto transient decoding matching. This reverses the work done by
  * {@link net.shibboleth.idp.attribute.resolver.impl.ad.CryptoTransientIdAttributeDefinition}
  */
-public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableInitializeableComponent {
+public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableInitializableComponent {
 
     /** Object used to protect and encrypt the data. */
     @NonnullAfterInit private DataSealer dataSealer;

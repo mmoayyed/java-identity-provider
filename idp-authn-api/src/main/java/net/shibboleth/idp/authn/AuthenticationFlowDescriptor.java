@@ -33,7 +33,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -53,7 +53,7 @@ import com.google.common.collect.Collections2;
  * of the flow, and others can be found by examining the list of extended {@link Principal}s that the flow exposes.
  * </p>
  */
-public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializeableComponent implements
+public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializableComponent implements
         PrincipalSupportingComponent, StorageSerializer<AuthenticationResult> {
 
     /** Additional allowance for storage of result records to avoid race conditions during use. */

@@ -32,7 +32,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -47,7 +47,7 @@ import com.google.common.collect.Iterables;
 /**
  * The concrete representation of a &lt;PrincipalConnector&gt;, delegates actual work to decoders.
  */
-public class PrincipalConnector extends AbstractIdentifiableInitializeableComponent implements NameIdentifierDecoder,
+public class PrincipalConnector extends AbstractIdentifiableInitializableComponent implements NameIdentifierDecoder,
         NameIDDecoder {
 
     /** The {@link NameID} decoder. */

@@ -20,7 +20,7 @@ package net.shibboleth.idp.spring;
 import javax.annotation.Nonnull;
 
 import junit.framework.Assert;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
@@ -67,6 +67,6 @@ public class IdentifiableBeanPostProcessorTest extends AbstractTestNGSpringConte
         }
     }
 
-    public static class Identifiable extends AbstractIdentifiableInitializeableComponent {
+    public static class Identifiable extends AbstractIdentifiableInitializableComponent {
     }
 }

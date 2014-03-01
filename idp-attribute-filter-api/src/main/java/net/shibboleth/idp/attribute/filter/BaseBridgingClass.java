@@ -19,7 +19,7 @@ package net.shibboleth.idp.attribute.filter;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
@@ -33,7 +33,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  * 
  * This code takes care of the mundane aspects of #getId() and initialize, validate and destroy.
  */
-public abstract class BaseBridgingClass extends AbstractIdentifiableInitializeableComponent implements
+public abstract class BaseBridgingClass extends AbstractIdentifiableInitializableComponent implements
         IdentifiableComponent, DestructableComponent {
 
     /** The object we are bridging to. */

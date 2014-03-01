@@ -27,7 +27,7 @@ import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.TransientIdParameters;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializeableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 /**
  * An abstract action which contains the logic to do transient decoding matching (shared between SAML2 and SAML1).
  */
-public abstract class BaseTransientDecoder extends AbstractIdentifiableInitializeableComponent {
+public abstract class BaseTransientDecoder extends AbstractIdentifiableInitializableComponent {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(BaseTransientDecoder.class);
