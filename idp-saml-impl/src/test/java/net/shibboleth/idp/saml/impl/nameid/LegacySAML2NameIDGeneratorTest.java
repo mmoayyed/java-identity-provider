@@ -56,6 +56,7 @@ public class LegacySAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
 
     @BeforeMethod public void initTest() throws ComponentInitializationException {
         generator = new LegacySAML2NameIDGenerator();
+        generator.setId("test");
         generator.initialize();
         prc = new RequestContextBuilder().buildProfileRequestContext();
     }

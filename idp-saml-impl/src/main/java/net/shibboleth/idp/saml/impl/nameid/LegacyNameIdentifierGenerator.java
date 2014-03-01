@@ -78,8 +78,6 @@ public class LegacyNameIdentifierGenerator<NameIdType extends SAMLObject>
      * @param clazz encoder class type
      */
     protected LegacyNameIdentifierGenerator(@Nonnull Class<? extends NameIdentifierAttributeEncoder> clazz) {
-        super.setId(getClass().getName());
-        
         activationCondition = Predicates.alwaysTrue();
         encoderType = Constraint.isNotNull(clazz, "Encoder class type cannot be null");
 

@@ -85,6 +85,7 @@ public class DefaultSAML1NameIdentifierGeneratorTest extends OpenSAMLInitBaseTes
     @BeforeMethod public void initTest() throws ComponentInitializationException {
 
         generator = new DefaultSAML1NameIdentifierGenerator();
+        generator.setId("test");
         generator.setFormat(NameIdentifier.X509_SUBJECT);
         saml1Builder = new NameIdentifierBuilder();
         saml2Builder = new NameIDBuilder();
