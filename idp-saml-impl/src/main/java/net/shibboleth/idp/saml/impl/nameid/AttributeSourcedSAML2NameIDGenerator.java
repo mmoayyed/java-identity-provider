@@ -108,9 +108,9 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
     }
     
     /**
-     * Set the relying parties to match against.
+     * Set the attribute sources to pull from.
      * 
-     * @param ids   relying party IDs to match against
+     * @param ids   attribute IDs to pull from
      */
     public synchronized void setAttributeSourceIds(@Nonnull @NonnullElements final List<String> ids) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
