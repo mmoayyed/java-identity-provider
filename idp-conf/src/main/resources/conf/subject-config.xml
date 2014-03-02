@@ -32,22 +32,28 @@
     <!-- SAML 2 NameID Generation -->
     <util:list id="shibboleth.SAML2NameIDGenerators">
     
-        <!-- TODO: add transient/persistent generators -->
+        <bean id="transient" class="net.shibboleth.idp.saml.impl.nameid.TransientSAML2NameIDGenerator"
+            p:format="urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
+            p:transientIdGenerator-ref="${idp.transientId.generator}" />
     
         <bean id="email" class="net.shibboleth.idp.saml.impl.nameid.AttributeSourcedSAML2NameIDGenerator"
-                p:format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
-                p:attributeSourceIds="#{ {'email'} }" />
+            p:format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
+            p:attributeSourceIds="#{ {'email'} }"
+            p:activationCondition-ref="shibboleth.Predicates.False" />
                 
     </util:list>
 
     <!-- SAML 1 NameIdentifier Generation -->
     <util:list id="shibboleth.SAML1NameIdentifierGenerators">
     
-        <!-- TODO: add transient/persistent generators -->
+        <bean id="transient" class="net.shibboleth.idp.saml.impl.nameid.TransientSAML1NameIdentifierGenerator"
+            p:format="urn:mace:shibboleth:1.0:nameIdentifier"
+            p:transientIdGenerator-ref="${idp.transientId.generator}" />
 
         <bean id="email" class="net.shibboleth.idp.saml.impl.nameid.AttributeSourcedSAML1NameIdentifierGenerator"
-                p:format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
-                p:attributeSourceIds="#{ {'email'} }" />
+            p:format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
+            p:attributeSourceIds="#{ {'email'} }"
+            p:activationCondition-ref="shibboleth.Predicates.False" />
                 
     </util:list>
     

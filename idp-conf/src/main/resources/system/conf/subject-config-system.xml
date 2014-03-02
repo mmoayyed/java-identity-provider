@@ -12,6 +12,9 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
+    <bean id="shibboleth.StoredTransientIdGenerator" class="net.shibboleth.idp.saml.impl.nameid.StoredTransientIdGenerator"
+        p:idStore-ref="shibboleth.StorageService" />
+
     <bean id="SubjectC14NFlow/LegacyPrincipalConnector" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
         <property name="activationCondition">
             <bean class="net.shibboleth.idp.saml.impl.nameid.LegacyCanonicalization.ActivationCondition" 
