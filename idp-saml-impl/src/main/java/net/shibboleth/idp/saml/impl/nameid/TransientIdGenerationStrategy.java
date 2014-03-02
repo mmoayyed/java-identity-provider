@@ -17,16 +17,16 @@
 
 package net.shibboleth.idp.saml.impl.nameid;
 
-import java.io.IOException;
-
 import javax.annotation.Nonnull;
+
+import org.opensaml.profile.ProfileException;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /**
  * Generates and manages transient identifiers according to specific strategies.
  */
-public interface TransientIdGenerator {
+public interface TransientIdGenerationStrategy {
 
     /**
      * Generate a new Transient ID.
@@ -35,9 +35,9 @@ public interface TransientIdGenerator {
      * @param principalName     the principal to map to
      * 
      * @return  the new identifier
-     * @throws IOException  if an error occurs generating the identifier
+     * @throws ProfileException  if an error occurs generating the identifier
      */
     @Nonnull @NotEmpty String generate(@Nonnull @NotEmpty final String relyingPartyId,
-            @Nonnull @NotEmpty final String principalName) throws IOException;
+            @Nonnull @NotEmpty final String principalName) throws ProfileException;
 
 }

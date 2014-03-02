@@ -18,7 +18,6 @@
 package net.shibboleth.idp.saml.impl.attribute.resolver;
 
 import java.util.Collections;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,16 +28,19 @@ import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
+import net.shibboleth.idp.saml.impl.nameid.CryptoTransientIdGenerationStrategy;
 import net.shibboleth.utilities.java.support.annotation.Duration;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.DataSealer;
-import net.shibboleth.utilities.java.support.security.DataSealerException;
 
+import org.opensaml.profile.ProfileException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * An attribute definition that generates integrity protected, encrypted identifiers useful for stateless transient
@@ -49,102 +51,112 @@ public class CryptoTransientIdAttributeDefinition extends AbstractAttributeDefin
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(CryptoTransientIdAttributeDefinition.class);
 
-    /** Object used to protect and encrypt the data. */
-    private DataSealer dataSealer;
+    /** The actual implementation of the transient generation process. */
+    @Nonnull private final CryptoTransientIdGenerationStrategy idGenerator;
 
-    /** Length, in milliseconds, tokens are valid. */
-    @Duration private long idLifetime;
+    /** Constructor. */
+    public CryptoTransientIdAttributeDefinition() {
+        idGenerator = new CryptoTransientIdGenerationStrategy();
+    }
 
+    /**
+     * Set the data sealer to use.
+     * 
+     * @param sealer object used to protect and encrypt the data
+     */
+    public void setDataSealer(@Nonnull final DataSealer sealer) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        idGenerator.setDataSealer(sealer);
+    }
+
+    /**
+     * Get the time, in milliseconds, ids are valid.
+     * 
+     * @return  time, in milliseconds, ids are valid
+     */
+    @Positive public long getIdLifetime() {
+        return idGenerator.getIdLifetime();
+    }
+    
+    /**
+     * Set the time, in milliseconds, ids are valid.
+     * 
+     * @param lifetime time, in milliseconds, ids are valid
+     */
+    public void setIdLifetime(@Duration @Positive final long lifetime) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        idGenerator.setIdLifetime(lifetime);
+    }
+    
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
-        if (0 == idLifetime) {
-            log.debug("set default lifetime of 4 hours.", getLogPrefix());
-            idLifetime = 1000 * 60 * 60 * 4;
-        }
-        if (null == dataSealer) {
-            throw new ComponentInitializationException(getLogPrefix() + " data sealer was null or unspecified");
-        }
+        idGenerator.setId(getId() + " Transient Generator");
+        idGenerator.initialize();
+    }
+    
+    /** {@inheritDoc} */
+    @Override protected void doDestroy() {
+        idGenerator.destroy();
+        super.doDestroy();
     }
 
     /** {@inheritDoc} */
     @Override @Nullable protected IdPAttribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        Constraint.isNotNull(resolutionContext, "Resolution context cannot be null");
-
-        final String attributeIssuerID = resolutionContext.getAttributeIssuerID();
-        if (null == attributeIssuerID) {
-            throw new ResolutionException(getLogPrefix() + " provided attribute issuer ID was empty");
+        final String attributeRecipientID = getAttributeRecipientID(resolutionContext);
+        
+        final String principalName = getPrincipal(resolutionContext);
+    
+        try {
+            final String transientId = idGenerator.generate(attributeRecipientID, principalName);
+            log.debug("{} creating new transient ID '{}' for request '{}'",
+                    new Object[] {getLogPrefix(), transientId, resolutionContext.getId(),});
+            
+            final IdPAttribute result = new IdPAttribute(getId());
+            result.setValues(Collections.singleton(new StringAttributeValue(transientId)));
+            return result;
+        } catch (final ProfileException e) {
+            throw new ResolutionException(e);
         }
+    }
 
+    /**
+     * Police and get the AttributeRecipientID.
+     * 
+     * @param resolutionContext where to look
+     * @return the AttributeRecipientID
+     * @throws ResolutionException if it was non null
+     */
+    @Nonnull @NotEmpty private String getAttributeRecipientID(
+            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         final String attributeRecipientID = resolutionContext.getAttributeRecipientID();
-        if (null == attributeRecipientID) {
+        if (Strings.isNullOrEmpty(attributeRecipientID)) {
             throw new ResolutionException(getLogPrefix() + " provided attribute recipient ID was empty");
         }
+        return attributeRecipientID;
+    }
 
-        final String principalName = resolutionContext.getPrincipal();
-        if (null == principalName) {
+    /**
+     * Police and get the Principal.
+     * 
+     * @param context where to look
+     * @return the Principal
+     * @throws ResolutionException if it was non null
+     */
+    @Nonnull @NotEmpty private String getPrincipal(@Nonnull final AttributeResolutionContext context)
+            throws ResolutionException {
+        final String principalName = context.getPrincipal();
+        if (Strings.isNullOrEmpty(principalName)) {
             throw new ResolutionException(getLogPrefix() + " provided prinicipal name was empty");
         }
 
-        final IdPAttribute result = new IdPAttribute(getId());
-
-        log.debug("{} Building crypto transient ID for recipient: '{}', issuer: {}, principal identifer: {}",
-                new Object[] {getLogPrefix(), attributeRecipientID, attributeIssuerID, principalName,});
-
-        final StringBuilder principalTokenIdBuilder = new StringBuilder();
-        principalTokenIdBuilder.append(attributeIssuerID).append("!").append(attributeRecipientID).append("!")
-                .append(principalName);
-
-        try {
-            final String transientId =
-                    dataSealer.wrap(principalTokenIdBuilder.toString(), System.currentTimeMillis() + idLifetime);
-            final Set<StringAttributeValue> vals = Collections.singleton(new StringAttributeValue(transientId));
-            result.setValues(vals);
-        } catch (final DataSealerException e) {
-            throw new ResolutionException(getLogPrefix() + " Caught exception wrapping principal identifier. {}", e);
-        }
-
-        return result;
-    }
-
-    /**
-     * Gets the time, in milliseconds, that ids are valid for.
-     * 
-     * @return time, in milliseconds, that ids are valid for.
-     */
-    public long getIdLifetime() {
-        return idLifetime;
-    }
-
-    /**
-     * Sets the time, in milliseconds, that ids are valid for.
-     * 
-     * @param lifetime time, in milliseconds, that ids are valid for.
-     */
-    public void setIdLifetime(@Duration final long lifetime) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        idLifetime = lifetime;
-    }
-
-    /**
-     * Sets the Sealer.
-     * 
-     * @param sealer object used to protect and encrypt the data
-     */
-    public void setDataSealer(@Nonnull final DataSealer sealer) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        dataSealer = Constraint.isNotNull(sealer, "DataSealer may not be null");
-    }
-
-    /**
-     * Gets the Sealer.
-     * 
-     * @return sealer object used to protect and encrypt the data
-     */
-    @Nullable @NonnullAfterInit public DataSealer getDataSealer() {
-        return dataSealer;
+        return principalName;
     }
 
 }

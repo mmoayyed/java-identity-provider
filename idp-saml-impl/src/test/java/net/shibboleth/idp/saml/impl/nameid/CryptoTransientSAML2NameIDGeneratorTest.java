@@ -22,40 +22,52 @@ import java.io.IOException;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.saml.nameid.TransientIdParameters;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.security.DataSealer;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml1.core.NameIdentifier;
-import org.opensaml.storage.StorageRecord;
-import org.opensaml.storage.StorageService;
-import org.opensaml.storage.impl.MemoryStorageService;
+import org.opensaml.saml.saml2.core.NameID;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-/** Unit test for {@link TransientSAML1NameIdentifierGenerator} using storage-based generator. */
-public class StoredTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLInitBaseTestCase {
+/** Unit test for {@link TransientSAML2NameIDGenerator} using crypto-based generator. */
+public class CryptoTransientSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
 
-    private StorageService store;
+    private static final long TIMEOUT = 500;
     
-    private StoredTransientIdGenerationStrategy transientGenerator;
+    private DataSealer sealer;
     
-    private TransientSAML1NameIdentifierGenerator generator;
+    private CryptoTransientIdGenerationStrategy transientGenerator;
     
-    @BeforeMethod public void setUp() throws ComponentInitializationException {
-        store = new MemoryStorageService();
-        store.initialize();
+    private TransientSAML2NameIDGenerator generator;
+    
+    @BeforeMethod public void setUp() throws ComponentInitializationException, IOException {
+        final Resource keyStore  = new ClassPathResource("/net/shibboleth/idp/saml/impl/attribute/resolver/SealerKeyStore.jks");
+        final String keyStorePath = keyStore.getFile().getAbsolutePath();
+
+        sealer = new DataSealer();
+        sealer.setCipherKeyAlias("secret");
+        sealer.setCipherKeyPassword("kpassword");
+
+        sealer.setKeystorePassword("password");
+        sealer.setKeystorePath(keyStorePath);
+
+        sealer.initialize();
         
-        transientGenerator = new StoredTransientIdGenerationStrategy();
+        transientGenerator = new CryptoTransientIdGenerationStrategy();
         transientGenerator.setId("test");
-        transientGenerator.setIdStore(store);
+        transientGenerator.setDataSealer(sealer);
+        transientGenerator.setIdLifetime(TIMEOUT);
         transientGenerator.initialize();
         
-        generator = new TransientSAML1NameIdentifierGenerator();
+        generator = new TransientSAML2NameIDGenerator();
         generator.setId("test");
         generator.setFormat(NameIdentifier.UNSPECIFIED);
         generator.setTransientIdGenerator(transientGenerator);
@@ -63,16 +75,16 @@ public class StoredTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLIni
     }
     
     @AfterMethod public void tearDown() {
-        store.destroy();
-        transientGenerator.destroy();
         generator.destroy();
+        transientGenerator.destroy();
+        sealer.destroy();
     }
 
     @Test public void testNoPrincipal() throws ComponentInitializationException, IOException, ProfileException {        
 
         final ProfileRequestContext prc = new RequestContextBuilder().buildProfileRequestContext();
         
-        final NameIdentifier name = generator.generate(prc, generator.getFormat());
+        final NameID name = generator.generate(prc, generator.getFormat());
         
         Assert.assertNull(name);
     }
@@ -83,35 +95,36 @@ public class StoredTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLIni
         prc.getSubcontext(RelyingPartyContext.class).setRelyingPartyId(null);
         prc.getSubcontext(SubjectContext.class, true).setPrincipalName("jdoe");
         
-        final NameIdentifier name = generator.generate(prc, generator.getFormat());
+        final NameID name = generator.generate(prc, generator.getFormat());
         
         Assert.assertNull(name);
     }
     
-    @Test public void testTransient() throws ComponentInitializationException, IOException, ProfileException {        
+    @Test public void testTransient() throws Exception {        
 
         final ProfileRequestContext prc = new RequestContextBuilder().buildProfileRequestContext();
         final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
         prc.getSubcontext(SubjectContext.class, true).setPrincipalName("jdoe");
         
-        final NameIdentifier name = generator.generate(prc, generator.getFormat());
+        final NameID name = generator.generate(prc, generator.getFormat());
         
         Assert.assertNotNull(name);
         Assert.assertEquals(name.getFormat(), generator.getFormat());
         Assert.assertEquals(name.getNameQualifier(), rpc.getConfiguration().getResponderId());
 
-        String val = name.getNameIdentifier();
+        final String val = name.getValue();
 
-        final StorageRecord record = store.read(TransientIdParameters.CONTEXT, val);
-        
-        Assert.assertNotNull(record);
-        Assert.assertTrue(val.length() >= transientGenerator.getIdSize());
- 
-        TransientIdParameters parms = new TransientIdParameters(record.getValue());
-        
-        Assert.assertNotNull(parms);
-        Assert.assertEquals(parms.getAttributeRecipient(), rpc.getRelyingPartyId());
-        Assert.assertEquals(parms.getPrincipal(), "jdoe");
+        final String decode = sealer.unwrap(val);
+
+        Assert.assertEquals(decode, rpc.getRelyingPartyId() + "!" + "jdoe");
+
+        Thread.sleep(TIMEOUT);
+        try {
+            sealer.unwrap(val);
+            Assert.fail("Timeout not set correctly");
+        } catch (Exception e) {
+            // OK
+        }
     }
     
 }

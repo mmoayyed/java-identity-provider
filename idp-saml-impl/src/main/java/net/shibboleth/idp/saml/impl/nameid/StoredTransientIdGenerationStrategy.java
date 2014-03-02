@@ -22,8 +22,10 @@ import java.io.IOException;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.saml.nameid.TransientIdParameters;
+import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -31,6 +33,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.RandomIdentifierGenerationStrategy;
 
+import org.opensaml.profile.ProfileException;
 import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,11 +44,11 @@ import org.slf4j.LoggerFactory;
  * <p>The identifier itself is the record key, and the value combines the principal name with the
  * identifier of the recipient.</p>
  */
-public class StoredTransientIdGenerator extends AbstractIdentifiableInitializableComponent
-        implements TransientIdGenerator {
+public class StoredTransientIdGenerationStrategy extends AbstractIdentifiableInitializableComponent
+        implements TransientIdGenerationStrategy {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(StoredTransientIdGenerator.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(StoredTransientIdGenerationStrategy.class);
 
     /** Store used to map identifiers to principals. */
     @NonnullAfterInit private StorageService idStore;
@@ -57,10 +60,10 @@ public class StoredTransientIdGenerator extends AbstractIdentifiableInitializabl
     private int idSize;
 
     /** Length, in milliseconds, identifiers are valid. */
-    private long idLifetime;
+    @Duration @Positive private long idLifetime;
 
     /** Constructor. */
-    public StoredTransientIdGenerator() {
+    public StoredTransientIdGenerationStrategy() {
         idSize = 16;
         idLifetime = 1000 * 60 * 60 * 4;
     }
@@ -92,7 +95,7 @@ public class StoredTransientIdGenerator extends AbstractIdentifiableInitializabl
      * 
      * @return  id size, in bytes
      */
-    public int getIdSize() {
+    @Positive public int getIdSize() {
         return idSize;
     }
     
@@ -101,10 +104,10 @@ public class StoredTransientIdGenerator extends AbstractIdentifiableInitializabl
      * 
      * @param size size, in bytes, of the id
      */
-    public void setIdSize(final int size) {
+    public void setIdSize(@Positive final int size) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        idSize = size;
+        idSize = (int) Constraint.isGreaterThan(0, size, "ID size must be positive");
     }
     
     /**
@@ -112,7 +115,7 @@ public class StoredTransientIdGenerator extends AbstractIdentifiableInitializabl
      * 
      * @return  time, in milliseconds, ids are valid
      */
-    public long getIdLifetime() {
+    @Positive public long getIdLifetime() {
         return idLifetime;
     }
 
@@ -121,10 +124,10 @@ public class StoredTransientIdGenerator extends AbstractIdentifiableInitializabl
      * 
      * @param lifetime time, in milliseconds, ids are valid
      */
-    public void setIdLifetime(final long lifetime) {
+    public void setIdLifetime(@Duration @Positive final long lifetime) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        idLifetime = lifetime;
+        idLifetime = Constraint.isGreaterThan(0, lifetime, "ID lifetime must be positive");
     }
 
     /** {@inheritDoc} */
@@ -143,35 +146,39 @@ public class StoredTransientIdGenerator extends AbstractIdentifiableInitializabl
     /** {@inheritDoc} */
     @Override
     @Nonnull @NotEmpty public String generate(@Nonnull @NotEmpty final String relyingPartyId,
-            @Nonnull @NotEmpty final String principalName) throws IOException {
+            @Nonnull @NotEmpty final String principalName) throws ProfileException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
-        final String principalTokenId = new TransientIdParameters(relyingPartyId, principalName).encode();
-
-        // This code used to store the entries keyed by the ID *and* the value, which I think
-        // was used to prevent generation of multiple IDs if the resolver runs multiple times.
-        // This is the source of the current V2 bug that causes the same transient to be reused
-        // for the same SP within the TTL window. If we need to prevent multiple resolutions, I
-        // suggest we do that by storing transactional state for resolver plugins in the context
-        // tree. But in practice, I'm not sure it matters much how many times this runs, that's
-        // the point of a transient. So this version never reads the store, it just writes to it.
-
-        final String id = idGenerator.generateIdentifier();
-
-        log.debug("Creating new transient ID '{}'", id);
-
-        final long expiration = System.currentTimeMillis() + idLifetime;
-
-        int collisions = 0;
-        while (collisions < 5) {
-            if (idStore.create(TransientIdParameters.CONTEXT, id, principalTokenId, expiration)) {
-                return id;
-            } else {
-                ++collisions;
-            }
-        }
+        try {
+            final String principalTokenId = new TransientIdParameters(relyingPartyId, principalName).encode();
     
-        throw new IOException("Exceeded allowable number of collisions");
+            // This code used to store the entries keyed by the ID *and* the value, which I think
+            // was used to prevent generation of multiple IDs if the resolver runs multiple times.
+            // This is the source of the current V2 bug that causes the same transient to be reused
+            // for the same SP within the TTL window. If we need to prevent multiple resolutions, I
+            // suggest we do that by storing transactional state for resolver plugins in the context
+            // tree. But in practice, I'm not sure it matters much how many times this runs, that's
+            // the point of a transient. So this version never reads the store, it just writes to it.
+    
+            final String id = idGenerator.generateIdentifier();
+    
+            log.debug("Creating new transient ID '{}'", id);
+    
+            final long expiration = System.currentTimeMillis() + idLifetime;
+    
+            int collisions = 0;
+            while (collisions < 5) {
+                if (idStore.create(TransientIdParameters.CONTEXT, id, principalTokenId, expiration)) {
+                    return id;
+                } else {
+                    ++collisions;
+                }
+            }
+        
+            throw new ProfileException("Exceeded allowable number of collisions");
+        } catch (final IOException e) {
+            throw new ProfileException(e);
+        }
     }
 
 }

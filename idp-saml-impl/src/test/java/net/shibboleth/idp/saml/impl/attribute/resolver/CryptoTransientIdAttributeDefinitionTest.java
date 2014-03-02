@@ -78,8 +78,6 @@ public class CryptoTransientIdAttributeDefinitionTest   extends OpenSAMLInitBase
     @Test public void setterGetters() throws ComponentInitializationException {
         CryptoTransientIdAttributeDefinition defn = new CryptoTransientIdAttributeDefinition();
         defn.setId(ID);
-        Assert.assertEquals(defn.getIdLifetime(), 0);
-        Assert.assertNull(defn.getDataSealer());
         try {
             defn.initialize();
             Assert.fail("null dataSealer");
@@ -89,14 +87,12 @@ public class CryptoTransientIdAttributeDefinitionTest   extends OpenSAMLInitBase
         defn.setDataSealer(dataSealer);
         defn.initialize();
         Assert.assertEquals(defn.getIdLifetime(), 4 * 1000 * 3600);
-        Assert.assertEquals(defn.getDataSealer(), dataSealer);
 
         defn = new CryptoTransientIdAttributeDefinition();
         defn.setId(ID);
         defn.setDataSealer(dataSealer);
         defn.setIdLifetime(TIMEOUT);
         Assert.assertEquals(defn.getIdLifetime(), TIMEOUT);
-        Assert.assertEquals(defn.getDataSealer(), dataSealer);
     }
     
     @Test public void badVals() throws ComponentInitializationException {
@@ -122,14 +118,8 @@ public class CryptoTransientIdAttributeDefinitionTest   extends OpenSAMLInitBase
             // OK
         }
         try {
-            defn.resolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, null, TestSources.SP_ENTITY_ID));
-            Assert.fail("No IdP");
-        } catch (ResolutionException e) {
-            // OK
-        }
-        try {
             defn.resolve(TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
-            Assert.fail("No IdP");
+            Assert.fail("No Principal");
         } catch (ResolutionException e) {
             // OK
         }
@@ -155,8 +145,7 @@ public class CryptoTransientIdAttributeDefinitionTest   extends OpenSAMLInitBase
 
         final String decode = dataSealer.unwrap(code);
 
-        Assert.assertEquals(decode, TestSources.IDP_ENTITY_ID + "!" + TestSources.SP_ENTITY_ID + "!"
-                + TestSources.PRINCIPAL_ID);
+        Assert.assertEquals(decode, TestSources.SP_ENTITY_ID + "!" + TestSources.PRINCIPAL_ID);
 
         Thread.sleep(TIMEOUT);
         try {

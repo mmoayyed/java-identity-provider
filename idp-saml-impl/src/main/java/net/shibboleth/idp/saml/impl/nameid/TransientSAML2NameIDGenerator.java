@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.saml.impl.nameid;
 
-import java.io.IOException;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -56,7 +54,7 @@ public class TransientSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator 
     @Nonnull private Function<ProfileRequestContext, SubjectContext> subjectContextLookupStrategy;
     
     /** Generator for transients. */
-    @NonnullAfterInit private TransientIdGenerator transientIdGenerator;
+    @NonnullAfterInit private TransientIdGenerationStrategy transientIdGenerator;
     
     /** Constructor. */
     public TransientSAML2NameIDGenerator() {
@@ -95,10 +93,10 @@ public class TransientSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator 
      * 
      * @param generator transient ID generator
      */
-    public synchronized void setTransientIdGenerator(@Nonnull final TransientIdGenerator generator) {
+    public synchronized void setTransientIdGenerator(@Nonnull final TransientIdGenerationStrategy generator) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        transientIdGenerator = Constraint.isNotNull(generator, "TransientIdGenerator cannot be null");
+        transientIdGenerator = Constraint.isNotNull(generator, "TransientIdGenerationStrategy cannot be null");
     }
 
     /** {@inheritDoc} */
@@ -107,7 +105,7 @@ public class TransientSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator 
         super.doInitialize();
         
         if (transientIdGenerator == null) {
-            throw new ComponentInitializationException("TransientIdGenerator cannot be null");
+            throw new ComponentInitializationException("TransientIdGenerationStrategy cannot be null");
         }
     }
 
@@ -130,7 +128,7 @@ public class TransientSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator 
         
         try {
             return transientIdGenerator.generate(relyingPartyId, subjectCtx.getPrincipalName());
-        } catch (IOException e) {
+        } catch (final ProfileException e) {
             log.debug("Exception generating transient ID", e);
             return null;
         }

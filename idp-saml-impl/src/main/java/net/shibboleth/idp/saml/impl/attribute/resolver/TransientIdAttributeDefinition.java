@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.impl.attribute.resolver;
 
-import java.io.IOException;
 import java.util.Collections;
 
 import javax.annotation.Nonnull;
@@ -28,12 +27,15 @@ import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
-import net.shibboleth.idp.saml.impl.nameid.StoredTransientIdGenerator;
+import net.shibboleth.idp.saml.impl.nameid.StoredTransientIdGenerationStrategy;
+import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 
+import org.opensaml.profile.ProfileException;
 import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,11 +54,11 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
     @Nonnull private final Logger log = LoggerFactory.getLogger(TransientIdAttributeDefinition.class);
 
     /** The actual implementation of the transient generation process. */
-    @Nonnull private final StoredTransientIdGenerator idGenerator;
+    @Nonnull private final StoredTransientIdGenerationStrategy idGenerator;
     
     /** Constructor. */
     public TransientIdAttributeDefinition() {
-        idGenerator = new StoredTransientIdGenerator();
+        idGenerator = new StoredTransientIdGenerationStrategy();
     }
 
     /**
@@ -86,7 +88,7 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
      * 
      * @return  id size, in bytes
      */
-    public int getIdSize() {
+    @Positive public int getIdSize() {
         return idGenerator.getIdSize();
     }
     
@@ -95,7 +97,7 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
      * 
      * @param size size, in bytes, of the id
      */
-    public void setIdSize(final int size) {
+    public void setIdSize(@Positive final int size) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         idGenerator.setIdSize(size);
@@ -107,7 +109,7 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
      * 
      * @return  time, in milliseconds, ids are valid
      */
-    public long getIdLifetime() {
+    @Positive public long getIdLifetime() {
         return idGenerator.getIdLifetime();
     }
     
@@ -116,7 +118,7 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
      * 
      * @param lifetime time, in milliseconds, ids are valid
      */
-    public void setIdLifetime(final long lifetime) {
+    public void setIdLifetime(@Duration @Positive final long lifetime) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         idGenerator.setIdLifetime(lifetime);
@@ -134,6 +136,32 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
         idGenerator.destroy();
         super.doDestroy();
     }
+
+    /** {@inheritDoc} */
+    @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
+    
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+    
+        final String attributeRecipientID = getAttributeRecipientID(resolutionContext);
+    
+        final String principalName = getPrincipal(resolutionContext);
+    
+        try {
+            final String transientId = idGenerator.generate(attributeRecipientID, principalName);
+            log.debug("{} creating new transient ID '{}' for request '{}'",
+                    new Object[] {getLogPrefix(), transientId, resolutionContext.getId(),});
+            
+            final IdPAttribute result = new IdPAttribute(getId());
+            result.setValues(Collections.singleton(new StringAttributeValue(transientId)));
+            return result;
+        } catch (final ProfileException e) {
+            throw new ResolutionException(e);
+        }
+    }
+    
 
     /**
      * Police and get the AttributeRecipientID.
@@ -166,31 +194,6 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
         }
 
         return principalName;
-    }
-
-    /** {@inheritDoc} */
-    @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
-
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-
-        final String attributeRecipientID = getAttributeRecipientID(resolutionContext);
-
-        final String principalName = getPrincipal(resolutionContext);
-
-        try {
-            final String transientId = idGenerator.generate(attributeRecipientID, principalName);
-            log.debug("{} creating new transient ID '{}' for request '{}'",
-                    new Object[] {getLogPrefix(), transientId, resolutionContext.getId(),});
-            
-            final IdPAttribute result = new IdPAttribute(getId());
-            result.setValues(Collections.singleton(new StringAttributeValue(transientId)));
-            return result;
-        } catch (final IOException except) {
-            throw new ResolutionException(except);
-        }
     }
 
 }

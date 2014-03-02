@@ -100,20 +100,17 @@ public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableIni
 
         // Split the identifier.
         String[] parts = decodedId.split("!");
-        if (parts.length != 3) {
+        if (parts.length != 2) {
             throw new SubjectCanonicalizationException(getLogPrefix() + " Decoded principal information was invalid: "
                     + decodedId);
         }
 
-        if (issuerId != null && !issuerId.equals(parts[0])) {
-            throw new SubjectCanonicalizationException(getLogPrefix() + " Issuer (" + issuerId
-                    + ") does not match supplied value (" + parts[0] + ").");
-        } else if (requesterId != null && !requesterId.equals(parts[1])) {
+        if (requesterId != null && !requesterId.equals(parts[0])) {
             throw new SubjectCanonicalizationException(getLogPrefix() + " Requester (" + requesterId
-                    + ") does not match supplied value (" + parts[1] + ").");
+                    + ") does not match supplied value (" + parts[0] + ").");
         }
 
-        return parts[2];
+        return parts[1];
     }
 
     /** {@inheritDoc} */

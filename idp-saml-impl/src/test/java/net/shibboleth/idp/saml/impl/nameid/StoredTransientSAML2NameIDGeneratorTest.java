@@ -43,7 +43,7 @@ public class StoredTransientSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTes
 
     private StorageService store;
     
-    private StoredTransientIdGenerator transientGenerator;
+    private StoredTransientIdGenerationStrategy transientGenerator;
     
     private TransientSAML2NameIDGenerator generator;
     
@@ -51,7 +51,7 @@ public class StoredTransientSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTes
         store = new MemoryStorageService();
         store.initialize();
         
-        transientGenerator = new StoredTransientIdGenerator();
+        transientGenerator = new StoredTransientIdGenerationStrategy();
         transientGenerator.setId("test");
         transientGenerator.setIdStore(store);
         transientGenerator.initialize();

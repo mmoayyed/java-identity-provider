@@ -99,17 +99,16 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
         decoder.initialize();
     }
 
-    private String code(String principalName, String attributeIssuerID, String attributeRecipientID, long timeout)
+    private String code(String principalName, String attributeRecipientID, long timeout)
             throws DataSealerException {
         final String principalTokenId =
-                new StringBuilder().append(attributeIssuerID).append("!").append(attributeRecipientID).append("!")
-                        .append(principalName).toString();
+                new StringBuilder().append(attributeRecipientID).append("!").append(principalName).toString();
         return dataSealer.wrap(principalTokenId, System.currentTimeMillis() + timeout);
     }
 
     private String code(String principalName, String attributeIssuerID, String attributeRecipientID)
             throws DataSealerException {
-        return code(principalName, attributeIssuerID, attributeRecipientID, TIMEOUT);
+        return code(principalName, attributeRecipientID, TIMEOUT);
     }
 
     @Test public void testSucess() throws ProfileException, ComponentInitializationException, IOException,
@@ -121,7 +120,7 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
 
     @Test(expectedExceptions = {NameDecoderException.class,}) public void timeout()
             throws SubjectCanonicalizationException, DataSealerException, NameDecoderException {
-        String ct = code(PRINCIPAL, ISSUER, RECIPIENT, -10);
+        String ct = code(PRINCIPAL, RECIPIENT, -10);
 
         decoder.decode(ct, ISSUER, RECIPIENT);
     }
