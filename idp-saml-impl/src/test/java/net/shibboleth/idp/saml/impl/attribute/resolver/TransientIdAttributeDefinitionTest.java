@@ -135,8 +135,6 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         Assert.assertEquals(defn.getIdLifetime(), TEST_LIFETIME);
         Assert.assertEquals(defn.getIdSize(), TEST_ID_SIZE);
 
-        Assert.assertEquals(defn.getIdStore(), store);
-
         defn.destroy();
         store.destroy();
     }
