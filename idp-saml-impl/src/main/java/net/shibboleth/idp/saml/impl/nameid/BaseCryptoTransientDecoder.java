@@ -34,7 +34,8 @@ import net.shibboleth.utilities.java.support.security.DataSealerException;
 
 /**
  * An abstract action which contains the logic to do crypto transient decoding matching. This reverses the work done by
- * {@link net.shibboleth.idp.attribute.resolver.impl.ad.CryptoTransientIdAttributeDefinition}
+ * {@link net.shibboleth.idp.attribute.resolver.impl.ad.CryptoTransientIdAttributeDefinition} and
+ * {@link CryptoTransientIdGenerationStrategy}
  */
 public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableInitializableComponent {
 

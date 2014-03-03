@@ -56,7 +56,7 @@ import org.testng.annotations.Test;
  */
 public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
 
-    private final static long TIMEOUT = 5000;
+    private final static long TIMEOUT = 50000;
 
     private final static String PRINCIPAL = "ThePrincipal";
 
@@ -148,13 +148,6 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
         String ct = code(PRINCIPAL, ISSUER, RECIPIENT);
 
         decoder.decode(ct, ISSUER, "my" + RECIPIENT);
-    }
-
-    @Test(expectedExceptions = {SubjectCanonicalizationException.class,}) public void badIdP()
-            throws SubjectCanonicalizationException, DataSealerException, NameDecoderException {
-        String ct = code(PRINCIPAL, ISSUER, RECIPIENT);
-
-        decoder.decode(ct, "my" + ISSUER, RECIPIENT);
     }
 
     @Test public void decode() throws ComponentInitializationException, ResolutionException, DataSealerException,
