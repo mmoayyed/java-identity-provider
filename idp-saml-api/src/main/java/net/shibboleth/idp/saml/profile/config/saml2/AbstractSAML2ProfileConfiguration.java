@@ -24,8 +24,6 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
-import org.opensaml.profile.context.ProfileRequestContext;
-
 import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -33,13 +31,15 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 
 /** Base class for SAML 2 profile configurations. */
-public abstract class AbstractSAML2ProfileConfiguration
-        extends AbstractSAMLProfileConfiguration implements SAML2ProfileConfiguration {
+public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProfileConfiguration implements
+        SAML2ProfileConfiguration {
 
     /** Predicate used to determine if assertions should be encrypted. */
     @Nonnull private Predicate<ProfileRequestContext> encryptAssertionsPredicate;
@@ -49,7 +49,7 @@ public abstract class AbstractSAML2ProfileConfiguration
 
     /** Predicate used to determine if attributes should be encrypted. */
     @Nonnull private Predicate<ProfileRequestContext> encryptAttributesPredicate;
-    
+
     /** Maximum proxy count for an assertion. Default value: 0 */
     private long proxyCount;
 
@@ -63,7 +63,7 @@ public abstract class AbstractSAML2ProfileConfiguration
      */
     public AbstractSAML2ProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
-        
+
         encryptAssertionsPredicate = Predicates.alwaysTrue();
         encryptNameIDsPredicate = Predicates.alwaysFalse();
         encryptAttributesPredicate = Predicates.alwaysFalse();
@@ -72,7 +72,7 @@ public abstract class AbstractSAML2ProfileConfiguration
     }
 
     /** {@inheritDoc} */
-    public long getProxyCount() {
+    @Override public long getProxyCount() {
         return proxyCount;
     }
 
@@ -86,7 +86,7 @@ public abstract class AbstractSAML2ProfileConfiguration
     }
 
     /** {@inheritDoc} */
-    public Collection<String> getProxyAudiences() {
+    @Override public Collection<String> getProxyAudiences() {
         return ImmutableList.copyOf(proxyAudiences);
     }
 
@@ -100,7 +100,7 @@ public abstract class AbstractSAML2ProfileConfiguration
             proxyAudiences = Collections.emptySet();
             return;
         }
-    
+
         proxyAudiences = new HashSet<>();
         String trimmedAudience;
         for (String audience : audiences) {
@@ -112,7 +112,7 @@ public abstract class AbstractSAML2ProfileConfiguration
     }
 
     /** {@inheritDoc} */
-    public Predicate<ProfileRequestContext> getEncryptAssertionsPredicate() {
+    @Override public Predicate<ProfileRequestContext> getEncryptAssertionsPredicate() {
         return encryptAssertionsPredicate;
     }
 
@@ -128,7 +128,7 @@ public abstract class AbstractSAML2ProfileConfiguration
     }
 
     /** {@inheritDoc} */
-    public Predicate<ProfileRequestContext> getEncryptNameIDsPredicate() {
+    @Override public Predicate<ProfileRequestContext> getEncryptNameIDsPredicate() {
         return encryptNameIDsPredicate;
     }
 
@@ -144,7 +144,7 @@ public abstract class AbstractSAML2ProfileConfiguration
     }
 
     /** {@inheritDoc} */
-    public Predicate<ProfileRequestContext> getEncryptAttributesPredicate() {
+    @Override public Predicate<ProfileRequestContext> getEncryptAttributesPredicate() {
         return encryptAttributesPredicate;
     }
 

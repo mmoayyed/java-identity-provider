@@ -25,8 +25,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.opensaml.profile.context.ProfileRequestContext;
-
 import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -36,13 +34,15 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 
 /** Base class for SAML profile configurations. */
-public abstract class AbstractSAMLProfileConfiguration
-        extends AbstractProfileConfiguration implements SAMLProfileConfiguration {
+public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileConfiguration implements
+        SAMLProfileConfiguration {
 
     /** Predicate used to determine if the received request should be signed. Default returns false. */
     @Nonnull private Predicate<ProfileRequestContext> signedRequestsPredicate;
@@ -58,10 +58,10 @@ public abstract class AbstractSAMLProfileConfiguration
 
     /** Whether to include a NotBefore attribute in the Conditions of generated assertions. */
     private boolean includeConditionsNotBefore;
-    
+
     /** Additional audiences to which an assertion may be released. Default value: empty */
     @Nonnull @NonnullElements private Set<String> assertionAudiences;
-        
+
     /** SAML artifact configuration. */
     @Nullable private SAMLArtifactConfiguration artifactConfig;
 
@@ -72,7 +72,7 @@ public abstract class AbstractSAMLProfileConfiguration
      */
     public AbstractSAMLProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
-        
+
         includeConditionsNotBefore = true;
         signedRequestsPredicate = Predicates.alwaysFalse();
         signResponsesPredicate = Predicates.alwaysTrue();
@@ -82,7 +82,7 @@ public abstract class AbstractSAMLProfileConfiguration
     }
 
     /** {@inheritDoc} */
-    @Nonnull public Predicate<ProfileRequestContext> getSignAssertionsPredicate() {
+    @Override @Nonnull public Predicate<ProfileRequestContext> getSignAssertionsPredicate() {
         return signAssertionsPredicate;
     }
 
@@ -97,7 +97,7 @@ public abstract class AbstractSAMLProfileConfiguration
     }
 
     /** {@inheritDoc} */
-    @Nonnull public Predicate<ProfileRequestContext> getSignRequestsPredicate() {
+    @Override @Nonnull public Predicate<ProfileRequestContext> getSignRequestsPredicate() {
         return signedRequestsPredicate;
     }
 
@@ -113,7 +113,7 @@ public abstract class AbstractSAMLProfileConfiguration
     }
 
     /** {@inheritDoc} */
-    public Predicate<ProfileRequestContext> getSignResponsesPredicate() {
+    @Override public Predicate<ProfileRequestContext> getSignResponsesPredicate() {
         return signResponsesPredicate;
     }
 
@@ -128,7 +128,7 @@ public abstract class AbstractSAMLProfileConfiguration
     }
 
     /** {@inheritDoc} */
-    @Positive public long getAssertionLifetime() {
+    @Override @Positive public long getAssertionLifetime() {
         return assertionLifetime;
     }
 
@@ -140,23 +140,23 @@ public abstract class AbstractSAMLProfileConfiguration
     public void setAssertionLifetime(@Positive @Duration final long lifetime) {
         assertionLifetime = Constraint.isGreaterThan(0, lifetime, "Assertion lifetime must be greater than 0");
     }
-    
+
     /** {@inheritDoc} */
-    public boolean includeConditionsNotBefore() {
+    @Override public boolean includeConditionsNotBefore() {
         return includeConditionsNotBefore;
     }
-    
+
     /**
      * Set whether to include a NotBefore attribute in the Conditions of generated assertions.
      * 
-     * @param include  whether to include a NotBefore attribute in the Conditions of generated assertions
+     * @param include whether to include a NotBefore attribute in the Conditions of generated assertions
      */
     public void setIncludeConditionsNotBefore(final boolean include) {
         includeConditionsNotBefore = include;
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive public Set<String> getAdditionalAudiencesForAssertion() {
+    @Override @Nonnull @NonnullElements @NotLive public Set<String> getAdditionalAudiencesForAssertion() {
         return ImmutableSet.copyOf(assertionAudiences);
     }
 
@@ -181,19 +181,19 @@ public abstract class AbstractSAMLProfileConfiguration
             }
         }
     }
-    
+
     /** {@inheritDoc} */
-    @Nullable public SAMLArtifactConfiguration getArtifactConfiguration() {
+    @Override @Nullable public SAMLArtifactConfiguration getArtifactConfiguration() {
         return artifactConfig;
     }
-    
+
     /**
      * Set the SAML artifact configuration, if any.
      * 
-     * @param config    configuration to set
+     * @param config configuration to set
      */
     public void setArtifactConfiguration(@Nullable final SAMLArtifactConfiguration config) {
         artifactConfig = config;
     }
-    
+
 }

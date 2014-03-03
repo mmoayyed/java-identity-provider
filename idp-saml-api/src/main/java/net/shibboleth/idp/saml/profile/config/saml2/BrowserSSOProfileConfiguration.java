@@ -23,11 +23,6 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
 import net.shibboleth.idp.profile.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.utilities.java.support.annotation.Duration;
@@ -38,9 +33,14 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
 /** Configuration support for SAML 2 Browser SSO. */
-public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfiguration
-        implements AuthenticationProfileConfiguration {
+public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfiguration implements
+        AuthenticationProfileConfiguration {
 
     /** ID for this profile configuration. */
     public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/sso/browser";
@@ -50,7 +50,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
 
     /** Whether the response endpoint should be validated if the request is signed. */
     private boolean skipEndpointValidationWhenSigned;
-    
+
     /**
      * The maximum amount of time, in milliseconds, the service provider should maintain a session for the user. A value
      * of 0 (the default) indicates no cap is put on the SP's session lifetime.
@@ -65,7 +65,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
 
     /** Precedence of name identifier formats to use for requests. */
     @Nonnull @NonnullElements private List<String> nameIDFormatPrecedence;
-    
+
     /** Constructor. */
     public BrowserSSOProfileConfiguration() {
         this(PROFILE_ID);
@@ -78,7 +78,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      */
     protected BrowserSSOProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
-        
+
         includeAttributeStatement = true;
         skipEndpointValidationWhenSigned = false;
         maximumSPSessionLifetime = 0;
@@ -122,7 +122,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
     public void setSkipEndpointValidationWhenSigned(final boolean skip) {
         skipEndpointValidationWhenSigned = skip;
     }
-    
+
     /**
      * Get the maximum amount of time, in milliseconds, the service provider should maintain a session for the user
      * based on the authentication assertion. A value of 0 is interpreted as an unlimited lifetime.
@@ -140,8 +140,9 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * @param lifetime max lifetime of service provider should maintain a session
      */
     public void setMaximumSPSessionLifetime(@Duration @NonNegative final long lifetime) {
-            maximumSPSessionLifetime = Constraint.isGreaterThanOrEqual(0, lifetime,
-                    "Maximum SP session lifetime must be greater than or equal to 0");
+        maximumSPSessionLifetime =
+                Constraint.isGreaterThanOrEqual(0, lifetime,
+                        "Maximum SP session lifetime must be greater than or equal to 0");
     }
 
     /**
@@ -163,37 +164,36 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods() {
-        return ImmutableList.<Principal>copyOf(defaultAuthenticationContexts);
+    @Override @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Principal> 
+        getDefaultAuthenticationMethods() {
+        return ImmutableList.<Principal> copyOf(defaultAuthenticationContexts);
     }
-    
+
     /**
      * Set the default authentication contexts to use, expressed as custom principals.
      * 
-     * @param contexts   default authentication contexts to use
+     * @param contexts default authentication contexts to use
      */
     public void setDefaultAuthenticationMethods(
             @Nonnull @NonnullElements final List<AuthnContextClassRefPrincipal> contexts) {
         Constraint.isNotNull(contexts, "List of contexts cannot be null");
-        
+
         defaultAuthenticationContexts = Lists.newArrayList(Collections2.filter(contexts, Predicates.notNull()));
     }
-    
+
     /** {@inheritDoc} */
-    @Override
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence() {
+    @Override @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence() {
         return ImmutableList.copyOf(nameIDFormatPrecedence);
     }
 
     /**
      * Set the name identifier formats to use.
      * 
-     * @param formats   name identifier formats to use
+     * @param formats name identifier formats to use
      */
     public void setNameIDFormatPrecedence(@Nonnull @NonnullElements final List<String> formats) {
         Constraint.isNotNull(formats, "List of formats cannot be null");
-        
+
         nameIDFormatPrecedence = Lists.newArrayList(Collections2.filter(formats, Predicates.notNull()));
     }
 
