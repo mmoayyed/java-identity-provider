@@ -15,4 +15,8 @@ targetNamespace="urn:mace:shibboleth:2.0:naturestudy"
     </complexType>
 
     <element name="NatureStudy2" type="ns:NatureStudy2Type"/>
+    
+    <element name="SecondBean"/>
+    
+    
 </schema>

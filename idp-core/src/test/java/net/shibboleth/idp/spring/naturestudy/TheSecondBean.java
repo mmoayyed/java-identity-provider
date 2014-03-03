@@ -17,25 +17,27 @@
 
 package net.shibboleth.idp.spring.naturestudy;
 
-import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
- *
+ * Another bean we are going to summon up and tear down.
  */
-public class NamespaceHandler extends BaseSpringNamespaceHandler {
+public class TheSecondBean extends AbstractInitializableComponent implements TheInterface {
 
-    /** Namespace for this handler. */
-    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:naturestudy";
+    private static int initCount;
 
     /** {@inheritDoc} */
-    @Override
-    public void init() {
-        registerBeanDefinitionParser(TheBeanParser.SCHEMA_TYPE,
-                new TheBeanParser());
-        registerBeanDefinitionParser(TheBeanParser2.SCHEMA_TYPE,
-                new TheBeanParser2());
-        registerBeanDefinitionParser(TheSecondBeanParser.SCHEMA_TYPE,
-                new TheSecondBeanParser());
+    @Override protected void doInitialize() throws ComponentInitializationException {
+        initCount++;
+        super.doInitialize();
+    }
+    
+    public static int getInitCount() {
+        return initCount;
     }
 
+    public static synchronized void resetInitCount() {
+        initCount = 0;
+    }
 }

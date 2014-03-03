@@ -17,25 +17,9 @@
 
 package net.shibboleth.idp.spring.naturestudy;
 
-import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
-
 /**
  *
  */
-public class NamespaceHandler extends BaseSpringNamespaceHandler {
-
-    /** Namespace for this handler. */
-    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:naturestudy";
-
-    /** {@inheritDoc} */
-    @Override
-    public void init() {
-        registerBeanDefinitionParser(TheBeanParser.SCHEMA_TYPE,
-                new TheBeanParser());
-        registerBeanDefinitionParser(TheBeanParser2.SCHEMA_TYPE,
-                new TheBeanParser2());
-        registerBeanDefinitionParser(TheSecondBeanParser.SCHEMA_TYPE,
-                new TheSecondBeanParser());
-    }
+public interface TheInterface {
 
 }
