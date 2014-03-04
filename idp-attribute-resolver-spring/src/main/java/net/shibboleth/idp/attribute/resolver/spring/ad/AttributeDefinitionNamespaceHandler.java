@@ -22,7 +22,6 @@ import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.SourceValueParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.ValueMapParser;
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
-// TODO incomplete
 /**
  * Namespace handler for {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition.BaseAttributeDefinition}s.
  */
@@ -32,6 +31,7 @@ public class AttributeDefinitionNamespaceHandler extends BaseSpringNamespaceHand
     public static final String NAMESPACE = "urn:mace:shibboleth:2.0:resolver:ad";
 
     /** {@inheritDoc} */
+    @Override
     public void init() {
         registerBeanDefinitionParser(CryptoTransientIdAttributeDefinitionParser.TYPE_NAME,
                 new CryptoTransientIdAttributeDefinitionParser());

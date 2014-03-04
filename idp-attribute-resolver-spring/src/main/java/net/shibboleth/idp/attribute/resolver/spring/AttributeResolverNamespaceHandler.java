@@ -22,7 +22,6 @@ import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 
-// TODO incomplete
 /** Namespace handler for the attribute resolver. */
 public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandler {
 
