@@ -61,6 +61,9 @@ public final class IdPEventIds {
      */
     public static final String UNABLE_FILTER_ATTRIBS = "UnableToFilterAttributes";
 
+    /** ID of the event returned if some attributes cannot be encoded. */
+    public static final String UNABLE_ENCODE_ATTRIBUTE = "UnableToEncodeAttribute";
+    
     /** Constructor. */
     private IdPEventIds() {
 
