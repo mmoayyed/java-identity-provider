@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.impl.profile.saml1;
+package net.shibboleth.idp.saml.impl.profile.saml2;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,8 +33,8 @@ import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.idp.saml.impl.attribute.encoding.SAML1StringAttributeEncoder;
-import net.shibboleth.idp.saml.profile.saml1.SAML1ActionTestingSupport;
+import net.shibboleth.idp.saml.impl.attribute.encoding.SAML2StringAttributeEncoder;
+import net.shibboleth.idp.saml.profile.saml2.SAML2ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -42,10 +42,10 @@ import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.impl.XSStringImpl;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.saml1.core.Assertion;
-import org.opensaml.saml.saml1.core.Attribute;
-import org.opensaml.saml.saml1.core.AttributeStatement;
-import org.opensaml.saml.saml1.core.Response;
+import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.Attribute;
+import org.opensaml.saml.saml2.core.AttributeStatement;
+import org.opensaml.saml.saml2.core.Response;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
@@ -78,7 +78,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         rc = new RequestContextBuilder().setOutboundMessage(
-                SAML1ActionTestingSupport.buildResponse()).buildRequestContext();
+                SAML2ActionTestingSupport.buildResponse()).buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
         
         action = new AddAttributeStatementToAssertion();
@@ -124,7 +124,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
     /** Test that the action ignores attribute encoding errors. */
     @Test public void testIgnoreAttributeEncodingErrors() throws Exception {
-        final MockSAML1StringAttributeEncoder attributeEncoder = new MockSAML1StringAttributeEncoder();
+        final MockSAML2StringAttributeEncoder attributeEncoder = new MockSAML2StringAttributeEncoder();
 
         final IdPAttribute attribute = new IdPAttribute(MY_NAME_1);
         attribute.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
@@ -144,7 +144,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
     /** Test that the action returns the correct transition when an attribute encoding error occurs. */
     @Test public void failOnAttributeEncodingErrors() throws Exception {
-        final MockSAML1StringAttributeEncoder attributeEncoder = new MockSAML1StringAttributeEncoder();
+        final MockSAML2StringAttributeEncoder attributeEncoder = new MockSAML2StringAttributeEncoder();
 
         final IdPAttribute attribute = new IdPAttribute(MY_NAME_1);
         attribute.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
@@ -169,7 +169,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     @Test public void testAddedAttributeStatement() throws Exception {
 
         ((Response) prc.getOutboundMessageContext().getMessage()).getAssertions().add(
-                SAML1ActionTestingSupport.buildAssertion());
+                SAML2ActionTestingSupport.buildAssertion());
 
         final AttributeContext attribCtx = buildAttributeContext();
         ((RelyingPartyContext) prc.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
@@ -196,7 +196,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     /** Test that the attribute statement is correctly added to an assertion which already exists in the response. */
     @Test public void testAssertionInResponse() throws Exception {
         ((Response) prc.getOutboundMessageContext().getMessage()).getAssertions().add(
-                SAML1ActionTestingSupport.buildAssertion());
+                SAML2ActionTestingSupport.buildAssertion());
 
         final AttributeContext attribCtx = buildAttributeContext();
         ((RelyingPartyContext) prc.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
@@ -251,9 +251,9 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         final IdPAttribute attribute1 = new IdPAttribute(MY_NAME_1);
         attribute1.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
 
-        final SAML1StringAttributeEncoder attributeEncoder1 = new SAML1StringAttributeEncoder();
+        final SAML2StringAttributeEncoder attributeEncoder1 = new SAML2StringAttributeEncoder();
         attributeEncoder1.setName(MY_NAME_1);
-        attributeEncoder1.setNamespace(MY_NAMESPACE);
+        attributeEncoder1.setNameFormat(MY_NAMESPACE);
         attributeEncoder1.initialize();
 
         final Collection collection1 = Arrays.asList(attributeEncoder1);
@@ -262,9 +262,9 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         final IdPAttribute attribute2 = new IdPAttribute(MY_NAME_2);
         attribute2.setValues(Collections.singleton(new StringAttributeValue(MY_VALUE_2)));
 
-        final SAML1StringAttributeEncoder attributeEncoder2 = new SAML1StringAttributeEncoder();
+        final SAML2StringAttributeEncoder attributeEncoder2 = new SAML2StringAttributeEncoder();
         attributeEncoder2.setName(MY_NAME_2);
-        attributeEncoder2.setNamespace(MY_NAMESPACE);
+        attributeEncoder2.setNameFormat(MY_NAMESPACE);
         attributeEncoder2.initialize();
 
         final Collection collection2 = Arrays.asList(attributeEncoder2);
@@ -291,9 +291,9 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
             Assert.assertEquals(samlAttr.getAttributeValues().size(), 1);
             final XMLObject xmlObject = samlAttr.getAttributeValues().get(0);
             Assert.assertTrue(xmlObject instanceof XSStringImpl);
-            if (samlAttr.getAttributeName().equals(MY_NAME_1)) {
+            if (samlAttr.getName().equals(MY_NAME_1)) {
                 Assert.assertEquals(((XSStringImpl) xmlObject).getValue(), MY_VALUE_1);
-            } else if (samlAttr.getAttributeName().equals(MY_NAME_2)) {
+            } else if (samlAttr.getName().equals(MY_NAME_2)) {
                 Assert.assertEquals(((XSStringImpl) xmlObject).getValue(), MY_VALUE_2);
             } else {
                 Assert.fail("Incorrect attribute name.");
@@ -301,8 +301,8 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         }
     }
 
-    /** A mock SAML1 string attribute encoder which always throws an {@link AttributeEncodingException}. */
-    private class MockSAML1StringAttributeEncoder extends SAML1StringAttributeEncoder {
+    /** A mock SAML2 string attribute encoder which always throws an {@link AttributeEncodingException}. */
+    private class MockSAML2StringAttributeEncoder extends SAML2StringAttributeEncoder {
 
         /** {@inheritDoc} */
         @Nullable public Attribute encode(@Nonnull final IdPAttribute attribute) throws AttributeEncodingException {

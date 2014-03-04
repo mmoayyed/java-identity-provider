@@ -39,7 +39,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
 
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML1AttributeEncoder;
-import net.shibboleth.idp.saml.profile.SAMLEventIds;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -240,7 +239,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
 
             log.debug("{} Adding constructed AttributeStatement to Assertion {} ", getLogPrefix(), assertion.getID());
         } catch (final AttributeEncodingException e) {
-            ActionSupport.buildEvent(profileRequestContext, SAMLEventIds.UNABLE_ENCODE_ATTRIBUTE);
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_ENCODE_ATTRIBUTE);
         }
     }
 
