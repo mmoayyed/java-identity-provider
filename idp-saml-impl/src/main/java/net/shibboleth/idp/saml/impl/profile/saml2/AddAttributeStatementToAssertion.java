@@ -73,7 +73,7 @@ import com.google.common.collect.Lists;
  * @event {@link EventIds#INVALID_MSG_CTX}
  * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
  * @event {@link IdPEventIds#INVALID_PROFILE_CONFIG}
- * @event {@Link IdPEventIds#UNABLE_ENCODE_ATTRIBUTE}
+ * @event {@link IdPEventIds#UNABLE_ENCODE_ATTRIBUTE}
  */
 public class AddAttributeStatementToAssertion extends AbstractProfileAction {
 
@@ -85,7 +85,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
 
     /**
      * Whether attributes that result in an {@link AttributeEncodingException} when being encoded should be ignored or
-     * result in an {@link #UNABLE_ENCODE_ATTRIBUTE} transition.
+     * result in an {@link IdPEventIds#UNABLE_ENCODE_ATTRIBUTE} transition.
      */
     private boolean ignoringUnencodableAttributes;
 
@@ -137,11 +137,10 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
     }
 
     /**
-     * Ses whether the attributes that result in an {@link AttributeEncodingException} when being encoded should be
-     * ignored or result in an {@link #UNABLE_ENCODE_ATTRIBUTE} transition.
+     * Set whether the attributes that result in an {@link AttributeEncodingException} when being encoded should be
+     * ignored or result in an {@link IdPEventIds#UNABLE_ENCODE_ATTRIBUTE} transition.
      * 
-     * @param flag whether the attributes that result in an {@link AttributeEncodingException}
-     *            when being encoded should be ignored or result in an {@link #UNABLE_ENCODE_ATTRIBUTE} transition
+     * @param flag flag to set
      */
     public synchronized void setIgnoringUnencodableAttributes(boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);

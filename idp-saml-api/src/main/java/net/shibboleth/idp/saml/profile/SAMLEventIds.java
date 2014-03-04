@@ -23,23 +23,14 @@ package net.shibboleth.idp.saml.profile;
  */
 public final class SAMLEventIds {
 
-    /** ID of the event returned if some attributes cannot be encoded. */
-    public static final String UNABLE_ENCODE_ATTRIBUTE = "UnableToEncodeAttribute";
-
     /**
      * ID of the event returned if no SAML response is associated with the
      * {@link org.opensaml.profile.context.ProfileRequestContext}.
      */
     public static final String NO_RESPONSE = "NoResponse";
 
-    /** ID of the event returned if the outbound message context already contains a SAML response. */
-    public static final String RESPONSE_EXISTS = "ResponseExists";
-
     /** ID of the event returned if the outbound response does not contain an assertion. */
     public static final String NO_ASSERTION = "NoAssertion";
-
-    /** ID of the event returned if the inbound message did not contain an ID. */
-    public static final String NO_IN_MSG_ID = "NoInboundMessageId";
 
     /** Constructor. */
     private SAMLEventIds() {
