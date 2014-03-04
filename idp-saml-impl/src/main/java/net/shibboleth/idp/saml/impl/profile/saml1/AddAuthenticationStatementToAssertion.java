@@ -113,7 +113,7 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
     public AddAuthenticationStatementToAssertion() {
         statementInOwnAssertion = false;
 
-        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
+        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         responseLookupStrategy =
                 Functions.compose(new MessageLookup<>(Response.class), new OutboundMessageContextLookup());
         methodLookupStrategy = new DefaultPrincipalDeterminationStrategy<>(AuthenticationMethodPrincipal.class,

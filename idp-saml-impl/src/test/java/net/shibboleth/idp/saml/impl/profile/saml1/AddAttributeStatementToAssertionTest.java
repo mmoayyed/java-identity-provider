@@ -24,7 +24,6 @@ import java.util.Collections;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -33,22 +32,24 @@ import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.saml.impl.attribute.encoding.SAML1StringAttributeEncoder;
-import net.shibboleth.idp.saml.profile.SAMLEventIds;
 import net.shibboleth.idp.saml.profile.saml1.SAML1ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.impl.XSStringImpl;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.Attribute;
 import org.opensaml.saml.saml1.core.AttributeStatement;
 import org.opensaml.saml.saml1.core.Response;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.test.MockRequestContext;
+import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link AddAttributeStatementToAssertion} unit test. */
@@ -68,144 +69,97 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
     /** The value of the second attribute. */
     private final static String MY_VALUE_2 = "myValue2";
+    
+    private RequestContext rc;
+    
+    private ProfileRequestContext prc;
+    
+    private AddAttributeStatementToAssertion action;
+    
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
+        rc = new RequestContextBuilder().setOutboundMessage(
+                SAML1ActionTestingSupport.buildResponse()).buildRequestContext();
+        prc = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
+        
+        action = new AddAttributeStatementToAssertion();
+        action.setId("test");
+    }
 
     /** Test that the action errors out properly if there is no relying party context. */
     @Test public void testNoRelyingPartyContext() throws Exception {
-        ProfileRequestContext profileCtx = new ProfileRequestContext();
+        prc.removeSubcontext(RelyingPartyContext.class);
 
-        AddAttributeStatementToAssertion action = new AddAttributeStatementToAssertion();
-        action.setId("test");
         action.initialize();
-
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
-
+        final Event result = action.execute(rc);
         ActionTestingSupport.assertEvent(result, IdPEventIds.INVALID_RELYING_PARTY_CTX);
     }
 
     /** Test that the action errors out properly if there is no response. */
     @Test public void testNoResponse() throws Exception {
-        ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
+        prc.getOutboundMessageContext().setMessage(null);
+        final AttributeContext attribCtx = new AttributeContext();
+        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
 
-        AttributeContext attribCtx = new AttributeContext();
-        profileCtx.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
-
-        AddAttributeStatementToAssertion action = new AddAttributeStatementToAssertion();
-        action.setId("test");
         action.initialize();
-
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
-
-        ActionTestingSupport.assertEvent(result, SAMLEventIds.NO_RESPONSE);
+        final Event result = action.execute(rc);
+        ActionTestingSupport.assertEvent(result, EventIds.INVALID_MSG_CTX);
     }
 
-    /** Test that the action errors out properly if there is no attribute context. */
+    /** Test that the action continues properly if there is no attribute context. */
     @Test public void testNoAttributeContext() throws Exception {
-        ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
-                        .buildProfileRequestContext();
-
-        AddAttributeStatementToAssertion action = new AddAttributeStatementToAssertion();
-        action.setId("test");
         action.initialize();
-
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
-
-        ActionTestingSupport.assertEvent(result, IdPEventIds.INVALID_ATTRIBUTE_CTX);
+        Event result = action.execute(rc);
+        ActionTestingSupport.assertProceedEvent(result);
     }
 
-    /** Test that the action errors out properly if the attribute context does not contain attributes. */
+    /** Test that the action continues properly if the attribute context does not contain attributes. */
     @Test public void testNoAttributes() throws Exception {
-        ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
-                        .buildProfileRequestContext();
+        final AttributeContext attribCtx = new AttributeContext();
+        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
 
-        AttributeContext attribCtx = new AttributeContext();
-        profileCtx.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
-
-        AddAttributeStatementToAssertion action = new AddAttributeStatementToAssertion();
-        action.setId("test");
         action.initialize();
-
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
-
+        Event result = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(result);
     }
 
     /** Test that the action ignores attribute encoding errors. */
     @Test public void testIgnoreAttributeEncodingErrors() throws Exception {
-        ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
-                        .buildProfileRequestContext();
+        final MockSaml1StringAttributeEncoder attributeEncoder = new MockSaml1StringAttributeEncoder();
 
-        MockSaml1StringAttributeEncoder attributeEncoder = new MockSaml1StringAttributeEncoder();
-
-        IdPAttribute attribute = new IdPAttribute(MY_NAME_1);
+        final IdPAttribute attribute = new IdPAttribute(MY_NAME_1);
         attribute.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
 
-        Collection collection = (Collection<AttributeEncoder>) Arrays.asList((AttributeEncoder) attributeEncoder);
+        final Collection collection = Arrays.asList(attributeEncoder);
         attribute.setEncoders(collection);
 
-        AttributeContext attribCtx = new AttributeContext();
+        final AttributeContext attribCtx = new AttributeContext();
         attribCtx.setIdPAttributes(Arrays.asList(attribute));
+        ((RelyingPartyContext) prc.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
 
-        ((RelyingPartyContext) profileCtx.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
-
-        AddAttributeStatementToAssertion action = new AddAttributeStatementToAssertion();
-        action.setId("test");
         action.setIgnoringUnencodableAttributes(true);
         action.initialize();
-
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
-
+        final Event result = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(result);
     }
 
     /** Test that the action returns the correct transition when an attribute encoding error occurs. */
     @Test public void failOnAttributeEncodingErrors() throws Exception {
-        ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
-                        .buildProfileRequestContext();
+        final MockSaml1StringAttributeEncoder attributeEncoder = new MockSaml1StringAttributeEncoder();
 
-        MockSaml1StringAttributeEncoder attributeEncoder = new MockSaml1StringAttributeEncoder();
-
-        IdPAttribute attribute = new IdPAttribute(MY_NAME_1);
+        final IdPAttribute attribute = new IdPAttribute(MY_NAME_1);
         attribute.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
 
-        Collection collection = (Collection<AttributeEncoder>) Arrays.asList((AttributeEncoder) attributeEncoder);
+        final Collection collection = Arrays.asList(attributeEncoder);
         attribute.setEncoders(collection);
 
-        AttributeContext attribCtx = new AttributeContext();
+        final AttributeContext attribCtx = new AttributeContext();
         attribCtx.setIdPAttributes(Arrays.asList(attribute));
+        ((RelyingPartyContext) prc.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
 
-        ((RelyingPartyContext) profileCtx.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
-
-        AddAttributeStatementToAssertion action = new AddAttributeStatementToAssertion();
-        action.setId("test");
+        action.setIgnoringUnencodableAttributes(false);
         action.initialize();
-
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
-
-        ActionTestingSupport.assertEvent(result, SAMLEventIds.UNABLE_ENCODE_ATTRIBUTE);
-    }
-
-    @Test public void testNonResponseOutboundMessage() throws Exception {
-        ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setOutboundMessage(new String()).buildProfileRequestContext();
-
-        AttributeContext attribCtx = new AttributeContext();
-
-        profileCtx.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
-
-        AddAttributeStatementToAssertion action = new AddAttributeStatementToAssertion();
-        action.setId("test");
-        action.initialize();
-
-        try {
-            action.doExecute(new MockRequestContext(), profileCtx);
-            Assert.fail();
-        } catch (ClassCastException e) {
-            // ok
-        }
+        final Event result = action.execute(rc);
+        ActionTestingSupport.assertEvent(result, IdPEventIds.UNABLE_ENCODE_ATTRIBUTE);
     }
 
     /**
@@ -214,32 +168,21 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
      */
     @Test public void testAddedAttributeStatement() throws Exception {
 
-        ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
-                        .buildProfileRequestContext();
-
-        ((Response) profileCtx.getOutboundMessageContext().getMessage()).getAssertions().add(
+        ((Response) prc.getOutboundMessageContext().getMessage()).getAssertions().add(
                 SAML1ActionTestingSupport.buildAssertion());
 
-        AttributeContext attribCtx = buildAttributeContext();
-        ((RelyingPartyContext) profileCtx.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
+        final AttributeContext attribCtx = buildAttributeContext();
+        ((RelyingPartyContext) prc.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
 
-        AddAttributeStatementToAssertion action = new AddAttributeStatementToAssertion();
-        action.setId("test");
         action.setStatementInOwnAssertion(true);
         action.initialize();
-
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
-
+        final Event result = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(result);
 
-        Assert.assertNotNull(profileCtx.getOutboundMessageContext().getMessage());
-        Assert.assertTrue(profileCtx.getOutboundMessageContext().getMessage() instanceof Response);
-
-        Response response = (Response) profileCtx.getOutboundMessageContext().getMessage();
+        final Response response = (Response) prc.getOutboundMessageContext().getMessage();
         Assert.assertEquals(response.getAssertions().size(), 2);
 
-        for (Assertion assertion : response.getAssertions()) {
+        for (final Assertion assertion : response.getAssertions()) {
             if (!assertion.getAttributeStatements().isEmpty()) {
                 Assert.assertNotNull(assertion.getAttributeStatements());
                 Assert.assertEquals(assertion.getAttributeStatements().size(), 1);
@@ -252,36 +195,24 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
     /** Test that the attribute statement is correctly added to an assertion which already exists in the response. */
     @Test public void testAssertionInResponse() throws Exception {
-
-        ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
-                        .buildProfileRequestContext();
-
-        ((Response) profileCtx.getOutboundMessageContext().getMessage()).getAssertions().add(
+        ((Response) prc.getOutboundMessageContext().getMessage()).getAssertions().add(
                 SAML1ActionTestingSupport.buildAssertion());
 
-        AttributeContext attribCtx = buildAttributeContext();
-        ((RelyingPartyContext) profileCtx.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
+        final AttributeContext attribCtx = buildAttributeContext();
+        ((RelyingPartyContext) prc.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
 
-        AddAttributeStatementToAssertion action = new AddAttributeStatementToAssertion();
-        action.setId("test");
         action.initialize();
-
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
-
+        final Event result = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(result);
 
-        Assert.assertNotNull(profileCtx.getOutboundMessageContext().getMessage());
-        Assert.assertTrue(profileCtx.getOutboundMessageContext().getMessage() instanceof Response);
-
-        Response response = (Response) profileCtx.getOutboundMessageContext().getMessage();
+        final Response response = (Response) prc.getOutboundMessageContext().getMessage();
         Assert.assertEquals(response.getAssertions().size(), 1);
 
         Assertion assertion = response.getAssertions().get(0);
         Assert.assertNotNull(assertion.getAttributeStatements());
         Assert.assertEquals(assertion.getAttributeStatements().size(), 1);
 
-        AttributeStatement attributeStatement = assertion.getAttributeStatements().get(0);
+        final AttributeStatement attributeStatement = assertion.getAttributeStatements().get(0);
 
         testAttributeStatement(attributeStatement);
     }
@@ -291,32 +222,21 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
      * originally contained no assertions.
      */
     @Test public void testNoAssertionInResponse() throws Exception {
-        ProfileRequestContext profileCtx =
-                new RequestContextBuilder().setOutboundMessage(SAML1ActionTestingSupport.buildResponse())
-                        .buildProfileRequestContext();
+        final AttributeContext attribCtx = buildAttributeContext();
+        ((RelyingPartyContext) prc.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
 
-        AttributeContext attribCtx = buildAttributeContext();
-        ((RelyingPartyContext) profileCtx.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
-
-        AddAttributeStatementToAssertion action = new AddAttributeStatementToAssertion();
-        action.setId("test");
         action.initialize();
-
-        Event result = action.doExecute(new MockRequestContext(), profileCtx);
-
+        final Event result = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(result);
 
-        Assert.assertNotNull(profileCtx.getOutboundMessageContext().getMessage());
-        Assert.assertTrue(profileCtx.getOutboundMessageContext().getMessage() instanceof Response);
-
-        Response response = (Response) profileCtx.getOutboundMessageContext().getMessage();
+        final Response response = (Response) prc.getOutboundMessageContext().getMessage();
         Assert.assertEquals(response.getAssertions().size(), 1);
 
         Assertion assertion = response.getAssertions().get(0);
         Assert.assertNotNull(assertion.getAttributeStatements());
         Assert.assertEquals(assertion.getAttributeStatements().size(), 1);
 
-        AttributeStatement attributeStatement = assertion.getAttributeStatements().get(0);
+        final AttributeStatement attributeStatement = assertion.getAttributeStatements().get(0);
         testAttributeStatement(attributeStatement);
     }
 
@@ -328,29 +248,29 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
      */
     private AttributeContext buildAttributeContext() throws ComponentInitializationException {
 
-        IdPAttribute attribute1 = new IdPAttribute(MY_NAME_1);
+        final IdPAttribute attribute1 = new IdPAttribute(MY_NAME_1);
         attribute1.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
 
-        SAML1StringAttributeEncoder attributeEncoder1 = new SAML1StringAttributeEncoder();
+        final SAML1StringAttributeEncoder attributeEncoder1 = new SAML1StringAttributeEncoder();
         attributeEncoder1.setName(MY_NAME_1);
         attributeEncoder1.setNamespace(MY_NAMESPACE);
         attributeEncoder1.initialize();
 
-        Collection collection1 = (Collection<AttributeEncoder>) Arrays.asList((AttributeEncoder) attributeEncoder1);
+        final Collection collection1 = Arrays.asList(attributeEncoder1);
         attribute1.setEncoders(collection1);
 
-        IdPAttribute attribute2 = new IdPAttribute(MY_NAME_2);
+        final IdPAttribute attribute2 = new IdPAttribute(MY_NAME_2);
         attribute2.setValues(Collections.singleton(new StringAttributeValue(MY_VALUE_2)));
 
-        SAML1StringAttributeEncoder attributeEncoder2 = new SAML1StringAttributeEncoder();
+        final SAML1StringAttributeEncoder attributeEncoder2 = new SAML1StringAttributeEncoder();
         attributeEncoder2.setName(MY_NAME_2);
         attributeEncoder2.setNamespace(MY_NAMESPACE);
         attributeEncoder2.initialize();
 
-        Collection collection2 = (Collection<AttributeEncoder>) Arrays.asList((AttributeEncoder) attributeEncoder2);
+        final Collection collection2 = Arrays.asList(attributeEncoder2);
         attribute2.setEncoders(collection2);
 
-        AttributeContext attribCtx = new AttributeContext();
+        final AttributeContext attribCtx = new AttributeContext();
         attribCtx.setIdPAttributes(Arrays.asList(attribute1, attribute2));
 
         return attribCtx;
@@ -366,10 +286,10 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         Assert.assertNotNull(attributeStatement.getAttributes());
         Assert.assertEquals(attributeStatement.getAttributes().size(), 2);
 
-        for (Attribute samlAttr : attributeStatement.getAttributes()) {
+        for (final Attribute samlAttr : attributeStatement.getAttributes()) {
             Assert.assertNotNull(samlAttr.getAttributeValues());
             Assert.assertEquals(samlAttr.getAttributeValues().size(), 1);
-            XMLObject xmlObject = samlAttr.getAttributeValues().get(0);
+            final XMLObject xmlObject = samlAttr.getAttributeValues().get(0);
             Assert.assertTrue(xmlObject instanceof XSStringImpl);
             if (samlAttr.getAttributeName().equals(MY_NAME_1)) {
                 Assert.assertEquals(((XSStringImpl) xmlObject).getValue(), MY_VALUE_1);
