@@ -17,6 +17,31 @@
 
     <dependencies>
         <!-- Compile Dependencies -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-saml-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-saml-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        
 
         <!-- Provided Dependencies -->
 

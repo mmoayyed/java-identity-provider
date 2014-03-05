@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:util="http://www.springframework.org/schema/util"
+        xmlns:c="http://www.springframework.org/schema/c"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+                            
+    <context:property-placeholder
+        location="classpath:/net/shibboleth/idp/profile/spring/relyingparty/saml/SAML.properties"/>
+
+    <!-- This bean MUST be called "conversionService" to work properly. -->
+    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+            <list>
+                <bean class="net.shibboleth.ext.spring.config.DurationToLongConverter"/>
+                <bean class="net.shibboleth.ext.spring.config.StringToIPRangeConverter"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- This BeanPostProcessor auto-sets identifiable beans with the bean name (if not already set). -->
+    <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
+
+    <bean id="shibboleth.SAML2.Artifact.ServiceURL" class="java.lang.String" c:_0="https://idp.example.org/Artifact"/>
+    <bean id="shibboleth.SAML2.Artifact.ServiceIndex" class="java.lang.String" c:_0="4321"/>
+</beans>
+                            

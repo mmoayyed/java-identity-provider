@@ -1,0 +1,3 @@
+urn\:mace\:shibboleth\:2.0\:relying-party =       net.shibboleth.idp.profile.spring.relyingparty.RelyingPartyNamespaceHandler
+urn\:mace\:shibboleth\:2.0\:relying-party\:saml = net.shibboleth.idp.profile.spring.relyingparty.saml.RelyingPartySAMLNamespaceHandler
+
