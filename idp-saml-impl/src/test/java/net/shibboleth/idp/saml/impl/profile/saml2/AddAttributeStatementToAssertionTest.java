@@ -91,7 +91,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         action.initialize();
         final Event result = action.execute(rc);
-        ActionTestingSupport.assertEvent(result, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+        ActionTestingSupport.assertEvent(result, EventIds.INVALID_PROFILE_CTX);
     }
 
     /** Test that the action errors out properly if there is no response. */

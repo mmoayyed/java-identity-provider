@@ -39,9 +39,13 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
 
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML1AttributeEncoder;
+import net.shibboleth.idp.saml.impl.profile.config.navigate.IdentifierGenerationStrategyLookupFunction;
+import net.shibboleth.idp.saml.impl.profile.config.navigate.ResponderIdLookupFunction;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -71,8 +75,7 @@ import com.google.common.collect.Lists;
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_MSG_CTX}
- * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
- * @event {@link IdPEventIds#INVALID_PROFILE_CONFIG}
+ * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link IdPEventIds#UNABLE_ENCODE_ATTRIBUTE}
  */
 public class AddAttributeStatementToAssertion extends AbstractProfileAction {
@@ -90,23 +93,27 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
     private boolean ignoringUnencodableAttributes;
 
     /**
-     * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
-     */
-    @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
-
-    /**
      * Strategy used to locate the {@link AttributeContext} associated with a given {@link ProfileRequestContext}.
      */
     @Nonnull private Function<ProfileRequestContext, AttributeContext> attributeContextLookupStrategy;
+
+    /** Strategy used to locate the {@link IdentifierGenerationStrategy} to use. */
+    @NonnullAfterInit private Function<ProfileRequestContext,IdentifierGenerationStrategy> idGeneratorLookupStrategy;
+
+    /** Strategy used to obtain the assertion issuer value. */
+    @Nullable private Function<ProfileRequestContext,String> issuerLookupStrategy;
     
     /** Strategy used to locate the {@link Response} to operate on. */
     @Nonnull private Function<ProfileRequestContext, Response> responseLookupStrategy;
 
-    /** RelyingPartyContext to use. */
-    @Nullable private RelyingPartyContext relyingPartyCtx;
-
     /** AttributeContext to use. */
     @Nullable private AttributeContext attributeCtx;
+
+    /** The generator to use. */
+    @Nullable private IdentifierGenerationStrategy idGenerator;
+
+    /** EntityID to populate as assertion issuer. */
+    @Nullable private String issuerId;
     
     /** Response to modify. */
     @Nullable private Response response;
@@ -116,11 +123,12 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
         statementInOwnAssertion = false;
         ignoringUnencodableAttributes = true;
 
-        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         attributeContextLookupStrategy = Functions.compose(new ChildContextLookup<>(AttributeContext.class),
                 new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
         responseLookupStrategy =
                 Functions.compose(new MessageLookup<>(Response.class), new OutboundMessageContextLookup());
+        idGeneratorLookupStrategy = new IdentifierGenerationStrategyLookupFunction();
+        issuerLookupStrategy = new ResponderIdLookupFunction();
     }
 
     /**
@@ -149,21 +157,6 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
     }
 
     /**
-     * Set the strategy used to locate the {@link RelyingPartyContext} associated with a given
-     * {@link ProfileRequestContext}.
-     * 
-     * @param strategy strategy used to locate the {@link RelyingPartyContext} associated with a given
-     *            {@link ProfileRequestContext}
-     */
-    public synchronized void setRelyingPartyContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        relyingPartyContextLookupStrategy =
-                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
-    }
-
-    /**
      * Set the strategy used to locate the {@link AttributeContext} associated with a given
      * {@link ProfileRequestContext}.
      * 
@@ -189,21 +182,47 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
 
         responseLookupStrategy = Constraint.isNotNull(strategy, "Response lookup strategy cannot be null");
     }
+
+    /**
+     * Set the strategy used to locate the {@link IdentifierGenerationStrategy} to use.
+     * 
+     * @param strategy lookup strategy
+     */
+    public synchronized void setIdentifierGeneratorLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, IdentifierGenerationStrategy> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        idGeneratorLookupStrategy =
+                Constraint.isNotNull(strategy, "IdentifierGenerationStrategy lookup strategy cannot be null");
+    }
+
+    /**
+     * Set the strategy used to locate the issuer value to use.
+     * 
+     * @param strategy lookup strategy
+     */
+    public synchronized void setIssuerLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        issuerLookupStrategy = Constraint.isNotNull(strategy, "Issuer lookup strategy cannot be null");
+    }
     
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
         log.debug("{} Attempting to add an AttributeStatement to outgoing Response", getLogPrefix());
 
-        relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (relyingPartyCtx == null) {
-            log.debug("{} No relying party context located in current profile request context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+        idGenerator = idGeneratorLookupStrategy.apply(profileRequestContext);
+        if (idGenerator == null) {
+            log.debug("{} No identifier generation strategy", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
-        } else if (relyingPartyCtx.getProfileConfig() == null
-                || relyingPartyCtx.getProfileConfig().getSecurityConfiguration() == null) {
-            log.debug("{} No profile configuration located in relying party context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
+        }
+        
+        issuerId = issuerLookupStrategy.apply(profileRequestContext);
+        if (issuerId == null) {
+            log.debug("{} No assertion issuer value", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
         
@@ -249,9 +268,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
      */
     @Nonnull private Assertion getStatementAssertion() {
         if (statementInOwnAssertion || response.getAssertions().isEmpty()) {
-            return SAML1ActionSupport.addAssertionToResponse(this, response,
-                    relyingPartyCtx.getProfileConfig().getSecurityConfiguration().getIdGenerator(),
-                    relyingPartyCtx.getConfiguration().getResponderId());
+            return SAML1ActionSupport.addAssertionToResponse(this, response, idGenerator, issuerId);
         } else {
             return response.getAssertions().get(0);
         }
