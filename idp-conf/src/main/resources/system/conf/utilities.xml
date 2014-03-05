@@ -15,4 +15,11 @@
     <bean id="shibboleth.Predicates.True" class="com.google.common.base.Predicates" factory-method="alwaysTrue" />
     <bean id="shibboleth.Predicates.False" class="com.google.common.base.Predicates" factory-method="alwaysFalse" />
 
+    <bean id="shibboleth.ChildLookup.RelyingParty"
+        class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+        c:type="#{ T(net.shibboleth.idp.profile.context.RelyingPartyContext) }" />
+    <bean id="shibboleth.ChildLookup.SecurityParameters"
+        class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+        c:type="#{ T(org.opensaml.xmlsec.context.SecurityParametersContext) }" />
+
 </beans>

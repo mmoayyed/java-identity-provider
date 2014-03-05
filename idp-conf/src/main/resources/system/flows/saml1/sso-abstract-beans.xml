@@ -261,16 +261,9 @@
 
     <bean id="SignAssertions" class="org.opensaml.saml.saml1.profile.impl.SignAssertions" scope="prototype">
         <property name="securityParametersLookupStrategy">
-            <bean class="com.google.common.base.Functions" factory-method="compose">
-                <constructor-arg>
-                    <bean class="org.opensaml.messaging.context.navigate.ChildContextLookup"
-                        c:type="#{ T(org.opensaml.xmlsec.context.SecurityParametersContext) }" />
-                </constructor-arg>
-                <constructor-arg>
-                    <bean class="org.opensaml.messaging.context.navigate.ChildContextLookup"
-                        c:type="#{ T(net.shibboleth.idp.profile.context.RelyingPartyContext) }" />
-                </constructor-arg>
-            </bean>
+            <bean class="com.google.common.base.Functions" factory-method="compose"
+                c:g-ref="shibboleth.ChildLookup.SecurityParameters"
+                c:f-ref="shibboleth.ChildLookup.RelyingParty" />
         </property>
     </bean>
 
