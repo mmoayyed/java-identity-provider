@@ -21,7 +21,13 @@
    
     <logger name="org.opensaml.saml.common.binding" level="DEBUG" />
 
+    <logger name="org.opensaml.saml.saml1.binding" level="DEBUG" />
+
+    <logger name="org.opensaml.saml.saml1.profile" level="DEBUG" />
+
     <logger name="org.opensaml.saml.saml2.binding" level="DEBUG" />
+
+    <logger name="org.opensaml.saml.saml2.profile" level="DEBUG" />
 
     <logger name="org.opensaml.storage" level="TRACE" />
 
