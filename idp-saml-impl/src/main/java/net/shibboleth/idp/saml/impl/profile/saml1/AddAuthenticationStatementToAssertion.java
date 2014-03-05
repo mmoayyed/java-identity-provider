@@ -27,8 +27,6 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.principal.DefaultPrincipalDeterminationStrategy;
-import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -36,13 +34,16 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
 
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
+import net.shibboleth.idp.saml.impl.profile.config.navigate.IdentifierGenerationStrategyLookupFunction;
+import net.shibboleth.idp.saml.impl.profile.config.navigate.ResponderIdLookupFunction;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 
 import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml1.core.Assertion;
@@ -73,9 +74,8 @@ import com.google.common.base.Functions;
  * or defaulted function that obtains an {@link AuthenticationMethodPrincipal} from the profile context.</p>
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
+ * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link EventIds#INVALID_MSG_CTX}
- * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
- * @event {@link IdPEventIds#INVALID_PROFILE_CONFIG}
  * @event {@link AuthnEventIds#INVALID_AUTHN_CTX}
  */
 public class AddAuthenticationStatementToAssertion extends AbstractAuthenticationAction {
@@ -89,33 +89,38 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
      */
     private boolean statementInOwnAssertion;
 
-    /**
-     * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
-     */
-    @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
-
     /** Strategy used to locate the {@link Response} to operate on. */
     @Nonnull private Function<ProfileRequestContext, Response> responseLookupStrategy;
 
+    /** Strategy used to locate the {@link IdentifierGenerationStrategy} to use. */
+    @NonnullAfterInit private Function<ProfileRequestContext,IdentifierGenerationStrategy> idGeneratorLookupStrategy;
+
+    /** Strategy used to obtain the assertion issuer value. */
+    @Nullable private Function<ProfileRequestContext,String> issuerLookupStrategy;
+    
     /** Strategy used to determine the AuthenticationMethod attribute. */
     @Nonnull private Function<ProfileRequestContext, AuthenticationMethodPrincipal> methodLookupStrategy;
-        
-    /** RelyingPartyContext to access. */
-    @Nullable private RelyingPartyContext relyingPartyCtx;
 
+    /** The generator to use. */
+    @Nullable private IdentifierGenerationStrategy idGenerator;
+    
     /** AuthenticationResult basis of statement. */
     @Nullable private AuthenticationResult authenticationResult;
     
     /** Response to modify. */
     @Nullable private Response response;
     
+    /** EntityID to populate as assertion issuer. */
+    @Nullable private String issuerId;
+    
     /** Constructor. */
     public AddAuthenticationStatementToAssertion() {
         statementInOwnAssertion = false;
 
-        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         responseLookupStrategy =
                 Functions.compose(new MessageLookup<>(Response.class), new OutboundMessageContextLookup());
+        idGeneratorLookupStrategy = new IdentifierGenerationStrategyLookupFunction();
+        issuerLookupStrategy = new ResponderIdLookupFunction();
         methodLookupStrategy = new DefaultPrincipalDeterminationStrategy<>(AuthenticationMethodPrincipal.class,
                 new AuthenticationMethodPrincipal(AuthenticationStatement.UNSPECIFIED_AUTHN_METHOD));
     }
@@ -134,21 +139,6 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
     }
     
     /**
-     * Set the strategy used to locate the {@link RelyingPartyContext} associated with a given
-     * {@link ProfileRequestContext}.
-     * 
-     * @param strategy strategy used to locate the {@link RelyingPartyContext} associated with a given
-     *            {@link ProfileRequestContext}
-     */
-    public synchronized void setRelyingPartyContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        relyingPartyContextLookupStrategy =
-                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
-    }
-    
-    /**
      * Set the strategy used to locate the {@link Response} to operate on.
      * 
      * @param strategy strategy used to locate the {@link Response} to operate on
@@ -160,6 +150,30 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
         responseLookupStrategy = Constraint.isNotNull(strategy, "Response lookup strategy cannot be null");
     }
 
+    /**
+     * Set the strategy used to locate the {@link IdentifierGenerationStrategy} to use.
+     * 
+     * @param strategy lookup strategy
+     */
+    public synchronized void setIdentifierGeneratorLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, IdentifierGenerationStrategy> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        idGeneratorLookupStrategy =
+                Constraint.isNotNull(strategy, "IdentifierGenerationStrategy lookup strategy cannot be null");
+    }
+
+    /**
+     * Set the strategy used to locate the issuer value to use.
+     * 
+     * @param strategy lookup strategy
+     */
+    public synchronized void setIssuerLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        issuerLookupStrategy = Constraint.isNotNull(strategy, "Issuer lookup strategy cannot be null");
+    }
+    
     /**
      * Set the strategy function to use to obtain the authentication method to use.
      * 
@@ -176,17 +190,19 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
-        log.debug("{} Attempting to add an AuthenticationStatement to outgoing Response", getLogPrefix());
-
-        relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (relyingPartyCtx == null) {
-            log.debug("{} No relying party context located in current profile request context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+        log.debug("{} Attempting to add an AuthenticationStatement to Response", getLogPrefix());
+        
+        idGenerator = idGeneratorLookupStrategy.apply(profileRequestContext);
+        if (idGenerator == null) {
+            log.debug("{} No identifier generation strategy", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
-        } else if (relyingPartyCtx.getProfileConfig() == null
-                || relyingPartyCtx.getProfileConfig().getSecurityConfiguration() == null) {
-            log.debug("{} No profile configuration located in relying party context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
+        }
+        
+        issuerId = issuerLookupStrategy.apply(profileRequestContext);
+        if (issuerId == null) {
+            log.debug("{} No assertion issuer value", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
         
@@ -227,9 +243,7 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
      */
     @Nonnull private Assertion getStatementAssertion() {
         if (statementInOwnAssertion || response.getAssertions().isEmpty()) {
-            return SAML1ActionSupport.addAssertionToResponse(this, response,
-                    relyingPartyCtx.getProfileConfig().getSecurityConfiguration().getIdGenerator(),
-                    relyingPartyCtx.getConfiguration().getResponderId());
+            return SAML1ActionSupport.addAssertionToResponse(this, response, idGenerator, issuerId);
         } else {
             return response.getAssertions().get(0);
         }

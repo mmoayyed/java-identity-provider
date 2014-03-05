@@ -24,7 +24,6 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
-import net.shibboleth.idp.profile.IdPEventIds;
 
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -79,7 +78,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         prc.removeSubcontext(RelyingPartyContext.class);
 
         final Event event = action.execute(rc);
-        ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+        ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
     }
 
     /** Test that the action errors out properly if there is no response. */
