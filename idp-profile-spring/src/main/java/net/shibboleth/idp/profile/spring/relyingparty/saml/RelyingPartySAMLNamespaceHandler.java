@@ -28,7 +28,5 @@ public class RelyingPartySAMLNamespaceHandler extends BaseSpringNamespaceHandler
 
     /** {@inheritDoc} */
     @Override public void init() {
-        registerBeanDefinitionParser(SAML2ArtifactResolutionProfileParser.ELEMENT_NAME,
-                new SAML2ArtifactResolutionProfileParser());
     }
 }

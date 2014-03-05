@@ -21,17 +21,16 @@ import java.util.Collection;
 import java.util.Set;
 
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
-import net.shibboleth.idp.saml.profile.config.saml2.ArtifactResolutionProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.saml2.SingleLogoutProfileConfiguration;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class SAML2ArtifactTest extends BaseSAMLProfileTest {
+public class LogoutTest extends BaseSAMLProfileTest {
 
     @Test public void defaults() {
 
-        ArtifactResolutionProfileConfiguration profile =
-                getBean(ArtifactResolutionProfileConfiguration.class, true, "saml2artifact.xml");
+        SingleLogoutProfileConfiguration profile = getBean(SingleLogoutProfileConfiguration.class, true, "logout.xml");
 
         // defaults for AbstractSAML2ProfileConfiguration
 
@@ -43,8 +42,8 @@ public class SAML2ArtifactTest extends BaseSAMLProfileTest {
 
         // defaults for AbstractSAMLProfileConfiguration
         assertConditionalPredicate(profile.getSignRequestsPredicate());
-        assertTruePredicate(profile.getSignAssertionsPredicate());
-        assertFalsePredicate(profile.getSignResponsesPredicate());
+        assertFalsePredicate(profile.getSignAssertionsPredicate());
+        assertConditionalPredicate(profile.getSignResponsesPredicate());
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
@@ -52,34 +51,32 @@ public class SAML2ArtifactTest extends BaseSAMLProfileTest {
     }
 
     @Test public void values() {
-        ArtifactResolutionProfileConfiguration profile =
-                getBean(ArtifactResolutionProfileConfiguration.class, false, "beans.xml", "saml2artifactValues.xml");
+        SingleLogoutProfileConfiguration profile =
+                getBean(SingleLogoutProfileConfiguration.class, false, "beans.xml", "logoutValues.xml");
 
-        assertFalsePredicate(profile.getEncryptAssertionsPredicate());
-        assertTruePredicate(profile.getEncryptNameIDsPredicate());
+        assertTruePredicate(profile.getEncryptAssertionsPredicate());
+        assertFalsePredicate(profile.getEncryptNameIDsPredicate());
 
-        Assert.assertEquals(profile.getProxyCount(), 99);
+        Assert.assertEquals(profile.getProxyCount(), 98);
         final Collection<String> proxyAudiences = profile.getProxyAudiences();
-        Assert.assertEquals(proxyAudiences.size(), 2);
-        Assert.assertTrue(proxyAudiences.contains("ProxyAudience1"));
-        Assert.assertTrue(proxyAudiences.contains("ProxyAudience2"));
+        Assert.assertEquals(proxyAudiences.size(), 1);
+        Assert.assertTrue(proxyAudiences.contains("NibbleAHappyWarthog"));
 
-        assertFalsePredicate(profile.getSignRequestsPredicate());
+        assertConditionalPredicate(profile.getSignRequestsPredicate());
         assertFalsePredicate(profile.getSignAssertionsPredicate());
-        assertConditionalPredicate(profile.getSignResponsesPredicate());
+        assertFalsePredicate(profile.getSignResponsesPredicate());
 
-        Assert.assertEquals(profile.getAssertionLifetime(), 10 * 60 * 1000);
+        Assert.assertEquals(profile.getAssertionLifetime(), 8 * 60 * 1000);
 
         final Set<String> audiences = profile.getAdditionalAudiencesForAssertion();
-        Assert.assertEquals(audiences.size(), 1);
-        Assert.assertEquals(audiences.iterator().next(), "NibbleAHappyWarthog");
+        Assert.assertEquals(audiences.size(), 0);
 
-        Assert.assertFalse(profile.includeConditionsNotBefore());
+        Assert.assertTrue(profile.includeConditionsNotBefore());
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
-        Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/Artifact");
-        Assert.assertEquals(artifact.getArtifactType().intValue(), 1234);
-        Assert.assertEquals(artifact.getArtifactResolutionServiceIndex().intValue(), 4321);
+        Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/Logout");
+        Assert.assertEquals(artifact.getArtifactType().intValue(), 7);
+        Assert.assertEquals(artifact.getArtifactResolutionServiceIndex().intValue(), 3214);
 
     }
 

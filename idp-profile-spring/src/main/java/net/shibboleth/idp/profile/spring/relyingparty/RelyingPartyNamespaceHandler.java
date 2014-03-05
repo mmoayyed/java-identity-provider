@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.spring.relyingparty;
 
 import net.shibboleth.idp.profile.spring.relyingparty.saml.SAML2ArtifactResolutionProfileParser;
+import net.shibboleth.idp.profile.spring.relyingparty.saml.SAML2LogoutRequestProfileParser;
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 // TODO incomplete
@@ -31,6 +32,8 @@ public class RelyingPartyNamespaceHandler extends BaseSpringNamespaceHandler {
     @Override public void init() {
         registerBeanDefinitionParser(SAML2ArtifactResolutionProfileParser.ELEMENT_NAME,
                 new SAML2ArtifactResolutionProfileParser());
+        registerBeanDefinitionParser(SAML2LogoutRequestProfileParser.ELEMENT_NAME,
+                new SAML2LogoutRequestProfileParser());
 
     }
 }
