@@ -242,7 +242,7 @@
 
     <bean
         id="AddNotOnOrAfterConditionToAssertions"
-        class="org.opensaml.saml.saml1.profile.impl.AddNotOnOrAfterConditionToAssertions"
+        class="org.opensaml.saml.common.profile.impl.AddNotOnOrAfterConditionToAssertions"
         scope="prototype"
         p:defaultAssertionLifetime="PT5M">
         <property name="assertionLifetimeStrategy">
