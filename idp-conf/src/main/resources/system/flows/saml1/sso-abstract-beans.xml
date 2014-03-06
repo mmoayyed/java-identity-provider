@@ -233,7 +233,7 @@
 
     <bean
         id="AddNotBeforeConditionToAssertions"
-        class="org.opensaml.saml.saml1.profile.impl.AddNotBeforeConditionToAssertions"
+        class="org.opensaml.saml.common.profile.impl.AddNotBeforeConditionToAssertions"
         scope="prototype">
         <property name="activationCondition">
             <bean class="net.shibboleth.idp.saml.impl.profile.config.logic.NotBeforeProfileConfigPredicate" />
