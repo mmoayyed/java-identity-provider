@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.joda.time.DateTime;
-import org.opensaml.messaging.context.BasicMessageMetadataContext;
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.session.SAML2SPSession;
 import net.shibboleth.idp.session.BasicSPSession;
 import net.shibboleth.idp.session.SPSession;
@@ -64,6 +65,9 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
     /** Lifetime of sessions to create. */
     @Positive @Duration private final long sessionLifetime;
     
+    /** RelyingPartyContext lookup strategy. */
+    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
+    
     /** Response lookup strategy. */
     @Nonnull private Function<ProfileRequestContext, Response> responseLookupStrategy;
     
@@ -75,23 +79,44 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
      */
     public SAML2SPSessionCreationStrategy(@Positive @Duration final long lifetime) {
         sessionLifetime = Constraint.isGreaterThan(0, lifetime, "Lifetime must be greater than 0");
+        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         responseLookupStrategy =
                 Functions.compose(new MessageLookup<>(Response.class), new OutboundMessageContextLookup());
     }
 
+    /**
+     * Set the strategy used to locate the {@link RelyingPartyContext} to operate on.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setRelyingPartyContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
+        relyingPartyContextLookupStrategy = Constraint.isNotNull(strategy,
+                "RelyingPartyContext lookup strategy cannot be null");
+    }
+        
+    /**
+     * Set the strategy used to locate the {@link Response} to operate on.
+     * 
+     * @param strategy strategy used to locate the {@link Response} to operate on
+     */
+    public void setResponseLookupStrategy(@Nonnull final Function<ProfileRequestContext, Response> strategy) {
+        responseLookupStrategy = Constraint.isNotNull(strategy, "Response lookup strategy cannot be null");
+    }
+    
     /** {@inheritDoc} */
     @Override
     @Nullable public SPSession apply(@Nullable final ProfileRequestContext input) {
         
-        if (input == null || input.getInboundMessageContext() == null) {
-            log.debug("No inbound MessageContext, no SAML2SPSession created");
+        final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(input);
+        if (rpCtx == null) {
+            log.debug("No RelyingPartyContext, no SAML2SPSession created");
             return null;
         }
         
-        final BasicMessageMetadataContext mdCtx =
-                input.getInboundMessageContext().getSubcontext(BasicMessageMetadataContext.class, false);
-        if (mdCtx == null || mdCtx.getMessageIssuer() == null) {
-            log.debug("No message issuer found in inbound BasicMessageMetadataContext, no SAML2SPSession created");
+        final String issuer = rpCtx.getRelyingPartyId();
+        if (issuer == null) {
+            log.debug("No relying party ID, no SAML2SPSession created");
             return null;
         }
         
@@ -105,8 +130,8 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
         if (result == null) {
             log.info("Creating BasicSPSession in the absence of necessary information");
             final long now = System.currentTimeMillis();
-            return new BasicSPSession(mdCtx.getMessageIssuer(),
-                    authCtx.getAuthenticationResult().getAuthenticationFlowId(), now, now + sessionLifetime);
+            return new BasicSPSession(issuer, authCtx.getAuthenticationResult().getAuthenticationFlowId(),
+                    now, now + sessionLifetime);
         }
         
         final long now = System.currentTimeMillis();
@@ -118,7 +143,7 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
             expiration = now + sessionLifetime;
         }
         
-        return new SAML2SPSession(mdCtx.getMessageIssuer(), authCtx.getAuthenticationResult().getAuthenticationFlowId(),
+        return new SAML2SPSession(issuer, authCtx.getAuthenticationResult().getAuthenticationFlowId(),
                 now, expiration, result.getFirst().getSubject().getNameID(), result.getSecond().getSessionIndex());
     }
 

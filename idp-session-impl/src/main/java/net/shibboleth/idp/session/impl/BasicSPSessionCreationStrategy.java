@@ -20,12 +20,13 @@ package net.shibboleth.idp.session.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.opensaml.messaging.context.BasicMessageMetadataContext;
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.session.BasicSPSession;
 import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.utilities.java.support.annotation.Duration;
@@ -49,6 +50,9 @@ public class BasicSPSessionCreationStrategy implements Function<ProfileRequestCo
     
     /** Lifetime of sessions to create. */
     @Positive @Duration private final long sessionLifetime;
+
+    /** RelyingPartyContext lookup strategy. */
+    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
     
     /**
      * Constructor.
@@ -57,21 +61,33 @@ public class BasicSPSessionCreationStrategy implements Function<ProfileRequestCo
      */
     public BasicSPSessionCreationStrategy(@Positive @Duration final long lifetime) {
         sessionLifetime = Constraint.isGreaterThan(0, lifetime, "Lifetime must be greater than 0");
+        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
     }
 
+    /**
+     * Set the strategy used to locate the {@link RelyingPartyContext} to operate on.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setRelyingPartyContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
+        relyingPartyContextLookupStrategy = Constraint.isNotNull(strategy,
+                "RelyingPartyContext lookup strategy cannot be null");
+    }
+    
     /** {@inheritDoc} */
     @Override
     @Nullable public SPSession apply(@Nullable final ProfileRequestContext input) {
         
-        if (input == null || input.getInboundMessageContext() == null) {
-            log.debug("No inbound MessageContext, no SPSession created");
+        final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(input);
+        if (rpCtx == null) {
+            log.debug("No RelyingPartyContext, no SPSession created");
             return null;
         }
         
-        final BasicMessageMetadataContext mdCtx =
-                input.getInboundMessageContext().getSubcontext(BasicMessageMetadataContext.class, false);
-        if (mdCtx == null || mdCtx.getMessageIssuer() == null) {
-            log.debug("No message issuer found in inbound BasicMessageMetadataContext, no SPSession created");
+        final String issuer = rpCtx.getRelyingPartyId();
+        if (issuer == null) {
+            log.debug("No relying party ID, no SPSession created");
             return null;
         }
         
@@ -82,7 +98,7 @@ public class BasicSPSessionCreationStrategy implements Function<ProfileRequestCo
         }
         
         final long now = System.currentTimeMillis();
-        return new BasicSPSession(mdCtx.getMessageIssuer(), authCtx.getAuthenticationResult().getAuthenticationFlowId(),
+        return new BasicSPSession(issuer, authCtx.getAuthenticationResult().getAuthenticationFlowId(),
                 now, now + sessionLifetime);
     }
 
