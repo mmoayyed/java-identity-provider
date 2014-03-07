@@ -85,9 +85,9 @@ public class InitializeRelyingPartyContextFromSAMLPeer extends AbstractProfileAc
     }
     
     /**
-     * Set the strategy used to look up the {@link BasicMessageMetadataContext} to draw from.
+     * Set the strategy used to look up the {@link SAMLPeerEntityContext} to draw from.
      * 
-     * @param strategy strategy used to look up the {@link BasicMessageMetadataContext}
+     * @param strategy strategy used to look up the {@link SAMLPeerEntityContext}
      */
     public void setPeerEntityContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, SAMLPeerEntityContext> strategy) {
