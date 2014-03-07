@@ -27,5 +27,7 @@
     <bean id="shibboleth.SAML2.Artifact.ServiceIndex" class="java.lang.String" c:_0="4321"/>
     <bean id="shibboleth.SAML2.Logout.ServiceURL" class="java.lang.String" c:_0="https://idp.example.org/Logout"/>
     <bean id="shibboleth.SAML2.Logout.ServiceIndex" class="java.lang.String" c:_0="3214"/>
+    <bean id="shibboleth.SAML2.AttributeQuery.ServiceURL" class="java.lang.String" c:_0="https://idp.example.org/AttributeQuery"/>
+    <bean id="shibboleth.SAML2.AttributeQuery.ServiceIndex" class="java.lang.String" c:_0="2143"/>
 </beans>
                             
