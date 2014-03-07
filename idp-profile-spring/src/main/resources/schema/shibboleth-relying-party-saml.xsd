@@ -260,7 +260,7 @@
                 <sequence>
                     <element name="Audience" type="string" minOccurs="0" maxOccurs="unbounded">
                         <annotation>
-                            <documentation>List of audiences for issued assertions.</documentation>
+                            <documentation>Additional audiences to which an assertion may be released.</documentation>
                         </annotation>
                     </element>
                 </sequence>
