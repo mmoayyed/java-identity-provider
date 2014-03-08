@@ -35,7 +35,7 @@ public class SAML1ArtifactTest extends BaseSAMLProfileTest {
         // defaults for AbstractSAMLProfileConfiguration
         assertConditionalPredicate(profile.getSignRequestsPredicate());
         assertFalsePredicate(profile.getSignAssertionsPredicate());
-        assertFalsePredicate(profile.getSignResponsesPredicate());
+        assertConditionalPredicate(profile.getSignResponsesPredicate());
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
@@ -44,7 +44,7 @@ public class SAML1ArtifactTest extends BaseSAMLProfileTest {
 
     @Test public void values() {
         ArtifactResolutionProfileConfiguration profile =
-                getBean(ArtifactResolutionProfileConfiguration.class, true, "beans.xml", "saml1artifactValues.xml");
+                getBean(ArtifactResolutionProfileConfiguration.class, false, "beans.xml", "saml1artifactValues.xml");
 
         assertFalsePredicate(profile.getSignRequestsPredicate());
         assertFalsePredicate(profile.getSignAssertionsPredicate());
@@ -54,12 +54,12 @@ public class SAML1ArtifactTest extends BaseSAMLProfileTest {
 
         final Set<String> audiences = profile.getAdditionalAudiencesForAssertion();
         Assert.assertEquals(audiences.size(), 1);
-        Assert.assertEquals(audiences.iterator().next(), "NibbleAHappyWarthog");
+        Assert.assertEquals(audiences.iterator().next(), "NibbleAHappyWarthogNibbleAHappyWarthog");
 
         Assert.assertFalse(profile.includeConditionsNotBefore());
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
-        Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/Artifact1");
+        Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/Artifact/SAML1");
         Assert.assertEquals(artifact.getArtifactType().intValue(), 12340);
         Assert.assertEquals(artifact.getArtifactResolutionServiceIndex().intValue(), 43210);
 

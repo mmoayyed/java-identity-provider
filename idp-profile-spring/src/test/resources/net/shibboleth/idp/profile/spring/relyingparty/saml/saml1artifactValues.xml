@@ -5,9 +5,7 @@
 
 	xsi:type="saml:SAML1ArtifactResolutionProfile"
 
-    securityPolicyRef="wobble"
-
-    encryptNameIds="always"	 encryptAssertions="${prop.confitional}" attributeAuthority="wibble"
+    securityPolicyRef="wobble" attributeAuthority="wibble"
     
     assertionLifetime="${prop.tenMins}" includeConditionsNotBefore="${prop.false}" outboundArtifactType="${prop.artifactType}0" 
     signingCredentialRef="credref" signAssertions="${prop.never}" signRequests="never" signResponses="conditional"
