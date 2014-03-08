@@ -29,7 +29,7 @@ import org.w3c.dom.Element;
 
 /**
  Parser to generate {@link ArtifactResolutionProfileConfiguration} from a
- * <code>saml:SAML2ArtifactResolutionProfile</code>.
+ * <code>saml:SAML1ArtifactResolutionProfile</code>.
  */
 public class SAML1ArtifactResolutionProfileParser extends BaseSAMLProfileConfigurationParser {
 
