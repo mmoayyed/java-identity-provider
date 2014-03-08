@@ -31,5 +31,7 @@
     <bean id="shibboleth.SAML2.AttributeQuery.ServiceIndex" class="java.lang.String" c:_0="2143"/>
     <bean id="shibboleth.SAML2.BrowserSSO.ServiceURL" class="java.lang.String" c:_0="https://idp.example.org/SSO"/>
     <bean id="shibboleth.SAML2.BrowserSSO.ServiceIndex" class="java.lang.String" c:_0="1111"/>
+    <bean id="shibboleth.SAML2.ECP.ServiceURL" class="java.lang.String" c:_0="https://idp.example.org/ECP"/>
+    <bean id="shibboleth.SAML2.ECP.ServiceIndex" class="java.lang.String" c:_0="2222"/>
 </beans>
                             
