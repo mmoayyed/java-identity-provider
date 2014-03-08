@@ -11,7 +11,7 @@
         <relativePath>../idp-parent</relativePath>
     </parent>
 
-    <name>idp-profile-spring</name>
+    <name>Shibboleth IdP :: Profile Spring Integration</name>
     <artifactId>idp-profile-spring</artifactId>
     <packaging>jar</packaging>
 
