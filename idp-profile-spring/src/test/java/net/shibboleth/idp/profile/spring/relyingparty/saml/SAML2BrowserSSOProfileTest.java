@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.saml;
 
+import java.util.List;
+
+import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.profile.config.saml2.BrowserSSOProfileConfiguration;
 
@@ -27,13 +30,12 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
 
     @Test public void defaults() {
 
-        BrowserSSOProfileConfiguration profile =
-                getBean(BrowserSSOProfileConfiguration.class, true, "saml2SSO.xml");
-        
+        BrowserSSOProfileConfiguration profile = getBean(BrowserSSOProfileConfiguration.class, true, "saml2SSO.xml");
+
         Assert.assertTrue(profile.includeAttributeStatement());
         Assert.assertFalse(profile.skipEndpointValidationWhenSigned());
         Assert.assertEquals(profile.getMaximumSPSessionLifetime(), 0);
-        
+
         // defaults for AbstractSAML2ProfileConfiguration
 
         assertConditionalPredicate(profile.getEncryptAssertionsPredicate());
@@ -55,11 +57,10 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
     @Test public void values() {
         BrowserSSOProfileConfiguration profile =
                 getBean(BrowserSSOProfileConfiguration.class, true, "beans.xml", "saml2SSOValues.xml");
-        
+
         Assert.assertFalse(profile.includeAttributeStatement());
         Assert.assertTrue(profile.skipEndpointValidationWhenSigned());
         Assert.assertEquals(profile.getMaximumSPSessionLifetime(), 1);
-
 
         assertConditionalPredicate(profile.getEncryptAssertionsPredicate());
         assertFalsePredicate(profile.getEncryptNameIDsPredicate());
@@ -80,6 +81,17 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertEquals(artifact.getArtifactType().intValue(), 76543);
         Assert.assertEquals(artifact.getArtifactResolutionServiceIndex().intValue(), 1111);
 
-    }
+        Assert.assertEquals(profile.getDefaultAuthenticationMethods().size(), 1);
+        final AuthnContextClassRefPrincipal authnMethod =
+                (AuthnContextClassRefPrincipal) profile.getDefaultAuthenticationMethods().get(0);
+        Assert.assertEquals(authnMethod.getAuthnContextClassRef().getAuthnContextClassRef(),
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport");
 
+        final List<String> nameIDPrefs = profile.getNameIDFormatPrecedence();
+
+        Assert.assertEquals(nameIDPrefs.size(), 2);
+        Assert.assertTrue(nameIDPrefs.contains("one"));
+        Assert.assertTrue(nameIDPrefs.contains("two"));
+
+    }
 }

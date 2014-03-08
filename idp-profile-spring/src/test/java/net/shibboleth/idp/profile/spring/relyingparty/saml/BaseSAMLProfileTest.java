@@ -22,6 +22,7 @@ import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.ConversionServiceFactoryBean;
@@ -33,7 +34,7 @@ import org.testng.Assert;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 
-public class BaseSAMLProfileTest {
+public class BaseSAMLProfileTest  extends OpenSAMLInitBaseTestCase {
     
     private static final String PATH = "/net/shibboleth/idp/profile/spring/relyingparty/saml/";
     
