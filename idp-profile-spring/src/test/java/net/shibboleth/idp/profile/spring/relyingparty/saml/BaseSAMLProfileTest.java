@@ -62,15 +62,15 @@ public class BaseSAMLProfileTest {
         return context.getBean(claz);
     }
     
-    protected void assertTruePredicate(Predicate<ProfileRequestContext> predicate) {
+    protected static void assertTruePredicate(Predicate<ProfileRequestContext> predicate) {
         Assert.assertTrue(predicate.apply(null));
     }
     
-    protected void assertFalsePredicate(Predicate<ProfileRequestContext> predicate) {
+    protected static void assertFalsePredicate(Predicate<ProfileRequestContext> predicate) {
         Assert.assertFalse(predicate.apply(null));
     }
     
-    protected void assertConditionalPredicate(Predicate<ProfileRequestContext> predicate) {
+    protected static void assertConditionalPredicate(Predicate<ProfileRequestContext> predicate) {
         // a conditional predicate will look at the parameter and fail immediately
         try {
             predicate.apply(null);
