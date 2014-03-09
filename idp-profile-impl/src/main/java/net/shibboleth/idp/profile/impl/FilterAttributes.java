@@ -56,7 +56,6 @@ import com.google.common.base.Functions;
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
  * @event {@link IdPEventIds#INVALID_SUBJECT_CTX}
- * @event {@link IdPEventIds#INVALID_ATTRIBUTE_CTX}
  * @event {@link IdPEventIds#UNABLE_FILTER_ATTRIBS}
  * 
  * @post If resolution is successful, the relevant RelyingPartyContext.getSubcontext(AttributeContext.class, false) !=
@@ -224,7 +223,6 @@ public class FilterAttributes extends AbstractProfileAction {
         attributeContext = rpContext.getSubcontext(AttributeContext.class, false);
         if (attributeContext == null) {
             log.debug("{} No attribute context, no attributes to filter", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_ATTRIBUTE_CTX);
             return false;
         }
 

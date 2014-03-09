@@ -81,7 +81,7 @@ public class FilterAttributesTest {
         ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_RELYING_PARTY_CTX);
     }
 
-    /** Test that the action errors out properly if there is no attribute context. */
+    /** Test that the action proceeds properly if there is no attribute context. */
     @Test public void testNoAttributeContext() throws Exception {
         prc.getSubcontext(SubjectContext.class, true);
 
@@ -93,7 +93,7 @@ public class FilterAttributesTest {
         action.initialize();
 
         final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_ATTRIBUTE_CTX);
+        ActionTestingSupport.assertProceedEvent(event);
     }
 
     /** Test that the action proceeds properly if there are no attributes to filter . */
