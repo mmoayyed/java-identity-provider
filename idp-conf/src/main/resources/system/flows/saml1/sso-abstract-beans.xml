@@ -152,7 +152,6 @@
         class="net.shibboleth.idp.authn.impl.InitializeRequestedPrincipalContext"
         scope="prototype" />
 
-    <!-- TODO make constructor arg names consistent for resolution and filtering -->
     <bean
         id="ResolveAttributes"
         class="net.shibboleth.idp.profile.impl.ResolveAttributes"
@@ -163,7 +162,7 @@
         id="FilterAttributes"
         class="net.shibboleth.idp.profile.impl.FilterAttributes"
         scope="prototype"
-        c:service-ref="shibboleth.AttributeFilterService" />
+        c:filterService-ref="shibboleth.AttributeFilterService" />
 
     <bean
         id="UpdateSessionWithSPSession"

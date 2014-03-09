@@ -68,7 +68,7 @@ public class FilterAttributes extends AbstractProfileAction {
     @Nonnull private final Logger log = LoggerFactory.getLogger(FilterAttributes.class);
 
     /** Service used to get the engine used to fetch attributes. */
-    @Nonnull private final ReloadableService<AttributeFilter> filterService;
+    @Nonnull private final ReloadableService<AttributeFilter> attributeFilterService;
 
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
@@ -89,7 +89,7 @@ public class FilterAttributes extends AbstractProfileAction {
      * Strategy used to locate the {@link SAMLMetadataContext} associated with a given {@link ProfileRequestContext}.
      */
     @Nonnull private Function<ProfileRequestContext, SAMLMetadataContext> metadataContextLookupStrategy;
-
+    
     /**
      * Strategy used to locate the {@link SAMLMetadataContext} associated with a given {@link AttributeFilterContext}.
      */
@@ -108,13 +108,15 @@ public class FilterAttributes extends AbstractProfileAction {
     @Nullable private AttributeContext attributeContext;
 
     /**
-     * Constructor. Initializes {@link #relyingPartyContextLookupStrategy}, {@link #authnContextLookupStrategy} and
-     * {@link #subjectContextLookupStrategy} to {@link ChildContextLookup}.
+     * Constructor.
      * 
-     * @param service engine used to filter attributes
+     * <p>Initializes {@link #relyingPartyContextLookupStrategy}, {@link #authnContextLookupStrategy} and
+     * {@link #subjectContextLookupStrategy} to {@link ChildContextLookup}.</p>
+     * 
+     * @param filterService engine used to filter attributes
      */
-    public FilterAttributes(@Nonnull final ReloadableService<AttributeFilter> service) {
-        filterService = Constraint.isNotNull(service, "Service cannot be null");
+    public FilterAttributes(@Nonnull final ReloadableService<AttributeFilter> filterService) {
+        attributeFilterService = Constraint.isNotNull(filterService, "Service cannot be null");
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
         subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class, false);
         authnContextLookupStrategy = new ChildContextLookup<>(AuthenticationContext.class, false);
@@ -126,7 +128,12 @@ public class FilterAttributes extends AbstractProfileAction {
                         new InboundMessageContextLookup()));
         
         // This is always set to navigate to the root context and then apply the previous function.
-        metadataFromFilterLookupStrategy = Functions.compose(metadataContextLookupStrategy,
+        metadataFromFilterLookupStrategy = Functions.compose(
+                new Function<ProfileRequestContext,SAMLMetadataContext>() {
+                    public SAMLMetadataContext apply(ProfileRequestContext input) {
+                        return metadataContextLookupStrategy.apply(input);
+                    }
+                },
                 new RootContextLookup<AttributeFilterContext,ProfileRequestContext>());
     }
 
@@ -270,7 +277,7 @@ public class FilterAttributes extends AbstractProfileAction {
         ServiceableComponent<AttributeFilter> component = null;
 
         try {
-            component = filterService.getServiceableComponent();
+            component = attributeFilterService.getServiceableComponent();
             if (null == component) {
                 log.error("{} Error encountered while filtering attributes : Invalid Attribute Filter configuration",
                         getLogPrefix());
