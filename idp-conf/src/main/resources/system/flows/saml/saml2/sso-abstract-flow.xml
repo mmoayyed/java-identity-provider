@@ -1,0 +1,110 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
+      abstract="true" parent="SAML.Abstract">
+
+    <!-- Bootstrap action has to be at the "top" of the flow after this flow prepends itself to parent. -->
+    
+    <action-state id="InitializeProfileRequestContext">
+        <evaluate expression="InitializeProfileRequestContext" />
+        <transition on="proceed" to="DecodeMessage" />
+    </action-state>
+    
+    <!-- This picks up from the parent flow with endpoint validation. -->
+
+    <action-state id="PopulateBindingAndEndpointContexts">
+        <evaluate expression="PopulateBindingAndEndpointContexts" />
+        <transition on="proceed" to="InitializeAuthenticationContext" />
+    </action-state>
+        
+    <action-state id="InitializeAuthenticationContext">
+        <evaluate expression="InitializeAuthenticationContext" />
+        <transition on="proceed" to="DoAuthenticationSubflow" />
+    </action-state>
+    
+    <!-- Authentication Handoff -->
+    
+    <subflow-state id="DoAuthenticationSubflow" subflow="Authentication">
+        <transition on="proceed" to="ResolveAttributes" />
+    </subflow-state>
+        
+    <!-- Attribute Resolution -->
+
+    <action-state id="ResolveAttributes">
+        <evaluate expression="ResolveAttributes" />
+        <transition on="proceed" to="FilterAttributes" />
+    </action-state>
+
+    <action-state id="FilterAttributes">
+        <evaluate expression="FilterAttributes" />
+        <transition on="proceed" to="AddResponseShell" />
+    </action-state>
+
+    <!-- Response Generation -->
+
+    <action-state id="AddResponseShell">
+        <evaluate expression="AddResponseShell" />
+        <transition on="proceed" to="AddInResponseToToResponse" />
+    </action-state>
+
+    <action-state id="AddInResponseToToResponse">
+        <evaluate expression="AddInResponseToToResponse" />
+        <transition on="proceed" to="AddAuthnStatementToAssertion" />
+    </action-state>
+
+    <!-- Assertion Generation -->
+
+    <action-state id="AddAuthnStatementToAssertion">
+        <evaluate expression="AddAuthnStatementToAssertion" />
+        <transition on="proceed" to="AddAttributeStatementToAssertion" />
+    </action-state>
+
+    <action-state id="AddAttributeStatementToAssertion">
+        <evaluate expression="AddAttributeStatementToAssertion" />
+        <transition on="proceed" to="AddNameIDToSubjects" />
+    </action-state>
+
+    <action-state id="AddNameIDToSubjects">
+        <evaluate expression="AddNameIDToSubjects" />
+        <transition on="proceed" to="AddSubjectConfirmationToSubjects" />
+    </action-state>
+
+    <action-state id="AddSubjectConfirmationToSubjects">
+        <evaluate expression="AddSubjectConfirmationToSubjects" />
+        <transition on="proceed" to="AddNotBeforeConditionToAssertions" />
+    </action-state>
+
+    <action-state id="AddNotBeforeConditionToAssertions">
+        <evaluate expression="AddNotBeforeConditionToAssertions" />
+        <transition on="proceed" to="AddNotOnOrAfterConditionToAssertions" />
+    </action-state>
+
+    <action-state id="AddNotOnOrAfterConditionToAssertions">
+        <evaluate expression="AddNotOnOrAfterConditionToAssertions" />
+        <transition on="proceed" to="AddAudienceRestrictionToAssertions" />
+    </action-state>
+
+    <action-state id="AddAudienceRestrictionToAssertions">
+        <evaluate expression="AddAudienceRestrictionToAssertions" />
+        <transition on="proceed" to="SignAssertions" />
+    </action-state>
+
+    <action-state id="SignAssertions">
+        <evaluate expression="SignAssertions" />
+        <transition on="proceed" to="UpdateSessionWithSPSession" />
+    </action-state>
+
+    <!-- Session Update -->
+
+    <action-state id="UpdateSessionWithSPSession">
+        <evaluate expression="UpdateSessionWithSPSession" />
+        <transition on="proceed" to="HandleOutboundMessage" />
+        <!-- Mask storage failure. -->
+        <transition on="IOError" to="HandleOutboundMessage" />
+    </action-state>
+    
+    <!-- Outbound message handling completes in the parent flow. -->
+
+    <bean-import resource="sso-abstract-beans.xml" />
+
+</flow>

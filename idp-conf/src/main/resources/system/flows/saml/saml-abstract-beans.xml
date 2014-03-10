@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:c="http://www.springframework.org/schema/c"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+    default-init-method="initialize"
+    default-destroy-method="destroy">
+
+    <context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
+
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
+
+    <!-- These are beans that are common to most or all SAML profile flows, regardless of version. -->
+
+    <bean id="HandleInboundMessage" class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
+        c:messageHandler-ref="inboundMessageHandlerChain"
+        c:executionDirection="INBOUND" />
+
+    <!-- TODO: remove once we get real metadata config in place -->
+    <bean id="ExampleMetadata" class="org.springframework.core.io.FileSystemResource" c:path="${idp.home}/metadata/example-metadata.xml" />
+
+    <bean id="InitializeRelyingPartyContexFromSAMLPeer"
+        class="net.shibboleth.idp.saml.impl.profile.InitializeRelyingPartyContextFromSAMLPeer" scope="prototype" />
+
+    <bean id="SelectRelyingPartyConfiguration"
+        class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration" scope="prototype"
+        p:relyingPartyConfigurationResolver-ref="RelyingPartyConfigurationResolver" />
+
+    <bean id="RelyingPartyConfigurationResolver"
+        class="net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver" scope="prototype"
+        p:relyingPartyConfigurations-ref="RelyingPartyConfiguration" />
+
+    <bean id="SelectProfileConfiguration"
+        class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration" scope="prototype" />
+
+    <bean id="InitializeOutboundMessageContext"
+        class="net.shibboleth.idp.saml.impl.profile.InitializeOutboundMessageContext" scope="prototype" />
+
+    <bean id="InitializeAuthenticationContext"
+        class="net.shibboleth.idp.saml.impl.profile.InitializeAuthenticationContext" scope="prototype" />
+
+    <bean id="InitializeRequestedPrincipalContext"
+        class="net.shibboleth.idp.authn.impl.InitializeRequestedPrincipalContext" scope="prototype" />
+
+    <bean id="ResolveAttributes" class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
+        c:resolverService-ref="shibboleth.AttributeResolverService" />
+
+    <bean id="FilterAttributes" class="net.shibboleth.idp.profile.impl.FilterAttributes" scope="prototype"
+        c:filterService-ref="shibboleth.AttributeFilterService" />
+
+    <bean id="AddInResponseToToResponse"
+            class="org.opensaml.saml.common.profile.impl.AddInResponseToToResponse" scope="prototype">
+        <property name="requestIdLookupStrategy">
+            <bean class="org.opensaml.saml.common.profile.impl.AddInResponseToToResponse.DefaultRequestIdLookupStrategy"
+                p:suppressForBindings="#{ {'urn:mace:shibboleth:1.0:profiles:AuthnRequest', 'urn:mace:shibboleth:2.0:profiles:AuthnRequest'} }"/>
+        </property>
+    </bean>
+
+    <bean id="AddNotBeforeConditionToAssertions"
+            class="org.opensaml.saml.common.profile.impl.AddNotBeforeConditionToAssertions" scope="prototype">
+        <property name="activationCondition">
+            <bean class="net.shibboleth.idp.saml.impl.profile.config.logic.NotBeforeProfileConfigPredicate" />
+        </property>
+    </bean>
+
+    <bean id="AddNotOnOrAfterConditionToAssertions"
+            class="org.opensaml.saml.common.profile.impl.AddNotOnOrAfterConditionToAssertions" scope="prototype"
+            p:defaultAssertionLifetime="PT5M">
+        <property name="assertionLifetimeStrategy">
+            <bean class="net.shibboleth.idp.saml.impl.profile.config.navigate.AssertionLifetimeLookupFunction" />
+        </property>
+    </bean>
+
+    <bean id="AddAudienceRestrictionToAssertions"
+            class="org.opensaml.saml.common.profile.impl.AddAudienceRestrictionToAssertions" scope="prototype">
+        <property name="audienceRestrictionsLookupStrategy">
+            <bean class="net.shibboleth.idp.saml.impl.profile.config.navigate.AudienceRestrictionsLookupFunction" />
+        </property>
+    </bean>
+
+    <bean id="SignAssertions" class="org.opensaml.saml.common.profile.impl.SignAssertions" scope="prototype">
+        <property name="securityParametersLookupStrategy">
+            <bean class="com.google.common.base.Functions" factory-method="compose"
+                c:g-ref="shibboleth.ChildLookup.SecurityParameters"
+                c:f-ref="shibboleth.ChildLookup.RelyingParty" />
+        </property>
+    </bean>
+
+    <bean id="HandleOutboundMessage"
+        class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
+        c:messageHandler-ref="outboundMessageHandlerChain"
+        c:executionDirection="OUTBOUND" />
+
+    <bean id="outboundMessageHandlerChain"
+            class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
+        <property name="handlers">
+            <util:list>
+                <!-- TODO outbound handlers -->
+                <bean class="org.opensaml.saml.common.binding.SAMLOutboundDestinationHandler" />
+                <bean class="org.opensaml.saml.common.binding.security.EndpointUrlSchemeSecurityHandler" />
+                <bean class="org.opensaml.saml.common.binding.security.SAMLOutboundProtocolMessageSigningHandler" />
+            </util:list>
+        </property>
+    </bean>
+
+    <bean id="EncodeMessage" class="org.opensaml.profile.action.impl.EncodeMessage" scope="prototype"
+        p:messageEncoderFactory-ref="messageEncoderFactory" />
+
+    <bean id="RecordResponseComplete" class="net.shibboleth.idp.profile.impl.RecordResponseComplete" scope="prototype" />
+
+</beans>

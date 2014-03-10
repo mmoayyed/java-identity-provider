@@ -1,47 +1,18 @@
 <flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/webflow classpath:/org/springframework/webflow/engine/model/builder/xml/spring-webflow-2.0.xsd"
-    abstract="true">
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
+    abstract="true" parent="SAML.Abstract">
 
     <!-- https://wiki.shibboleth.net/confluence/display/IDP30/SAML+1.1+Browser+SSO -->
 
-    <!-- Preamble / Decode / Configuration Lookup -->
-
-    <on-start>
-        <evaluate expression="InitializeProfileRequestContext" />
-    </on-start>
-
-    <action-state id="DecodeMessage">
-        <evaluate expression="DecodeMessage" />
-        <transition on="proceed" to="HandleInboundMessage" />
-    </action-state>
-
-    <action-state id="HandleInboundMessage">
-        <evaluate expression="HandleInboundMessage" />
-        <transition on="proceed" to="InitializeRelyingPartyContexFromSAMLPeer" />
-    </action-state>
-
-    <action-state id="InitializeRelyingPartyContexFromSAMLPeer">
-        <evaluate expression="InitializeRelyingPartyContexFromSAMLPeer" />
-        <transition on="proceed" to="SelectRelyingPartyConfiguration" />
-    </action-state>
-
-    <action-state id="SelectRelyingPartyConfiguration">
-        <evaluate expression="SelectRelyingPartyConfiguration" />
-        <transition on="proceed" to="SelectProfileConfiguration" />
-    </action-state>
-
-    <action-state id="SelectProfileConfiguration">
-        <evaluate expression="SelectProfileConfiguration" />
-        <transition on="proceed" to="InitializeOutboundMessageContext" />
-    </action-state>
-
-    <!-- Request Checking and Preliminaries -->
-
-    <action-state id="InitializeOutboundMessageContext">
-        <evaluate expression="InitializeOutboundMessageContext" />
-        <transition on="proceed" to="PopulateBindingAndEndpointContexts" />
-    </action-state>
+    <!-- Bootstrap action has to be at the "top" of the flow after this flow prepends itself to parent. -->
     
+    <action-state id="InitializeProfileRequestContext">
+        <evaluate expression="InitializeProfileRequestContext" />
+        <transition on="proceed" to="DecodeMessage" />
+    </action-state>
+
+    <!-- This picks up from the parent flow with endpoint validation. -->
+
     <action-state id="PopulateBindingAndEndpointContexts">
         <evaluate expression="PopulateBindingAndEndpointContexts" />
         <transition on="proceed" to="InitializeAuthenticationContext" />
@@ -61,7 +32,6 @@
 
     <subflow-state id="DoAuthenticationSubflow" subflow="Authentication">
         <transition on="proceed" to="ResolveAttributes" />
-        <transition on="#{true}" to="ResolveAttributes" />
     </subflow-state>
 
     <!-- Attribute Resolution -->
@@ -138,39 +108,8 @@
         <!-- Mask storage failure. -->
         <transition on="IOError" to="HandleOutboundMessage" />
     </action-state>
-
-    <!-- Post Processing / Encode -->
-
-    <action-state id="HandleOutboundMessage">
-        <evaluate expression="HandleOutboundMessage" />
-        <transition on="proceed" to="EncodeMessage" />
-    </action-state>
-
-    <action-state id="EncodeMessage">
-        <evaluate expression="EncodeMessage" />
-        <transition on="proceed" to="RecordResponseComplete" />
-    </action-state>
-
-    <action-state id="RecordResponseComplete">
-        <evaluate expression="RecordResponseComplete" />
-        <transition on="proceed" to="end" />
-    </action-state>
-
-    <end-state id="end">
-        <!-- TODO: Probably remove later. For tests, map the profile request context as an output attribute -->
-        <output name="ProfileRequestContext"
-            value="flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext')" />
-    </end-state>
-
-    <!-- TODO error view-state ? -->
-    <view-state id="error" />
-
-    <global-transitions>
-        <transition on="NoPotentialFlow" to="error" />
-        <transition on="EndpointResolutionFailed" to="error" />
-        <transition on="#{currentEvent.id.startsWith('Unable')}" to="error" />
-        <transition on="#{currentEvent.id.startsWith('Invalid')}" to="error" />
-    </global-transitions>
+    
+    <!-- Outbound message handling completes in the parent flow. -->
 
     <bean-import resource="sso-abstract-beans.xml" />
 

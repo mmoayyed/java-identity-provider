@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:c="http://www.springframework.org/schema/c"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+    default-init-method="initialize"
+    default-destroy-method="destroy">
+
+    <context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
+
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
+
+    <bean id="InitializeProfileRequestContext"
+        class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
+        p:profileId="#{T(net.shibboleth.idp.saml.profile.config.saml1.BrowserSSOProfileConfiguration).PROFILE_ID}" />
+
+    <bean id="inboundMessageHandlerChain"
+            class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
+        <property name="handlers">
+            <util:list>
+                <bean class="org.opensaml.saml.common.binding.SAMLProtocolAndRoleHandler">
+                    <property name="protocol">
+                        <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML11P_NS" />
+                    </property>
+                    <property name="role">
+                        <util:constant static-field="org.opensaml.saml.saml2.metadata.SPSSODescriptor.DEFAULT_ELEMENT_NAME" />
+                    </property>
+                </bean>
+                
+                <!-- TODO: need to poke metadata source in from relying party config later -->
+                <bean class="org.opensaml.saml.common.binding.SAMLMetadataLookupHandler">
+                    <property name="roleDescriptorResolver">
+                        <bean class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver">
+                            <constructor-arg>
+                                <bean class="org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolver"
+                                        p:parserPool-ref="shibboleth.ParserPool">
+                                    <constructor-arg>
+                                        <util:property-path path="ExampleMetadata.File" />
+                                    </constructor-arg>
+                                </bean>
+                            </constructor-arg>
+                        </bean>
+                    </property>
+                </bean>
+                
+                <!-- TODO: move to the dynamically resolved handler chain -->
+                <bean class="org.opensaml.saml.common.binding.security.MessageReplaySecurityHandler"
+                    p:replayCache-ref="shibboleth.ReplayCache" />
+                <bean class="org.opensaml.saml.common.binding.security.MessageLifetimeSecurityHandler" />
+            </util:list>
+        </property>
+    </bean>
+
+    <!-- TODO replace with eventual relying-party.xml config -->
+    <bean
+        id="SecurityConfiguration"
+        class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
+    <bean
+        id="SAML1BrowserSSOProfileConfiguration"
+        class="net.shibboleth.idp.saml.profile.config.saml1.BrowserSSOProfileConfiguration"
+        p:securityConfiguration-ref="SecurityConfiguration" />
+    <bean
+        id="RelyingPartyConfiguration"
+        class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"
+        p:id="ActivatedRelyingPartyConfiguration"
+        p:responderId="https://idp.example.org"
+        p:detailedErrors="true"
+        p:profileConfigurations-ref="SAML1BrowserSSOProfileConfiguration" />
+
+    <bean id="PopulateBindingAndEndpointContexts"
+        class="net.shibboleth.idp.saml.impl.profile.PopulateBindingAndEndpointContexts" scope="prototype"
+        p:endpointResolver-ref="shibboleth.EndpointResolver"
+        p:bindings-ref="shibboleth.OutgoingSAML1SSOBindings" />
+
+    <bean id="AddResponseShell" class="org.opensaml.saml.saml1.profile.impl.AddResponseShell" scope="prototype">
+        <property name="identifierGeneratorLookupStrategy">
+            <bean class="net.shibboleth.idp.saml.impl.profile.config.navigate.IdentifierGenerationStrategyLookupFunction" />
+        </property>
+    </bean>
+
+    <bean id="AddAuthenticationStatementToAssertion"
+        class="net.shibboleth.idp.saml.impl.profile.saml1.AddAuthenticationStatementToAssertion" scope="prototype" />
+
+    <bean id="AddAttributeStatementToAssertion"
+        class="net.shibboleth.idp.saml.impl.profile.saml1.AddAttributeStatementToAssertion" scope="prototype" />
+
+    <bean id="AddNameIdentifierToSubjects"
+            class="org.opensaml.saml.saml1.profile.impl.AddNameIdentifierToSubjects" scope="prototype"
+            p:defaultNameIDGenerator="#{getObject('shibboleth.LegacySAML1NameIdentifierGenerator')}"
+            p:nameIdentifierGenerators-ref="shibboleth.SAML1NameIdentifierGenerators">
+        <property name="formatLookupStrategy">
+            <bean class="net.shibboleth.idp.saml.impl.profile.logic.DefaultNameIdentifierFormatStrategy" />
+        </property>
+    </bean>
+
+    <bean id="AddSubjectConfirmationToSubjects"
+        class="org.opensaml.saml.saml1.profile.impl.AddSubjectConfirmationToSubjects" scope="prototype"
+        p:methods="#{ {'urn:oasis:names:tc:SAML:1.0:cm:bearer'} }" />
+
+    <bean id="UpdateSessionWithSPSession"
+        class="net.shibboleth.idp.session.impl.UpdateSessionWithSPSession" scope="prototype"
+        p:enabled="${idp.session.enabled}"
+        p:sessionManager-ref="shibboleth.SessionManager"
+        p:sessionLifetime="${idp.session.defaultSPlifetime}" />
+
+    <bean id="messageEncoderFactory" class="net.shibboleth.idp.saml.impl.profile.SpringAwareMessageEncoderFactory"
+        p:bindings-ref="shibboleth.OutgoingSAML1SSOBindings" />
+
+</beans>

@@ -17,30 +17,16 @@
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
-    
-    <!--
-    <bean class="idp.LoggingBeanPostProcessor" />
-    -->
-    
-    <!--
-    <bean id="LogSpringContextInfo" class="idp.LogSpringContextInfo" />
-    -->
 
     <bean id="InitializeProfileRequestContext" class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext">
         <property name="profileId">
             <util:constant static-field="net.shibboleth.idp.saml.profile.config.saml2.BrowserSSOProfileConfiguration.PROFILE_ID" />
         </property>
     </bean>
-
-    <!-- TODO: remove once we get real metadata config in place -->
-    <bean id="ExampleMetadata" class="org.springframework.core.io.FileSystemResource" c:path="${idp.home}/metadata/example-metadata.xml" />
     
     <bean id="inboundMessageHandlerChain" class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
         <property name="handlers">
             <util:list>
-            
-                <bean class="idp.TestMessageHandler" scope="prototype" />
-                
                 <bean class="org.opensaml.saml.common.binding.CheckMessageVersionHandler" />
                 
                 <bean class="org.opensaml.saml.common.binding.SAMLProtocolAndRoleHandler">
@@ -68,6 +54,7 @@
                     </property>
                 </bean>
 
+                <!-- TODO: move to the dynamically resolved handler chain -->
                 <bean class="org.opensaml.saml.common.binding.security.ReceivedEndpointSecurityHandler" scope="prototype">
                     <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
                 </bean>
@@ -99,69 +86,6 @@
             </util:list>
         </property>
     </bean>
-    
-    <bean id="HandleInboundMessage" class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype">
-        <constructor-arg ref="inboundMessageHandlerChain"/>
-        <constructor-arg value="INBOUND" />
-    </bean>
-    
-    <bean id="InitializeAuthenticationContext" class="net.shibboleth.idp.saml.impl.profile.InitializeAuthenticationContext" scope="prototype" />
-    
-    <bean id="BuildResponse" class="idp.BuildMockSaml2Response" />
-    
-    <bean id="outboundMessageHandlerChain" class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
-        <property name="handlers">
-            <util:list>
-            
-                <bean class="idp.TestMessageHandler" scope="prototype" />
-                
-                <bean class="org.opensaml.saml.common.binding.SAMLOutboundDestinationHandler" />
-                
-                <bean class="org.opensaml.saml.common.binding.security.EndpointUrlSchemeSecurityHandler" />
-                
-                <bean class="org.opensaml.saml.common.binding.security.SAMLOutboundProtocolMessageSigningHandler" />
-                
-            </util:list>
-        </property>
-    </bean>
-    
-    <bean id="HandleOutboundMessage" class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype">
-        <constructor-arg ref="outboundMessageHandlerChain"/>
-        <constructor-arg value="OUTBOUND" />
-    </bean>
-    
-    <bean id="EncodeMessage" class="org.opensaml.profile.action.impl.EncodeMessage" scope="prototype">
-        <property name="messageEncoderFactory">
-            <bean class="net.shibboleth.idp.saml.impl.profile.SpringAwareMessageEncoderFactory"
-                p:bindings-ref="shibboleth.OutgoingSAML2SSOBindings" />
-        </property>
-    </bean>
-    
-    <bean id="AddBasicMessageMetadataContext" class="idp.AddBasicMessageMetadataContext" />
-    
-    <bean id="InitializeRelyingPartyContexFromSAMLPeer" class="net.shibboleth.idp.saml.impl.profile.InitializeRelyingPartyContextFromSAMLPeer" />
-            
-    <bean id="CheckMandatoryIssuer" class="org.opensaml.profile.action.impl.CheckMandatoryIssuer" />
-    
-    <bean id="ResolveAttributes" class="net.shibboleth.idp.profile.impl.ResolveAttributes" >
-       <constructor-arg ref="shibboleth.AttributeResolverService"/>
-    </bean>
-    
-    <bean id="FilterAttributes" class="net.shibboleth.idp.profile.impl.FilterAttributes" >
-       <constructor-arg ref="shibboleth.AttributeFilterService"/>
-    </bean>
-
-    <bean
-        id="InitializeOutboundMessageContext"
-        class="net.shibboleth.idp.saml.impl.profile.InitializeOutboundMessageContext"
-        scope="prototype" />
-
-    <bean
-        id="PopulateBindingAndEndpointContexts"
-        class="net.shibboleth.idp.saml.impl.profile.PopulateBindingAndEndpointContexts"
-        scope="prototype"
-        p:endpointResolver-ref="shibboleth.EndpointResolver"
-        p:bindings-ref="shibboleth.OutgoingSAML2SSOBindings" />
 
     <!-- TODO replace with eventual relying-party.xml config -->
     <bean id="RelyingPartyConfiguration" class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"
@@ -182,24 +106,51 @@
         </property>
     </bean>
 
-    <bean id="RelyingPartyConfigurationResolver" p:id="RelyingPartyConfigurationResolver" class="net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver">
-        <property name="relyingPartyConfigurations">
-            <util:list>
-                <ref bean="RelyingPartyConfiguration" />
-            </util:list>
+    <bean id="PopulateBindingAndEndpointContexts"
+        class="net.shibboleth.idp.saml.impl.profile.PopulateBindingAndEndpointContexts" scope="prototype"
+        p:endpointResolver-ref="shibboleth.EndpointResolver"
+        p:bindings-ref="shibboleth.OutgoingSAML2SSOBindings" />
+        
+    <bean id="AddResponseShell" class="org.opensaml.saml.saml2.profile.impl.AddResponseShell" scope="prototype">
+        <property name="identifierGeneratorLookupStrategy">
+            <bean class="net.shibboleth.idp.saml.impl.profile.config.navigate.IdentifierGenerationStrategyLookupFunction" />
+        </property>
+        <property name="issuerLookupStrategy">
+            <bean class="net.shibboleth.idp.saml.impl.profile.config.navigate.ResponderIdLookupFunction" />
         </property>
     </bean>
 
-    <bean id="SelectRelyingPartyConfiguration" class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration" scope="prototype"
-        p:relyingPartyConfigurationResolver-ref="RelyingPartyConfigurationResolver" />
+    <bean id="AddAuthnStatementToAssertion"
+        class="net.shibboleth.idp.saml.impl.profile.saml2.AddAuthnStatementToAssertion" scope="prototype" />
 
-    <bean id="SelectProfileConfiguration" class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration" scope="prototype"/>
+    <bean id="AddAttributeStatementToAssertion"
+        class="net.shibboleth.idp.saml.impl.profile.saml2.AddAttributeStatementToAssertion" scope="prototype" />
 
-    <bean id="UpdateSessionWithSPSession" class="net.shibboleth.idp.session.impl.UpdateSessionWithSPSession" scope="prototype"
+    <bean id="AddNameIDToSubjects"
+            class="org.opensaml.saml.saml2.profile.impl.AddNameIDToSubjects" scope="prototype"
+            p:defaultNameIDGenerator="#{getObject('shibboleth.LegacySAML2NameIdentifierGenerator')}"
+            p:nameIDGenerators-ref="shibboleth.SAML2NameIDGenerators">
+        <property name="formatLookupStrategy">
+            <bean class="net.shibboleth.idp.saml.impl.profile.logic.DefaultNameIdentifierFormatStrategy" />
+        </property>
+    </bean>
+
+    <bean id="AddSubjectConfirmationToSubjects"
+        class="org.opensaml.saml.saml2.profile.impl.AddSubjectConfirmationToSubjects" scope="prototype"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:method="urn:oasis:names:tc:SAML:2.0:cm:bearer" />
+
+    <bean id="UpdateSessionWithSPSession"
+            class="net.shibboleth.idp.session.impl.UpdateSessionWithSPSession" scope="prototype"
             p:enabled="${idp.session.enabled}"
-            p:sessionManager-ref="shibboleth.SessionManager"
-            p:sessionLifetime="${idp.session.defaultSPlifetime}" />
-
-    <bean id="AddAttributeStatementToAssertion" class="net.shibboleth.idp.saml.impl.profile.saml2.AddAttributeStatementToAssertion" />
+            p:sessionManager-ref="shibboleth.SessionManager">
+        <property name="SPSessionCreationStrategy">
+            <bean class="net.shibboleth.idp.saml.impl.session.SAML2SPSessionCreationStrategy"
+                c:lifetime="${idp.session.defaultSPlifetime}"/>
+        </property>
+    </bean>
+        
+    <bean id="messageEncoderFactory" class="net.shibboleth.idp.saml.impl.profile.SpringAwareMessageEncoderFactory"
+        p:bindings-ref="shibboleth.OutgoingSAML2SSOBindings" />
     
 </beans>
