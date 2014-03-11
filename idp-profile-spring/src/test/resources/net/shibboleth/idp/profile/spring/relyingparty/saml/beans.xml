@@ -38,6 +38,9 @@
     <bean id="shibboleth.SAML1.Artifact.ServiceIndex" class="java.lang.String" c:_0="43210"/>
     <bean id="shibboleth.SAML1.AttributeQuery.ServiceURL" class="java.lang.String" c:_0="https://idp.example.org/AttributeQuery/SAML1"/>
     <bean id="shibboleth.SAML1.AttributeQuery.ServiceIndex" class="java.lang.String" c:_0="432100"/>
+    <bean id="shibboleth.SAML1.BrowserSSO.ServiceURL" class="java.lang.String" c:_0="https://idp.example.org/SSO/SAML1"/>
+    <bean id="shibboleth.SAML1.BrowserSSO.ServiceIndex" class="java.lang.String" c:_0="1111"/>
+
     
 </beans>
                             
