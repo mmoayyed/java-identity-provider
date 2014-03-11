@@ -36,6 +36,8 @@
     
     <bean id="shibboleth.SAML1.Artifact.ServiceURL" class="java.lang.String" c:_0="https://idp.example.org/Artifact/SAML1"/>
     <bean id="shibboleth.SAML1.Artifact.ServiceIndex" class="java.lang.String" c:_0="43210"/>
+    <bean id="shibboleth.SAML1.AttributeQuery.ServiceURL" class="java.lang.String" c:_0="https://idp.example.org/AttributeQuery/SAML1"/>
+    <bean id="shibboleth.SAML1.AttributeQuery.ServiceIndex" class="java.lang.String" c:_0="432100"/>
     
 </beans>
                             
