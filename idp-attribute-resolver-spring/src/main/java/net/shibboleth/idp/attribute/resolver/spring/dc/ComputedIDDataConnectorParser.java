@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring.dc;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.impl.dc.ComputedIDDataConnector;
+import net.shibboleth.idp.saml.impl.attribute.resolver.ComputedIDDataConnector;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;

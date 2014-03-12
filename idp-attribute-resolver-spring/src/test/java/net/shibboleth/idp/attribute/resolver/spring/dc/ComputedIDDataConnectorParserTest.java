@@ -17,8 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
-import net.shibboleth.idp.attribute.resolver.impl.dc.ComputedIDDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
+import net.shibboleth.idp.saml.impl.attribute.resolver.ComputedIDDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
