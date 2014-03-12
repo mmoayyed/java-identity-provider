@@ -34,12 +34,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 
+import org.cryptacular.util.CodecUtil;
+import org.cryptacular.util.HashUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import edu.vt.middleware.crypt.digest.DigestAlgorithm;
-import edu.vt.middleware.crypt.digest.SHA256;
-import edu.vt.middleware.crypt.util.HexConverter;
 
 /**
  * Consent helper class.
@@ -87,9 +85,6 @@ public final class ConsentHelper {
      */
     public static String hashAttributeValues(final IdPAttribute attribute) {
 
-        // TODO: Make static member?
-        final DigestAlgorithm digestAlgorithm = new SHA256();
-
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ObjectOutputStream objectOutputStream;
         try {
@@ -102,7 +97,7 @@ public final class ConsentHelper {
             LOGGER.error("Error while converting attribute values into a byte array", e);
             return null;
         }
-        return digestAlgorithm.digest(byteArrayOutputStream.toByteArray(), new HexConverter(true));
+        return CodecUtil.hex(HashUtil.sha256(byteArrayOutputStream.toByteArray()), true);
     }
 
     /**

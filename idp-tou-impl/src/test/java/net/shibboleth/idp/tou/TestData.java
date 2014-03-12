@@ -20,11 +20,10 @@ package net.shibboleth.idp.tou;
 import java.util.Random;
 import java.util.UUID;
 
+import org.cryptacular.util.CodecUtil;
+import org.cryptacular.util.HashUtil;
 import org.joda.time.DateTime;
 import org.testng.annotations.DataProvider;
-
-import edu.vt.middleware.crypt.digest.SHA256;
-import edu.vt.middleware.crypt.util.HexConverter;
 
 public class TestData {
 
@@ -37,7 +36,7 @@ public class TestData {
     private static String getRandomFingerprint() {
         final byte[] bytes = new byte[4096];
         random.nextBytes(bytes);
-        return new SHA256().digest(bytes, new HexConverter(true));
+        return CodecUtil.hex(HashUtil.sha256(bytes), true);
     }
 
     private static String getRandomVersion() {

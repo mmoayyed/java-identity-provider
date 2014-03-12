@@ -30,12 +30,11 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 
+import org.cryptacular.util.CodecUtil;
+import org.cryptacular.util.HashUtil;
 import org.joda.time.DateTime;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.testng.annotations.DataProvider;
-
-import edu.vt.middleware.crypt.digest.SHA256;
-import edu.vt.middleware.crypt.util.HexConverter;
 
 /**
  *
@@ -78,7 +77,7 @@ public class TestData {
     private static String getRandomHash() {
         byte[] bytes = new byte[4096];
         random.nextBytes(bytes);
-        return new SHA256().digest(bytes, new HexConverter(true));
+        return CodecUtil.hex(HashUtil.sha256(bytes), true);
     }
 
     private static DateTime getRandomDate() {
