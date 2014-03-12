@@ -55,7 +55,7 @@
                 <attribute name="generatedAttributeID" type="string">
                     <annotation>
                         <documentation>
-                            The name of the attribute which should be used to as input to the computed ID.
+                            The name of the attribute produced by this data connector.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -113,7 +113,7 @@
                 <attribute name="generatedAttributeID" type="string">
                     <annotation>
                         <documentation>
-                            The name of the attribute which should be used to as input to the computed ID.
+                            The name of the attribute produced by this data connector.
                         </documentation>
                     </annotation>
                 </attribute>
