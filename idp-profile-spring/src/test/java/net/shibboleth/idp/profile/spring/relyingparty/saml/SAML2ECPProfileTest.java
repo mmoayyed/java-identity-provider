@@ -31,7 +31,7 @@ public class SAML2ECPProfileTest extends BaseSAMLProfileTest {
 
     @Test public void defaults() {
 
-        ECPProfileConfiguration profile = getBean(ECPProfileConfiguration.class, true, "ecp.xml");
+        ECPProfileConfiguration profile = getBean(ECPProfileConfiguration.class, true, "saml/ecp.xml");
 
         Assert.assertTrue(profile.includeAttributeStatement());
         Assert.assertFalse(profile.skipEndpointValidationWhenSigned());
@@ -57,7 +57,7 @@ public class SAML2ECPProfileTest extends BaseSAMLProfileTest {
 
     @Test public void values() {
         BrowserSSOProfileConfiguration profile =
-                getBean(BrowserSSOProfileConfiguration.class, true, "beans.xml", "ecpValues.xml");
+                getBean(BrowserSSOProfileConfiguration.class, true, "beans.xml", "saml/ecpValues.xml");
 
         Assert.assertFalse(profile.includeAttributeStatement());
         Assert.assertTrue(profile.skipEndpointValidationWhenSigned());

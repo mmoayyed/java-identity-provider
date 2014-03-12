@@ -31,7 +31,7 @@ public class SAML2ArtifactTest extends BaseSAMLProfileTest {
     @Test public void defaults() {
 
         ArtifactResolutionProfileConfiguration profile =
-                getBean(ArtifactResolutionProfileConfiguration.class, true, "saml2artifact.xml");
+                getBean(ArtifactResolutionProfileConfiguration.class, true, "saml/saml2artifact.xml");
 
         // defaults for AbstractSAML2ProfileConfiguration
 
@@ -53,7 +53,7 @@ public class SAML2ArtifactTest extends BaseSAMLProfileTest {
 
     @Test public void values() {
         ArtifactResolutionProfileConfiguration profile =
-                getBean(ArtifactResolutionProfileConfiguration.class, false, "beans.xml", "saml2artifactValues.xml");
+                getBean(ArtifactResolutionProfileConfiguration.class, false, "beans.xml", "saml/saml2artifactValues.xml");
 
         assertFalsePredicate(profile.getEncryptAssertionsPredicate());
         assertTruePredicate(profile.getEncryptNameIDsPredicate());

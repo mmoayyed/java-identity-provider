@@ -30,7 +30,7 @@ public class ShibbolethSSOProfileTest extends BaseSAMLProfileTest {
 
     @Test public void defaults() {
 
-        BrowserSSOProfileConfiguration profile = getBean(BrowserSSOProfileConfiguration.class, true, "shibbolethSSO.xml");
+        BrowserSSOProfileConfiguration profile = getBean(BrowserSSOProfileConfiguration.class, true, "saml/shibbolethSSO.xml");
 
         Assert.assertFalse(profile.includeAttributeStatement());
 
@@ -45,7 +45,7 @@ public class ShibbolethSSOProfileTest extends BaseSAMLProfileTest {
 
     @Test public void values() {
         BrowserSSOProfileConfiguration profile =
-                getBean(BrowserSSOProfileConfiguration.class, true, "beans.xml", "shibbolethSSOValues.xml");
+                getBean(BrowserSSOProfileConfiguration.class, true, "beans.xml", "saml/shibbolethSSOValues.xml");
 
         Assert.assertTrue(profile.includeAttributeStatement());
         

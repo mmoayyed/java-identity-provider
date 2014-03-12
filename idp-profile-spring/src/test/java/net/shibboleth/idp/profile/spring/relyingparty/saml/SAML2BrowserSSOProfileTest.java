@@ -30,7 +30,7 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
 
     @Test public void defaults() {
 
-        BrowserSSOProfileConfiguration profile = getBean(BrowserSSOProfileConfiguration.class, true, "saml2SSO.xml");
+        BrowserSSOProfileConfiguration profile = getBean(BrowserSSOProfileConfiguration.class, true, "saml/saml2SSO.xml");
 
         Assert.assertTrue(profile.includeAttributeStatement());
         Assert.assertFalse(profile.skipEndpointValidationWhenSigned());
@@ -56,7 +56,7 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
 
     @Test public void values() {
         BrowserSSOProfileConfiguration profile =
-                getBean(BrowserSSOProfileConfiguration.class, true, "beans.xml", "saml2SSOValues.xml");
+                getBean(BrowserSSOProfileConfiguration.class, true, "beans.xml", "saml/saml2SSOValues.xml");
 
         Assert.assertFalse(profile.includeAttributeStatement());
         Assert.assertTrue(profile.skipEndpointValidationWhenSigned());

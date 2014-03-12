@@ -30,7 +30,7 @@ public class SAML1ArtifactTest extends BaseSAMLProfileTest {
     @Test public void defaults() {
 
         ArtifactResolutionProfileConfiguration profile =
-                getBean(ArtifactResolutionProfileConfiguration.class, true, "saml1artifact.xml");
+                getBean(ArtifactResolutionProfileConfiguration.class, true, "saml/saml1artifact.xml");
 
         // defaults for AbstractSAMLProfileConfiguration
         assertConditionalPredicate(profile.getSignRequestsPredicate());
@@ -44,7 +44,7 @@ public class SAML1ArtifactTest extends BaseSAMLProfileTest {
 
     @Test public void values() {
         ArtifactResolutionProfileConfiguration profile =
-                getBean(ArtifactResolutionProfileConfiguration.class, false, "beans.xml", "saml1artifactValues.xml");
+                getBean(ArtifactResolutionProfileConfiguration.class, false, "beans.xml", "saml/saml1artifactValues.xml");
 
         assertFalsePredicate(profile.getSignRequestsPredicate());
         assertFalsePredicate(profile.getSignAssertionsPredicate());

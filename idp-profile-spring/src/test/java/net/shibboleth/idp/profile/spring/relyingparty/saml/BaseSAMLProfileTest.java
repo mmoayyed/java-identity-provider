@@ -36,7 +36,7 @@ import com.google.common.collect.Sets;
 
 public class BaseSAMLProfileTest  extends OpenSAMLInitBaseTestCase {
     
-    private static final String PATH = "/net/shibboleth/idp/profile/spring/relyingparty/saml/";
+    private static final String PATH = "/net/shibboleth/idp/profile/spring/relyingparty/";
     
     protected <T extends AbstractSAMLProfileConfiguration> T getBean(Class<T> claz,  boolean validating, String... files){
         final Resource[] resources = new Resource[files.length];

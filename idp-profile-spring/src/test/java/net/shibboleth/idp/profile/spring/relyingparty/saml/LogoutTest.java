@@ -30,7 +30,7 @@ public class LogoutTest extends BaseSAMLProfileTest {
 
     @Test public void defaults() {
 
-        SingleLogoutProfileConfiguration profile = getBean(SingleLogoutProfileConfiguration.class, true, "logout.xml");
+        SingleLogoutProfileConfiguration profile = getBean(SingleLogoutProfileConfiguration.class, true, "saml/logout.xml");
 
         // defaults for AbstractSAML2ProfileConfiguration
 
@@ -52,7 +52,7 @@ public class LogoutTest extends BaseSAMLProfileTest {
 
     @Test public void values() {
         SingleLogoutProfileConfiguration profile =
-                getBean(SingleLogoutProfileConfiguration.class, false, "beans.xml", "logoutValues.xml");
+                getBean(SingleLogoutProfileConfiguration.class, false, "beans.xml", "saml/logoutValues.xml");
 
         assertTruePredicate(profile.getEncryptAssertionsPredicate());
         assertFalsePredicate(profile.getEncryptNameIDsPredicate());

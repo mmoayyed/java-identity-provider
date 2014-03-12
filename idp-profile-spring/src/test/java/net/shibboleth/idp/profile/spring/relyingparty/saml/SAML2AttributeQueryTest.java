@@ -31,7 +31,7 @@ public class SAML2AttributeQueryTest extends BaseSAMLProfileTest {
     @Test public void defaults() {
 
         AttributeQueryProfileConfiguration profile =
-                getBean(AttributeQueryProfileConfiguration.class, true, "saml2attributeQuery.xml");
+                getBean(AttributeQueryProfileConfiguration.class, true, "saml/saml2attributeQuery.xml");
 
         // defaults for AbstractSAML2ProfileConfiguration
 
@@ -53,7 +53,7 @@ public class SAML2AttributeQueryTest extends BaseSAMLProfileTest {
 
     @Test public void values() {
         AttributeQueryProfileConfiguration profile =
-                getBean(AttributeQueryProfileConfiguration.class, false, "beans.xml", "saml2attributeQueryValues.xml");
+                getBean(AttributeQueryProfileConfiguration.class, false, "beans.xml", "saml/saml2attributeQueryValues.xml");
 
         assertFalsePredicate(profile.getEncryptAssertionsPredicate());
         assertTruePredicate(profile.getEncryptNameIDsPredicate());

@@ -30,7 +30,7 @@ public class SAML1AttributeQueryTest extends BaseSAMLProfileTest {
     @Test public void defaults() {
 
         AttributeQueryProfileConfiguration profile =
-                getBean(AttributeQueryProfileConfiguration.class, true, "saml1attributeQuery.xml");
+                getBean(AttributeQueryProfileConfiguration.class, true, "saml/saml1attributeQuery.xml");
 
         // defaults for AbstractSAMLProfileConfiguration
         assertConditionalPredicate(profile.getSignRequestsPredicate());
@@ -44,7 +44,7 @@ public class SAML1AttributeQueryTest extends BaseSAMLProfileTest {
 
     @Test public void values() {
         AttributeQueryProfileConfiguration profile =
-                getBean(AttributeQueryProfileConfiguration.class, false, "beans.xml", "saml1attributeQueryValues.xml");
+                getBean(AttributeQueryProfileConfiguration.class, false, "beans.xml", "saml/saml1attributeQueryValues.xml");
 
         assertFalsePredicate(profile.getSignRequestsPredicate());
         assertFalsePredicate(profile.getSignAssertionsPredicate());
