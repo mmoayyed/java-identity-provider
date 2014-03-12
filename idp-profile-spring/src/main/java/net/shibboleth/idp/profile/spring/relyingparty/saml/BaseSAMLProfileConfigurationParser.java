@@ -168,6 +168,7 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
         builder.addPropertyValue("artifactConfiguration", getArtifactConfiguration(element));
 
         if (element.hasAttributeNS(null, "signingCredentialRef")) {
+            //TODO
             log.warn("I do not (yet) know how to handle 'signingCredential=\"{}\"' yet",
                     element.getAttributeNS(null, "signingCredentialRef"));
         }

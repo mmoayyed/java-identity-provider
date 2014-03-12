@@ -83,6 +83,7 @@ public class SAML1AttributeQueryProfileParser extends BaseSAMLProfileConfigurati
         }
         
         if (element.hasAttributeNS(null, "securityPolicyRef")) {
+            //TODO
             log.warn("I do not (yet) know how to deal with 'securityPolicyRef=\"{}\"'",
                     element.getAttributeNS(null, "securityPolicyRef"));
         }

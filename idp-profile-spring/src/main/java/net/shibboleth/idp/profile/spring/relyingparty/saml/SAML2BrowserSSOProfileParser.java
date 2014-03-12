@@ -149,6 +149,7 @@ public class SAML2BrowserSSOProfileParser extends BaseSAML2ProfileConfigurationP
         setPropertiesFromRelyingParty(element, builder);
 
         if (element.hasAttributeNS(null, "securityPolicyRef")) {
+            //TODO
             log.warn("I do not (yet) know how to deal with 'securityPolicyRef=\"{}\"'",
                     element.getAttributeNS(null, "securityPolicyRef"));
         }

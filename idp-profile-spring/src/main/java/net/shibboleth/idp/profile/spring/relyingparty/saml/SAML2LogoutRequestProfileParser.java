@@ -70,6 +70,7 @@ public class SAML2LogoutRequestProfileParser extends BaseSAML2ProfileConfigurati
         super.doParse(element, parserContext, builder);
 
         if (element.hasAttributeNS(null, "securityPolicyRef")) {
+            //TODO
             log.warn("I do not (yet) know how to deal with 'securityPolicyRef=\"{}\"'",
                     element.getAttributeNS(null, "securityPolicyRef"));
         }
