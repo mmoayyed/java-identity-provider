@@ -18,9 +18,9 @@
 package net.shibboleth.idp.relyingparty.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -60,7 +60,7 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
     @Nonnull private final Logger log = LoggerFactory.getLogger(DefaultRelyingPartyConfigurationResolver.class);
 
     /** Registered relying party configurations. */
-    private Collection<RelyingPartyConfiguration> rpConfigurations;
+    private List<RelyingPartyConfiguration> rpConfigurations;
 
     /** Constructor. */
     public DefaultRelyingPartyConfigurationResolver() {
@@ -72,7 +72,7 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
      * 
      * @return unmodifiable list of registered relying party configurations
      */
-    @Nonnull @NonnullElements @Unmodifiable @NotLive public Collection<RelyingPartyConfiguration>
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public List<RelyingPartyConfiguration>
             getRelyingPartyConfigurations() {
         return ImmutableList.copyOf(rpConfigurations);
     }
@@ -85,7 +85,7 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
      * @param configs list of registered relying party configurations
      */
     public void setRelyingPartyConfigurations(
-            @Nonnull @NonnullElements final Collection<RelyingPartyConfiguration> configs) {
+            @Nonnull @NonnullElements final List<RelyingPartyConfiguration> configs) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(configs, "RelyingPartyConfiguration collection cannot be null");
 
