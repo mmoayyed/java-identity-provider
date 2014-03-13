@@ -15,31 +15,33 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.spring.relyingparty;
+package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.idp.profile.spring.relyingparty.RelyingPartyNamespaceHandler;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Parser for the &lt:rp:relyingParty&gt; element.
+ * Parser for a &lt;rp:MetadataProvider&gt; element.
+ * 
+ * TODO.
  */
-public class RelyingPartyParser extends AbstractRelyingPartyParser {
+public class MetadataProviderParser extends AbstractSingleBeanDefinitionParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(RelyingPartyNamespaceHandler.NAMESPACE, "RelyingParty");
+    public static final QName ELEMENT_NAME = new QName(RelyingPartyNamespaceHandler.NAMESPACE, "MetadataProvider");
+
+    /** {@inheritDoc} */
+    @Override protected Class<Object> getBeanClass(Element element) {
+        return Object.class;
+    }
 
     /** {@inheritDoc} */
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(element, parserContext, builder);
-        
-        final String id = StringSupport.trimOrNull(element.getAttributeNS(null, "id"));
-        builder.addPropertyValue("id", id);
-        // TODO - plug in the predicate
-        //builder.addPropertyValue("activationCondition", <Something<id>)
     }
 }

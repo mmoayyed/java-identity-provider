@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 /**
- * Parsers for the urn:mace:shibboleth:2.0:relying-party:saml schema. Mostly 
- * to do with &lt;ProfileConfiguration&gt; 
+ * Parsers for the urn:mace:shibboleth:2.0:metadata schema. Mostly 
+ * to do with &lt;MetadataProvider&gt; and its children
  */
 
-package net.shibboleth.idp.profile.spring.relyingparty.saml;
+
+package net.shibboleth.idp.profile.spring.relyingparty.metadata;

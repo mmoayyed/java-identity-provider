@@ -15,39 +15,43 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.spring.relyingparty.saml;
+package net.shibboleth.idp.profile.spring.relyingparty;
+
+import java.util.List;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
-import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
+import net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.testng.Assert;
+import org.testng.annotations.Test;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 
-public class BaseSAMLProfileTest extends OpenSAMLInitBaseTestCase {
+/**
+ * Test for a complete example RelyingParty file
+ */
+public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
     
     private static final String PATH = "/net/shibboleth/idp/profile/spring/relyingparty/";
     
-    protected <T extends AbstractSAMLProfileConfiguration> T getBean(Class<T> claz,  boolean validating, String... files){
-        final Resource[] resources = new Resource[files.length];
-       
-        for (int i = 0; i < files.length; i++) {
-            resources[i] = new ClassPathResource(PATH + files[i]);
-        }
+    @Test public void relyingParties() {
+        final Resource[] resources = new Resource[2];
+        
+            resources[0] = new ClassPathResource(PATH + "beans.xml");
+            resources[1] = new ClassPathResource(PATH + "relying-party.xml");
         
         final GenericApplicationContext context = new GenericApplicationContext();
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
-        context.setDisplayName("ApplicationContext: " + claz);
+        context.setDisplayName("ApplicationContext: " );
         service.setConverters(Sets.newHashSet(new DurationToLongConverter(), new StringToIPRangeConverter()));
         service.afterPropertiesSet();
 
@@ -55,30 +59,17 @@ public class BaseSAMLProfileTest extends OpenSAMLInitBaseTestCase {
 
         final XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
 
-        configReader.setValidating(validating);
+        configReader.setValidating(true);
         
         configReader.loadBeanDefinitions(resources);
         context.refresh();
 
-        return context.getBean(claz);
-    }
-    
-    protected static void assertTruePredicate(Predicate<ProfileRequestContext> predicate) {
-        Assert.assertTrue(predicate.apply(null));
-    }
-    
-    protected static void assertFalsePredicate(Predicate<ProfileRequestContext> predicate) {
-        Assert.assertFalse(predicate.apply(null));
-    }
-    
-    protected static void assertConditionalPredicate(Predicate<ProfileRequestContext> predicate) {
-        // a conditional predicate will look at the parameter and fail immediately
-        try {
-            predicate.apply(null);
-            Assert.fail("Was not a conditional Predicate");
-        } catch (ConstraintViolationException ex) {
-            // expected   
-        }
+        DefaultRelyingPartyConfigurationResolver resolver =  (DefaultRelyingPartyConfigurationResolver ) context.getBean(RelyingPartyConfigurationResolver.class);
+        
+        List<RelyingPartyConfiguration> configs = resolver.getRelyingPartyConfigurations();
+        Assert.assertEquals(configs.size(), 2);
+           // TODO test that the order is correct    
     }
 
+    
 }

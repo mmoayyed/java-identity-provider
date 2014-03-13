@@ -37,27 +37,27 @@ public class RelyingPartyNamespaceHandler extends BaseSpringNamespaceHandler {
     /** {@inheritDoc} */
     @Override public void init() {
         // Profile Configuration
-        registerBeanDefinitionParser(SAML2ArtifactResolutionProfileParser.ELEMENT_NAME, 
+        registerBeanDefinitionParser(SAML2ArtifactResolutionProfileParser.ELEMENT_NAME,
                 new SAML2ArtifactResolutionProfileParser());
         registerBeanDefinitionParser(SAML2LogoutRequestProfileParser.ELEMENT_NAME,
                 new SAML2LogoutRequestProfileParser());
         registerBeanDefinitionParser(SAML2AttributeQueryProfileParser.ELEMENT_NAME,
                 new SAML2AttributeQueryProfileParser());
-        registerBeanDefinitionParser(SAML2BrowserSSOProfileParser.ELEMENT_NAME,
-                new SAML2BrowserSSOProfileParser());
-        registerBeanDefinitionParser(SAML2ECPProfileParser.ELEMENT_NAME,
-            new SAML2ECPProfileParser());
-        
+        registerBeanDefinitionParser(SAML2BrowserSSOProfileParser.ELEMENT_NAME, new SAML2BrowserSSOProfileParser());
+        registerBeanDefinitionParser(SAML2ECPProfileParser.ELEMENT_NAME, new SAML2ECPProfileParser());
+
         registerBeanDefinitionParser(SAML1ArtifactResolutionProfileParser.ELEMENT_NAME,
                 new SAML1ArtifactResolutionProfileParser());
         registerBeanDefinitionParser(SAML1AttributeQueryProfileParser.ELEMENT_NAME,
                 new SAML1AttributeQueryProfileParser());
         registerBeanDefinitionParser(SAML1AttributeQueryProfileParser.ELEMENT_NAME,
                 new SAML1AttributeQueryProfileParser());
-        registerBeanDefinitionParser(ShibbolethSSOProfileParser.ELEMENT_NAME,
-                new ShibbolethSSOProfileParser());
-        
-        registerBeanDefinitionParser(RelyingPartyParser.ELEMENT_NAME,
-                new RelyingPartyParser());
-        }
+        registerBeanDefinitionParser(ShibbolethSSOProfileParser.ELEMENT_NAME, new ShibbolethSSOProfileParser());
+
+        registerBeanDefinitionParser(RelyingPartyParser.ELEMENT_NAME, new RelyingPartyParser());
+        registerBeanDefinitionParser(DefaultRelyingPartyParser.ELEMENT_NAME, new DefaultRelyingPartyParser());
+        registerBeanDefinitionParser(AnonymousRelyingPartyParser.ELEMENT_NAME, new AnonymousRelyingPartyParser());
+
+        registerBeanDefinitionParser(RelyingPartyGroupParser.ELEMENT_NAME, new RelyingPartyGroupParser());
+    }
 }

@@ -19,27 +19,32 @@ package net.shibboleth.idp.profile.spring.relyingparty;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import com.google.common.base.Predicates;
+
 /**
- * Parser for the &lt:rp:relyingParty&gt; element.
+ * Parser for the &lt:rp:AnonymousRelyingParty&gt; element. <br/>
+ * The {@link com.google.common.base.Predicate<org.opensaml.profile.context.ProfileRequestContext>} which is injected
+ * is AlwaysTrue.  The {@link RelyingPartyGroupParser} takes care to ensure that this element is alwatys at the end
+ * of the list, thus implementing Default semantics.
  */
-public class RelyingPartyParser extends AbstractRelyingPartyParser {
+public class DefaultRelyingPartyParser extends AbstractRelyingPartyParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(RelyingPartyNamespaceHandler.NAMESPACE, "RelyingParty");
+    public static final QName ELEMENT_NAME = new QName(RelyingPartyNamespaceHandler.NAMESPACE, "DefaultRelyingParty");
 
     /** {@inheritDoc} */
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
-        
-        final String id = StringSupport.trimOrNull(element.getAttributeNS(null, "id"));
-        builder.addPropertyValue("id", id);
-        // TODO - plug in the predicate
-        //builder.addPropertyValue("activationCondition", <Something<id>)
+
+        builder.addPropertyValue("activationCondition", Predicates.alwaysTrue());
+    }
+
+    /** {@inheritDoc} */
+    @Override protected boolean shouldGenerateId() {
+        return true;
     }
 }
