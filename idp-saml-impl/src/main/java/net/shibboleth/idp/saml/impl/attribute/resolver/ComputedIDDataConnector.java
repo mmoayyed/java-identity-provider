@@ -26,36 +26,90 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
+import net.shibboleth.idp.saml.impl.nameid.ComputedPersistentIdGenerationStrategy;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
+import org.opensaml.profile.ProfileException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
 /**
- * A data connector that generates a unique ID by computing the SHA-1 hash of a given attribute value, the entity ID of
- * the inbound message issuer, and a provided salt.
+ * A data connector that delegates generation of IDs to a {@link ComputedPersistentIdGenerationStrategy}.
  */
-public class ComputedIDDataConnector extends AbstractComputedIDDataConnector {
+public class ComputedIDDataConnector extends AbstractPersistentIdDataConnector {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ComputedIDDataConnector.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ComputedIDDataConnector.class);
 
+    /** Generation strategy for IDs. */
+    @Nonnull private final ComputedPersistentIdGenerationStrategy idStrategy;
+    
+    /** Constructor. */
+    public ComputedIDDataConnector() {
+        idStrategy = new ComputedPersistentIdGenerationStrategy();
+        idStrategy.setId("ComputedPersistentIdGenerationStrategy");
+    }
+    
+    /**
+     * Get the strategy plugin that generates computed IDs.
+     * 
+     * @return strategy for computing IDs
+     */
+    @Nonnull public ComputedPersistentIdGenerationStrategy getComputedIdStrategy() {
+        return idStrategy;
+    }
+    
+    /**
+     * Get the salt used when computing the ID.
+     * 
+     * @return salt used when computing the ID
+     */
+    @Nullable public byte[] getSalt() {
+        return idStrategy.getSalt();
+    }
+
+    /**
+     * Set the salt used when computing the ID.
+     * 
+     * @param salt used when computing the ID
+     */
+    public void setSalt(@Nullable byte[] salt) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        idStrategy.setSalt(salt);
+    }
+
+    /**
+     * Set the JCE algorithm name of the digest algorithm to use (default is SHA).
+     * 
+     * @param alg JCE message digest algorithm
+     */
+    public void setAlgorithm(@Nonnull @NotEmpty final String alg) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        idStrategy.setAlgorithm(alg);
+    }
+    
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-
-        if (null == getSalt()) {
-            throw new ComponentInitializationException(getLogPrefix() + " No salt set");
-        }
-
-        if (getSalt().length < 16) {
-            throw new ComponentInitializationException(getLogPrefix() + " Salt must be at least 16 bytes in size");
-        }
-
+        
+        idStrategy.initialize();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    protected void doDestroy() {
+        idStrategy.destroy();
+        
+        super.doDestroy();
+    }
+    
     /** {@inheritDoc} */
     @Override
     @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(
@@ -64,14 +118,34 @@ public class ComputedIDDataConnector extends AbstractComputedIDDataConnector {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
-        String attributeRecipientID = resolutionContext.getAttributeRecipientID();
-        
-        if (attributeRecipientID == null) {
-            log.warn(" No Attribute Recipient ID located, unable to compute ID", getLogPrefix());
+        final String principalName = resolutionContext.getPrincipal();
+        if (Strings.isNullOrEmpty(principalName)) {
+            log.warn("{} No principal name located, unable to compute ID", getLogPrefix());
             return null;
         }
-
-        return encodeAsAttribute(generateComputedId(attributeRecipientID, resolveSourceAttribute(workContext)));
+                
+        final String attributeIssuerId = resolutionContext.getAttributeIssuerID();
+        if (Strings.isNullOrEmpty(attributeIssuerId)) {
+            log.warn("{} No Attribute issuer ID located, unable to compute ID", getLogPrefix());
+            return null;
+        }
+        
+        final String attributeRecipientID = resolutionContext.getAttributeRecipientID();
+        if (Strings.isNullOrEmpty(attributeRecipientID)) {
+            log.warn("{} No Attribute Recipient ID located, unable to compute ID", getLogPrefix());
+            return null;
+        }
+        
+        final String sourceId = resolveSourceAttribute(workContext);
+        if (Strings.isNullOrEmpty(sourceId)) {
+            return null;
+        }
+        
+        try {
+            return encodeAsAttribute(idStrategy.get(attributeIssuerId, attributeRecipientID, principalName, sourceId));
+        } catch (final ProfileException e) {
+            throw new ResolutionException(e);
+        }
     }
 
 }

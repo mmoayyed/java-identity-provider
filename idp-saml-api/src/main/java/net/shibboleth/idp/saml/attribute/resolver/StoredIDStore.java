@@ -43,7 +43,7 @@ public interface  StoredIDStore {
      * 
      * @throws StoredIDException thrown if there is a problem
      */
-    public int getNumberOfPersistentIdEntries(@Nonnull @NotEmpty String localEntity,
+    int getNumberOfPersistentIdEntries(@Nonnull @NotEmpty String localEntity,
             @Nonnull @NotEmpty String peerEntity, @Nonnull @NotEmpty String localId) throws StoredIDException;
 
     /**
@@ -57,9 +57,19 @@ public interface  StoredIDStore {
      * 
      * @throws StoredIDException thrown if there is a problem
      */
-    @Nonnull public List<PersistentIdEntry> getPersistentIdEntries(@Nonnull @NotEmpty String localEntity,
+    @Nonnull List<PersistentIdEntry> getPersistentIdEntries(@Nonnull @NotEmpty String localEntity,
             @Nonnull @NotEmpty String peerEntity, @Nonnull @NotEmpty String localId) throws StoredIDException;
 
+    /**
+     * Get whether a persistentID is not in use, active or otherwise.
+     * 
+     * @param persistentId  the ID to check
+     * 
+     * @return true iff the ID is available for use
+     * @throws StoredIDException if an error occurs
+     */
+    boolean isPersistentIdAvailable(@Nonnull @NotEmpty final String persistentId) throws StoredIDException;
+    
     /**
      * Gets the persistent ID entry for the given ID.
      * 
@@ -69,8 +79,8 @@ public interface  StoredIDStore {
      * 
      * @throws StoredIDException thrown if there is a problem
      */
-    @Nullable public PersistentIdEntry getActivePersistentIdEntry(String persistentId) throws StoredIDException;
-
+    @Nullable PersistentIdEntry getActivePersistentIdEntry(String persistentId) throws StoredIDException;
+    
     /**
      * Gets the currently active identifier entry for a (principal, peer, local) tuple.
      * 
@@ -84,7 +94,7 @@ public interface  StoredIDStore {
      * 
      * @throws StoredIDException thrown if there is a problem
      */
-    @Nonnull public PersistentIdEntry getActivePersistentIdEntry(@Nonnull @NotEmpty String localEntity,
+    @Nonnull PersistentIdEntry getActivePersistentIdEntry(@Nonnull @NotEmpty String localEntity,
             @Nonnull @NotEmpty String peerEntity, @Nonnull @NotEmpty String localId) throws StoredIDException;
 
 
@@ -95,7 +105,7 @@ public interface  StoredIDStore {
      * 
      * @throws StoredIDException thrown is there is a problem
      */
-    public void storePersistentIdEntry(@Nonnull PersistentIdEntry entry) throws StoredIDException;
+    void storePersistentIdEntry(@Nonnull PersistentIdEntry entry) throws StoredIDException;
     
     /**
      * Deactivates a given persistent ID.
@@ -105,7 +115,7 @@ public interface  StoredIDStore {
      * 
      * @throws StoredIDException thrown if there is a problem communication with the database
      */
-    public void deactivatePersistentId(@NotEmpty String persistentId, @Nullable DateTime deactivation)
+    void deactivatePersistentId(@NotEmpty String persistentId, @Nullable DateTime deactivation)
             throws StoredIDException;
 
 }

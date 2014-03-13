@@ -30,7 +30,7 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import net.shibboleth.idp.saml.impl.TestSources;
-import net.shibboleth.idp.saml.impl.attribute.resolver.AbstractComputedIDDataConnector;
+import net.shibboleth.idp.saml.impl.attribute.resolver.AbstractPersistentIdDataConnector;
 import net.shibboleth.idp.saml.impl.attribute.resolver.ComputedIDDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -41,7 +41,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Test for {@link AbstractComputedIDDataConnector}
+ * Test for {@link AbstractPersistentIdDataConnector}
  */
 public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
@@ -61,7 +61,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     protected static final byte smallSalt[] = {0, 1, 2};
 
-    private static void testInit(AbstractComputedIDDataConnector connector, String failMessage) {
+    private static void testInit(AbstractPersistentIdDataConnector connector, String failMessage) {
         try {
             connector.initialize();
             Assert.fail(failMessage);
@@ -100,8 +100,8 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolver.initialize();
         connector.initialize();
 
-        final AttributeResolutionContext context =
-                TestSources.createResolutionContext(null, null, TestSources.SP_ENTITY_ID);
+        final AttributeResolutionContext context = TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
+                TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected - two scoped attributes
@@ -139,7 +139,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         return constructResolver(connector, values);
     }
 
-    protected static AttributeResolver constructResolver(AbstractComputedIDDataConnector connector, int values)
+    protected static AttributeResolver constructResolver(ComputedIDDataConnector connector, int values)
             throws ComponentInitializationException {
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency(
@@ -167,7 +167,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         return constructResolverWithNonString(new ComputedIDDataConnector(), dependantOn);
     }
 
-    protected static AttributeResolver constructResolverWithNonString(AbstractComputedIDDataConnector connector,
+    protected static AttributeResolver constructResolverWithNonString(ComputedIDDataConnector connector,
             String dependantOn) throws ComponentInitializationException {
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency(dependantOn, null)));
@@ -188,17 +188,18 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         return new AttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector), null);
     }
 
-    protected static AbstractComputedIDDataConnector connectorFromResolver(AttributeResolver resolver) {
-        return (AbstractComputedIDDataConnector) resolver.getDataConnectors().get(TEST_CONNECTOR_NAME);
+    protected static AbstractPersistentIdDataConnector connectorFromResolver(AttributeResolver resolver) {
+        return (AbstractPersistentIdDataConnector) resolver.getDataConnectors().get(TEST_CONNECTOR_NAME);
     }
 
-    //TODO: fix assertion on line 218, see IDP-357
+    //TODO: fix assertion on line 218, see IDP-357 (note this line number isn't right anymore, don't know which test is involved)
     @Test(enabled = false) public void altDataConnector() throws ComponentInitializationException, ResolutionException {
         AttributeResolver resolver = constructResolver(1);
         connectorFromResolver(resolver).initialize();
         ComponentSupport.initialize(resolver);
 
-        AttributeResolutionContext context = TestSources.createResolutionContext(null, null, TestSources.SP_ENTITY_ID);;
+        AttributeResolutionContext context = TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
+                TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected
@@ -213,7 +214,8 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         connectorFromResolver(resolver).initialize();
         ComponentSupport.initialize(resolver);
 
-        context = TestSources.createResolutionContext(null, null, TestSources.SP_ENTITY_ID);;
+        context = TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected - two scoped attributes
@@ -229,7 +231,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         connectorFromResolver(resolver).initialize();
         ComponentSupport.initialize(resolver);
 
-        context = TestSources.createResolutionContext(null, null, "foo");
+        context = TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID, "foo");
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected - two scoped attributes

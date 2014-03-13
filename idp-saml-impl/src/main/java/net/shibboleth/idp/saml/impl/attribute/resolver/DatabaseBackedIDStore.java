@@ -143,17 +143,7 @@ public class DatabaseBackedIDStore extends AbstractInitializableComponent implem
         }
     }
 
-    /**
-     * Gets the number of persistent ID entries for a (principal, peer, local) tuple.
-     * 
-     * @param localEntity entity ID of the ID issuer
-     * @param peerEntity entity ID of the peer the ID is for
-     * @param localId local ID part of the persistent ID
-     * 
-     * @return the number of identifiers
-     * 
-     * @throws StoredIDException thrown if there is a problem communication with the database
-     */
+    /** {@inheritDoc} */
     @Override public int getNumberOfPersistentIdEntries(@Nonnull @NotEmpty String localEntity,
             @Nonnull @NotEmpty String peerEntity, @Nonnull @NotEmpty String localId) throws StoredIDException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -200,17 +190,7 @@ public class DatabaseBackedIDStore extends AbstractInitializableComponent implem
         }
     }
 
-    /**
-     * Gets all the persistent ID entries for a (principal, peer, local) tuple.
-     * 
-     * @param localId local ID part of the persistent ID
-     * @param peerEntity entity ID of the peer the ID is for
-     * @param localEntity entity ID of the ID issuer
-     * 
-     * @return the active identifier
-     * 
-     * @throws StoredIDException thrown if there is a problem communication with the database
-     */
+    /** {@inheritDoc} */
     @Override @Nonnull public List<PersistentIdEntry> getPersistentIdEntries(@Nonnull @NotEmpty String localEntity,
             @Nonnull @NotEmpty String peerEntity, @Nonnull @NotEmpty String localId) throws StoredIDException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -249,19 +229,16 @@ public class DatabaseBackedIDStore extends AbstractInitializableComponent implem
         }
     }
 
-    /**
-     * Gets the persistent ID entry for the given ID.
-     * 
-     * @param persistentId the persistent ID
-     * 
-     * @return the ID entry for the given ID or null if none exists
-     * 
-     * @throws StoredIDException thrown if there is a problem communication with the database
-     */
+    /** {@inheritDoc} */
     @Override @Nullable public PersistentIdEntry getActivePersistentIdEntry(String persistentId)
             throws StoredIDException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         return getPersistentIdEntry(persistentId, true);
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public boolean isPersistentIdAvailable(@Nonnull @NotEmpty final String persistentId) throws StoredIDException {
+        return getPersistentIdEntry(persistentId, false) == null;
     }
 
     /**
@@ -274,7 +251,7 @@ public class DatabaseBackedIDStore extends AbstractInitializableComponent implem
      * 
      * @throws StoredIDException thrown if there is a problem communication with the database
      */
-    @Nullable public PersistentIdEntry getPersistentIdEntry(@Nonnull @NotEmpty String persistentId, 
+    @Nullable protected PersistentIdEntry getPersistentIdEntry(@Nonnull @NotEmpty String persistentId, 
             boolean onlyActiveId) throws StoredIDException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         StringBuilder sqlBuilder = new StringBuilder(idEntrySelectSQL);
@@ -319,19 +296,7 @@ public class DatabaseBackedIDStore extends AbstractInitializableComponent implem
         }
     }
 
-    /**
-     * Gets the currently active identifier entry for a (principal, peer, local) tuple.
-     * 
-     * @param localId local ID part of the persistent ID
-     * 
-     * @param peerEntity entity ID of the peer the ID is for
-     * 
-     * @param localEntity entity ID of the ID issuer
-     * 
-     * @return the active identifier
-     * 
-     * @throws StoredIDException thrown if there is a problem communication with the database
-     */
+    /** {@inheritDoc} */
     @Override @Nonnull public PersistentIdEntry getActivePersistentIdEntry(@Nonnull @NotEmpty String localEntity,
             @Nonnull @NotEmpty String peerEntity, @Nonnull @NotEmpty String localId) throws StoredIDException {
         StringBuilder sqlBuilder = new StringBuilder(idEntrySelectSQL);
@@ -445,13 +410,7 @@ public class DatabaseBackedIDStore extends AbstractInitializableComponent implem
         return sqlBuilder.toString();
     }
 
-    /**
-     * Stores a persistent ID entry into the database.
-     * 
-     * @param entry entry to persist
-     * 
-     * @throws StoredIDException thrown is there is a problem writing to the database
-     */
+    /** {@inheritDoc} */
     @Override public void storePersistentIdEntry(@Nonnull PersistentIdEntry entry) throws StoredIDException {
 
         try {
@@ -510,14 +469,7 @@ public class DatabaseBackedIDStore extends AbstractInitializableComponent implem
         }
     }
 
-    /**
-     * Deactivates a given persistent ID.
-     * 
-     * @param persistentId ID to deactivate
-     * @param deactivation deactivation time, if null the current time is used
-     * 
-     * @throws StoredIDException thrown if there is a problem communication with the database
-     */
+    /** {@inheritDoc} */
     @Override public void deactivatePersistentId(@NotEmpty String persistentId, @Nullable DateTime deactivation)
             throws StoredIDException {
         final Timestamp deactivationTime;
