@@ -1,6 +1,10 @@
+http\://shibboleth.net/schema/idp/shibboleth-security.xsd = schema/shibboleth-security.xsd
+http\://shibboleth.net/schema/idp/shibboleth-metadata.xsd = schema/shibboleth-metadata.xsd
 http\://shibboleth.net/schema/idp/shibboleth-relying-party.xsd = schema/shibboleth-relying-party.xsd
 http\://shibboleth.net/schema/idp/shibboleth-relying-party-saml.xsd = schema/shibboleth-relying-party-saml.xsd
 http\://www.w3.org/2001/xml.xsd = schema/xml.xsd
 
+classpath\:/schema/shibboleth-2.0-security.xsd = schema/shibboleth-security.xsd
+classpath\:/schema/shibboleth-2.0-metadata.xsd = schema/shibboleth-metadata.xsd
 classpath\:/schema/shibboleth-2.0-relying-party.xsd = schema/shibboleth-relying-party.xsd
 classpath\:/schema/shibboleth-2.0-relying-party-saml.xsd = schema/shibboleth-relying-party-saml.xsd
