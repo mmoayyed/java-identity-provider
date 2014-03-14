@@ -41,7 +41,7 @@ public interface PersistentIdGenerationStrategy {
      * @return  the identifier
      * @throws ProfileException  if an error occurs generating the identifier
      */
-    @Nonnull @NotEmpty String get(@Nonnull @NotEmpty final String assertingPartyId,
+    @Nonnull @NotEmpty String generate(@Nonnull @NotEmpty final String assertingPartyId,
             @Nonnull @NotEmpty final String relyingPartyId, @Nonnull @NotEmpty final String principalName,
             @Nonnull @NotEmpty final String sourceId) throws ProfileException;
 

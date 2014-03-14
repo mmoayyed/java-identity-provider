@@ -21,8 +21,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.context.SubjectContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.idp.saml.impl.profile.config.navigate.RelyingPartyIdLookupFunction;
+import net.shibboleth.idp.saml.impl.profile.config.navigate.ResponderIdLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -46,42 +46,27 @@ public class TransientSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator 
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(TransientSAML2NameIDGenerator.class);
-    
-    /** Strategy function to lookup RelyingPartyContext. */
-    @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
 
     /** Strategy function to lookup SubjectContext. */
-    @Nonnull private Function<ProfileRequestContext, SubjectContext> subjectContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,SubjectContext> subjectContextLookupStrategy;
     
     /** Generator for transients. */
     @NonnullAfterInit private TransientIdGenerationStrategy transientIdGenerator;
     
     /** Constructor. */
     public TransientSAML2NameIDGenerator() {
-        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
+        setDefaultIdPNameQualifierLookupStrategy(new ResponderIdLookupFunction());
+        setDefaultSPNameQualifierLookupStrategy(new RelyingPartyIdLookupFunction());
     }
     
-    /**
-     * Set the lookup strategy to use to locate the {@link RelyingPartyContext}.
-     * 
-     * @param strategy lookup function to use
-     */
-    public synchronized void setRelyingPartyContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        relyingPartyContextLookupStrategy = Constraint.isNotNull(strategy,
-                "RelyingPartyContext lookup strategy cannot be null");
-    }
-
     /**
      * Set the lookup strategy to use to locate the {@link SubjectContext}.
      * 
      * @param strategy lookup function to use
      */
     public synchronized void setSubjectContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
+            @Nonnull final Function<ProfileRequestContext,SubjectContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         subjectContextLookupStrategy = Constraint.isNotNull(strategy,
@@ -114,7 +99,8 @@ public class TransientSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator 
     @Nullable protected String getIdentifier(@Nonnull final ProfileRequestContext profileRequestContext)
             throws ProfileException {
         
-        final String relyingPartyId = this.getDefaultSPNameQualifier(profileRequestContext);
+        final Function<ProfileRequestContext,String> lookup = getDefaultSPNameQualifierLookupStrategy();
+        final String relyingPartyId = lookup != null ? lookup.apply(profileRequestContext) : null;
         if (relyingPartyId == null) {
             log.debug("No relying party identifier available, can't generate transient ID");
             return null;
@@ -132,33 +118,6 @@ public class TransientSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator 
             log.debug("Exception generating transient ID", e);
             return null;
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Nullable protected String getDefaultIdPNameQualifier(@Nonnull final ProfileRequestContext profileRequestContext) {
-        
-        final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (rpCtx != null) {
-            final RelyingPartyConfiguration rpConfig = rpCtx.getConfiguration();
-            if (rpConfig != null) {
-                return rpConfig.getResponderId();
-            }
-        }
-        
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Nullable protected String getDefaultSPNameQualifier(@Nonnull final ProfileRequestContext profileRequestContext) {
-
-        final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (rpCtx != null) {
-            return rpCtx.getRelyingPartyId();
-        }
-        
-        return null;
     }
 
 }

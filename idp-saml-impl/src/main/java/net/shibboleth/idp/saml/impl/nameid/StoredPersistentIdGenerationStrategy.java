@@ -97,7 +97,7 @@ public class StoredPersistentIdGenerationStrategy extends AbstractIdentifiableIn
     /** {@inheritDoc} */
     /** {@inheritDoc} */
     @Override
-    @Nonnull @NotEmpty public String get(@Nonnull @NotEmpty final String assertingPartyId,
+    @Nonnull @NotEmpty public String generate(@Nonnull @NotEmpty final String assertingPartyId,
             @Nonnull @NotEmpty final String relyingPartyId, @Nonnull @NotEmpty final String principalName,
             @Nonnull @NotEmpty final String sourceId) throws ProfileException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -164,7 +164,7 @@ public class StoredPersistentIdGenerationStrategy extends AbstractIdentifiableIn
 
         String persistentId;
         if (numberOfExistingEntries == 0 && null != computedIdStrategy) {
-            persistentId = computedIdStrategy.get(localEntityId, peerEntityId, principalName, localId);
+            persistentId = computedIdStrategy.generate(localEntityId, peerEntityId, principalName, localId);
         } else {
             persistentId = UUID.randomUUID().toString();
         }

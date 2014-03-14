@@ -104,7 +104,7 @@ public class ComputedPersistentIdGenerationStrategy extends AbstractIdentifiable
     
     /** {@inheritDoc} */
     @Override
-    @Nonnull @NotEmpty public String get(@Nonnull @NotEmpty final String assertingPartyId,
+    @Nonnull @NotEmpty public String generate(@Nonnull @NotEmpty final String assertingPartyId,
             @Nonnull @NotEmpty final String relyingPartyId, @Nonnull @NotEmpty final String principalName,
             @Nonnull @NotEmpty final String sourceId) throws ProfileException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);

@@ -142,7 +142,8 @@ public class ComputedIDDataConnector extends AbstractPersistentIdDataConnector {
         }
         
         try {
-            return encodeAsAttribute(idStrategy.get(attributeIssuerId, attributeRecipientID, principalName, sourceId));
+            return encodeAsAttribute(idStrategy.generate(attributeIssuerId, attributeRecipientID, principalName,
+                    sourceId));
         } catch (final ProfileException e) {
             throw new ResolutionException(e);
         }

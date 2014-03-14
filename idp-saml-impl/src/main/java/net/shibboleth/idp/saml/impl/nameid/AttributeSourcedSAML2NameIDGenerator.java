@@ -32,7 +32,8 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.idp.saml.impl.profile.config.navigate.RelyingPartyIdLookupFunction;
+import net.shibboleth.idp.saml.impl.profile.config.navigate.ResponderIdLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -62,9 +63,6 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeSourcedSAML2NameIDGenerator.class);
-    
-    /** Strategy function to lookup RelyingPartyContext. */
-    @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
 
     /** Strategy function to lookup AttributeContext. */
     @Nonnull private Function<ProfileRequestContext, AttributeContext> attributeContextLookupStrategy;
@@ -74,24 +72,12 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
     
     /** Constructor. */
     public AttributeSourcedSAML2NameIDGenerator() {
-        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         attributeContextLookupStrategy = Functions.compose(
-                new ChildContextLookup<RelyingPartyContext, AttributeContext>(AttributeContext.class),
-                relyingPartyContextLookupStrategy);
+                new ChildContextLookup<RelyingPartyContext,AttributeContext>(AttributeContext.class),
+                new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
         attributeSourceIds = Collections.emptyList();
-    }
-    
-    /**
-     * Set the lookup strategy to use to locate the {@link RelyingPartyContext}.
-     * 
-     * @param strategy lookup function to use
-     */
-    public synchronized void setRelyingPartyContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        relyingPartyContextLookupStrategy = Constraint.isNotNull(strategy,
-                "RelyingPartyContext lookup strategy cannot be null");
+        setDefaultIdPNameQualifierLookupStrategy(new ResponderIdLookupFunction());
+        setDefaultSPNameQualifierLookupStrategy(new RelyingPartyIdLookupFunction());
     }
 
     /**
@@ -135,12 +121,6 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
             throws ProfileException {
         
         // Check for a natively generated NameIdentifier attribute value.
-
-        final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (rpCtx == null) {
-            log.warn("Unable to locate RelyingPartContext.");
-            return null;
-        }
 
         final AttributeContext attributeCtx = attributeContextLookupStrategy.apply(profileRequestContext);
         if (attributeCtx == null) {
@@ -207,33 +187,6 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
         }
         
         log.info("Attribute sources {} did not produce a usable identifier", attributeSourceIds);
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Nullable protected String getDefaultIdPNameQualifier(@Nonnull final ProfileRequestContext profileRequestContext) {
-        
-        final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (rpCtx != null) {
-            final RelyingPartyConfiguration rpConfig = rpCtx.getConfiguration();
-            if (rpConfig != null) {
-                return rpConfig.getResponderId();
-            }
-        }
-        
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Nullable protected String getDefaultSPNameQualifier(@Nonnull final ProfileRequestContext profileRequestContext) {
-
-        final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (rpCtx != null) {
-            return rpCtx.getRelyingPartyId();
-        }
-        
         return null;
     }
 

@@ -16,7 +16,7 @@
  */
 /**
  * Implementation of SAML {@link org.opensaml.saml.saml2.core.NameID} and
- *  {@link org.opensaml.saml.saml1.core.NameIdentifier} canonicalizers.
+ * {@link org.opensaml.saml.saml1.core.NameIdentifier} generation and consumption.
  */
 
 package net.shibboleth.idp.saml.impl.nameid;

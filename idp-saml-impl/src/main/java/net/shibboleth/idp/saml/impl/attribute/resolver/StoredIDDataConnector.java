@@ -159,7 +159,7 @@ public class StoredIDDataConnector extends ComputedIDDataConnector {
         }
 
         try {
-            return encodeAsAttribute(storedIdStrategy.get(attributeIssuerID, attributeRecipientID, principalName,
+            return encodeAsAttribute(storedIdStrategy.generate(attributeIssuerID, attributeRecipientID, principalName,
                     sourceId));
         } catch (final ProfileException e) {
             throw new ResolutionException(e);
