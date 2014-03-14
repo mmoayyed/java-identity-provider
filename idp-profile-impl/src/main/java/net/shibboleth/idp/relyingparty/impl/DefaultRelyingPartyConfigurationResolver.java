@@ -172,12 +172,6 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
             }
             configIds.add(config.getId());
         }
-        if (null == getDefaultConfiguration()) {
-                throw new ComponentInitializationException("No default Relying Party Configuration provided");
-        }
-        if (null == getAnonymousConfiguration()) {
-            throw new ComponentInitializationException("No anonymous Relying Party Configuration provided");
-        }
     }
 
     /** {@inheritDoc} */
