@@ -45,10 +45,10 @@ public class SubjectCanonicalizationContext extends BaseContext {
     @Nullable private String principalName;
     
     /** Requester ID.*/
-    private String requesterId;
+    @Nullable private String requesterId;
     
     /** Responder ID.*/
-    private String responderId;
+    @Nullable private String responderId;
 
     /** Flows that could potentially be used. */
     @Nonnull @NonnullElements private final Map<String, SubjectCanonicalizationFlowDescriptor> potentialFlows;
