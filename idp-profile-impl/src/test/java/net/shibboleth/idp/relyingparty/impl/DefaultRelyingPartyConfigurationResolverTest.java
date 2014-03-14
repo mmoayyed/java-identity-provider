@@ -71,9 +71,87 @@ public class DefaultRelyingPartyConfigurationResolverTest {
         Assert.assertEquals(resolver.getId(), "test");
         Assert.assertEquals(resolver.getRelyingPartyConfigurations().size(), 0);
     }
+    
+    @Test public void testDefault() throws Exception {
+        ProfileRequestContext requestContext = new ProfileRequestContext();
+
+        RelyingPartyConfiguration anonRP = new RelyingPartyConfiguration();
+        anonRP.setId("anonRPId");
+        anonRP.setResponderId("anonRPResp");
+        anonRP.setDetailedErrors(true);
+        anonRP.initialize();
+        
+        RelyingPartyConfiguration defaultRP = new RelyingPartyConfiguration();
+        defaultRP.setId("defaultRPId");
+        defaultRP.setResponderId("defaultRPResp");
+        defaultRP.setDetailedErrors(true);
+        defaultRP.initialize();
+
+        DefaultRelyingPartyConfigurationResolver resolver = new DefaultRelyingPartyConfigurationResolver();
+        resolver.setId("test");
+        resolver.setAnonymousConfiguration(anonRP);
+        resolver.setDefaultConfiguration(defaultRP);
+        resolver.initialize();
+        
+        Iterable<RelyingPartyConfiguration> results = resolver.resolve(requestContext);
+        Assert.assertNotNull(results);
+        
+        Iterator<RelyingPartyConfiguration> resultItr = results.iterator();        
+        Assert.assertTrue(resultItr.hasNext());
+        Assert.assertSame(resultItr.next(), defaultRP);
+        Assert.assertFalse(resultItr.hasNext());
+        
+        Assert.assertSame(resolver.resolveSingle(requestContext), defaultRP);
+    }
+    
+    @Test public void testAnon() throws Exception {
+        ProfileRequestContext requestContext = new ProfileRequestContext();
+        
+        RelyingPartyConfiguration anonRP = new RelyingPartyConfiguration();
+        anonRP.setId("anonRPId");
+        anonRP.setResponderId("anonRPResp");
+        anonRP.setDetailedErrors(true);
+        anonRP.setActivationCondition(Predicates.<ProfileRequestContext>alwaysTrue());
+        anonRP.initialize();
+        
+        RelyingPartyConfiguration defaultRP = new RelyingPartyConfiguration();
+        defaultRP.setId("defaultRPId");
+        defaultRP.setResponderId("defaultRPResp");
+        defaultRP.setDetailedErrors(true);
+        defaultRP.initialize();
+
+        DefaultRelyingPartyConfigurationResolver resolver = new DefaultRelyingPartyConfigurationResolver();
+        resolver.setId("test");
+        resolver.setIsAnonymousPredicate(Predicates.<ProfileRequestContext>alwaysTrue());
+        resolver.setAnonymousConfiguration(anonRP);
+        resolver.setDefaultConfiguration(defaultRP);
+        resolver.initialize();
+        
+        Iterable<RelyingPartyConfiguration> results = resolver.resolve(requestContext);
+        Assert.assertNotNull(results);
+        
+        Iterator<RelyingPartyConfiguration> resultItr = results.iterator();        
+        Assert.assertTrue(resultItr.hasNext());
+        Assert.assertSame(resultItr.next(), anonRP);
+        Assert.assertFalse(resultItr.hasNext());
+
+        Assert.assertSame(resolver.resolveSingle(requestContext), anonRP);
+    }
 
     @Test public void testResolve() throws Exception {
         ProfileRequestContext requestContext = new ProfileRequestContext();
+
+        RelyingPartyConfiguration anonRP = new RelyingPartyConfiguration();
+        anonRP.setId("anonRPId");
+        anonRP.setResponderId("anonRPResp");
+        anonRP.setDetailedErrors(true);
+        anonRP.initialize();
+        
+        RelyingPartyConfiguration defaultRP = new RelyingPartyConfiguration();
+        defaultRP.setId("defaultRPId");
+        defaultRP.setResponderId("defaultRPResp");
+        defaultRP.setDetailedErrors(true);
+        defaultRP.initialize();
 
         RelyingPartyConfiguration one = new RelyingPartyConfiguration();
         one.setId("one");
@@ -99,6 +177,8 @@ public class DefaultRelyingPartyConfigurationResolverTest {
         DefaultRelyingPartyConfigurationResolver resolver = new DefaultRelyingPartyConfigurationResolver();
         resolver.setId("test");
         resolver.setRelyingPartyConfigurations(rpConfigs);
+        resolver.setAnonymousConfiguration(anonRP);
+        resolver.setDefaultConfiguration(defaultRP);
         resolver.initialize();
 
         Iterable<RelyingPartyConfiguration> results = resolver.resolve(requestContext);

@@ -22,7 +22,6 @@ import java.util.List;
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -40,18 +39,19 @@ import com.google.common.collect.Sets;
  * Test for a complete example RelyingParty file
  */
 public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
-    
+
     private static final String PATH = "/net/shibboleth/idp/profile/spring/relyingparty/";
-    
-    @Test public void relyingParties() {
-        final Resource[] resources = new Resource[2];
-        
-            resources[0] = new ClassPathResource(PATH + "beans.xml");
-            resources[1] = new ClassPathResource(PATH + "relying-party-group.xml");
-        
+
+    private DefaultRelyingPartyConfigurationResolver getResolver(String... files) {
+        final Resource[] resources = new Resource[files.length];
+
+        for (int i = 0; i < files.length; i++) {
+            resources[i] = new ClassPathResource(PATH + files[i]);
+        }
+
         final GenericApplicationContext context = new GenericApplicationContext();
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
-        context.setDisplayName("ApplicationContext: " );
+        context.setDisplayName("ApplicationContext");
         service.setConverters(Sets.newHashSet(new DurationToLongConverter(), new StringToIPRangeConverter()));
         service.afterPropertiesSet();
 
@@ -60,16 +60,48 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
         final XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
 
         configReader.setValidating(true);
-        
+
         configReader.loadBeanDefinitions(resources);
         context.refresh();
 
-        DefaultRelyingPartyConfigurationResolver resolver =  (DefaultRelyingPartyConfigurationResolver ) context.getBean(RelyingPartyConfigurationResolver.class);
-        
-        List<RelyingPartyConfiguration> configs = resolver.getRelyingPartyConfigurations();
-        Assert.assertEquals(configs.size(), 2);
-           // TODO test that the order is correct    
+        return context.getBean(DefaultRelyingPartyConfigurationResolver.class);
     }
 
-    
+    @Test public void relyingParty() {
+
+        DefaultRelyingPartyConfigurationResolver resolver = getResolver("beans.xml", "relying-party-group.xml");
+        Assert.assertTrue(resolver.getRelyingPartyConfigurations().isEmpty());
+
+        RelyingPartyConfiguration anon = resolver.getAnonymousConfiguration();
+        Assert.assertTrue(anon.getProfileConfigurations().isEmpty());
+
+        RelyingPartyConfiguration def = resolver.getDefaultConfiguration();
+        Assert.assertEquals(def.getProfileConfigurations().size(), 8);
+    }
+
+    @Test public void relyingParty2() {
+        DefaultRelyingPartyConfigurationResolver resolver = getResolver("relying-party-group2.xml");
+
+        Assert.assertEquals(resolver.getId(), "RelyingPartyGroup");
+
+        final List<RelyingPartyConfiguration> rps = resolver.getRelyingPartyConfigurations();
+        Assert.assertEquals(rps.size(), 2);
+
+        RelyingPartyConfiguration rp = rps.get(0);
+        Assert.assertEquals(rp.getId(), "the id1");
+        Assert.assertEquals(rp.getResponderId(), "IdP1");
+
+        rp = rps.get(1);
+        Assert.assertEquals(rp.getId(), "the id2");
+        Assert.assertEquals(rp.getResponderId(), "IdP2");
+
+        rp = resolver.getAnonymousConfiguration();
+        Assert.assertEquals(rp.getResponderId(), "AnonIdP");
+        Assert.assertEquals(rp.getId(), "AnonymousRelyingParty");
+
+        rp = resolver.getDefaultConfiguration();
+        Assert.assertEquals(rp.getResponderId(), "DefaultIdP");
+        Assert.assertEquals(rp.getId(), "DefaultRelyingParty");
+    }
+
 }

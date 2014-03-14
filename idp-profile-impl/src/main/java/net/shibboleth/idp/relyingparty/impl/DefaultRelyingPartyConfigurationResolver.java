@@ -25,8 +25,10 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.profile.logic.AnonymousProfilePredicate;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
@@ -40,6 +42,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
@@ -60,11 +63,21 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
     @Nonnull private final Logger log = LoggerFactory.getLogger(DefaultRelyingPartyConfigurationResolver.class);
 
     /** Registered relying party configurations. */
-    private List<RelyingPartyConfiguration> rpConfigurations;
+    @Nonnull private List<RelyingPartyConfiguration> rpConfigurations;
+
+    /** Default relying party configurations, called if no other configuration matches. */
+    @NonnullAfterInit private RelyingPartyConfiguration defaultConfiguration;
+
+    /** Anonymous relying party configurations, called if the profile is Anonymous. */
+    @Nullable private RelyingPartyConfiguration anonymousConfiguration;
+
+    /** The predicate which decides if this context is "Anonymous". */
+    @NonnullAfterInit private Predicate<ProfileRequestContext> isAnonymousPredicate;
 
     /** Constructor. */
     public DefaultRelyingPartyConfigurationResolver() {
         rpConfigurations = Collections.emptyList();
+        isAnonymousPredicate = new AnonymousProfilePredicate();
     }
 
     /**
@@ -84,12 +97,67 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
      * 
      * @param configs list of registered relying party configurations
      */
-    public void setRelyingPartyConfigurations(
-            @Nonnull @NonnullElements final List<RelyingPartyConfiguration> configs) {
+    public void setRelyingPartyConfigurations(@Nonnull @NonnullElements final List<RelyingPartyConfiguration> configs) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(configs, "RelyingPartyConfiguration collection cannot be null");
 
         rpConfigurations = Lists.newArrayList(Collections2.filter(configs, Predicates.notNull()));
+    }
+
+    /**
+     * Get the {@link RelyingPartyConfiguration} to use if no other configuration is acceptable.
+     * 
+     * @return Returns the defaultConfiguration.
+     */
+    @NonnullAfterInit public RelyingPartyConfiguration getDefaultConfiguration() {
+        return defaultConfiguration;
+    }
+
+    /**
+     * Set the {@link RelyingPartyConfiguration} to use if no other configuration is acceptable.
+     * 
+     * @param configuration The defaultConfiguration to set.
+     */
+    public void setDefaultConfiguration(RelyingPartyConfiguration configuration) {
+        defaultConfiguration = configuration;
+    }
+
+    /**
+     * Get the {@link RelyingPartyConfiguration} to use if the configuration is found to be "anonymous" (via the call to
+     * the {@link #isAnonymousPredicate}.
+     * 
+     * @return Returns the anonymousConfiguration.
+     */
+    @NonnullAfterInit public RelyingPartyConfiguration getAnonymousConfiguration() {
+        return anonymousConfiguration;
+    }
+
+    /**
+     * Set the {@link RelyingPartyConfiguration} to use if the configuration is found to be "anonymous" (via the call to
+     * the {@link #isAnonymousPredicate}.
+     * 
+     * @param configuration The anonymousConfiguration to set.
+     */
+    public void setAnonymousConfiguration(RelyingPartyConfiguration configuration) {
+        anonymousConfiguration = configuration;
+    }
+
+    /**
+     * Gets the definition of what an anonymous Profile is.
+     * 
+     * @return Returns the Predicate.
+     */
+    public Predicate<ProfileRequestContext> getIsAnonymousPredicate() {
+        return isAnonymousPredicate;
+    }
+
+    /**
+     * Sets the definition of what an anonymous Profile is.
+     * 
+     * @param predicate The Predicate to set.
+     */
+    public void setIsAnonymousPredicate(Predicate<ProfileRequestContext> predicate) {
+        isAnonymousPredicate = predicate;
     }
 
     /** {@inheritDoc} */
@@ -104,6 +172,12 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
             }
             configIds.add(config.getId());
         }
+        if (null == getDefaultConfiguration()) {
+                throw new ComponentInitializationException("No default Relying Party Configuration provided");
+        }
+        if (null == getAnonymousConfiguration()) {
+            throw new ComponentInitializationException("No anonymous Relying Party Configuration provided");
+        }
     }
 
     /** {@inheritDoc} */
@@ -116,6 +190,11 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
         }
 
         log.debug("Resolving relying party configurations for profile request {}", context.getId());
+        if (isAnonymousPredicate.apply(context) && null != getAnonymousConfiguration()) {
+            log.debug("Profile Request {} is anonymous: returning configuration {} only", context.getId(),
+                    getAnonymousConfiguration().getId());
+            return Collections.singleton(getAnonymousConfiguration());
+        }
 
         final ArrayList<RelyingPartyConfiguration> matches = Lists.newArrayList();
 
@@ -132,6 +211,11 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
             }
         }
 
+        if (matches.isEmpty()) {
+            log.debug("No matching Relying Party Configuration found for profile request {}"
+                    + ", returning the default configuration {}", context.getId(), getDefaultConfiguration().getId());
+            return Collections.singleton(getDefaultConfiguration());
+        }
         return matches;
     }
 
@@ -142,6 +226,11 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
 
         if (context == null) {
             return null;
+        }
+        if (isAnonymousPredicate.apply(context) && null != getAnonymousConfiguration()) {
+            log.debug("Profile Request {} is anonymous: returning configuration {} only", context.getId(),
+                    getAnonymousConfiguration().getId());
+            return getAnonymousConfiguration();
         }
 
         log.debug("Resolving relying party configuration for profile request {}", context.getId());
@@ -158,8 +247,8 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
             }
         }
 
-        log.debug("No relying party configurations are applicable to profile request {}", context.getId());
-        return null;
+        log.debug("No relying party configurations are applicable to profile request {}"
+                    + ", returning the default configuration {}", context.getId(), getDefaultConfiguration().getId());
+        return getDefaultConfiguration();
     }
-
 }

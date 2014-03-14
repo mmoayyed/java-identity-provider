@@ -29,7 +29,6 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -37,9 +36,9 @@ import org.w3c.dom.Element;
 /**
  * TODO.
  * 
- * Parser for &lt;AnonymousRelyingParty&gt;<br/> This parser summons up two (TODO three) beans
- * a  {@link DefaultRelyingPartyConfigurationResolver} which deals with the RelyingParty bit 
- * of the file and a {@link TBD} which deals with the metadata and security configuration.  
+ * Parser for &lt;AnonymousRelyingParty&gt;<br/>
+ * This parser summons up two (TODO three) beans a {@link DefaultRelyingPartyConfigurationResolver} which deals with the
+ * RelyingParty bit of the file and a {@link TBD} which deals with the metadata and security configuration.
  */
 public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser {
 
@@ -56,46 +55,23 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
         super.doParse(element, parserContext, builder);
         final Map<QName, List<Element>> configChildren = ElementSupport.getIndexedChildElements(element);
 
+        builder.addPropertyValue("id", "RelyingPartyGroup");
+        
         // All the Relying Parties
         final List<BeanDefinition> relyingParties =
                 SpringSupport.parseCustomElements(configChildren.get(RelyingPartyParser.ELEMENT_NAME), parserContext);
+        if (null != relyingParties && relyingParties.size() > 0) {
+            builder.addPropertyValue("relyingPartyConfigurations", relyingParties);
+        }
         final List<BeanDefinition> defaultRps =
                 SpringSupport.parseCustomElements(configChildren.get(DefaultRelyingPartyParser.ELEMENT_NAME),
                         parserContext);
+        builder.addPropertyValue("defaultConfiguration", defaultRps.get(0));
+
         final List<BeanDefinition> anonRps =
                 SpringSupport.parseCustomElements(configChildren.get(AnonymousRelyingPartyParser.ELEMENT_NAME),
                         parserContext);
-
-        int count = 0;
-        if (null != relyingParties) {
-            count += relyingParties.size();
-        }
-        if (null != defaultRps) {
-            count += defaultRps.size();
-        }
-        if (null != anonRps) {
-            count += anonRps.size();
-        }
-
-        List<BeanDefinition> newList = new ManagedList<>(count);
-
-        // Construct this list so that the default is at the end
-        if (null != relyingParties) {
-            for (final BeanDefinition defn : relyingParties) {
-                newList.add(defn);
-            }
-        }
-        if (null != anonRps) {
-            for (final BeanDefinition defn : anonRps) {
-                newList.add(defn);
-            }
-        }
-        if (null != defaultRps) {
-            for (final BeanDefinition defn : defaultRps) {
-                newList.add(defn);
-            }
-        }
-        builder.addPropertyValue("relyingPartyConfigurations", newList);
+        builder.addPropertyValue("anonymousConfiguration", anonRps.get(0));
 
         // TODO Metadata
         SpringSupport.parseCustomElements(configChildren.get(MetadataProviderParser.ELEMENT_NAME), parserContext);

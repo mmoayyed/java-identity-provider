@@ -40,6 +40,7 @@ public class DefaultRelyingPartyParser extends AbstractRelyingPartyParser {
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
+        builder.addPropertyValue("id", "DefaultRelyingParty");
         builder.addPropertyValue("activationCondition", Predicates.alwaysTrue());
     }
 

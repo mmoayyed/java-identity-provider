@@ -39,6 +39,7 @@ public class AnonymousRelyingPartyParser extends AbstractRelyingPartyParser {
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
+        builder.addPropertyValue("id", "AnonymousRelyingParty");
         builder.addPropertyValue("activationCondition", new AnonymousProfilePredicate());
     }
 
