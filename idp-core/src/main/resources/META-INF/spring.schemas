@@ -1,10 +1,3 @@
-# These will move somewhere once we implement them.
-http\://shibboleth.net/schema/idp/shibboleth-security-policy-saml.xsd = schema/shibboleth-security-policy-saml.xsd
-http\://shibboleth.net/schema/idp/shibboleth-resource.xsd = schema/shibboleth-resource.xsd
-
-classpath\:/schema/shibboleth-2.0-security-policy-saml.xsd = schema/shibboleth-security-policy-saml.xsd
-classpath\:/schema/shibboleth-2.0-resource.xsd = schema/shibboleth-resource.xsd
-
 # These need to be somewhere, leaving here for want of a better choice for now.
 
 http\://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd = schema/xmldsig-core-schema.xsd
