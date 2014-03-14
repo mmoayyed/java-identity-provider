@@ -19,6 +19,8 @@ package net.shibboleth.idp.profile.spring.relyingparty;
 
 import javax.xml.namespace.QName;
 
+import net.shibboleth.idp.profile.logic.AnonymousProfilePredicate;
+
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -37,8 +39,7 @@ public class AnonymousRelyingPartyParser extends AbstractRelyingPartyParser {
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
-        // TODO - plug in the predicate
-        // builder.addPropertyValue("activationCondition", <Something>)
+        builder.addPropertyValue("activationCondition", new AnonymousProfilePredicate());
     }
 
     /** {@inheritDoc} */

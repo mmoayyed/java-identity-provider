@@ -73,5 +73,7 @@ public abstract class AbstractRelyingPartyParser extends AbstractSingleBeanDefin
                 SpringSupport.parseCustomElements(ElementSupport.getChildElements(element, PROFILE_CONFIGURATION),
                         parserContext);
         builder.addPropertyValue("profileConfigurations", profileConfigurations);
+        
+        builder.setInitMethodName("initialize");
     }
 }

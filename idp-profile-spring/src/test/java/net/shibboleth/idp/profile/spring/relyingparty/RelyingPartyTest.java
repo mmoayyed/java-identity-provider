@@ -17,15 +17,13 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty;
 
-import java.util.List;
-
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
-import net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
@@ -37,21 +35,21 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Sets;
 
 /**
- * Test for a complete example RelyingParty file
+ * Test a &lt;RelyingParty&gt;
  */
-public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
-    
+public class RelyingPartyTest extends OpenSAMLInitBaseTestCase {
+
     private static final String PATH = "/net/shibboleth/idp/profile/spring/relyingparty/";
-    
+
     @Test public void relyingParties() {
         final Resource[] resources = new Resource[2];
-        
-            resources[0] = new ClassPathResource(PATH + "beans.xml");
-            resources[1] = new ClassPathResource(PATH + "relying-party-group.xml");
-        
+
+        resources[0] = new ClassPathResource(PATH + "beans.xml");
+        resources[1] = new ClassPathResource(PATH + "relying-party.xml");
+
         final GenericApplicationContext context = new GenericApplicationContext();
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
-        context.setDisplayName("ApplicationContext: " );
+        context.setDisplayName("ApplicationContext: ");
         service.setConverters(Sets.newHashSet(new DurationToLongConverter(), new StringToIPRangeConverter()));
         service.afterPropertiesSet();
 
@@ -60,16 +58,22 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
         final XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
 
         configReader.setValidating(true);
-        
+
         configReader.loadBeanDefinitions(resources);
         context.refresh();
 
-        DefaultRelyingPartyConfigurationResolver resolver =  (DefaultRelyingPartyConfigurationResolver ) context.getBean(RelyingPartyConfigurationResolver.class);
+        RelyingPartyConfiguration rpConf = context.getBean(RelyingPartyConfiguration.class);
+
+        Assert.assertEquals(rpConf.getId(), "the_RP");
+        Assert.assertEquals(rpConf.getProfileConfigurations().size(), 1);
+
+        ProfileRequestContext ctx = new ProfileRequestContext<>();
+        RelyingPartyContext rpCtx = ctx.getSubcontext(RelyingPartyContext.class, true);
+        rpCtx.setRelyingPartyId("the_RP");
         
-        List<RelyingPartyConfiguration> configs = resolver.getRelyingPartyConfigurations();
-        Assert.assertEquals(configs.size(), 2);
-           // TODO test that the order is correct    
+        Assert.assertTrue(rpConf.apply(ctx));
+        //
+        // TODO the EntitiesGroup thing
     }
 
-    
 }
