@@ -37,8 +37,8 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 /**
- * Function to return a set of candidate NameIdentifier/NameID Format values derived from an entity's
- * SAML metadata. 
+ * Function to filter a set of candidate NameIdentifier/NameID Format values derived from an entity's
+ * SAML metadata against configuration preferences. 
  */
 public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierFormatStrategy {
 
@@ -52,7 +52,7 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
     
     /** Constructor. */
     public DefaultNameIdentifierFormatStrategy() {
-        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
+        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
     }
     
     /**
