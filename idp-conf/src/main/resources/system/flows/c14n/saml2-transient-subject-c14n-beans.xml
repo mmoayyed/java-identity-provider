@@ -13,7 +13,7 @@
     <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
 
 	<bean id="SAML2TransientDecoder" class="net.shibboleth.idp.saml.impl.nameid.TransientNameIDDecoder"
-		scope="prototype" p:idStore-ref="shibboleth.StorageService" />
+		p:idStore-ref="shibboleth.StorageService" />
 
 	<bean id="SAML2TransientCanonicalization" class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization"
 		scope="prototype" p:decoder-ref="SAML2TransientDecoder" />

@@ -13,7 +13,7 @@
     <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
 
 	<bean id="SAML2CryptoTransientDecoder" class="net.shibboleth.idp.saml.impl.nameid.CryptoTransientNameIDDecoder"
-		scope="prototype" p:dataSealer-ref="shibboleth.DataSealer" />
+		p:dataSealer-ref="shibboleth.DataSealer" />
 
 	<bean id="SAML2CrypoTransientCanonicalization" class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization"
 		scope="prototype" p:decoder-ref="SAML2CryptoTransientDecoder" />
