@@ -113,7 +113,7 @@
         
     <bean id="AddResponseShell" class="org.opensaml.saml.saml2.profile.impl.AddResponseShell" scope="prototype">
         <property name="identifierGeneratorLookupStrategy">
-            <bean class="net.shibboleth.idp.saml.impl.profile.config.navigate.IdentifierGenerationStrategyLookupFunction" />
+            <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction" />
         </property>
         <property name="issuerLookupStrategy">
             <bean class="net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction" />
