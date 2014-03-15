@@ -116,7 +116,7 @@
             <bean class="net.shibboleth.idp.saml.impl.profile.config.navigate.IdentifierGenerationStrategyLookupFunction" />
         </property>
         <property name="issuerLookupStrategy">
-            <bean class="net.shibboleth.idp.saml.impl.profile.config.navigate.ResponderIdLookupFunction" />
+            <bean class="net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction" />
         </property>
     </bean>
 

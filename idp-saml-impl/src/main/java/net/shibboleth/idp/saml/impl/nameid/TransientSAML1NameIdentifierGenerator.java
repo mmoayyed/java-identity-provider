@@ -21,8 +21,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.context.SubjectContext;
-import net.shibboleth.idp.saml.impl.profile.config.navigate.RelyingPartyIdLookupFunction;
-import net.shibboleth.idp.saml.impl.profile.config.navigate.ResponderIdLookupFunction;
+import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
+import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;

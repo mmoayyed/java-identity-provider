@@ -16,7 +16,6 @@
  */
 
 /** 
- * Functions dealing with traversing and extracting data from
- * Spring or Web Flow context objects.
+ * Functions dealing with traversing and extracting data from profile request contexts.
  */
 package net.shibboleth.idp.profile.context.navigate;
