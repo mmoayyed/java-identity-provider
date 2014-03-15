@@ -18,8 +18,15 @@ http\://shibboleth.net/schema/idp/shibboleth-relying-party-saml.xsd = schema/shi
 http\://shibboleth.net/schema/idp/shibboleth-security-policy-saml.xsd = schema/shibboleth-security-policy-saml.xsd
 http\://shibboleth.net/schema/idp/shibboleth-resource.xsd = schema/shibboleth-resource.xsd
 
-# Needed to stop us hitting w3.org
+# Core schemas
 http\://www.w3.org/2001/xml.xsd = schema/xml.xsd
+http\://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd = schema/xmldsig-core-schema.xsd
+http\://www.w3.org/TR/2013/REC-xmldsig-core1-20130411/xmldsig11-schema.xsd = schema/xmldsig11-schema.xsd
+http\://www.w3.org/TR/xmlenc-core/xenc-schema.xsd = schema/xenc-schema.xsd
+http\://www.w3.org/TR/2013/REC-xmlenc-core1-20130411/xenc-schema-11.xsd = schema/xenc11-schema.xsd
+http\://docs.oasis-open.org/security/saml/v2.0/saml-schema-assertion-2.0.xsd = schema/saml-schema-assertion-2.0.xsd
+http\://docs.oasis-open.org/security/saml/v2.0/saml-schema-protocol-2.0.xsd = schema/saml-schema-protocol-2.0.xsd
+http\://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd = schema/saml-schema-metadata-2.0.xsd
 
 # Legacy Filter
 classpath\:/schema/shibboleth-2.0-afp.xsd = schema/shibboleth-afp.xsd
@@ -33,7 +40,7 @@ classpath\:/schema/shibboleth-2.0-attribute-resolver-dc.xsd = schema/shibboleth-
 classpath\:/schema/shibboleth-2.0-attribute-resolver-pc.xsd = schema/shibboleth-attribute-resolver-pc.xsd
 classpath\:/schema/shibboleth-2.0-attribute-encoder.xsd = schema/shibboleth-attribute-encoder.xsd
 
-# legacy Relying-Party
+# Legacy Relying-Party
 classpath\:/schema/shibboleth-2.0-security.xsd = schema/shibboleth-security.xsd
 classpath\:/schema/shibboleth-2.0-metadata.xsd = schema/shibboleth-metadata.xsd
 classpath\:/schema/shibboleth-2.0-relying-party.xsd = schema/shibboleth-relying-party.xsd
@@ -41,6 +48,12 @@ classpath\:/schema/shibboleth-2.0-relying-party-saml.xsd = schema/shibboleth-rel
 classpath\:/schema/shibboleth-2.0-security-policy-saml.xsd = schema/shibboleth-security-policy-saml.xsd
 classpath\:/schema/shibboleth-2.0-resource.xsd = schema/shibboleth-resource.xsd
 
-# legacy xmlorg 
+# Legacy core schemas 
 classpath\:/schema/xml.xsd = schema/xml.xsd
-
+classpath\:/schema/xmldsig-core-schema.xsd = schema/xmldsig-core-schema.xsd
+classpath\:/schema/xmldsig11-schema.xsd = schema/xmldsig11-schema.xsd
+classpath\:/schema/xenc-schema.xsd = schema/xenc-schema.xsd
+classpath\:/schema/xenc11-schema.xsd = schema/xenc11-schema.xsd
+classpath\:/schema/saml-schema-assertion-2.0.xsd = schema/saml-schema-assertion-2.0.xsd
+classpath\:/schema/saml-schema-protocol-2.0.xsd = schema/saml-schema-protocol-2.0.xsd
+classpath\:/schema/saml-schema-metadata-2.0.xsd = schema/saml-schema-metadata-2.0.xsd
