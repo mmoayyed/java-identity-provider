@@ -52,6 +52,14 @@ import com.google.common.base.Functions;
  */
 public class InitializeRelyingPartyContextFromSAMLPeer extends AbstractProfileAction {
 
+    /** The relying party ID lookup function to inject. */
+    @Nonnull private static final Function<RelyingPartyContext,String> RPID_LOOKUP
+        = new SAMLRelyingPartyIdLookupStrategy();
+
+    /** The anonymity lookup function to inject. */
+    @Nonnull private static final Function<RelyingPartyContext,Boolean> ANON_LOOKUP
+        = new SAMLAnonymityLookupStrategy();
+    
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(InitializeRelyingPartyContextFromSAMLPeer.class);
 
@@ -125,7 +133,8 @@ public class InitializeRelyingPartyContextFromSAMLPeer extends AbstractProfileAc
         log.debug("{} Attaching RelyingPartyContext based on SAML peer {}", getLogPrefix(),
                 peerEntityCtx.getEntityId());
         rpContext.setRelyingPartyIdContextTree(peerEntityCtx);
-        rpContext.setRelyingPartyIdLookupStrategy(new SAMLRelyingPartyIdLookupStrategy());
+        rpContext.setRelyingPartyIdLookupStrategy(RPID_LOOKUP);
+        rpContext.setAnonymityLookupStrategy(ANON_LOOKUP);
     }
     
 }
