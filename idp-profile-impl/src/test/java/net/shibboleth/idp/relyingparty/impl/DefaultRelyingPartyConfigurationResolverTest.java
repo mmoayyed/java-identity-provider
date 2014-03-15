@@ -20,6 +20,7 @@ package net.shibboleth.idp.relyingparty.impl;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -74,6 +75,7 @@ public class DefaultRelyingPartyConfigurationResolverTest {
     
     @Test public void testDefault() throws Exception {
         ProfileRequestContext requestContext = new ProfileRequestContext();
+        requestContext.getSubcontext(RelyingPartyContext.class, true).setAnonymous(false);
 
         RelyingPartyConfiguration anonRP = new RelyingPartyConfiguration();
         anonRP.setId("anonRPId");
@@ -106,6 +108,7 @@ public class DefaultRelyingPartyConfigurationResolverTest {
     
     @Test public void testAnon() throws Exception {
         ProfileRequestContext requestContext = new ProfileRequestContext();
+        requestContext.getSubcontext(RelyingPartyContext.class, true).setAnonymous(true);
         
         RelyingPartyConfiguration anonRP = new RelyingPartyConfiguration();
         anonRP.setId("anonRPId");
@@ -140,6 +143,7 @@ public class DefaultRelyingPartyConfigurationResolverTest {
 
     @Test public void testResolve() throws Exception {
         ProfileRequestContext requestContext = new ProfileRequestContext();
+        requestContext.getSubcontext(RelyingPartyContext.class, true).setAnonymous(false);
 
         RelyingPartyConfiguration anonRP = new RelyingPartyConfiguration();
         anonRP.setId("anonRPId");
