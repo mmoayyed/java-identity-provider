@@ -11,7 +11,7 @@
         <relativePath>../idp-parent</relativePath>
     </parent>
 
-    <name>idp-schema</name>
+    <name>Shibboleth IdP :: Configuration Schemas</name>
     <artifactId>idp-schema</artifactId>
     <packaging>jar</packaging>
 

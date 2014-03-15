@@ -1,0 +1,46 @@
+# Current Filter
+http\://shibboleth.net/schema/idp/shibboleth-afp.xsd = schema/shibboleth-afp.xsd
+http\://shibboleth.net/schema/idp/shibboleth-afp-mf-basic.xsd = schema/shibboleth-afp-mf-basic.xsd
+http\://shibboleth.net/schema/idp/shibboleth-afp-mf-saml.xsd = schema/shibboleth-afp-mf-saml.xsd
+
+#  Current Resolver
+http\://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd = schema/shibboleth-attribute-resolver.xsd
+http\://shibboleth.net/schema/idp/shibboleth-attribute-resolver-ad.xsd = schema/shibboleth-attribute-resolver-ad.xsd
+http\://shibboleth.net/schema/idp/shibboleth-attribute-resolver-dc.xsd = schema/shibboleth-attribute-resolver-dc.xsd
+http\://shibboleth.net/schema/idp/shibboleth-attribute-resolver-pc.xsd = schema/shibboleth-attribute-resolver-pc.xsd
+http\://shibboleth.net/schema/idp/shibboleth-attribute-encoder.xsd = schema/shibboleth-attribute-encoder.xsd
+
+# Current Relying-Party
+http\://shibboleth.net/schema/idp/shibboleth-security.xsd = schema/shibboleth-security.xsd
+http\://shibboleth.net/schema/idp/shibboleth-metadata.xsd = schema/shibboleth-metadata.xsd
+http\://shibboleth.net/schema/idp/shibboleth-relying-party.xsd = schema/shibboleth-relying-party.xsd
+http\://shibboleth.net/schema/idp/shibboleth-relying-party-saml.xsd = schema/shibboleth-relying-party-saml.xsd
+http\://shibboleth.net/schema/idp/shibboleth-security-policy-saml.xsd = schema/shibboleth-security-policy-saml.xsd
+http\://shibboleth.net/schema/idp/shibboleth-resource.xsd = schema/shibboleth-resource.xsd
+
+# Needed to stop us hitting w3.org
+http\://www.w3.org/2001/xml.xsd = schema/xml.xsd
+
+# Legacy Filter
+classpath\:/schema/shibboleth-2.0-afp.xsd = schema/shibboleth-afp.xsd
+classpath\:/schema/shibboleth-2.0-afp-mf-basic.xsd = schema/shibboleth-afp-mf-basic.xsd
+classpath\:/schema/shibboleth-2.0-afp-mf-saml.xsd = schema/shibboleth-afp-mf-saml.xsd
+
+# Legacy Resolver
+classpath\:/schema/shibboleth-2.0-attribute-resolver.xsd = schema/shibboleth-attribute-resolver.xsd
+classpath\:/schema/shibboleth-2.0-attribute-resolver-ad.xsd = schema/shibboleth-attribute-resolver-ad.xsd
+classpath\:/schema/shibboleth-2.0-attribute-resolver-dc.xsd = schema/shibboleth-attribute-resolver-dc.xsd
+classpath\:/schema/shibboleth-2.0-attribute-resolver-pc.xsd = schema/shibboleth-attribute-resolver-pc.xsd
+classpath\:/schema/shibboleth-2.0-attribute-encoder.xsd = schema/shibboleth-attribute-encoder.xsd
+
+# legacy Relying-Party
+classpath\:/schema/shibboleth-2.0-security.xsd = schema/shibboleth-security.xsd
+classpath\:/schema/shibboleth-2.0-metadata.xsd = schema/shibboleth-metadata.xsd
+classpath\:/schema/shibboleth-2.0-relying-party.xsd = schema/shibboleth-relying-party.xsd
+classpath\:/schema/shibboleth-2.0-relying-party-saml.xsd = schema/shibboleth-relying-party-saml.xsd
+classpath\:/schema/shibboleth-2.0-security-policy-saml.xsd = schema/shibboleth-security-policy-saml.xsd
+classpath\:/schema/shibboleth-2.0-resource.xsd = schema/shibboleth-resource.xsd
+
+# legacy xmlorg 
+classpath\:/schema/xml.xsd = schema/xml.xsd
+

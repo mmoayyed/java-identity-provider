@@ -25,6 +25,8 @@
 
     <modules>
         <module>../idp-core</module>
+        <module>../idp-schema</module>
+
         <module>../idp-authn-api</module>
         <module>../idp-attribute-api</module>
         <module>../idp-attribute-resolver-api</module>

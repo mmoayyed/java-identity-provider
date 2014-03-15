@@ -1,7 +1,0 @@
-http\://shibboleth.net/schema/idp/shibboleth-afp.xsd = schema/shibboleth-afp.xsd
-http\://shibboleth.net/schema/idp/shibboleth-afp-mf-basic.xsd = schema/shibboleth-afp-mf-basic.xsd
-http\://shibboleth.net/schema/idp/shibboleth-afp-mf-saml.xsd = schema/shibboleth-afp-mf-saml.xsd
-
-classpath\:/schema/shibboleth-2.0-afp.xsd = schema/shibboleth-afp.xsd
-classpath\:/schema/shibboleth-2.0-afp-mf-basic.xsd = schema/shibboleth-afp-mf-basic.xsd
-classpath\:/schema/shibboleth-2.0-afp-mf-saml.xsd = schema/shibboleth-afp-mf-saml.xsd
