@@ -26,7 +26,8 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
-import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
+
+import com.google.common.base.Function;
 
 /**
  * {@link BaseContext} containing relying party specific information, usually a
@@ -44,10 +45,10 @@ public final class RelyingPartyContext extends BaseContext {
     @Nullable private BaseContext relyingPartyIdContextTree;
 
     /** A lookup strategy for deriving anonymity based on contained information. */
-    @Nullable private ContextDataLookupFunction<RelyingPartyContext,Boolean> anonymityLookupStrategy;
+    @Nullable private Function<RelyingPartyContext,Boolean> anonymityLookupStrategy;
 
     /** A lookup strategy for deriving a relying party ID based on contained information. */
-    @Nullable private ContextDataLookupFunction<RelyingPartyContext,String> relyingPartyIdLookupStrategy;
+    @Nullable private Function<RelyingPartyContext,String> relyingPartyIdLookupStrategy;
     
     /** The relying party configuration. */
     @Nullable private RelyingPartyConfiguration relyingPartyConfiguration;
@@ -143,7 +144,7 @@ public final class RelyingPartyContext extends BaseContext {
      * 
      * @return lookup strategy
      */
-    @Nullable ContextDataLookupFunction<RelyingPartyContext,Boolean> getAnonymityLookupStrategy() {
+    @Nullable Function<RelyingPartyContext,Boolean> getAnonymityLookupStrategy() {
         return anonymityLookupStrategy;
     }
     
@@ -155,7 +156,7 @@ public final class RelyingPartyContext extends BaseContext {
      * @return this context
      */
     @Nonnull public RelyingPartyContext setAnonymityLookupStrategy(
-            @Nonnull final ContextDataLookupFunction<RelyingPartyContext,Boolean> strategy) {
+            @Nonnull final Function<RelyingPartyContext,Boolean> strategy) {
         anonymityLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
         return this;
     }
@@ -165,7 +166,7 @@ public final class RelyingPartyContext extends BaseContext {
      * 
      * @return lookup strategy
      */
-    @Nullable ContextDataLookupFunction<RelyingPartyContext,String> getRelyingPartyIdLookupStrategy() {
+    @Nullable Function<RelyingPartyContext,String> getRelyingPartyIdLookupStrategy() {
         return relyingPartyIdLookupStrategy;
     }
     
@@ -177,7 +178,7 @@ public final class RelyingPartyContext extends BaseContext {
      * @return this context
      */
     @Nonnull public RelyingPartyContext setRelyingPartyIdLookupStrategy(
-            @Nonnull final ContextDataLookupFunction<RelyingPartyContext,String> strategy) {
+            @Nonnull final Function<RelyingPartyContext,String> strategy) {
         relyingPartyIdLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
         return this;
     }
