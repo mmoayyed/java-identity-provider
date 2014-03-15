@@ -34,12 +34,18 @@ import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
  */
 public final class RelyingPartyContext extends BaseContext {
 
+    /** Optional flag indicating anonymity. */
+    @Nullable private Boolean anonymous; 
+    
     /** The identifier for the relying party. */
     @Nullable private String relyingPartyId;
 
     /** A pointer to a context tree containing identifying material for the relying party. */
     @Nullable private BaseContext relyingPartyIdContextTree;
-    
+
+    /** A lookup strategy for deriving anonymity based on contained information. */
+    @Nullable private ContextDataLookupFunction<RelyingPartyContext,Boolean> anonymityLookupStrategy;
+
     /** A lookup strategy for deriving a relying party ID based on contained information. */
     @Nullable private ContextDataLookupFunction<RelyingPartyContext,String> relyingPartyIdLookupStrategy;
     
@@ -48,6 +54,35 @@ public final class RelyingPartyContext extends BaseContext {
 
     /** Profile configuration that is in use. */
     @Nullable private ProfileConfiguration profileConfiguration;
+    
+    /**
+     * Get whether the relying party is securely identified.
+     * 
+     * @return  true iff the relying party's identity was not securely established
+     */
+    public boolean isAnonymous() {
+        if (anonymous != null) {
+            return anonymous;
+        } else if (anonymityLookupStrategy != null) {
+            final Boolean flag = anonymityLookupStrategy.apply(this);
+            if (flag != null) {
+                return flag;
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Set whether the relying party is securely identified.
+     * 
+     * @param flag  explicit value for the anonymity setting
+     * 
+     * @return this context
+     */
+    @Nonnull public RelyingPartyContext setAnonymous(@Nullable final Boolean flag) {
+        anonymous = flag;
+        return this;
+    }
 
     /**
      * Get the unique identifier of the relying party.
@@ -70,9 +105,12 @@ public final class RelyingPartyContext extends BaseContext {
      * Set the unique identifier of the relying party.
      * 
      * @param rpId the relying party identifier, or null
+     * 
+     * @return this context
      */
-    public void setRelyingPartyId(@Nullable final String rpId) {
+    @Nonnull public RelyingPartyContext setRelyingPartyId(@Nullable final String rpId) {
         relyingPartyId = StringSupport.trimOrNull(rpId);
+        return this;
     }
 
     /**
@@ -92,9 +130,34 @@ public final class RelyingPartyContext extends BaseContext {
      * <p>The subtree root may, but need not, be an actual subcontext of this context.</p>
      * 
      * @param root  root of context tree
+     * 
+     * @return this context
      */
-    public void setRelyingPartyIdContextTree(@Nullable final BaseContext root) {
+    @Nonnull public RelyingPartyContext setRelyingPartyIdContextTree(@Nullable final BaseContext root) {
         relyingPartyIdContextTree = root;
+        return this;
+    }
+    
+    /**
+     * Get the lookup strategy for a non-explicit anonymity determination.
+     * 
+     * @return lookup strategy
+     */
+    @Nullable ContextDataLookupFunction<RelyingPartyContext,Boolean> getAnonymityLookupStrategy() {
+        return anonymityLookupStrategy;
+    }
+    
+    /**
+     * Set the lookup strategy for a non-explicit anonymity determination.
+     * 
+     * @param strategy  lookup strategy
+     * 
+     * @return this context
+     */
+    @Nonnull public RelyingPartyContext setAnonymityLookupStrategy(
+            @Nonnull final ContextDataLookupFunction<RelyingPartyContext,Boolean> strategy) {
+        anonymityLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
+        return this;
     }
     
     /**
@@ -110,10 +173,13 @@ public final class RelyingPartyContext extends BaseContext {
      * Set the lookup strategy for a non-explicit relying party ID.
      * 
      * @param strategy  lookup strategy
+     * 
+     * @return this context
      */
-    public void setRelyingPartyIdLookupStrategy(
+    @Nonnull public RelyingPartyContext setRelyingPartyIdLookupStrategy(
             @Nonnull final ContextDataLookupFunction<RelyingPartyContext,String> strategy) {
         relyingPartyIdLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
+        return this;
     }
     
     /**
@@ -129,9 +195,12 @@ public final class RelyingPartyContext extends BaseContext {
      * Set the configuration to use when processing requests for this relying party.
      * 
      * @param config configuration to use when processing requests for this relying party, or null
+     * 
+     * @return this context
      */
-    public void setConfiguration(@Nullable final RelyingPartyConfiguration config) {
+    @Nonnull public RelyingPartyContext setConfiguration(@Nullable final RelyingPartyConfiguration config) {
         relyingPartyConfiguration = config;
+        return this;
     }
 
     /**
@@ -147,9 +216,12 @@ public final class RelyingPartyContext extends BaseContext {
      * Set the configuration for the request profile currently being processed.
      * 
      * @param config configuration for the request profile currently being processed, or null
+     * 
+     * @return this context
      */
-    public void setProfileConfig(@Nullable final ProfileConfiguration config) {
+    @Nonnull public RelyingPartyContext setProfileConfig(@Nullable final ProfileConfiguration config) {
         profileConfiguration = config;
+        return this;
     }
     
 }

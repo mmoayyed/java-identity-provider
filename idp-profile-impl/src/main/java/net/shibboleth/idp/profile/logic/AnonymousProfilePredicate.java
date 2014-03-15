@@ -19,19 +19,26 @@ package net.shibboleth.idp.profile.logic;
 
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.profile.context.logic.AbstractRelyingPartyPredicate;
+
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import com.google.common.base.Predicate;
-
 /**
- * Predicate to determine whether the Request is anonymnous.
+ * Predicate to determine whether a profile request is anonymous.
  */
-public class AnonymousProfilePredicate implements Predicate<ProfileRequestContext> {
+public class AnonymousProfilePredicate extends AbstractRelyingPartyPredicate {
 
     /** {@inheritDoc} */
-    @Override public boolean apply(@Nullable ProfileRequestContext arg0) {
-        // TODO
-        return false;
+    @Override public boolean apply(@Nullable final ProfileRequestContext input) {
+        if (input != null) {
+            final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
+            if (rpc != null) {
+                return rpc.isAnonymous();
+            }
+        }
+        
+        return true;
     }
 
 }
