@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl.ad;
+package net.shibboleth.idp.attribute.resolver.impl.dc;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

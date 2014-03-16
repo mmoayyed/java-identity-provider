@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl.ad;
+package net.shibboleth.idp.attribute.resolver.impl.dc;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -29,6 +29,7 @@ import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
+import net.shibboleth.idp.attribute.resolver.impl.ad.SimpleAttributeDefinition;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.saml.impl.attribute.resolver.AbstractPersistentIdDataConnector;
 import net.shibboleth.idp.saml.impl.attribute.resolver.ComputedIDDataConnector;
