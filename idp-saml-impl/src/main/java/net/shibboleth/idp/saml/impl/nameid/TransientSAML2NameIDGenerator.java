@@ -98,9 +98,14 @@ public class TransientSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator 
     @Override
     @Nullable protected String getIdentifier(@Nonnull final ProfileRequestContext profileRequestContext)
             throws ProfileException {
-        
-        final Function<ProfileRequestContext,String> lookup = getDefaultSPNameQualifierLookupStrategy();
-        final String relyingPartyId = lookup != null ? lookup.apply(profileRequestContext) : null;
+
+        // Effective qualifier may override default in the case of an Affiliation.
+        // This doesn't really impact transients typically, but for consistency...
+        String relyingPartyId = getEffectiveSPNameQualifier(profileRequestContext);
+        if (relyingPartyId == null) {
+            final Function<ProfileRequestContext,String> lookup = getDefaultSPNameQualifierLookupStrategy();
+            relyingPartyId = lookup != null ? lookup.apply(profileRequestContext) : null;
+        }
         if (relyingPartyId == null) {
             log.debug("No relying party identifier available, can't generate transient ID");
             return null;

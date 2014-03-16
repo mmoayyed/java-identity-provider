@@ -161,8 +161,12 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
             return null;
         }
 
-        lookup = getDefaultSPNameQualifierLookupStrategy();
-        final String relyingPartyId = lookup != null ? lookup.apply(profileRequestContext) : null;
+        // Effective qualifier may override default in the case of an Affiliation.
+        String relyingPartyId = getEffectiveSPNameQualifier(profileRequestContext);
+        if (relyingPartyId == null) {
+            lookup = getDefaultSPNameQualifierLookupStrategy();
+            relyingPartyId = lookup != null ? lookup.apply(profileRequestContext) : null;
+        }
         if (relyingPartyId == null) {
             log.debug("No relying party identifier available, can't generate persistent ID");
             return null;
