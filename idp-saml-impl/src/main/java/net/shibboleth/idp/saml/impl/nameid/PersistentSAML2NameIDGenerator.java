@@ -143,7 +143,9 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         
-        if (attributeSourceIds.isEmpty()) {
+        if (persistentIdStrategy == null) {
+            throw new ComponentInitializationException("PersistentIdGenerationStrategy cannot be null");
+        } else if (attributeSourceIds.isEmpty()) {
             throw new ComponentInitializationException("Attribute source ID list cannot be empty");
         }
     }
@@ -157,7 +159,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
         Function<ProfileRequestContext,String> lookup = getDefaultIdPNameQualifierLookupStrategy();
         final String responderId = lookup != null ? lookup.apply(profileRequestContext) : null;
         if (responderId == null) {
-            log.debug("No responder identifier available, can't generate persistent ID");
+            log.debug("No responder identifier, can't generate persistent ID");
             return null;
         }
 
@@ -168,17 +170,21 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
             relyingPartyId = lookup != null ? lookup.apply(profileRequestContext) : null;
         }
         if (relyingPartyId == null) {
-            log.debug("No relying party identifier available, can't generate persistent ID");
+            log.debug("No relying party identifier, can't generate persistent ID");
             return null;
         }
         
         final SubjectContext subjectCtx = subjectContextLookupStrategy.apply(profileRequestContext);
         if (subjectCtx == null || subjectCtx.getPrincipalName() == null) {
-            log.debug("No principal name available, can't generate persistent ID");
+            log.debug("No principal name, can't generate persistent ID");
             return null;
         }
         
         final AttributeContext attributeCtx = attributeContextLookupStrategy.apply(profileRequestContext);
+        if (attributeCtx == null) {
+            log.debug("No attribute context, can't generate persistent ID");
+            return null;
+        }
         
         final Map<String, IdPAttribute> attributes = attributeCtx.getIdPAttributes();
         for (final String sourceId : attributeSourceIds) {
