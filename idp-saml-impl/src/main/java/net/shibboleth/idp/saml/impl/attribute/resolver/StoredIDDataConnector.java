@@ -28,6 +28,8 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.saml.impl.nameid.StoredPersistentIdGenerationStrategy;
+import net.shibboleth.utilities.java.support.annotation.Duration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -40,22 +42,22 @@ import com.google.common.base.Strings;
 
 /**
  * A data connector that delegates generation of IDs to a {@link StoredPersistentIdGenerationStrategy}
- * that makes use of a {@link DatabaseBackedIDStore}.
+ * that makes use of a {@link JDBCPersistentIdStore}.
  */
 public class StoredIDDataConnector extends ComputedIDDataConnector {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(StoredIDDataConnector.class);
 
-    /** The {@link DatabaseBackedIDStore} used to manage IDs. */
-    @Nonnull private final DatabaseBackedIDStore idStore;
+    /** The {@link JDBCPersistentIdStore} used to manage IDs. */
+    @Nonnull private final JDBCPersistentIdStore idStore;
 
     /** Persistent ID data store. */
     @Nonnull private final StoredPersistentIdGenerationStrategy storedIdStrategy;
     
     /** Constructor. */
     public StoredIDDataConnector() {
-        idStore = new DatabaseBackedIDStore();
+        idStore = new JDBCPersistentIdStore();
         storedIdStrategy = new StoredPersistentIdGenerationStrategy();
         storedIdStrategy.setId("StoredPersistentIdGenerationStrategy");
         storedIdStrategy.setIDStore(idStore);
@@ -86,16 +88,16 @@ public class StoredIDDataConnector extends ComputedIDDataConnector {
      * 
      * @return data store used to manage stored IDs
      */
-    @Nonnull public DatabaseBackedIDStore getStoredIDStore() {
+    @Nonnull public JDBCPersistentIdStore getStoredIDStore() {
         return idStore;
     }
 
     /**
      * Get the SQL query timeout.
      * 
-     * @return the timeout in seconds
+     * @return the timeout in milliseconds
      */
-    public int getQueryTimeout() {
+    @NonNegative public long getQueryTimeout() {
         return idStore.getQueryTimeout();
     }
 
@@ -104,7 +106,7 @@ public class StoredIDDataConnector extends ComputedIDDataConnector {
      * 
      * @param timeout the timeout to set in seconds
      */
-    public void setQueryTimeout(final int timeout) {
+    public void setQueryTimeout(@Duration @NonNegative final long timeout) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         idStore.setQueryTimeout(timeout);

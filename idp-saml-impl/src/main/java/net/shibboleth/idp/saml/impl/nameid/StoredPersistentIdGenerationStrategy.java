@@ -17,15 +17,15 @@
 
 package net.shibboleth.idp.saml.impl.nameid;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.saml.attribute.resolver.PersistentIdEntry;
-import net.shibboleth.idp.saml.attribute.resolver.StoredIDException;
-import net.shibboleth.idp.saml.attribute.resolver.StoredIDStore;
+import net.shibboleth.idp.saml.nameid.PersistentIdEntry;
+import net.shibboleth.idp.saml.nameid.PersistentIdStore;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
@@ -39,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Manages persistent IDs via a {@link StoredIDStore}, generating them either randomly or via a
+ * Manages persistent IDs via a {@link PersistentIdStore}, generating them either randomly or via a
  * {@link ComputedPersistentIdGenerationStrategy} (for compatibility with existing data).
  */
 public class StoredPersistentIdGenerationStrategy extends AbstractIdentifiableInitializableComponent
@@ -49,7 +49,7 @@ public class StoredPersistentIdGenerationStrategy extends AbstractIdentifiableIn
     @Nonnull private final Logger log = LoggerFactory.getLogger(StoredPersistentIdGenerationStrategy.class);
 
     /** Persistent identifier data store. */
-    @NonnullAfterInit private StoredIDStore pidStore;
+    @NonnullAfterInit private PersistentIdStore pidStore;
 
     /** Optional generator of computed ID values. */
     @Nullable private ComputedPersistentIdGenerationStrategy computedIdStrategy;
@@ -59,19 +59,19 @@ public class StoredPersistentIdGenerationStrategy extends AbstractIdentifiableIn
      * 
      * @return the {@link DataSource}.
      */
-    @NonnullAfterInit public StoredIDStore getIDStore() {
+    @NonnullAfterInit public PersistentIdStore getIDStore() {
         return pidStore;
     }
 
     /**
-     * Set the {@link StoredIDStore} used to store the IDs.
+     * Set the {@link PersistentIdStore} used to store the IDs.
      * 
      * @param store the ID store to use
      */
-    public void setIDStore(@Nonnull final StoredIDStore store) {
+    public void setIDStore(@Nonnull final PersistentIdStore store) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        pidStore = Constraint.isNotNull(store, "StoredIDStore cannot be null");
+        pidStore = Constraint.isNotNull(store, "PersistentIdStore cannot be null");
     }
 
     /**
@@ -90,7 +90,7 @@ public class StoredPersistentIdGenerationStrategy extends AbstractIdentifiableIn
         super.doInitialize();
         
         if (null == pidStore) {
-            throw new ComponentInitializationException("StoredIDStore cannot be null");
+            throw new ComponentInitializationException("PersistentIdStore cannot be null");
         }
     }
 
@@ -104,11 +104,11 @@ public class StoredPersistentIdGenerationStrategy extends AbstractIdentifiableIn
         
         try {
             log.debug("Checking for existing, active, stored ID for principal '{}'", principalName);
-            PersistentIdEntry idEntry = pidStore.getActivePersistentIdEntry(assertingPartyId, relyingPartyId, sourceId);
+            PersistentIdEntry idEntry = pidStore.getActiveEntry(assertingPartyId, relyingPartyId, sourceId);
             if (idEntry == null) {
                 log.debug("No existing, active, stored ID, creating a new one for principal '{}'", principalName);
                 idEntry = createPersistentId(principalName, assertingPartyId, relyingPartyId, sourceId);
-                pidStore.storePersistentIdEntry(idEntry);
+                pidStore.store(idEntry);
                 log.debug("Created stored ID '{}'", idEntry);
             } else {
                 log.debug("Located existing stored ID {}", idEntry);
@@ -121,7 +121,7 @@ public class StoredPersistentIdGenerationStrategy extends AbstractIdentifiableIn
             }
     
             return pid;
-        } catch (final StoredIDException e) {
+        } catch (final IOException e) {
             log.debug("ID storage error retrieving persistent identifier", e);
             throw new ProfileException("ID storage error retrieving persistent identifier", e);
         }
@@ -143,24 +143,24 @@ public class StoredPersistentIdGenerationStrategy extends AbstractIdentifiableIn
      * 
      * @return the created identifier
      * 
-     * @throws StoredIDException thrown if there is a problem communication with the database
-     * @throws ProfileException if there is a problem with has generation
+     * @throws IOException if there is a problem communication with the database
+     * @throws ProfileException if there is a problem with generation
      */
     @Nonnull protected PersistentIdEntry createPersistentId(@Nonnull @NotEmpty String principalName,
             @Nonnull @NotEmpty String localEntityId, @Nonnull @NotEmpty String peerEntityId,
-            @Nonnull @NotEmpty String localId) throws StoredIDException, ProfileException {
+            @Nonnull @NotEmpty String localId) throws IOException, ProfileException {
         
         final PersistentIdEntry entry = new PersistentIdEntry();
-        entry.setAttributeIssuerId(Constraint.isNotNull(StringSupport.trimOrNull(localEntityId),
+        entry.setIssuerEntityId(Constraint.isNotNull(StringSupport.trimOrNull(localEntityId),
                 "Attribute Issuer entity Id must not be null"));
-        entry.setPeerEntityId(Constraint.isNotNull(StringSupport.trimOrNull(peerEntityId),
+        entry.setRecipientEntityId(Constraint.isNotNull(StringSupport.trimOrNull(peerEntityId),
                 "Attribute Recipient entity Id must not be null"));
         entry.setPrincipalName(Constraint.isNotNull(StringSupport.trimOrNull(principalName),
                 "Principal must not be null"));
-        entry.setLocalId(localId);
+        entry.setSourceId(localId);
 
-        final int numberOfExistingEntries = pidStore.getNumberOfPersistentIdEntries(entry.getAttributeIssuerId(),
-                entry.getAttributeConsumerId(), entry.getLocalId());
+        final int numberOfExistingEntries = pidStore.getCount(entry.getIssuerEntityId(),
+                entry.getRecipientEntityId(), entry.getSourceId());
 
         String persistentId;
         if (numberOfExistingEntries == 0 && null != computedIdStrategy) {
@@ -169,7 +169,7 @@ public class StoredPersistentIdGenerationStrategy extends AbstractIdentifiableIn
             persistentId = UUID.randomUUID().toString();
         }
 
-        while (!pidStore.isPersistentIdAvailable(persistentId)) {
+        while (!pidStore.isAvailable(persistentId)) {
             log.debug("Generated persistent ID was already assigned to another user, regenerating");
             persistentId = UUID.randomUUID().toString();
         }

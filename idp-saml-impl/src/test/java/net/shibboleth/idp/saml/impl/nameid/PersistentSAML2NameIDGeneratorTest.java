@@ -30,7 +30,7 @@ import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.impl.TestSources;
-import net.shibboleth.idp.saml.impl.attribute.resolver.DatabaseBackedIDStore;
+import net.shibboleth.idp.saml.impl.attribute.resolver.JDBCPersistentIdStore;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -162,7 +162,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
 
     @Test
     public void testStoredId() throws ComponentInitializationException, ProfileException {
-        final DatabaseBackedIDStore store = new DatabaseBackedIDStore();
+        final JDBCPersistentIdStore store = new JDBCPersistentIdStore();
         store.setDataSource(testSource);
         store.initialize();
         
@@ -226,7 +226,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         strategy.setSalt(salt);
         strategy.initialize();
 
-        final DatabaseBackedIDStore store = new DatabaseBackedIDStore();
+        final JDBCPersistentIdStore store = new JDBCPersistentIdStore();
         store.setDataSource(testSource);
         store.initialize();
         
@@ -260,7 +260,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
         Assert.assertEquals(id.getSPNameQualifier(), TestSources.SP_ENTITY_ID);
         
-        store.deactivatePersistentId(RESULT, null);
+        store.deactivate(RESULT, null);
         
         id = generator.generate(prc, NameID.PERSISTENT);
         Assert.assertNotEquals(id.getValue(), RESULT);

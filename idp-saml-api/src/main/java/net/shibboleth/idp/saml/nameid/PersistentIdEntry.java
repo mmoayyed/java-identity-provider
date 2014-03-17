@@ -15,85 +15,81 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.attribute.resolver;
+package net.shibboleth.idp.saml.nameid;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
 
 import javax.annotation.Nullable;
 
-/** Data object representing a persistent identifier entry in the persistent storage. */
+/** Object representing a persistent identifier entry in storage. */
 public class PersistentIdEntry implements Serializable {
 
-    /** Serial version UID . */
+    /** Serial version UID. */
     private static final long serialVersionUID = -8711779466442306767L;
 
     /** ID of the entity that issued that identifier. */
-    private String attributeIssuerId;
+    @Nullable private String issuerEntityId;
 
     /** ID of the entity to which the identifier was issued. */
-    private String peerEntityId;
+    @Nullable private String recipientEntityId;
 
     /** Name of the principal represented by the identifier. */
-    private String principalName;
+    @Nullable private String principalName;
 
-    /** Local component portion of the persistent ID entry. */
-    private String localId;
+    /** Underlying source ID of the entry. */
+    @Nullable private String sourceId;
 
     /** The persistent identifier. */
-    private String persistentId;
+    @Nullable private String persistentId;
 
     /** ID, associated with the persistent identifier, provided by the peer. */
-    private String peerProvidedId;
+    @Nullable private String peerProvidedId;
 
     /** Time the identifier was created. */
-    private Timestamp creationTime;
+    @Nullable private Timestamp creationTime;
 
     /** Time the identifier was deactivated. */
-    private Timestamp deactivationTime;
-
-    /** Constructor. */
-    public PersistentIdEntry() {
-    }
+    @Nullable private Timestamp deactivationTime;
 
     /**
-     * Gets the ID of the entity that issued the identifier.
+     * Get the ID of the entity that issued the identifier.
      * 
      * @return ID of the entity that issued the identifier
      */
-    public String getAttributeIssuerId() {
-        return attributeIssuerId;
+    @Nullable public String getIssuerEntityId() {
+        return issuerEntityId;
     }
 
     /**
-     * Sets the ID of the entity that issued the identifier.
+     * Set the ID of the entity that issued the identifier.
      * 
      * @param id ID of the entity that issued the identifier
      */
-    public void setAttributeIssuerId(String id) {
-        attributeIssuerId = id;
+    public void setIssuerEntityId(@Nullable final String id) {
+        issuerEntityId = id;
     }
 
     /**
-     * Gets the ID of the entity to which the identifier was issued.
+     * Get the ID of the entity to which the identifier was issued.
      * 
      * @return ID of the entity to which the identifier was issued
      */
-    @Nullable public String getAttributeConsumerId() {
-        return peerEntityId;
+    @Nullable public String getRecipientEntityId() {
+        return recipientEntityId;
     }
 
     /**
-     * Sets the ID of the entity to which the identifier was issued.
+     * Set the ID of the entity to which the identifier was issued.
      * 
      * @param id ID of the entity to which the identifier was issued
      */
-    public void setPeerEntityId(@Nullable String id) {
-        peerEntityId = id;
+    public void setRecipientEntityId(@Nullable final String id) {
+        recipientEntityId = id;
     }
 
     /**
-     * Gets the name of the principal the identifier represents.
+     * Get the name of the principal the identifier represents.
      * 
      * @return name of the principal the identifier represents
      */
@@ -102,34 +98,34 @@ public class PersistentIdEntry implements Serializable {
     }
 
     /**
-     * Sets the name of the principal the identifier represents.
+     * Set the name of the principal the identifier represents.
      * 
      * @param name name of the principal the identifier represents
      */
-    public void setPrincipalName(@Nullable String name) {
+    public void setPrincipalName(@Nullable final String name) {
         principalName = name;
     }
 
     /**
-     * Gets the local ID component of the persistent identifier.
+     * Get the source ID underlying the persistent identifier.
      * 
-     * @return local ID component of the persistent identifier
+     * @return source ID underlying the persistent identifier
      */
-    @Nullable public String getLocalId() {
-        return localId;
+    @Nullable public String getSourceId() {
+        return sourceId;
     }
 
     /**
-     * Sets the local ID component of the persistent identifier.
+     * Set the source ID underlying the persistent identifier.
      * 
-     * @param id local ID component of the persistent identifier
+     * @param id source ID underlying the persistent identifier
      */
-    public void setLocalId(@Nullable String id) {
-        localId = id;
+    public void setSourceId(@Nullable final String id) {
+        sourceId = id;
     }
 
     /**
-     * Gets the persistent identifier.
+     * Get the persistent identifier.
      * 
      * @return the persistent identifier
      */
@@ -142,30 +138,30 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @param id the persistent identifier
      */
-    public void setPersistentId(@Nullable String id) {
+    public void setPersistentId(@Nullable final String id) {
         persistentId = id;
     }
 
     /**
-     * Gets the ID, provided by the peer, associated with this ID.
+     * Get the alias, provided by the recipient, attached to this ID.
      * 
-     * @return ID, provided by the peer, associated with this ID
+     * @return alias, provided by the recipient, associated with this ID
      */
     @Nullable public String getPeerProvidedId() {
         return peerProvidedId;
     }
 
     /**
-     * Sets the ID, provided by the peer, associated with this ID.
+     * Set the alias, provided by the recipient, attached to this ID.
      * 
-     * @param id ID, provided by the peer, associated with this ID
+     * @param id alias, provided by the recipient, attached to this ID
      */
-    public void setPeerProvidedId(@Nullable String id) {
+    public void setPeerProvidedId(@Nullable final String id) {
         peerProvidedId = id;
     }
 
     /**
-     * Gets the time the identifier was created.
+     * Get the time the identifier was created.
      * 
      * @return time the identifier was created
      */
@@ -174,16 +170,16 @@ public class PersistentIdEntry implements Serializable {
     }
 
     /**
-     * Sets the time the identifier was created.
+     * Set the time the identifier was created.
      * 
      * @param time time the identifier was created
      */
-    public void setCreationTime(@Nullable Timestamp time) {
+    public void setCreationTime(@Nullable final Timestamp time) {
         creationTime = time;
     }
 
     /**
-     * Gets the time the identifier was deactivated.
+     * Get the time the identifier was deactivated.
      * 
      * @return time the identifier was deactivated
      */
@@ -192,21 +188,22 @@ public class PersistentIdEntry implements Serializable {
     }
 
     /**
-     * Sets the time the identifier was deactivated.
+     * Set the time the identifier was deactivated.
      * 
      * @param time the time the identifier was deactivated
      */
-    public void setDeactivationTime(@Nullable Timestamp time) {
+    public void setDeactivationTime(@Nullable final Timestamp time) {
         this.deactivationTime = time;
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
-        StringBuilder stringForm = new StringBuilder("PersistentIdEntry{");
+        final StringBuilder stringForm = new StringBuilder("PersistentIdEntry{");
         stringForm.append("persistentId:").append(persistentId).append(", ");
-        stringForm.append("localEntityId:").append(attributeIssuerId).append(", ");
-        stringForm.append("peerEntityId:").append(peerEntityId).append(", ");
-        stringForm.append("localId:").append(localId).append(", ");
+        stringForm.append("localEntityId:").append(issuerEntityId).append(", ");
+        stringForm.append("recipientEntityId:").append(recipientEntityId).append(", ");
+        stringForm.append("sourceId:").append(sourceId).append(", ");
         stringForm.append("principalName:").append(principalName).append(", ");
         stringForm.append("peerProvidedId:").append(peerProvidedId).append(", ");
         stringForm.append("creationTime:").append(creationTime).append(", ");
@@ -214,4 +211,5 @@ public class PersistentIdEntry implements Serializable {
         stringForm.append("}");
         return stringForm.toString();
     }
+    
 }

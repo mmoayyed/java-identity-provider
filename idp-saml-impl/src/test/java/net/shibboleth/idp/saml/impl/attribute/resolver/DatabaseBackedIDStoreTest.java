@@ -20,14 +20,12 @@ package net.shibboleth.idp.saml.impl.attribute.resolver;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 
-import net.shibboleth.idp.saml.attribute.resolver.PersistentIdEntry;
-import net.shibboleth.idp.saml.attribute.resolver.StoredIDException;
+import net.shibboleth.idp.saml.nameid.PersistentIdEntry;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -43,7 +41,7 @@ import com.google.common.base.Objects;
 import com.google.common.io.CharStreams;
 
 /**
- * Tests for {@link DatabaseBackedIDStore}
+ * Tests for {@link JDBCPersistentIdStore}
  */
 public class DatabaseBackedIDStoreTest {
     
@@ -56,14 +54,13 @@ public class DatabaseBackedIDStoreTest {
     }
     
     @BeforeTest
-    public void setupSource() throws StoredIDException, IOException  {
-        
-        testSource = DatabaseTestingSupport.GetMockDataSource("/net/shibboleth/idp/saml/impl/attribute/resolver/StoredIdStore.sql", "StoredIDStore");
+    public void setupSource() throws IOException, IOException  {
+        testSource = DatabaseTestingSupport.GetMockDataSource("/net/shibboleth/idp/saml/impl/attribute/resolver/StoredIdStore.sql", "PersistentIdStore");
     }
     
-    @Test public void initializeAndGetters() throws ComponentInitializationException, StoredIDException {
+    @Test public void initializeAndGetters() throws ComponentInitializationException, IOException {
 
-        DatabaseBackedIDStore store = new DatabaseBackedIDStore();
+        JDBCPersistentIdStore store = new JDBCPersistentIdStore();
         try {
             store.initialize();
             Assert.fail("Need to initialize the source");
@@ -77,7 +74,7 @@ public class DatabaseBackedIDStoreTest {
         store.setQueryTimeout(1);
         
         try {
-            store.getActivePersistentIdEntry("fii");
+            store.getActiveEntry("fii");
             Assert.fail("need to initialize first");
         } catch (UninitializedComponentException e) {
             // OK
@@ -107,9 +104,9 @@ public class DatabaseBackedIDStoreTest {
         // Do not compare times
         //
         boolean result = Objects.equal(one.getPersistentId(), other.getPersistentId()) &&
-                Objects.equal(one.getAttributeIssuerId(), other.getAttributeIssuerId()) &&
-                Objects.equal(one.getAttributeConsumerId(), other.getAttributeConsumerId()) &&
-                Objects.equal(one.getLocalId(), other.getLocalId()) &&
+                Objects.equal(one.getIssuerEntityId(), other.getIssuerEntityId()) &&
+                Objects.equal(one.getRecipientEntityId(), other.getRecipientEntityId()) &&
+                Objects.equal(one.getSourceId(), other.getSourceId()) &&
                 Objects.equal(one.getPrincipalName(), other.getPrincipalName()) &&
                 Objects.equal(one.getPeerProvidedId(), other.getPeerProvidedId()) &&
                 Objects.equal(one.getDeactivationTime(), other.getDeactivationTime());
@@ -119,19 +116,17 @@ public class DatabaseBackedIDStoreTest {
         return result;
     }
     
-    private void tryToValidate(DatabaseBackedIDStore store, PersistentIdEntry id, String errorMessage) {
-
+    private void tryToValidate(JDBCPersistentIdStore store, PersistentIdEntry id, String errorMessage) {
         try {
             store.validatePersistentIdEntry(id);
             Assert.fail(errorMessage);
         } catch (SQLException e) {
             // OK
         }
-
     }
    
-    @Test public void storeEntry() throws ComponentInitializationException, StoredIDException {
-        DatabaseBackedIDStore store = new DatabaseBackedIDStore();
+    @Test public void storeEntry() throws ComponentInitializationException, IOException {
+        JDBCPersistentIdStore store = new JDBCPersistentIdStore();
         store.setDataSource(testSource);
         store.initialize();
         
@@ -139,47 +134,43 @@ public class DatabaseBackedIDStoreTest {
         String persistentId = UUID.randomUUID().toString();
         
         tryToValidate(store, id, "No Local Id");
-        id.setAttributeIssuerId(DatabaseTestingSupport.IDP_ENTITY_ID);
+        id.setIssuerEntityId(DatabaseTestingSupport.IDP_ENTITY_ID);
         
         tryToValidate(store, id, "No Peer Entity Id");
-        id.setPeerEntityId(DatabaseTestingSupport.SP_ENTITY_ID);
+        id.setRecipientEntityId(DatabaseTestingSupport.SP_ENTITY_ID);
         
         tryToValidate(store, id, "No Principal Name");
         id.setPrincipalName(DatabaseTestingSupport.PRINCIPAL_ID);
         
         tryToValidate(store, id, "No Local Id");
-        id.setLocalId("localID");
+        id.setSourceId("localID");
         
         id.setPeerProvidedId("PeerprovidedId");
         
         tryToValidate(store, id, "No PersistentId");
         id.setPersistentId(persistentId);
         
-        store.storePersistentIdEntry(id);
+        store.store(id);
         
-        PersistentIdEntry gotback = store.getActivePersistentIdEntry(persistentId);
+        PersistentIdEntry gotback = store.getActiveEntry(persistentId);
         
         Assert.assertNull(gotback.getDeactivationTime());
         
         Assert.assertTrue(comparePersistentIdEntrys(gotback, id));
-        List<PersistentIdEntry> list = store.getPersistentIdEntries(DatabaseTestingSupport.IDP_ENTITY_ID, DatabaseTestingSupport.SP_ENTITY_ID, "localID");
         
-        Assert.assertEquals(list.size(), 1);
-        Assert.assertTrue(comparePersistentIdEntrys(list.get(0), gotback));
+        store.deactivate(persistentId, null);
         
-        store.deactivatePersistentId(persistentId, null);
+        Assert.assertNull(store.getActiveEntry(persistentId));
         
-        Assert.assertNull(store.getActivePersistentIdEntry(persistentId));
-        
-        Assert.assertEquals(store.getNumberOfPersistentIdEntries(DatabaseTestingSupport.IDP_ENTITY_ID, DatabaseTestingSupport.SP_ENTITY_ID, "localID"), 1);
+        Assert.assertEquals(store.getCount(DatabaseTestingSupport.IDP_ENTITY_ID, DatabaseTestingSupport.SP_ENTITY_ID, "localID"), 1);
      
         persistentId = UUID.randomUUID().toString();
         id.setPersistentId(persistentId);
         id.setPeerProvidedId(null);
-        id.setPeerEntityId(DatabaseTestingSupport.SP_ENTITY_ID + "2");
-        store.storePersistentIdEntry(id);
+        id.setRecipientEntityId(DatabaseTestingSupport.SP_ENTITY_ID + "2");
+        store.store(id);
         
-        gotback = store.getActivePersistentIdEntry(persistentId);
-        
+        gotback = store.getActiveEntry(persistentId);
     }
+    
 }

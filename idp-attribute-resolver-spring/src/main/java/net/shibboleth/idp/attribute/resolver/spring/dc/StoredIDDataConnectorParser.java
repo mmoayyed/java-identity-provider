@@ -58,7 +58,10 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
         } else {
             builder.addPropertyValue("dataSource", getDataSource(springBeans));
         }
-        // TODO set queryTimeout?
+        
+        if (config.hasAttributeNS(null, "queryTimeout")) {
+            builder.addPropertyValue("queryTimeout", config.getAttributeNS(null, "queryTimeout"));
+        }
     }
 
     /**
