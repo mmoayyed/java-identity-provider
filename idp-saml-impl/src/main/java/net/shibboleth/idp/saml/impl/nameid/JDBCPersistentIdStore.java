@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.impl.attribute.resolver;
+package net.shibboleth.idp.saml.impl.nameid;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -41,6 +41,7 @@ import net.shibboleth.utilities.java.support.component.AbstractInitializableComp
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -67,38 +68,291 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
     @Duration @NonNegative private long queryTimeout;
 
     /** Name of the database table. */
-    private final String table = "shibpid";
+    @Nonnull @NotEmpty private String tableName;
 
-    /** Name of the local entity ID column. */
-    private final String localEntityColumn = "localEntity";
+    /** Name of the issuer entityID column. */
+    @Nonnull @NotEmpty private String issuerColumn;
 
-    /** Name of the peer entity ID name column. */
-    private final String peerEntityColumn = "peerEntity";
+    /** Name of the recipient entityID column. */
+    @Nonnull @NotEmpty private String recipientColumn;
 
     /** Name of the principal name column. */
-    private final String principalNameColumn = "principalName";
+    @Nonnull @NotEmpty private String principalNameColumn;
 
-    /** Name of the local ID column. */
-    private final String localIdColumn = "localId";
+    /** Name of the source ID column. */
+    @Nonnull @NotEmpty private String sourceIdColumn;
 
     /** Name of the persistent ID column. */
-    private final String persistentIdColumn = "persistentId";
+    @Nonnull @NotEmpty private String persistentIdColumn;
 
-    /** ID, provided by peer, associated with the persistent ID. */
-    private final String peerProvidedIdColumn = "peerProvidedId";
+    /** Name of recipient-attached alias column. */
+    @Nonnull @NotEmpty private String peerProvidedIdColumn;
 
     /** Name of the creation time column. */
-    private final String createTimeColumn = "creationDate";
+    @Nonnull @NotEmpty private String creationTimeColumn;
 
     /** Name of the deactivation time column. */
-    private final String deactivationTimeColumn = "deactivationDate";
+    @Nonnull @NotEmpty private String deactivationTimeColumn;
 
     /** Partial select query for ID entries. */
-    private final String idEntrySelectSQL = "SELECT * FROM " + table + " WHERE ";
+    @NonnullAfterInit private String idEntrySelectSQL;
 
     /** SQL used to deactivate an ID. */
-    private final String deactivateIdSQL = "UPDATE " + table + " SET " + deactivationTimeColumn + "= ? WHERE "
-            + persistentIdColumn + "= ?";
+    @NonnullAfterInit private String deactivateIdSQL;
+
+    /** Constructor. */
+    public JDBCPersistentIdStore() {
+        tableName = "shibpid";
+        issuerColumn = "localEntity";
+        recipientColumn = "peerEntity";
+        principalNameColumn = "principalName";
+        sourceIdColumn = "localId";
+        persistentIdColumn = "persistentId";
+        peerProvidedIdColumn = "peerProvidedId";
+        creationTimeColumn = "creationDate";
+        deactivationTimeColumn = "deactivationDate";
+        
+        deactivateIdSQL = "UPDATE " + tableName + " SET " + deactivationTimeColumn + "= ? WHERE "
+                + persistentIdColumn + "= ?";
+    }
+    
+    /**
+     * Get the table name.
+     * 
+     * @return table name
+     */
+    @Nonnull @NotEmpty public String getTableName() {
+        return tableName;
+    }
+
+
+
+    /**
+     * Set the table name.
+     * 
+     * @param name table name
+     */
+    public void setTableName(@Nonnull @NotEmpty final String name) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        tableName = Constraint.isNotNull(StringSupport.trimOrNull(name), "Table name cannot be null or empty");
+    }
+    
+
+
+
+    /**
+     * Get the name of the issuer entityID column.
+     * 
+     * @return name of issuer column
+     */
+    @Nonnull @NotEmpty public String getIssuerColumn() {
+        return issuerColumn;
+    }
+    
+
+
+
+    /**
+     * Set the name of the issuer entityID column.
+     * 
+     * @param name name of issuer column
+     */
+    public void setLocalEntityColumn(@Nonnull @NotEmpty final String name) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        issuerColumn = Constraint.isNotNull(StringSupport.trimOrNull(name), "Column name cannot be null or empty");
+    }
+    
+
+
+
+    /**
+     * Get the name of the recipient entityID column.
+     * 
+     * @return name of recipient column
+     */
+    @Nonnull @NotEmpty public String getPeerEntityColumn() {
+        return recipientColumn;
+    }
+    
+
+
+
+    /**
+     * Set the name of the recipient entityID column.
+     * 
+     * @param name name of recipient column
+     */
+    public void setPeerEntityColumn(@Nonnull @NotEmpty final String name) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        recipientColumn = Constraint.isNotNull(StringSupport.trimOrNull(name), "Column name cannot be null or empty");
+    }
+    
+
+
+
+    /**
+     * Get the name of the principal name column.
+     * 
+     * @return name of principal name column
+     */
+    @Nonnull @NotEmpty public String getPrincipalNameColumn() {
+        return principalNameColumn;
+    }
+    
+
+
+
+    /**
+     * Set the name of the principal name column.
+     * 
+     * @param name name of principal name column
+     */
+    public void setPrincipalNameColumn(@Nonnull @NotEmpty final String name) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        principalNameColumn = Constraint.isNotNull(StringSupport.trimOrNull(name),
+                "Column name cannot be null or empty");
+    }
+    
+
+
+
+    /**
+     * Get the name of the source ID column.
+     * 
+     * @return name of source ID column
+     */
+    @Nonnull @NotEmpty public String getSourceIdColumn() {
+        return sourceIdColumn;
+    }
+    
+
+
+
+    /**
+     * Set the name of the source ID column.
+     * 
+     * @param name name of source ID column
+     */
+    public void setSourceIdColumn(@Nonnull @NotEmpty final String name) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        sourceIdColumn = Constraint.isNotNull(StringSupport.trimOrNull(name), "Column name cannot be null or empty");
+    }
+    
+
+
+
+    /**
+     * Get the name of the persistent ID column.
+     * 
+     * @return name of persistent ID column
+     */
+    @Nonnull @NotEmpty public String getPersistentIdColumn() {
+        return persistentIdColumn;
+    }
+    
+
+
+
+    /**
+     * Set the name of the persistent ID column.
+     * 
+     * @param name name of the persistent ID column
+     */
+    public void setPersistentIdColumn(@Nonnull @NotEmpty final String name) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        persistentIdColumn = Constraint.isNotNull(StringSupport.trimOrNull(name),
+                "Column name cannot be null or empty");
+    }
+    
+
+
+
+    /**
+     * Get the name of the peer-provided ID column.
+     * 
+     * @return name of peer-provided ID column
+     */
+    @Nonnull @NotEmpty public String getPeerProvidedIdColumn() {
+        return peerProvidedIdColumn;
+    }
+    
+
+
+
+    /**
+     * Set the name of the peer-provided ID column.
+     * 
+     * @param name name of peer-provided ID column
+     */
+    public void setPeerProvidedIdColumn(@Nonnull @NotEmpty final String name) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        peerProvidedIdColumn = Constraint.isNotNull(StringSupport.trimOrNull(name),
+                "Column name cannot be null or empty");
+    }
+    
+
+
+
+    /**
+     * Get the name of the creation time column.
+     * 
+     * @return name of creation time column
+     */
+    @Nonnull @NotEmpty public String getCreateTimeColumn() {
+        return creationTimeColumn;
+    }
+    
+
+
+
+    /**
+     * Set the name of the creation time column.
+     * 
+     * @param name name of creation time column
+     */
+    public void setCreateTimeColumn(@Nonnull @NotEmpty final String name) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        creationTimeColumn = Constraint.isNotNull(StringSupport.trimOrNull(name),
+                "Column name cannot be null or empty");
+    }
+    
+
+
+
+    /**
+     * Get the name of the deactivation time column.
+     * 
+     * @return name of deactivation time column
+     */
+    @Nonnull @NotEmpty public String getDeactivationTimeColumn() {
+        return deactivationTimeColumn;
+    }
+    
+
+
+
+    /**
+     * Set the name of the deactivation time column.
+     * 
+     * @param name name of deactivation time column
+     */
+    public void setDeactivationTimeColumn(@Nonnull @NotEmpty final String name) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        deactivationTimeColumn = Constraint.isNotNull(StringSupport.trimOrNull(name),
+                "Column name cannot be null or empty");
+    }
+    
+
+
 
     /**
      * Get the source datasource used to communicate with the database.
@@ -148,6 +402,8 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
         if (null == dataSource) {
             throw new ComponentInitializationException(getLogPrefix() + " No database connection provided");
         }
+        
+        idEntrySelectSQL = "SELECT * FROM " + tableName + " WHERE ";
     }
 
     /** {@inheritDoc} */
@@ -215,12 +471,12 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
         final StringBuilder sqlBuilder = new StringBuilder();
         sqlBuilder.append("SELECT");
         sqlBuilder.append(" count(").append(persistentIdColumn).append(")");
-        sqlBuilder.append(" FROM ").append(table).append(" WHERE ");
-        sqlBuilder.append(localEntityColumn).append(" = ?");
+        sqlBuilder.append(" FROM ").append(tableName).append(" WHERE ");
+        sqlBuilder.append(issuerColumn).append(" = ?");
         sqlBuilder.append(" AND ");
-        sqlBuilder.append(peerEntityColumn).append(" = ?");
+        sqlBuilder.append(recipientColumn).append(" = ?");
         sqlBuilder.append(" AND ");
-        sqlBuilder.append(localIdColumn).append(" = ?");
+        sqlBuilder.append(sourceIdColumn).append(" = ?");
 
         final String sql = sqlBuilder.toString();
         try (final Connection dbConn = dataSource.getConnection()) {
@@ -257,9 +513,9 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         final StringBuilder sqlBuilder = new StringBuilder(idEntrySelectSQL);
-        sqlBuilder.append(localEntityColumn).append(" = ?");
-        sqlBuilder.append(" AND ").append(peerEntityColumn).append(" = ?");
-        sqlBuilder.append(" AND ").append(localIdColumn).append(" = ?");
+        sqlBuilder.append(issuerColumn).append(" = ?");
+        sqlBuilder.append(" AND ").append(recipientColumn).append(" = ?");
+        sqlBuilder.append(" AND ").append(sourceIdColumn).append(" = ?");
         sqlBuilder.append(" AND ").append(deactivationTimeColumn).append(" IS NULL");
         final String sql = sqlBuilder.toString();
     
@@ -416,14 +672,14 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
      */
     @Nonnull private String getInsertSql() {
         final StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ");
-        sqlBuilder.append(table).append(" (");
-        sqlBuilder.append(localEntityColumn).append(", ");
-        sqlBuilder.append(peerEntityColumn).append(", ");
+        sqlBuilder.append(tableName).append(" (");
+        sqlBuilder.append(issuerColumn).append(", ");
+        sqlBuilder.append(recipientColumn).append(", ");
         sqlBuilder.append(principalNameColumn).append(", ");
-        sqlBuilder.append(localIdColumn).append(", ");
+        sqlBuilder.append(sourceIdColumn).append(", ");
         sqlBuilder.append(persistentIdColumn).append(", ");
         sqlBuilder.append(peerProvidedIdColumn).append(", ");
-        sqlBuilder.append(createTimeColumn);
+        sqlBuilder.append(creationTimeColumn);
         sqlBuilder.append(") VALUES (?, ?, ?, ?, ?, ?, ?)");
 
         return sqlBuilder.toString();
@@ -443,13 +699,13 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
 
         while (resultSet.next()) {
             PersistentIdEntry entry = new PersistentIdEntry();
-            entry.setIssuerEntityId(resultSet.getString(localEntityColumn));
-            entry.setRecipientEntityId(resultSet.getString(peerEntityColumn));
+            entry.setIssuerEntityId(resultSet.getString(issuerColumn));
+            entry.setRecipientEntityId(resultSet.getString(recipientColumn));
             entry.setPrincipalName(resultSet.getString(principalNameColumn));
             entry.setPersistentId(resultSet.getString(persistentIdColumn));
-            entry.setSourceId(resultSet.getString(localIdColumn));
+            entry.setSourceId(resultSet.getString(sourceIdColumn));
             entry.setPeerProvidedId(resultSet.getString(peerProvidedIdColumn));
-            entry.setCreationTime(resultSet.getTimestamp(createTimeColumn));
+            entry.setCreationTime(resultSet.getTimestamp(creationTimeColumn));
             entry.setDeactivationTime(resultSet.getTimestamp(deactivationTimeColumn));
             entries.add(entry);
 

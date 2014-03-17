@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.impl.attribute.resolver;
+package net.shibboleth.idp.saml.impl.nameid;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -25,6 +25,7 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 
+import net.shibboleth.idp.saml.impl.nameid.JDBCPersistentIdStore;
 import net.shibboleth.idp.saml.nameid.PersistentIdEntry;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
