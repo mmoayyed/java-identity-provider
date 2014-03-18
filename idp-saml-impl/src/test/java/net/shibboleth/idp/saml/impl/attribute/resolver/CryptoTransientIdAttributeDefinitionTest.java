@@ -27,6 +27,7 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.saml.impl.TestSources;
+import net.shibboleth.idp.saml.impl.nameid.CryptoTransientIdGenerationStrategy;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.DataSealerException;
@@ -39,29 +40,35 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * Tests for {Link CryptoTransientIdAttributeDefinition}.
+ * Tests for CryptoTransientIdAttributeDefinition, which is a
+ * 
+ * @link {@link TransientIdAttributeDefinition} with an injected {@link CryptoTransientIdGenerationStrategy}
  */
 
-public class CryptoTransientIdAttributeDefinitionTest   extends OpenSAMLInitBaseTestCase {
+public class CryptoTransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase {
 
     private static final String ID = "CryptoTransientIdAttributeDefn";
 
     private static final long TIMEOUT = 500;
 
+    private CryptoTransientIdGenerationStrategy strategy;
+
     private DataSealer dataSealer;
 
     /**
-     * Set up the data sealer.  We take advantage of the fact that Spring a {@link ClassPathResource} wraps a files.
+     * Set up the data sealer. We take advantage of the fact that Spring a {@link ClassPathResource} wraps a files.
      * 
      * @throws IOException
      * @throws DataSealerException
-     * @throws ComponentInitializationException 
+     * @throws ComponentInitializationException
      */
-    @BeforeClass public void setupDataSealer() throws IOException, DataSealerException, ComponentInitializationException {
-        
-        final Resource keyStore  = new ClassPathResource("/net/shibboleth/idp/saml/impl/attribute/resolver/SealerKeyStore.jks");
+    @BeforeClass public void setupStrategyAndSealer() throws IOException, DataSealerException,
+            ComponentInitializationException {
+
+        final Resource keyStore =
+                new ClassPathResource("/net/shibboleth/idp/saml/impl/attribute/resolver/SealerKeyStore.jks");
         Assert.assertTrue(keyStore.exists());
-        
+
         final String keyStorePath = keyStore.getFile().getAbsolutePath();
 
         dataSealer = new DataSealer();
@@ -73,35 +80,19 @@ public class CryptoTransientIdAttributeDefinitionTest   extends OpenSAMLInitBase
 
         dataSealer.initialize();
 
+        strategy = new CryptoTransientIdGenerationStrategy();
+        strategy.setDataSealer(dataSealer);
+        strategy.setId("strategy");
+        strategy.setIdLifetime(TIMEOUT);
+        strategy.initialize();
+
     }
 
-    @Test public void setterGetters() throws ComponentInitializationException {
-        CryptoTransientIdAttributeDefinition defn = new CryptoTransientIdAttributeDefinition();
-        defn.setId(ID);
-        try {
-            defn.initialize();
-            Assert.fail("null dataSealer");
-        } catch (ComponentInitializationException e) {
-            // OK
-        }
-        defn.setDataSealer(dataSealer);
-        defn.initialize();
-        Assert.assertEquals(defn.getIdLifetime(), 4 * 1000 * 3600);
-
-        defn = new CryptoTransientIdAttributeDefinition();
-        defn.setId(ID);
-        defn.setDataSealer(dataSealer);
-        defn.setIdLifetime(TIMEOUT);
-        Assert.assertEquals(defn.getIdLifetime(), TIMEOUT);
-    }
-    
     @Test public void badVals() throws ComponentInitializationException {
-        final CryptoTransientIdAttributeDefinition defn = new CryptoTransientIdAttributeDefinition();
+        final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition(strategy);
         defn.setId(ID);
-        defn.setDataSealer(dataSealer);
-        defn.setIdLifetime(TIMEOUT);
         defn.initialize();
-        
+
         AttributeResolutionContext context = new AttributeResolutionContext();
         context.getSubcontext(AttributeResolverWorkContext.class, true);
         try {
@@ -124,13 +115,11 @@ public class CryptoTransientIdAttributeDefinitionTest   extends OpenSAMLInitBase
             // OK
         }
     }
-        
+
     @Test public void encode() throws ComponentInitializationException, ResolutionException, DataSealerException,
             InterruptedException {
-        final CryptoTransientIdAttributeDefinition defn = new CryptoTransientIdAttributeDefinition();
+        final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition(strategy);
         defn.setId(ID);
-        defn.setDataSealer(dataSealer);
-        defn.setIdLifetime(TIMEOUT);
         defn.initialize();
 
         final AttributeResolutionContext context =

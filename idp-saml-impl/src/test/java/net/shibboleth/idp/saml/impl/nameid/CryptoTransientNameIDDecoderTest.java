@@ -32,7 +32,7 @@ import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.impl.TestSources;
-import net.shibboleth.idp.saml.impl.attribute.resolver.CryptoTransientIdAttributeDefinition;
+import net.shibboleth.idp.saml.impl.attribute.resolver.TransientIdAttributeDefinition;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -152,10 +152,15 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void decode() throws ComponentInitializationException, ResolutionException, DataSealerException,
             InterruptedException, ProfileException {
-        final CryptoTransientIdAttributeDefinition defn = new CryptoTransientIdAttributeDefinition();
+        
+        final CryptoTransientIdGenerationStrategy strategy = new CryptoTransientIdGenerationStrategy();
+        strategy.setDataSealer(dataSealer);
+        strategy.setId("strategy");
+        strategy.setIdLifetime(TIMEOUT);
+        strategy.initialize();
+
+        final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition(strategy);
         defn.setId("defn");
-        defn.setDataSealer(dataSealer);
-        defn.setIdLifetime(TIMEOUT);
         defn.initialize();
 
         final AttributeResolutionContext context =

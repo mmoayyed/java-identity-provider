@@ -36,6 +36,7 @@ import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.saml.nameid.TransientIdParameters;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -46,7 +47,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** {@link BaseTransientDecoder} unit test. */
-public class TransientDecoderTest {
+public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
 
     private static final String RECIPIENT="TheRecipient";
     private static final String PRINCIPAL="ThePrincipalName";
@@ -142,12 +143,17 @@ public class TransientDecoderTest {
     
     @Test public void decode() throws ComponentInitializationException, ResolutionException, AttributeEncodingException, ProfileException {
         
-        final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
-        defn.setId("id");
-        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
+        final StoredTransientIdGenerationStrategy strategy = new StoredTransientIdGenerationStrategy();
+        strategy.setId("strategy");
+        
         final StorageService store = new MemoryStorageService();
         store.initialize();
-        defn.setIdStore(store);
+        strategy.setIdStore(store);        
+        strategy.initialize();
+        
+        final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition(strategy);
+        defn.setId("id");
+        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
         defn.initialize();
     
         final IdPAttribute result =

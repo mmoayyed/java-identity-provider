@@ -23,9 +23,9 @@ import java.util.Set;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.saml.impl.TestSources;
+import net.shibboleth.idp.saml.impl.nameid.StoredTransientIdGenerationStrategy;
 import net.shibboleth.idp.saml.nameid.TransientIdParameters;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -46,26 +46,19 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
 
     private static final int TEST_ID_SIZE = 32;
 
-    private void testInitializeFail(AttributeDefinition simple, String message) {
-        try {
-            simple.initialize();
-            Assert.fail(message);
-        } catch (ComponentInitializationException e) {
-            // OK
-        }
-    }
-
     @Test public void single() throws ComponentInitializationException, ResolutionException, IOException {
-        final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
-        defn.setId(TEST_ATTRIBUTE_NAME);
-        testInitializeFail(defn, "no dependencies");
-
-        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
-        testInitializeFail(defn, "no IdStore");
-
+        final StoredTransientIdGenerationStrategy strategy = new StoredTransientIdGenerationStrategy();
+        strategy.setId("strategy");
+        
         final StorageService store = new MemoryStorageService();
         store.initialize();
-        defn.setIdStore(store);
+        strategy.setIdStore(store);        
+        strategy.initialize();
+        
+        final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition(strategy);
+        defn.setId(TEST_ATTRIBUTE_NAME);
+
+        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
 
         defn.initialize();
 
@@ -81,7 +74,7 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         StorageRecord record = store.read(TransientIdParameters.CONTEXT, val);
         
         Assert.assertNotNull(record);
-        Assert.assertTrue(val.length() >= defn.getIdSize());
+        Assert.assertTrue(val.length() >= strategy.getIdSize());
  
         TransientIdParameters parms = new TransientIdParameters(record.getValue());
         
@@ -95,12 +88,17 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
 
     private void constructAndFail(String sp, String idp, String principal, String whyItFailed)
             throws ComponentInitializationException {
-        final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
-        defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
+        
+        final StoredTransientIdGenerationStrategy strategy = new StoredTransientIdGenerationStrategy();
+        strategy.setId("strategy");
         final StorageService store = new MemoryStorageService();
         store.initialize();
-        defn.setIdStore(store);
+        strategy.setIdStore(store);
+        strategy.initialize();
+        
+        final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition(strategy);
+        defn.setId(TEST_ATTRIBUTE_NAME);
+        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
         defn.initialize();
         try {
             defn.resolve(TestSources.createResolutionContext(principal, idp, sp));
@@ -120,20 +118,24 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
     }
 
     @Test public void testGetters() throws ComponentInitializationException {
-        final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
-        defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
+        final StoredTransientIdGenerationStrategy strategy = new StoredTransientIdGenerationStrategy();
+        strategy.setId("strategy");
+
         final StorageService store = new MemoryStorageService();
         store.initialize();
-        defn.setIdStore(store);
 
-        defn.setIdLifetime(TEST_LIFETIME);
-        defn.setIdSize(TEST_ID_SIZE);
+        strategy.setIdLifetime(TEST_LIFETIME);
+        strategy.setIdSize(TEST_ID_SIZE);
+
+        strategy.setIdStore(store);
+        strategy.initialize();
+        final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition(strategy);
+        defn.setId(TEST_ATTRIBUTE_NAME);
+        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
+
         defn.initialize();
 
         Assert.assertEquals(defn.getId(), TEST_ATTRIBUTE_NAME);
-        Assert.assertEquals(defn.getIdLifetime(), TEST_LIFETIME);
-        Assert.assertEquals(defn.getIdSize(), TEST_ID_SIZE);
 
         defn.destroy();
         store.destroy();
@@ -141,14 +143,21 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
 
     @Test public void rerun() throws ComponentInitializationException, ResolutionException,
             InterruptedException {
-        final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
-        defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setIdLifetime(TEST_LIFETIME);
-        defn.setIdSize(TEST_ID_SIZE);
-        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
+        final StoredTransientIdGenerationStrategy strategy = new StoredTransientIdGenerationStrategy();
+        strategy.setId("strategy");
+
         final StorageService store = new MemoryStorageService();
         store.initialize();
-        defn.setIdStore(store);
+
+        strategy.setIdLifetime(TEST_LIFETIME);
+        strategy.setIdSize(TEST_ID_SIZE);
+
+        strategy.setIdStore(store);
+        strategy.initialize();
+        final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition(strategy);
+
+        defn.setId(TEST_ATTRIBUTE_NAME);
+        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
         defn.initialize();
 
         IdPAttribute result = defn.resolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
@@ -160,7 +169,7 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         result = defn.resolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
                 TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
         Assert.assertEquals(firstTime, vals.iterator().next().getValue());
-        Assert.assertTrue(firstTime.length() >= defn.getIdSize());
+        Assert.assertTrue(firstTime.length() >= strategy.getIdSize());
 
         Thread.sleep(TEST_LIFETIME * 2);
 
