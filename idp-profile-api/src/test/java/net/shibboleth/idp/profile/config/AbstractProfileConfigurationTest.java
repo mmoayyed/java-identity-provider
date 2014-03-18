@@ -47,15 +47,6 @@ public class AbstractProfileConfigurationTest {
     }
 
     @Test
-    public void testEnabled() {
-        MockProfileConfiguration config = new MockProfileConfiguration("mock");
-        Assert.assertTrue(config.isEnabled());
-
-        config.setEnabled(false);
-        Assert.assertFalse(config.isEnabled());
-    }
-    
-    @Test
     public void testSecurityConfiguration(){
         MockProfileConfiguration config = new MockProfileConfiguration("mock");
         Assert.assertNotNull(config.getSecurityConfiguration());
