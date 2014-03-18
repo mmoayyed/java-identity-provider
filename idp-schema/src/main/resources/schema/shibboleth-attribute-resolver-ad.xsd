@@ -32,7 +32,7 @@
 
     <complexType name="TransientId">
         <annotation>
-            <documentation>A attribute definition used to construct transient subeject identifiers.</documentation>
+            <documentation>A attribute definition used to construct transient subject identifiers.</documentation>
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeDefinitionType">
