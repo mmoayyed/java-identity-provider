@@ -65,6 +65,7 @@ public class RelyingPartyTest extends OpenSAMLInitBaseTestCase {
         RelyingPartyConfiguration rpConf = context.getBean(RelyingPartyConfiguration.class);
 
         Assert.assertEquals(rpConf.getId(), "the_RP");
+        Assert.assertTrue(rpConf.isDetailedErrors());
         Assert.assertEquals(rpConf.getProfileConfigurations().size(), 1);
 
         ProfileRequestContext ctx = new ProfileRequestContext<>();

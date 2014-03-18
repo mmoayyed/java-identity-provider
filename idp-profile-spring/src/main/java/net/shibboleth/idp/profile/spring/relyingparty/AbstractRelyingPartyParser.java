@@ -68,7 +68,12 @@ public abstract class AbstractRelyingPartyParser extends AbstractSingleBeanDefin
 
         final String provider = StringSupport.trimOrNull(element.getAttributeNS(null, "provider"));
         builder.addPropertyValue("responderId", provider);
-
+        
+        final String detailedErrors = StringSupport.trimOrNull(element.getAttributeNS(null, "detailedErrors"));
+        if (null != detailedErrors) {
+            builder.addPropertyValue("detailedErrors", detailedErrors);
+        }
+        
         final List<BeanDefinition> profileConfigurations =
                 SpringSupport.parseCustomElements(ElementSupport.getChildElements(element, PROFILE_CONFIGURATION),
                         parserContext);

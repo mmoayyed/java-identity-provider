@@ -69,51 +69,69 @@
     </complexType>
 
     <complexType name="UnidentifiedRelyingParty">
-        <annotation>
-            <documentation>
-                Relying party configuration information that is not specific to an identified relying party.
-            </documentation>
-        </annotation>
-        <sequence>
-            <element ref="rp:ProfileConfiguration" minOccurs="0" maxOccurs="unbounded">
-                <annotation>
-                    <documentation>Profile specific configuration information.</documentation>
-                </annotation>
-            </element>
-        </sequence>
-        <attribute name="provider" type="string" use="required">
+    	<annotation>
+    		<documentation>
+    			Relying party configuration information that is not
+    			specific to an identified relying party.
+    		</documentation>
+    	</annotation>
+    	<sequence>
+    		<element ref="rp:ProfileConfiguration" minOccurs="0"
+    			maxOccurs="unbounded">
+    			<annotation>
+    				<documentation>
+    					Profile specific configuration information.
+    				</documentation>
+    			</annotation>
+    		</element>
+    	</sequence>
+    	<attribute name="provider" type="string" use="required">
+    		<annotation>
+    			<documentation>
+    				The entity ID the responder should use when
+    				communicating with the relying party.
+    			</documentation>
+    		</annotation>
+    	</attribute>
+    	<attribute name="defaultAuthenticationMethod" type="string">
+    		<annotation>
+    			<documentation>
+    				The authentication method to use to authenticate the
+    				user, if one is not specified within the request.
+    				This method must be one of the methods handled by
+    				one of the authentication handlers defined for the
+    				system.
+    			</documentation>
+    		</annotation>
+    	</attribute>
+    	<attribute name="defaultSigningCredentialRef" type="string">
+    		<annotation>
+    			<documentation>
+    				The ID of the default signing credential for the
+    				relying party. This is provided as a convenience
+    				method so that this credential need not be defined
+    				on every signing supporting profile configuration.
+    				If a profile configuration has a defined signing
+    				credential it must be used in place of the
+    				credential retrieved here.
+    			</documentation>
+    		</annotation>
+    	</attribute>
+    	<attribute name="nameIDFormatPrecedence" type="string">
+    		<annotation>
+    			<documentation>
+    				A space delimited list that provides a precedence
+    				for NameID format to be used with the relying party.
+    			</documentation>
+    		</annotation>
+    	</attribute>
+    	<attribute name="detailedErrors" type="boolean">
             <annotation>
                 <documentation>
-                    The entity ID the responder should use when communicating with the relying party.
+                    a boolean to indicate whether details errors are to be reported
                 </documentation>
             </annotation>
-        </attribute>
-        <attribute name="defaultAuthenticationMethod" type="string">
-            <annotation>
-                <documentation>
-                    The authentication method to use to authenticate the user, if one is not specified within the
-                    request. This method must be one of the methods handled by one of the authentication handlers
-                    defined for the system.
-                </documentation>
-            </annotation>
-        </attribute>
-        <attribute name="defaultSigningCredentialRef" type="string">
-            <annotation>
-                <documentation>
-                    The ID of the default signing credential for the relying party. This is provided as a convenience
-                    method so that this credential need not be defined on every signing supporting profile
-                    configuration. If a profile configuration has a defined signing credential it must be used in place
-                    of the credential retrieved here.
-                </documentation>
-            </annotation>
-        </attribute>
-        <attribute name="nameIDFormatPrecedence" type="string">
-            <annotation>
-                <documentation>
-                    A space delimited list that provides a precedence for NameID format to be used with the relying party.
-                </documentation>
-            </annotation>
-        </attribute>
+    	</attribute>
     </complexType>
 
     <element name="ProfileConfiguration" type="rp:ProfileConfigurationType"/>
