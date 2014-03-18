@@ -20,11 +20,11 @@ package net.shibboleth.idp.profile.config;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.opensaml.messaging.handler.MessageHandler;
-
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
+import org.opensaml.messaging.handler.MessageHandler;
 
 import com.google.common.base.Objects;
 
@@ -33,9 +33,6 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
 
     /** ID of the profile configured. */
     @Nonnull @NotEmpty private final String id;
-
-    /** Whether this profile is enabled. */
-    private boolean enabled;
 
     /** Inbound message handler. */
     @Nullable private MessageHandler inboundHandler;
@@ -53,28 +50,12 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
      */
     public AbstractProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         id = Constraint.isNotNull(StringSupport.trimOrNull(profileId), "Profile identifier cannot be null or empty");
-        enabled = true;
     }
 
     /** {@inheritDoc} */
     @Override
     @Nonnull @NotEmpty public String getId() {
         return id;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    /**
-     * Sets whether this profile is enabled.
-     * 
-     * @param isEnabled whether this profile is enabled
-     */
-    public void setEnabled(final boolean isEnabled) {
-        enabled = isEnabled;
     }
 
     /** {@inheritDoc} */
