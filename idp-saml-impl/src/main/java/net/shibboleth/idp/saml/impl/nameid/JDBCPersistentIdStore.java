@@ -34,8 +34,10 @@ import javax.sql.DataSource;
 import net.shibboleth.idp.saml.nameid.PersistentIdEntry;
 import net.shibboleth.idp.saml.nameid.PersistentIdStore;
 import net.shibboleth.utilities.java.support.annotation.Duration;
+import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -93,12 +95,12 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
 
     /** Name of the deactivation time column. */
     @Nonnull @NotEmpty private String deactivationTimeColumn;
-
+    
     /** Partial select query for ID entries. */
     @NonnullAfterInit private String idEntrySelectSQL;
 
     /** SQL used to deactivate an ID. */
-    @NonnullAfterInit private String deactivateIdSQL;
+    @NonnullAfterInit private String deactivateSQL;
 
     /** Constructor. */
     public JDBCPersistentIdStore() {
@@ -111,22 +113,8 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
         peerProvidedIdColumn = "peerProvidedId";
         creationTimeColumn = "creationDate";
         deactivationTimeColumn = "deactivationDate";
-        
-        deactivateIdSQL = "UPDATE " + tableName + " SET " + deactivationTimeColumn + "= ? WHERE "
-                + persistentIdColumn + "= ?";
     }
     
-    /**
-     * Get the table name.
-     * 
-     * @return table name
-     */
-    @Nonnull @NotEmpty public String getTableName() {
-        return tableName;
-    }
-
-
-
     /**
      * Set the table name.
      * 
@@ -137,21 +125,6 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
         
         tableName = Constraint.isNotNull(StringSupport.trimOrNull(name), "Table name cannot be null or empty");
     }
-    
-
-
-
-    /**
-     * Get the name of the issuer entityID column.
-     * 
-     * @return name of issuer column
-     */
-    @Nonnull @NotEmpty public String getIssuerColumn() {
-        return issuerColumn;
-    }
-    
-
-
 
     /**
      * Set the name of the issuer entityID column.
@@ -163,21 +136,6 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
         
         issuerColumn = Constraint.isNotNull(StringSupport.trimOrNull(name), "Column name cannot be null or empty");
     }
-    
-
-
-
-    /**
-     * Get the name of the recipient entityID column.
-     * 
-     * @return name of recipient column
-     */
-    @Nonnull @NotEmpty public String getPeerEntityColumn() {
-        return recipientColumn;
-    }
-    
-
-
 
     /**
      * Set the name of the recipient entityID column.
@@ -189,21 +147,6 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
         
         recipientColumn = Constraint.isNotNull(StringSupport.trimOrNull(name), "Column name cannot be null or empty");
     }
-    
-
-
-
-    /**
-     * Get the name of the principal name column.
-     * 
-     * @return name of principal name column
-     */
-    @Nonnull @NotEmpty public String getPrincipalNameColumn() {
-        return principalNameColumn;
-    }
-    
-
-
 
     /**
      * Set the name of the principal name column.
@@ -216,21 +159,6 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
         principalNameColumn = Constraint.isNotNull(StringSupport.trimOrNull(name),
                 "Column name cannot be null or empty");
     }
-    
-
-
-
-    /**
-     * Get the name of the source ID column.
-     * 
-     * @return name of source ID column
-     */
-    @Nonnull @NotEmpty public String getSourceIdColumn() {
-        return sourceIdColumn;
-    }
-    
-
-
 
     /**
      * Set the name of the source ID column.
@@ -242,21 +170,6 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
         
         sourceIdColumn = Constraint.isNotNull(StringSupport.trimOrNull(name), "Column name cannot be null or empty");
     }
-    
-
-
-
-    /**
-     * Get the name of the persistent ID column.
-     * 
-     * @return name of persistent ID column
-     */
-    @Nonnull @NotEmpty public String getPersistentIdColumn() {
-        return persistentIdColumn;
-    }
-    
-
-
 
     /**
      * Set the name of the persistent ID column.
@@ -269,21 +182,6 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
         persistentIdColumn = Constraint.isNotNull(StringSupport.trimOrNull(name),
                 "Column name cannot be null or empty");
     }
-    
-
-
-
-    /**
-     * Get the name of the peer-provided ID column.
-     * 
-     * @return name of peer-provided ID column
-     */
-    @Nonnull @NotEmpty public String getPeerProvidedIdColumn() {
-        return peerProvidedIdColumn;
-    }
-    
-
-
 
     /**
      * Set the name of the peer-provided ID column.
@@ -296,21 +194,6 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
         peerProvidedIdColumn = Constraint.isNotNull(StringSupport.trimOrNull(name),
                 "Column name cannot be null or empty");
     }
-    
-
-
-
-    /**
-     * Get the name of the creation time column.
-     * 
-     * @return name of creation time column
-     */
-    @Nonnull @NotEmpty public String getCreateTimeColumn() {
-        return creationTimeColumn;
-    }
-    
-
-
 
     /**
      * Set the name of the creation time column.
@@ -323,21 +206,6 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
         creationTimeColumn = Constraint.isNotNull(StringSupport.trimOrNull(name),
                 "Column name cannot be null or empty");
     }
-    
-
-
-
-    /**
-     * Get the name of the deactivation time column.
-     * 
-     * @return name of deactivation time column
-     */
-    @Nonnull @NotEmpty public String getDeactivationTimeColumn() {
-        return deactivationTimeColumn;
-    }
-    
-
-
 
     /**
      * Set the name of the deactivation time column.
@@ -350,9 +218,6 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
         deactivationTimeColumn = Constraint.isNotNull(StringSupport.trimOrNull(name),
                 "Column name cannot be null or empty");
     }
-    
-
-
 
     /**
      * Get the source datasource used to communicate with the database.
@@ -404,6 +269,8 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
         }
         
         idEntrySelectSQL = "SELECT * FROM " + tableName + " WHERE ";
+        deactivateSQL = "UPDATE " + tableName + " SET " + deactivationTimeColumn + "= ? WHERE "
+                + persistentIdColumn + "= ?";
     }
 
     /** {@inheritDoc} */
@@ -550,7 +417,8 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
     }
 
     /** {@inheritDoc} */
-    @Override public void deactivate(@NotEmpty String persistentId, @Nullable DateTime deactivation)
+    @Override
+    public void deactivate(@Nonnull @NotEmpty final String persistentId, @Nullable final DateTime deactivation)
             throws IOException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
@@ -563,7 +431,7 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
     
         try (final Connection dbConn = dataSource.getConnection()) {
             log.debug("Deactivating persistent id {} as of {}", persistentId, deactivationTime.toString());
-            final PreparedStatement statement = dbConn.prepareStatement(deactivateIdSQL);
+            final PreparedStatement statement = dbConn.prepareStatement(deactivateSQL);
             statement.setQueryTimeout((int) (queryTimeout / 1000));
             statement.setTimestamp(1, deactivationTime);
             statement.setString(2, persistentId);
@@ -584,7 +452,7 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
      * @throws IOException thrown if there is a problem communication with the database
      */
     @Nullable private PersistentIdEntry getPersistentIdEntry(@Nonnull @NotEmpty final String persistentId, 
-            boolean onlyActiveId) throws IOException {
+            final boolean onlyActiveId) throws IOException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         final StringBuilder sqlBuilder = new StringBuilder(idEntrySelectSQL);
@@ -632,7 +500,7 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
      * 
      * @throws SQLException if we go against the constraint.
      */
-    protected void validatePersistentIdEntry(@Nonnull PersistentIdEntry entry) throws SQLException {
+    protected void validatePersistentIdEntry(@Nonnull final PersistentIdEntry entry) throws SQLException {
         boolean doThrow = false;
 
         if (null == entry.getIssuerEntityId()) {
@@ -670,7 +538,7 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
      * 
      * @return the SQL statement
      */
-    @Nonnull private String getInsertSql() {
+    @Nonnull @NotEmpty private String getInsertSql() {
         final StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ");
         sqlBuilder.append(tableName).append(" (");
         sqlBuilder.append(issuerColumn).append(", ");
@@ -694,7 +562,8 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
      * 
      * @throws SQLException thrown if there is a problem reading the information from the database
      */
-    @Nonnull private List<PersistentIdEntry> buildIdentifierEntries(ResultSet resultSet) throws SQLException {
+    @Nonnull @NonnullElements @Live private List<PersistentIdEntry> buildIdentifierEntries(
+            @Nonnull final ResultSet resultSet) throws SQLException {
         final ArrayList<PersistentIdEntry> entries = new ArrayList<>();
 
         while (resultSet.next()) {
