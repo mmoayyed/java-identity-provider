@@ -18,8 +18,8 @@
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.attribute.resolver.spring.ad.CryptoTransientIdAttributeDefinitionParser;
-import net.shibboleth.idp.saml.impl.attribute.resolver.CryptoTransientIdAttributeDefinition;
+import net.shibboleth.idp.saml.impl.attribute.resolver.TransientIdAttributeDefinition;
+import net.shibboleth.idp.saml.impl.nameid.CryptoTransientIdGenerationStrategy;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
@@ -30,29 +30,31 @@ import org.testng.annotations.Test;
  */
 public class CryptoTransientIdAttributeDefinitionParserTest extends BaseAttributeDefinitionParserTest {
 
-    private CryptoTransientIdAttributeDefinition getDefinition(String fileName) {
+    private TransientIdAttributeDefinition getDefinition(String fileName) {
 
-        return getAttributeDefn(fileName, "sealer.xml", CryptoTransientIdAttributeDefinition.class);
-    }
-    
-    @Test
-    public void withTime() throws ComponentInitializationException {
-
-        CryptoTransientIdAttributeDefinition defn = getDefinition("cryptoWithTime.xml");
-        
-        defn.initialize();
-        
-        Assert.assertEquals(defn.getIdLifetime(), 3 * 60 * 1000);
-    }
-    
-    
-    @Test
-    public void noTime() throws ComponentInitializationException {
-
-        CryptoTransientIdAttributeDefinition defn = getDefinition("cryptoNoTime.xml");
-        defn.initialize();
-        
-        Assert.assertEquals(defn.getIdLifetime(), 4 * 3600 * 1000);
+        return getAttributeDefn(fileName, "sealer.xml", TransientIdAttributeDefinition.class);
     }
 
+    @Test public void withTime() throws ComponentInitializationException {
+
+        TransientIdAttributeDefinition defn = getDefinition("cryptoWithTime.xml");
+
+        Assert.assertTrue(defn.isInitialized());
+
+        CryptoTransientIdGenerationStrategy strategy =
+                (CryptoTransientIdGenerationStrategy) defn.getTransientIdGenerationStrategy();
+
+        Assert.assertEquals(strategy.getIdLifetime(), 3 * 60 * 1000);
+    }
+
+    @Test public void noTime() throws ComponentInitializationException {
+
+        TransientIdAttributeDefinition defn = getDefinition("cryptoNoTime.xml");
+        Assert.assertTrue(defn.isInitialized());
+
+        CryptoTransientIdGenerationStrategy strategy =
+                (CryptoTransientIdGenerationStrategy) defn.getTransientIdGenerationStrategy();
+
+        Assert.assertEquals(strategy.getIdLifetime(), 4 * 3600 * 1000);
+    }
 }

@@ -21,12 +21,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.saml.impl.attribute.resolver.CryptoTransientIdAttributeDefinition;
+import net.shibboleth.idp.saml.impl.attribute.resolver.TransientIdAttributeDefinition;
+import net.shibboleth.idp.saml.impl.nameid.CryptoTransientIdGenerationStrategy;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -34,36 +32,34 @@ import org.w3c.dom.Element;
 /**
  * Spring bean definition parser for {@link CryptoTransientIdAttributeDefinition}s.
  */
-public class CryptoTransientIdAttributeDefinitionParser extends
-        BaseAttributeDefinitionParser {
+public class CryptoTransientIdAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "CryptoTransientId");
 
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(CryptoTransientIdAttributeDefinitionParser.class);
-
     /** {@inheritDoc} */
-    protected Class<CryptoTransientIdAttributeDefinition> getBeanClass(@Nullable Element element) {
-        return CryptoTransientIdAttributeDefinition.class;
+    @Override protected Class<TransientIdAttributeDefinition> getBeanClass(@Nullable Element element) {
+        return TransientIdAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
-        Long lifetime = null;
-        
+
+        BeanDefinitionBuilder strategyBuilder =
+                BeanDefinitionBuilder.genericBeanDefinition(CryptoTransientIdGenerationStrategy.class);
+
+        strategyBuilder.setInitMethodName("initialize");
+        strategyBuilder.addPropertyValue("id", "CryptoTransientIdGenerationStrategy:" + getDefinitionId());
+
         if (config.hasAttributeNS(null, "lifetime")) {
-            lifetime = AttributeSupport.getDurationAttributeValueAsLong(config.getAttributeNodeNS(null, "lifetime"));
-            log.debug("{} lifetime of {} specified.", getLogPrefix(), lifetime);
+            strategyBuilder.addPropertyValue("idLifetime", config.getAttributeNS(null, "lifetime"));
         }
 
-        if (null != lifetime) {
-            builder.addPropertyValue("idLifetime", lifetime.longValue());
-        }
-
-        builder.addPropertyReference("dataSealer",
+        strategyBuilder.addPropertyReference("dataSealer",
                 StringSupport.trimOrNull(config.getAttributeNS(null, "dataSealerRef")));
+
+        builder.addConstructorArgValue(strategyBuilder.getBeanDefinition());
     }
 }

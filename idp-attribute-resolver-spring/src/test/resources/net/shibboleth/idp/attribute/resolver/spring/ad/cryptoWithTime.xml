@@ -1,4 +1,5 @@
- <resolver:AttributeDefinition 
+<?xml version="1.0" encoding="UTF-8"?>
+<resolver:AttributeDefinition 
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
     xmlns:ad="urn:mace:shibboleth:2.0:resolver:ad"

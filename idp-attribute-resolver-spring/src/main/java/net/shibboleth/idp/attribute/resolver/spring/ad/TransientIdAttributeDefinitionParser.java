@@ -22,8 +22,8 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.impl.attribute.resolver.TransientIdAttributeDefinition;
+import net.shibboleth.idp.saml.impl.nameid.StoredTransientIdGenerationStrategy;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,24 +43,23 @@ public class TransientIdAttributeDefinitionParser extends BaseAttributeDefinitio
     private final Logger log = LoggerFactory.getLogger(TransientIdAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
-    protected Class<TransientIdAttributeDefinition> getBeanClass(@Nullable Element element) {
+    @Override protected Class<TransientIdAttributeDefinition> getBeanClass(@Nullable Element element) {
         return TransientIdAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        Long lifetime = null;
+        BeanDefinitionBuilder strategyBuilder =
+                BeanDefinitionBuilder.genericBeanDefinition(StoredTransientIdGenerationStrategy.class);
+
+        strategyBuilder.setInitMethodName("initialize");
+        strategyBuilder.addPropertyValue("id", "StoredTransientIdGenerationStrategy:"+getDefinitionId());
 
         if (config.hasAttributeNS(null, "lifetime")) {
-            lifetime = AttributeSupport.getDurationAttributeValueAsLong(config.getAttributeNodeNS(null, "lifetime"));
-        }
-
-        if (null != lifetime) {
-            log.debug("{}: lifetime {}", getLogPrefix(), lifetime);
-            builder.addPropertyValue("idLifetime", lifetime.longValue());
+            strategyBuilder.addPropertyValue("idLifetime", config.getAttributeNS(null, "lifetime"));
         }
 
         String idStore = "shibboleth.StorageService";
@@ -69,6 +68,8 @@ public class TransientIdAttributeDefinitionParser extends BaseAttributeDefinitio
         }
 
         log.debug("{} idStore '{}'", getLogPrefix(), idStore);
-        builder.addPropertyReference("idStore", idStore);
+        strategyBuilder.addPropertyReference("idStore", idStore);
+
+        builder.addConstructorArgValue(strategyBuilder.getBeanDefinition());
     }
 }

@@ -35,7 +35,7 @@ import org.w3c.dom.Element;
 /** Bean definition parser for a {@link BaseResolverPlugin}. */
 public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinitionParser {
 
-    /** An Id for the definition, used for debugging messages. */
+    /** An Id for the definition, used for debugging messages and creating names of children. */
     private String defnId = "<Unnamed Attribute or Connector>";
 
     /** Class logger. */

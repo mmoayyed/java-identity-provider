@@ -27,16 +27,12 @@ import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
-import net.shibboleth.idp.saml.impl.nameid.StoredTransientIdGenerationStrategy;
-import net.shibboleth.utilities.java.support.annotation.Duration;
+import net.shibboleth.idp.saml.impl.nameid.TransientIdGenerationStrategy;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.ProfileException;
-import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,8 +41,10 @@ import com.google.common.base.Strings;
 /**
  * An attribute definition that generates random identifiers useful for transient subject IDs.
  * 
- * <p>Information about the created IDs are stored within a provided {@link StorageService}. The identifier
- * itself is the record key, and the value combines the principal name with the identifier of the recipient.</p>
+ * <p>
+ * The generation in devolved to the supplied {@link TransientIdGenerationStrategy}, which will be a
+ * {@link net.shibboleth.idp.saml.impl.nameid.StoredTransientIdGenerationStrategy} for the Transient and
+ * {@link net.shibboleth.idp.saml.impl.nameid.CryptoTransientIdGenerationStrategy} for a CryptoTransient.
  */
 public class TransientIdAttributeDefinition extends AbstractAttributeDefinition {
 
@@ -54,106 +52,41 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
     @Nonnull private final Logger log = LoggerFactory.getLogger(TransientIdAttributeDefinition.class);
 
     /** The actual implementation of the transient generation process. */
-    @Nonnull private final StoredTransientIdGenerationStrategy idGenerator;
-    
-    /** Constructor. */
-    public TransientIdAttributeDefinition() {
-        idGenerator = new StoredTransientIdGenerationStrategy();
-    }
+    @Nonnull private final TransientIdGenerationStrategy idGenerator;
 
     /**
-     * Set the ID store we should use.
+     * Constructor.
      * 
-     * @param store the store to use.
+     * @param generator the (crypto or transient) generator to use
      */
-    public void setIdStore(@Nonnull final StorageService store) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        idGenerator.setIdStore(store);
-    }
-
-    /**
-     * Set the ID generator we should use.
-     * 
-     * @param generator identifier generation strategy to use
-     */
-    public void setIdGenerator(@Nonnull final IdentifierGenerationStrategy generator) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        idGenerator.setIdGenerator(generator);
+    public TransientIdAttributeDefinition(@Nonnull final TransientIdGenerationStrategy generator) {
+        idGenerator = Constraint.isNotNull(generator, "Id generator must be non null");
     }
     
-    /**
-     * Get the size, in bytes, of the id.
-     * 
-     * @return  id size, in bytes
+    /** return the id generator being used.  This is primarily used in testing.
+     * @return the generator strategy;
      */
-    @Positive public int getIdSize() {
-        return idGenerator.getIdSize();
-    }
-    
-    /**
-     * Set the size, in bytes, of the id.
-     * 
-     * @param size size, in bytes, of the id
-     */
-    public void setIdSize(@Positive final int size) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        idGenerator.setIdSize(size);
-    }
-
-    
-    /**
-     * Get the time, in milliseconds, ids are valid.
-     * 
-     * @return  time, in milliseconds, ids are valid
-     */
-    @Positive public long getIdLifetime() {
-        return idGenerator.getIdLifetime();
-    }
-    
-    /**
-     * Set the time, in milliseconds, ids are valid.
-     * 
-     * @param lifetime time, in milliseconds, ids are valid
-     */
-    public void setIdLifetime(@Duration @Positive final long lifetime) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        idGenerator.setIdLifetime(lifetime);
-    }
-
-    /** {@inheritDoc} */
-    @Override protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-        idGenerator.setId(getId() + " Transient Generator");
-        idGenerator.initialize();
-    }
-
-    /** {@inheritDoc} */
-    @Override protected void doDestroy() {
-        idGenerator.destroy();
-        super.doDestroy();
+    @Nonnull public TransientIdGenerationStrategy getTransientIdGenerationStrategy() {
+        return idGenerator;
     }
 
     /** {@inheritDoc} */
     @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
-    
+
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-    
+
         final String attributeRecipientID = getAttributeRecipientID(resolutionContext);
-    
+
         final String principalName = getPrincipal(resolutionContext);
-    
+
         try {
             final String transientId = idGenerator.generate(attributeRecipientID, principalName);
-            log.debug("{} creating new transient ID '{}' for request '{}'",
-                    new Object[] {getLogPrefix(), transientId, resolutionContext.getId(),});
-            
+            log.debug("{} creating new transient ID '{}' for request '{}'", new Object[] {getLogPrefix(), transientId,
+                    resolutionContext.getId(),});
+
             final IdPAttribute result = new IdPAttribute(getId());
             result.setValues(Collections.singleton(new StringAttributeValue(transientId)));
             return result;
@@ -161,7 +94,6 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
             throw new ResolutionException(e);
         }
     }
-    
 
     /**
      * Police and get the AttributeRecipientID.

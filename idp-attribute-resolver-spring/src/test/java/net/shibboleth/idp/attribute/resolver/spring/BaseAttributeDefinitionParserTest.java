@@ -19,6 +19,8 @@ package net.shibboleth.idp.attribute.resolver.spring;
 
 import java.util.Collection;
 
+import net.shibboleth.ext.spring.config.DurationToLongConverter;
+import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
@@ -29,8 +31,11 @@ import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
+
+import com.google.common.collect.Sets;
 
 /**
  * Test for {@link SimpleAttributeDefinitionParser} and by extension {@link BaseAttributeDefinitionParser}.
@@ -50,6 +55,12 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
     protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context,
             boolean supressValid) {
 
+        ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
+        service.setConverters(Sets.newHashSet(new DurationToLongConverter(), new StringToIPRangeConverter()));
+        service.afterPropertiesSet();
+
+        context.getBeanFactory().setConversionService(service.getObject());    
+
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
@@ -57,7 +68,7 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
             beanDefinitionReader.setValidating(false);
         }
         beanDefinitionReader.loadBeanDefinitions(fileName);
-
+        
         context.refresh();
         
         Collection<Type> beans = context.getBeansOfType(claz).values();
@@ -94,6 +105,12 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + claz);
         XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
+        
+        ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
+        service.setConverters(Sets.newHashSet(new DurationToLongConverter(), new StringToIPRangeConverter()));
+        service.afterPropertiesSet();
+
+        context.getBeanFactory().setConversionService(service.getObject());            
 
         configReader.loadBeanDefinitions(BEAN_FILE_PATH + beanFileName);
 
