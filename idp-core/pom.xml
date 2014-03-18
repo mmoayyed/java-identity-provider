@@ -34,6 +34,16 @@
           <groupId>${spring.groupId}</groupId>
           <artifactId>spring-context</artifactId>
         </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>compile</scope><!-- normally runtime -->
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <scope>compile</scope><!-- normally runtime -->
+        </dependency>
 
         <!-- Provided Dependencies -->
 
