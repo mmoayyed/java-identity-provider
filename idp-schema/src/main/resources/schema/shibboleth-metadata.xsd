@@ -57,7 +57,7 @@
                 </sequence>
                 <attribute name="maxCacheDuration" type="string">
                     <annotation>
-                        <documentation>This property is deprecated, use requireValidMetadata instead.</documentation>
+                        <documentation>This property is deprecated, use maxRefreshDelay instead.</documentation>
                     </annotation>
                 </attribute>
             </extension>
