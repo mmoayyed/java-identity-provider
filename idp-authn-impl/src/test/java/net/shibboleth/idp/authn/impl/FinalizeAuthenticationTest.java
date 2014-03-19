@@ -26,6 +26,7 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.idp.profile.IdPEventIds;
 
 import org.opensaml.profile.ProfileException;
 import org.springframework.webflow.execution.Event;
@@ -50,23 +51,32 @@ public class FinalizeAuthenticationTest extends PopulateAuthenticationContextTes
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNull(prc.getSubcontext(SubjectContext.class, false));
+        Assert.assertNull(prc.getSubcontext(SubjectContext.class));
     }
 
+    @Test public void testMismatch() throws ProfileException {
+        prc.getSubcontext(SubjectContext.class, true).setPrincipalName("foo");
+        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("bar");
+        
+        final Event event = action.execute(src);
+        
+        ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_SUBJECT_CTX);
+    }
+    
     @Test public void testNothingActive() throws ProfileException {
         prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("foo");
         
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
-        SubjectContext sc = prc.getSubcontext(SubjectContext.class, false);
+        SubjectContext sc = prc.getSubcontext(SubjectContext.class);
         Assert.assertNotNull(sc);
         Assert.assertEquals(sc.getPrincipalName(), "foo");
     }
 
     @Test public void testOneActive() throws ProfileException {
         AuthenticationResult active = new AuthenticationResult("test2", new Subject());
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         authCtx.setActiveResults(Arrays.asList(active));
         authCtx.setAuthenticationResult(active);
         prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("foo");
@@ -74,7 +84,7 @@ public class FinalizeAuthenticationTest extends PopulateAuthenticationContextTes
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
-        SubjectContext sc = prc.getSubcontext(SubjectContext.class, false);
+        SubjectContext sc = prc.getSubcontext(SubjectContext.class);
         Assert.assertNotNull(sc);
         Assert.assertEquals(sc.getPrincipalName(), "foo");
         Assert.assertEquals(sc.getAuthenticationResults().size(), 1);
@@ -83,7 +93,7 @@ public class FinalizeAuthenticationTest extends PopulateAuthenticationContextTes
     @Test public void testMultipleActive() throws ProfileException {
         AuthenticationResult active1 = new AuthenticationResult("test1", new Subject());
         AuthenticationResult active2 = new AuthenticationResult("test2", new Subject());
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         authCtx.setActiveResults(Arrays.asList(active1));
         authCtx.setAuthenticationResult(active2);
         prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("foo");
@@ -91,7 +101,7 @@ public class FinalizeAuthenticationTest extends PopulateAuthenticationContextTes
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
-        SubjectContext sc = prc.getSubcontext(SubjectContext.class, false);
+        SubjectContext sc = prc.getSubcontext(SubjectContext.class);
         Assert.assertNotNull(sc);
         Assert.assertEquals(sc.getPrincipalName(), "foo");
         Assert.assertEquals(sc.getAuthenticationResults().size(), 2);

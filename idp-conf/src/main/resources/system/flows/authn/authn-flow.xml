@@ -77,7 +77,10 @@
         <transition on="InputOutputError" to="FinalizeAuthentication" />
     </action-state>
     
-    <!-- Wraps up the subflow or result reuse by producing a SubjectContext. -->
+    <!--
+    Wraps up the subflow or result reuse by producing a SubjectContext. If a mismatch
+    exists between an existing SubjectContext and the result here, an error occurs.
+    -->
     <action-state id="FinalizeAuthentication">
         <evaluate expression="FinalizeAuthentication" />
         

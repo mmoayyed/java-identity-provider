@@ -4,8 +4,8 @@
       parent="SubjectC14N.Abstract">
 
     <!--
-    This is the SubjectCanonicalization subflow. It handles set up and eventual selection of a
-    c14n subflow before returning control to the calling flow.
+    This is the post-login SubjectCanonicalization subflow. It handles set up and eventual selection of a
+    c14n subflow before returning control to the calling (authentication) flow.
     -->
     
     <action-state id="PopulateSubjectCanonicalizationContext">
