@@ -157,17 +157,6 @@
                 <version>1.2-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>${spring.groupId}</groupId>
-                <artifactId>spring-jdbc</artifactId>
-                <version>${spring.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
                 <groupId>${spring-webflow.groupId}</groupId>
                 <artifactId>spring-webflow</artifactId>
                 <version>${spring-webflow.version}</version>

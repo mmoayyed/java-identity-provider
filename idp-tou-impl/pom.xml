@@ -43,7 +43,6 @@
         <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-jdbc</artifactId>
-            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.velocity</groupId>
