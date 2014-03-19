@@ -23,15 +23,20 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.ext.spring.config.DurationToLongConverter;
+import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Element;
+
+import com.google.common.collect.Sets;
 
 /**
  * Helper class for performing some common Spring-related functions.
@@ -56,6 +61,13 @@ public final class SpringSupport {
         GenericApplicationContext context = new GenericApplicationContext(parentContext);
         context.setDisplayName("ApplicationContext:" + name);
 
+        ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
+        service.setConverters(Sets.newHashSet(new DurationToLongConverter(), new StringToIPRangeConverter()));
+        service.afterPropertiesSet();
+
+        context.getBeanFactory().setConversionService(service.getObject());
+
+        
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
