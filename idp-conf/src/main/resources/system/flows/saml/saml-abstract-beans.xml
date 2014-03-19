@@ -25,6 +25,12 @@
 
     <!-- TODO: remove once we get real metadata config in place -->
     <bean id="ExampleMetadata" class="org.springframework.core.io.FileSystemResource" c:path="${idp.home}/metadata/example-metadata.xml" />
+    <bean id="ExampleMetadataResolver" class="org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolver"
+            p:parserPool-ref="shibboleth.ParserPool">
+        <constructor-arg>
+            <util:property-path path="ExampleMetadata.File" />
+        </constructor-arg>
+    </bean>
 
     <bean id="InitializeRelyingPartyContexFromSAMLPeer"
         class="net.shibboleth.idp.saml.impl.profile.InitializeRelyingPartyContextFromSAMLPeer" scope="prototype" />

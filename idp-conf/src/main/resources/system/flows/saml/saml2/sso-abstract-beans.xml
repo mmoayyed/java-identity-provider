@@ -41,16 +41,8 @@
                 <!-- TODO: need to poke metadata source in from relying party config later -->
                 <bean class="org.opensaml.saml.common.binding.SAMLMetadataLookupHandler">
                     <property name="roleDescriptorResolver">
-                        <bean class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver">
-                            <constructor-arg>
-                                <bean class="org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolver"
-                                        p:parserPool-ref="shibboleth.ParserPool">
-                                    <constructor-arg>
-                                        <util:property-path path="ExampleMetadata.File" />
-                                    </constructor-arg>
-                                </bean>
-                            </constructor-arg>
-                        </bean>
+                        <bean class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
+                            c:mdResolver-ref="ExampleMetadataResolver" />
                     </property>
                 </bean>
 
@@ -132,6 +124,10 @@
             p:nameIDGenerators-ref="shibboleth.SAML2NameIDGenerators">
         <property name="formatLookupStrategy">
             <bean class="net.shibboleth.idp.saml.impl.profile.logic.DefaultNameIdentifierFormatStrategy" />
+        </property>
+        <property name="nameIDPolicyPredicate">
+            <bean class="org.opensaml.saml.saml2.profile.impl.AffiliationNameIDPolicyPredicate"
+                p:metadataResolver-ref="ExampleMetadataResolver" />
         </property>
     </bean>
 
