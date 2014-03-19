@@ -45,6 +45,10 @@
             <scope>compile</scope><!-- normally runtime -->
         </dependency>
 
+        <dependency>
+            <groupId>net.shibboleth.ext</groupId>
+            <artifactId>spring-extensions</artifactId>
+        </dependency>
         <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->
