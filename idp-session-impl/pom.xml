@@ -58,7 +58,6 @@
         <!-- Test Dependencies -->
         <dependency>
             <groupId>${spring.groupId}</groupId>
-            <version>${spring.version}</version>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
