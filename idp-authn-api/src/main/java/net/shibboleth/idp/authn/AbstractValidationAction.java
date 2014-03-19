@@ -35,6 +35,8 @@ import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
+import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
+import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
@@ -47,6 +49,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
@@ -86,12 +89,20 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
     
     /** Predicate to apply when setting AuthenticationResult cacheability. */
     @Nullable private Predicate<ProfileRequestContext> resultCachingPredicate;
+
+    /** Function used to obtain the requester ID. */
+    @Nullable private Function<ProfileRequestContext,String> requesterLookupStrategy;
+
+    /** Function used to obtain the responder ID. */
+    @Nullable private Function<ProfileRequestContext,String> responderLookupStrategy;
     
     /** Constructor. */
     public AbstractValidationAction() {
         authenticatedSubject = new Subject();
         clearErrorContext = true;
         classifiedMessages = Collections.emptyMap();
+        requesterLookupStrategy = new RelyingPartyIdLookupFunction();
+        responderLookupStrategy = new ResponderIdLookupFunction();
     }
 
     /**
@@ -141,6 +152,30 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
         
         resultCachingPredicate = predicate;
     }
+
+    /**
+     * Set the strategy used to locate the requester ID for canonicalization.
+     * 
+     * @param strategy lookup strategy
+     */
+    public synchronized void setRequesterLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        requesterLookupStrategy = strategy;
+    }
+
+    /**
+     * Set the strategy used to locate the responder ID for canonicalization.
+     * 
+     * @param strategy lookup strategy
+     */
+    public synchronized void setResponderLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        responderLookupStrategy = strategy;
+    }
     
     /** {@inheritDoc} */
     @Override
@@ -164,7 +199,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
         authenticatedSubject.getPrincipals().clear();
         authenticatedSubject.getPrincipals().addAll(Collections2.filter(principals, Predicates.notNull()));
     }
-
+ 
     /**
      * Get the subject to be produced by successful execution of this action.
      * 
@@ -240,7 +275,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
                     authenticationContext.getAttemptedFlow().getSupportedPrincipals());
         }
         
-        AuthenticationResult result = new AuthenticationResult(authenticationContext.getAttemptedFlow().getId(),
+        final AuthenticationResult result = new AuthenticationResult(authenticationContext.getAttemptedFlow().getId(),
                 populateSubject(authenticatedSubject));
         authenticationContext.setAuthenticationResult(result);
         
@@ -252,7 +287,15 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
         }
         
         // Transfer the subject to a new c14n context.
-        profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(result.getSubject());
+        final SubjectCanonicalizationContext c14n = new SubjectCanonicalizationContext();
+        c14n.setSubject(result.getSubject());
+        if (requesterLookupStrategy != null) {
+            c14n.setRequesterId(requesterLookupStrategy.apply(profileRequestContext));
+        }
+        if (responderLookupStrategy != null) {
+            c14n.setResponderId(responderLookupStrategy.apply(profileRequestContext));
+        }
+        profileRequestContext.addSubcontext(c14n, true);
     }
     
     /**
