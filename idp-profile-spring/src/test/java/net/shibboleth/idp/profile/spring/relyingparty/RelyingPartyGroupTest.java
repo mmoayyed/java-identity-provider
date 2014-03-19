@@ -17,12 +17,14 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty;
 
+import java.util.Collection;
 import java.util.List;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver;
+import net.shibboleth.idp.saml.impl.metadata.RelyingPartyMetadataProvider;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
@@ -42,7 +44,7 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
 
     private static final String PATH = "/net/shibboleth/idp/profile/spring/relyingparty/";
 
-    private DefaultRelyingPartyConfigurationResolver getResolver(String... files) {
+    private GenericApplicationContext getContext(String... files) {
         final Resource[] resources = new Resource[files.length];
 
         for (int i = 0; i < files.length; i++) {
@@ -64,23 +66,30 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
         configReader.loadBeanDefinitions(resources);
         context.refresh();
 
-        return context.getBean(DefaultRelyingPartyConfigurationResolver.class);
+        return context;
     }
 
     @Test public void relyingParty() {
+        GenericApplicationContext context = getContext("beans.xml", "relying-party-group.xml");
 
-        DefaultRelyingPartyConfigurationResolver resolver = getResolver("beans.xml", "relying-party-group.xml");
+        DefaultRelyingPartyConfigurationResolver resolver = context.getBean(DefaultRelyingPartyConfigurationResolver.class);
         Assert.assertTrue(resolver.getRelyingPartyConfigurations().isEmpty());
 
         RelyingPartyConfiguration anon = resolver.getAnonymousConfiguration();
+        Assert.assertFalse(anon.isDetailedErrors());
         Assert.assertTrue(anon.getProfileConfigurations().isEmpty());
 
         RelyingPartyConfiguration def = resolver.getDefaultConfiguration();
         Assert.assertEquals(def.getProfileConfigurations().size(), 8);
+        
+        final Collection<RelyingPartyMetadataProvider> metadataProviders = context.getBeansOfType(RelyingPartyMetadataProvider.class).values();
+        
+        Assert.assertEquals(metadataProviders.size(), 1);
     }
 
     @Test public void relyingParty2() {
-        DefaultRelyingPartyConfigurationResolver resolver = getResolver("relying-party-group2.xml");
+        GenericApplicationContext context = getContext("relying-party-group2.xml");
+        DefaultRelyingPartyConfigurationResolver resolver = context.getBean(DefaultRelyingPartyConfigurationResolver.class);
 
         Assert.assertEquals(resolver.getId(), "RelyingPartyGroup");
 

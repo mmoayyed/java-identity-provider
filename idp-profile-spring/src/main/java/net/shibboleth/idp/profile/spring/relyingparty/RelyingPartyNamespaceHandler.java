@@ -28,7 +28,7 @@ import net.shibboleth.idp.profile.spring.relyingparty.saml.ShibbolethSSOProfileP
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 // TODO incomplete
-/** Namespace handler for the attribute resolver. */
+/** Namespace handler for the relying party. */
 public class RelyingPartyNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Namespace for this handler. */

@@ -24,6 +24,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.MetadataProviderParser;
 import net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver;
+import net.shibboleth.idp.saml.impl.metadata.RelyingPartyMetadataProvider;
 import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -38,7 +39,8 @@ import org.w3c.dom.Element;
  * 
  * Parser for &lt;AnonymousRelyingParty&gt;<br/>
  * This parser summons up two (TODO three) beans a {@link DefaultRelyingPartyConfigurationResolver} which deals with the
- * RelyingParty bit of the file and a {@link TBD} which deals with the metadata and security configuration.
+ * RelyingParty bit of the file, a series of {@link RelyingPartyMetadataProvider}s which deal with the metadata
+ * configuration and a series of {@link TBD} which deals with the security configuration.
  */
 public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser {
 
@@ -56,7 +58,7 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
         final Map<QName, List<Element>> configChildren = ElementSupport.getIndexedChildElements(element);
 
         builder.addPropertyValue("id", "RelyingPartyGroup");
-        
+
         // All the Relying Parties
         final List<BeanDefinition> relyingParties =
                 SpringSupport.parseCustomElements(configChildren.get(RelyingPartyParser.ELEMENT_NAME), parserContext);
@@ -73,9 +75,24 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
                         parserContext);
         builder.addPropertyValue("anonymousConfiguration", anonRps.get(0));
 
-        // TODO Metadata
-        SpringSupport.parseCustomElements(configChildren.get(MetadataProviderParser.ELEMENT_NAME), parserContext);
+        // Metadata
 
+        final List<BeanDefinition> metadataProviders =
+                SpringSupport.parseCustomElements(configChildren.get(MetadataProviderParser.ELEMENT_NAME),
+                        parserContext);
+
+        if (metadataProviders != null && metadataProviders.size() > 0) {
+            for (BeanDefinition metadataProvider : metadataProviders) {
+                final BeanDefinitionBuilder metadataBuilder =
+                        BeanDefinitionBuilder.genericBeanDefinition(RelyingPartyMetadataProvider.class);
+
+                metadataBuilder.setInitMethodName("initialize");
+                metadataBuilder.addConstructorArgValue(metadataProvider);
+                BeanDefinition rpDefinition = metadataBuilder.getBeanDefinition();
+                parserContext.getRegistry().registerBeanDefinition(
+                        parserContext.getReaderContext().generateBeanName(rpDefinition), rpDefinition);
+            }
+        }
         // TODO Security
     }
 
