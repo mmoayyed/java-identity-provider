@@ -43,12 +43,15 @@ import org.opensaml.profile.context.ProfileRequestContext;
  * the completed {@link AuthenticationResult} and any other active results found in the
  * {@link AuthenticationContext}.</p>
  * 
+ * <p>Any {@link SubjectCanonicalizationContext} found will be removed.</p> 
+ * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
+ * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class) != null</pre>
  * @post If SubjectCanonicalizationContext.getCanonicalPrincipalName() != null
  * || SessionContext.getIdPSession() != null
- * then ProfileRequestContext.getSubcontext(SubjectContext.class, false) != null 
+ * then ProfileRequestContext.getSubcontext(SubjectContext.class) != null 
  * @post AuthenticationContext.setCompletionInstant() was called
+ * @post <pre>ProfileRequestContext.getSubcontext(SubjectCanonicalizationContext.class) == null</pre>
  */
 public class FinalizeAuthentication extends AbstractAuthenticationAction {
 
@@ -60,14 +63,15 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
-        SubjectCanonicalizationContext c14nCtx =
-                profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, false);
+        final SubjectCanonicalizationContext c14nCtx =
+                profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class);
         if (c14nCtx != null) {
             canonicalPrincipalName = c14nCtx.getPrincipalName();
+            profileRequestContext.removeSubcontext(c14nCtx);
         }
         
         if (canonicalPrincipalName == null) {
-            SessionContext sessionCtx = profileRequestContext.getSubcontext(SessionContext.class, false);
+            final SessionContext sessionCtx = profileRequestContext.getSubcontext(SessionContext.class);
             if (sessionCtx != null && sessionCtx.getIdPSession() != null) {
                 canonicalPrincipalName = sessionCtx.getIdPSession().getPrincipalName();
             }
@@ -82,15 +86,15 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
             @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
 
         if (canonicalPrincipalName != null) {
-            SubjectContext sc = profileRequestContext.getSubcontext(SubjectContext.class, true);
+            final SubjectContext sc = profileRequestContext.getSubcontext(SubjectContext.class, true);
             sc.setPrincipalName(canonicalPrincipalName);
 
-            Map scResults = sc.getAuthenticationResults();
+            final Map scResults = sc.getAuthenticationResults();
             scResults.putAll(authenticationContext.getActiveResults());
             
-            AuthenticationResult latest = authenticationContext.getAuthenticationResult();
+            final AuthenticationResult latest = authenticationContext.getAuthenticationResult();
             if (latest != null && !scResults.containsKey(latest.getAuthenticationFlowId())) {
-                    scResults.put(latest.getAuthenticationFlowId(), latest);
+                scResults.put(latest.getAuthenticationFlowId(), latest);
             }
         }
         
