@@ -22,7 +22,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.MetadataProviderParser;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.MetadataNamespaceHandler;
 import net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver;
 import net.shibboleth.idp.saml.impl.metadata.RelyingPartyMetadataProvider;
 import net.shibboleth.idp.spring.SpringSupport;
@@ -35,7 +35,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * TODO.
+ * TODO Security.
  * 
  * Parser for &lt;AnonymousRelyingParty&gt;<br/>
  * This parser summons up two (TODO three) beans a {@link DefaultRelyingPartyConfigurationResolver} which deals with the
@@ -78,7 +78,7 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
         // Metadata
 
         final List<BeanDefinition> metadataProviders =
-                SpringSupport.parseCustomElements(configChildren.get(MetadataProviderParser.ELEMENT_NAME),
+                SpringSupport.parseCustomElements(configChildren.get(MetadataNamespaceHandler.METADATA_ELEMENT_NAME),
                         parserContext);
 
         if (metadataProviders != null && metadataProviders.size() > 0) {

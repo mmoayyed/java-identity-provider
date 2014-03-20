@@ -17,19 +17,27 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
+import javax.xml.namespace.QName;
+
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 // TODO incomplete
-/** Namespace handler for the metafdata name space. */
+/** Namespace handler for <code>urn:mace:shibboleth:2.0:metadata</code>. */
 public class MetadataNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Namespace for this handler. */
     public static final String NAMESPACE = "urn:mace:shibboleth:2.0:metadata";
 
+    /** Metadata provider element name. */
+    public static final QName METADATA_ELEMENT_NAME = new QName(NAMESPACE, "MetadataProvider");
+
+    /** Metadata filter Element name. */
+    public static final QName METADATA_FILTER_ELEMENT_NAME = new QName(NAMESPACE, "MetadataFilter");
+
     /** {@inheritDoc} */
     @Override public void init() {
         // Profile Configuration
-        registerBeanDefinitionParser(MetadataProviderParser.ELEMENT_NAME,
-                new MetadataProviderParser());
+        registerBeanDefinitionParser(ChainingMetadataProviderParser.ELEMENT_NAME, new ChainingMetadataProviderParser());
+        registerBeanDefinitionParser(InlineMetadataProviderParser.ELEMENT_NAME, new InlineMetadataProviderParser());
     }
 }
