@@ -80,6 +80,7 @@
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-impl</artifactId>
             <version>${opensaml.version}</version>
+            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
 
