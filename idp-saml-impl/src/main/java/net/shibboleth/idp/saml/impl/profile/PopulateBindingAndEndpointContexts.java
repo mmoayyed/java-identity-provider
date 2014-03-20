@@ -64,17 +64,24 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
- * Action that populates the outbound {@link SAMLBindingContext} and {@link SAMLEndpointContext}
- * based on the inbound request.
+ * Action that populates the outbound {@link SAMLBindingContext} and when appropriate the
+ * {@link SAMLEndpointContext} based on the inbound request.
  * 
- * <p>The endpoint context is populated by constructing a "template" endpoint, with content
- * based on the inbound request, and relying on an injected {@link EndpointResolver} and
- * an injected list of acceptable bindings.</p>
+ * <p>If the inbound binding is found in the set of supported bindings, and it is "synchronous",
+ * then there is no endpoint (the response is sent directly back to the requester), and an
+ * endpoint context is not created. A binding context is created based on the inbound binding.</p>
+ * 
+ * <p>Otherwise, the endpoint context is populated by constructing a "template" endpoint,
+ * with content based on the inbound request, and relying on an injected {@link EndpointResolver}
+ * and an injected list of acceptable bindings.</p>
  * 
  * <p>The binding context is populated based on the computed endpoint's binding, and the
  * inbound {@link SAMLBindingContext}'s relay state.</p>
@@ -275,6 +282,10 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext)
             throws ProfileException {
         
+        if (handleSynchronousRequest(profileRequestContext)) {
+            return;
+        }
+        
         log.debug("{} Attempting to resolve endpoint of type {} for outbound message", getLogPrefix(), endpointType);
 
         // Compile binding list.
@@ -335,6 +346,40 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     }
  // Checkstyle: CyclomaticComplexity ON
     
+    /**
+     * Check for an inbound request binding that is synchronous and handle appropriately.
+     * 
+     * @param profileRequestContext profile request context
+     * 
+     * @return  true iff a synchronous binding was handled
+     */
+    private boolean handleSynchronousRequest(@Nonnull final ProfileRequestContext profileRequestContext) {
+        if (inboundMessage != null) {
+            final SAMLBindingContext bindingCtx =
+                    profileRequestContext.getInboundMessageContext().getSubcontext(SAMLBindingContext.class);
+            if (bindingCtx != null && bindingCtx.getBindingUri() != null) {
+                final Optional<BindingDescriptor> binding = Iterables.tryFind(bindingDescriptors,
+                        new Predicate<BindingDescriptor>() {
+                            public boolean apply(BindingDescriptor input) {
+                                return input.getId().equals(bindingCtx.getBindingUri());
+                            }
+                        });
+                if (binding.isPresent()) {
+                    log.debug("{} Handling request via synchronous binding, preparing outbound binding context for {}",
+                            getLogPrefix(), binding.get().getId());
+                    
+                    final SAMLBindingContext outboundCtx = bindingContextLookupStrategy.apply(profileRequestContext);
+                    outboundCtx.setRelayState(SAMLBindingSupport.getRelayState(
+                            profileRequestContext.getInboundMessageContext()));
+                    outboundCtx.setBindingUri(binding.get().getId());
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+
     /**
      * Build a template Endpoint object to use as input criteria to the resolution process.
      * 

@@ -210,6 +210,30 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         ActionTestingSupport.assertEvent(event, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
     }
     
+    /** Test SOAP case. */
+    @Test
+    public void testSynchrnonous() throws ProfileException, ComponentInitializationException {
+        prc.getInboundMessageContext().getSubcontext(SAMLBindingContext.class).setBindingUri(
+                SAMLConstants.SAML2_SOAP11_BINDING_URI);
+        
+        final BindingDescriptor binding = new BindingDescriptor();
+        binding.setId(SAMLConstants.SAML2_SOAP11_BINDING_URI);
+        binding.setSynchronous(true);
+        binding.initialize();
+        final PopulateBindingAndEndpointContexts badaction = new PopulateBindingAndEndpointContexts();
+        badaction.setId("test");
+        badaction.setEndpointResolver(new DefaultEndpointResolver());
+        badaction.setBindings(Collections.singletonList(binding));
+        badaction.initialize();
+        
+        final Event event = badaction.execute(rc);
+        ActionTestingSupport.assertProceedEvent(event);
+        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class, false);
+        Assert.assertNotNull(bindingCtx);
+        Assert.assertEquals(bindingCtx.getRelayState(), RELAY_STATE);
+        Assert.assertEquals(bindingCtx.getBindingUri(), SAMLConstants.SAML2_SOAP11_BINDING_URI);
+    }
+    
     /** Requested location/binding are in metadata. */
     @Test
     public void testInMetadata() throws UnmarshallingException, ProfileException {
