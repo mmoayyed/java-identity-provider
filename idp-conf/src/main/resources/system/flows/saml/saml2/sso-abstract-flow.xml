@@ -10,7 +10,12 @@
         <transition on="proceed" to="DecodeMessage" />
     </action-state>
     
-    <!-- This picks up from the parent flow with authentication. -->
+    <!-- This picks up from the parent flow with the transition step. -->
+    
+    <action-state id="DoProfileWork">
+        <evaluate expression="true" />
+        <transition on="#{true}" to="InitializeAuthenticationContext" />
+    </action-state>
         
     <action-state id="InitializeAuthenticationContext">
         <evaluate expression="InitializeAuthenticationContext" />

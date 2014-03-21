@@ -41,11 +41,11 @@
     
     <action-state id="PopulateBindingAndEndpointContexts">
         <evaluate expression="PopulateBindingAndEndpointContexts" />
-        <transition on="proceed" to="InitializeAuthenticationContext" />
+        <transition on="proceed" to="DoProfileWork" />
     </action-state>
     
     <!--
-    The meat will be inserted here by defining InitializeAuthenticationContext and transitioning from
+    The meat will be inserted here by defining DoProfileWork and transitioning from
     there to profile activity and eventually to the final stages below.
     -->
 

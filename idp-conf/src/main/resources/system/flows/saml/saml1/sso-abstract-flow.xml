@@ -1,4 +1,5 @@
-<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<flow xmlns="http://www.springframework.org/schema/webflow"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
     abstract="true" parent="SAML.Abstract">
 
@@ -11,7 +12,12 @@
         <transition on="proceed" to="DecodeMessage" />
     </action-state>
 
-    <!-- This picks up from the parent flow with the authentication step. -->
+    <!-- This picks up from the parent flow with the transition step. -->
+    
+    <action-state id="DoProfileWork">
+        <evaluate expression="true" />
+        <transition on="#{true}" to="InitializeAuthenticationContext" />
+    </action-state>
 
     <action-state id="InitializeAuthenticationContext">
         <evaluate expression="InitializeAuthenticationContext" />
