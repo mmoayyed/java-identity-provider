@@ -98,10 +98,7 @@
         </property>
     </bean>
 
-    <bean id="PopulateBindingAndEndpointContexts"
-        class="net.shibboleth.idp.saml.impl.profile.PopulateBindingAndEndpointContexts" scope="prototype"
-        p:endpointResolver-ref="shibboleth.EndpointResolver"
-        p:bindings-ref="shibboleth.OutgoingSAML2SSOBindings" />
+    <alias name="shibboleth.OutgoingSAML2SSOBindings" alias="shibboleth.OutgoingBindings"/>
         
     <bean id="AddResponseShell" class="org.opensaml.saml.saml2.profile.impl.AddResponseShell" scope="prototype">
         <property name="identifierGeneratorLookupStrategy">

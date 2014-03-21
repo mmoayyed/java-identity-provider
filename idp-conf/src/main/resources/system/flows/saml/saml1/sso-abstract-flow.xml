@@ -11,14 +11,7 @@
         <transition on="proceed" to="DecodeMessage" />
     </action-state>
 
-    <!-- This picks up from the parent flow with endpoint validation. -->
-
-    <action-state id="PopulateBindingAndEndpointContexts">
-        <evaluate expression="PopulateBindingAndEndpointContexts" />
-        <transition on="proceed" to="InitializeAuthenticationContext" />
-    </action-state>
-
-    <!-- Authentication Handoff -->
+    <!-- This picks up from the parent flow with the authentication step. -->
 
     <action-state id="InitializeAuthenticationContext">
         <evaluate expression="InitializeAuthenticationContext" />
@@ -29,6 +22,8 @@
         <evaluate expression="InitializeRequestedPrincipalContext" />
         <transition on="proceed" to="DoAuthenticationSubflow" />
     </action-state>
+
+    <!-- Authentication Handoff -->
 
     <subflow-state id="DoAuthenticationSubflow" subflow="Authentication">
         <transition on="proceed" to="ResolveAttributes" />

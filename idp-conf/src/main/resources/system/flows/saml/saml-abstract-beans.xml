@@ -49,6 +49,11 @@
     <bean id="InitializeOutboundMessageContext"
         class="net.shibboleth.idp.saml.impl.profile.InitializeOutboundMessageContext" scope="prototype" />
 
+    <bean id="PopulateBindingAndEndpointContexts"
+        class="net.shibboleth.idp.saml.impl.profile.PopulateBindingAndEndpointContexts" scope="prototype"
+        p:endpointResolver-ref="shibboleth.EndpointResolver"
+        p:bindings-ref="shibboleth.OutgoingBindings" />
+
     <bean id="InitializeAuthenticationContext"
         class="net.shibboleth.idp.saml.impl.profile.InitializeAuthenticationContext" scope="prototype" />
 

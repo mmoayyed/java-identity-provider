@@ -10,12 +10,7 @@
         <transition on="proceed" to="DecodeMessage" />
     </action-state>
     
-    <!-- This picks up from the parent flow with endpoint validation. -->
-
-    <action-state id="PopulateBindingAndEndpointContexts">
-        <evaluate expression="PopulateBindingAndEndpointContexts" />
-        <transition on="proceed" to="InitializeAuthenticationContext" />
-    </action-state>
+    <!-- This picks up from the parent flow with authentication. -->
         
     <action-state id="InitializeAuthenticationContext">
         <evaluate expression="InitializeAuthenticationContext" />
