@@ -136,7 +136,7 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
         }
 
         if (attributeValues.size() > 1) {
-            log.warn("{} Source attribute {} for connector {} has more than one value, only the first value is used",
+            log.warn("{} Source attribute {} for connector {} has more than one value, only one value is used",
                     getLogPrefix(), getSourceAttributeId(), getId());
         }
 
