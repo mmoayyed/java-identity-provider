@@ -50,7 +50,7 @@ public class ToUAcceptance {
     /**
      * Constructs a terms of use acceptance using a terms of use and an acceptance date.
      * 
-     * @param tou The {@see Tou}.
+     * @param tou The {@link ToU}.
      * @param acceptanceDate The acceptance date.
      */
     private ToUAcceptance(final ToU tou, final DateTime acceptanceDate) {
@@ -89,7 +89,7 @@ public class ToUAcceptance {
     /**
      * Creates a terms of use acceptance.
      * 
-     * @param tou The {@see Tou}.
+     * @param tou The {@link ToU}.
      * @param acceptanceDate The acceptance date.
      * @return Returns a terms of use acceptance.
      */
@@ -109,7 +109,7 @@ public class ToUAcceptance {
     /**
      * Checks if this terms of acceptance contains a specific terms of use.
      * 
-     * @param tou The {@see Tou}.
+     * @param tou The {@link ToU}.
      * @return Returns true if version and fingerprint equals, false otherwise.
      */
     public boolean contains(final ToU tou) {

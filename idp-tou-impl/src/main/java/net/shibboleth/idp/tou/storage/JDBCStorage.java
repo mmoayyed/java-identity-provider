@@ -38,7 +38,7 @@ public class JDBCStorage implements Storage {
     /** The name of the terms of use acceptance table. */
     private final String acceptanceTable = "ToUAcceptance";
 
-    /** {@see ToUAcceptance} row mapper. */
+    /** {@link ToUAcceptance} row mapper. */
     private static final class ToUAcceptanceMapper implements RowMapper<ToUAcceptance> {
         @Override
         public ToUAcceptance mapRow(final ResultSet rs, final int rowNum) throws SQLException {
@@ -52,7 +52,11 @@ public class JDBCStorage implements Storage {
     /** The terms of use acceptance mapper. */
     private final ToUAcceptanceMapper touAcceptanceMapper = new ToUAcceptanceMapper();
 
-    /** {@inheritDoc} */
+    /**
+     * Sets the {@link DataSource} to use for this {@link JDBCStorage} instance.
+     * 
+     * @param dataSource the {@link DataSource} to use.
+     */
     public void setDataSource(final DataSource dataSource) {
         jdbcTemplate = new SimpleJdbcTemplate(dataSource);
     }

@@ -102,11 +102,11 @@ public final class ToUHelper {
     }
 
     /**
-     * Retrieves the mapped {@see ToU} for a specific relying party.
+     * Retrieves the mapped {@link ToU} for a specific relying party.
      * 
      * @param touMap The relying party / terms of use map.
      * @param entityId The relying party id.
-     * @return Returns the mapped {@see ToU} for this relying party id or <code>null</code>.
+     * @return Returns the mapped {@link ToU} for this relying party id or <code>null</code>.
      */
     public static ToU getToUForRelyingParty(final Map<String, ToU> touMap, final String entityId) {
         Pattern pattern;
@@ -125,7 +125,7 @@ public final class ToUHelper {
     /**
      * Gets the terms of use fingerprint.
      * 
-     * @param tou The {@see Tou}.
+     * @param tou The {@link ToU}.
      * @return Returns the terms of use fingerprint.
      */
     public static String getToUFingerprint(final ToU tou) {

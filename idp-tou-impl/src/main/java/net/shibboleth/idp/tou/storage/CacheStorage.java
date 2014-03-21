@@ -39,7 +39,7 @@ public class CacheStorage implements Storage {
     /**
      * The terms of use acceptance partition.
      * 
-     * Key: userId. Value: Map Key: version. Value: {@see ToUAcceptance}.
+     * Key: userId. Value: Map Key: version. Value: {@link ToUAcceptance}.
      */
     private ConcurrentMap<String, ConcurrentMap<String, ToUAcceptance>> touAcceptancePartition;
 

@@ -32,13 +32,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
-/** Implements @see TermsOfUseEngine. */
+/** Implements {@link TermsOfUseEngine}. */
 public class TermsOfUseEngineImpl implements TermsOfUseEngine {
 
     /** Class logger. */
     private final Logger logger = LoggerFactory.getLogger(TermsOfUseEngineImpl.class);
 
-    /** The @see Storage instance which is used. */
+    /** The {@link Storage} instance which is used. */
     @Resource(name = "tou.storage")
     private Storage storage;
 
@@ -46,7 +46,7 @@ public class TermsOfUseEngineImpl implements TermsOfUseEngine {
     @Resource(name = "tou.config.touMap")
     private Map<String, ToU> touMap;
 
-    /** The id of the @see Attribute which should be used for user identifcation. */
+    /** The id of the {@link net.shibboleth.idp.attribute.IdPAttribute} which should be used for user identification. */
     @Resource(name = "tou.config.userIdAttribute")
     private String userIdAttribute;
 
