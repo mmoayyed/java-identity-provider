@@ -41,6 +41,26 @@
     
     <action-state id="PopulateBindingAndEndpointContexts">
         <evaluate expression="PopulateBindingAndEndpointContexts" />
+        <transition on="proceed" to="ExtractSubjectFromRequest" />
+    </action-state>
+
+    <!-- Pull SAML Subject if present and turn it into a principal name. -->
+
+    <action-state id="ExtractSubjectFromRequest">
+        <evaluate expression="ExtractSubjectFromRequest" />
+        
+        <!-- No subject to operate on, so just skip to the profile. -->
+        <transition on="NoSubject" to="DoProfileWork" />
+        
+        <transition on="proceed" to="CallSubjectCanonicalization" />
+    </action-state>
+
+    <subflow-state id="CallSubjectCanonicalization" subflow="SubjectC14N/SAML">
+        <transition on="proceed" to="FinalizeSAMLSubjectCanonicalization" />
+    </subflow-state>
+    
+    <action-state id="FinalizeSAMLSubjectCanonicalization">
+        <evaluate expression="FinalizeSAMLSubjectCanonicalization" />
         <transition on="proceed" to="DoProfileWork" />
     </action-state>
     

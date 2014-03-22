@@ -54,6 +54,12 @@
         p:endpointResolver-ref="shibboleth.EndpointResolver"
         p:bindings-ref="shibboleth.OutgoingBindings" />
 
+    <bean id="ExtractSubjectFromRequest"
+        class="net.shibboleth.idp.saml.impl.profile.ExtractSubjectFromRequest" scope="prototype" />
+
+    <bean id="FinalizeSAMLSubjectCanonicalization"
+        class="net.shibboleth.idp.saml.impl.profile.FinalizeSAMLSubjectCanonicalization" scope="prototype" />
+
     <bean id="InitializeAuthenticationContext"
         class="net.shibboleth.idp.saml.impl.profile.InitializeAuthenticationContext" scope="prototype" />
 
