@@ -23,7 +23,6 @@ import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.opensaml.saml.metadata.resolver.impl.DOMMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -44,25 +43,6 @@ public class InlineMetadataParserTest extends AbstractMetadataParserTest {
         
     }
     
-    @Test public void maintainExpired() throws ResolverException {
-        DOMMetadataResolver resolver = getBean(DOMMetadataResolver.class, false, "inLineMaintainExpired.xml");
-        
-        Assert.assertEquals(resolver.getId(), "maintainExpired");
-   
-        final Iterator<EntityDescriptor> entities = resolver.resolve(criteriaFor(IDP_ID)).iterator();
-        Assert.assertTrue(resolver.isFailFastInitialization());
-        Assert.assertFalse(resolver.isRequireValidMetadata());
-        
-        Assert.assertEquals(entities.next().getEntityID(), IDP_ID);
-        Assert.assertFalse(entities.hasNext());
-        
-    }
-    
-    @Test(expectedExceptions={BeanDefinitionStoreException.class,}) public void maintainExpiredBoth() throws ResolverException {
-        getBean(DOMMetadataResolver.class, false, "inLineMaintainExpiredBoth.xml");  
-    }
-
-       
     @Test public void entities() throws ResolverException {
         DOMMetadataResolver resolver = getBean(DOMMetadataResolver.class, true, "inLineEntities.xml");
         

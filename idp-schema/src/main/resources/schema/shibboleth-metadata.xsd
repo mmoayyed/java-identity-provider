@@ -55,11 +55,6 @@
                         </annotation>
                     </element>
                 </sequence>
-                <attribute name="maxCacheDuration" type="string">
-                    <annotation>
-                        <documentation>This property is deprecated, use maxRefreshDelay instead.</documentation>
-                    </annotation>
-                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -126,16 +121,6 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maintainExpiredMetadata" type="boolean">
-                    <annotation>
-                        <documentation>This is deprecated, use requireValidMetadata instead.</documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="cacheDuration" type="string">
-                    <annotation>
-                        <documentation> This is deprecated, use maxRefreshDelay instead.</documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="requestTimeout" type="string">
                     <annotation>
                         <documentation>
@@ -198,11 +183,6 @@
                 <attribute name="metadataFile" type="string" use="required">
                     <annotation>
                         <documentation>The path to the metadata file.</documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="maintainExpiredMetadata" type="boolean">
-                    <annotation>
-                        <documentation>This is deprecated, use requireValidMetadata instead.</documentation>
                     </annotation>
                 </attribute>
             </extension>

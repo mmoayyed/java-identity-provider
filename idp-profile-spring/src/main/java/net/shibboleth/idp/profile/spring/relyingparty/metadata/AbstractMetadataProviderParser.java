@@ -22,17 +22,14 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.DomTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
 /**
@@ -86,21 +83,9 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
         }
 
         if (isPresentNotChaining(element, "requireValidMetadata")) {
-            if (element.hasAttributeNS(null, "maintainExpiredMetadata")) {
-                log.error("maintainExpiredMetadata is deprecated."
-                        + "  It cannot be present when requireValidMetadata is present");
-                throw new BeanCreationException("maintainExpiredMetadata is deprecated."
-                        + "  It cannot be present when requireValidMetadata is present");
-            }
+            
             builder.addPropertyValue("requireValidMetadata", element.getAttributeNS(null, "requireValidMetadata"));
 
-        } else if (isPresentNotChaining(element, "maintainExpiredMetadata")) {
-            // since we negate this has to be converted here
-            final Attr attr = element.getAttributeNodeNS(null, "maintainExpiredMetadata");
-            final boolean requireValidMetadata = !AttributeSupport.getAttributeValueAsBoolean(attr);
-            log.warn("Use of metadata provider configuration attribute 'maintainExpiredMetadata' is deprecated."
-                    + "  Use requireValidMetadata=\"{}\" instead.", requireValidMetadata);
-            builder.addPropertyValue("requireValidMetadata", requireValidMetadata);
         }
 
         final List<Element> filters =
