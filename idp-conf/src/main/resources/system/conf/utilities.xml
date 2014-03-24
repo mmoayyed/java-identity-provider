@@ -22,4 +22,10 @@
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(org.opensaml.xmlsec.context.SecurityParametersContext) }" />
 
+    <bean id="shibboleth.ResponderIdLookup.Simple"
+        class="net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction" />
+
+    <bean id="shibboleth.RelyingPartyIdLookup.Simple"
+        class="net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction" />
+
 </beans>

@@ -100,12 +100,10 @@
 
     <alias name="shibboleth.OutgoingSAML2SSOBindings" alias="shibboleth.OutgoingBindings"/>
         
-    <bean id="AddResponseShell" class="org.opensaml.saml.saml2.profile.impl.AddResponseShell" scope="prototype">
+    <bean id="AddResponseShell" class="org.opensaml.saml.saml2.profile.impl.AddResponseShell" scope="prototype"
+            p:issuerLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple">
         <property name="identifierGeneratorLookupStrategy">
             <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction" />
-        </property>
-        <property name="issuerLookupStrategy">
-            <bean class="net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction" />
         </property>
     </bean>
 
@@ -124,7 +122,9 @@
         </property>
         <property name="nameIDPolicyPredicate">
             <bean class="org.opensaml.saml.saml2.profile.impl.AffiliationNameIDPolicyPredicate"
-                p:metadataResolver-ref="ExampleMetadataResolver" />
+                p:metadataResolver-ref="ExampleMetadataResolver"
+                p:responderIdLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"
+                p:requesterIdLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple" />
         </property>
     </bean>
 
