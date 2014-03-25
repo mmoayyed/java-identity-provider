@@ -64,9 +64,6 @@ public class NameIdentifierCanonicalization extends AbstractSubjectCanonicalizat
 
     /** Supplies logic for pre-execute test. */
     @Nonnull private final ActivationCondition embeddedPredicate;
-
-    /** Predicate to validate {@link NameIdentifier} for permission to decode. */
-    @Nullable private Predicate<ProfileRequestContext> nameIDPolicyPredicate;
     
     /** Supplies logic for decoding the {@link NameIdentifier} into a principal. */
     @NonnullAfterInit private NameIdentifierDecoder decoder;
@@ -95,18 +92,6 @@ public class NameIdentifierCanonicalization extends AbstractSubjectCanonicalizat
         
         decoder = Constraint.isNotNull(theDecoder, "NameIdentifierDecoder cannot be null");
     }
-
-    /**
-     * Set a predicate used to evaluate the {@link NameIdentifier} to determine whether to proceed
-     * with the decoding process.
-     * 
-     * @param predicate predicate used to evaluate the {@link NameIdentifier}
-     */
-    public void setNameIDPolicyPredicate(@Nullable final Predicate<ProfileRequestContext> predicate) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        nameIDPolicyPredicate = predicate;
-    }
     
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
@@ -122,10 +107,6 @@ public class NameIdentifierCanonicalization extends AbstractSubjectCanonicalizat
             @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
 
         if (!embeddedPredicate.apply(profileRequestContext, c14nContext, true)) {
-            return false;
-        }
-        
-        if (nameIDPolicyPredicate != null && !nameIDPolicyPredicate.apply(profileRequestContext)) {
             return false;
         }
 

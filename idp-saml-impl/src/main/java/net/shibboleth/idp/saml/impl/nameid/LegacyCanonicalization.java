@@ -34,7 +34,6 @@ import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
 import net.shibboleth.idp.service.ReloadableService;
 import net.shibboleth.idp.service.ServiceableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.action.ActionSupport;
@@ -53,12 +52,6 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(LegacyCanonicalization.class);
-
-    /**
-     * Predicate to validate {@link org.opensaml.saml.saml2.core.NameID} or
-     * {@link org.opensaml.saml.saml1.core.NameIdentifier} for permission to decode.
-     */
-    @Nullable private Predicate<ProfileRequestContext> nameIDPolicyPredicate;
     
     /** Service used to get the resolver used to fetch attributes. */
     @Nonnull private final ReloadableService<AttributeResolver> attributeResolverService;
@@ -70,30 +63,6 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
      */
     public LegacyCanonicalization(@Nonnull final ReloadableService<AttributeResolver> resolverService) {
         attributeResolverService = Constraint.isNotNull(resolverService, "AttributeResolver cannot be null");
-    }
-
-    /**
-     * Set a predicate used to evaluate the {@link org.opensaml.saml.saml2.core.NameID} or
-     * {@link org.opensaml.saml.saml1.core.NameIdentifier} to determine whether to proceed
-     * with the decoding process.
-     * 
-     * @param predicate predicate used to evaluate the identifier
-     */
-    public void setNameIDPolicyPredicate(@Nullable final Predicate<ProfileRequestContext> predicate) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        nameIDPolicyPredicate = predicate;
-    }
-
-    /** {@inheritDoc} */
-    @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
-
-        if (nameIDPolicyPredicate != null && !nameIDPolicyPredicate.apply(profileRequestContext)) {
-            return false;
-        }
-        
-        return super.doPreExecute(profileRequestContext, c14nContext);
     }
     
     /** {@inheritDoc} */
