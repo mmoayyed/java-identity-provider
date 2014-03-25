@@ -36,6 +36,7 @@ import org.opensaml.saml.common.profile.impl.logic.DefaultNameIDPolicyPredicate;
 import org.opensaml.saml.saml1.core.Request;
 import org.opensaml.saml.saml1.profile.SAML1ActionTestingSupport;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.profile.SAML2ActionTestingSupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -99,6 +100,7 @@ public class ExtractSubjectFromRequestTest extends XMLObjectBaseTestCase {
         request.setSubject(SAML2ActionTestingSupport.buildSubject("foo"));
         prc.getInboundMessageContext().setMessage(request);
         
+        request.getSubject().getNameID().setFormat(NameID.TRANSIENT);
         request.getSubject().getNameID().setNameQualifier("foo");
         Event event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT);
@@ -126,6 +128,7 @@ public class ExtractSubjectFromRequestTest extends XMLObjectBaseTestCase {
                 SAML1ActionTestingSupport.buildSubject("foo"));
         prc.getInboundMessageContext().setMessage(request);
         
+        request.getAttributeQuery().getSubject().getNameIdentifier().setFormat(NameID.TRANSIENT);
         request.getAttributeQuery().getSubject().getNameIdentifier().setNameQualifier("foo");
         Event event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT);

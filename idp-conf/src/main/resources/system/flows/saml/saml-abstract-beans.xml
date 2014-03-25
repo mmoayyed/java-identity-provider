@@ -64,6 +64,13 @@
                 <property name="objectLookupStrategy">
                     <bean class="net.shibboleth.idp.saml.impl.profile.ExtractSubjectFromRequest.SubjectNameLookupFunction" />
                 </property>
+                <property name="formats">
+                    <util:list>
+                        <value>urn:mace:shibboleth:1.0:nameIdentifier</value>
+                        <value>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</value>
+                        <value>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</value>
+                    </util:list>
+                </property>
             </bean>
         </property>
     </bean>
