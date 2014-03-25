@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
+import java.io.IOException;
 import java.util.Iterator;
 
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
@@ -28,7 +29,7 @@ import org.testng.annotations.Test;
 
 public class ChainingMetadataParserTest extends AbstractMetadataParserTest {
     
-    @Test public void chain() throws ResolverException {
+    @Test public void chain() throws ResolverException, IOException {
         ChainingMetadataResolver resolver = getBean(ChainingMetadataResolver.class, true, "chain.xml");
         
         Assert.assertEquals(resolver.getId(), "chain");
@@ -42,7 +43,7 @@ public class ChainingMetadataParserTest extends AbstractMetadataParserTest {
         
     }
 
-    @Test public void chain2() throws ResolverException {
+    @Test public void chain2() throws ResolverException, IOException {
         ChainingMetadataResolver resolver = getBean(ChainingMetadataResolver.class, true, "chain2.xml");
         
         Assert.assertEquals(resolver.getId(), "chain2");

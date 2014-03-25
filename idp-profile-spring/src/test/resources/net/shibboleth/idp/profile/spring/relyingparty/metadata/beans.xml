@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:c="http://www.springframework.org/schema/c" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+
+	default-init-method="initialize" default-destroy-method="destroy">
+
+	<bean id="shibboleth.ParserPool"
+		class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
+		p:maxPoolSize="100"
+		p:coalescing="true" p:ignoreComments="true"
+		p:ignoreElementContentWhitespace="true" p:namespaceAware="true" />
+
+
+	<bean id="shibboleth.TaskTimer" class="java.util.Timer"
+		destroy-method="cancel" /> <!-- only needed if you do reloading -->
+</beans>

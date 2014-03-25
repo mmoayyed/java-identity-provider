@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
+import java.io.IOException;
+
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -27,8 +29,12 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.mock.env.MockPropertySource;
 
 import com.google.common.collect.Sets;
 
@@ -40,9 +46,30 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
     private static final String PATH = "/net/shibboleth/idp/profile/spring/relyingparty/metadata/";
     
     protected static final String SP_ID = "https://sp.example.org/sp/shibboleth"; 
-    protected static final String IDP_ID = "https://idp.example.org/idp/shibboleth"; 
+    protected static final String IDP_ID = "https://idp.example.org/idp/shibboleth";
     
-    static protected <T extends MetadataResolver> T getBean(Class<T> claz,  boolean validating, String... files){
+    /**
+     * Set up a property placeholder called DIR which points to the test directory
+     * this makes the test location insensitive but able to look at the local
+     * filesystem.
+     * @param context the context
+     * @throws IOException 
+     */
+    private static void setDirectoryPlaceholder(GenericApplicationContext context) throws IOException {
+        PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
+        ClassPathResource resource = new ClassPathResource("/net/shibboleth/idp/profile/spring/relyingparty/metadata");
+        
+        MutablePropertySources propertySources = context.getEnvironment().getPropertySources();
+        MockPropertySource mockEnvVars = new MockPropertySource();
+        mockEnvVars.setProperty("DIR", resource.getFile().getAbsolutePath());
+        propertySources.replace(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, mockEnvVars);
+        placeholderConfig.setPropertySources(propertySources);
+        
+        context.addBeanFactoryPostProcessor(placeholderConfig);
+        
+    }
+    
+    static protected <T extends MetadataResolver> T getBean(Class<T> claz,  boolean validating, String... files) throws IOException{
         final Resource[] resources = new Resource[files.length];
        
         for (int i = 0; i < files.length; i++) {
@@ -50,6 +77,9 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         }
         
         final GenericApplicationContext context = new GenericApplicationContext();
+
+        setDirectoryPlaceholder(context);
+        
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         context.setDisplayName("ApplicationContext: " + claz);
         service.setConverters(Sets.newHashSet(new DurationToLongConverter(), new StringToIPRangeConverter()));
@@ -58,6 +88,7 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         context.getBeanFactory().setConversionService(service.getObject());
 
         final XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
+
 
         configReader.setValidating(validating);
         
@@ -71,4 +102,5 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         EntityIdCriterion criterion = new EntityIdCriterion(entityId);
         return  new CriteriaSet(criterion);
     }
+    
  }

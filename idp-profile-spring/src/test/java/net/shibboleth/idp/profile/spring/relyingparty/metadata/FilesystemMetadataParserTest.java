@@ -17,22 +17,19 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
-import java.io.IOException;
 import java.util.Iterator;
 
-import net.shibboleth.utilities.java.support.resolver.ResolverException;
-
-import org.opensaml.saml.metadata.resolver.impl.DOMMetadataResolver;
+import org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class InlineMetadataParserTest extends AbstractMetadataParserTest {
-    
-    @Test public void entity() throws ResolverException, IOException {
-        DOMMetadataResolver resolver = getBean(DOMMetadataResolver.class, true, "inLineEntity.xml");
+public class FilesystemMetadataParserTest extends AbstractMetadataParserTest {
+    @Test public void entity() throws Exception {
+
+        FilesystemMetadataResolver resolver = getBean(FilesystemMetadataResolver.class, true, "fileEntity.xml", "beans.xml");
         
-        Assert.assertEquals(resolver.getId(), "inLineEntity");
+        Assert.assertEquals(resolver.getId(), "fileEntity");
    
         final Iterator<EntityDescriptor> entities = resolver.resolve(criteriaFor(IDP_ID)).iterator();
         Assert.assertTrue(resolver.isFailFastInitialization());
@@ -40,20 +37,23 @@ public class InlineMetadataParserTest extends AbstractMetadataParserTest {
         
         Assert.assertEquals(entities.next().getEntityID(), IDP_ID);
         Assert.assertFalse(entities.hasNext());
-        
-    }
-    
-    @Test public void entities() throws ResolverException, IOException {
-        DOMMetadataResolver resolver = getBean(DOMMetadataResolver.class, true, "inLineEntities.xml");
-        
-        Assert.assertEquals(resolver.getId(), "inLineEntities");
-        
-        Assert.assertFalse(resolver.isFailFastInitialization());
-        Assert.assertFalse(resolver.isRequireValidMetadata());
-           
-        Assert.assertNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
-        Assert.assertNotNull(resolver.resolveSingle(criteriaFor(SP_ID)));
-        
+
+        Assert.assertNull(resolver.resolveSingle(criteriaFor(SP_ID)));
     }
 
+    @Test public void entities() throws Exception {
+
+        FilesystemMetadataResolver resolver = getBean(FilesystemMetadataResolver.class, true, "fileEntities.xml", "beans.xml");
+        
+        Assert.assertEquals(resolver.getId(), "fileEntities");
+   
+        final Iterator<EntityDescriptor> entities = resolver.resolve(criteriaFor(IDP_ID)).iterator();
+        Assert.assertTrue(resolver.isFailFastInitialization());
+        Assert.assertTrue(resolver.isRequireValidMetadata());
+        
+        Assert.assertEquals(entities.next().getEntityID(), IDP_ID);
+        Assert.assertFalse(entities.hasNext());
+
+        Assert.assertNotNull(resolver.resolveSingle(criteriaFor(SP_ID)));
+    }
 }
