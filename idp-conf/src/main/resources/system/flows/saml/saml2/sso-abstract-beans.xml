@@ -122,9 +122,13 @@
         </property>
         <property name="nameIDPolicyPredicate">
             <bean class="org.opensaml.saml.common.profile.impl.logic.AffiliationNameIDPolicyPredicate"
-                p:metadataResolver-ref="ExampleMetadataResolver"
-                p:responderIdLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"
-                p:requesterIdLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple" />
+                    p:metadataResolver-ref="ExampleMetadataResolver"
+                    p:responderIdLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"
+                    p:requesterIdLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple">
+                <property name="nameIDPolicyLookupStrategy">
+                    <bean class="org.opensaml.saml.saml2.profile.impl.AddNameIDToSubjects.NameIDPolicyLookupFunction" />
+                </property>
+            </bean>
         </property>
     </bean>
 
