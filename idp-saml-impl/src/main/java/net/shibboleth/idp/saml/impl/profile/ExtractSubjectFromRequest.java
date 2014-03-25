@@ -33,7 +33,6 @@ import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.ProfileException;
@@ -41,7 +40,6 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.messaging.context.SAMLSubjectNameIdentifierContext;
-import org.opensaml.saml.common.profile.impl.logic.DefaultNameIDPolicyPredicate;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml2.core.NameID;
 import org.slf4j.Logger;
@@ -79,7 +77,7 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
     @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractSubjectFromRequest.class);
     
     /** Predicate to validate use of {@link NameID} or {@link NameIdentifier} in subject. */
-    @Nonnull private Predicate<ProfileRequestContext> nameIDPolicyPredicate;
+    @Nullable private Predicate<ProfileRequestContext> nameIDPolicyPredicate;
     
     /** Function used to obtain the requester ID. */
     @Nullable private Function<ProfileRequestContext,String> requesterLookupStrategy;
@@ -97,14 +95,6 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
     public ExtractSubjectFromRequest() throws ComponentInitializationException {
         requesterLookupStrategy = new RelyingPartyIdLookupFunction();
         responderLookupStrategy = new ResponderIdLookupFunction();
-
-        // Default predicate pulls NameQualifiers from NameID and does a direct match
-        // against requester and responder. Handles simple cases, overridden for complex ones.
-        nameIDPolicyPredicate = new DefaultNameIDPolicyPredicate();
-        ((DefaultNameIDPolicyPredicate) nameIDPolicyPredicate).setRequesterIdLookupStrategy(requesterLookupStrategy);
-        ((DefaultNameIDPolicyPredicate) nameIDPolicyPredicate).setResponderIdLookupStrategy(responderLookupStrategy);
-        ((DefaultNameIDPolicyPredicate) nameIDPolicyPredicate).setObjectLookupStrategy(new SubjectNameLookupFunction());
-        ((DefaultNameIDPolicyPredicate) nameIDPolicyPredicate).initialize();
     }
     
     /**
@@ -132,14 +122,14 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
     }
     
     /**
-     * Set the predicate used to validate use of the {@link NameID} or {@link NameIdentifier} in the subject.
+     * Set a predicate used to validate use of the {@link NameID} or {@link NameIdentifier} in the subject.
      * 
      * @param predicate predicate to use
      */
-    public synchronized void setNameIDPolicyPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
+    public synchronized void setNameIDPolicyPredicate(@Nullable final Predicate<ProfileRequestContext> predicate) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        nameIDPolicyPredicate = Constraint.isNotNull(predicate, "Name identifier policy predicate cannot be null");
+        nameIDPolicyPredicate = predicate;
     }
     
     /** {@inheritDoc} */
@@ -159,7 +149,7 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
             return false;
         }
         
-        if (!nameIDPolicyPredicate.apply(profileRequestContext)) {
+        if (nameIDPolicyPredicate != null && !nameIDPolicyPredicate.apply(profileRequestContext)) {
             log.warn("{} Consumption of NameID/NameIdentifier blocked by policy", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
             return false;

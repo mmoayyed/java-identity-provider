@@ -21,14 +21,18 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
+import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
+import net.shibboleth.idp.saml.impl.profile.ExtractSubjectFromRequest.SubjectNameLookupFunction;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.profile.impl.logic.DefaultNameIDPolicyPredicate;
 import org.opensaml.saml.saml1.core.Request;
 import org.opensaml.saml.saml1.profile.SAML1ActionTestingSupport;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -52,9 +56,16 @@ public class ExtractSubjectFromRequestTest extends XMLObjectBaseTestCase {
     public void setUp() throws ComponentInitializationException {
         rc = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
+
+        final DefaultNameIDPolicyPredicate nameIDPolicyPredicate = new DefaultNameIDPolicyPredicate();
+        nameIDPolicyPredicate.setRequesterIdLookupStrategy(new RelyingPartyIdLookupFunction());
+        nameIDPolicyPredicate.setResponderIdLookupStrategy(new ResponderIdLookupFunction());
+        nameIDPolicyPredicate.setObjectLookupStrategy(new SubjectNameLookupFunction());
+        nameIDPolicyPredicate.initialize();
         
         action = new ExtractSubjectFromRequest();
         action.setId("test");
+        action.setNameIDPolicyPredicate(nameIDPolicyPredicate);
         action.initialize();
     }
 
