@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
+import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
@@ -30,7 +31,9 @@ import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.ProfileException;
@@ -38,12 +41,14 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.messaging.context.SAMLSubjectNameIdentifierContext;
+import org.opensaml.saml.common.profile.impl.logic.DefaultNameIDPolicyPredicate;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml2.core.NameID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 
 /**
  * Action that extracts a SAML Subject from an inbound message, and prepares a
@@ -52,10 +57,15 @@ import com.google.common.base.Function;
  * <p>If the inbound message does not supply a {@link NameIdentifier} or {@link NameID} to
  * process, then nothing is done, and the local event ID {@link #NO_SUBJECT} is signaled.</p>
  * 
+ * <p>A policy predicate may also be executed to control the conditions under which a subject
+ * name may be used by a requester, possibly resulting in a {@link AuthnEventIds#INVALID_SUBJECT}
+ * event.</p>
+ * 
  * <p>Otherwise, a custom {@link Principal} of the appropriate type is wrapped around the
  * identifier object and a Java {@link Subject} is prepared for canonicalization.</p>
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
+ * @event {@link AuthnEventIds#INVALID_SUBJECT}
  * @event {@link #NO_SUBJECT}
  * 
  * @post If "proceed" signaled, then ProfileRequestContext.getSubcontext(SubjectCanonicalizationContext.class) != null
@@ -68,6 +78,9 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractSubjectFromRequest.class);
     
+    /** Predicate to validate use of {@link NameID} or {@link NameIdentifier} in subject. */
+    @Nonnull private Predicate<ProfileRequestContext> nameIDPolicyPredicate;
+    
     /** Function used to obtain the requester ID. */
     @Nullable private Function<ProfileRequestContext,String> requesterLookupStrategy;
 
@@ -77,10 +90,21 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
     /** SAML 1 or 2 identifier object to wrap for c14n. */
     @Nullable private SAMLObject nameIdentifier;
     
-    /** Constructor. */
-    public ExtractSubjectFromRequest() {
+    /** Constructor.
+     * 
+     * @throws ComponentInitializationException if unable to initialize default objects
+     */
+    public ExtractSubjectFromRequest() throws ComponentInitializationException {
         requesterLookupStrategy = new RelyingPartyIdLookupFunction();
         responderLookupStrategy = new ResponderIdLookupFunction();
+
+        // Default predicate pulls NameQualifiers from NameID and does a direct match
+        // against requester and responder. Handles simple cases, overridden for complex ones.
+        nameIDPolicyPredicate = new DefaultNameIDPolicyPredicate();
+        ((DefaultNameIDPolicyPredicate) nameIDPolicyPredicate).setRequesterIdLookupStrategy(requesterLookupStrategy);
+        ((DefaultNameIDPolicyPredicate) nameIDPolicyPredicate).setResponderIdLookupStrategy(responderLookupStrategy);
+        ((DefaultNameIDPolicyPredicate) nameIDPolicyPredicate).setObjectLookupStrategy(new SubjectNameLookupFunction());
+        ((DefaultNameIDPolicyPredicate) nameIDPolicyPredicate).initialize();
     }
     
     /**
@@ -107,6 +131,17 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
         responderLookupStrategy = strategy;
     }
     
+    /**
+     * Set the predicate used to validate use of the {@link NameID} or {@link NameIdentifier} in the subject.
+     * 
+     * @param predicate predicate to use
+     */
+    public synchronized void setNameIDPolicyPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        nameIDPolicyPredicate = Constraint.isNotNull(predicate, "Name identifier policy predicate cannot be null");
+    }
+    
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
@@ -124,6 +159,12 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
             return false;
         }
         
+        if (!nameIDPolicyPredicate.apply(profileRequestContext)) {
+            log.warn("{} Consumption of NameID/NameIdentifier blocked by policy", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+            return false;
+        }
+        
         return super.doPreExecute(profileRequestContext);
     }
     
@@ -131,7 +172,7 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
-        Subject subject = null;
+        final Subject subject;
         if (nameIdentifier instanceof NameIdentifier) {
             subject = new Subject(false,
                     Collections.singleton(new NameIdentifierPrincipal((NameIdentifier) nameIdentifier)),
@@ -140,10 +181,12 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
             subject = new Subject(false,
                     Collections.singleton(new NameIDPrincipal((NameID) nameIdentifier)),
                     Collections.emptySet(), Collections.emptySet());
+        } else {
+            subject = null;
         }
         
         if (subject == null) {
-            log.debug("{} Identifier was not of a supported type, ignoring");
+            log.debug("{} Identifier was not of a supported type, ignoring", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, NO_SUBJECT);
             return;
         }
@@ -161,4 +204,27 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
         log.debug("{} Created subject canonicalization context", getLogPrefix());
     }
     
+
+    /**
+     * Lookup function that returns the {@link NameIdentifier} or {@link NameID} from the request in the inbound
+     * message context.
+     */
+    public static class SubjectNameLookupFunction implements Function<ProfileRequestContext,SAMLObject> {
+        
+        /** {@inheritDoc} */
+        @Override
+        @Nullable public SAMLObject apply(@Nullable final ProfileRequestContext profileRequestContext) {
+            
+            if (profileRequestContext != null) {
+                final MessageContext<?> msgCtx = profileRequestContext.getInboundMessageContext();
+                if (msgCtx != null) {
+                    return msgCtx.getSubcontext(
+                            SAMLSubjectNameIdentifierContext.class, true).getSubjectNameIdentifier();
+                }
+            }
+            
+            return null;
+        }
+    }
+
 }

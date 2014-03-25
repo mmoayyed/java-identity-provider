@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.impl.profile;
 
+import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
@@ -87,7 +88,17 @@ public class ExtractSubjectFromRequestTest extends XMLObjectBaseTestCase {
         request.setSubject(SAML2ActionTestingSupport.buildSubject("foo"));
         prc.getInboundMessageContext().setMessage(request);
         
-        final Event event = action.execute(rc);
+        request.getSubject().getNameID().setNameQualifier("foo");
+        Event event = action.execute(rc);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT);
+        
+        request.getSubject().getNameID().setNameQualifier(ActionTestingSupport.OUTBOUND_MSG_ISSUER);
+        request.getSubject().getNameID().setSPNameQualifier("foo");
+        event = action.execute(rc);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT);
+        
+        request.getSubject().getNameID().setSPNameQualifier(ActionTestingSupport.INBOUND_MSG_ISSUER);
+        event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
         
         final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class);
@@ -104,7 +115,12 @@ public class ExtractSubjectFromRequestTest extends XMLObjectBaseTestCase {
                 SAML1ActionTestingSupport.buildSubject("foo"));
         prc.getInboundMessageContext().setMessage(request);
         
-        final Event event = action.execute(rc);
+        request.getAttributeQuery().getSubject().getNameIdentifier().setNameQualifier("foo");
+        Event event = action.execute(rc);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT);
+        
+        request.getAttributeQuery().getSubject().getNameIdentifier().setNameQualifier(ActionTestingSupport.OUTBOUND_MSG_ISSUER);
+        event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
         
         final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class);

@@ -125,7 +125,7 @@
                     p:metadataResolver-ref="ExampleMetadataResolver"
                     p:responderIdLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"
                     p:requesterIdLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple">
-                <property name="nameIDPolicyLookupStrategy">
+                <property name="objectLookupStrategy">
                     <bean class="org.opensaml.saml.saml2.profile.impl.AddNameIDToSubjects.NameIDPolicyLookupFunction" />
                 </property>
             </bean>
