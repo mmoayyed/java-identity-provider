@@ -97,7 +97,11 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         configReader.loadBeanDefinitions(resources);
         context.refresh();
         
-        parserPool = context.getBean("shibboleth.ParserPool");
+        if (context.containsBean("shibboleth.ParserPool")) {
+            parserPool = context.getBean("shibboleth.ParserPool");
+        } else {
+            parserPool = null;
+        }
 
         return context.getBean(claz);
     }
