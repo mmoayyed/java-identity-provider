@@ -16,6 +16,12 @@
 		p:ignoreElementContentWhitespace="true" p:namespaceAware="true" />
 
 
+    <bean id="myParserPool"
+        class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
+        p:maxPoolSize="1000"
+        p:coalescing="true" p:ignoreComments="true"
+        p:ignoreElementContentWhitespace="true" p:namespaceAware="true" />
+
 	<bean id="shibboleth.TaskTimer" class="java.util.Timer"
 		destroy-method="cancel" /> <!-- only needed if you do reloading -->
 </beans>

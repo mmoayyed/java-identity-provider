@@ -30,7 +30,8 @@ import org.w3c.dom.Element;
 public class FilesystemMetadataProviderParser extends AbstractReloadingMetadataProviderParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "FilesystemMetadataProvider");
+    public static final QName ELEMENT_NAME = new QName(MetadataNamespaceHandler.NAMESPACE,
+            "FilesystemMetadataProvider");
 
     
     /** {@inheritDoc} */

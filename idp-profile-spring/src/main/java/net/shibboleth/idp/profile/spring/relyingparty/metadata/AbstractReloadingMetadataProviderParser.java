@@ -95,7 +95,7 @@ public abstract class AbstractReloadingMetadataProviderParser extends AbstractMe
      */
     protected String getParserPoolRef(Element element) {
         String parserPoolRef = null;
-        if (element.hasAttributeNS(null, "parerPoolRef")) {
+        if (element.hasAttributeNS(null, "parserPoolRef")) {
             parserPoolRef = StringSupport.trimOrNull(element.getAttributeNS(null, "parserPoolRef"));
         }
 

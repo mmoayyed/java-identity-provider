@@ -38,6 +38,9 @@ public class FilesystemMetadataParserTest extends AbstractMetadataParserTest {
         Assert.assertEquals(entities.next().getEntityID(), IDP_ID);
         Assert.assertFalse(entities.hasNext());
 
+        Assert.assertEquals(resolver.getRefreshDelayFactor(), 0.75, 0.001);
+        Assert.assertSame(resolver.getParserPool(), parserPool);
+        
         Assert.assertNull(resolver.resolveSingle(criteriaFor(SP_ID)));
     }
 
@@ -46,6 +49,10 @@ public class FilesystemMetadataParserTest extends AbstractMetadataParserTest {
         FilesystemMetadataResolver resolver = getBean(FilesystemMetadataResolver.class, true, "fileEntities.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "fileEntities");
+        Assert.assertEquals(resolver.getMaxRefreshDelay(), 1000*60*55);
+        Assert.assertEquals(resolver.getMinRefreshDelay(), 1000*60*15);
+        Assert.assertEquals(resolver.getRefreshDelayFactor(), 0.5, 0.001);
+        Assert.assertNotSame(resolver.getParserPool(), parserPool);
    
         final Iterator<EntityDescriptor> entities = resolver.resolve(criteriaFor(IDP_ID)).iterator();
         Assert.assertTrue(resolver.isFailFastInitialization());

@@ -48,6 +48,8 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
     protected static final String SP_ID = "https://sp.example.org/sp/shibboleth"; 
     protected static final String IDP_ID = "https://idp.example.org/idp/shibboleth";
     
+    protected Object parserPool;
+    
     /**
      * Set up a property placeholder called DIR which points to the test directory
      * this makes the test location insensitive but able to look at the local
@@ -55,7 +57,7 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
      * @param context the context
      * @throws IOException 
      */
-    private static void setDirectoryPlaceholder(GenericApplicationContext context) throws IOException {
+    static void setDirectoryPlaceholder(GenericApplicationContext context) throws IOException {
         PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
         ClassPathResource resource = new ClassPathResource("/net/shibboleth/idp/profile/spring/relyingparty/metadata");
         
@@ -69,7 +71,7 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         
     }
     
-    static protected <T extends MetadataResolver> T getBean(Class<T> claz,  boolean validating, String... files) throws IOException{
+    protected <T extends MetadataResolver> T getBean(Class<T> claz,  boolean validating, String... files) throws IOException{
         final Resource[] resources = new Resource[files.length];
        
         for (int i = 0; i < files.length; i++) {
@@ -94,6 +96,8 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         
         configReader.loadBeanDefinitions(resources);
         context.refresh();
+        
+        parserPool = context.getBean("shibboleth.ParserPool");
 
         return context.getBean(claz);
     }
