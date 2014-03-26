@@ -121,11 +121,10 @@ public class NameIDCanonicalization extends AbstractSubjectCanonicalizationActio
         final NameID nameID = nameIDs.iterator().next().getNameID();
 
         try {
-            c14nContext.setPrincipalName(decoder.decode(nameID, c14nContext.getResponderId(),
-                    c14nContext.getRequesterId()));
-        } catch (final SubjectCanonicalizationException e) {
-            c14nContext.setException(e);
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+            c14nContext.setPrincipalName(decoder.decode(c14nContext, nameID));
+            if (c14nContext.getPrincipalName() == null) {
+                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+            }
         } catch (final NameDecoderException e) {
             c14nContext.setException(e);
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);

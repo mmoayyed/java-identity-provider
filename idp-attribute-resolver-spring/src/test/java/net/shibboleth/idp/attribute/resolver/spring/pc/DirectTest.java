@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.pc;
 
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.authn.SubjectCanonicalizationException;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.impl.attribute.principalconnector.PrincipalConnector;
 import net.shibboleth.idp.saml.impl.nameid.DirectNameIDDecoder;
 import net.shibboleth.idp.saml.impl.nameid.DirectNameIdentifierDecoder;
@@ -34,23 +34,23 @@ import org.testng.annotations.Test;
  */
 public class DirectTest extends BaseAttributeDefinitionParserTest {
 
-    @Test public void simple() throws SubjectCanonicalizationException, NameDecoderException {
-        PrincipalConnector connector = getPrincipalConnector("direct.xml");
+    @Test public void simple() throws NameDecoderException {
+        final PrincipalConnector connector = getPrincipalConnector("direct.xml");
         
         Assert.assertTrue(connector.getNameIDDecoder() instanceof DirectNameIDDecoder);
         Assert.assertTrue(connector.getNameIdentifierDecoder() instanceof DirectNameIdentifierDecoder);
         Assert.assertEquals(connector.getFormat(), "https://example.org/direct");
         Assert.assertTrue(connector.getRelyingParties().isEmpty());
         
-        NameID id = new NameIDBuilder().buildObject();
+        final NameID id = new NameIDBuilder().buildObject();
         id.setFormat("https://example.org/sealer");
         id.setValue("The_value");
         
-        Assert.assertEquals(connector.decode(id, "", ""), "The_value");
+        Assert.assertEquals(connector.decode(new SubjectCanonicalizationContext(), id), "The_value");
     }
     
     @Test public void relyingParties() {
-        PrincipalConnector connector = getPrincipalConnector("directRPs.xml");
+        final PrincipalConnector connector = getPrincipalConnector("directRPs.xml");
         
         Assert.assertTrue(connector.getNameIDDecoder() instanceof DirectNameIDDecoder);
         Assert.assertTrue(connector.getNameIdentifierDecoder() instanceof DirectNameIdentifierDecoder);

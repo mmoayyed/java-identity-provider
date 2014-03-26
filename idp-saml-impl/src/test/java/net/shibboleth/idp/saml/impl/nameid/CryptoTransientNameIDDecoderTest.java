@@ -67,7 +67,7 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
     private DataSealer dataSealer;
 
     private CryptoTransientNameIDDecoder decoder;
-
+    
     /**
      * Set up the data sealer. We take advantage of the fact that Spring a {@link ClassPathResource} wraps a files.
      * 
@@ -75,8 +75,7 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
      * @throws DataSealerException
      * @throws ComponentInitializationException
      */
-    @BeforeClass public void setupDataSealer() throws IOException, DataSealerException,
-            ComponentInitializationException {
+    @BeforeClass public void setupDataSealer() throws IOException, DataSealerException, ComponentInitializationException {
 
         final Resource keyStore =
                 new ClassPathResource("/net/shibboleth/idp/saml/impl/attribute/resolver/SealerKeyStore.jks");
@@ -98,7 +97,7 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
         decoder.setId("Decoder");
         decoder.initialize();
     }
-
+    
     private String code(String principalName, String attributeRecipientID, long timeout)
             throws DataSealerException {
         final String principalTokenId =
@@ -113,41 +112,38 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void testSucess() throws ProfileException, ComponentInitializationException, IOException,
             DataSealerException {
-        String ct = code(PRINCIPAL, ISSUER, RECIPIENT);
+        final String ct = code(PRINCIPAL, ISSUER, RECIPIENT);
 
-        Assert.assertEquals(decoder.decode(ct, ISSUER, RECIPIENT), PRINCIPAL);
+        Assert.assertEquals(decoder.decode(ct, RECIPIENT), PRINCIPAL);
     }
 
     @Test(expectedExceptions = {NameDecoderException.class,}) public void timeout()
             throws SubjectCanonicalizationException, DataSealerException, NameDecoderException {
-        String ct = code(PRINCIPAL, RECIPIENT, -10);
+        final String ct = code(PRINCIPAL, RECIPIENT, -10);
 
-        decoder.decode(ct, ISSUER, RECIPIENT);
+        decoder.decode(ct, RECIPIENT);
     }
 
-    @Test(expectedExceptions = {NameDecoderException.class, SubjectCanonicalizationException.class, }) public void baddata()
-            throws SubjectCanonicalizationException, DataSealerException, NameDecoderException {
-        String ct = code(PRINCIPAL, ISSUER, RECIPIENT);
+    @Test public void baddata() throws DataSealerException, NameDecoderException {
+        final String ct = code(PRINCIPAL, ISSUER, RECIPIENT);
 
-        decoder.decode(ct.toUpperCase(), ISSUER, RECIPIENT);
+        Assert.assertNull(decoder.decode(ct.toUpperCase(), RECIPIENT));
     }
 
-    @Test(expectedExceptions = {SubjectCanonicalizationException.class,}) public void baddata2()
-            throws SubjectCanonicalizationException, DataSealerException, NameDecoderException {
+    @Test public void baddata2() throws DataSealerException, NameDecoderException {
 
         final String principalTokenId =
                 new StringBuilder().append(ISSUER).append("!").append(RECIPIENT).append("+").append(PRINCIPAL)
                         .toString();
-        String ct = dataSealer.wrap(principalTokenId, System.currentTimeMillis() + TIMEOUT);
+        final String ct = dataSealer.wrap(principalTokenId, System.currentTimeMillis() + TIMEOUT);
 
-        decoder.decode(ct, ISSUER, RECIPIENT);
+        Assert.assertNull(decoder.decode(ct, RECIPIENT));
     }
 
-    @Test(expectedExceptions = {SubjectCanonicalizationException.class,}) public void badSP()
-            throws SubjectCanonicalizationException, DataSealerException, NameDecoderException {
-        String ct = code(PRINCIPAL, ISSUER, RECIPIENT);
+    @Test public void badSP() throws DataSealerException, NameDecoderException {
+        final String ct = code(PRINCIPAL, ISSUER, RECIPIENT);
 
-        decoder.decode(ct, ISSUER, "my" + RECIPIENT);
+        Assert.assertNull(decoder.decode(ct, "my" + RECIPIENT));
     }
 
     @Test public void decode() throws ComponentInitializationException, ResolutionException, DataSealerException,
@@ -207,4 +203,5 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(scc.getPrincipalName(), TestSources.PRINCIPAL_ID);
 
     }
+
 }

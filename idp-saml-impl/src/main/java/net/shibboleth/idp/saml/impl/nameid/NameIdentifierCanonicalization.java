@@ -122,11 +122,10 @@ public class NameIdentifierCanonicalization extends AbstractSubjectCanonicalizat
         final NameIdentifier nameIdentifier = nameIdentifiers.iterator().next().getNameIdentifier();
 
         try {
-            c14nContext.setPrincipalName(decoder.decode(nameIdentifier, c14nContext.getResponderId(),
-                    c14nContext.getRequesterId()));
-        } catch (final SubjectCanonicalizationException e) {
-            c14nContext.setException(e);
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+            c14nContext.setPrincipalName(decoder.decode(c14nContext, nameIdentifier));
+            if (c14nContext.getPrincipalName() == null) {
+                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+            }
         } catch (final NameDecoderException e) {
             c14nContext.setException(e);
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);

@@ -22,7 +22,6 @@ import java.io.IOException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.TransientIdParameters;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -36,6 +35,8 @@ import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * An abstract action which contains the logic to do transient decoding matching (shared between SAML2 and SAML1).
@@ -74,43 +75,40 @@ public abstract class BaseTransientDecoder extends AbstractIdentifiableInitializ
      * Convert the transient Id into the principal.
      * 
      * @param transientId the transientID
-     * @param issuerId the issuer (not used)
      * @param requesterId the requested (SP)
      * 
      * @return the decoded principal
      * @throws NameDecoderException if a decode error occurs
-     * @throws SubjectCanonicalizationException if a mismatch occurs
      */
-    @Nonnull @NotEmpty public String decode(@Nonnull final String transientId, @Nullable final String issuerId,
-            @Nullable final String requesterId) throws SubjectCanonicalizationException, NameDecoderException {
+    @Nullable public String decode(@Nonnull final String transientId, @Nonnull @NotEmpty final String requesterId)
+            throws NameDecoderException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        Constraint.isNotNull(requesterId, "Requester ID cannot be null");
 
         if (null == transientId) {
-            throw new NameDecoderException(getLogPrefix() + " transient identifier was null");
+            throw new NameDecoderException(getLogPrefix() + " Transient identifier was null");
+        } else if (Strings.isNullOrEmpty(requesterId)) {
+            throw new NameDecoderException(getLogPrefix() + " Requester ID was null");
         }
 
         try {
             final StorageRecord record = idStore.read(TransientIdParameters.CONTEXT, transientId);
-
             if (null == record) {
-                throw new SubjectCanonicalizationException(getLogPrefix() + " Could not find transient Identifier");
-            }
-
-            if (record.getExpiration() < System.currentTimeMillis()) {
-                throw new NameDecoderException(getLogPrefix() + " Transient identifier has expired");
+                log.info("{} Could not find transient identifier", getLogPrefix());
+                return null;
             }
 
             final TransientIdParameters param = new TransientIdParameters(record.getValue());
 
             if (!requesterId.equals(param.getAttributeRecipient())) {
-                throw new SubjectCanonicalizationException(getLogPrefix() + " Transient identifier was issued to "
-                        + param.getAttributeRecipient() + " but is being used by " + requesterId);
+                log.warn("{} Transient identifier issued to {} but requested by {}", getLogPrefix(),
+                        param.getAttributeRecipient(), requesterId);
+                throw new NameDecoderException("Misuse of identifier by an improper relying party");
             }
 
             return param.getPrincipal();
         } catch (final IOException e) {
-            throw new SubjectCanonicalizationException(e);
+            log.error(getLogPrefix() + " I/O error looking up transient identifier", e);
+            return null;
         }
     }
 
@@ -119,7 +117,7 @@ public abstract class BaseTransientDecoder extends AbstractIdentifiableInitializ
         super.doInitialize();
 
         if (null == idStore) {
-            throw new ComponentInitializationException(getLogPrefix() + " no Id store set");
+            throw new ComponentInitializationException(getLogPrefix() + " No Id store set");
         }
         log.debug("{} using the store '{}'", getLogPrefix(), idStore.getId());
     }

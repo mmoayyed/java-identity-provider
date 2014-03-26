@@ -20,7 +20,11 @@ package net.shibboleth.idp.saml.impl.nameid;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.SubjectCanonicalizationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
+
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -39,6 +43,9 @@ import net.shibboleth.utilities.java.support.security.DataSealerException;
  */
 public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableInitializableComponent {
 
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(BaseCryptoTransientDecoder.class);
+    
     /** Object used to protect and encrypt the data. */
     @NonnullAfterInit private DataSealer dataSealer;
 
@@ -46,7 +53,7 @@ public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableIni
     @Nullable private String logPrefix;
 
     /**
-     * Gets the Data Sealer we are using.
+     * Get the Data Sealer we are using.
      * 
      * @return the Data Sealer we are using.
      */
@@ -55,12 +62,13 @@ public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableIni
     }
 
     /**
-     * Sets the Data Sealer we should use.
+     * Set the Data Sealer we should use.
      * 
      * @param sealer the Data Sealer to use.
      */
     public void setDataSealer(@Nonnull final DataSealer sealer) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         dataSealer = Constraint.isNotNull(sealer, "DataSealer cannot be null");
     }
 
@@ -68,20 +76,19 @@ public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableIni
      * Convert the transient Id into the principal.
      * 
      * @param transientId the encrypted transientID
-     * @param issuerId the issuer (not used)
-     * @param requesterId the requested (SP)
+     * @param requesterId the requester ID
      * 
      * @return the decoded entity.
-     * @throws SubjectCanonicalizationException if a mismatch occurrs
      * @throws NameDecoderException if a decode error occurs.
      */
-    @Nonnull @NotEmpty protected String decode(@Nonnull final String transientId, @Nullable final String issuerId,
-            @Nullable final String requesterId) throws SubjectCanonicalizationException, NameDecoderException {
+    @Nullable protected String decode(@Nonnull final String transientId, @Nonnull @NotEmpty final String requesterId)
+            throws NameDecoderException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        Constraint.isNotNull(requesterId, "Supplied requester cannot be null");
-
+        
         if (null == transientId) {
-            throw new NameDecoderException(getLogPrefix() + " transient identifier was null");
+            throw new NameDecoderException(getLogPrefix() + " Transient identifier was null");
+        } else if (Strings.isNullOrEmpty(requesterId)) {
+            throw new NameDecoderException(getLogPrefix() + " Requester ID was null");
         }
 
         final String decodedId;
@@ -90,8 +97,8 @@ public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableIni
         } catch (final DataExpiredException e) {
             throw new NameDecoderException(getLogPrefix() + " Principal identifier has expired");
         } catch (final DataSealerException e) {
-            throw new SubjectCanonicalizationException(getLogPrefix()
-                    + " Caught exception unwrapping principal identifier.", e);
+            log.debug(getLogPrefix() + " Caught exception unwrapping principal identifier", e);
+            return null;
         }
 
         if (decodedId == null) {
@@ -100,15 +107,15 @@ public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableIni
         }
 
         // Split the identifier.
-        String[] parts = decodedId.split("!");
+        final String[] parts = decodedId.split("!");
         if (parts.length != 2) {
-            throw new SubjectCanonicalizationException(getLogPrefix() + " Decoded principal information was invalid: "
-                    + decodedId);
+            log.warn("{} Decoded principal information was invalid: {}", getLogPrefix(), decodedId);
+            return null;
         }
 
         if (requesterId != null && !requesterId.equals(parts[0])) {
-            throw new SubjectCanonicalizationException(getLogPrefix() + " Requester (" + requesterId
-                    + ") does not match supplied value (" + parts[0] + ").");
+            log.warn("{} Transient identifier issued to {} but requested by {}", getLogPrefix(), parts[0], requesterId);
+            return null;
         }
 
         return parts[1];

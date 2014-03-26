@@ -20,41 +20,29 @@ package net.shibboleth.idp.saml.impl.nameid;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.opensaml.saml.saml1.core.NameIdentifier;
-import org.slf4j.LoggerFactory;
 
-/**
- * Class to implement the direct transform from a {@link NameIdentifier}. The decode operation returns the input.
- */
+/** Direct transform from a {@link NameIdentifier}. The decode operation returns the input. */
 public class DirectNameIdentifierDecoder extends AbstractIdentifiableInitializableComponent implements
         NameIdentifierDecoder {
 
-    /**
-     * {@inheritDoc}
-     * 
-     * The decoded value is just the input. We do not police any values.
-     */
-    @Override @Nonnull @NotEmpty public String decode(@Nonnull final NameIdentifier nameIdentifier,
-            @Nullable final String responderId, @Nullable final String requesterId) throws NameDecoderException {
+    /** {@inheritDoc} */
+    @Override
+    @Nullable public String decode(@Nonnull final SubjectCanonicalizationContext c14nContext,
+            @Nonnull final NameIdentifier nameIdentifier) throws NameDecoderException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         if (nameIdentifier.getNameIdentifier() == null) {
             throw new NameDecoderException("NameIdentifier value was null");
         }
+        
         return nameIdentifier.getNameIdentifier();
-    }
-
-    /** {@inheritDoc} */
-    @Override protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-        LoggerFactory.getLogger(DirectNameIdentifierDecoder.class).debug("Direct Transform {}", getId());
     }
     
 }

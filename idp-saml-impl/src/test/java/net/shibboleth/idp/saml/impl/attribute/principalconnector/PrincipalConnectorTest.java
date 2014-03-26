@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.impl.attribute.principalconnector;
 import java.util.Collections;
 
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.impl.nameid.DirectNameIDDecoder;
 import net.shibboleth.idp.saml.impl.nameid.DirectNameIdentifierDecoder;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
@@ -100,8 +101,11 @@ public class PrincipalConnectorTest extends OpenSAMLInitBaseTestCase {
         
         final NameIdentifier nameIdentifier = new NameIdentifierBuilder().buildObject();
         nameIdentifier.setNameIdentifier(NAMEIDENTIFIER_TEXT);
+        
+        final SubjectCanonicalizationContext scc = new SubjectCanonicalizationContext();
+        scc.setRequesterId(RP1);
 
-        Assert.assertEquals(connector.decode(nameIdentifier, null, RP1), NAMEIDENTIFIER_TEXT);
+        Assert.assertEquals(connector.decode(scc, nameIdentifier), NAMEIDENTIFIER_TEXT);
     }
     
     @Test public void saml2() throws ComponentInitializationException, SubjectCanonicalizationException, NameDecoderException {
@@ -112,8 +116,10 @@ public class PrincipalConnectorTest extends OpenSAMLInitBaseTestCase {
         final NameID  nameID = new NameIDBuilder().buildObject();
         nameID.setValue(NAMEID_TEXT);
 
+        final SubjectCanonicalizationContext scc = new SubjectCanonicalizationContext();
+        scc.setRequesterId(RP1);
 
-        Assert.assertEquals(connector.decode(nameID, null, RP1), NAMEID_TEXT);
+        Assert.assertEquals(connector.decode(scc, nameID), NAMEID_TEXT);
     }
 
 }

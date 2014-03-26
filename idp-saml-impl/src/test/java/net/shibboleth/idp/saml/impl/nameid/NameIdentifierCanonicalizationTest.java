@@ -20,12 +20,10 @@ package net.shibboleth.idp.saml.impl.nameid;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
@@ -77,20 +75,18 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
         action = new NameIdentifierCanonicalization();
         action.setId("test");
         action.setDecoder(new NameIdentifierDecoder() {
-
-            @Override @Nonnull public String decode(@Nullable NameIdentifier nameIdentifier, @Nonnull String issuerId,
-                    @Nonnull String requesterId) throws SubjectCanonicalizationException {
-                if (RESPONDER.equals(issuerId) && REQUESTER.equals(requesterId)) {
+            public String decode(SubjectCanonicalizationContext scc, NameIdentifier nameIdentifier) {
+                if (RESPONDER.equals(scc.getResponderId()) && REQUESTER.equals(scc.getRequesterId())) {
                     return VALUE_PREFIX + nameIdentifier.getNameIdentifier();
                 }
-                throw new SubjectCanonicalizationException();
+                return null;
             }
         });
         action.initialize();
     }
 
     private void setSubContext(@Nullable Subject subject, @Nullable String responder, @Nullable String requester) {
-        SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
+        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
         if (subject != null) {
             scc.setSubject(subject);
         }
@@ -105,7 +101,7 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
 
     private NameIdentifier nameId(String value, String format, String nameQualifier) {
 
-        NameIdentifier id = builder.buildObject();
+        final NameIdentifier id = builder.buildObject();
 
         id.setNameIdentifier(value);
         id.setFormat(format);
@@ -125,7 +121,7 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
     }
 
     @Test public void testNoPrincipal() throws ProfileException {
-        Subject subject = new Subject();
+        final Subject subject = new Subject();
         setSubContext(subject, null, null);
 
         action.execute(prc);
@@ -135,7 +131,7 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
     }
 
     @Test public void testMultiPrincipals() throws ProfileException {
-        Subject subject = new Subject();
+        final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("value", NameIdentifier.WIN_DOMAIN_QUALIFIED)));
         subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("value2", NameIdentifier.X509_SUBJECT)));
 
@@ -148,7 +144,7 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
     }
 
     @Test public void testWrongFormat() throws ProfileException {
-        Subject subject = new Subject();
+        final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("value", NameIdentifier.WIN_DOMAIN_QUALIFIED)));
 
         setSubContext(subject, RESPONDER, REQUESTER);
@@ -160,41 +156,38 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
     }
 
     @Test public void testWrongRequester() throws ProfileException {
-        Subject subject = new Subject();
+        final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("value", NameIdentifier.EMAIL)));
         setSubContext(subject, RESPONDER, RESPONDER);
 
         action.execute(prc);
 
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
-        Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
     }
 
     @Test public void testWrongResponderNameId() throws ProfileException {
-        Subject subject = new Subject();
+        final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("value", NameIdentifier.EMAIL)));
         setSubContext(subject, REQUESTER, REQUESTER);
 
         action.execute(prc);
 
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
-        Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
     }
     
     @Test public void testWrongResponder() throws ProfileException {
-        Subject subject = new Subject();
+        final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("value", NameIdentifier.EMAIL, REQUESTER)));
         setSubContext(subject, REQUESTER, REQUESTER);
 
         action.execute(prc);
 
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
-        Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
     }
 
 
     @Test public void testSuccess() throws ProfileException {
-        Subject subject = new Subject();
+        final Subject subject = new Subject();
         subject.getPrincipals().add(new UsernamePrincipal("foo@osu.edu"));
         subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("works", NameIdentifier.EMAIL)));
         setSubContext(subject, RESPONDER, REQUESTER);

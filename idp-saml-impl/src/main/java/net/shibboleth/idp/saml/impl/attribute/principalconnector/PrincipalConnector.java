@@ -23,7 +23,7 @@ import java.util.Collections;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.SubjectCanonicalizationException;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.NameIDDecoder;
 import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
@@ -139,17 +139,16 @@ public class PrincipalConnector extends AbstractIdentifiableInitializableCompone
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull @NotEmpty public String decode(@Nonnull final NameID nameID, @Nullable final String responderId,
-            @Nullable final String requesterId) throws SubjectCanonicalizationException, NameDecoderException {
-        return nameIDDecoder.decode(nameID, responderId, requesterId);
+    @Nullable public String decode(@Nonnull final SubjectCanonicalizationContext c14nContext,
+            @Nonnull final NameID nameID) throws NameDecoderException {
+        return nameIDDecoder.decode(c14nContext, nameID);
     }
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull @NotEmpty public String decode(@Nonnull final NameIdentifier nameIdentifier,
-            @Nullable final String responderId, @Nullable final String requesterId)
-                    throws SubjectCanonicalizationException, NameDecoderException {
-        return nameIdentifierDecoder.decode(nameIdentifier, responderId, requesterId);
+    @Nullable public String decode(@Nonnull final SubjectCanonicalizationContext c14nContext,
+            @Nonnull final NameIdentifier nameIdentifier) throws NameDecoderException {
+        return nameIdentifierDecoder.decode(c14nContext, nameIdentifier);
     }
     
 }

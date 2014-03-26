@@ -18,42 +18,25 @@
 package net.shibboleth.idp.saml.impl.nameid;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.SubjectCanonicalizationException;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.opensaml.saml.saml1.core.NameIdentifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Processes a transient {@link NameIdentifier}, checks that its {@link NameIdentifier#getNameQualifier()} is
- * correct, and decodes {@link NameIdentifier#getNameIdentifier()} via the base class (reversing the work done by
- * {@link net.shibboleth.idp.attribute.resolver.impl.ad.TransientIdAttributeDefinition}).
+ * Decodes {@link NameIdentifier#getNameIdentifier()}  via the base class (reversing the work done by
+ * {@link net.shibboleth.idp.saml.impl.attribute.resolver.TransientIdAttributeDefinition}).
  */
 public class TransientNameIdentifierDecoder extends BaseTransientDecoder implements NameIdentifierDecoder {
 
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(TransientNameIdentifierDecoder.class);
-
     /** {@inheritDoc} */
     @Override
-    @Nonnull public String decode(@Nonnull final NameIdentifier nameIdentifier, @Nullable final String responderId,
-            @Nullable final String requesterId) throws SubjectCanonicalizationException, NameDecoderException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+    @Nonnull public String decode(@Nonnull final SubjectCanonicalizationContext c14nContext,
+            @Nonnull final NameIdentifier nameIdentifier) throws NameDecoderException {
 
-        final String nameQualifier = nameIdentifier.getNameQualifier();
-
-        if (null != nameQualifier && null != responderId && !nameQualifier.equals(responderId)) {
-            log.debug("{} NameQualifier '{}' does not match responderId '{}'",
-                    new Object[] {getLogPrefix(), nameQualifier, responderId,});
-            throw new SubjectCanonicalizationException("NameQualifier does not match responderId");
-        }
-
-        return super.decode(nameIdentifier.getNameIdentifier(), responderId, requesterId);
+        return super.decode(nameIdentifier.getNameIdentifier(), c14nContext.getRequesterId());
     }
 
 }

@@ -22,10 +22,7 @@ import java.util.Collections;
 
 import javax.security.auth.Subject;
 
-import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.impl.TestSources;
@@ -67,16 +64,15 @@ public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
         Assert.assertTrue(store.create(TransientIdParameters.CONTEXT, id, principalTokenId, expiration),
                 "initial store");
 
-        BaseTransientDecoder decoder = new BaseTransientDecoder(){};
+        final BaseTransientDecoder decoder = new BaseTransientDecoder(){};
         decoder.setId("decoder");
         decoder.setIdStore(store);
         decoder.initialize();
 
-        Assert.assertEquals(decoder.decode(id, "ME", RECIPIENT), PRINCIPAL);
-
+        Assert.assertEquals(decoder.decode(id, RECIPIENT), PRINCIPAL);
     }
 
-    @Test(expectedExceptions={NameDecoderException.class, SubjectCanonicalizationException.class}) public void testExpired() throws ProfileException, ComponentInitializationException, IOException {
+    @Test public void testExpired() throws Exception {
 
         final StorageService store = new MemoryStorageService();
         store.initialize();
@@ -91,32 +87,30 @@ public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
         Assert.assertTrue(store.create(TransientIdParameters.CONTEXT, id, principalTokenId, expiration),
                 "initial store");
 
-        BaseTransientDecoder decoder = new BaseTransientDecoder(){};
+        final BaseTransientDecoder decoder = new BaseTransientDecoder(){};
         decoder.setId("decoder");
         decoder.setIdStore(store);
         decoder.initialize();
 
-        decoder.decode(id, "ME", RECIPIENT);
-
+        Assert.assertNull(decoder.decode(id, RECIPIENT));
     }
 
 
-    @Test(expectedExceptions={SubjectCanonicalizationException.class,})  public void testNotFound() throws ProfileException, ComponentInitializationException, IOException {
+    @Test public void testNotFound() throws Exception {
 
         final StorageService store = new MemoryStorageService();
         store.initialize();
 
-        BaseTransientDecoder decoder = new BaseTransientDecoder(){};
+        final BaseTransientDecoder decoder = new BaseTransientDecoder(){};
         decoder.setId("decoder");
         decoder.setIdStore(store);
         decoder.initialize();
 
-        decoder.decode("THE_ID", "ME", RECIPIENT);
-
+        Assert.assertNull(decoder.decode("THE_ID", RECIPIENT));
     }
 
 
-    @Test(expectedExceptions={SubjectCanonicalizationException.class,}) public void testBadRecipient() throws ProfileException, ComponentInitializationException, IOException {
+    @Test(expectedExceptions={NameDecoderException.class,}) public void testBadRecipient() throws Exception {
 
         final StorageService store = new MemoryStorageService();
         store.initialize();
@@ -131,17 +125,16 @@ public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
         Assert.assertTrue(store.create(TransientIdParameters.CONTEXT, id, principalTokenId, expiration),
                 "initial store");
 
-        BaseTransientDecoder decoder = new BaseTransientDecoder(){};
+        final BaseTransientDecoder decoder = new BaseTransientDecoder(){};
         decoder.setId("decoder");
         decoder.setIdStore(store);
         decoder.initialize();
 
-        decoder.decode(id, "ME", PRINCIPAL);
-
+        decoder.decode(id, PRINCIPAL);
     }
 
     
-    @Test public void decode() throws ComponentInitializationException, ResolutionException, AttributeEncodingException, ProfileException {
+    @Test public void decode() throws Exception {
         
         final StoredTransientIdGenerationStrategy strategy = new StoredTransientIdGenerationStrategy();
         strategy.setId("strategy");
@@ -165,7 +158,7 @@ public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
         encoder.setNameFormat("https://example.org/");
         final NameID nameid = encoder.encode(result);
 
-        NameIDCanonicalizationFlowDescriptor descriptor = new NameIDCanonicalizationFlowDescriptor();
+        final NameIDCanonicalizationFlowDescriptor descriptor = new NameIDCanonicalizationFlowDescriptor();
         descriptor.setFormats(Collections.singleton("https://example.org/"));
         descriptor.setId("NameIdFlowDescriptor");
         descriptor.initialize();
@@ -194,7 +187,6 @@ public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
         ActionTestingSupport.assertProceedEvent(prc);
         
         Assert.assertEquals(scc.getPrincipalName(), TestSources.PRINCIPAL_ID);
-        
     }
 
 }

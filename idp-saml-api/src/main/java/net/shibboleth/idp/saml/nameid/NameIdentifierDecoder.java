@@ -20,8 +20,7 @@ package net.shibboleth.idp.saml.nameid;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.SubjectCanonicalizationException;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 
 import org.opensaml.saml.saml1.core.NameIdentifier;
 
@@ -29,21 +28,17 @@ import org.opensaml.saml.saml1.core.NameIdentifier;
 public interface NameIdentifierDecoder {
 
     /**
-     * Decode the provided {@link NameIdentifier}, testing or otherwise using either or both of the issuer and
-     * requester.
+     * Decode the provided {@link NameIdentifier}.
      * 
-     * <p>If relevant, the implementation is expected to test the {@link NameIdentifier#getNameQualifier()}
-     * against the responder, as well as any stored or decrypted values.</p>
+     * <p>If the object is incompatible with the decoder in some way, a null is returned.</p> 
      * 
-     * @param nameIdentifier object to decode
-     * @param responderId the entityID that issued (and is looking at and responding to) the value
-     * @param requesterId the entityID that provided the name and is asking for information based on it
+     * @param c14nContext the active c14n context
+     * @param nameID the object to decode
      * 
-     * @return the principal decoded from the value
-     * @throws SubjectCanonicalizationException if match conditions failed
+     * @return the principal decoded from the value, or null
      * @throws NameDecoderException if an error occurred during translation
      */
-    @Nonnull @NotEmpty String decode(@Nonnull final NameIdentifier nameIdentifier, @Nullable final String responderId,
-            @Nullable final String requesterId) throws SubjectCanonicalizationException, NameDecoderException;
+    @Nullable String decode(@Nonnull final SubjectCanonicalizationContext c14nContext,
+            @Nonnull final NameIdentifier nameID) throws NameDecoderException;
 
 }

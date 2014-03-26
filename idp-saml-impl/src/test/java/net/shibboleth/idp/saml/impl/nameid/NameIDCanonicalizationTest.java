@@ -20,12 +20,10 @@ package net.shibboleth.idp.saml.impl.nameid;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
@@ -78,20 +76,18 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
         action = new NameIDCanonicalization();
         action.setId("test");
         action.setDecoder(new NameIDDecoder() {
-
-            @Override @Nonnull public String decode(@Nonnull NameID nameID, @Nullable String responderId,
-                    @Nullable String requesterId) throws SubjectCanonicalizationException, NameDecoderException {
-                if (RESPONDER.equals(responderId) && REQUESTER.equals(requesterId)) {
+            public String decode(SubjectCanonicalizationContext scc, NameID nameID) throws NameDecoderException {
+                if (RESPONDER.equals(scc.getResponderId()) && REQUESTER.equals(scc.getRequesterId())) {
                     return VALUE_PREFIX + nameID.getValue();
                 }
-                throw new SubjectCanonicalizationException();
+                return null;
             }
         });
         action.initialize();
     }
 
     private void setSubContext(@Nullable Subject subject, @Nullable String responder, @Nullable String requester) {
-        SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
+        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
         if (subject != null) {
             scc.setSubject(subject);
         }
@@ -106,7 +102,7 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
 
     private NameID nameId(String value, String format, String nameQualifier, String nameSPQualifier) {
 
-        NameID id = builder.buildObject();
+        final NameID id = builder.buildObject();
 
         id.setValue(value);
         id.setFormat(format);
@@ -129,97 +125,84 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void testNoContext() throws ProfileException {
         action.execute(prc);
-
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
     }
 
     @Test public void testNoPrincipal() throws ProfileException {
-        Subject subject = new Subject();
+        final Subject subject = new Subject();
         setSubContext(subject, null, null);
 
         action.execute(prc);
-
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
         Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
     }
 
     @Test public void testMultiPrincipals() throws ProfileException {
-        Subject subject = new Subject();
+        final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIDPrincipal(nameId("value", NameID.KERBEROS)));
         subject.getPrincipals().add(new NameIDPrincipal(nameId("value2", NameID.X509_SUBJECT)));
 
         setSubContext(subject, null, null);
 
         action.execute(prc);
-
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
         Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
     }
 
     @Test public void testWrongFormat() throws ProfileException {
-        Subject subject = new Subject();
+        final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIDPrincipal(nameId("value", NameID.X509_SUBJECT)));
 
         setSubContext(subject, RESPONDER, REQUESTER);
 
         action.execute(prc);
-
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
         Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
     }
 
     @Test public void testWrongRequesterNameID() throws ProfileException {
-        Subject subject = new Subject();
+        final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIDPrincipal(nameId("value", NameID.KERBEROS)));
         setSubContext(subject, RESPONDER, RESPONDER);
 
         action.execute(prc);
-
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
-        Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
     }
 
     @Test public void testWrongResponderNameID() throws ProfileException {
-        Subject subject = new Subject();
+        final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIDPrincipal(nameId("value", NameID.KERBEROS)));
         setSubContext(subject, REQUESTER, REQUESTER);
 
         action.execute(prc);
-
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
-        Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
     }
 
     @Test public void testWrongRequester() throws ProfileException {
-        Subject subject = new Subject();
+        final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIDPrincipal(nameId("value", NameID.KERBEROS, REQUESTER, REQUESTER)));
         setSubContext(subject, RESPONDER, RESPONDER);
 
         action.execute(prc);
-
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
-        Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
     }
 
     @Test public void testWrongResponder() throws ProfileException {
-        Subject subject = new Subject();
+        final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIDPrincipal(nameId("value", NameID.KERBEROS, REQUESTER, REQUESTER)));
         setSubContext(subject, REQUESTER, REQUESTER);
 
         action.execute(prc);
-
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
-        Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
     }
 
     @Test public void testSuccess() throws ProfileException {
-        Subject subject = new Subject();
+        final Subject subject = new Subject();
         subject.getPrincipals().add(new UsernamePrincipal("foo@osu.edu"));
         subject.getPrincipals().add(new NameIDPrincipal(nameId("works", NameID.KERBEROS)));
         setSubContext(subject, RESPONDER, REQUESTER);
 
         action.execute(prc);
-
         ActionTestingSupport.assertProceedEvent(prc);
         SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class, false);
         Assert.assertEquals(sc.getPrincipalName(), VALUE_PREFIX + "works");

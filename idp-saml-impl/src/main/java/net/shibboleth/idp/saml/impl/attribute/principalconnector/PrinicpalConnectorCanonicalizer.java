@@ -26,7 +26,6 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.resolver.LegacyPrincipalDecoder;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
@@ -145,18 +144,12 @@ public class PrinicpalConnectorCanonicalizer implements LegacyPrincipalDecoder  
                             nameIdentifier.getFormat())) {
 
                 try {
-                    final String result = connector.decode(
-                            nameIdentifier, c14nContext.getResponderId(), c14nContext.getRequesterId());
+                    final String result = connector.decode(c14nContext, nameIdentifier);
                     if (null != result) {
                         log.trace("Legacy Principal Decoder: decoded to {}", result);
                         return result;
                     }
-                    log.trace("Legacy Principal Decoder: decode provided no results");
-                } catch (final SubjectCanonicalizationException e) {
-                    //
-                    // Not us, continue
-                    //
-                    continue;
+                    log.trace("Legacy Principal Decoder: decode provided no result");
                 } catch (final NameDecoderException e) {
                     throw new ResolutionException(e);
                 }
@@ -189,22 +182,15 @@ public class PrinicpalConnectorCanonicalizer implements LegacyPrincipalDecoder  
                     SAML2ObjectSupport.areNameIdentifierFormatsEquivalent(connector.getFormat(), nameID.getFormat())) {
 
                 try {
-                    final String result =
-                            connector.decode(nameID, c14nContext.getResponderId(), c14nContext.getRequesterId());
+                    final String result = connector.decode(c14nContext, nameID);
                     if (null != result) {
                         log.trace("Legacy Principal Decoder: decoded to {}", result);
                         return result;
                     }
-                    log.trace("Legacy Principal Decoder: decode provided no results");
-                } catch (final SubjectCanonicalizationException e) {
-                    //
-                    // Not us, continue
-                    //
-                    continue;
+                    log.trace("Legacy Principal Decoder: decode provided no result");
                 } catch (final NameDecoderException e) {
                     throw new ResolutionException(e);
                 }
-
             } else {
                 log.trace("Legacy Principal Decoder: format or relying party mismatch");
             }

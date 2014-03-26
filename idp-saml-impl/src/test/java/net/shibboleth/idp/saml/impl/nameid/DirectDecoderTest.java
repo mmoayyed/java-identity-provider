@@ -19,6 +19,7 @@ package net.shibboleth.idp.saml.impl.nameid;
 
 import java.io.IOException;
 
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 
@@ -36,45 +37,45 @@ public class DirectDecoderTest {
     private static final String PRINCIPAL="ThePrincipalName";
 
     @Test public void testSucess() throws ProfileException, ComponentInitializationException, IOException {
-        DirectNameIDDecoder decode = new DirectNameIDDecoder();
+        final DirectNameIDDecoder decode = new DirectNameIDDecoder();
         decode.setId("Decoder");
         decode.initialize();
         
-        NameID nameId = new NameIDBuilder().buildObject();
+        final NameID nameId = new NameIDBuilder().buildObject();
         nameId.setValue(PRINCIPAL);
         
-        Assert.assertEquals(decode.decode(nameId, null, null), PRINCIPAL);
-
+        Assert.assertEquals(decode.decode(new SubjectCanonicalizationContext(), nameId), PRINCIPAL);
     }
 
-    @Test(expectedExceptions={UninitializedComponentException.class,}) public void testNoinit() throws ProfileException, ComponentInitializationException, IOException {
-
-        DirectNameIDDecoder decode = new DirectNameIDDecoder();
+    @Test(expectedExceptions={UninitializedComponentException.class,})
+    public void testNoinit() throws ProfileException, ComponentInitializationException, IOException {
+        final DirectNameIDDecoder decode = new DirectNameIDDecoder();
         decode.setId("Decoder");
-        NameID nameId = new NameIDBuilder().buildObject();
+        
+        final NameID nameId = new NameIDBuilder().buildObject();
         nameId.setValue(PRINCIPAL);
-        decode.decode(nameId, null, null);
+        decode.decode(new SubjectCanonicalizationContext(), nameId);
     }
 
-    @Test public void testSAML1Sucess() throws ProfileException, ComponentInitializationException, IOException {
-        DirectNameIdentifierDecoder decode = new DirectNameIdentifierDecoder();
+    @Test public void testSAML1Success() throws ProfileException, ComponentInitializationException, IOException {
+        final DirectNameIdentifierDecoder decode = new DirectNameIdentifierDecoder();
         decode.setId("Decoder");
         decode.initialize();
         
-        NameIdentifier nameIdentifier = new NameIdentifierBuilder().buildObject();
+        final NameIdentifier nameIdentifier = new NameIdentifierBuilder().buildObject();
         nameIdentifier.setNameIdentifier(PRINCIPAL);
         
-        Assert.assertEquals(decode.decode(nameIdentifier, null, null), PRINCIPAL);
-
+        Assert.assertEquals(decode.decode(new SubjectCanonicalizationContext(), nameIdentifier), PRINCIPAL);
     }
 
-    @Test(expectedExceptions={UninitializedComponentException.class,}) public void testSAML1Noinit() throws ProfileException, ComponentInitializationException, IOException {
-
-        DirectNameIdentifierDecoder decode = new DirectNameIdentifierDecoder();
+    @Test(expectedExceptions={UninitializedComponentException.class,})
+    public void testSAML1Noinit() throws ProfileException, ComponentInitializationException, IOException {
+        final DirectNameIdentifierDecoder decode = new DirectNameIdentifierDecoder();
         decode.setId("Decoder");
-        NameIdentifier nameIdentifier = new NameIdentifierBuilder().buildObject();
+        
+        final NameIdentifier nameIdentifier = new NameIdentifierBuilder().buildObject();
         nameIdentifier.setNameIdentifier(PRINCIPAL);
-        decode.decode(nameIdentifier, null, null);
+        decode.decode(new SubjectCanonicalizationContext(), nameIdentifier);
     }
 
 }

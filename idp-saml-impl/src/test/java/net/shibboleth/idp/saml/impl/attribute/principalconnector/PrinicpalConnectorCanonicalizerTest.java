@@ -21,11 +21,9 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
@@ -220,16 +218,18 @@ public class PrinicpalConnectorCanonicalizerTest extends OpenSAMLInitBaseTestCas
         }
 
         /** {@inheritDoc} */
-        @Override @Nonnull public String decode(@Nonnull NameIdentifier nameIdentifier, @Nullable String responderId,
-                @Nullable String requesterId) throws SubjectCanonicalizationException, NameDecoderException {
-            return prefix + nameIdentifier.getNameIdentifier() + requesterId + responderId;
+        @Override
+        @Nonnull public String decode(@Nonnull final SubjectCanonicalizationContext scc, @Nonnull NameIdentifier nameIdentifier)
+                throws NameDecoderException {
+            return prefix + nameIdentifier.getNameIdentifier() + scc.getRequesterId() + scc.getResponderId();
         }
 
         /** {@inheritDoc} */
-        @Override @Nonnull public String decode(@Nonnull NameID nameID, @Nullable String responderId,
-                @Nullable String requesterId) throws SubjectCanonicalizationException, NameDecoderException {
-            return nameID.getValue() + requesterId + responderId + prefix;
+        @Override @Nonnull public String decode(@Nonnull final SubjectCanonicalizationContext scc, @Nonnull NameID nameID)
+                throws NameDecoderException {
+            return nameID.getValue() + scc.getRequesterId() + scc.getResponderId() + prefix;
         }
 
     }
+    
 }
