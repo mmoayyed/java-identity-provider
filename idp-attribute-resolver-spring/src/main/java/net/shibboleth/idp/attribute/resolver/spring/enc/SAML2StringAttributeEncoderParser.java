@@ -24,6 +24,7 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.saml.impl.attribute.encoding.SAML2StringAttributeEncoder;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.opensaml.saml.saml2.core.Attribute;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -58,7 +59,7 @@ public class SAML2StringAttributeEncoderParser extends BaseAttributeEncoderParse
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        String nameFormat = "urn:oasis:names:tc:SAML:2.0:attrname-format:uri";
+        String nameFormat = Attribute.URI_REFERENCE;
         if (config.hasAttributeNS(null, NAME_FORMAT_ATTRIBUTE_NAME)) {
             nameFormat = StringSupport.trimOrNull(config.getAttributeNS(null, NAME_FORMAT_ATTRIBUTE_NAME));
         }

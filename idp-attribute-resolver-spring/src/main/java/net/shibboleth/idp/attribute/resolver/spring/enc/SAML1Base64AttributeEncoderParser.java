@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.impl.attribute.encoding.SAML1ByteAttributeEncoder;
+import net.shibboleth.idp.saml.xml.SAMLConstants;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -55,7 +56,7 @@ public class SAML1Base64AttributeEncoderParser extends BaseAttributeEncoderParse
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        String namespace = "urn:mace:shibboleth:1.0:attributeNamespace:uri";
+        String namespace = SAMLConstants.SAML1_ATTR_NAMESPACE_URI;
         if (config.hasAttributeNS(null, NAMESPACE_ATTRIBUTE_NAME)) {
             namespace = StringSupport.trimOrNull(config.getAttributeNS(null, NAMESPACE_ATTRIBUTE_NAME));
         }

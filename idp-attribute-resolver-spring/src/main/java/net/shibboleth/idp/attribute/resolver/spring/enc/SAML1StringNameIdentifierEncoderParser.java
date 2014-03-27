@@ -24,6 +24,7 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.saml.impl.attribute.encoding.SAML1StringNameIdentifierEncoder;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -54,7 +55,7 @@ public class SAML1StringNameIdentifierEncoderParser extends AbstractSingleBeanDe
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        String format = "urn:oasis:names:tc:SAML:1.0:nameid-format:unspecified";
+        String format = NameIdentifier.UNSPECIFIED;
         if (config.hasAttributeNS(null, FORMAT_ATTRIBUTE_NAME)) {
             format = StringSupport.trimOrNull(config.getAttributeNS(null, FORMAT_ATTRIBUTE_NAME));
         }

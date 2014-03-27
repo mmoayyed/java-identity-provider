@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.impl.attribute.encoding.SAML1ScopedStringAttributeEncoder;
+import net.shibboleth.idp.saml.xml.SAMLConstants;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -62,7 +63,7 @@ public class SAML1ScopedStringAttributeEncoderParser extends
             builder.addPropertyValue("scopeType", "attribute");
         }
 
-        String namespace = "urn:mace:shibboleth:1.0:attributeNamespace:uri";
+        String namespace = SAMLConstants.SAML1_ATTR_NAMESPACE_URI;
         if (config.hasAttributeNS(null, NAMESPACE_ATTRIBUTE_NAME)) {
             namespace = StringSupport.trimOrNull(config.getAttributeNS(null, NAMESPACE_ATTRIBUTE_NAME));
         }

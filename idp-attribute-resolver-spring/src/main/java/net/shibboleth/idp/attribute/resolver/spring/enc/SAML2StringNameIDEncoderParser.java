@@ -24,6 +24,7 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.saml.impl.attribute.encoding.SAML2StringNameIDEncoder;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.opensaml.saml.saml2.core.NameID;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -55,7 +56,7 @@ public class SAML2StringNameIDEncoderParser extends AbstractSingleBeanDefinition
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        String namespace = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";
+        String namespace = NameID.UNSPECIFIED;
         if (config.hasAttributeNS(null, FORMAT_ATTRIBUTE_NAME)) {
             namespace = StringSupport.trimOrNull(config.getAttributeNS(null, FORMAT_ATTRIBUTE_NAME));
         }
