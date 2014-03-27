@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring.enc;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.saml.impl.attribute.encoding.SAML2ByteAttributeEncoder;
 
+import org.opensaml.saml.saml2.core.Attribute;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -44,7 +45,7 @@ public class SAML2Base64AttributeEncoderParserTest extends BaseAttributeDefiniti
 
         Assert.assertEquals(encoder.getName(), "Base64Name");
         Assert.assertNull(encoder.getFriendlyName()); 
-        Assert.assertEquals(encoder.getNameFormat(),"urn:oasis:names:tc:SAML:2.0:attrname-format:uri");
+        Assert.assertEquals(encoder.getNameFormat(), Attribute.URI_REFERENCE);
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {

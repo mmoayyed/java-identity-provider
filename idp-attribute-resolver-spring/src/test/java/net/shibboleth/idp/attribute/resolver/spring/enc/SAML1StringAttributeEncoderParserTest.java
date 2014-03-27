@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.resolver.spring.enc;
 
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.saml.impl.attribute.encoding.SAML1StringAttributeEncoder;
+import net.shibboleth.idp.saml.xml.SAMLConstants;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.Assert;
@@ -42,7 +43,7 @@ public class SAML1StringAttributeEncoderParserTest extends BaseAttributeDefiniti
                 getAttributeEncoder("saml1StringDefault.xml", SAML1StringAttributeEncoder.class);
 
         Assert.assertEquals(encoder.getName(), "ATTRIBUTE");
-        Assert.assertEquals(encoder.getNamespace(),"urn:mace:shibboleth:1.0:attributeNamespace:uri");
+        Assert.assertEquals(encoder.getNamespace(), SAMLConstants.SAML1_ATTR_NAMESPACE_URI);
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {

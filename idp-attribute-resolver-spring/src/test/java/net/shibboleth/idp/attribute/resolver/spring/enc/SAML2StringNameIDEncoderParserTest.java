@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring.enc;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.saml.impl.attribute.encoding.SAML2StringNameIDEncoder;
 
+import org.opensaml.saml.saml2.core.NameID;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -40,7 +41,7 @@ public class SAML2StringNameIDEncoderParserTest extends BaseAttributeDefinitionP
         SAML2StringNameIDEncoder encoder =
                 getAttributeEncoder("saml2StringNameIDDefault.xml", SAML2StringNameIDEncoder.class);
 
-        Assert.assertEquals(encoder.getNameFormat(), "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
+        Assert.assertEquals(encoder.getNameFormat(), NameID.UNSPECIFIED);
         Assert.assertNull(encoder.getNameQualifier());;
     }
     
