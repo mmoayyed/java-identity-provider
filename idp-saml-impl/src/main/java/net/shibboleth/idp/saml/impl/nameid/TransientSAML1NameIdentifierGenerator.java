@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.idp.saml.xml.SAMLConstants;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -55,6 +56,7 @@ public class TransientSAML1NameIdentifierGenerator extends AbstractSAML1NameIden
     
     /** Constructor. */
     public TransientSAML1NameIdentifierGenerator() {
+        setFormat(SAMLConstants.SAML1_NAMEID_TRANSIENT);
         subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
         setDefaultIdPNameQualifierLookupStrategy(new ResponderIdLookupFunction());
         setDefaultSPNameQualifierLookupStrategy(new RelyingPartyIdLookupFunction());
