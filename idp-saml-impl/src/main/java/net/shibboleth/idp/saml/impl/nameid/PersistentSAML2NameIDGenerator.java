@@ -132,7 +132,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
      * 
      * @param strategy generation strategy
      */
-    public synchronized void setPersistentIdGenerationStrategy(@Nonnull final PersistentIdGenerationStrategy strategy) {
+    public synchronized void setPersistentIdGenerator(@Nonnull final PersistentIdGenerationStrategy strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         persistentIdStrategy = Constraint.isNotNull(strategy, "PersistentIdGenerationStrategy cannot be null");

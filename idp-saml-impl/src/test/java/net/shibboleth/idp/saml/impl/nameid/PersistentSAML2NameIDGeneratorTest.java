@@ -93,13 +93,13 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         strategy.initialize();
         
         generator.initialize();
-        generator.setPersistentIdGenerationStrategy(strategy);
+        generator.setPersistentIdGenerator(strategy);
         generator.initialize();
     }
     
     @Test
     public void testNoResponderId() throws ComponentInitializationException, ProfileException {
-        generator.setPersistentIdGenerationStrategy(new ComputedPersistentIdGenerationStrategy());
+        generator.setPersistentIdGenerator(new ComputedPersistentIdGenerationStrategy());
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
         
@@ -108,7 +108,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
 
     @Test
     public void testNoRequesterId() throws ComponentInitializationException, ProfileException {
-        generator.setPersistentIdGenerationStrategy(new ComputedPersistentIdGenerationStrategy());
+        generator.setPersistentIdGenerator(new ComputedPersistentIdGenerationStrategy());
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
         
@@ -119,7 +119,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
     
     @Test
     public void testNoSubject() throws ComponentInitializationException, ProfileException {
-        generator.setPersistentIdGenerationStrategy(new ComputedPersistentIdGenerationStrategy());
+        generator.setPersistentIdGenerator(new ComputedPersistentIdGenerationStrategy());
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
         
@@ -128,7 +128,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
 
     @Test
     public void testNoSource() throws ComponentInitializationException, ProfileException {
-        generator.setPersistentIdGenerationStrategy(new ComputedPersistentIdGenerationStrategy());
+        generator.setPersistentIdGenerator(new ComputedPersistentIdGenerationStrategy());
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
         
@@ -147,7 +147,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         strategy.setSalt(salt);
         strategy.initialize();
 
-        generator.setPersistentIdGenerationStrategy(strategy);
+        generator.setPersistentIdGenerator(strategy);
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
         
@@ -177,7 +177,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         strategy.setIDStore(store);
         strategy.initialize();
 
-        generator.setPersistentIdGenerationStrategy(strategy);
+        generator.setPersistentIdGenerator(strategy);
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
         
@@ -242,7 +242,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         strategy2.setComputedIdStrategy(strategy);
         strategy2.initialize();
         
-        generator.setPersistentIdGenerationStrategy(strategy2);
+        generator.setPersistentIdGenerator(strategy2);
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
         
