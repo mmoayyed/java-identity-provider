@@ -38,6 +38,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
+import org.junit.AfterClass;
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -58,6 +59,8 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     private static final String INIT_FILE = "/data/net/shibboleth/idp/attribute/resolver/impl/dc/StoredIdStore.sql";
 
+    private static final String DELETE_FILE = "/data/net/shibboleth/idp/attribute/resolver/impl/dc/DeleteStore.sql";
+
     private DataSource testSource;
 
     public static String convertStreamToString(java.io.InputStream is) throws IOException {
@@ -67,6 +70,10 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
     @BeforeTest public void setupSource() throws SQLException, IOException {
 
         testSource = DatabaseTestingSupport.GetMockDataSource(INIT_FILE, "StoredIDDataConnectorStore");
+    }
+
+    @AfterClass public void teardown() {
+        DatabaseTestingSupport.InitializeDataSource(DELETE_FILE, testSource);
     }
 
     private void tryInitialize(StoredIDDataConnector connector, String failMessage) {
