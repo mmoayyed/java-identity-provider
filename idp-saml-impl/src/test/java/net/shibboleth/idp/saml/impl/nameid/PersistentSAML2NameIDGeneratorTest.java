@@ -33,6 +33,7 @@ import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.junit.AfterClass;
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.profile.ProfileException;
@@ -42,8 +43,8 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.profile.SAML2ActionTestingSupport;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 /**
@@ -56,7 +57,9 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
 
     private static final byte salt[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 
-    private static final String INIT_FILE = "/net/shibboleth/idp/saml/impl/nameid/StoredIdStore.sql";
+    public static final String INIT_FILE = "/net/shibboleth/idp/saml/impl/nameid/StoredIdStore.sql";
+    public static final String DELETE_FILE = "/net/shibboleth/idp/saml/impl/nameid/DeleteStore.sql";
+    
 
     private DataSource testSource;
     
@@ -64,8 +67,12 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
     
     private PersistentSAML2NameIDGenerator generator;
     
-    @BeforeTest public void setupSource() throws SQLException, IOException {
+    @BeforeClass public void setupSource() throws SQLException, IOException {
         testSource = DatabaseTestingSupport.GetMockDataSource(INIT_FILE, "StoredIDDataConnectorStore");
+    }
+    
+    @AfterClass public void teardown() {
+        DatabaseTestingSupport.InitializeDataSource(DELETE_FILE, testSource);
     }
     
     @BeforeMethod

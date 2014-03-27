@@ -50,7 +50,7 @@ public class DatabaseTestingSupport {
     public static final String SP_ENTITY_ID = "https://sp.example.org/sp";
     
 
-    protected static void InitializeDataSource(@Nullable String initializingSQLFile, DataSource source) {
+    public static void InitializeDataSource(@Nullable String initializingSQLFile, DataSource source) {
 
         final String sql = ReadSqlFromFile(initializingSQLFile);
         if (sql == null) {

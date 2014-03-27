@@ -25,17 +25,17 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 
-import net.shibboleth.idp.saml.impl.nameid.JDBCPersistentIdStore;
 import net.shibboleth.idp.saml.nameid.PersistentIdEntry;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
+import org.junit.AfterClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Objects;
@@ -54,10 +54,15 @@ public class DatabaseBackedIDStoreTest {
         return CharStreams.toString(new InputStreamReader(is));
     }
     
-    @BeforeTest
+    @BeforeClass
     public void setupSource() throws IOException, IOException  {
-        testSource = DatabaseTestingSupport.GetMockDataSource("/net/shibboleth/idp/saml/impl/attribute/resolver/StoredIdStore.sql", "PersistentIdStore");
+        testSource = DatabaseTestingSupport.GetMockDataSource(PersistentSAML2NameIDGeneratorTest.INIT_FILE, "PersistentIdStore");
     }
+    
+    @AfterClass public void teardown() {
+        DatabaseTestingSupport.InitializeDataSource(PersistentSAML2NameIDGeneratorTest.DELETE_FILE, testSource);
+    }
+
     
     @Test public void initializeAndGetters() throws ComponentInitializationException, IOException {
 
