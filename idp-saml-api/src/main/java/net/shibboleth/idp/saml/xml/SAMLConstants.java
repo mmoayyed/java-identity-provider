@@ -25,8 +25,13 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 public final class SAMLConstants {
     
     /** Legacy Shibboleth format for transient IDs in SAML 1.x. */
-    @Nonnull @NotEmpty public static final String SAML1_NAMEID_TRANSIENT = "urn:mace:shibboleth:1.0:nameIdentifier";
+    @Nonnull @NotEmpty
+    public static final String SAML1_NAMEID_TRANSIENT = "urn:mace:shibboleth:1.0:nameIdentifier";
 
+    /** Legacy Shibboleth SAML 1.x AttributeNamespace for URI-named attributes. */
+    @Nonnull @NotEmpty
+    public static final String SAML1_ATTR_NAMESPACE_URI = "urn:mace:shibboleth:1.0:attributeNamespace:uri";
+    
     /** Constructor. */
     private SAMLConstants() {
 
