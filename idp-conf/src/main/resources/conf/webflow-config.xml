@@ -54,6 +54,7 @@
         
         <webflow:flow-location id="SubjectC14NFlow/SAML2/Transient" path="/c14n/saml2-transient-subject-c14n-flow.xml"  />
         <webflow:flow-location id="SubjectC14NFlow/SAML2/CryptoTransient" path="/c14n/saml2-crypto-transient-subject-c14n-flow.xml"  />
+        <webflow:flow-location id="SubjectC14NFlow/SAML2/Persistent" path="/c14n/saml2-persistent-subject-c14n-flow.xml"  />
         <webflow:flow-location id="SubjectC14NFlow/SAML2/Direct" path="/c14n/saml2-direct-subject-c14n-flow.xml"  />
 
         <webflow:flow-location id="SubjectC14NFlow/SAML1/Transient" path="/c14n/saml1-transient-subject-c14n-flow.xml"  />

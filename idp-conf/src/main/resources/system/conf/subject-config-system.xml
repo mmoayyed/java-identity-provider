@@ -11,12 +11,25 @@
                            
        default-init-method="initialize"
        default-destroy-method="destroy">
+       
+    <context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
 
-    <bean id="shibboleth.StoredTransientIdGenerator" class="net.shibboleth.idp.saml.impl.nameid.StoredTransientIdGenerationStrategy"
+    <bean id="shibboleth.StoredTransientIdGenerator"
+        class="net.shibboleth.idp.saml.impl.nameid.StoredTransientIdGenerationStrategy"
         p:idStore-ref="shibboleth.StorageService" />
 
-    <bean id="shibboleth.CryptoTransientIdGenerator" class="net.shibboleth.idp.saml.impl.nameid.CryptoTransientIdGenerationStrategy"
+    <bean id="shibboleth.CryptoTransientIdGenerator"
+        class="net.shibboleth.idp.saml.impl.nameid.CryptoTransientIdGenerationStrategy"
         p:dataSealer-ref="shibboleth.DataSealer" />
+
+    <bean id="shibboleth.ComputedPersistentIdGenerator"
+        class="net.shibboleth.idp.saml.impl.nameid.ComputedPersistentIdGenerationStrategy"
+        p:salt="${idp.persistentId.salt}" p:algorithm="${idp.persistentId.algorithm}" />
+
+    <bean id="shibboleth.StoredPersistentIdGenerator" lazy-init="true"
+        class="net.shibboleth.idp.saml.impl.nameid.StoredPersistentIdGenerationStrategy"
+        p:computedIdStrategy-ref="shibboleth.ComputedPersistentIdGenerator"
+        p:IDStore-ref="${idp.persistentId.store}" />
 
     <bean id="SubjectC14NFlow/LegacyPrincipalConnector" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
         <property name="activationCondition">
@@ -38,6 +51,9 @@
             <bean class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition" />
         </property>
     </bean>
+
+    <bean id="SubjectC14NFlow/SAML2/Persistent" parent="shibboleth.AbstractSAML2C14NFlowBean"
+        p:formats="#{ {'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent'} }" />
 
     <bean id="SubjectC14NFlow/SAML2/Transient" parent="shibboleth.AbstractSAML2C14NFlowBean"
         p:formats="#{ {'urn:oasis:names:tc:SAML:2.0:nameid-format:transient'} }" />

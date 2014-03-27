@@ -21,25 +21,27 @@
     <!-- ========================= SAML NameID Generation ========================= -->
 
     <!--
-    These beans enable legacy support for NameID generation in the Attribute Resolver.
-    If you don't need that (or this is a new install) you can remove them.
+    These generator lists handle NameID/Nameidentifier generation going forward. By default,
+    transient IDs for both SAML versions are enabled. The other examples are for persistent IDs
+    and generating more one-off formats based on resolved attributes. A suggested approach is to
+    control their use via release of the underlying source attribute in the filter policy rather
+    than here, but you can set a property on any generator called "activationCondition" to limit
+    use. 
     -->
-    <bean id="shibboleth.LegacySAML1NameIdentifierGenerator"
-        class="net.shibboleth.idp.saml.impl.nameid.LegacySAML1NameIdentifierGenerator" />
-    <bean id="shibboleth.LegacySAML2NameIDGenerator"
-        class="net.shibboleth.idp.saml.impl.nameid.LegacySAML2NameIDGenerator" />
     
     <!-- SAML 2 NameID Generation -->
     <util:list id="shibboleth.SAML2NameIDGenerators">
     
         <bean id="transient" class="net.shibboleth.idp.saml.impl.nameid.TransientSAML2NameIDGenerator"
-            p:format="urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
             p:transientIdGenerator-ref="${idp.transientId.generator}" />
-    
+            
+        <bean id="persistent" class="net.shibboleth.idp.saml.impl.nameid.PersistentSAML2NameIDGenerator"
+            p:attributeSourceIds="#{ {'${idp.persistentId.sourceAttribute}'} }"
+            p:persistentIdGenerator-ref="${idp.persistentId.generator}" />
+
         <bean id="email" class="net.shibboleth.idp.saml.impl.nameid.AttributeSourcedSAML2NameIDGenerator"
             p:format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
-            p:attributeSourceIds="#{ {'email'} }"
-            p:activationCondition-ref="shibboleth.Predicates.False" />
+            p:attributeSourceIds="#{ {'email'} }" />
                 
     </util:list>
 
@@ -47,15 +49,23 @@
     <util:list id="shibboleth.SAML1NameIdentifierGenerators">
     
         <bean id="transient" class="net.shibboleth.idp.saml.impl.nameid.TransientSAML1NameIdentifierGenerator"
-            p:format="urn:mace:shibboleth:1.0:nameIdentifier"
             p:transientIdGenerator-ref="${idp.transientId.generator}" />
 
         <bean id="email" class="net.shibboleth.idp.saml.impl.nameid.AttributeSourcedSAML1NameIdentifierGenerator"
             p:format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
-            p:attributeSourceIds="#{ {'email'} }"
-            p:activationCondition-ref="shibboleth.Predicates.False" />
+            p:attributeSourceIds="#{ {'email'} }" />
                 
     </util:list>
+    
+    <!--
+    These two beans enable legacy support for NameID generation in the Attribute Resolver.
+    If you don't need that (or this is a new install) you can remove them.
+    -->
+    <bean id="shibboleth.LegacySAML1NameIdentifierGenerator"
+        class="net.shibboleth.idp.saml.impl.nameid.LegacySAML1NameIdentifierGenerator" />
+    <bean id="shibboleth.LegacySAML2NameIDGenerator"
+        class="net.shibboleth.idp.saml.impl.nameid.LegacySAML2NameIDGenerator" />
+    
     
     <!-- ========================= Java Subject -> Principal Mapping ========================= -->
 
@@ -98,6 +108,9 @@
         <ref bean="SubjectC14NFlow/SAML2/CryptoTransient" />
         <ref bean="SubjectC14NFlow/SAML1/Transient" /> 
         <ref bean="SubjectC14NFlow/SAML1/CryptoTransient" /> 
+        
+        <!-- Handle a SAML 2 persistent ID, provided a stored strategy is in use. -->
+        <!-- <ref bean="SubjectC14NFlow/SAML2/Persistent" /> -->
         
         <!--
         Finally we have beans for decoding arbitrary SAML formats directly. By default, these are turned off,
