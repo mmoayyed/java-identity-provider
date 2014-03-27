@@ -32,6 +32,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.profile.AbstractSAML2NameIDGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +56,7 @@ public class TransientSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator 
     
     /** Constructor. */
     public TransientSAML2NameIDGenerator() {
+        setFormat(NameID.TRANSIENT);
         subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
         setDefaultIdPNameQualifierLookupStrategy(new ResponderIdLookupFunction());
         setDefaultSPNameQualifierLookupStrategy(new RelyingPartyIdLookupFunction());
