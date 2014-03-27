@@ -35,6 +35,7 @@ import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.junit.AfterClass;
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -49,8 +50,6 @@ import org.testng.annotations.Test;
 /** Test for {@link StoredPersistentIdDecoder}. */
 public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
 
-    private static final String INIT_FILE = "/net/shibboleth/idp/saml/impl/nameid/StoredIdStore.sql";
-    
     private DataSource testSource;
     
     private ProfileRequestContext prc;
@@ -60,8 +59,13 @@ public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
     private StoredPersistentIdDecoder decoder;
     
     @BeforeClass public void setUpSource() {
-        testSource = DatabaseTestingSupport.GetMockDataSource(INIT_FILE, "StoredIDDataConnectorStore");
+        testSource = DatabaseTestingSupport.GetMockDataSource(PersistentSAML2NameIDGeneratorTest.INIT_FILE, "StoredIDDataConnectorStore");
     }
+    
+    @AfterClass public void teardown() {
+        DatabaseTestingSupport.InitializeDataSource(PersistentSAML2NameIDGeneratorTest.DELETE_FILE, testSource);
+    }
+
     
     @BeforeMethod public void setUp() throws SQLException, IOException, ComponentInitializationException {
         
