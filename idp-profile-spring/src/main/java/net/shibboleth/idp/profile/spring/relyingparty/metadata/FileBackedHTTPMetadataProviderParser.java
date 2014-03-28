@@ -17,38 +17,31 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
-import java.util.List;
-
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.spring.SpringSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
-import org.opensaml.saml.metadata.resolver.impl.ChainingMetadataResolver;
+import org.opensaml.saml.metadata.resolver.impl.FileBackedHTTPMetadataResolver;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Parser for &lt;ChainingMetadataProvider&gt;.
+ * Parser for a &lt;FileBackedHTTPMetadataProvider&gt;.
  */
-public class ChainingMetadataProviderParser extends AbstractMetadataProviderParser {
+public class FileBackedHTTPMetadataProviderParser extends HTTPMetadataProviderParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "ChainingMetadataProvider");
+    public static final QName ELEMENT_NAME = new QName(MetadataNamespaceHandler.NAMESPACE,
+            "FileBackedHTTPMetadataProvider");
 
     /** {@inheritDoc} */
-    @Override protected Class<ChainingMetadataResolver> getBeanClass(Element element) {
-        return ChainingMetadataResolver.class;
+    @Override protected Class<?> getBeanClass(Element element) {
+        return FileBackedHTTPMetadataResolver.class;
     }
 
     /** {@inheritDoc} */
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
-        final List<Element> childProviders =
-                ElementSupport.getChildElements(element, MetadataNamespaceHandler.METADATA_ELEMENT_NAME);
-
-        builder.addPropertyValue("resolvers", SpringSupport.parseCustomElements(childProviders, parserContext));
+        builder.addConstructorArgValue(element.getAttributeNS(null, "backingFile"));
     }
 }
