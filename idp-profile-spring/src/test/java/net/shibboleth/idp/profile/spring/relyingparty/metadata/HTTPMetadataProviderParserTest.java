@@ -19,18 +19,21 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import java.util.Iterator;
 
-import org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolver;
+import org.opensaml.saml.metadata.resolver.impl.HTTPMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.springframework.beans.factory.BeanCreationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class FilesystemMetadataParserTest extends AbstractMetadataParserTest {
+public class HTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
+
     
     @Test public void entity() throws Exception {
 
-        FilesystemMetadataResolver resolver = getBean(FilesystemMetadataResolver.class, true, "fileEntity.xml", "beans.xml");
+        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, true, "HTTPEntity.xml", "beans.xml");
         
-        Assert.assertEquals(resolver.getId(), "fileEntity");
+        Assert.assertEquals(resolver.getId(), "HTTPEntity");
+        
    
         final Iterator<EntityDescriptor> entities = resolver.resolve(criteriaFor(IDP_ID)).iterator();
         Assert.assertTrue(resolver.isFailFastInitialization());
@@ -44,24 +47,26 @@ public class FilesystemMetadataParserTest extends AbstractMetadataParserTest {
         
         Assert.assertNull(resolver.resolveSingle(criteriaFor(SP_ID)));
     }
+    
+    
+    /**Test the proxy parameters.  This will throw an exception because we do not
+     * have a proxy to test against.  It is here to allow hand walking of the code during
+     * development and as a placeholder against when we get a proxy gost.
+     * @throws Exception
+     */
+    @Test(expectedExceptions={BeanCreationException.class,}) public void proxy() throws Exception {
+
+        getBean(HTTPMetadataResolver.class, true, "HTTPProxy.xml", "beans.xml");
+    }
 
     @Test public void entities() throws Exception {
 
-        FilesystemMetadataResolver resolver = getBean(FilesystemMetadataResolver.class, true, "fileEntities.xml", "beans.xml");
+        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, true, "HTTPEntities.xml", "beans.xml");
         
-        Assert.assertEquals(resolver.getId(), "fileEntities");
-        Assert.assertEquals(resolver.getMaxRefreshDelay(), 1000*60*55);
-        Assert.assertEquals(resolver.getMinRefreshDelay(), 1000*60*15);
-        Assert.assertEquals(resolver.getRefreshDelayFactor(), 0.5, 0.001);
-        Assert.assertNotSame(resolver.getParserPool(), parserPool);
-   
-        final Iterator<EntityDescriptor> entities = resolver.resolve(criteriaFor(IDP_ID)).iterator();
-        Assert.assertTrue(resolver.isFailFastInitialization());
-        Assert.assertTrue(resolver.isRequireValidMetadata());
-        
-        Assert.assertEquals(entities.next().getEntityID(), IDP_ID);
-        Assert.assertFalse(entities.hasNext());
-
+        Assert.assertEquals(resolver.getId(), "HTTPEntities");
         Assert.assertNotNull(resolver.resolveSingle(criteriaFor(SP_ID)));
+        Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
+        Assert.assertNotSame(resolver.getParserPool(), parserPool);
+        
     }
 }
