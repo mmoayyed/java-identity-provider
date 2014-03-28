@@ -53,6 +53,8 @@
         class="net.shibboleth.idp.saml.impl.profile.PopulateBindingAndEndpointContexts" scope="prototype"
         p:endpointResolver-ref="shibboleth.EndpointResolver"
         p:bindings-ref="shibboleth.OutgoingBindings" />
+        
+    <bean id="DecryptNameIDs" class="org.opensaml.saml.saml2.profile.impl.DecryptNameIDs" scope="prototype" />
 
     <bean id="ExtractSubjectFromRequest"
             class="net.shibboleth.idp.saml.impl.profile.ExtractSubjectFromRequest" scope="prototype">
