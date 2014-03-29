@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
 public class FileBackedHTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
 
     
-    @Test(enabled=false) public void entity() throws Exception {
+    @Test public void entity() throws Exception {
 
         FileBackedHTTPMetadataResolver resolver = getBean(FileBackedHTTPMetadataResolver.class, true, "fileBackedHTTPEntity.xml", "beans.xml");
         
