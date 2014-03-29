@@ -32,6 +32,10 @@
         <transition on="proceed" to="InitializeOutboundMessageContext" />
     </action-state>
 
+    <!-- TODO: Action to populate SignatureValidationParameters on inbound context. -->
+    
+    <!-- TODO: Action to invoke dynamically established message handler chain. -->
+
     <!-- Request Checking and Preliminaries -->
 
     <action-state id="InitializeOutboundMessageContext">
@@ -47,6 +51,7 @@
     <!-- Pull SAML Subject if present and turn it into a principal name. -->
 
     <!-- TODO: action to populate DecryptionParameters on inbound context. -->
+    
     <action-state id="DecryptNameIDs">
         <evaluate expression="DecryptNameIDs" />
         <transition on="proceed" to="ExtractSubjectFromRequest" />
@@ -69,6 +74,10 @@
         <evaluate expression="FinalizeSAMLSubjectCanonicalization" />
         <transition on="proceed" to="DoProfileWork" />
     </action-state>
+    
+    <!-- TODO: action to populate SigningParameters on outbound and/or RP context. -->
+    
+    <!-- TODO: action to check encryption options and set EncryptionParameters on RP context. -->
     
     <!--
     The meat will be inserted here by defining DoProfileWork and transitioning from
