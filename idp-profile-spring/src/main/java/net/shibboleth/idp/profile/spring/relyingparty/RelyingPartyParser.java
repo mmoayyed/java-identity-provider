@@ -62,7 +62,7 @@ public class RelyingPartyParser extends AbstractRelyingPartyParser {
                 BeanDefinitionBuilder.genericBeanDefinition(EntitiesDescriptorPredicate.class);
         // TODO add navigation
         egPredicate.setInitMethodName("initialize");
-        egPredicate.addPropertyValue("entitiesDescriptorIds:", id);
+        egPredicate.addPropertyValue("entitiesDescriptorIds", id);
         egPredicate.addPropertyValue("id", "EntitiesGroup:" + id);
 
         BeanDefinitionBuilder orPredicate = BeanDefinitionBuilder.genericBeanDefinition(Predicates.class);
