@@ -5,7 +5,8 @@
                        urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"
 
     parserPoolRef="myParserPool"  requestTimeout="PT40M" basicAuthPassword="pass" basicAuthUser="user" disregardSslCertificate="true" 
-    	id="HTTPEntities" xsi:type="metadata:HTTPMetadataProvider" metadataURL="http://svn.shibboleth.net/view/java-identity-provider/trunk/idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/entities.xml?revision=5634&amp;view=co"> 
+    	id="HTTPEntities" xsi:type="metadata:HTTPMetadataProvider" 
+    	metadataURL="http://svn.shibboleth.net/view/java-identity-provider/trunk/idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/entities.xml?revision=5634&amp;view=co"> 
 
 </metadata:MetadataProvider>
                                    

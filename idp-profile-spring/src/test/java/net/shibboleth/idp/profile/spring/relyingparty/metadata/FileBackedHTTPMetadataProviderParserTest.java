@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import java.util.Iterator;
 
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.FileBackedHTTPMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.testng.Assert;
@@ -31,7 +32,7 @@ public class FileBackedHTTPMetadataProviderParserTest extends AbstractMetadataPa
 
         FileBackedHTTPMetadataResolver resolver = getBean(FileBackedHTTPMetadataResolver.class, true, "fileBackedHTTPEntity.xml", "beans.xml");
         
-        Assert.assertEquals(resolver.getId(), "FileBackedHTTPEntity");
+        Assert.assertEquals(resolver.getId(), "fileBackedHTTPEntity");
         
    
         final Iterator<EntityDescriptor> entities = resolver.resolve(criteriaFor(IDP_ID)).iterator();
@@ -47,5 +48,14 @@ public class FileBackedHTTPMetadataProviderParserTest extends AbstractMetadataPa
         Assert.assertNull(resolver.resolveSingle(criteriaFor(SP_ID)));
     }
     
+    @Test public void entities() throws Exception {
+
+        MetadataResolver resolver = getBean(MetadataResolver.class, true, "fileBackedHTTPEntities.xml", "beans.xml");
+
+        Assert.assertEquals(resolver.getId(), "fileBackedHTTPEntities");
+        
+        Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
+        Assert.assertNotNull(resolver.resolveSingle(criteriaFor(SP_ID)));
+    }
     
 }
