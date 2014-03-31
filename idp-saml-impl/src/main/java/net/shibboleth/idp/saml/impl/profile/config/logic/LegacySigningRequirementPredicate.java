@@ -18,10 +18,12 @@
 package net.shibboleth.idp.saml.impl.profile.config.logic;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.messaging.context.MessageChannelSecurityContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.Predicate;
@@ -67,7 +69,7 @@ public class LegacySigningRequirementPredicate implements Predicate<ProfileReque
     }
 
     /** {@inheritDoc} */
-    public boolean apply(ProfileRequestContext input) {
+    public boolean apply(@Nullable final ProfileRequestContext input) {
         switch (settingToApply) {
             case ALWAYS:
                 return true;
@@ -76,10 +78,12 @@ public class LegacySigningRequirementPredicate implements Predicate<ProfileReque
                 return false;
                 
             case CONDITIONAL:
-                Constraint.isNotNull(input,
-                        "ProfileRequestContext cannot be null to apply 'conditional' signing setting");
-                // TODO: implement conditional checking
-                return true;
+                if (input == null || input.getOutboundMessageContext() == null) {
+                    throw new IllegalArgumentException(
+                            "Conditional setting for signing requires non-null outbound message context");
+                }
+                return !input.getOutboundMessageContext().getSubcontext(
+                        MessageChannelSecurityContext.class, true).isIntegrityActive();
                 
             default:
                 throw new IllegalArgumentException("Signing requirement setting not one of the supported values");
