@@ -76,8 +76,10 @@ public class BaseSAMLProfileTest extends OpenSAMLInitBaseTestCase {
         try {
             predicate.apply(null);
             Assert.fail("Was not a conditional Predicate");
-        } catch (ConstraintViolationException ex) {
+        } catch (ConstraintViolationException  ex) {
             // expected   
+        } catch ( IllegalArgumentException ex) {
+            // expected
         }
     }
 
