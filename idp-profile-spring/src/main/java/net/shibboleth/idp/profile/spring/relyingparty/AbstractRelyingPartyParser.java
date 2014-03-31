@@ -80,5 +80,6 @@ public abstract class AbstractRelyingPartyParser extends AbstractSingleBeanDefin
         builder.addPropertyValue("profileConfigurations", profileConfigurations);
         
         builder.setInitMethodName("initialize");
+        builder.setDestroyMethodName("destroy");
     }
 }

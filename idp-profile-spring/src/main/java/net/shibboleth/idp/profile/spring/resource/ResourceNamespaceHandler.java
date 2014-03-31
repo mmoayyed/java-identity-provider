@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.spring.relyingparty.metadata;
+package net.shibboleth.idp.profile.spring.resource;
 
 import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.springframework.beans.factory.parsing.BeanDefinitionParsingException;
@@ -30,10 +31,9 @@ import org.springframework.beans.factory.xml.XmlReaderContext;
 import org.w3c.dom.Element;
 
 /**
- * Helper functions for dealing with legacy &lt;Resource&gt; statements.
+ * Namespace handler for legacy Resources.
  */
-public final class ResourcesHelper {
-
+public class ResourceNamespaceHandler extends BaseSpringNamespaceHandler {
     /** Namespace. */
     public static final String NAMESPACE = "urn:mace:shibboleth:2.0:resource";
 
@@ -43,39 +43,23 @@ public final class ResourcesHelper {
     /** The ResourceFilter element. */
     public static final QName FILTER_NAME = new QName(NAMESPACE, "ResourceFilter");
 
-    /** The local name for a Classpath Resource. */
-    public static final String CLASSPATH_LOCAL_NAME = "ClasspathResource";
+    /** The schema type for a Filesystem Resource. */
+    public static final QName FILESYSTEM_ELEMENT_NAME = new QName(NAMESPACE, "FilesystemResource");
 
-    /** The QName for a Classpath Resource. */
-    public static final QName CLASSPATH_ELEMENT_NAME = new QName(NAMESPACE, CLASSPATH_LOCAL_NAME);
+    /** The schema type for a HTTP Resource. */
+    public static final QName HTTP_ELEMENT_NAME = new QName(NAMESPACE, "HttpResource");
 
-    /** The local name for a Filesystem Resource. */
-    public static final String FILESYSTEM_LOCAL_NAME = "FilesystemResource";
+    /** The schema type for a file backed HTTP Resource. */
+    public static final QName FILE_HTTP_ELEMENT_NAME = new QName(NAMESPACE, "FileBackedHttpResource");
 
-    /** The QName for a Filesystem Resource. */
-    public static final QName FILESYSTEM_ELEMENT_NAME = new QName(NAMESPACE, FILESYSTEM_LOCAL_NAME);
-
-    /** The local name for a HTTP Resource. */
-    public static final String HTTP_LOCAL_NAME = "HttpResource";
-
-    /** The QName for a HTTP Resource. */
-    public static final QName HTTP_ELEMENT_NAME = new QName(NAMESPACE, HTTP_LOCAL_NAME);
-
-    /** The local name for a file backed HTTP Resource. */
-    public static final String FILE_HTTP_LOCAL_NAME = "FileBackedHttpResource";
-
-    /** The QName for a file backed HTTP Resource. */
-    public static final QName FILE_HTTP_ELEMENT_NAME = new QName(NAMESPACE, FILE_HTTP_LOCAL_NAME);
-
-    /** The local name for a SVN Resource. */
-    public static final String SVN_LOCAL_NAME = "SVNResource";
-
-    /** The QName for a SVN Resource. */
-    public static final QName SVN_ELEMENT_NAME = new QName(NAMESPACE, SVN_LOCAL_NAME);
-
-    /** (private) Constructor. */
-    private ResourcesHelper() {
+    /** {@inheritDoc} */
+    @Override
+    public void init() {
+        // Relying party Configuration
+        registerBeanDefinitionParser(ClasspathResourceParser.ELEMENT_NAME, new ClasspathResourceParser());
+        registerBeanDefinitionParser(SVNResourceParser.ELEMENT_NAME, new SVNResourceParser());
     }
+
 
     /** Check that there are no filters on the resource.
      * @param resourceElement the element to look at

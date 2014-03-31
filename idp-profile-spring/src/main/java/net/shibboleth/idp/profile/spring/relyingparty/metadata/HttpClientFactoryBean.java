@@ -30,19 +30,19 @@ public class HttpClientFactoryBean extends AbstractFactoryBean<HttpClient> {
 
     /** Our captive builder. */
     private HttpClientBuilder builder = new HttpClientBuilder();
-    
-    /** Connection Timeout.<br/>
+
+    /**
+     * Connection Timeout.<br/>
      * We need this field to ensure that Spring does the conversion.
      */
     @Duration private long connectionTimeout;
-    
+
     /** {@inheritDoc} */
-    @Override
-    public Class<HttpClient> getObjectType() {
-        
+    @Override public Class<HttpClient> getObjectType() {
+
         return HttpClient.class;
     }
-    
+
     /**
      * Sets the maximum length of time in milliseconds to wait for the connection to be established. A value of less
      * than 1 indicates no timeout.
@@ -56,7 +56,7 @@ public class HttpClientFactoryBean extends AbstractFactoryBean<HttpClient> {
         }
         builder.setConnectionTimeout((int) timeout);
     }
-    
+
     /**
      * Sets whether the responder's SSL certificate should be ignored.
      * 
@@ -65,7 +65,7 @@ public class HttpClientFactoryBean extends AbstractFactoryBean<HttpClient> {
     public void setConnectionDisregardSslCertificate(final boolean disregard) {
         builder.setConnectionDisregardSslCertificate(disregard);
     }
-    
+
     /**
      * Sets the hostname of the default proxy used when making connection. A null indicates no default proxy.
      * 
@@ -103,8 +103,7 @@ public class HttpClientFactoryBean extends AbstractFactoryBean<HttpClient> {
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected HttpClient createInstance() throws Exception {
+    @Override protected HttpClient createInstance() throws Exception {
         return builder.buildClient();
     }
 }

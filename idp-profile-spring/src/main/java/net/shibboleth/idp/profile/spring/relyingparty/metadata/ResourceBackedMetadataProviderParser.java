@@ -22,6 +22,10 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.resource.ResourceHelper;
+import net.shibboleth.idp.profile.spring.resource.ClasspathResourceParser;
+import net.shibboleth.idp.profile.spring.resource.ResourceNamespaceHandler;
+import net.shibboleth.idp.profile.spring.resource.SVNResourceParser;
+import net.shibboleth.utilities.java.support.xml.DomTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.saml.metadata.resolver.impl.AbstractBatchMetadataResolver;
@@ -37,7 +41,6 @@ import org.springframework.beans.factory.parsing.Location;
 import org.springframework.beans.factory.parsing.Problem;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.springframework.core.io.ClassPathResource;
 import org.w3c.dom.Element;
 
 /**
@@ -64,25 +67,26 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
         if (null == resources || resources.isEmpty()) {
             throw new BeanCreationException("No <Resource> specified for ResourceBackedMetadataProvider");
         }
-        final String type = getLocalPartOfType(resources.get(0));
-        if (null == type) {
+        final QName qName = DomTypeSupport.getXSIType(resources.get(0));
+        if (null == qName) {
             throw new BeanCreationException(
                     "No type specified for a <Resource> within a ResourceBackedMetadataProvider");
         }
-        log.debug("comparing type '{}' against known Resources", type);
-        if (type.equals(ResourcesHelper.CLASSPATH_LOCAL_NAME) || type.equals(ResourcesHelper.SVN_LOCAL_NAME)) {
+        log.debug("comparing type '{}' against known Resources", qName.getLocalPart());
+        
+        if (ClasspathResourceParser.ELEMENT_NAME.equals(qName)) {
             return ResourceBackedMetadataResolver.class;
-        }
-        if (type.equals(ResourcesHelper.HTTP_LOCAL_NAME)) {
+        } else if (SVNResourceParser.ELEMENT_NAME.equals(qName)) {
+            return ResourceBackedMetadataResolver.class;
+        } else if (ResourceNamespaceHandler.HTTP_ELEMENT_NAME.equals(qName)) {
             return HTTPMetadataResolver.class;
-        }
-        if (type.equals(ResourcesHelper.FILE_HTTP_LOCAL_NAME)) {
+        } else if (ResourceNamespaceHandler.FILE_HTTP_ELEMENT_NAME.equals(qName)) {
             return FileBackedHTTPMetadataResolver.class;
-        }
-        if (type.equals(ResourcesHelper.FILESYSTEM_LOCAL_NAME)) {
+        } else if (ResourceNamespaceHandler.FILESYSTEM_ELEMENT_NAME.equals(qName)) {
             return FilesystemMetadataResolver.class;
         }
-        throw new BeanCreationException("ResourceBackedMetadataProvider : Unrecognised resource type " + type);
+
+        throw new BeanCreationException("ResourceBackedMetadataProvider : Unrecognised resource type: " + qName.getLocalPart());
     }
 
     /** {@inheritDoc} */
@@ -96,22 +100,40 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
                             .getReaderContext().getResource())));
         }
 
-        ResourcesHelper.noFilters(resources.get(0), parserContext.getReaderContext());
-        final String type = getLocalPartOfType(resources.get(0));
-        log.debug("Despatching based on type '{}'", type);
+        ResourceNamespaceHandler.noFilters(resources.get(0), parserContext.getReaderContext());
 
-        if (type.equals(ResourcesHelper.CLASSPATH_LOCAL_NAME)) {
-            parseClasspathResource(resources.get(0), parserContext, builder);
-        } else if (type.equals(ResourcesHelper.SVN_LOCAL_NAME)) {
-            parseSVNResource(resources.get(0), parserContext, builder);
-        } else if (type.equals(ResourcesHelper.HTTP_LOCAL_NAME)) {
+        final QName qName = DomTypeSupport.getXSIType(resources.get(0));
+        log.debug("Dispatching based on type '{}'", qName.getLocalPart());
+        
+        if (ClasspathResourceParser.ELEMENT_NAME.equals(qName)) {
+                   
+            parseResource(resources.get(0), parserContext, builder);
+            
+        } else if (SVNResourceParser.ELEMENT_NAME.equals(qName)) {
+            
+            parseResource(resources.get(0), parserContext, builder);
+            
+        } else if (ResourceNamespaceHandler.HTTP_ELEMENT_NAME.equals(qName)) {
+            
+            log.warn("{}: {} is deprecated. consider using {}", parserContext.getReaderContext().getResource()
+                    .getDescription(), ResourceNamespaceHandler.HTTP_ELEMENT_NAME.getLocalPart(),
+                    HTTPMetadataProviderParser.ELEMENT_NAME.getLocalPart());
             parseHTTPResource(resources.get(0), parserContext, builder);
-        } else if (type.equals(ResourcesHelper.FILE_HTTP_LOCAL_NAME)) {
+            
+        } else if (ResourceNamespaceHandler.FILE_HTTP_ELEMENT_NAME.equals(qName)) {
+            
+            log.warn("{}: {} is deprecated. consider using {}", parserContext.getReaderContext().getResource()
+                    .getDescription(), ResourceNamespaceHandler.FILE_HTTP_ELEMENT_NAME.getLocalPart(),
+                    FileBackedHTTPMetadataProviderParser.ELEMENT_NAME.getLocalPart());
             parseFileBackedHTTPResource(resources.get(0), parserContext, builder);
-        } else if (type.equals(ResourcesHelper.FILESYSTEM_LOCAL_NAME)) {
+            
+        } else if (ResourceNamespaceHandler.FILESYSTEM_ELEMENT_NAME.equals(qName)) {
+            
+            log.warn("{}: {} is deprecated. consider using {}", parserContext.getReaderContext().getResource()
+                    .getDescription(), ResourceNamespaceHandler.FILESYSTEM_ELEMENT_NAME.getLocalPart(),
+                    FilesystemMetadataProviderParser.ELEMENT_NAME.getLocalPart());
             parseFilesystemResource(resources.get(0), parserContext, builder);
         }
-
     }
 
     /**
@@ -121,28 +143,14 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
      * @param parserContext the parser context
      * @param builder the builder for the {@link ResourceBackedMetadataResolver}.
      */
-    private void parseClasspathResource(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        BeanDefinitionBuilder resourceBuilder = BeanDefinitionBuilder.genericBeanDefinition(ClassPathResource.class);
-        resourceBuilder.setLazyInit(true);
-        resourceBuilder.addConstructorArgValue(element.getAttributeNS(null, "file"));
+    private void parseResource(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
 
         BeanDefinitionBuilder resourceConverter = BeanDefinitionBuilder.genericBeanDefinition(ResourceHelper.class);
         resourceConverter.setLazyInit(true);
         resourceConverter.setFactoryMethod("of");
-        resourceConverter.addConstructorArgValue(resourceBuilder.getBeanDefinition());
+        resourceConverter.addConstructorArgValue(parserContext.getDelegate().parseCustomElement(element));
 
         builder.addConstructorArgValue(resourceConverter.getBeanDefinition());
-    }
-
-    /**
-     * Parse the provided &lt;Resource&gt; and populate an appropriate {@link ResourceBackedMetadataResolver}.
-     * 
-     * @param element the &lt;Resource&gt; element
-     * @param parserContext the parser context
-     * @param builder the builder for the {@link ResourceBackedMetadataResolver}.
-     */
-    private void parseSVNResource(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-
     }
 
 /**

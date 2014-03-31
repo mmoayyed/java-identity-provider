@@ -20,8 +20,6 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.xml.namespace.QName;
 
 import net.shibboleth.utilities.java.support.xml.DomTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -60,9 +58,7 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
             return false;
         }
 
-        final String localPart = getLocalPartOfType(element);
-
-        if (ChainingMetadataProviderParser.ELEMENT_NAME.getLocalPart().equals(localPart)) {
+        if (ChainingMetadataProviderParser.ELEMENT_NAME.equals(DomTypeSupport.getXSIType(element))) {
             log.warn("{} is not valid for {}", attribute, ChainingMetadataProviderParser.ELEMENT_NAME.getLocalPart());
             return false;
         }
@@ -74,6 +70,7 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
         super.doParse(element, parserContext, builder);
 
         builder.setInitMethodName("initialize");
+        builder.setDestroyMethodName("destroy");
         builder.setLazyInit(true);
 
         builder.addPropertyValue("id", element.getAttributeNS(null, "id"));
@@ -109,19 +106,4 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
             log.warn("I do not know how to handle metadata filters (yet)");
         }
     }
-    
-    /**
-     * Return the local part of the XSI type of the element.
-     * 
-     * @param element the element to inspect
-     * @return the type as a String or null
-     */
-    @Nullable protected String getLocalPartOfType(Element element) {
-        final QName name = DomTypeSupport.getXSIType(element);
-        if (null == name) {
-            return null;
-        }
-        return name.getLocalPart();
-    }
-
 }

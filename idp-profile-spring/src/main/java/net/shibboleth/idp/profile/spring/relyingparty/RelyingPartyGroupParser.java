@@ -87,6 +87,7 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
                         BeanDefinitionBuilder.genericBeanDefinition(RelyingPartyMetadataProvider.class);
 
                 metadataBuilder.setInitMethodName("initialize");
+                metadataBuilder.setDestroyMethodName("destroy");
                 metadataBuilder.addConstructorArgValue(metadataProvider);
                 BeanDefinition rpDefinition = metadataBuilder.getBeanDefinition();
                 parserContext.getRegistry().registerBeanDefinition(

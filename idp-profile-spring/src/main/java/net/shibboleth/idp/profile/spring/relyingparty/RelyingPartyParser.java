@@ -55,6 +55,7 @@ public class RelyingPartyParser extends AbstractRelyingPartyParser {
                 BeanDefinitionBuilder.genericBeanDefinition(RelyingPartyIdPredicate.class);
         // TODO add navigation
         rpPredicate.setInitMethodName("initialize");
+        rpPredicate.setDestroyMethodName("destroy");
         rpPredicate.addPropertyValue("relyingPartyIds", id);
         rpPredicate.addPropertyValue("id", "RelyingParty#" + id);
 
@@ -62,6 +63,7 @@ public class RelyingPartyParser extends AbstractRelyingPartyParser {
                 BeanDefinitionBuilder.genericBeanDefinition(EntitiesDescriptorPredicate.class);
         // TODO add navigation
         egPredicate.setInitMethodName("initialize");
+        egPredicate.setDestroyMethodName("destroy");
         egPredicate.addPropertyValue("entitiesDescriptorIds", id);
         egPredicate.addPropertyValue("id", "EntitiesGroup:" + id);
 

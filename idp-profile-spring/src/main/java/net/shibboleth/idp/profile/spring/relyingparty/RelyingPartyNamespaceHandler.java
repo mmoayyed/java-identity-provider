@@ -28,7 +28,7 @@ import net.shibboleth.idp.profile.spring.relyingparty.saml.ShibbolethSSOProfileP
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 // TODO incomplete
-/** Namespace handler for the relying party. */
+/** Namespace handler for the relying party files. */
 public class RelyingPartyNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Namespace for this handler. */
@@ -36,7 +36,7 @@ public class RelyingPartyNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** {@inheritDoc} */
     @Override public void init() {
-        // Profile Configuration
+        // Relying party Configuration
         registerBeanDefinitionParser(SAML2ArtifactResolutionProfileParser.ELEMENT_NAME,
                 new SAML2ArtifactResolutionProfileParser());
         registerBeanDefinitionParser(SAML2LogoutRequestProfileParser.ELEMENT_NAME,
