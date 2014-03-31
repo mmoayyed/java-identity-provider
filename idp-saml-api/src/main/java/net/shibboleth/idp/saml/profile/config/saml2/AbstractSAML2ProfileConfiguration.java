@@ -41,6 +41,9 @@ import com.google.common.collect.ImmutableList;
 public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProfileConfiguration implements
         SAML2ProfileConfiguration {
 
+    /** Whether encryption is optional in the face of no key, etc. */
+    private boolean encryptionOptional;
+    
     /** Predicate used to determine if assertions should be encrypted. */
     @Nonnull private Predicate<ProfileRequestContext> encryptAssertionsPredicate;
 
@@ -64,6 +67,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
     public AbstractSAML2ProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
 
+        encryptionOptional = false;
         encryptAssertionsPredicate = Predicates.alwaysTrue();
         encryptNameIDsPredicate = Predicates.alwaysFalse();
         encryptAttributesPredicate = Predicates.alwaysFalse();
@@ -109,6 +113,20 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
                 proxyAudiences.add(trimmedAudience);
             }
         }
+    }
+    
+    /** {@inheritDoc} */
+    @Override public boolean isEncryptionOptional() {
+        return encryptionOptional;
+    }
+    
+    /**
+     * Set whether encryption is optional in the face of a missing key, etc.
+     * 
+     * @param flag  flag to set
+     */
+    public void setEncryptionOptional(final boolean flag) {
+        encryptionOptional = flag;
     }
 
     /** {@inheritDoc} */

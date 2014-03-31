@@ -135,6 +135,11 @@
                         </annotation>
                     </element>
                 </sequence>
+                <attribute name="encryptionOptional" type="string">
+                    <annotation>
+                        <documentation>A flag indicating whether encryption is optional.</documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="encryptNameIds" type="samlrp:cryptoReqType">
                     <annotation>
                         <documentation>A flag indicating whether NameIDs should be encrypted.</documentation>
