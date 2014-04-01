@@ -19,7 +19,6 @@ package net.shibboleth.idp.spring;
 
 import javax.annotation.Nonnull;
 
-import junit.framework.Assert;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -28,6 +27,7 @@ import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
@@ -43,22 +43,22 @@ public class IdentifiableBeanPostProcessorTest extends AbstractTestNGSpringConte
 
     @Test public void defaultedIdentifiable() {
         IdentifiedComponent bean = applicationContext.getBean("IdentifiableBean", Identifiable.class);
-        Assert.assertEquals("IdentifiableBean", bean.getId());
+        Assert.assertEquals(bean.getId(), "IdentifiableBean");
     }
 
     @Test public void nonDefaultedIdentified() {
         IdentifiedComponent bean = applicationContext.getBean("NonDefaultIdentifiedBean", Identified.class);
-        Assert.assertEquals("NameForAnIdentifiedBean", bean.getId());
+        Assert.assertEquals(bean.getId(), "NameForAnIdentifiedBean");
     }
 
     @Test public void nonDefaultedIdentifiable() {
         IdentifiedComponent bean = applicationContext.getBean("NonDefaultIdentifiableBean", Identifiable.class);
-        Assert.assertEquals("NameForAnIdentifiableBean", bean.getId());
+        Assert.assertEquals(bean.getId(), "NameForAnIdentifiableBean");
     }
 
     @Test public void TautologousTest() {
         IdentifiedComponent bean = applicationContext.getBean("TautologousName", Identifiable.class);
-        Assert.assertEquals("TautologousName", bean.getId());
+        Assert.assertEquals(bean.getId(), "TautologousName");
     }
 
     public static class Identified extends AbstractIdentifiedInitializableComponent {
