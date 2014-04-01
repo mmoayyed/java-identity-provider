@@ -141,6 +141,13 @@
                 <sequence>
                     <element ref="resolver:FailoverDataConnector" minOccurs="0"/>
                 </sequence>
+                <attribute name="springResources" type="string">
+                    <annotation>
+                        <documentation>
+                        Locations of Spring resource configurations.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>

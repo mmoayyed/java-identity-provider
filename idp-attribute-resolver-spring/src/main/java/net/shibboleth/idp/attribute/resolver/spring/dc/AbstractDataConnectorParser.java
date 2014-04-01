@@ -21,8 +21,6 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -35,8 +33,6 @@ import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginParser;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
-import net.shibboleth.utilities.java.support.xml.SerializeSupport;
-import net.shibboleth.utilities.java.support.xml.XmlConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,10 +43,6 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
-
-import com.google.common.base.Strings;
 
 /**
  * Base spring bean definition parser for data connectors. DataConnector implementations should provide a custom
@@ -93,57 +85,18 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
     }
 
     /**
-     * Iterates over the children of the supplied element looking for a spring <beans/> element. If the element contains
-     * multiple <beans/> declarations, only the first is returned.
+     * Creates a Spring bean factory from the supplied spring resources.
      * 
-     * @param config to check for spring beans declaration
-     * 
-     * @return spring beans element
-     */
-    @Nullable protected Element getSpringBeansElement(@Nullable final Element config) {
-        final List<Element> configElements = ElementSupport.getChildElements(config, SPRING_BEANS_ELEMENT_NAME);
-        if (configElements.size() > 0) {
-            return configElements.get(0);
-        }
-        return null;
-    }
-
-    /**
-     * Creates a Spring bean factory from the supplied Spring beans element.
-     * 
-     * @param springBeans to create bean factory from
+     * @param springResources to load bean definitions from
      * 
      * @return bean factory
      */
-    @Nonnull protected BeanFactory createBeanFactory(@Nonnull final Element springBeans) {
-
-        // Pull in the closest xsi:schemaLocation attribute we can find.
-        if (!springBeans.hasAttributeNS(XmlConstants.XSI_SCHEMA_LOCATION_ATTRIB_NAME.getNamespaceURI(),
-                XmlConstants.XSI_SCHEMA_LOCATION_ATTRIB_NAME.getLocalPart())) {
-            Node parent = springBeans.getParentNode();
-            while (parent != null && parent.getNodeType() == Node.ELEMENT_NODE) {
-                final String schemaLoc = ((Element) parent).getAttributeNS(
-                        XmlConstants.XSI_SCHEMA_LOCATION_ATTRIB_NAME.getNamespaceURI(),
-                        XmlConstants.XSI_SCHEMA_LOCATION_ATTRIB_NAME.getLocalPart());
-                if (!Strings.isNullOrEmpty(schemaLoc)) {
-                    springBeans.setAttributeNS(XmlConstants.XSI_SCHEMA_LOCATION_ATTRIB_NAME.getNamespaceURI(),
-                            XmlConstants.XSI_SCHEMA_LOCATION_ATTRIB_NAME.getPrefix() + ':'
-                                + XmlConstants.XSI_SCHEMA_LOCATION_ATTRIB_NAME.getLocalPart(),
-                            schemaLoc);
-                    break;
-                } else {
-                    parent = parent.getParentNode();
-                }
-            }
-        }
-        
-        GenericApplicationContext ctx = new GenericApplicationContext();
+    @Nonnull protected BeanFactory createBeanFactory(@Nonnull final String... springResources) {
+        final GenericApplicationContext ctx = new GenericApplicationContext();
         final XmlBeanDefinitionReader definitionReader = new XmlBeanDefinitionReader(ctx);
         definitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
         definitionReader.setNamespaceAware(true);
-        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        SerializeSupport.writeNode(springBeans, outputStream);
-        definitionReader.loadBeanDefinitions(new InputSource(new ByteArrayInputStream(outputStream.toByteArray())));
+        definitionReader.loadBeanDefinitions(springResources);
         ctx.refresh();
         return ctx.getBeanFactory();
     }

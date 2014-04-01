@@ -22,6 +22,7 @@ import javax.sql.DataSource;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.impl.attribute.resolver.StoredIDDataConnector;
+import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,11 +53,11 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder, "storedId");
         log.debug("doParse {}", config);
-        final Element springBeans = getSpringBeansElement(config);
-        if (springBeans == null) {
+        final String springResources = AttributeSupport.getAttributeValue(config, new QName("springResources"));
+        if (springResources == null) {
             builder.addPropertyValue("dataSource", getv2DataSource(config));            
         } else {
-            builder.addPropertyValue("dataSource", getDataSource(springBeans));
+            builder.addPropertyValue("dataSource", getDataSource(springResources.split("\\s+")));
         }
         
         if (config.hasAttributeNS(null, "queryTimeout")) {
@@ -67,11 +68,11 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
     /**
      * Get the dataSource from the configuration.
      * 
-     * @param springBeans the DOM element under consideration.
+     * @param springResource location of a spring resource.
      * @return the DataSource
      */
-    protected DataSource getDataSource(@Nonnull Element springBeans) {
-        final BeanFactory beanFactory = createBeanFactory(springBeans);
+    protected DataSource getDataSource(@Nonnull String... springResource) {
+        final BeanFactory beanFactory = createBeanFactory(springResource);
         return beanFactory.getBean(DataSource.class);
     }
 

@@ -1,42 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resolver:AttributeResolver 
-            xmlns="http://www.springframework.org/schema/beans"
-            xmlns:p="http://www.springframework.org/schema/p"
-            xmlns:resolver="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-            xmlns:dc="urn:mace:shibboleth:2.0:resolver:dc" xmlns:enc="urn:mace:shibboleth:2.0:attribute:encoder" 
-            xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd
-                                urn:mace:shibboleth:2.0:resolver:dc http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-dc.xsd
-                                http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    xmlns:resolver="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:dc="urn:mace:shibboleth:2.0:resolver:dc" 
+    xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd
+                        urn:mace:shibboleth:2.0:resolver:dc http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-dc.xsd">
 
-    <resolver:DataConnector id="myDatabase" xsi:type="dc:RelationalDatabase">
-      <beans>
-        <bean class="com.mchange.v2.c3p0.ComboPooledDataSource"
-              destroy-method="close"
-              p:driverClass="org.hsqldb.jdbc.JDBCDriver"
-              p:jdbcUrl="jdbc:hsqldb:mem:RDBMSDataConnectorStore"
-              p:user="SA"
-              p:password=""
-              p:acquireIncrement="3"
-              p:acquireRetryAttempts="24"
-              p:acquireRetryDelay="5000"
-              p:breakAfterAcquireFailure="true"
-              p:minPoolSize="1"
-              p:maxPoolSize="5"
-              p:maxIdleTime="300"
-              p:idleConnectionTestPeriod="360"/>
-        <bean id="cacheBuilder"
-              class="com.google.common.cache.CacheBuilder"
-              factory-method="from">
-            <constructor-arg value="expireAfterAccess=10s,maximumSize=25"/>
-        </bean>
-        <bean id="cache"
-              class="com.google.common.cache.Cache"
-              factory-bean="cacheBuilder"
-              factory-method="build"/>
-        <bean class="net.shibboleth.idp.attribute.resolver.impl.dc.rdbms.FormatExecutableStatementBuilder">
-          <constructor-arg index="0" value="SELECT * FROM people WHERE userid='%s'"/>
-        </bean>
-      </beans>
-    </resolver:DataConnector>
-    
+    <resolver:DataConnector
+      id="myDatabase"
+      xsi:type="dc:RelationalDatabase"
+      springResources="classpath:net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-spring-context.xml"/>
+
 </resolver:AttributeResolver>

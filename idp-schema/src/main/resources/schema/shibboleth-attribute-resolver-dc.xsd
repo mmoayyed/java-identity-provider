@@ -447,7 +447,7 @@
                     <element name="ConnectionPool" type="dc:LdapPoolConfigType" minOccurs="0"/>
                     <element name="ResultCache" type="dc:CacheConfigType" minOccurs="0"/>
                 </sequence>
-                <attribute name="ldapURL" type="string" use="required">
+                <attribute name="ldapURL" type="string">
                     <annotation>
                         <documentation>
                         The URL to the LDAP server.

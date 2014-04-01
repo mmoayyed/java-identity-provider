@@ -96,12 +96,12 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
         super.doParse(config, parserContext, builder);
         log.debug("doParse {}", config);
 
-        final Element springBeans = getSpringBeansElement(config);
-        if (springBeans == null) {
+        final String springResources = AttributeSupport.getAttributeValue(config, new QName("springResources"));
+        if (springResources == null) {
             log.debug("parsing v2 configuration");
             doParseV2(config, parserContext, builder);
         } else {
-            doParseInternal(config, parserContext, builder);
+            doParseInternal(config, createBeanFactory(springResources.split("\\s+")), builder);
         }
 
     }
@@ -110,14 +110,12 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
      * Parses a Spring <beans/> configuration.
      * 
      * @param config LDAPDirectory containing Spring configuration
-     * @param parserContext bean definition parsing context
+     * @param beanFactory containing spring beans
      * @param builder to initialize
      */
-    protected void doParseInternal(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    protected void doParseInternal(@Nonnull final Element config, @Nonnull final BeanFactory beanFactory,
             @Nonnull final BeanDefinitionBuilder builder) {
 
-        final Element springBeans = getSpringBeansElement(config);
-        final BeanFactory beanFactory = createBeanFactory(springBeans);
         addPropertyDescriptorValues(builder, beanFactory, LdapDataConnector.class);
 
         final String noResultAnError = AttributeSupport.getAttributeValue(config, new QName("noResultIsError"));
