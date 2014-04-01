@@ -54,7 +54,7 @@ public class HTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
      * development and as a placeholder against when we get a proxy gost.
      * @throws Exception
      */
-    @Test(expectedExceptions={BeanCreationException.class,}) public void proxy() throws Exception {
+    @Test(expectedExceptions={BeanCreationException.class,}, enabled=false) public void proxy() throws Exception {
 
         getBean(HTTPMetadataResolver.class, true, "HTTPProxy.xml", "beans.xml");
     }

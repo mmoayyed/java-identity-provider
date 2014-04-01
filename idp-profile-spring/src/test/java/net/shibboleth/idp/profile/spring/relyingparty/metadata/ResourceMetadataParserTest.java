@@ -22,6 +22,7 @@ import java.util.Iterator;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.springframework.beans.factory.BeanCreationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -136,4 +137,7 @@ public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
         Assert.assertNull(resolver.resolveSingle(criteriaFor(SP_ID)));
     }
 
+    @Test(expectedExceptions={BeanCreationException.class,}, enabled=false) public void svnParams() throws Exception {
+        getBean(MetadataResolver.class, true, "svnParams.xml", "beans.xml");
+    }
 }

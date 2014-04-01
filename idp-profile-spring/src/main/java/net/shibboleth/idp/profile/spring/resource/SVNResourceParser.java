@@ -150,7 +150,8 @@ public class SVNResourceParser extends AbstractSingleBeanDefinitionParser {
         if (username != null) {
             final BeanDefinitionBuilder usernameBuilder =
                     BeanDefinitionBuilder.genericBeanDefinition(SVNUserNameAuthentication.class);
-
+            usernameBuilder.setLazyInit(true);
+            
             usernameBuilder.addConstructorArgValue(username);
             usernameBuilder.addConstructorArgValue(false);
             usernameBuilder.addConstructorArgValue(url);
@@ -162,6 +163,9 @@ public class SVNResourceParser extends AbstractSingleBeanDefinitionParser {
             if (password != null) {
                 final BeanDefinitionBuilder passwordBuilder =
                         BeanDefinitionBuilder.genericBeanDefinition(SVNPasswordAuthentication.class);
+                passwordBuilder.setLazyInit(true);
+                
+                passwordBuilder.addConstructorArgValue(username);
                 passwordBuilder.addConstructorArgValue(password);
                 passwordBuilder.addConstructorArgValue(false);
                 passwordBuilder.addConstructorArgValue(url);
@@ -184,7 +188,7 @@ public class SVNResourceParser extends AbstractSingleBeanDefinitionParser {
         if (proxyHost != null) {
             authnManager.addPropertyValue("proxyHost", proxyHost);
             authnManager.addPropertyValue("proxyPort", proxyPort);
-            authnManager.addPropertyValue("proxyUser", proxyUser);
+            authnManager.addPropertyValue("proxyUserName", proxyUser);
             authnManager.addPropertyValue("proxyPassword", proxyPassword);
         }
         final String connectionTimeout = getAttribute(element, CTX_TIMEOUT_ATTRIB_NAME, parserContext);
@@ -221,6 +225,7 @@ public class SVNResourceParser extends AbstractSingleBeanDefinitionParser {
         }
         
         final BeanDefinitionBuilder urlBuilder = BeanDefinitionBuilder.genericBeanDefinition(SVNURL.class);
+        urlBuilder.setLazyInit(true);
         urlBuilder.setFactoryMethod("parseURIDecoded");
         urlBuilder.addConstructorArgValue(value);
         return urlBuilder.getBeanDefinition();
