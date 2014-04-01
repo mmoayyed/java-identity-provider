@@ -73,7 +73,7 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
                     "No type specified for a <Resource> within a ResourceBackedMetadataProvider");
         }
         log.debug("comparing type '{}' against known Resources", qName.getLocalPart());
-        
+
         if (ClasspathResourceParser.ELEMENT_NAME.equals(qName)) {
             return ResourceBackedMetadataResolver.class;
         } else if (SVNResourceParser.ELEMENT_NAME.equals(qName)) {
@@ -86,7 +86,8 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
             return FilesystemMetadataResolver.class;
         }
 
-        throw new BeanCreationException("ResourceBackedMetadataProvider : Unrecognised resource type: " + qName.getLocalPart());
+        throw new BeanCreationException("ResourceBackedMetadataProvider : Unrecognised resource type: "
+                + qName.getLocalPart());
     }
 
     /** {@inheritDoc} */
@@ -104,31 +105,31 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
 
         final QName qName = DomTypeSupport.getXSIType(resources.get(0));
         log.debug("Dispatching based on type '{}'", qName.getLocalPart());
-        
+
         if (ClasspathResourceParser.ELEMENT_NAME.equals(qName)) {
-                   
+
             parseResource(resources.get(0), parserContext, builder);
-            
+
         } else if (SVNResourceParser.ELEMENT_NAME.equals(qName)) {
-            
+
             parseResource(resources.get(0), parserContext, builder);
-            
+
         } else if (ResourceNamespaceHandler.HTTP_ELEMENT_NAME.equals(qName)) {
-            
+
             log.warn("{}: {} is deprecated. consider using {}", parserContext.getReaderContext().getResource()
                     .getDescription(), ResourceNamespaceHandler.HTTP_ELEMENT_NAME.getLocalPart(),
                     HTTPMetadataProviderParser.ELEMENT_NAME.getLocalPart());
             parseHTTPResource(resources.get(0), parserContext, builder);
-            
+
         } else if (ResourceNamespaceHandler.FILE_HTTP_ELEMENT_NAME.equals(qName)) {
-            
+
             log.warn("{}: {} is deprecated. consider using {}", parserContext.getReaderContext().getResource()
                     .getDescription(), ResourceNamespaceHandler.FILE_HTTP_ELEMENT_NAME.getLocalPart(),
                     FileBackedHTTPMetadataProviderParser.ELEMENT_NAME.getLocalPart());
             parseFileBackedHTTPResource(resources.get(0), parserContext, builder);
-            
+
         } else if (ResourceNamespaceHandler.FILESYSTEM_ELEMENT_NAME.equals(qName)) {
-            
+
             log.warn("{}: {} is deprecated. consider using {}", parserContext.getReaderContext().getResource()
                     .getDescription(), ResourceNamespaceHandler.FILESYSTEM_ELEMENT_NAME.getLocalPart(),
                     FilesystemMetadataProviderParser.ELEMENT_NAME.getLocalPart());

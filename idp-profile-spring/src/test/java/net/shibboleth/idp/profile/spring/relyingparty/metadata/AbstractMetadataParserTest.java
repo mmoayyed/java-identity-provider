@@ -17,7 +17,10 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
@@ -35,6 +38,8 @@ import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.env.MockPropertySource;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeSuite;
 
 import com.google.common.collect.Sets;
 
@@ -48,7 +53,36 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
     protected static final String SP_ID = "https://sp.example.org/sp/shibboleth"; 
     protected static final String IDP_ID = "https://idp.example.org/idp/shibboleth";
     
+    static private String workspaceDirName;
+    
+    static private File tempDir;
+    static private String tempDirName;
+    
     protected Object parserPool;
+    
+    @BeforeSuite public void setupDirs() throws IOException {
+        final Path p = Files.createTempDirectory("MetadataProviderTest");
+        tempDir = p.toFile();
+        tempDirName = tempDir.getAbsolutePath();
+        
+        final ClassPathResource resource = new ClassPathResource("/net/shibboleth/idp/profile/spring/relyingparty/metadata");
+        workspaceDirName = resource.getFile().getAbsolutePath();
+    }
+    
+    private void emptyDir(File dir) {
+        for (File f : dir.listFiles()) {
+            if (f.isDirectory()) {
+                emptyDir(f);
+            }
+            f.delete();
+        }
+    }
+    
+    @AfterSuite public void deleteTmpDir() {
+        emptyDir(tempDir);
+        tempDir.delete();
+        tempDir = null;
+    }
     
     /**
      * Set up a property placeholder called DIR which points to the test directory
@@ -57,13 +91,14 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
      * @param context the context
      * @throws IOException 
      */
-    static void setDirectoryPlaceholder(GenericApplicationContext context) throws IOException {
+    protected void setDirectoryPlaceholder(GenericApplicationContext context) throws IOException {
         PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
-        ClassPathResource resource = new ClassPathResource("/net/shibboleth/idp/profile/spring/relyingparty/metadata");
         
         MutablePropertySources propertySources = context.getEnvironment().getPropertySources();
         MockPropertySource mockEnvVars = new MockPropertySource();
-        mockEnvVars.setProperty("DIR", resource.getFile().getAbsolutePath());
+        mockEnvVars.setProperty("DIR", workspaceDirName);
+        mockEnvVars.setProperty("TMPDIR", tempDirName);
+        
         propertySources.replace(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, mockEnvVars);
         placeholderConfig.setPropertySources(propertySources);
         
