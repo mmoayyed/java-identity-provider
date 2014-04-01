@@ -29,10 +29,13 @@
 
     <action-state id="SelectProfileConfiguration">
         <evaluate expression="SelectProfileConfiguration" />
-        <transition on="proceed" to="InitializeOutboundMessageContext" />
+        <transition on="proceed" to="PopulateSignatureValidationParameters" />
     </action-state>
 
-    <!-- TODO: Action to populate SignatureValidationParameters on inbound context. -->
+    <action-state id="PopulateSignatureValidationParameters">
+        <evaluate expression="PopulateSignatureValidationParameters" />
+        <transition on="proceed" to="InitializeOutboundMessageContext" />
+    </action-state>
     
     <!-- TODO: Action to invoke dynamically established message handler chain. -->
 

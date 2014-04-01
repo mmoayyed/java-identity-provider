@@ -45,6 +45,11 @@
 
     <bean id="SelectProfileConfiguration"
         class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration" scope="prototype" />
+        
+    <bean id="PopulateSignatureValidationParameters"
+        class="org.opensaml.profile.action.impl.PopulateSignatureValidationParameters" scope="prototype"
+        p:configurationLookupStrategy-ref="shibboleth.SignatureValidationConfigurationLookup"
+        p:signatureValidationParametersResolver-ref="shibboleth.SignatureValidationParametersResolver" />
 
     <bean id="InitializeOutboundMessageContext"
         class="net.shibboleth.idp.saml.impl.profile.InitializeOutboundMessageContext" scope="prototype" />

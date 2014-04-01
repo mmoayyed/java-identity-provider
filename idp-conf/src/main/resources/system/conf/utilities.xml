@@ -28,4 +28,13 @@
     <bean id="shibboleth.RelyingPartyIdLookup.Simple"
         class="net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction" />
 
+    <bean id="shibboleth.SignatureValidationConfigurationLookup"
+        class="net.shibboleth.idp.profile.config.navigate.SignatureValidationConfigurationLookupFunction" />
+    <bean id="shibboleth.SignatureSigningConfigurationLookup"
+        class="net.shibboleth.idp.profile.config.navigate.SignatureSigningConfigurationLookupFunction" />
+    <bean id="shibboleth.DecryptionConfigurationLookup"
+        class="net.shibboleth.idp.profile.config.navigate.DecryptionConfigurationLookupFunction" />
+    <bean id="shibboleth.EncryptionConfigurationLookup"
+        class="net.shibboleth.idp.profile.config.navigate.EncryptionConfigurationLookupFunction" />
+        
 </beans>
