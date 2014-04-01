@@ -63,6 +63,10 @@ public abstract class BaseSAML2ProfileConfigurationParser extends BaseSAMLProfil
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
+        if (element.hasAttributeNS(null, "encryptionOptional")) {
+            builder.addPropertyValue("encryptionOptional", element.getAttributeNS(null, "encryptionOptional"));
+        }
+        
         builder.addPropertyValue("encryptAssertionsPredicate",
                 predicateForEncryption(element.getAttributeNS(null, "encryptAssertions"), "conditional"));
         builder.addPropertyValue("encryptNameIDsPredicate",

@@ -64,6 +64,7 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
 
         assertConditionalPredicate(profile.getEncryptAssertionsPredicate());
         assertFalsePredicate(profile.getEncryptNameIDsPredicate());
+        Assert.assertTrue(profile.isEncryptionOptional());
 
         Assert.assertEquals(profile.getProxyCount(), 0);
         Assert.assertTrue(profile.getProxyAudiences().isEmpty());

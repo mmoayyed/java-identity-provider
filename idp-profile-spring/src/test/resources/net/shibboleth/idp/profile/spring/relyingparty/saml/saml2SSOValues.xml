@@ -6,7 +6,7 @@
                         nameIDFormatPrecedence="one two" defaultAuthenticationMethod="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport">
 	<rp:ProfileConfiguration xsi:type="saml:SAML2SSOProfile"
 		localityAddress="ignore" localityDNSName="ignore" includeAttributeStatement="false" securityPolicyRef="ignore" 
-		maximumSPSessionLifetime="1"
+		maximumSPSessionLifetime="1" encryptionOptional="true"
 		skipEndpointValidationWhenSigned="true" outboundArtifactType="76543">
 	</rp:ProfileConfiguration>
 
