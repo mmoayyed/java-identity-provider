@@ -197,6 +197,8 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      */
     public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         relyingPartyContextLookupStrategy = Constraint.isNotNull(strategy,
                 "RelyingPartyContext lookup strategy cannot be null");
     }
@@ -208,6 +210,8 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      */
     public void setMetadataContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         metadataContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SAMLMetadataContext lookup strategy cannot be null");
     }
@@ -219,6 +223,8 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      */
     public void setBindingContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLBindingContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         bindingContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SAMLBindingContext lookup strategy cannot be null");
     }
@@ -230,6 +236,8 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      */
     public void setEndpointContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLEndpointContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         endpointContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SAMLEndpointContext lookup strategy cannot be null");
     }
