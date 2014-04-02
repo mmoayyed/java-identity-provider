@@ -6,8 +6,6 @@
 
 	id="chain" xsi:type="metadata:ChainingMetadataProvider">
 
-    <metadata:MetadataFilter xsi:type="metadata:RequiredValidUntil"/>
-
 	<metadata:MetadataProvider id="entity"
 		xsi:type="metadata:InlineMetadataProvider">
 		<EntityDescriptor entityID="https://idp.example.org/idp/shibboleth">

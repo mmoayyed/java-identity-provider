@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.xml.DomTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -101,9 +102,8 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
         final List<Element> filters =
                 ElementSupport.getChildElements(element, MetadataNamespaceHandler.METADATA_FILTER_ELEMENT_NAME);
 
-        if (null != filters && filters.size() > 0) {
-            // TODO
-            log.warn("I do not know how to handle metadata filters (yet)");
+        if (null != filters && !filters.isEmpty()) {
+            builder.addPropertyValue("metadataFilter", SpringSupport.parseCustomElements(filters, parserContext));
         }
     }
 }
