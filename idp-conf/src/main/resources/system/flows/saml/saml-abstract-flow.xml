@@ -66,8 +66,8 @@
     <action-state id="ExtractSubjectFromRequest">
         <evaluate expression="ExtractSubjectFromRequest" />
         
-        <!-- No subject to operate on, so just skip to the profile. -->
-        <transition on="NoSubject" to="DoProfileWork" />
+        <!-- No subject to operate on, so just skip back to the profile. -->
+        <transition on="NoSubject" to="PopulateResponseSignatureSigningParameters" />
         
         <transition on="proceed" to="CallSubjectCanonicalization" />
     </action-state>
@@ -83,10 +83,13 @@
 
     <action-state id="PopulateResponseSignatureSigningParameters">
         <evaluate expression="PopulateResponseSignatureSigningParameters" />
-        <transition on="proceed" to="DoProfileWork" />
+        <transition on="proceed" to="PopulateAssertionSignatureSigningParameters" />
     </action-state>
     
-    <!-- TODO: action to populate SigningParameters on RP context. -->
+    <action-state id="PopulateAssertionSignatureSigningParameters">
+        <evaluate expression="PopulateAssertionSignatureSigningParameters" />
+        <transition on="proceed" to="DoProfileWork" />
+    </action-state>
     
     <!-- TODO: action to check encryption options and set EncryptionParameters on RP context. -->
     

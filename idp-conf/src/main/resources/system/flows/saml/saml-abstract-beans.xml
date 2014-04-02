@@ -94,8 +94,30 @@
             class="org.opensaml.saml.common.profile.impl.PopulateSignatureSigningParameters" scope="prototype"
             p:configurationLookupStrategy-ref="shibboleth.SignatureSigningConfigurationLookup"
             p:signatureSigningParametersResolver-ref="shibboleth.SignatureSigningParametersResolver">
-        <property name="activationCondition">
+        <!-- TODO: disable until parameter resolver in OpenSAML is working -->
+        <property name="activationCondition" ref="shibboleth.Predicates.False">
+            <!--
             <bean class="net.shibboleth.idp.saml.impl.profile.config.logic.SignResponsesPredicate" />
+            -->
+        </property>
+    </bean>
+
+    <bean id="PopulateAssertionSignatureSigningParameters"
+            class="org.opensaml.saml.common.profile.impl.PopulateSignatureSigningParameters" scope="prototype"
+            p:configurationLookupStrategy-ref="shibboleth.SignatureSigningConfigurationLookup"
+            p:signatureSigningParametersResolver-ref="shibboleth.SignatureSigningParametersResolver">
+        <property name="activationCondition">
+            <bean class="net.shibboleth.idp.saml.impl.profile.config.logic.SignAssertionsPredicate" />
+        </property>
+        <property name="securityParametersContextLookupStrategy">
+            <bean class="com.google.common.base.Functions" factory-method="compose"
+                c:g-ref="shibboleth.ChildLookupOrCreate.SecurityParameters"
+                c:f-ref="shibboleth.ChildLookup.RelyingParty" />
+        </property>
+        <property name="existingParametersContextLookupStrategy">
+            <bean class="com.google.common.base.Functions" factory-method="compose"
+                c:g-ref="shibboleth.ChildLookup.SecurityParameters"
+                c:f-ref="shibboleth.MessageContextLookup.Outbound" />
         </property>
     </bean>
 

@@ -15,12 +15,22 @@
     <bean id="shibboleth.Predicates.True" class="com.google.common.base.Predicates" factory-method="alwaysTrue" />
     <bean id="shibboleth.Predicates.False" class="com.google.common.base.Predicates" factory-method="alwaysFalse" />
 
+    <bean id="shibboleth.MessageContextLookup.Inbound"
+        class="org.opensaml.profile.context.navigate.InboundMessageContextLookup" />
+    <bean id="shibboleth.MessageContextLookup.Outbound"
+        class="org.opensaml.profile.context.navigate.OutboundMessageContextLookup" />
+
     <bean id="shibboleth.ChildLookup.RelyingParty"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(net.shibboleth.idp.profile.context.RelyingPartyContext) }" />
+        
     <bean id="shibboleth.ChildLookup.SecurityParameters"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(org.opensaml.xmlsec.context.SecurityParametersContext) }" />
+    <bean id="shibboleth.ChildLookupOrCreate.SecurityParameters"
+        class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+        c:type="#{ T(org.opensaml.xmlsec.context.SecurityParametersContext) }"
+        c:createContext="true" />
 
     <bean id="shibboleth.ResponderIdLookup.Simple"
         class="net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction" />
