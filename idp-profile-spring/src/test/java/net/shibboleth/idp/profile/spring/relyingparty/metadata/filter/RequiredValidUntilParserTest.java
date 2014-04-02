@@ -20,7 +20,6 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter;
 import java.io.IOException;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataParserTest;
-import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.impl.RequiredValidUntilFilter;
@@ -31,10 +30,19 @@ import org.testng.annotations.Test;
  *
  */
 public class RequiredValidUntilParserTest extends AbstractMetadataParserTest {
-    
-    @Test public void validUntil() throws ResolverException, IOException {
+
+    @Test public void validUntil() throws IOException {
         MetadataResolver resolver = getBean(MetadataResolver.class, true, "filter/requiredValidUntil.xml");
-     
-        Assert.assertEquals(resolver.getMetadataFilter().getClass(), RequiredValidUntilFilter.class);
+
+        final RequiredValidUntilFilter filter = (RequiredValidUntilFilter) resolver.getMetadataFilter();
+        Assert.assertEquals(filter.getMaxValidityInterval(), 0);
     }
+    
+    @Test public void param() throws IOException {
+        MetadataResolver resolver = getBean(MetadataResolver.class, true, "filter/requiredValidUntilParam.xml");
+
+        final RequiredValidUntilFilter filter = (RequiredValidUntilFilter) resolver.getMetadataFilter();
+        Assert.assertEquals(filter.getMaxValidityInterval(), 2*3600*24*1000);
+    }
+
 }
