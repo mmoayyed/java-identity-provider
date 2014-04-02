@@ -48,12 +48,15 @@
     
     <action-state id="PopulateBindingAndEndpointContexts">
         <evaluate expression="PopulateBindingAndEndpointContexts" />
-        <transition on="proceed" to="DecryptNameIDs" />
+        <transition on="proceed" to="PopulateDecryptionParameters" />
     </action-state>
 
     <!-- Pull SAML Subject if present and turn it into a principal name. -->
 
-    <!-- TODO: action to populate DecryptionParameters on inbound context. -->
+    <action-state id="PopulateDecryptionParameters">
+        <evaluate expression="PopulateDecryptionParameters" />
+        <transition on="proceed" to="DecryptNameIDs" />
+    </action-state>
     
     <action-state id="DecryptNameIDs">
         <evaluate expression="DecryptNameIDs" />

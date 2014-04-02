@@ -58,6 +58,11 @@
         class="net.shibboleth.idp.saml.impl.profile.PopulateBindingAndEndpointContexts" scope="prototype"
         p:endpointResolver-ref="shibboleth.EndpointResolver"
         p:bindings-ref="shibboleth.OutgoingBindings" />
+
+    <bean id="PopulateDecryptionParameters"
+        class="org.opensaml.profile.action.impl.PopulateDecryptionParameters" scope="prototype"
+        p:configurationLookupStrategy-ref="shibboleth.DecryptionConfigurationLookup"
+        p:decryptionParametersResolver-ref="shibboleth.DecryptionParametersResolver" />
         
     <bean id="DecryptNameIDs" class="org.opensaml.saml.saml2.profile.impl.DecryptNameIDs" scope="prototype" />
 
