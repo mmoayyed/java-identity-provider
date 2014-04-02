@@ -78,10 +78,15 @@
     
     <action-state id="FinalizeSAMLSubjectCanonicalization">
         <evaluate expression="FinalizeSAMLSubjectCanonicalization" />
+        <transition on="proceed" to="PopulateResponseSignatureSigningParameters" />
+    </action-state>
+
+    <action-state id="PopulateResponseSignatureSigningParameters">
+        <evaluate expression="PopulateResponseSignatureSigningParameters" />
         <transition on="proceed" to="DoProfileWork" />
     </action-state>
     
-    <!-- TODO: action to populate SigningParameters on outbound and/or RP context. -->
+    <!-- TODO: action to populate SigningParameters on RP context. -->
     
     <!-- TODO: action to check encryption options and set EncryptionParameters on RP context. -->
     

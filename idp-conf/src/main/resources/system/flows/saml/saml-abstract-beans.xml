@@ -90,6 +90,15 @@
     <bean id="FinalizeSAMLSubjectCanonicalization"
         class="net.shibboleth.idp.saml.impl.profile.FinalizeSAMLSubjectCanonicalization" scope="prototype" />
 
+    <bean id="PopulateResponseSignatureSigningParameters"
+            class="org.opensaml.saml.common.profile.impl.PopulateSignatureSigningParameters" scope="prototype"
+            p:configurationLookupStrategy-ref="shibboleth.SignatureSigningConfigurationLookup"
+            p:signatureSigningParametersResolver-ref="shibboleth.SignatureSigningParametersResolver">
+        <property name="activationCondition">
+            <bean class="net.shibboleth.idp.saml.impl.profile.config.logic.SignResponsesPredicate" />
+        </property>
+    </bean>
+
     <bean id="InitializeAuthenticationContext"
         class="net.shibboleth.idp.saml.impl.profile.InitializeAuthenticationContext" scope="prototype" />
 
