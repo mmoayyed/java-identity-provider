@@ -86,12 +86,16 @@
         <transition on="proceed" to="PopulateAssertionSignatureSigningParameters" />
     </action-state>
     
+    <!-- TODO: route to encryption parameter action once bean is live -->
     <action-state id="PopulateAssertionSignatureSigningParameters">
         <evaluate expression="PopulateAssertionSignatureSigningParameters" />
         <transition on="proceed" to="DoProfileWork" />
     </action-state>
-    
-    <!-- TODO: action to check encryption options and set EncryptionParameters on RP context. -->
+
+    <action-state id="PopulateEncryptionParameters">
+        <evaluate expression="PopulateEncryptionParameters" />
+        <transition on="proceed" to="DoProfileWork" />
+    </action-state>
     
     <!--
     The meat will be inserted here by defining DoProfileWork and transitioning from

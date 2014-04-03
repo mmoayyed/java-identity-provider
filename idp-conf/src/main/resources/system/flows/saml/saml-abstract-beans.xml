@@ -120,6 +120,14 @@
                 c:f-ref="shibboleth.MessageContextLookup.Outbound" />
         </property>
     </bean>
+    
+    <!--
+    TODO: activate once resolver is available
+    <bean id="PopulateEncryptionParameters"
+            class="net.shibboleth.idp.saml.impl.profile.saml2.PopulateEncryptionParameters" scope="prototype"
+            p:configurationLookupStrategy-ref="shibboleth.EncryptionConfigurationLookup"
+            p:encryptionParametersResolver-ref="shibboleth.EncryptionParametersResolver" />
+    -->
 
     <bean id="InitializeAuthenticationContext"
         class="net.shibboleth.idp.saml.impl.profile.InitializeAuthenticationContext" scope="prototype" />
