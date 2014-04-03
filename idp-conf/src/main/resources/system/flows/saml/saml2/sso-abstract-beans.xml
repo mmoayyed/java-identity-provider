@@ -97,8 +97,6 @@
             <bean id="AlwaysTrueRelyingPartyPredicate" class="com.google.common.base.Predicates" factory-method="alwaysTrue" />
         </property>
     </bean>
-
-    <alias name="shibboleth.OutgoingSAML2SSOBindings" alias="shibboleth.OutgoingBindings"/>
         
     <bean id="AddResponseShell" class="org.opensaml.saml.saml2.profile.impl.AddResponseShell" scope="prototype"
             p:issuerLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple">
