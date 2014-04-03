@@ -372,7 +372,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
                                 return input.getId().equals(bindingCtx.getBindingUri());
                             }
                         });
-                if (binding.isPresent()) {
+                if (binding.isPresent() && binding.get().isSynchronous()) {
                     log.debug("{} Handling request via synchronous binding, preparing outbound binding context for {}",
                             getLogPrefix(), binding.get().getId());
                     
