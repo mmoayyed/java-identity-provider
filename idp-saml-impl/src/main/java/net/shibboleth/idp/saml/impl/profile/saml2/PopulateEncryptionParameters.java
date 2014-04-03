@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.AbstractConditionalProfileAction;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -38,6 +37,7 @@ import org.opensaml.xmlsec.EncryptionParameters;
 import org.opensaml.xmlsec.EncryptionParametersResolver;
 import org.opensaml.xmlsec.criterion.EncryptionConfigurationCriterion;
 
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.config.saml2.SAML2ProfileConfiguration;
@@ -70,7 +70,7 @@ import com.google.common.collect.Lists;
  * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
  * @event {@link IdPEventIds#INVALID_PROFILE_CONFIG}
  */
-public class PopulateEncryptionParameters extends AbstractConditionalProfileAction {
+public class PopulateEncryptionParameters extends AbstractProfileAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateEncryptionParameters.class);
