@@ -57,6 +57,7 @@
 
     <util:list id ="shibboleth.AttributeResolverResources">
         <value>file://${idp.home}/conf/attribute-resolver.xml</value>
+        <value>file://${idp.home}/conf/property-placeholder.xml</value>
     </util:list>
 
     <util:list id ="shibboleth.AttributeFilterResources">

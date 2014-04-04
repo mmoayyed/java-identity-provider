@@ -56,12 +56,11 @@
     <!-- ========================================== -->
     
     <!-- Example LDAP Connector -->
-    <!-- TODO tz Set properties via property replacement. -->
     <resolver:DataConnector id="myLDAP" xsi:type="dc:LDAPDirectory"
-        ldapURL="ldap://localhost:10389" 
-        baseDN="ou=people,dc=example,dc=org" 
-        principal="uid=myservice,ou=system"
-        principalCredential="myServicePassword">
+        ldapURL="${idp.attribute.resolver.myLDAP.ldapURL}" 
+        baseDN="${idp.attribute.resolver.myLDAP.baseDN}" 
+        principal="${idp.attribute.resolver.myLDAP.principal}"
+        principalCredential="${idp.attribute.resolver.myLDAP.principalCredential}">
         <dc:FilterTemplate>
             <![CDATA[
                 (uid=$requestContext.principalName)
