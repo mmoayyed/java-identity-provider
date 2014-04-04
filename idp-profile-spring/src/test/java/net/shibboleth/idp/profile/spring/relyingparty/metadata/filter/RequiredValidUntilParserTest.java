@@ -27,7 +27,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * test for patrser for RequiredValidUntil filter
+ * test for parser for RequiredValidUntil filter
  */
 public class RequiredValidUntilParserTest extends AbstractMetadataParserTest {
 

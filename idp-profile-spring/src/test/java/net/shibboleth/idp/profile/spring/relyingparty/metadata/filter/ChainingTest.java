@@ -28,7 +28,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Test for Chaining meytadata filter parser.
+ * Test for Chaining metadata filter parser.
  */
 public class ChainingTest extends AbstractMetadataParserTest {
 
