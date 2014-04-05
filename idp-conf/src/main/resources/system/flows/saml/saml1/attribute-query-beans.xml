@@ -63,8 +63,15 @@
                 
                 <bean class="org.opensaml.saml.common.binding.security.MessageLifetimeSecurityHandler" />
                 
-                <bean class="org.opensaml.saml.saml2.binding.security.SAML2AuthnRequestsSignedSecurityHandler" />
-                
+                <bean class="org.opensaml.saml.common.binding.security.SAMLMDClientCertAuthSecurityHandler">
+                    <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
+                    <property name="trustEngine" ref="idp.X509TrustEngine" />
+                    <property name="certificateNameOptions">
+                        <bean class="org.opensaml.security.messaging.impl.CertificateNameOptions"
+                            p:evaluateSubjectCommonName="true" />
+                    </property>
+                </bean>
+
                 <bean class="org.opensaml.saml.common.binding.security.SAMLProtocolMessageXMLSignatureSecurityHandler">
                     <property name="trustEngine" ref="idp.SignatureTrustEngine" />
                 </bean>
@@ -105,6 +112,16 @@
     <bean id="AddSubjectConfirmationToSubjects"
         class="org.opensaml.saml.saml1.profile.impl.AddSubjectConfirmationToSubjects" scope="prototype"
         p:methods="#{ {'urn:oasis:names:tc:SAML:1.0:cm:sender-vouches'} }" />
+
+    <bean id="outboundMessageHandlerChain"
+            class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
+        <property name="handlers">
+            <util:list>
+                <!-- TODO outbound handlers -->
+                <bean class="org.opensaml.saml.common.binding.security.SAMLOutboundProtocolMessageSigningHandler" />
+            </util:list>
+        </property>
+    </bean>
 
     <bean id="messageEncoderFactory" class="net.shibboleth.idp.saml.impl.profile.SpringAwareMessageEncoderFactory"
         p:bindings-ref="shibboleth.OutgoingSOAPBindings" />

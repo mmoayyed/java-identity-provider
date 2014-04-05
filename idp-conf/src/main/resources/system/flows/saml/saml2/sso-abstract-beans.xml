@@ -144,6 +144,18 @@
                 c:lifetime="${idp.session.defaultSPlifetime}"/>
         </property>
     </bean>
+
+    <bean id="outboundMessageHandlerChain"
+            class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
+        <property name="handlers">
+            <util:list>
+                <!-- TODO outbound handlers -->
+                <bean class="org.opensaml.saml.common.binding.SAMLOutboundDestinationHandler" />
+                <bean class="org.opensaml.saml.common.binding.security.EndpointUrlSchemeSecurityHandler" />
+                <bean class="org.opensaml.saml.common.binding.security.SAMLOutboundProtocolMessageSigningHandler" />
+            </util:list>
+        </property>
+    </bean>
         
     <bean id="messageEncoderFactory" class="net.shibboleth.idp.saml.impl.profile.SpringAwareMessageEncoderFactory"
         p:bindings-ref="shibboleth.OutgoingSAML2SSOBindings" />
