@@ -58,6 +58,12 @@
             p:encoderBeanId="shibboleth.Encoders.SAML2SOAPEncoder" p:synchronous="true" />
     </util:list>
 
+    <util:list id="shibboleth.OutgoingECPBindings">
+        <!-- Special case, the binding is technically SOAP, but response endpoint checking based on PAOS. -->
+        <bean parent="shibboleth.BindingDescriptor" id="urn:oasis:names:tc:SAML:2.0:bindings:PAOS"
+            p:encoderBeanId="shibboleth.Encoders.SAML2SOAPEncoder" />
+    </util:list>
+
     <!--
     These are the actual MessageEncoder beans that implement the outgoing binding requirements.
     There is generally never any reason to change these.
