@@ -37,6 +37,11 @@
             <version>${opensaml.version}</version>
         </dependency>
         <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-messaging-impl</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-profile-impl</artifactId>
             <version>${project.version}</version>

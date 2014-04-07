@@ -75,6 +75,11 @@
                     <property name="keyInfoResolver" ref="testbed.KeyInfoCredentialResolver" />
                 </bean>
                 
+                <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryIssuer">
+                    <property name="issuerLookupStrategy">
+                        <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageContextIssuerFunction" />
+                    </property>
+                </bean>
             </util:list>
         </property>
     </bean>

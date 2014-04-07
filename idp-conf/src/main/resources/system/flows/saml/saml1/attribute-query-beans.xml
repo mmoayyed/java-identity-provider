@@ -75,6 +75,12 @@
                 <bean class="org.opensaml.saml.common.binding.security.SAMLProtocolMessageXMLSignatureSecurityHandler">
                     <property name="trustEngine" ref="idp.SignatureTrustEngine" />
                 </bean>
+                
+                <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryIssuer">
+                    <property name="issuerLookupStrategy">
+                        <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageContextIssuerFunction" />
+                    </property>
+                </bean>
             </util:list>
         </property>
     </bean>
