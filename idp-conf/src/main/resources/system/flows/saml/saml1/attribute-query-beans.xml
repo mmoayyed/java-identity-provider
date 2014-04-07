@@ -81,6 +81,12 @@
                         <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageContextIssuerFunction" />
                     </property>
                 </bean>
+
+                <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryAuthentication">
+                    <property name="authenticationLookupStrategy">
+                        <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageContextAuthenticationFunction" />
+                    </property>
+                </bean>
             </util:list>
         </property>
     </bean>
