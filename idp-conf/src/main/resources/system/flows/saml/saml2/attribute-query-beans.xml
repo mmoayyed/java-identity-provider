@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:c="http://www.springframework.org/schema/c"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+    default-init-method="initialize"
+    default-destroy-method="destroy">
+
+    <context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
+
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
+
+    <bean id="InitializeProfileRequestContext"
+        class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
+        p:profileId="#{T(net.shibboleth.idp.saml.profile.config.saml2.AttributeQueryProfileConfiguration).PROFILE_ID}" />
+
+    <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
+        <constructor-arg>
+            <bean id="messageDecoder" class="org.opensaml.saml.saml2.binding.decoding.HTTPSOAP11Decoder" scope="prototype">
+                <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <bean id="inboundMessageHandlerChain"
+            class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
+        <property name="handlers">
+            <util:list>
+                <bean class="org.opensaml.saml.common.binding.CheckMessageVersionHandler" />
+
+                <bean class="org.opensaml.saml.common.binding.SAMLProtocolAndRoleHandler">
+                    <property name="protocol">
+                        <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML20P_NS" />
+                    </property>
+                    <property name="role">
+                        <util:constant static-field="org.opensaml.saml.saml2.metadata.SPSSODescriptor.DEFAULT_ELEMENT_NAME" />
+                    </property>
+                </bean>
+                
+                <!-- TODO: need to poke metadata source in from relying party config later -->
+                <bean class="org.opensaml.saml.common.binding.SAMLMetadataLookupHandler">
+                    <property name="roleDescriptorResolver">
+                        <bean class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
+                            c:mdResolver-ref="ExampleMetadataResolver" />
+                    </property>
+                </bean>
+                
+                <!-- TODO: move to the dynamically resolved handler chain -->
+                <bean class="org.opensaml.saml.common.binding.security.ReceivedEndpointSecurityHandler" scope="prototype">
+                    <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
+                </bean>
+                
+                <bean class="org.opensaml.saml.common.binding.security.MessageReplaySecurityHandler" >
+                    <property name="replayCache" ref="shibboleth.ReplayCache" />
+                </bean>
+                
+                <bean class="org.opensaml.saml.common.binding.security.MessageLifetimeSecurityHandler" />
+                
+                <bean class="org.opensaml.saml.common.binding.security.SAMLMDClientCertAuthSecurityHandler">
+                    <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
+                    <property name="trustEngine" ref="idp.X509TrustEngine" />
+                    <property name="certificateNameOptions">
+                        <bean class="org.opensaml.security.messaging.impl.CertificateNameOptions"
+                            p:evaluateSubjectCommonName="true" />
+                    </property>
+                </bean>
+
+                <bean class="org.opensaml.saml.common.binding.security.SAMLProtocolMessageXMLSignatureSecurityHandler">
+                    <property name="trustEngine" ref="idp.SignatureTrustEngine" />
+                </bean>
+                
+                <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryIssuer">
+                    <property name="issuerLookupStrategy">
+                        <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageContextIssuerFunction" />
+                    </property>
+                </bean>
+
+                <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryAuthentication">
+                    <property name="authenticationLookupStrategy">
+                        <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageContextAuthenticationFunction" />
+                    </property>
+                </bean>
+            </util:list>
+        </property>
+    </bean>
+
+    <!-- TODO replace with eventual relying-party.xml config -->
+    <bean
+        id="SecurityConfiguration"
+        class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
+    <bean
+        id="AttributeQueryProfileConfiguration"
+        class="net.shibboleth.idp.saml.profile.config.saml2.AttributeQueryProfileConfiguration"
+        p:securityConfiguration-ref="SecurityConfiguration" />
+    <bean
+        id="RelyingPartyConfiguration"
+        class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"
+        p:id="ActivatedRelyingPartyConfiguration"
+        p:responderId="https://idp.example.org"
+        p:detailedErrors="true"
+        p:profileConfigurations-ref="AttributeQueryProfileConfiguration" />
+
+    <alias name="shibboleth.OutgoingSOAPBindings" alias="shibboleth.OutgoingBindings"/>
+
+    <bean id="AddResponseShell" class="org.opensaml.saml.saml2.profile.impl.AddResponseShell" scope="prototype">
+        <property name="identifierGeneratorLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction" />
+        </property>
+    </bean>
+
+    <bean id="AddAttributeStatementToAssertion"
+        class="net.shibboleth.idp.saml.impl.profile.saml2.AddAttributeStatementToAssertion" scope="prototype" />
+
+    <bean id="CopyNameIDFromRequest"
+            class="org.opensaml.saml.saml2.profile.impl.CopyNameIDFromRequest" scope="prototype" />
+
+    <bean id="AddSubjectConfirmationToSubjects"
+            class="org.opensaml.saml.saml2.profile.impl.AddSubjectConfirmationToSubjects" scope="prototype"
+            p:method="urn:oasis:names:tc:SAML:2.0:cm:sender-vouches">
+        <property name="addressLookupStrategy"><null/></property>
+        <property name="inResponseToLookupStrategy"><null/></property>
+        <property name="lifetimeLookupStrategy"><null/></property>
+        <property name="recipientLookupStrategy"><null/></property>
+    </bean>
+
+    <bean id="outboundMessageHandlerChain"
+            class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
+        <property name="handlers">
+            <util:list>
+                <!-- TODO outbound handlers -->
+                <bean class="org.opensaml.saml.common.binding.security.SAMLOutboundProtocolMessageSigningHandler" />
+            </util:list>
+        </property>
+    </bean>
+
+</beans>
