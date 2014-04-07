@@ -18,10 +18,11 @@
 package net.shibboleth.idp.profile.impl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -43,6 +44,8 @@ import com.google.common.base.Function;
  * An {@link Action} implementation which adapts an OpenSAML {@link MessageHandler} for execution 
  * in a Spring WebFlow environment.
  * 
+ * <p>The handler to run may be injected directly, or supplied via a lookup function.</p>
+ * 
  * <p>
  * The {@link Direction} enum is used to indicate the target message context for the invocation
  * of the handler:
@@ -62,7 +65,7 @@ import com.google.common.base.Function;
  * @event {@link EventIds#INVALID_MSG_CTX}
  */
 public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageType> 
-        extends AbstractIdentifiedInitializableComponent implements Action {
+        extends AbstractIdentifiableInitializableComponent implements Action {
     
     /** Used to indicate the target message context for invocation of the adapted message handler. */
     public enum Direction {
@@ -77,10 +80,13 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
         };
     
     /** Logger. */
-    @Nonnull private Logger log = LoggerFactory.getLogger(WebFlowMessageHandlerAdaptor.class);
+    @Nonnull private Logger log = LoggerFactory.getLogger(WebFlowMessageHandlerAdaptor.class);    
+
+    /** Lookup strategy for handler to run if not set directly. */
+    @Nullable private Function<ProfileRequestContext,MessageHandler> handlerLookupStrategy;
     
     /** The message handler being adapted. */
-    @Nonnull private final MessageHandler handler;
+    @Nullable private MessageHandler handler;
     
     /** The direction of execution for this action instance. */
     private final Direction direction;
@@ -91,28 +97,58 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
     /**
      * Constructor.
      *
+     * @param executionDirection the direction of execution
+     */
+    private WebFlowMessageHandlerAdaptor(@Nonnull final Direction executionDirection) {
+        direction = Constraint.isNotNull(executionDirection, "Execution direction cannot be null");
+        profileContextLookupStrategy = new WebflowRequestContextProfileRequestContextLookup();
+    }
+    
+    /**
+     * Constructor.
+     *
      * @param messageHandler the adapted message handler
      * @param executionDirection the direction of execution
      */
     public WebFlowMessageHandlerAdaptor(@Nonnull final MessageHandler messageHandler,
-            final Direction executionDirection) {
-        handler = Constraint.isNotNull(messageHandler, "MessageHandler may not be null");
-        direction = Constraint.isNotNull(executionDirection, "Execution direction may not be null");
+            @Nonnull final Direction executionDirection) {
+        this(executionDirection);
         
-        profileContextLookupStrategy = new WebflowRequestContextProfileRequestContextLookup();
-        
-        setId(getClass().getName());
+        handler = Constraint.isNotNull(messageHandler, "MessageHandler cannot be null");
     }
 
+    /**
+     * Constructor.
+     *
+     * @param lookupStrategy lookup function for message handler to run 
+     * @param executionDirection the direction of execution
+     */
+    public WebFlowMessageHandlerAdaptor(@Nonnull final Function<ProfileRequestContext,MessageHandler> lookupStrategy,
+            @Nonnull final Direction executionDirection) {
+        this(executionDirection);
+        
+        handlerLookupStrategy = Constraint.isNotNull(lookupStrategy, "MessageHandler lookup strategy cannot be null");
+    }
+    
     /** {@inheritDoc} */
+    @Override
     public Event execute(RequestContext springRequestContext) throws Exception {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext =
                 profileContextLookupStrategy.apply(springRequestContext);
         if (profileRequestContext == null) {
-            log.error("Action {}: IdP profile request context is not available", getId());
+            log.error("Action {}: Profile request context is not available", getId());
             return ActionSupport.buildEvent(this, EventIds.INVALID_PROFILE_CTX);
+        
+        }
+        
+        if (handler == null) {
+            handler = handlerLookupStrategy.apply(profileRequestContext);
+            if (handler == null) {
+                log.debug("Action {}: No message handler returned by lookup function, nothing to do");
+                return ActionSupport.buildProceedEvent(handler);
+            }
         }
         
         MessageContext target = null;

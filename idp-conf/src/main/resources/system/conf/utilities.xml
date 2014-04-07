@@ -38,6 +38,10 @@
     <bean id="shibboleth.RelyingPartyIdLookup.Simple"
         class="net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction" />
 
+    <bean id="shibboleth.InboundMessageHandlerConfigurationLookup"
+        class="net.shibboleth.idp.profile.config.navigate.InboundMessageHandlerLookupFunction" />
+    <bean id="shibboleth.OutboundMessageHandlerConfigurationLookup"
+        class="net.shibboleth.idp.profile.config.navigate.OutboundMessageHandlerLookupFunction" />
     <bean id="shibboleth.SignatureValidationConfigurationLookup"
         class="net.shibboleth.idp.profile.config.navigate.SignatureValidationConfigurationLookupFunction" />
     <bean id="shibboleth.SignatureSigningConfigurationLookup"

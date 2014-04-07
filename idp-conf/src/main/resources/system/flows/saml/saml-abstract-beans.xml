@@ -19,18 +19,10 @@
 
     <!-- These are beans that are common to most or all SAML profile flows, regardless of version. -->
 
-    <bean id="HandleInboundMessage" class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
+    <bean id="HandleInboundMessage"
+        class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
         c:messageHandler-ref="inboundMessageHandlerChain"
         c:executionDirection="INBOUND" />
-
-    <!-- TODO: remove once we get real metadata config in place -->
-    <bean id="ExampleMetadata" class="org.springframework.core.io.FileSystemResource" c:path="${idp.home}/metadata/example-metadata.xml" />
-    <bean id="ExampleMetadataResolver" class="org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolver"
-            p:parserPool-ref="shibboleth.ParserPool">
-        <constructor-arg>
-            <util:property-path path="ExampleMetadata.File" />
-        </constructor-arg>
-    </bean>
 
     <bean id="InitializeRelyingPartyContexFromSAMLPeer"
         class="net.shibboleth.idp.saml.impl.profile.InitializeRelyingPartyContextFromSAMLPeer" scope="prototype" />
@@ -50,6 +42,11 @@
         class="org.opensaml.profile.action.impl.PopulateSignatureValidationParameters" scope="prototype"
         p:configurationLookupStrategy-ref="shibboleth.SignatureValidationConfigurationLookup"
         p:signatureValidationParametersResolver-ref="shibboleth.SignatureValidationParametersResolver" />
+
+    <bean id="HandleInboundSecurityPolicy"
+        class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
+        c:lookupStrategy-ref="shibboleth.InboundMessageHandlerConfigurationLookup"
+        c:executionDirection="INBOUND" />
 
     <bean id="InitializeOutboundMessageContext"
         class="net.shibboleth.idp.saml.impl.profile.InitializeOutboundMessageContext" scope="prototype" />

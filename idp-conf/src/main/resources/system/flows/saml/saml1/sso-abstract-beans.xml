@@ -41,16 +41,6 @@
                             c:mdResolver-ref="ExampleMetadataResolver" />
                     </property>
                 </bean>
-                
-                <!-- TODO: move to the dynamically resolved handler chain -->
-                <bean class="org.opensaml.saml.common.binding.security.MessageReplaySecurityHandler"
-                    p:replayCache-ref="shibboleth.ReplayCache" />
-                <bean class="org.opensaml.saml.common.binding.security.MessageLifetimeSecurityHandler" />
-                <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryIssuer">
-                    <property name="issuerLookupStrategy">
-                        <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageContextIssuerFunction" />
-                    </property>
-                </bean>
             </util:list>
         </property>
     </bean>
@@ -61,8 +51,13 @@
         class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
     <bean
         id="SAML1BrowserSSOProfileConfiguration"
-        class="net.shibboleth.idp.saml.profile.config.saml1.BrowserSSOProfileConfiguration"
-        p:securityConfiguration-ref="SecurityConfiguration" />
+            class="net.shibboleth.idp.saml.profile.config.saml1.BrowserSSOProfileConfiguration"
+            p:securityConfiguration-ref="SecurityConfiguration">
+        <property name="inboundHandler">
+            <bean class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain"
+                p:handlers-ref="shibboleth.ShibbolethSSOSecurityPolicy" />
+        </property>
+    </bean>
     <bean
         id="RelyingPartyConfiguration"
         class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"

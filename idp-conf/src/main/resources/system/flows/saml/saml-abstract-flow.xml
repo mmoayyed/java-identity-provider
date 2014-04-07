@@ -34,10 +34,13 @@
 
     <action-state id="PopulateSignatureValidationParameters">
         <evaluate expression="PopulateSignatureValidationParameters" />
-        <transition on="proceed" to="InitializeOutboundMessageContext" />
+        <transition on="proceed" to="HandleInboundSecurityPolicy" />
     </action-state>
     
-    <!-- TODO: Action to invoke dynamically established message handler chain. -->
+    <action-state id="HandleInboundSecurityPolicy">
+        <evaluate expression="HandleInboundSecurityPolicy" />
+        <transition on="proceed" to="InitializeOutboundMessageContext" />
+    </action-state>
 
     <!-- Request Checking and Preliminaries -->
 

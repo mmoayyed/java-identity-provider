@@ -32,6 +32,7 @@
 
     <import resource="session-manager.xml" />
     <import resource="saml-binding-config.xml" />
+    <import resource="security-policy.xml" />
     <import resource="subject-config-system.xml" />
     <import resource="utilities.xml" />
     

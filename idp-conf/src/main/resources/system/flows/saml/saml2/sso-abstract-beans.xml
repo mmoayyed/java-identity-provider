@@ -45,63 +45,30 @@
                             c:mdResolver-ref="ExampleMetadataResolver" />
                     </property>
                 </bean>
-
-                <!-- TODO: move to the dynamically resolved handler chain -->
-                <bean class="org.opensaml.saml.common.binding.security.ReceivedEndpointSecurityHandler" scope="prototype">
-                    <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
-                </bean>
-                
-                <bean class="org.opensaml.saml.common.binding.security.MessageReplaySecurityHandler" >
-                    <property name="replayCache" ref="shibboleth.ReplayCache" />
-                </bean>
-                
-                <bean class="org.opensaml.saml.common.binding.security.MessageLifetimeSecurityHandler" />
-                
-                <bean class="org.opensaml.saml.saml2.binding.security.SAML2AuthnRequestsSignedSecurityHandler" />
-                
-                <bean class="org.opensaml.saml.common.binding.security.SAMLProtocolMessageXMLSignatureSecurityHandler">
-                    <property name="trustEngine" ref="idp.SignatureTrustEngine" />
-                </bean>
-                
-                <bean class="org.opensaml.saml.saml2.binding.security.SAML2HTTPRedirectDeflateSignatureSecurityHandler" scope="prototype">
-                    <property name="trustEngine" ref="idp.SignatureTrustEngine" />
-                    <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
-                </bean>
-                
-                <bean class="org.opensaml.saml.saml2.binding.security.SAML2HTTPPostSimpleSignSecurityHandler" scope="prototype">
-                    <property name="trustEngine" ref="idp.SignatureTrustEngine" />
-                    <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
-                    <property name="parser" ref="shibboleth.ParserPool" />
-                    <property name="keyInfoResolver" ref="testbed.KeyInfoCredentialResolver" />
-                </bean>
-                
-                <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryIssuer">
-                    <property name="issuerLookupStrategy">
-                        <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageContextIssuerFunction" />
-                    </property>
-                </bean>
             </util:list>
         </property>
     </bean>
 
     <!-- TODO replace with eventual relying-party.xml config -->
-    <bean id="RelyingPartyConfiguration" class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"
-            p:id="ActivatedRelyingPartyConfiguration"
-            p:responderId="https://idp.example.org"
-            p:detailedErrors="true">
-        <property name="profileConfigurations">
-            <util:list>
-                <bean class="net.shibboleth.idp.saml.profile.config.saml2.BrowserSSOProfileConfiguration">
-                    <property name="securityConfiguration">
-                        <bean class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
-                    </property>
-                </bean>
-            </util:list>
-        </property>
-        <property name="activationCondition">
-            <bean id="AlwaysTrueRelyingPartyPredicate" class="com.google.common.base.Predicates" factory-method="alwaysTrue" />
+    <bean
+        id="SecurityConfiguration"
+        class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
+    <bean
+        id="SAML2BrowserSSOProfileConfiguration"
+            class="net.shibboleth.idp.saml.profile.config.saml2.BrowserSSOProfileConfiguration"
+            p:securityConfiguration-ref="SecurityConfiguration">
+        <property name="inboundHandler">
+            <bean class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain"
+                p:handlers-ref="shibboleth.SAML2SSOSecurityPolicy" />
         </property>
     </bean>
+    <bean
+        id="RelyingPartyConfiguration"
+        class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"
+        p:id="ActivatedRelyingPartyConfiguration"
+        p:responderId="https://idp.example.org"
+        p:detailedErrors="true"
+        p:profileConfigurations-ref="SAML2BrowserSSOProfileConfiguration" />
         
     <alias name="shibboleth.OutgoingSAML2SSOBindings" alias="shibboleth.OutgoingBindings"/>
         

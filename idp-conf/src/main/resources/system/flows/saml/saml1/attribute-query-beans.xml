@@ -51,42 +51,6 @@
                             c:mdResolver-ref="ExampleMetadataResolver" />
                     </property>
                 </bean>
-                
-                <!-- TODO: move to the dynamically resolved handler chain -->
-                <bean class="org.opensaml.saml.common.binding.security.ReceivedEndpointSecurityHandler" scope="prototype">
-                    <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
-                </bean>
-                
-                <bean class="org.opensaml.saml.common.binding.security.MessageReplaySecurityHandler" >
-                    <property name="replayCache" ref="shibboleth.ReplayCache" />
-                </bean>
-                
-                <bean class="org.opensaml.saml.common.binding.security.MessageLifetimeSecurityHandler" />
-                
-                <bean class="org.opensaml.saml.common.binding.security.SAMLMDClientCertAuthSecurityHandler">
-                    <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
-                    <property name="trustEngine" ref="idp.X509TrustEngine" />
-                    <property name="certificateNameOptions">
-                        <bean class="org.opensaml.security.messaging.impl.CertificateNameOptions"
-                            p:evaluateSubjectCommonName="true" />
-                    </property>
-                </bean>
-
-                <bean class="org.opensaml.saml.common.binding.security.SAMLProtocolMessageXMLSignatureSecurityHandler">
-                    <property name="trustEngine" ref="idp.SignatureTrustEngine" />
-                </bean>
-                
-                <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryIssuer">
-                    <property name="issuerLookupStrategy">
-                        <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageContextIssuerFunction" />
-                    </property>
-                </bean>
-
-                <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryAuthentication">
-                    <property name="authenticationLookupStrategy">
-                        <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageContextAuthenticationFunction" />
-                    </property>
-                </bean>
             </util:list>
         </property>
     </bean>
@@ -97,8 +61,13 @@
         class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
     <bean
         id="AttributeQueryProfileConfiguration"
-        class="net.shibboleth.idp.saml.profile.config.saml1.AttributeQueryProfileConfiguration"
-        p:securityConfiguration-ref="SecurityConfiguration" />
+            class="net.shibboleth.idp.saml.profile.config.saml1.AttributeQueryProfileConfiguration"
+            p:securityConfiguration-ref="SecurityConfiguration">
+        <property name="inboundHandler">
+            <bean class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain"
+                p:handlers-ref="shibboleth.SAML1AttributeQuerySecurityPolicy" />
+        </property>
+    </bean>
     <bean
         id="RelyingPartyConfiguration"
         class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"
