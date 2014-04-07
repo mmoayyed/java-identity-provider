@@ -135,7 +135,4 @@
         </property>
     </bean>
 
-    <bean id="messageEncoderFactory" class="net.shibboleth.idp.saml.impl.profile.SpringAwareMessageEncoderFactory"
-        p:bindings-ref="shibboleth.OutgoingSOAPBindings" />
-
 </beans>

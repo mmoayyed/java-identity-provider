@@ -16,7 +16,5 @@
             </bean>
         </constructor-arg>
     </bean>
-    
-    <alias name="shibboleth.OutgoingSAML2SSOBindings" alias="shibboleth.OutgoingBindings"/>
 
 </beans>

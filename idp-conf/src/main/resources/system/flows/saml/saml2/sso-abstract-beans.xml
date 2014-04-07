@@ -103,6 +103,8 @@
         </property>
     </bean>
         
+    <alias name="shibboleth.OutgoingSAML2SSOBindings" alias="shibboleth.OutgoingBindings"/>
+        
     <bean id="AddResponseShell" class="org.opensaml.saml.saml2.profile.impl.AddResponseShell" scope="prototype"
             p:issuerLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple">
         <property name="identifierGeneratorLookupStrategy">
@@ -161,8 +163,5 @@
             </util:list>
         </property>
     </bean>
-        
-    <bean id="messageEncoderFactory" class="net.shibboleth.idp.saml.impl.profile.SpringAwareMessageEncoderFactory"
-        p:bindings-ref="shibboleth.OutgoingSAML2SSOBindings" />
     
 </beans>

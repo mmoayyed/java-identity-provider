@@ -116,7 +116,4 @@
         </property>
     </bean>
 
-    <bean id="messageEncoderFactory" class="net.shibboleth.idp.saml.impl.profile.SpringAwareMessageEncoderFactory"
-        p:bindings-ref="shibboleth.OutgoingSAML1SSOBindings" />
-
 </beans>
