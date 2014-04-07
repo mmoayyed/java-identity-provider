@@ -117,7 +117,6 @@
         <Set name="KeyStorePath"><SystemProperty name="idp.home" />/<SystemProperty name="jetty.keystore.path" /></Set>
         <Set name="KeyStoreType"><SystemProperty name="jetty.keystore.type" /></Set>
         <Set name="KeyStorePassword"><SystemProperty name="jetty.keystore.password" /></Set>
-        <Set name="EndpointIdentificationAlgorithm">HTTPS</Set>
         <Set name="ExcludeCipherSuites">
             <Array type="String">
                 <Item>SSL_RSA_WITH_DES_CBC_SHA</Item>
@@ -138,7 +137,6 @@
         <Set name="KeyStorePath"><SystemProperty name="idp.home" />/<SystemProperty name="jetty.keystore.path" /></Set>
         <Set name="KeyStoreType"><SystemProperty name="jetty.keystore.type" /></Set>
         <Set name="KeyStorePassword"><SystemProperty name="jetty.keystore.password" /></Set>
-        <Set name="EndpointIdentificationAlgorithm">HTTPS</Set>
         <Set name="ExcludeCipherSuites">
             <Array type="String">
                 <Item>SSL_RSA_WITH_DES_CBC_SHA</Item>
