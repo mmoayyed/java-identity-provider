@@ -124,6 +124,8 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
      */
     @Override protected void doParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
+        
+        super.doParse(element, parserContext, builder);
 
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
