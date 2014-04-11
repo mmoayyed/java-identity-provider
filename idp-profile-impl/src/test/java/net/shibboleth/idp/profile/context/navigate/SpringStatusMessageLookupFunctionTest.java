@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.impl.profile.navigate;
+package net.shibboleth.idp.profile.context.navigate;
 
 import java.util.Locale;
 
@@ -27,7 +27,6 @@ import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.idp.profile.context.navigate.SpringStatusMessageLookupFunction;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.NoSuchMessageException;
@@ -38,7 +37,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link SpringStatusMessageLookupFunction} unit test. */
-public class SpringStatusMessageLookupFunctionTest extends OpenSAMLInitBaseTestCase {
+public class SpringStatusMessageLookupFunctionTest {
 
     private MockRequestContext springRequestContext;
     
