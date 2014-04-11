@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 import org.opensaml.security.credential.UsageType;
+import org.opensaml.security.crypto.KeySupport;
 import org.opensaml.security.x509.BasicX509Credential;
 import org.springframework.beans.factory.BeanCreationException;
 
@@ -35,13 +36,14 @@ import org.springframework.beans.factory.BeanCreationException;
  * A factory bean to collect information to do with an X509 backed {@link BasicX509Credential}.
  */
 public abstract class AbstractX509CredentialFactoryBean extends AbstractCredentialFactoryBean<BasicX509Credential> {
-    
+
     /** The privateKey Password (if any). */
     @Nullable private String privateKeyPassword;
 
     /** {@inheritDoc} */
+    // Checkstyle: CyclomaticComplexity OFF
     @Override protected BasicX509Credential createInstance() throws Exception {
-        
+
         final List<X509Certificate> certificates = getCertificates();
         if (null == certificates || certificates.isEmpty()) {
             throw new BeanCreationException("No Certificates provided");
@@ -51,45 +53,57 @@ public abstract class AbstractX509CredentialFactoryBean extends AbstractCredenti
         if (null == entityCertificate) {
             entityCertificate = certificates.get(0);
         }
-        
+
         final PrivateKey privateKey = getPrivateKey();
-        
+
         final BasicX509Credential credential;
         if (null == privateKey) {
             credential = new BasicX509Credential(entityCertificate);
         } else {
             credential = new BasicX509Credential(entityCertificate, privateKey);
+
+            if (!KeySupport.matchKeyPair(entityCertificate.getPublicKey(), privateKey)) {
+                throw new BeanCreationException("Public and private keys do not match");
+            }
         }
-        
+
+        credential.setEntityCertificateChain(certificates);
+
         final List<X509CRL> crls = getCrls();
         if (null != crls && !crls.isEmpty()) {
             credential.setCRLs(crls);
         }
-        
+
         if (null != getUsageType()) {
             credential.setUsageType(UsageType.valueOf(getUsageType()));
         }
-        
+
         if (null != getEntityID()) {
             credential.setEntityId(getEntityID());
         }
-        
+
         final List<String> keyNames = getKeyNames();
         if (null != keyNames) {
             credential.getKeyNames().addAll(keyNames);
         }
-        
+
         return credential;
     }
 
-    /** Get the password for the private key.
+    // Checkstyle: CyclomaticComplexity ON
+
+    /**
+     * Get the password for the private key.
+     * 
      * @return Returns the privateKeyPassword.
      */
     @Nullable public String getPrivateKeyPassword() {
         return privateKeyPassword;
     }
 
-    /** Set the password for the private key.
+    /**
+     * Set the password for the private key.
+     * 
      * @param password The password to set.
      */
     public void setPrivateKeyPassword(@Nullable String password) {
@@ -101,25 +115,31 @@ public abstract class AbstractX509CredentialFactoryBean extends AbstractCredenti
         return BasicX509Credential.class;
     }
 
-    /** 
+    /**
      * return the explicitly configured entity certificate.
+     * 
      * @return the certificate, or none if not configured.
      */
     @Nullable protected abstract X509Certificate getEntityCertificate();
 
-    /** Get the configured certificates.  This <strong>MUST</strong> include the entity
-     * certificate if it was configured.
+    /**
+     * Get the configured certificates. This <strong>MUST</strong> include the entity certificate if it was configured.
+     * 
      * @return the certificates.
      */
-    
+
     @Nonnull @NotEmpty protected abstract List<X509Certificate> getCertificates();
 
-    /** Get the configured private key.
+    /**
+     * Get the configured private key.
+     * 
      * @return the key or null if non configured
      */
     @Nullable protected abstract PrivateKey getPrivateKey();
 
-    /** Get the configured CRL list.
+    /**
+     * Get the configured CRL list.
+     * 
      * @return the crls or null
      */
     @Nullable protected abstract List<X509CRL> getCrls();

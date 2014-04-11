@@ -72,7 +72,7 @@ public abstract class AbstractCredentialFactoryBean<T extends Credential> extend
      * 
      * @param names names for the key represented by the credential
      */
-    public void setKeyNames(List<String> names) {
+    public void setKeyNames(@Nullable final List<String> names) {
         keyNames = names;
     }
 
@@ -81,7 +81,7 @@ public abstract class AbstractCredentialFactoryBean<T extends Credential> extend
      * 
      * @param type usage type of the credential
      */
-    public void setUsageType(String type) {
+    public void setUsageType(@Nullable final String type) {
         usageType = type;
     }
 
@@ -90,7 +90,7 @@ public abstract class AbstractCredentialFactoryBean<T extends Credential> extend
      * 
      * @param newEntityID the entity ID
      */
-    public void setEntityID(String newEntityID) {
+    public void setEntityID(@Nullable final String newEntityID) {
         entityID = newEntityID;
     }
 }

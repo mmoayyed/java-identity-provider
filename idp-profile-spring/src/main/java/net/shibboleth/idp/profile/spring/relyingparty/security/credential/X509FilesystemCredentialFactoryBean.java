@@ -30,6 +30,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.LazyList;
 
 import org.opensaml.security.crypto.KeySupport;
@@ -39,7 +40,7 @@ import org.springframework.beans.FatalBeanException;
 /**
  * A factory bean to understand X509Filesystem credentials.
  */
-public class FilesystemCredentialFactoryBean extends AbstractX509CredentialFactoryBean {
+public class X509FilesystemCredentialFactoryBean extends AbstractX509CredentialFactoryBean {
 
     /** The specification of where the entity File is to be found. */
     private File entityFile;
@@ -58,7 +59,7 @@ public class FilesystemCredentialFactoryBean extends AbstractX509CredentialFacto
      * 
      * @param file The file to set.
      */
-    public void setEntityFile(File file) {
+    public void setEntity(@Nonnull final File file) {
         entityFile = file;
     }
 
@@ -67,7 +68,7 @@ public class FilesystemCredentialFactoryBean extends AbstractX509CredentialFacto
      * 
      * @param files The value to set.
      */
-    public void setCertificateFiles(List<File> files) {
+    public void setCertificates(@Nullable @NotEmpty final List<File> files) {
         certificateFiles = files;
     }
 
@@ -76,7 +77,7 @@ public class FilesystemCredentialFactoryBean extends AbstractX509CredentialFacto
      * 
      * @param file The file to set.
      */
-    public void setPrivateKeyFile(File file) {
+    public void setPrivateKey(@Nullable final File file) {
         privateKeyFile = file;
     }
 
@@ -85,7 +86,7 @@ public class FilesystemCredentialFactoryBean extends AbstractX509CredentialFacto
      * 
      * @param files The value to set.
      */
-    public void setCrlFiles(List<File> files) {
+    public void setCrls(@Nullable @NotEmpty final List<File> files) {
         crlFiles = files;
     }
 
@@ -98,8 +99,8 @@ public class FilesystemCredentialFactoryBean extends AbstractX509CredentialFacto
         try {
             final Collection<X509Certificate> certs = X509Support.decodeCertificates(entityFile);
             if (certs.size() > 1) {
-                throw new FatalBeanException(
-                        "Config element indicated an entityCertificate, but multiple certs where decoded");
+                throw new FatalBeanException("Configuration element indicated an entityCertificate,"
+                        + " but multiple certificates where decoded");
             }
             return certs.iterator().next();
         } catch (CertificateException e) {
@@ -139,7 +140,7 @@ public class FilesystemCredentialFactoryBean extends AbstractX509CredentialFacto
             return null;
         }
         List<X509CRL> crls = new LazyList<>();
-        for (File crlFile:crlFiles) {
+        for (File crlFile : crlFiles) {
             try {
                 crls.addAll(X509Support.decodeCRLs(crlFile));
             } catch (CRLException e) {

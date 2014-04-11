@@ -15,20 +15,20 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.spring.relyingparty.saml;
+package net.shibboleth.idp.profile.spring.relyingparty.security;
 
+import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509FilesystemCredentialParser;
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
-/**
- * Namespace handler for the Relying Party SAML configuration. Perfoms no function since we do not parse these children
- * in this way, but serves as an anchor and site for future extension.
- */
-public class RelyingPartySAMLNamespaceHandler extends BaseSpringNamespaceHandler {
+
+/** Namespace handler <em>{@value NAMESPACE}</em>. */
+public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Namespace for this handler. */
-    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:relying-party:saml";
+    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:security";
 
     /** {@inheritDoc} */
     @Override public void init() {
+        registerBeanDefinitionParser(X509FilesystemCredentialParser.ELEMENT_NAME, new X509FilesystemCredentialParser());
     }
 }

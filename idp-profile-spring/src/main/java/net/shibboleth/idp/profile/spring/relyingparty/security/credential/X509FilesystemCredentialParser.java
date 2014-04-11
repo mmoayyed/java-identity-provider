@@ -15,20 +15,23 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.spring.relyingparty.saml;
+package net.shibboleth.idp.profile.spring.relyingparty.security.credential;
 
-import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
+import javax.xml.namespace.QName;
+
+import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
+
+import org.w3c.dom.Element;
 
 /**
- * Namespace handler for the Relying Party SAML configuration. Perfoms no function since we do not parse these children
- * in this way, but serves as an anchor and site for future extension.
+ * Parser for X509Filesystem credentials.
  */
-public class RelyingPartySAMLNamespaceHandler extends BaseSpringNamespaceHandler {
+public class X509FilesystemCredentialParser extends AbstractX509CredentialParser {
 
-    /** Namespace for this handler. */
-    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:relying-party:saml";
+    /** Element Name.*/
+    public static final QName ELEMENT_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "X509Filesystem");
 
-    /** {@inheritDoc} */
-    @Override public void init() {
+    @Override protected Class<?> getBeanClass(Element element) {
+        return X509FilesystemCredentialFactoryBean.class;
     }
 }
