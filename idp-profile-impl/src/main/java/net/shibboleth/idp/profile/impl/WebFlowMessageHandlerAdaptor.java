@@ -28,6 +28,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.handler.MessageHandler;
+import org.opensaml.messaging.handler.MessageHandlerException;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.EventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -164,19 +165,25 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
                         handler.getClass().getName());
                 break;
             default:
-                log.warn("Specified direction '{}' was unknown, skipping handler invocation", direction);
+                log.warn("Action {}: Specified direction '{}' was unknown, skipping handler invocation", getId(),
+                        direction);
                 return ActionSupport.buildProceedEvent(handler);
         } 
         
         if (target == null) {
-            log.warn("Target message context was null, cannot invoke handler");
+            log.warn("Action {}: Target message context was null, cannot invoke handler", getId());
             return ActionSupport.buildEvent(handler, EventIds.INVALID_MSG_CTX);
         }
         
         log.debug("Action {}: Invoking message handler on message context containing a message of type '{}'", getId(), 
                 target.getMessage().getClass().getName());
-        
-        handler.invoke(target);
+        try {
+            handler.invoke(target);
+        } catch (final MessageHandlerException e) {
+            // TODO: probably should be a different event, but we really do need to trap the exception
+            log.warn("Action " + getId() + ": Exception handling message", e);
+            return ActionSupport.buildEvent(handler, EventIds.INVALID_MSG_CTX);
+        }
         
         // TODO same approach as actions, or different?  For now just copy what Scott did, it may all change anyway.
         return getResult(handler, target);
