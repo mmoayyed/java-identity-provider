@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.spring;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,16 +28,23 @@ import javax.annotation.Nullable;
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.xml.SerializeSupport;
+import net.shibboleth.utilities.java.support.xml.XmlConstants;
 
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 /**
@@ -67,7 +76,6 @@ public final class SpringSupport {
 
         context.getBeanFactory().setConversionService(service.getObject());
 
-        
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
@@ -98,5 +106,45 @@ public final class SpringSupport {
         }
 
         return definitions;
+    }
+
+    /**
+     * Creates a Spring bean factory from the supplied Spring beans element.
+     * 
+     * @param springBeans to create bean factory from
+     * 
+     * @return bean factory
+     */
+    @Nonnull public static BeanFactory createBeanFactory(@Nonnull final Element springBeans) {
+
+        // Pull in the closest xsi:schemaLocation attribute we can find.
+        if (!springBeans.hasAttributeNS(XmlConstants.XSI_SCHEMA_LOCATION_ATTRIB_NAME.getNamespaceURI(),
+                XmlConstants.XSI_SCHEMA_LOCATION_ATTRIB_NAME.getLocalPart())) {
+            Node parent = springBeans.getParentNode();
+            while (parent != null && parent.getNodeType() == Node.ELEMENT_NODE) {
+                final String schemaLoc =
+                        ((Element) parent).getAttributeNS(
+                                XmlConstants.XSI_SCHEMA_LOCATION_ATTRIB_NAME.getNamespaceURI(),
+                                XmlConstants.XSI_SCHEMA_LOCATION_ATTRIB_NAME.getLocalPart());
+                if (!Strings.isNullOrEmpty(schemaLoc)) {
+                    springBeans.setAttributeNS(XmlConstants.XSI_SCHEMA_LOCATION_ATTRIB_NAME.getNamespaceURI(),
+                            XmlConstants.XSI_SCHEMA_LOCATION_ATTRIB_NAME.getPrefix() + ':'
+                                    + XmlConstants.XSI_SCHEMA_LOCATION_ATTRIB_NAME.getLocalPart(), schemaLoc);
+                    break;
+                } else {
+                    parent = parent.getParentNode();
+                }
+            }
+        }
+
+        final GenericApplicationContext ctx = new GenericApplicationContext();
+        final XmlBeanDefinitionReader definitionReader = new XmlBeanDefinitionReader(ctx);
+        definitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
+        definitionReader.setNamespaceAware(true);
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        SerializeSupport.writeNode(springBeans, outputStream);
+        definitionReader.loadBeanDefinitions(new InputSource(new ByteArrayInputStream(outputStream.toByteArray())));
+        ctx.refresh();
+        return ctx.getBeanFactory();
     }
 }
