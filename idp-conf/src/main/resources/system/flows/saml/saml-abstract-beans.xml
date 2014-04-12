@@ -189,4 +189,6 @@
 
     <bean id="RecordResponseComplete" class="net.shibboleth.idp.profile.impl.RecordResponseComplete" scope="prototype" />
 
+    <bean id="SavePreviousEventAsError" class="org.opensaml.profile.action.impl.SavePreviousEventAsError" scope="prototype" />
+    
 </beans>

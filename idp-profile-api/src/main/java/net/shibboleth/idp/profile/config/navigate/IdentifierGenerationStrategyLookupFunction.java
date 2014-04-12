@@ -34,20 +34,33 @@ import com.google.common.base.Function;
  * A function that returns an {@link IdentifierGenerationStrategy} by way of a {@link RelyingPartyContext}
  * obtained via a lookup function, by default a child of the {@link ProfileRequestContext}.
  * 
- * <p>If a specific setting is unavailable, a null value is returned.</p>
+ * <p>If a specific setting is unavailable, a default generator can be returned.</p>
  */
 public class IdentifierGenerationStrategyLookupFunction
         implements Function<ProfileRequestContext, IdentifierGenerationStrategy> {
+    
+    /** Default strategy to return. */
+    @Nullable private IdentifierGenerationStrategy defaultGenerator;
 
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
      */
-    @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
     
     /** Constructor. */
     public IdentifierGenerationStrategyLookupFunction() {
         relyingPartyContextLookupStrategy =
-                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class, false);
+                new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class, false);
+    }
+    
+    /**
+     * Set the default {@link IdentifierGenerationStrategy} to return.
+     * 
+     * @param strategy  default generation strategy;
+     */
+    public synchronized void setDefaultIdentifierGenerationStrategy(
+            @Nullable final IdentifierGenerationStrategy strategy) {
+        defaultGenerator = strategy;
     }
 
     /**
@@ -58,7 +71,7 @@ public class IdentifierGenerationStrategyLookupFunction
      *            {@link ProfileRequestContext}
      */
     public synchronized void setRelyingPartyContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
+            @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
@@ -76,7 +89,7 @@ public class IdentifierGenerationStrategyLookupFunction
             }
         }
         
-        return null;
+        return defaultGenerator;
     }
 
 }

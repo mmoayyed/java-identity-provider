@@ -110,17 +110,22 @@
     <action-state id="HandleOutboundMessage">
         <evaluate expression="HandleOutboundMessage" />
         <transition on="proceed" to="EncodeMessage" />
+        <transition on="#{true}" to="error" />
     </action-state>
 
     <action-state id="EncodeMessage">
         <evaluate expression="EncodeMessage" />
         <transition on="proceed" to="RecordResponseComplete" />
+        <transition on="#{true}" to="error" />
     </action-state>
 
     <action-state id="RecordResponseComplete">
         <evaluate expression="RecordResponseComplete" />
         <transition on="proceed" to="end" />
+        <transition on="#{true}" to="error" />
     </action-state>
+
+    <!-- Terminus -->
 
     <end-state id="end">
         <!-- TODO: Probably remove later. For tests, map the profile request context as an output attribute -->
@@ -128,14 +133,16 @@
             value="flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext')" />
     </end-state>
 
-    <!-- TODO error view-state ? -->
-    <view-state id="error" />
+    <!-- Handle errors by preserving state and transitioning to an action defined below us.  -->
 
+    <action-state id="SavePreviousEventAsError">
+        <evaluate expression="SavePreviousEventAsError" />
+        <transition on="proceed" to="HandleError" />
+    </action-state>
+
+    <!-- Default is to turn any event into an error and preserve it for error handling. -->
     <global-transitions>
-        <transition on="NoPotentialFlow" to="error" />
-        <transition on="EndpointResolutionFailed" to="error" />
-        <transition on="#{currentEvent.id.startsWith('Unable')}" to="error" />
-        <transition on="#{currentEvent.id.startsWith('Invalid')}" to="error" />
+        <transition on="#{true}" to="SavePreviousEventAsError" />
     </global-transitions>
 
     <!-- The import references the parent folder because the abstract flow is used only from one level down. -->
