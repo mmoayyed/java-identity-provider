@@ -81,7 +81,7 @@ public abstract class AbstractX509CredentialParser extends AbstractCredentialPar
         if (null == value) {
             throw new BeanCreationException("<PrivateKey> Must contain text.");
         }
-        log.debug("Found a private key {}", value);
+        log.debug("Found a private key <Supressed>");
         builder.addPropertyValue("privateKey", value);
         builder.addPropertyValue("privateKeyPassword", key.getAttributeNS(null, "password"));
     }

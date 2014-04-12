@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.spring.relyingparty.security;
 
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509FilesystemCredentialParser;
+import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509InlineCredentialParser;
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 
@@ -30,5 +31,6 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
     /** {@inheritDoc} */
     @Override public void init() {
         registerBeanDefinitionParser(X509FilesystemCredentialParser.ELEMENT_NAME, new X509FilesystemCredentialParser());
+        registerBeanDefinitionParser(X509InlineCredentialParser.ELEMENT_NAME, new X509InlineCredentialParser());
     }
 }
