@@ -41,7 +41,7 @@ import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.binding.BindingDescriptor;
-import org.opensaml.saml.common.binding.DefaultEndpointResolver;
+import org.opensaml.saml.common.binding.impl.DefaultEndpointResolver;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;

@@ -11,7 +11,7 @@
 
    <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
         <constructor-arg>
-            <bean id="messageDecoder" class="org.opensaml.saml.saml2.binding.decoding.HTTPPostDecoder" scope="prototype">
+            <bean class="org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder" scope="prototype">
                 <property name="parserPool" ref="shibboleth.ParserPool" />
                 <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
             </bean>

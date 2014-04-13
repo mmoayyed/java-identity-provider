@@ -18,12 +18,12 @@
     -->
     
     <util:list id="shibboleth.ShibbolethSSOSecurityPolicy">
-        <bean class="org.opensaml.saml.common.binding.security.MessageReplaySecurityHandler"
+        <bean class="org.opensaml.saml.common.binding.security.impl.MessageReplaySecurityHandler" scope="prototype"
             p:replayCache-ref="shibboleth.ReplayCache" />
 
-        <bean class="org.opensaml.saml.common.binding.security.MessageLifetimeSecurityHandler" />
+        <bean class="org.opensaml.saml.common.binding.security.impl.MessageLifetimeSecurityHandler" scope="prototype" />
 
-        <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryIssuer">
+        <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryIssuer" scope="prototype">
             <property name="issuerLookupStrategy">
                 <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageContextIssuerFunction" />
             </property>
@@ -31,17 +31,17 @@
     </util:list>
 
     <util:list id="shibboleth.SAML1AttributeQuerySecurityPolicy">
-        <bean class="org.opensaml.saml.common.binding.security.ReceivedEndpointSecurityHandler" scope="prototype">
+        <bean class="org.opensaml.saml.common.binding.security.impl.ReceivedEndpointSecurityHandler" scope="prototype">
             <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
         </bean>
         
-        <bean class="org.opensaml.saml.common.binding.security.MessageReplaySecurityHandler" >
+        <bean class="org.opensaml.saml.common.binding.security.impl.MessageReplaySecurityHandler" scope="prototype">
             <property name="replayCache" ref="shibboleth.ReplayCache" />
         </bean>
         
-        <bean class="org.opensaml.saml.common.binding.security.MessageLifetimeSecurityHandler" />
+        <bean class="org.opensaml.saml.common.binding.security.impl.MessageLifetimeSecurityHandler" scope="prototype" />
         
-        <bean class="org.opensaml.saml.common.binding.security.SAMLMDClientCertAuthSecurityHandler">
+        <bean class="org.opensaml.saml.common.binding.security.impl.SAMLMDClientCertAuthSecurityHandler" scope="prototype">
             <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
             <property name="trustEngine" ref="shibboleth.X509TrustEngine" />
             <property name="certificateNameOptions">
@@ -50,17 +50,17 @@
             </property>
         </bean>
 
-        <bean class="org.opensaml.saml.common.binding.security.SAMLProtocolMessageXMLSignatureSecurityHandler">
+        <bean class="org.opensaml.saml.common.binding.security.impl.SAMLProtocolMessageXMLSignatureSecurityHandler" scope="prototype">
             <property name="trustEngine" ref="shibboleth.SignatureTrustEngine" />
         </bean>
         
-        <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryIssuer">
+        <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryIssuer" scope="prototype">
             <property name="issuerLookupStrategy">
                 <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageContextIssuerFunction" />
             </property>
         </bean>
 
-        <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryAuthentication">
+        <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryAuthentication" scope="prototype">
             <property name="authenticationLookupStrategy">
                 <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageContextAuthenticationFunction" />
             </property>
@@ -68,35 +68,35 @@
     </util:list>
 
     <util:list id="shibboleth.SAML2SSOSecurityPolicy">
-        <bean class="org.opensaml.saml.common.binding.security.ReceivedEndpointSecurityHandler" scope="prototype">
+        <bean class="org.opensaml.saml.common.binding.security.impl.ReceivedEndpointSecurityHandler" scope="prototype">
             <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
         </bean>
         
-        <bean class="org.opensaml.saml.common.binding.security.MessageReplaySecurityHandler" >
+        <bean class="org.opensaml.saml.common.binding.security.impl.MessageReplaySecurityHandler" scope="prototype">
             <property name="replayCache" ref="shibboleth.ReplayCache" />
         </bean>
         
-        <bean class="org.opensaml.saml.common.binding.security.MessageLifetimeSecurityHandler" />
+        <bean class="org.opensaml.saml.common.binding.security.impl.MessageLifetimeSecurityHandler" scope="prototype" />
         
-        <bean class="org.opensaml.saml.saml2.binding.security.SAML2AuthnRequestsSignedSecurityHandler" />
+        <bean class="org.opensaml.saml.saml2.binding.security.impl.SAML2AuthnRequestsSignedSecurityHandler" scope="prototype" />
         
-        <bean class="org.opensaml.saml.common.binding.security.SAMLProtocolMessageXMLSignatureSecurityHandler">
+        <bean class="org.opensaml.saml.common.binding.security.impl.SAMLProtocolMessageXMLSignatureSecurityHandler" scope="prototype">
             <property name="trustEngine" ref="shibboleth.SignatureTrustEngine" />
         </bean>
         
-        <bean class="org.opensaml.saml.saml2.binding.security.SAML2HTTPRedirectDeflateSignatureSecurityHandler" scope="prototype">
+        <bean class="org.opensaml.saml.saml2.binding.security.impl.SAML2HTTPRedirectDeflateSignatureSecurityHandler" scope="prototype">
             <property name="trustEngine" ref="shibboleth.SignatureTrustEngine" />
             <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
         </bean>
         
-        <bean class="org.opensaml.saml.saml2.binding.security.SAML2HTTPPostSimpleSignSecurityHandler" scope="prototype">
+        <bean class="org.opensaml.saml.saml2.binding.security.impl.SAML2HTTPPostSimpleSignSecurityHandler" scope="prototype">
             <property name="trustEngine" ref="shibboleth.SignatureTrustEngine" />
             <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
             <property name="parser" ref="shibboleth.ParserPool" />
             <property name="keyInfoResolver" ref="shibboleth.KeyInfoCredentialResolver" />
         </bean>
         
-        <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryIssuer">
+        <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryIssuer" scope="prototype">
             <property name="issuerLookupStrategy">
                 <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageContextIssuerFunction" />
             </property>
@@ -104,17 +104,17 @@
     </util:list>
     
     <util:list id="shibboleth.SAML2AttributeQuerySecurityPolicy">
-        <bean class="org.opensaml.saml.common.binding.security.ReceivedEndpointSecurityHandler" scope="prototype">
+        <bean class="org.opensaml.saml.common.binding.security.impl.ReceivedEndpointSecurityHandler" scope="prototype">
             <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
         </bean>
         
-        <bean class="org.opensaml.saml.common.binding.security.MessageReplaySecurityHandler" >
+        <bean class="org.opensaml.saml.common.binding.security.impl.MessageReplaySecurityHandler" scope="prototype">
             <property name="replayCache" ref="shibboleth.ReplayCache" />
         </bean>
         
-        <bean class="org.opensaml.saml.common.binding.security.MessageLifetimeSecurityHandler" />
+        <bean class="org.opensaml.saml.common.binding.security.impl.MessageLifetimeSecurityHandler" scope="prototype" />
         
-        <bean class="org.opensaml.saml.common.binding.security.SAMLMDClientCertAuthSecurityHandler">
+        <bean class="org.opensaml.saml.common.binding.security.impl.SAMLMDClientCertAuthSecurityHandler" scope="prototype">
             <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
             <property name="trustEngine" ref="shibboleth.X509TrustEngine" />
             <property name="certificateNameOptions">
@@ -123,17 +123,17 @@
             </property>
         </bean>
 
-        <bean class="org.opensaml.saml.common.binding.security.SAMLProtocolMessageXMLSignatureSecurityHandler">
+        <bean class="org.opensaml.saml.common.binding.security.impl.SAMLProtocolMessageXMLSignatureSecurityHandler" scope="prototype">
             <property name="trustEngine" ref="shibboleth.SignatureTrustEngine" />
         </bean>
         
-        <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryIssuer">
+        <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryIssuer" scope="prototype">
             <property name="issuerLookupStrategy">
                 <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageContextIssuerFunction" />
             </property>
         </bean>
 
-        <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryAuthentication">
+        <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryAuthentication" scope="prototype">
             <property name="authenticationLookupStrategy">
                 <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageContextAuthenticationFunction" />
             </property>
@@ -151,7 +151,7 @@
     
     <!-- TODO: all this is probably wrong, but need it to get something working -->
     
-    <bean id="shibboleth.MetadataCredentialResolver" class="org.opensaml.saml.security.MetadataCredentialResolver">
+    <bean id="shibboleth.MetadataCredentialResolver" class="org.opensaml.saml.security.impl.MetadataCredentialResolver">
         <constructor-arg>
             <bean class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
                 c:mdResolver-ref="ExampleMetadataResolver" />

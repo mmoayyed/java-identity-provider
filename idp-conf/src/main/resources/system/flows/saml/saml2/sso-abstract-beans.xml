@@ -27,9 +27,9 @@
     <bean id="inboundMessageHandlerChain" class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
         <property name="handlers">
             <util:list>
-                <bean class="org.opensaml.saml.common.binding.CheckMessageVersionHandler" />
+                <bean class="org.opensaml.saml.common.binding.impl.CheckMessageVersionHandler" scope="prototype"/>
                 
-                <bean class="org.opensaml.saml.common.binding.SAMLProtocolAndRoleHandler">
+                <bean class="org.opensaml.saml.common.binding.impl.SAMLProtocolAndRoleHandler" scope="prototype">
                     <property name="protocol">
                         <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML20P_NS" />
                     </property>
@@ -39,7 +39,7 @@
                 </bean>
                 
                 <!-- TODO: need to poke metadata source in from relying party config later -->
-                <bean class="org.opensaml.saml.common.binding.SAMLMetadataLookupHandler">
+                <bean class="org.opensaml.saml.common.binding.impl.SAMLMetadataLookupHandler" scope="prototype">
                     <property name="roleDescriptorResolver">
                         <bean class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
                             c:mdResolver-ref="ExampleMetadataResolver" />
@@ -94,7 +94,7 @@
             <bean class="net.shibboleth.idp.saml.impl.profile.logic.DefaultNameIdentifierFormatStrategy" />
         </property>
         <property name="nameIDPolicyPredicate">
-            <bean class="org.opensaml.saml.common.profile.impl.logic.AffiliationNameIDPolicyPredicate"
+            <bean class="org.opensaml.saml.common.profile.logic.AffiliationNameIDPolicyPredicate"
                     p:metadataResolver-ref="ExampleMetadataResolver"
                     p:responderIdLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"
                     p:requesterIdLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple">
@@ -125,9 +125,9 @@
         <property name="handlers">
             <util:list>
                 <!-- TODO outbound handlers -->
-                <bean class="org.opensaml.saml.common.binding.SAMLOutboundDestinationHandler" />
-                <bean class="org.opensaml.saml.common.binding.security.EndpointUrlSchemeSecurityHandler" />
-                <bean class="org.opensaml.saml.common.binding.security.SAMLOutboundProtocolMessageSigningHandler" />
+                <bean class="org.opensaml.saml.common.binding.impl.SAMLOutboundDestinationHandler" scope="prototype"/>
+                <bean class="org.opensaml.saml.common.binding.security.impl.EndpointUrlSchemeSecurityHandler" scope="prototype"/>
+                <bean class="org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler" scope="prototype"/>
             </util:list>
         </property>
     </bean>

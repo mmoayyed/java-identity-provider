@@ -66,7 +66,7 @@
     <bean id="ExtractSubjectFromRequest"
             class="net.shibboleth.idp.saml.impl.profile.ExtractSubjectFromRequest" scope="prototype">
         <property name="nameIDPolicyPredicate">
-            <bean class="org.opensaml.saml.common.profile.impl.logic.AffiliationNameIDPolicyPredicate"
+            <bean class="org.opensaml.saml.common.profile.logic.AffiliationNameIDPolicyPredicate"
                     p:metadataResolver-ref="ExampleMetadataResolver"
                     p:responderIdLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"
                     p:requesterIdLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple">

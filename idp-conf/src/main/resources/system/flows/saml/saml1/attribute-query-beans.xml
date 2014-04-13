@@ -23,7 +23,7 @@
 
     <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
         <constructor-arg>
-            <bean id="messageDecoder" class="org.opensaml.saml.saml1.binding.decoding.HTTPSOAP11Decoder" scope="prototype">
+            <bean class="org.opensaml.saml.saml1.binding.decoding.impl.HTTPSOAP11Decoder" scope="prototype">
                 <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
             </bean>
         </constructor-arg>
@@ -33,9 +33,9 @@
             class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
         <property name="handlers">
             <util:list>
-                <bean class="org.opensaml.saml.common.binding.CheckMessageVersionHandler" />
+                <bean class="org.opensaml.saml.common.binding.impl.CheckMessageVersionHandler" scope="prototype"/>
 
-                <bean class="org.opensaml.saml.common.binding.SAMLProtocolAndRoleHandler">
+                <bean class="org.opensaml.saml.common.binding.impl.SAMLProtocolAndRoleHandler" scope="prototype">
                     <property name="protocol">
                         <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML11P_NS" />
                     </property>
@@ -45,7 +45,7 @@
                 </bean>
                 
                 <!-- TODO: need to poke metadata source in from relying party config later -->
-                <bean class="org.opensaml.saml.common.binding.SAMLMetadataLookupHandler">
+                <bean class="org.opensaml.saml.common.binding.impl.SAMLMetadataLookupHandler" scope="prototype">
                     <property name="roleDescriptorResolver">
                         <bean class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
                             c:mdResolver-ref="ExampleMetadataResolver" />
@@ -125,7 +125,7 @@
         <property name="handlers">
             <util:list>
                 <!-- TODO outbound handlers -->
-                <bean class="org.opensaml.saml.common.binding.security.SAMLOutboundProtocolMessageSigningHandler" />
+                <bean class="org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler" scope="prototype"/>
             </util:list>
         </property>
     </bean>

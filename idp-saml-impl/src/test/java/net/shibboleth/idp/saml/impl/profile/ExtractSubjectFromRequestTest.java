@@ -32,7 +32,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.common.profile.impl.logic.DefaultNameIDPolicyPredicate;
+import org.opensaml.saml.common.profile.logic.DefaultNameIDPolicyPredicate;
 import org.opensaml.saml.saml1.core.Request;
 import org.opensaml.saml.saml1.profile.SAML1ActionTestingSupport;
 import org.opensaml.saml.saml2.core.AuthnRequest;

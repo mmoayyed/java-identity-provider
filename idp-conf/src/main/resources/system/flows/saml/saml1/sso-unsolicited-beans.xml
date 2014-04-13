@@ -9,7 +9,7 @@
 
     <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
         <constructor-arg>
-            <bean id="messageDecoder" class="net.shibboleth.idp.saml.impl.profile.saml1.IdPInitiatedSSORequestMessageDecoder" scope="prototype">
+            <bean class="net.shibboleth.idp.saml.impl.profile.saml1.IdPInitiatedSSORequestMessageDecoder" scope="prototype">
                 <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
             </bean>
         </constructor-arg>
