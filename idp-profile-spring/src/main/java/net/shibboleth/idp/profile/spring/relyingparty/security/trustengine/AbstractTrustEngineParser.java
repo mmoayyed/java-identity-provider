@@ -15,23 +15,24 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.spring.relyingparty.security.credential;
+package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine;
 
-import javax.xml.namespace.QName;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
-
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Parser for X509Inline credentials.
+ * Basis of all parsers for &lt;security:TrustEngine&gt;. 
  */
-public class X509InlineCredentialParser extends AbstractX509CredentialParser {
+public abstract class AbstractTrustEngineParser extends AbstractSingleBeanDefinitionParser {
 
-    /** Element Name.*/
-    public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "X509Inline");
-
-    @Override protected Class<?> getBeanClass(Element element) {
-        return X509InlineCredentialFactoryBean.class;
+    /** {@inheritDoc} */
+    @Override
+    protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
+        return StringSupport.trimOrNull(element.getAttributeNS(null, "id"));
     }
+
 }

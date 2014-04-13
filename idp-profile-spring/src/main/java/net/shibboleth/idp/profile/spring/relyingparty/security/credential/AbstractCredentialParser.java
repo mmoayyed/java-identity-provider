@@ -39,6 +39,9 @@ import org.w3c.dom.Element;
 public abstract class AbstractCredentialParser extends AbstractSingleBeanDefinitionParser {
 
     /** &lt;KeyName&gt;. */
+    public static final QName CREDENTIAL_ELEMENT_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "Credential");
+
+    /** &lt;KeyName&gt;. */
     public static final QName KEY_NAME_ELEMENT_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "KeyName");
 
     /** {@inheritDoc} */

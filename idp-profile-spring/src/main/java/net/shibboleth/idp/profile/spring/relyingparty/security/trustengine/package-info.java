@@ -14,24 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package net.shibboleth.idp.profile.spring.relyingparty.security.credential;
-
-import javax.xml.namespace.QName;
-
-import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
-
-import org.w3c.dom.Element;
-
 /**
- * Parser for X509Inline credentials.
+ * Parsers to deal with &lt;security:TrustEngine&gt;.
  */
-public class X509InlineCredentialParser extends AbstractX509CredentialParser {
 
-    /** Element Name.*/
-    public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "X509Inline");
-
-    @Override protected Class<?> getBeanClass(Element element) {
-        return X509InlineCredentialFactoryBean.class;
-    }
-}
+package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine;

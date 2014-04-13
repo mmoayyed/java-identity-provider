@@ -15,14 +15,13 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.spring.relyingparty.security.credential;
+package net.shibboleth.idp.profile.spring.relyingparty.security;
 
 import java.io.IOException;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 
-import org.opensaml.security.credential.Credential;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
@@ -37,11 +36,11 @@ import org.testng.annotations.BeforeSuite;
 import com.google.common.collect.Sets;
 
 /**
- * Base mechanics for Credential parser tests
+ * Base mechanics for Security parser tests
  */
-public class AbstractCredentialParserTest {
+public class AbstractSecurityParserTest {
 
-    private static final String PATH = "/net/shibboleth/idp/profile/spring/relyingparty/security/credential/";
+    private static final String PATH = "/net/shibboleth/idp/profile/spring/relyingparty/security/";
     
     protected static final String SP_ID = "https://sp.example.org/sp/shibboleth"; 
     protected static final String IDP_ID = "https://idp.example.org/idp/shibboleth";
@@ -74,7 +73,7 @@ public class AbstractCredentialParserTest {
         
     }
     
-    protected <T extends Credential> T getBean(Class<T> claz,  boolean validating, String... files) throws IOException{
+    protected <T> T getBean(Class<T> claz,  boolean validating, String... files) throws IOException{
         final Resource[] resources = new Resource[files.length];
        
         for (int i = 0; i < files.length; i++) {
