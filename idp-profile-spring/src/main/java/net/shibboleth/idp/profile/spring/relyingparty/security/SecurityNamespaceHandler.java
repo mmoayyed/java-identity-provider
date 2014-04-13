@@ -22,7 +22,6 @@ import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509In
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.StaticExplicitKeySignatureParser;
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
-
 /** Namespace handler <em>{@value NAMESPACE}</em>. */
 public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
 
@@ -34,7 +33,8 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(X509FilesystemCredentialParser.SCHEMA_TYPE, new X509FilesystemCredentialParser());
         registerBeanDefinitionParser(X509InlineCredentialParser.SCHEMA_TYPE, new X509InlineCredentialParser());
 
-        registerBeanDefinitionParser(StaticExplicitKeySignatureParser.SCHEMA_TYPE, new StaticExplicitKeySignatureParser());
+        registerBeanDefinitionParser(StaticExplicitKeySignatureParser.SCHEMA_TYPE,
+                new StaticExplicitKeySignatureParser());
 
     }
 }
