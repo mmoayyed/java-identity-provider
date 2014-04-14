@@ -27,6 +27,32 @@ h+XNZ5oAql/cjrwDWw==
             </KeyInfo>
         </KeyDescriptor>
         
+        <KeyDescriptor>
+            <KeyInfo xmlns="http://www.w3.org/2000/09/xmldsig#">
+                <X509Data>
+                    <X509Certificate>
+MIIDDzCCAfegAwIBAgIJAN5ThWwNrvJxMA0GCSqGSIb3DQEBBQUAMCMxITAfBgNV
+BAMTGHNub3dkb2ctcHJvLmVsYW4ub3N1LmVkdTAeFw0xMzExMDYxNjUyMzBaFw0y
+MzExMDQxNjUyMzBaMCMxITAfBgNVBAMTGHNub3dkb2ctcHJvLmVsYW4ub3N1LmVk
+dTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAODCRHObLNAJ6xaxDmeA
+sJl2Mw3pTGCrWXe2H77n8TjZz68I9fgYLeamCONHFx1qaQUZXim/TANhzOSMCIs+
+/Ma/XVaB8H1lB2EJlob0gDa3wqpnd+ltUI+pirG0t1CDrP8RhBWaZWTRB8Oj9uMV
+lBarznvvSuJIOYnEt5OjLpHe3fbpstiI6dlkViB/jFMOT1G+MSfkPRXQopJ5PfnM
+LhrQa1iJ2hEwE4xviQUHbtqtIcw0xMOlse/GvdV6WMixxQ5Yr9tksb/hzOFG29Nk
+E+ZNxEoxeFQNl73pU3DuA8ogjBpGYDX9jGt0zvyDRlUyXferSIxZy4lauYaxw10o
+WyUCAwEAAaNGMEQwIwYDVR0RBBwwGoIYc25vd2RvZy1wcm8uZWxhbi5vc3UuZWR1
+MB0GA1UdDgQWBBS1KTq0OfsmdgBoqLkINa0wTnM9FzANBgkqhkiG9w0BAQUFAAOC
+AQEApclRWD8hdX+PvBS/8AZnMQFx0TP6UipoegT9GNiZTfbqUeaaepiUzLvrAa81
+IuxZKneg6deoeVhsvNxLAPlPR6OK32A3NadS4KU8d69H1zPKOd7nc+k9WzdFygwB
+DaWTdr2idWU2DpMkZpmDNnwsMpda3zONCJHiBqiCFbq2vsMhFa9X3SFasYIU0H9T
+osjFNFTQVwLeZyjf/fuKnfqbcs3JW+OM9fsxxAmUQQyLz8aKywOaMlQgTFTL9r9u
+Jnnr5zUpZZh6WVFIFS9QmNE4zJMZH6vIDk2zKsO0YJVaogxFML35hKlWen4DLbyT
+wJUl9NY7VG+HjvHrr6xeiDAq0g==
+                    </X509Certificate>
+                </X509Data>
+            </KeyInfo>
+        </KeyDescriptor>
+        
         <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://localhost/sp/SAML2/POST/ACS" index="1"/>
         <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://localhost:8443/sp/SAML2/POST/ACS" index="2"/>
         <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="http://localhost/sp/SAML2/POST/ACS" index="3"/>

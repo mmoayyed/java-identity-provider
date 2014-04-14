@@ -50,5 +50,61 @@
         class="net.shibboleth.idp.profile.config.navigate.DecryptionConfigurationLookupFunction" />
     <bean id="shibboleth.EncryptionConfigurationLookup"
         class="net.shibboleth.idp.profile.config.navigate.EncryptionConfigurationLookupFunction" />
+
+    <util:list id="Shibboleth.SAML1Status.VersionMismatch">
+        <util:constant static-field="org.opensaml.saml.saml1.core.StatusCode.VERSION_MISMATCH" />
+    </util:list>
+    
+    <util:list id="Shibboleth.SAML1Status.Requester">
+        <util:constant static-field="org.opensaml.saml.saml1.core.StatusCode.REQUESTER" />
+    </util:list>
+
+    <util:list id="Shibboleth.SAML1Status.RequestDenied">
+        <util:constant static-field="org.opensaml.saml.saml1.core.StatusCode.REQUESTER" />
+        <util:constant static-field="org.opensaml.saml.saml1.core.StatusCode.REQUEST_DENIED" />
+    </util:list>
+
+    <util:list id="Shibboleth.SAML1Status.Responder">
+        <util:constant static-field="org.opensaml.saml.saml1.core.StatusCode.RESPONDER" />
+    </util:list>
+
+    <util:list id="Shibboleth.SAML2Status.VersionMismatch">
+        <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.VERSION_MISMATCH_URI" />
+    </util:list>
+
+    <util:list id="Shibboleth.SAML2Status.RequestDenied">
+        <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.REQUESTER_URI" />
+        <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.REQUEST_DENIED_URI" />
+    </util:list>
+
+    <util:list id="Shibboleth.SAML2Status.RequestUnsupported">
+        <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.REQUESTER_URI" />
+        <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.REQUEST_UNSUPPORTED_URI" />
+    </util:list>
+
+    <util:list id="Shibboleth.SAML2Status.UnsupportedBinding">
+        <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.REQUESTER_URI" />
+        <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.UNSUPPORTED_BINDING_URI" />
+    </util:list>
+
+    <util:list id="Shibboleth.SAML2Status.NoAuthnContext">
+        <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.REQUESTER_URI" />
+        <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.NO_AUTHN_CONTEXT_URI" />
+    </util:list>
+
+    <util:list id="Shibboleth.SAML2Status.AuthnFailed">
+        <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.REQUESTER_URI" />
+        <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.AUTHN_FAILED_URI" />
+    </util:list>
+
+    <util:list id="Shibboleth.SAML2Status.UnknownPrincipal">
+        <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.REQUESTER_URI" />
+        <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.UNKNOWN_PRINCIPAL_URI" />
+    </util:list>
+
+    <util:list id="Shibboleth.SAML2Status.InvalidNameIDPolicy">
+        <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.REQUESTER_URI" />
+        <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.INVALID_NAMEID_POLICY_URI" />
+    </util:list>
         
 </beans>

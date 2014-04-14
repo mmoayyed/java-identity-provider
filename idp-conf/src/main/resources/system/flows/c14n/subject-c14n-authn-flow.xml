@@ -22,6 +22,9 @@
 
         <!-- Call a subflow with the same ID as the event. -->
         <transition on="#{currentEvent.id.startsWith('SubjectC14NFlow/')}" to="CallSubjectCanonicalizationFlow" />
+        
+        <!-- Remap the case of no flows to run into a more recognizeable fatal error. -->
+        <transition on="NoPotentialFlow" to="SubjectCanonicalizationError" />
     </action-state>
 
     <!--

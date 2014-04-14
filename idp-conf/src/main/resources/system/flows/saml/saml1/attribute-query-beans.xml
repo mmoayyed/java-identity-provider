@@ -112,8 +112,12 @@
         </property>
         <property name="statusCodes">
             <util:list>
-                <util:constant static-field="org.opensaml.saml.saml1.core.StatusCode.REQUESTER" />
+                <util:constant static-field="org.opensaml.saml.saml1.core.StatusCode.RESPONDER" />
             </util:list>
+        </property>
+        <property name="statusCodesLookupStrategy">
+            <bean class="org.opensaml.saml.saml1.profile.impl.AddStatusToResponse.StatusCodeMappingFunction"
+                 c:mappings-ref="shibboleth.SAML1StatusMappings"/>
         </property>
         <property name="statusMessageLookupStrategy">
             <bean class="net.shibboleth.idp.profile.context.navigate.SpringStatusMessageLookupFunction" />
