@@ -22,8 +22,8 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.filter.impl.matcher.logic.OrMatcher;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.logic.OrPolicyRule;
+import net.shibboleth.idp.attribute.filter.matcher.logic.impl.OrMatcher;
+import net.shibboleth.idp.attribute.filter.policyrule.logic.impl.OrPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;

@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
-import net.shibboleth.idp.attribute.resolver.impl.ad.PrincipalNameAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.ad.impl.PrincipalNameAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.PrincipalNameAttributeDefinitionParser;
 

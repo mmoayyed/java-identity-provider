@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.impl.ad.PrescopedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.ad.impl.PrescopedAttributeDefinition;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

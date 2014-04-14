@@ -19,7 +19,7 @@ package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import java.util.regex.Pattern;
 
-import net.shibboleth.idp.attribute.resolver.impl.ad.RegexSplitAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.ad.impl.RegexSplitAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.PrescopedAttributeDefinitionParser;
 

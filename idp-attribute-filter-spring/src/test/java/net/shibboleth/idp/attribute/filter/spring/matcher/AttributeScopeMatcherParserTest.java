@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.spring.matcher;
 
-import net.shibboleth.idp.attribute.filter.impl.matcher.AttributeScopeStringMatcher;
+import net.shibboleth.idp.attribute.filter.matcher.impl.AttributeScopeStringMatcher;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.filter.spring.matcher.AttributeScopeMatcherParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;

@@ -24,8 +24,8 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.filter.impl.matcher.ScriptedMatcher;
-import net.shibboleth.idp.attribute.filter.impl.policyrule.ScriptedPolicyRule;
+import net.shibboleth.idp.attribute.filter.matcher.impl.ScriptedMatcher;
+import net.shibboleth.idp.attribute.filter.policyrule.impl.ScriptedPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;

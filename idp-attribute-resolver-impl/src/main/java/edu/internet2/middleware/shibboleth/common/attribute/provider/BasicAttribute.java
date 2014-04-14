@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.resolver.impl.ad.ScriptedIdPAttribute;
+import net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedIdPAttribute;
 
 /**
  * A class which is here solely to provide compatibility for V2 scripted attribute definitions. The assumption is that a

@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.spring.policy;
 
-import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.PrincipalNamePolicyRule;
+import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.PrincipalNamePolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 

@@ -19,7 +19,7 @@ package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.impl.ad.PrincipalAuthenticationMethodAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.ad.impl.PrincipalAuthenticationMethodAttributeDefinition;
 
 import org.w3c.dom.Element;
 

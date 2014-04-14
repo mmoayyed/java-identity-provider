@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.filter.spring.matcher;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.filter.impl.matcher.AttributeValueStringMatcher;
+import net.shibboleth.idp.attribute.filter.matcher.impl.AttributeValueStringMatcher;
 import net.shibboleth.idp.attribute.filter.spring.basic.AttributeFilterBasicNamespaceHandler;
 
 /**

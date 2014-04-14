@@ -24,11 +24,11 @@ import javax.sql.DataSource;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder;
-import net.shibboleth.idp.attribute.resolver.impl.dc.MappingStrategy;
-import net.shibboleth.idp.attribute.resolver.impl.dc.Validator;
-import net.shibboleth.idp.attribute.resolver.impl.dc.rdbms.ExecutableStatement;
-import net.shibboleth.idp.attribute.resolver.impl.dc.rdbms.RdbmsDataConnector;
+import net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder;
+import net.shibboleth.idp.attribute.resolver.dc.impl.MappingStrategy;
+import net.shibboleth.idp.attribute.resolver.dc.impl.Validator;
+import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.ExecutableStatement;
+import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.RdbmsDataConnector;
 import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;

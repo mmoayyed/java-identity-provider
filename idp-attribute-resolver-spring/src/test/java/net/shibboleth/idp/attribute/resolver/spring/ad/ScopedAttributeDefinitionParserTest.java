@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
-import net.shibboleth.idp.attribute.resolver.impl.ad.ScopedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.ad.impl.ScopedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.SAML1NameIdentifierAttributeDefinitionParser;
 

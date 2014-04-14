@@ -13,7 +13,7 @@
         <constructor-arg value="${cache.cacheBuilderSpec}" />
     </bean>
     <bean id="cache" class="com.google.common.cache.Cache" factory-bean="cacheBuilder" factory-method="build" />
-    <bean class="net.shibboleth.idp.attribute.resolver.impl.dc.rdbms.FormatExecutableStatementBuilder">
+    <bean class="net.shibboleth.idp.attribute.resolver.dc.impl.rdbms.FormatExecutableStatementBuilder">
         <constructor-arg index="0" value="${statementBuilder.selectStatement}" />
     </bean>
     <context:property-placeholder location="classpath:net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-v3.properties"

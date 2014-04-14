@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.filter.spring.policyrule;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.filter.impl.policyrule.filtercontext.AttributeRequesterPolicyRule;
+import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.AttributeRequesterPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.basic.AttributeFilterBasicNamespaceHandler;
 
 /**

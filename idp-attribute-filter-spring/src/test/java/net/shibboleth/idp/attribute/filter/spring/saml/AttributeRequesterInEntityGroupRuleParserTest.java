@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
-import net.shibboleth.idp.attribute.filter.impl.policyrule.saml.AttributeRequesterInEntityGroupPolicyRule;
+import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterInEntityGroupPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 

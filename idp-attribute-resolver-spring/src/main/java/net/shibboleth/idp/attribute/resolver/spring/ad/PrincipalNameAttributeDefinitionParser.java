@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring.ad;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.impl.ad.PrincipalNameAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.ad.impl.PrincipalNameAttributeDefinition;
 
 import org.w3c.dom.Element;
 
