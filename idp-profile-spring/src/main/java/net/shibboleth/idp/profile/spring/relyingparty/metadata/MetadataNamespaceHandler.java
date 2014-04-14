@@ -23,6 +23,7 @@ import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.ChainingPa
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.EntityRoleFilterParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.RequiredValidUntilParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.SchemaValidationParser;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.SignatureValidationParser;
 import net.shibboleth.idp.profile.spring.resource.ClasspathResourceParser;
 import net.shibboleth.idp.profile.spring.resource.SVNResourceParser;
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
@@ -58,9 +59,10 @@ public class MetadataNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(SVNResourceParser.ELEMENT_NAME, new SVNResourceParser());
 
         // Filters
-        registerBeanDefinitionParser(RequiredValidUntilParser.ELEMENT_NAME, new RequiredValidUntilParser());
-        registerBeanDefinitionParser(ChainingParser.ELEMENT_NAME, new ChainingParser());
-        registerBeanDefinitionParser(EntityRoleFilterParser.ELEMENT_NAME, new EntityRoleFilterParser());
-        registerBeanDefinitionParser(SchemaValidationParser.ELEMENT_NAME, new SchemaValidationParser());
+        registerBeanDefinitionParser(RequiredValidUntilParser.TYPE_NAME, new RequiredValidUntilParser());
+        registerBeanDefinitionParser(ChainingParser.TYPE_NAME, new ChainingParser());
+        registerBeanDefinitionParser(EntityRoleFilterParser.TYPE_NAME, new EntityRoleFilterParser());
+        registerBeanDefinitionParser(SchemaValidationParser.TYPE_NAME, new SchemaValidationParser());
+        registerBeanDefinitionParser(SignatureValidationParser.TYPE_NAME, new SignatureValidationParser());
     }
 }

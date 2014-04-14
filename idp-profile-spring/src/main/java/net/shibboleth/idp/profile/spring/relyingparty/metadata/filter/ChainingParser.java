@@ -37,7 +37,7 @@ import org.w3c.dom.Element;
 public class ChainingParser extends AbstractSingleBeanDefinitionParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "ChainingFilter");
+    public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "ChainingFilter");
 
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(Element element) {

@@ -39,7 +39,7 @@ import org.w3c.dom.Element;
 public class SchemaValidationParser extends AbstractSingleBeanDefinitionParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "SchemaValidation");
+    public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "SchemaValidation");
 
     /** Element name for the extension Schema. */
     public static final QName EXTENSION_SCHEMA_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "ExtensionSchema");

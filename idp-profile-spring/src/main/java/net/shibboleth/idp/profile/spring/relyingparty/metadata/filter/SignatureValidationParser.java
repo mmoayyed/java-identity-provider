@@ -20,31 +20,32 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.MetadataNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.saml.metadata.resolver.filter.impl.RequiredValidUntilFilter;
+import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
-import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Parser for a &lt;RequiredValidUntil&gt; filter.
+ * Parser for xsi:type="SignatureValidation".
  */
-public class RequiredValidUntilParser extends AbstractSingleBeanDefinitionParser {
-    
-    /** Element name. */
-    public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "RequiredValidUntil");
+public class SignatureValidationParser extends AbstractSingleBeanDefinitionParser {
+
+    /** Schema type name. */
+    public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "SignatureValidation");
 
     /** {@inheritDoc} */
-    @Override protected Class<?> getBeanClass(Element element) {
-        return RequiredValidUntilFilter.class;
+    @Override protected Class getBeanClass(Element element) {
+        return SignatureValidationFilter.class;
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        if (element.hasAttributeNS(null, "maxValidityInterval")) {
-            builder.addPropertyValue("maxValidityInterval", element.getAttributeNS(null, "maxValidityInterval"));
+    @Override protected void doParse(Element element, BeanDefinitionBuilder builder) {
+        builder.addConstructorArgReference(StringSupport.trimOrNull(element.getAttributeNS(null, "trustEngineRef")));
+
+        if (element.hasAttributeNS(null, "requireSignedMetadata")) {
+            builder.addPropertyValue("requireSignature", element.getAttributeNS(null, "requireSignedMetadata"));
         }
     }
 
@@ -52,4 +53,5 @@ public class RequiredValidUntilParser extends AbstractSingleBeanDefinitionParser
     @Override protected boolean shouldGenerateId() {
         return true;
     }
+
 }
