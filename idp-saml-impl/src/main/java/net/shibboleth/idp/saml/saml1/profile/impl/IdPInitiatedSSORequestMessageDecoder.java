@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.impl.profile.saml1;
+package net.shibboleth.idp.saml.saml1.profile.impl;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.saml.impl.profile.BaseIdPInitiatedSSORequestMessageDecoder;
-import net.shibboleth.idp.saml.impl.profile.IdPInitiatedSSORequest;
+import net.shibboleth.idp.saml.profile.impl.BaseIdPInitiatedSSORequestMessageDecoder;
+import net.shibboleth.idp.saml.profile.impl.IdPInitiatedSSORequest;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 import org.joda.time.DateTime;
