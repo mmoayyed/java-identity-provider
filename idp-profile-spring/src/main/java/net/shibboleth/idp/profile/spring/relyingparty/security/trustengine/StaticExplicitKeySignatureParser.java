@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -27,7 +28,12 @@ import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.security.credential.impl.StaticCredentialResolver;
-import org.opensaml.security.trust.impl.ExplicitKeyTrustEngine;
+import org.opensaml.xmlsec.keyinfo.impl.BasicProviderKeyInfoCredentialResolver;
+import org.opensaml.xmlsec.keyinfo.impl.KeyInfoProvider;
+import org.opensaml.xmlsec.keyinfo.impl.provider.DSAKeyValueProvider;
+import org.opensaml.xmlsec.keyinfo.impl.provider.InlineX509DataProvider;
+import org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider;
+import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -42,7 +48,7 @@ public class StaticExplicitKeySignatureParser extends AbstractTrustEngineParser 
 
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(Element element) {
-        return ExplicitKeyTrustEngine.class;
+        return ExplicitKeySignatureTrustEngine.class;
     }
 
     /** {@inheritDoc} */
@@ -57,5 +63,11 @@ public class StaticExplicitKeySignatureParser extends AbstractTrustEngineParser 
         resolver.addConstructorArgValue(SpringSupport.parseCustomElements(credentials, parserContext));
 
         builder.addConstructorArgValue(resolver.getBeanDefinition());
+        
+        List<KeyInfoProvider> keyInfoProviders = new ArrayList<KeyInfoProvider>();
+        keyInfoProviders.add(new DSAKeyValueProvider());
+        keyInfoProviders.add(new RSAKeyValueProvider());
+        keyInfoProviders.add(new InlineX509DataProvider());
+        builder.addConstructorArgValue(new BasicProviderKeyInfoCredentialResolver(keyInfoProviders));
     }
 }
