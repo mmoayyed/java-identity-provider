@@ -19,7 +19,7 @@
 
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
-        p:profileId="#{T(net.shibboleth.idp.saml.profile.config.saml2.AttributeQueryProfileConfiguration).PROFILE_ID}" />
+        p:profileId="#{T(net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration).PROFILE_ID}" />
 
     <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
         <constructor-arg>
@@ -61,7 +61,7 @@
         class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
     <bean
         id="AttributeQueryProfileConfiguration"
-            class="net.shibboleth.idp.saml.profile.config.saml2.AttributeQueryProfileConfiguration"
+            class="net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration"
             p:securityConfiguration-ref="SecurityConfiguration">
         <property name="inboundHandler">
             <bean class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain"
@@ -86,7 +86,7 @@
     </bean>
 
     <bean id="AddAttributeStatementToAssertion"
-        class="net.shibboleth.idp.saml.impl.profile.saml2.AddAttributeStatementToAssertion" scope="prototype" />
+        class="net.shibboleth.idp.saml.saml2.profile.impl.AddAttributeStatementToAssertion" scope="prototype" />
 
     <bean id="CopyNameIDFromRequest"
             class="org.opensaml.saml.saml2.profile.impl.CopyNameIDFromRequest" scope="prototype" />

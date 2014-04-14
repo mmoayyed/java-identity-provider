@@ -21,7 +21,7 @@ import java.util.List;
 
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
-import net.shibboleth.idp.saml.profile.config.saml2.BrowserSSOProfileConfiguration;
+import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;

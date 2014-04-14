@@ -15,10 +15,10 @@
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
 
-	<bean id="SAML2PersistentDecoder" class="net.shibboleth.idp.saml.impl.nameid.StoredPersistentIdDecoder"
+	<bean id="SAML2PersistentDecoder" class="net.shibboleth.idp.saml.nameid.impl.StoredPersistentIdDecoder"
         p:persistentIdStore-ref="${idp.persistentId.store}" />
 
-	<bean id="SAML2PersistentCanonicalization" class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization"
+	<bean id="SAML2PersistentCanonicalization" class="net.shibboleth.idp.saml.nameid.impl.NameIDCanonicalization"
 		scope="prototype" p:decoder-ref="SAML2PersistentDecoder" />
 
 </beans>

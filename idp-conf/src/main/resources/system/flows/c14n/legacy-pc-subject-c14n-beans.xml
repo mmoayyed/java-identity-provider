@@ -13,7 +13,7 @@
     <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
 
 	<bean id="LegacyPrincipalConnectorCanonicalization"
-		class="net.shibboleth.idp.saml.impl.nameid.LegacyCanonicalization"
+		class="net.shibboleth.idp.saml.nameid.impl.LegacyCanonicalization"
 		scope="prototype" c:resolverService-ref="shibboleth.AttributeResolverService"/>
 
 </beans>

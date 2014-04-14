@@ -12,10 +12,10 @@
 	<bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
 
-	<bean id="SAML1CryptoTransientDecoder" class="net.shibboleth.idp.saml.impl.nameid.CryptoTransientNameIdentifierDecoder"
+	<bean id="SAML1CryptoTransientDecoder" class="net.shibboleth.idp.saml.nameid.impl.CryptoTransientNameIdentifierDecoder"
 		p:dataSealer-ref="shibboleth.DataSealer" />
 
-	<bean id="SAML1CrypoTransientCanonicalization" class="net.shibboleth.idp.saml.impl.nameid.NameIdentifierCanonicalization"
+	<bean id="SAML1CrypoTransientCanonicalization" class="net.shibboleth.idp.saml.nameid.impl.NameIdentifierCanonicalization"
 		scope="prototype" p:decoder-ref="SAML1CryptoTransientDecoder" />
 
 </beans>

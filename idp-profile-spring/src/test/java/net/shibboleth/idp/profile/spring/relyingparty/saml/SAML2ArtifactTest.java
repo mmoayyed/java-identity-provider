@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
-import net.shibboleth.idp.saml.profile.config.saml2.ArtifactResolutionProfileConfiguration;
+import net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;

@@ -11,7 +11,7 @@
     
     <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
         <constructor-arg>
-            <bean class="net.shibboleth.idp.saml.impl.profile.saml2.IdPInitiatedSSORequestMessageDecoder" scope="prototype">
+            <bean class="net.shibboleth.idp.saml.saml2.profile.impl.IdPInitiatedSSORequestMessageDecoder" scope="prototype">
                 <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
             </bean>
         </constructor-arg>

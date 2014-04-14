@@ -21,8 +21,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.saml.impl.attribute.resolver.TransientIdAttributeDefinition;
-import net.shibboleth.idp.saml.impl.nameid.CryptoTransientIdGenerationStrategy;
+import net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinition;
+import net.shibboleth.idp.saml.nameid.impl.CryptoTransientIdGenerationStrategy;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;

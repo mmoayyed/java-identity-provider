@@ -20,8 +20,8 @@ package net.shibboleth.idp.attribute.resolver.spring.pc;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.saml.impl.nameid.CryptoTransientNameIDDecoder;
-import net.shibboleth.idp.saml.impl.nameid.CryptoTransientNameIdentifierDecoder;
+import net.shibboleth.idp.saml.nameid.impl.CryptoTransientNameIDDecoder;
+import net.shibboleth.idp.saml.nameid.impl.CryptoTransientNameIdentifierDecoder;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;

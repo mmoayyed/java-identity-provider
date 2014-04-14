@@ -19,7 +19,7 @@
 
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
-        p:profileId="#{T(net.shibboleth.idp.saml.profile.config.saml1.BrowserSSOProfileConfiguration).PROFILE_ID}" />
+        p:profileId="#{T(net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration).PROFILE_ID}" />
 
     <bean id="inboundMessageHandlerChain"
             class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
@@ -51,7 +51,7 @@
         class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
     <bean
         id="SAML1BrowserSSOProfileConfiguration"
-            class="net.shibboleth.idp.saml.profile.config.saml1.BrowserSSOProfileConfiguration"
+            class="net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration"
             p:securityConfiguration-ref="SecurityConfiguration">
         <property name="inboundHandler">
             <bean class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain"
@@ -76,17 +76,17 @@
     </bean>
 
     <bean id="AddAuthenticationStatementToAssertion"
-        class="net.shibboleth.idp.saml.impl.profile.saml1.AddAuthenticationStatementToAssertion" scope="prototype" />
+        class="net.shibboleth.idp.saml.saml1.profile.impl.AddAuthenticationStatementToAssertion" scope="prototype" />
 
     <bean id="AddAttributeStatementToAssertion"
-        class="net.shibboleth.idp.saml.impl.profile.saml1.AddAttributeStatementToAssertion" scope="prototype" />
+        class="net.shibboleth.idp.saml.saml1.profile.impl.AddAttributeStatementToAssertion" scope="prototype" />
 
     <bean id="AddNameIdentifierToSubjects"
             class="org.opensaml.saml.saml1.profile.impl.AddNameIdentifierToSubjects" scope="prototype"
             p:defaultNameIDGenerator="#{getObject('shibboleth.LegacySAML1NameIdentifierGenerator')}"
             p:nameIdentifierGenerators-ref="shibboleth.SAML1NameIdentifierGenerators">
         <property name="formatLookupStrategy">
-            <bean class="net.shibboleth.idp.saml.impl.profile.logic.DefaultNameIdentifierFormatStrategy" />
+            <bean class="net.shibboleth.idp.saml.profile.logic.DefaultNameIdentifierFormatStrategy" />
         </property>
     </bean>
 

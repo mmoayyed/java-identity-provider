@@ -18,8 +18,8 @@
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.saml.impl.attribute.resolver.TransientIdAttributeDefinition;
-import net.shibboleth.idp.saml.impl.nameid.StoredTransientIdGenerationStrategy;
+import net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinition;
+import net.shibboleth.idp.saml.nameid.impl.StoredTransientIdGenerationStrategy;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.springframework.beans.factory.BeanCreationException;

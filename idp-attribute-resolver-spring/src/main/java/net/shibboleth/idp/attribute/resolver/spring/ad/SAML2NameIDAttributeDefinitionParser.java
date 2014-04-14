@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.saml.impl.attribute.resolver.SAML2NameIDAttributeDefinition;
+import net.shibboleth.idp.saml.attribute.resolver.impl.SAML2NameIDAttributeDefinition;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;

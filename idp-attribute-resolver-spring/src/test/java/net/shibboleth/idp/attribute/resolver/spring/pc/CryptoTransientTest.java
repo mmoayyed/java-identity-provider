@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.pc;
 
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.saml.impl.attribute.principalconnector.PrincipalConnector;
+import net.shibboleth.idp.saml.attribute.principalconnector.impl.PrincipalConnector;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;

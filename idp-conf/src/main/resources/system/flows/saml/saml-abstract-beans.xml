@@ -25,7 +25,7 @@
         c:executionDirection="INBOUND" />
 
     <bean id="InitializeRelyingPartyContexFromSAMLPeer"
-        class="net.shibboleth.idp.saml.impl.profile.InitializeRelyingPartyContextFromSAMLPeer" scope="prototype" />
+        class="net.shibboleth.idp.saml.profile.impl.InitializeRelyingPartyContextFromSAMLPeer" scope="prototype" />
 
     <bean id="SelectRelyingPartyConfiguration"
         class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration" scope="prototype"
@@ -49,10 +49,10 @@
         c:executionDirection="INBOUND" />
 
     <bean id="InitializeOutboundMessageContext"
-        class="net.shibboleth.idp.saml.impl.profile.InitializeOutboundMessageContext" scope="prototype" />
+        class="net.shibboleth.idp.saml.profile.impl.InitializeOutboundMessageContext" scope="prototype" />
 
     <bean id="PopulateBindingAndEndpointContexts"
-        class="net.shibboleth.idp.saml.impl.profile.PopulateBindingAndEndpointContexts" scope="prototype"
+        class="net.shibboleth.idp.saml.profile.impl.PopulateBindingAndEndpointContexts" scope="prototype"
         p:endpointResolver-ref="shibboleth.EndpointResolver"
         p:bindings-ref="shibboleth.OutgoingBindings" />
 
@@ -64,14 +64,14 @@
     <bean id="DecryptNameIDs" class="org.opensaml.saml.saml2.profile.impl.DecryptNameIDs" scope="prototype" />
 
     <bean id="ExtractSubjectFromRequest"
-            class="net.shibboleth.idp.saml.impl.profile.ExtractSubjectFromRequest" scope="prototype">
+            class="net.shibboleth.idp.saml.profile.impl.ExtractSubjectFromRequest" scope="prototype">
         <property name="nameIDPolicyPredicate">
             <bean class="org.opensaml.saml.common.profile.logic.AffiliationNameIDPolicyPredicate"
                     p:metadataResolver-ref="ExampleMetadataResolver"
                     p:responderIdLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"
                     p:requesterIdLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple">
                 <property name="objectLookupStrategy">
-                    <bean class="net.shibboleth.idp.saml.impl.profile.ExtractSubjectFromRequest.SubjectNameLookupFunction" />
+                    <bean class="net.shibboleth.idp.saml.profile.impl.ExtractSubjectFromRequest.SubjectNameLookupFunction" />
                 </property>
                 <property name="formats">
                     <util:list>
@@ -85,7 +85,7 @@
     </bean>
 
     <bean id="FinalizeSAMLSubjectCanonicalization"
-        class="net.shibboleth.idp.saml.impl.profile.FinalizeSAMLSubjectCanonicalization" scope="prototype" />
+        class="net.shibboleth.idp.saml.profile.impl.FinalizeSAMLSubjectCanonicalization" scope="prototype" />
 
     <bean id="PopulateResponseSignatureSigningParameters"
             class="org.opensaml.saml.common.profile.impl.PopulateSignatureSigningParameters" scope="prototype"
@@ -94,7 +94,7 @@
         <!-- TODO: disable until parameter resolver in OpenSAML is working -->
         <property name="activationCondition" ref="shibboleth.Predicates.False">
             <!--
-            <bean class="net.shibboleth.idp.saml.impl.profile.config.logic.SignResponsesPredicate" />
+            <bean class="net.shibboleth.idp.saml.profile.config.logic.SignResponsesPredicate" />
             -->
         </property>
     </bean>
@@ -104,7 +104,7 @@
             p:configurationLookupStrategy-ref="shibboleth.SignatureSigningConfigurationLookup"
             p:signatureSigningParametersResolver-ref="shibboleth.SignatureSigningParametersResolver">
         <property name="activationCondition">
-            <bean class="net.shibboleth.idp.saml.impl.profile.config.logic.SignAssertionsPredicate" />
+            <bean class="net.shibboleth.idp.saml.profile.config.logic.SignAssertionsPredicate" />
         </property>
         <property name="securityParametersContextLookupStrategy">
             <bean class="com.google.common.base.Functions" factory-method="compose"
@@ -121,13 +121,13 @@
     <!--
     TODO: activate once resolver is available
     <bean id="PopulateEncryptionParameters"
-            class="net.shibboleth.idp.saml.impl.profile.saml2.PopulateEncryptionParameters" scope="prototype"
+            class="net.shibboleth.idp.saml.saml2.profile.impl.PopulateEncryptionParameters" scope="prototype"
             p:configurationLookupStrategy-ref="shibboleth.EncryptionConfigurationLookup"
             p:encryptionParametersResolver-ref="shibboleth.EncryptionParametersResolver" />
     -->
 
     <bean id="InitializeAuthenticationContext"
-        class="net.shibboleth.idp.saml.impl.profile.InitializeAuthenticationContext" scope="prototype" />
+        class="net.shibboleth.idp.saml.profile.impl.InitializeAuthenticationContext" scope="prototype" />
 
     <bean id="InitializeRequestedPrincipalContext"
         class="net.shibboleth.idp.authn.impl.InitializeRequestedPrincipalContext" scope="prototype" />
@@ -149,7 +149,7 @@
     <bean id="AddNotBeforeConditionToAssertions"
             class="org.opensaml.saml.common.profile.impl.AddNotBeforeConditionToAssertions" scope="prototype">
         <property name="activationCondition">
-            <bean class="net.shibboleth.idp.saml.impl.profile.config.logic.NotBeforeProfileConfigPredicate" />
+            <bean class="net.shibboleth.idp.saml.profile.config.logic.NotBeforeProfileConfigPredicate" />
         </property>
     </bean>
 
@@ -157,14 +157,14 @@
             class="org.opensaml.saml.common.profile.impl.AddNotOnOrAfterConditionToAssertions" scope="prototype"
             p:defaultAssertionLifetime="PT5M">
         <property name="assertionLifetimeStrategy">
-            <bean class="net.shibboleth.idp.saml.impl.profile.config.navigate.AssertionLifetimeLookupFunction" />
+            <bean class="net.shibboleth.idp.saml.profile.config.navigate.AssertionLifetimeLookupFunction" />
         </property>
     </bean>
 
     <bean id="AddAudienceRestrictionToAssertions"
             class="org.opensaml.saml.common.profile.impl.AddAudienceRestrictionToAssertions" scope="prototype">
         <property name="audienceRestrictionsLookupStrategy">
-            <bean class="net.shibboleth.idp.saml.impl.profile.config.navigate.AudienceRestrictionsLookupFunction" />
+            <bean class="net.shibboleth.idp.saml.profile.config.navigate.AudienceRestrictionsLookupFunction" />
         </property>
     </bean>
 
@@ -181,7 +181,7 @@
         c:messageHandler-ref="outboundMessageHandlerChain"
         c:executionDirection="OUTBOUND" />
 
-    <bean id="messageEncoderFactory" class="net.shibboleth.idp.saml.impl.profile.SpringAwareMessageEncoderFactory"
+    <bean id="messageEncoderFactory" class="net.shibboleth.idp.saml.profile.impl.SpringAwareMessageEncoderFactory"
         p:bindings-ref="shibboleth.OutgoingBindings" />
 
     <bean id="EncodeMessage" class="org.opensaml.profile.action.impl.EncodeMessage" scope="prototype"

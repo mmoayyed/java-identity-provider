@@ -30,8 +30,8 @@ import org.w3c.dom.Element;
 
 /**
  * Spring bean definition parser for configuring
- * {@link net.shibboleth.idp.saml.impl.attribute.resolver.ComputedIDDataConnector} and
- * {@link net.shibboleth.idp.saml.impl.nameid.StoredIDDataConnector}.
+ * {@link net.shibboleth.idp.saml.attribute.resolver.impl.ComputedIDDataConnector} and
+ * {@link net.shibboleth.idp.saml.nameid.impl.StoredIDDataConnector}.
  */
 public abstract class BaseComputedIDDataConnectorParser extends AbstractDataConnectorParser {
 
@@ -39,8 +39,8 @@ public abstract class BaseComputedIDDataConnectorParser extends AbstractDataConn
     private final Logger log = LoggerFactory.getLogger(BaseComputedIDDataConnectorParser.class);
 
     /**
-     * Parse the common definitions for {@link net.shibboleth.idp.saml.impl.attribute.resolver.ComputedIDDataConnector}
-     * and {@link net.shibboleth.idp.saml.impl.nameid.StoredIDDataConnector}.
+     * Parse the common definitions for {@link net.shibboleth.idp.saml.attribute.resolver.impl.ComputedIDDataConnector}
+     * and {@link net.shibboleth.idp.saml.nameid.impl.StoredIDDataConnector}.
      * 
      * @param config the DOM element under consideration.
      * @param parserContext Spring's context.

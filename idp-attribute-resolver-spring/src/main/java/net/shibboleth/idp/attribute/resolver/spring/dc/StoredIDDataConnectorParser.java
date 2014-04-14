@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.saml.impl.attribute.resolver.StoredIDDataConnector;
+import net.shibboleth.idp.saml.attribute.resolver.impl.StoredIDDataConnector;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
 import org.slf4j.Logger;

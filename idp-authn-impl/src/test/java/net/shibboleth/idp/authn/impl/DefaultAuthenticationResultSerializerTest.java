@@ -26,10 +26,10 @@ import java.util.Collections;
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.idp.authn.impl.principal.LdapPrincipalSerializer;
 import net.shibboleth.idp.authn.principal.PrincipalSerializer;
 import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.idp.authn.principal.impl.LdapPrincipalSerializer;
 
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;

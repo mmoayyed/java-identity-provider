@@ -15,25 +15,25 @@
     <context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
 
     <bean id="shibboleth.StoredTransientIdGenerator"
-        class="net.shibboleth.idp.saml.impl.nameid.StoredTransientIdGenerationStrategy"
+        class="net.shibboleth.idp.saml.nameid.impl.StoredTransientIdGenerationStrategy"
         p:idStore-ref="shibboleth.StorageService" />
 
     <bean id="shibboleth.CryptoTransientIdGenerator"
-        class="net.shibboleth.idp.saml.impl.nameid.CryptoTransientIdGenerationStrategy"
+        class="net.shibboleth.idp.saml.nameid.impl.CryptoTransientIdGenerationStrategy"
         p:dataSealer-ref="shibboleth.DataSealer" />
 
     <bean id="shibboleth.ComputedPersistentIdGenerator"
-        class="net.shibboleth.idp.saml.impl.nameid.ComputedPersistentIdGenerationStrategy"
+        class="net.shibboleth.idp.saml.nameid.impl.ComputedPersistentIdGenerationStrategy"
         p:salt="${idp.persistentId.salt}" p:algorithm="${idp.persistentId.algorithm}" />
 
     <bean id="shibboleth.StoredPersistentIdGenerator" lazy-init="true"
-        class="net.shibboleth.idp.saml.impl.nameid.StoredPersistentIdGenerationStrategy"
+        class="net.shibboleth.idp.saml.nameid.impl.StoredPersistentIdGenerationStrategy"
         p:computedIdStrategy-ref="shibboleth.ComputedPersistentIdGenerator"
         p:IDStore-ref="${idp.persistentId.store}" />
 
     <bean id="SubjectC14NFlow/LegacyPrincipalConnector" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
         <property name="activationCondition">
-            <bean class="net.shibboleth.idp.saml.impl.nameid.LegacyCanonicalization.ActivationCondition" 
+            <bean class="net.shibboleth.idp.saml.nameid.impl.LegacyCanonicalization.ActivationCondition" 
                 c:service-ref="shibboleth.AttributeResolverService"/>
         </property>
     </bean>
@@ -41,14 +41,14 @@
     <bean id="shibboleth.AbstractSAML1C14NFlowBean" abstract="true"
             class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor">
         <property name="activationCondition">
-            <bean class="net.shibboleth.idp.saml.impl.nameid.NameIdentifierCanonicalization.ActivationCondition" />
+            <bean class="net.shibboleth.idp.saml.nameid.impl.NameIdentifierCanonicalization.ActivationCondition" />
         </property>
     </bean>
 
     <bean id="shibboleth.AbstractSAML2C14NFlowBean" abstract="true"
             class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor">
         <property name="activationCondition">
-            <bean class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition" />
+            <bean class="net.shibboleth.idp.saml.nameid.impl.NameIDCanonicalization.ActivationCondition" />
         </property>
     </bean>
 
@@ -73,7 +73,7 @@
             <bean class="com.google.common.base.Predicates" factory-method="and">
                 <constructor-arg>
                     <util:list>
-                        <bean class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization.ActivationCondition" />
+                        <bean class="net.shibboleth.idp.saml.nameid.impl.NameIDCanonicalization.ActivationCondition" />
                         <ref bean="shibboleth.DirectNamePredicate" />
                     </util:list>
                 </constructor-arg>
@@ -87,7 +87,7 @@
             <bean class="com.google.common.base.Predicates" factory-method="and">
                 <constructor-arg>
                     <util:list>
-                        <bean class="net.shibboleth.idp.saml.impl.nameid.NameIdentifierCanonicalization.ActivationCondition" />
+                        <bean class="net.shibboleth.idp.saml.nameid.impl.NameIdentifierCanonicalization.ActivationCondition" />
                         <ref bean="shibboleth.DirectNamePredicate" />
                     </util:list>
                 </constructor-arg>

@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.saml.impl.attribute.encoding.SAML2StringAttributeEncoder;
+import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringAttributeEncoder;
 
 import org.opensaml.saml.saml2.core.Attribute;
 import org.springframework.beans.factory.BeanDefinitionStoreException;

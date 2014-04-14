@@ -23,7 +23,7 @@
                     <bean class="net.shibboleth.idp.session.impl.BasicSPSessionSerializer" c:offset="PT30M" />
                 </entry>
                 <entry key="#{ T(net.shibboleth.idp.saml.session.SAML2SPSession) }">
-                    <bean class="net.shibboleth.idp.saml.impl.session.SAML2SPSessionSerializer" c:offset="PT30M"
+                    <bean class="net.shibboleth.idp.saml.session.impl.SAML2SPSessionSerializer" c:offset="PT30M"
                         p:parserPool-ref="shibboleth.ParserPool" />
                 </entry>
             </map>

@@ -20,8 +20,8 @@ package net.shibboleth.idp.attribute.resolver.spring.pc;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.saml.impl.nameid.DirectNameIDDecoder;
-import net.shibboleth.idp.saml.impl.nameid.DirectNameIdentifierDecoder;
+import net.shibboleth.idp.saml.nameid.impl.DirectNameIDDecoder;
+import net.shibboleth.idp.saml.nameid.impl.DirectNameIdentifierDecoder;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;

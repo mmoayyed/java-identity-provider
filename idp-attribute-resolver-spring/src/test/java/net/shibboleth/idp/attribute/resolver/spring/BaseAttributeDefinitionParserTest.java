@@ -26,7 +26,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.SimpleAttributeDefinitionParser;
-import net.shibboleth.idp.saml.impl.attribute.principalconnector.PrincipalConnector;
+import net.shibboleth.idp.saml.attribute.principalconnector.impl.PrincipalConnector;
 import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;

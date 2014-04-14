@@ -17,7 +17,7 @@
     desired value-ref slot in the AuthnComparisonRegistry.
     -->
     
-    <bean id="shibboleth.BetterClassRefMatchFactory" class="net.shibboleth.idp.authn.impl.principal.InexactPrincipalEvalPredicateFactory">
+    <bean id="shibboleth.BetterClassRefMatchFactory" class="net.shibboleth.idp.authn.principal.impl.InexactPrincipalEvalPredicateFactory">
         <!--
         <property name="matchingRules">
             <map>
@@ -32,15 +32,15 @@
         -->
     </bean>
 
-    <bean id="shibboleth.BetterDeclRefMatchFactory" class="net.shibboleth.idp.authn.impl.principal.InexactPrincipalEvalPredicateFactory"/>
+    <bean id="shibboleth.BetterDeclRefMatchFactory" class="net.shibboleth.idp.authn.principal.impl.InexactPrincipalEvalPredicateFactory"/>
 
-    <bean id="shibboleth.MinimumClassRefMatchFactory" class="net.shibboleth.idp.authn.impl.principal.InexactPrincipalEvalPredicateFactory"/>
+    <bean id="shibboleth.MinimumClassRefMatchFactory" class="net.shibboleth.idp.authn.principal.impl.InexactPrincipalEvalPredicateFactory"/>
 
-    <bean id="shibboleth.MinimumDeclRefMatchFactory" class="net.shibboleth.idp.authn.impl.principal.InexactPrincipalEvalPredicateFactory"/>
+    <bean id="shibboleth.MinimumDeclRefMatchFactory" class="net.shibboleth.idp.authn.principal.impl.InexactPrincipalEvalPredicateFactory"/>
 
-    <bean id="shibboleth.MaximumClassRefMatchFactory" class="net.shibboleth.idp.authn.impl.principal.InexactPrincipalEvalPredicateFactory"/>
+    <bean id="shibboleth.MaximumClassRefMatchFactory" class="net.shibboleth.idp.authn.principal.impl.InexactPrincipalEvalPredicateFactory"/>
 
-    <bean id="shibboleth.MaximumDeclRefMatchFactory" class="net.shibboleth.idp.authn.impl.principal.InexactPrincipalEvalPredicateFactory"/>
+    <bean id="shibboleth.MaximumDeclRefMatchFactory" class="net.shibboleth.idp.authn.principal.impl.InexactPrincipalEvalPredicateFactory"/>
     
     
     <!-- Registry of objects implementing matching rules. -->
@@ -92,6 +92,6 @@
         p:first="#{ T(net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal) }" p:second="better"/>
 
     <!-- Exact matching for SAML AC Classes and Declarations (or anything else really). -->
-    <bean id="shibboleth.ExactMatchFactory" class="net.shibboleth.idp.authn.impl.principal.ExactPrincipalEvalPredicateFactory"/>
+    <bean id="shibboleth.ExactMatchFactory" class="net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactory"/>
     
 </beans>

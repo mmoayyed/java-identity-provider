@@ -6,22 +6,22 @@
     
     <!-- Scope provider -->
         <ObjectProvider qualifiedName="shibmd:Scope">
-            <BuilderClass className="net.shibboleth.idp.saml.impl.xmlobject.ScopeBuilder"/>
-            <MarshallingClass className="net.shibboleth.idp.saml.impl.xmlobject.ScopeMarshaller"/>
-            <UnmarshallingClass className="net.shibboleth.idp.saml.impl.xmlobject.ScopeUnmarshaller"/>
+            <BuilderClass className="net.shibboleth.idp.saml.xmlobject.impl.ScopeBuilder"/>
+            <MarshallingClass className="net.shibboleth.idp.saml.xmlobject.impl.ScopeMarshaller"/>
+            <UnmarshallingClass className="net.shibboleth.idp.saml.xmlobject.impl.ScopeUnmarshaller"/>
         </ObjectProvider>
         
         <!-- KeyAuthority provider -->
         <ObjectProvider qualifiedName="shibmd:KeyAuthority">
-            <BuilderClass className="net.shibboleth.idp.saml.impl.xmlobject.KeyAuthorityBuilder"/>
-            <MarshallingClass className="net.shibboleth.idp.saml.impl.xmlobject.KeyAuthorityMarshaller"/>
-            <UnmarshallingClass className="net.shibboleth.idp.saml.impl.xmlobject.KeyAuthorityUnmarshaller"/>
+            <BuilderClass className="net.shibboleth.idp.saml.xmlobject.impl.KeyAuthorityBuilder"/>
+            <MarshallingClass className="net.shibboleth.idp.saml.xmlobject.impl.KeyAuthorityMarshaller"/>
+            <UnmarshallingClass className="net.shibboleth.idp.saml.xmlobject.impl.KeyAuthorityUnmarshaller"/>
         </ObjectProvider>
         
         <ObjectProvider qualifiedName="encoder:ScopedValue">
-            <BuilderClass className="net.shibboleth.idp.saml.impl.xmlobject.ScopedValueBuilder"/>
-            <MarshallingClass className="net.shibboleth.idp.saml.impl.xmlobject.ScopedValueMarshaller"/>
-            <UnmarshallingClass className="net.shibboleth.idp.saml.impl.xmlobject.ScopedValueUnmarshaller"/>
+            <BuilderClass className="net.shibboleth.idp.saml.xmlobject.impl.ScopedValueBuilder"/>
+            <MarshallingClass className="net.shibboleth.idp.saml.xmlobject.impl.ScopedValueMarshaller"/>
+            <UnmarshallingClass className="net.shibboleth.idp.saml.xmlobject.impl.ScopedValueUnmarshaller"/>
         </ObjectProvider>
 		
     </ObjectProviders>

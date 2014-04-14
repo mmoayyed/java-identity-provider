@@ -41,15 +41,15 @@
      -->
      
 	<bean id="abstractStringMapper" init-method="initialize" abstract="true" 
-		class="net.shibboleth.idp.saml.impl.attribute.mapping.RequestedAttributeMapper">
+		class="net.shibboleth.idp.saml.attribute.mapping.impl.RequestedAttributeMapper">
 		<property name="valueMapper">
 			<bean
-				class="net.shibboleth.idp.saml.impl.attribute.mapping.StringAttributeValueMapper" />
+				class="net.shibboleth.idp.saml.attribute.mapping.impl.StringAttributeValueMapper" />
 		</property>
 	</bean>
 
 	<bean id="RequestedAttributesMapper"
-		class="net.shibboleth.idp.saml.impl.attribute.mapping.RequestedAttributesMapper"
+		class="net.shibboleth.idp.saml.attribute.mapping.impl.RequestedAttributesMapper"
 		init-method="initialize" p:id="RequestedAttributesMapper">
 		<property name="mappers">
 			<list>
@@ -79,7 +79,7 @@
 					<property name="attributeFormat" value=" format " />
 					<property name="valueMapper">
 						<bean
-							class="net.shibboleth.idp.saml.impl.attribute.mapping.ScopedStringAttributeValueMapper"
+							class="net.shibboleth.idp.saml.attribute.mapping.impl.ScopedStringAttributeValueMapper"
 							p:delimiter="#" />
 					</property>
 					<property name="attributeIds">
@@ -94,7 +94,7 @@
 					<property name="id" value="eduPersonTargetedID"/>
 					<property name="valueMapper">
 						<bean
-							class="net.shibboleth.idp.saml.impl.attribute.mapping.XmlObjectAttributeValueMapper" />
+							class="net.shibboleth.idp.saml.attribute.mapping.impl.XmlObjectAttributeValueMapper" />
 					</property>
 					<property name="attributeIds">
 						<list>

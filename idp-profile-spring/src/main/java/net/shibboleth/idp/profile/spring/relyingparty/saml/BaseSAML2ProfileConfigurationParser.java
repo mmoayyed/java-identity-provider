@@ -31,7 +31,7 @@ import org.w3c.dom.Element;
 
 /**
  * Parser for all classes which extend
- * {@link net.shibboleth.idp.saml.profile.config.saml2.AbstractSAML2ProfileConfiguration} and for elements which inherit
+ * {@link net.shibboleth.idp.saml.saml2.profile.config.AbstractSAML2ProfileConfiguration} and for elements which inherit
  * from <code>saml:SAML2ProfileConfigutationType</code>.
  */
 public abstract class BaseSAML2ProfileConfigurationParser extends BaseSAMLProfileConfigurationParser {

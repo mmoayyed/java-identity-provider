@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.saml;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.saml.profile.config.saml2.SingleLogoutProfileConfiguration;
+import net.shibboleth.idp.saml.saml2.profile.config.SingleLogoutProfileConfiguration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

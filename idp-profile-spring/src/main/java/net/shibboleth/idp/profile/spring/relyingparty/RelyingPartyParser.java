@@ -20,7 +20,7 @@ package net.shibboleth.idp.profile.spring.relyingparty;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
-import net.shibboleth.idp.saml.impl.profile.logic.EntitiesDescriptorPredicate;
+import net.shibboleth.idp.saml.profile.logic.EntitiesDescriptorPredicate;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;

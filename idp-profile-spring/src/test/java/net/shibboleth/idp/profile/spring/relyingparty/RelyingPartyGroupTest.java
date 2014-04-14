@@ -24,7 +24,7 @@ import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver;
-import net.shibboleth.idp.saml.impl.metadata.RelyingPartyMetadataProvider;
+import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;

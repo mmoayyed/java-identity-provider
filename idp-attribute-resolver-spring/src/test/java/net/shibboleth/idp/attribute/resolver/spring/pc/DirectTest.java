@@ -19,10 +19,10 @@ package net.shibboleth.idp.attribute.resolver.spring.pc;
 
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
-import net.shibboleth.idp.saml.impl.attribute.principalconnector.PrincipalConnector;
-import net.shibboleth.idp.saml.impl.nameid.DirectNameIDDecoder;
-import net.shibboleth.idp.saml.impl.nameid.DirectNameIdentifierDecoder;
+import net.shibboleth.idp.saml.attribute.principalconnector.impl.PrincipalConnector;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
+import net.shibboleth.idp.saml.nameid.impl.DirectNameIDDecoder;
+import net.shibboleth.idp.saml.nameid.impl.DirectNameIdentifierDecoder;
 
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.impl.NameIDBuilder;

@@ -20,7 +20,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.saml;
 import java.util.Set;
 
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
-import net.shibboleth.idp.saml.profile.config.saml1.AttributeQueryProfileConfiguration;
+import net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;

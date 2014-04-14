@@ -22,9 +22,9 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.saml.impl.profile.config.logic.LegacyEncryptionRequirementPredicate;
-import net.shibboleth.idp.saml.impl.profile.config.logic.LegacySigningRequirementPredicate;
 import net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration;
+import net.shibboleth.idp.saml.profile.config.logic.LegacyEncryptionRequirementPredicate;
+import net.shibboleth.idp.saml.profile.config.logic.LegacySigningRequirementPredicate;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 

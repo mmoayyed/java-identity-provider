@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.saml;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.saml.profile.config.saml1.ArtifactResolutionProfileConfiguration;
+import net.shibboleth.idp.saml.saml1.profile.config.ArtifactResolutionProfileConfiguration;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;

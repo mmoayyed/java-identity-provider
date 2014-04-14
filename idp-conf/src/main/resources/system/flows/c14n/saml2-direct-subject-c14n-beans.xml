@@ -12,9 +12,9 @@
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
 
-	<bean id="SAML2DirectDecoder" class="net.shibboleth.idp.saml.impl.nameid.DirectNameIDDecoder" />
+	<bean id="SAML2DirectDecoder" class="net.shibboleth.idp.saml.nameid.impl.DirectNameIDDecoder" />
 
-	<bean id="SAML2DirectCanonicalization" class="net.shibboleth.idp.saml.impl.nameid.NameIDCanonicalization"
+	<bean id="SAML2DirectCanonicalization" class="net.shibboleth.idp.saml.nameid.impl.NameIDCanonicalization"
 		scope="prototype" p:decoder-ref="SAML2DirectDecoder" />
 
 </beans>

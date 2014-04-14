@@ -19,7 +19,7 @@
 
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
-        p:profileId="#{T(net.shibboleth.idp.saml.profile.config.saml1.AttributeQueryProfileConfiguration).PROFILE_ID}" />
+        p:profileId="#{T(net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration).PROFILE_ID}" />
 
     <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
         <constructor-arg>
@@ -61,7 +61,7 @@
         class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
     <bean
         id="AttributeQueryProfileConfiguration"
-            class="net.shibboleth.idp.saml.profile.config.saml1.AttributeQueryProfileConfiguration"
+            class="net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration"
             p:securityConfiguration-ref="SecurityConfiguration">
         <property name="inboundHandler">
             <bean class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain"
@@ -88,7 +88,7 @@
     </bean>
 
     <bean id="AddAttributeStatementToAssertion"
-        class="net.shibboleth.idp.saml.impl.profile.saml1.AddAttributeStatementToAssertion" scope="prototype" />
+        class="net.shibboleth.idp.saml.saml1.profile.impl.AddAttributeStatementToAssertion" scope="prototype" />
 
     <bean id="CopyNameIdentifierFromRequest"
             class="org.opensaml.saml.saml1.profile.impl.CopyNameIdentifierFromRequest" scope="prototype" />
@@ -98,7 +98,7 @@
         p:methods="#{ {'urn:oasis:names:tc:SAML:1.0:cm:sender-vouches'} }" />
 
     <bean id="InitializeOutboundMessageContextForError"
-            class="net.shibboleth.idp.saml.impl.profile.InitializeOutboundMessageContextForError" scope="prototype">
+            class="net.shibboleth.idp.saml.profile.impl.InitializeOutboundMessageContextForError" scope="prototype">
         <property name="outboundBinding">
             <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML1_SOAP11_BINDING_URI"/>
         </property>
