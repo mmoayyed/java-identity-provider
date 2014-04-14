@@ -53,10 +53,11 @@ public class WebFlowProfileActionAdaptor<InboundMessageType, OutboundMessageType
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull protected void doExecute(
+    @Nonnull public void execute(
             @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
                     throws ProfileException {
 
         action.execute(profileRequestContext);
     }
+    
 }
