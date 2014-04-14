@@ -71,7 +71,7 @@
         <constructor-arg value="expireAfterAccess=10s,maximumSize=25" />
     </bean>
     <bean id="cache" class="com.google.common.cache.Cache" factory-bean="cacheBuilder" factory-method="build" />
-    <bean class="net.shibboleth.idp.attribute.resolver.dc.impl.ldap.TemplatedExecutableSearchFilterBuilder"
+    <bean class="net.shibboleth.idp.attribute.resolver.dc.ldap.impl.TemplatedExecutableSearchFilterBuilder"
         p:templateText="(uid=${resolutionContext.principal})" p:velocityEngine-ref="shibboleth.VelocityEngine"
         init-method="initialize" />
     <import resource="classpath:/net/shibboleth/idp/attribute/resolver/spring/velocity.xml" />
