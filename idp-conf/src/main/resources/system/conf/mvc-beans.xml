@@ -33,15 +33,11 @@
     <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
        <property name="exceptionMappings">
           <props>
-             <prop key="org.springframework.webflow.execution.repository.FlowExecutionRestorationFailureException">
-                FlowExecutionRestorationFailureException
-             </prop>
+             <prop key="FlowExecutionRestorationFailureException">backbutton</prop>
           </props>
        </property>
-       <!-- 
        <property name="defaultErrorView" value="error"/>
-        -->
-    </bean>    
+    </bean>
     
     <!-- ViewResolvers -->
     
@@ -67,7 +63,7 @@
 
     <bean id="shibboleth.InternalViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
-        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="prefix" value="/WEB-INF/idp/jsp/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
 

@@ -10,8 +10,8 @@
     
     <h2>ERROR</h2>
 
-    #set ($encoder = $flowRequestContext.getFlowScope().get('esapiEncoder'))
-    #set ($errorEventContext = $flowRequestContext.getFlowScope().get('errorEventContext'))
+    #set ($encoder = $flowRequestContext.getRequestScope().get('encoder'))
+    #set ($errorEventContext = $flowRequestContext.getRequestScope().get('errorEventContext'))
 
     #if ( $errorEventContext && $errorEventContext.getEvent() )
             <p>ERROR: $encoder.encodeForHTML($errorEventContext.getEvent().toString())</p>
