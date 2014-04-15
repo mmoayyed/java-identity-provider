@@ -140,6 +140,14 @@
         <transition on="proceed" to="HandleError" />
     </action-state>
 
+    <end-state id="error" view="error">
+        <on-entry>
+            <evaluate expression="flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext')" result="flowScope.profileRequestContext" />
+            <evaluate expression="profileRequestContext.getSubcontext(T(org.opensaml.profile.context.ErrorEventContext))" result="flowScope.errorEventContext" />
+            <evaluate expression="T(org.owasp.esapi.ESAPI).encoder()" result="flowScope.esapiEncoder" />
+        </on-entry>
+    </end-state>
+
     <!-- Default is to turn any event into an error and preserve it for error handling. -->
     <global-transitions>
         <transition on="#{true}" to="SavePreviousEventAsError" />

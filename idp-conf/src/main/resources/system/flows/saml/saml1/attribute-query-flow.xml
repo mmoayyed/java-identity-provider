@@ -87,7 +87,7 @@
 
     <!-- Error Response Generation -->
 
-    <!-- TODO: we need to trap errors in these actions to avoid an infinite loop -->
+    <!-- We need to trap non-proceed transitions in these actions to avoid an infinite loop. -->
 
     <action-state id="InitializeOutboundMessageContextForError">
         <evaluate expression="InitializeOutboundMessageContextForError" />
@@ -109,10 +109,15 @@
     
     <action-state id="Error_AddStatusToResponse">
         <evaluate expression="AddStatusToResponse" />
-        <transition on="proceed" to="HandleOutboundMessage" />
+        <transition on="proceed" to="CallErrorSubflow" />
         <transition on="#{true}" to="error" />
     </action-state>
 
+    <subflow-state id="CallErrorSubflow" subflow="SAML.Error.BackChannel">
+        <transition on="proceed" to="HandleOutboundMessage" />
+        <transition on="#{true}" to="error" />
+    </subflow-state>
+    
     <bean-import resource="attribute-query-beans.xml" />
 
 </flow>
