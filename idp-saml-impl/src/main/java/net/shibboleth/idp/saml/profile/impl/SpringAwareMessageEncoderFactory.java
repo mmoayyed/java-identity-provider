@@ -78,7 +78,8 @@ public class SpringAwareMessageEncoderFactory extends AbstractInitializableCompo
     
     /** {@inheritDoc} */
     @Override
-    public MessageEncoder getMessageEncoder(ProfileRequestContext profileRequestContext) throws ProfileException {
+    @Nonnull public MessageEncoder getMessageEncoder(@Nonnull final ProfileRequestContext profileRequestContext)
+            throws ProfileException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         final SpringRequestContext springContext = profileRequestContext.getSubcontext(SpringRequestContext.class);
