@@ -38,7 +38,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * An authentication action that selects an authentication flow to invoke, or re-uses an
  * existing result for SSO.
@@ -49,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * to proceed.</p>
  * 
  * <p>If there is no {@link RequestedPrincipalContext}, then an active result will be
- * reused with the default Proceed event returned, unless the request requires forced
+ * reused with the default "proceed" event returned, unless the request requires forced
  * authentication. If not possible, then a potential flow will be selected and its ID
  * returned as the result of the action.</p>
  * 
@@ -61,6 +60,7 @@ import org.slf4j.LoggerFactory;
  * use of any active result.</p>
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID} (reuse of a result, i.e., SSO)
+ * @event {@link AuthnEventIds#NO_PASSIVE}
  * @event {@link AuthnEventIds#NO_POTENTIAL_FLOW}
  * @event {@link AuthnEventIds#REQUEST_UNSUPPORTED}
  * @event Selected flow ID to execute
@@ -96,7 +96,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
      * 
      * @param flag whether SSO should trump explicit relying party flow preference
      */
-    public void setFavorSSO(boolean flag) {
+    public void setFavorSSO(final boolean flag) {
         favorSSO = flag;
     }
 
@@ -145,19 +145,21 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         
         if (authenticationContext.isForceAuthn()) {
             log.debug("{} forced authentication requested, selecting an inactive flow", getLogPrefix());
-            AuthenticationFlowDescriptor flow = getUnattemptedInactiveFlow(authenticationContext);
+            final AuthenticationFlowDescriptor flow = getUnattemptedInactiveFlow(authenticationContext);
             if (flow == null) {
                 log.error("{} no potential flows left to choose from, authentication will fail", getLogPrefix());
-                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_POTENTIAL_FLOW);
+                ActionSupport.buildEvent(profileRequestContext,
+                        authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE : AuthnEventIds.NO_POTENTIAL_FLOW);
                 return;
             }
             selectInactiveFlow(profileRequestContext, authenticationContext, flow);
         } else if (authenticationContext.getActiveResults().isEmpty()) {
             log.debug("{} no active results available, selecting an inactive flow", getLogPrefix());
-            AuthenticationFlowDescriptor flow = getUnattemptedInactiveFlow(authenticationContext);
+            final AuthenticationFlowDescriptor flow = getUnattemptedInactiveFlow(authenticationContext);
             if (flow == null) {
                 log.error("{} no potential flows left to choose from, authentication will fail", getLogPrefix());
-                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_POTENTIAL_FLOW);
+                ActionSupport.buildEvent(profileRequestContext,
+                        authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE : AuthnEventIds.NO_POTENTIAL_FLOW);
                 return;
             }
             selectInactiveFlow(profileRequestContext, authenticationContext, flow);
@@ -289,6 +291,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
      * @param profileRequestContext the current IdP profile request context
      * @param authenticationContext the current authentication context
      */
+// Checkstyle: MethodLength|CyclomaticComplexity OFF
     private void selectRequestedFlow(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
@@ -365,5 +368,6 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
         }
     }
+// Checkstyle: MethodLength|CyclomaticComplexity ON
         
 }

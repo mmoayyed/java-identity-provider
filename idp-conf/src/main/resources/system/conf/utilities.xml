@@ -97,6 +97,11 @@
         <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.AUTHN_FAILED_URI" />
     </util:list>
 
+    <util:list id="Shibboleth.SAML2Status.NoPassive">
+        <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.REQUESTER_URI" />
+        <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.NO_PASSIVE_URI" />
+    </util:list>
+
     <util:list id="Shibboleth.SAML2Status.UnknownPrincipal">
         <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.REQUESTER_URI" />
         <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.UNKNOWN_PRINCIPAL_URI" />

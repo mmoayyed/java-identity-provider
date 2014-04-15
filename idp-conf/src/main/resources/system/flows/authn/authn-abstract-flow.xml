@@ -14,6 +14,7 @@
     <end-state id="InvalidCredentials" />
     <end-state id="InvalidProfileContext" />
     <end-state id="NoCredentials" />
+    <end-state id="NoPassive" />
     <end-state id="NoPotentialFlow" />
     <end-state id="RequestUnsupported" />
     <end-state id="ReselectFlow" />
