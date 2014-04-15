@@ -20,24 +20,19 @@ package net.shibboleth.idp.profile.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.handler.MessageHandler;
 import org.opensaml.messaging.handler.MessageHandlerException;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.EventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.core.collection.AttributeMap;
-import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
@@ -66,7 +61,7 @@ import com.google.common.base.Function;
  * @event {@link EventIds#INVALID_MSG_CTX}
  */
 public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageType> 
-        extends AbstractIdentifiableInitializableComponent implements Action {
+        extends AbstractProfileAction<InboundMessageType, OutboundMessageType> {
     
     /** Used to indicate the target message context for invocation of the adapted message handler. */
     public enum Direction {
@@ -91,9 +86,6 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
     
     /** The direction of execution for this action instance. */
     private final Direction direction;
-    
-    /** Strategy used to lookup the {@link ProfileRequestContext} from a given WebFlow {@link RequestContext}. */
-    @Nonnull private final Function<RequestContext, ProfileRequestContext> profileContextLookupStrategy;
 
     /**
      * Constructor.
@@ -102,7 +94,6 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
      */
     private WebFlowMessageHandlerAdaptor(@Nonnull final Direction executionDirection) {
         direction = Constraint.isNotNull(executionDirection, "Execution direction cannot be null");
-        profileContextLookupStrategy = new WebflowRequestContextProfileRequestContextLookup();
     }
     
     /**
@@ -133,22 +124,14 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
     
     /** {@inheritDoc} */
     @Override
-    public Event execute(RequestContext springRequestContext) throws Exception {
+    public void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
-        final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext =
-                profileContextLookupStrategy.apply(springRequestContext);
-        if (profileRequestContext == null) {
-            log.error("Action {}: Profile request context is not available", getId());
-            return ActionSupport.buildEvent(this, EventIds.INVALID_PROFILE_CTX);
-        
-        }
         
         if (handler == null) {
             handler = handlerLookupStrategy.apply(profileRequestContext);
             if (handler == null) {
-                log.debug("Action {}: No message handler returned by lookup function, nothing to do");
-                return ActionSupport.buildProceedEvent(handler);
+                log.debug("{} No message handler returned by lookup function, nothing to do", getLogPrefix());
+                return;
             }
         }
         
@@ -156,72 +139,35 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
         switch (direction) {
             case INBOUND:
                 target = profileRequestContext.getInboundMessageContext();
-                log.debug("Action {}: Invoking message handler of type '{}' on INBOUND message context", getId(), 
+                log.debug("{} Invoking message handler of type '{}' on INBOUND message context", getLogPrefix(), 
                         handler.getClass().getName());
                 break;
             case OUTBOUND:
                 target = profileRequestContext.getOutboundMessageContext();
-                log.debug("Action {}: Invoking message handler of type '{}' on OUTBOUND message context", getId(), 
+                log.debug("{} Invoking message handler of type '{}' on OUTBOUND message context", getLogPrefix(), 
                         handler.getClass().getName());
                 break;
             default:
-                log.warn("Action {}: Specified direction '{}' was unknown, skipping handler invocation", getId(),
+                log.warn("{} Specified direction '{}' was unknown, skipping handler invocation", getLogPrefix(),
                         direction);
-                return ActionSupport.buildProceedEvent(handler);
+                return;
         } 
         
         if (target == null) {
-            log.warn("Action {}: Target message context was null, cannot invoke handler", getId());
-            return ActionSupport.buildEvent(handler, EventIds.INVALID_MSG_CTX);
+            log.warn("{} Target message context was null, cannot invoke handler", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
+            return;
         }
         
-        log.debug("Action {}: Invoking message handler on message context containing a message of type '{}'", getId(), 
+        log.debug("{} Invoking message handler on message context containing a message of type '{}'", getLogPrefix(), 
                 target.getMessage().getClass().getName());
         try {
             handler.invoke(target);
         } catch (final MessageHandlerException e) {
             // TODO: probably should be a different event, but we really do need to trap the exception
-            log.warn("Action " + getId() + ": Exception handling message", e);
-            return ActionSupport.buildEvent(handler, EventIds.INVALID_MSG_CTX);
-        }
-        
-        // TODO same approach as actions, or different?  For now just copy what Scott did, it may all change anyway.
-        return getResult(handler, target);
-    }
-    
-    /**
-     * Examines the target message context for an event to return, or signals a "proceed" event if
-     * no {@link EventContext} is located; the EventContext will be removed upon completion.
-     * 
-     * <p>The EventContext must contain a Spring Web Flow {@link Event} or a {@link String}.
-     * Any other type of context data will be ignored.</p>
-     * 
-     * @param messageHandler the action signaling the event
-     * @param messageContext the message context to examine
-     * @return  an event based on the message context, or "proceed"
-     */
-    @Nonnull protected Event getResult(@Nonnull final MessageHandler messageHandler, 
-            @Nonnull final MessageContext messageContext) {
-        
-        // Check for an EventContext on output. Do not autocreate it.
-        EventContext eventCtx = messageContext.getSubcontext(EventContext.class, false);
-        if (eventCtx != null) {
-            messageContext.removeSubcontext(eventCtx);
-            if (eventCtx.getEvent() instanceof Event) {
-                return (Event) eventCtx.getEvent();
-            } else if (eventCtx.getEvent() instanceof String) {
-                return ActionSupport.buildEvent(messageHandler, (String) eventCtx.getEvent());
-            } else if (eventCtx.getEvent() instanceof AttributeMap) {
-                AttributeMap map = (AttributeMap) eventCtx.getEvent();
-                return ActionSupport.buildEvent(
-                        messageHandler, map.getString("eventId", EventIds.PROCEED_EVENT_ID), map); 
-            } else {
-                return null;
-            }
-        } else {
-            // Assume the result is to proceed.
-            return ActionSupport.buildProceedEvent(messageHandler);
+            log.warn(getLogPrefix() + " Exception handling message", e);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
         }
     }
 
-}
+ }
