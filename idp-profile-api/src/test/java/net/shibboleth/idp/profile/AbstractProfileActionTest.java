@@ -22,7 +22,6 @@ import net.shibboleth.utilities.java.support.component.UninitializedComponentExc
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.PreviousEventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
@@ -84,17 +83,17 @@ public class AbstractProfileActionTest {
         Assert.assertTrue(action.isExecuted());
         ActionTestingSupport.assertProceedEvent(result);
 
-        action = new MockProfileAction(new ProfileException());
+        action = new MockProfileAction(new RuntimeException());
         action.initialize();
 
         try {
             action.execute(springRequestContext);
             Assert.fail();
-        } catch (ProfileException e) {
+        } catch (RuntimeException e) {
             // expected this
         }
 
-        action = new MockProfileAction(new ProfileException());
+        action = new MockProfileAction(new RuntimeException());
 
         try {
             action.execute(springRequestContext);
@@ -133,7 +132,7 @@ public class AbstractProfileActionTest {
 
         private final String newEvent;
         private final String prevEvent;
-        private final ProfileException thrownException;
+        private final RuntimeException thrownException;
         private boolean executed;
 
         public MockProfileAction() {
@@ -143,7 +142,7 @@ public class AbstractProfileActionTest {
             setId("test");
         }
         
-        public MockProfileAction(ProfileException exception) {
+        public MockProfileAction(RuntimeException exception) {
             thrownException = exception;
             newEvent = null;
             prevEvent = null;
