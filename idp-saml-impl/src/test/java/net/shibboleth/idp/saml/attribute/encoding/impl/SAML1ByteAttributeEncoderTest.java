@@ -20,10 +20,12 @@ package net.shibboleth.idp.saml.attribute.encoding.impl;
 import java.util.Collection;
 import java.util.List;
 
+import javax.xml.bind.DatatypeConverter;
+
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -33,7 +35,6 @@ import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.saml.saml1.core.Attribute;
 import org.opensaml.saml.saml1.core.AttributeValue;
-import org.owasp.esapi.codecs.Base64;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -112,7 +113,7 @@ public class SAML1ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
         XSString childAsString = (XSString) child;
 
-        byte childAsBa[] = Base64.decode(childAsString.getValue());
+        byte childAsBa[] = DatatypeConverter.parseBase64Binary(childAsString.getValue());
 
         Assert.assertEquals(childAsBa, BYTE_ARRAY_1, "Input equals output");
     }
@@ -141,13 +142,13 @@ public class SAML1ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         XSString childAsString = (XSString) child;
         Assert.assertEquals(child.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
-        final byte[] res0 = Base64.decode(childAsString.getValue());
+        final byte[] res0 = DatatypeConverter.parseBase64Binary(childAsString.getValue());
 
         child = children.get(1);
         Assert.assertTrue(child instanceof XSString, "Child of result attribute should be a string");
 
         childAsString = (XSString) child;
-        final byte[] res1 = Base64.decode(childAsString.getValue());
+        final byte[] res1 = DatatypeConverter.parseBase64Binary(childAsString.getValue());
 
         //
         // order of results is not guaranteed so sense the result from the length
