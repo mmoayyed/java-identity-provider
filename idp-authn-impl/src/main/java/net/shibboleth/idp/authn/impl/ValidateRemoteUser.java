@@ -27,7 +27,6 @@ import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AbstractValidationAction;
-import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernameContext;
@@ -121,7 +120,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
         if (authenticationContext.getAttemptedFlow() == null) {
             log.debug("{} no attempted flow within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
@@ -147,7 +146,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
                 
         if (!isAuthenticated(usernameContext.getUsername())) {
             log.debug("{} user '{}' was not valid", getLogPrefix(), usernameContext.getUsername());
@@ -184,7 +183,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) throws AuthenticationException {
+    @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
         subject.getPrincipals().add(new UsernamePrincipal(usernameContext.getUsername()));
         return subject;
     }

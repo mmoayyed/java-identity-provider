@@ -22,7 +22,6 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.SpringRequestContext;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -52,8 +51,7 @@ public class RecordResponseComplete extends AbstractProfileAction {
     @Nonnull private Logger log = LoggerFactory.getLogger(RecordResponseComplete.class);
 
     /** {@inheritDoc} */
-    @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext)
-            throws ProfileException {
+    @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         SpringRequestContext springRequestContext =
                 profileRequestContext.getSubcontext(SpringRequestContext.class, false);
         if (springRequestContext == null) {
@@ -79,8 +77,7 @@ public class RecordResponseComplete extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext)
-            throws ProfileException {
+    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         SpringRequestContext springRequestContext =
                 profileRequestContext.getSubcontext(SpringRequestContext.class, false);
         if (!springRequestContext.getRequestContext().getExternalContext().isResponseComplete()) {

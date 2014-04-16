@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
-import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
@@ -76,7 +75,7 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
 
         final SubjectCanonicalizationContext c14nCtx =
                 profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class);
@@ -98,7 +97,7 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
 
         if (canonicalPrincipalName != null) {
             final SubjectContext sc = profileRequestContext.getSubcontext(SubjectContext.class, true);

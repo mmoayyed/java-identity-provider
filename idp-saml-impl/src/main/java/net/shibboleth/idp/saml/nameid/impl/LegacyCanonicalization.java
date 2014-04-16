@@ -67,7 +67,7 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
     
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
+            @Nonnull final SubjectCanonicalizationContext c14nContext) {
 
         ServiceableComponent<AttributeResolver> component = null;
         try {

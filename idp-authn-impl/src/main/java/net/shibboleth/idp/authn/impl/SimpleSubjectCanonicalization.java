@@ -60,7 +60,7 @@ public class SimpleSubjectCanonicalization extends AbstractSubjectCanonicalizati
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext, 
-            @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
+            @Nonnull final SubjectCanonicalizationContext c14nContext) {
 
         if (embeddedPredicate.apply(profileRequestContext, c14nContext, true)) {
             usernamePrincipal = c14nContext.getSubject().getPrincipals(UsernamePrincipal.class).iterator().next();
@@ -73,7 +73,7 @@ public class SimpleSubjectCanonicalization extends AbstractSubjectCanonicalizati
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext, 
-            @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
+            @Nonnull final SubjectCanonicalizationContext c14nContext) {
         
         c14nContext.setPrincipalName(applyTransforms(usernamePrincipal.getName()));
     }

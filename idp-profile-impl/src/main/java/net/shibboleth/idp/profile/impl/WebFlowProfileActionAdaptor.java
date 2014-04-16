@@ -23,7 +23,6 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ProfileAction;
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -54,8 +53,7 @@ public class WebFlowProfileActionAdaptor<InboundMessageType, OutboundMessageType
     /** {@inheritDoc} */
     @Override
     @Nonnull public void execute(
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
-                    throws ProfileException {
+            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext) {
 
         action.execute(profileRequestContext);
     }

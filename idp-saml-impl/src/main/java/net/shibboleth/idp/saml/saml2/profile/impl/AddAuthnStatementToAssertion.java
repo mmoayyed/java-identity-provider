@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
-import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -213,7 +212,7 @@ public class AddAuthnStatementToAssertion extends AbstractAuthenticationAction {
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
         log.debug("{} Attempting to add an AuthnStatement to Response", getLogPrefix());
 
         idGenerator = idGeneratorLookupStrategy.apply(profileRequestContext);
@@ -250,7 +249,7 @@ public class AddAuthnStatementToAssertion extends AbstractAuthenticationAction {
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
 
         final Assertion assertion = getStatementAssertion();
         final AuthnStatement statement = buildAuthnStatement(profileRequestContext,

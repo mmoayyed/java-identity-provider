@@ -37,7 +37,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -161,8 +160,7 @@ public abstract class AbstractSubjectCanonicalizationAction<InboundMessageType, 
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
-                    throws ProfileException {
+            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext) {
         scContext = scCtxLookupStrategy.apply(profileRequestContext);
         if (scContext == null) {
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
@@ -184,20 +182,17 @@ public abstract class AbstractSubjectCanonicalizationAction<InboundMessageType, 
      * @param c14nContext the current subject canonicalization context
      * 
      * @return true iff execution should continue
-     * 
-     * @throws SubjectCanonicalizationException thrown if there is a problem performing the authentication action
      */
     protected boolean doPreExecute(
             @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
-            @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
+            @Nonnull final SubjectCanonicalizationContext c14nContext) {
         return c14nContext.getSubject() != null;
     }
     
     /** {@inheritDoc} */
     @Override
     protected final void doExecute(
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
-                    throws ProfileException {
+            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext) {
         doExecute(profileRequestContext, scContext);
     }
 
@@ -206,13 +201,11 @@ public abstract class AbstractSubjectCanonicalizationAction<InboundMessageType, 
      * 
      * @param profileRequestContext the current IdP profile request context
      * @param c14nContext the current subject canonicalization context
-     * 
-     * @throws SubjectCanonicalizationException thrown if there is a problem performing the authentication action
      */
     protected void doExecute(
             @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
-            @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
-        throw new UnsupportedOperationException("This action is not implemented");
+            @Nonnull final SubjectCanonicalizationContext c14nContext) {
+        
     }
     
     /**
@@ -253,4 +246,5 @@ public abstract class AbstractSubjectCanonicalizationAction<InboundMessageType, 
         
         return s;
     }
+    
 }

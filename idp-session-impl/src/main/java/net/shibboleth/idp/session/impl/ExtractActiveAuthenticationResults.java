@@ -24,7 +24,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
-import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -56,7 +55,7 @@ public class ExtractActiveAuthenticationResults extends AbstractAuthenticationAc
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
 
         final SessionContext ctx = profileRequestContext.getSubcontext(SessionContext.class, false);
         if (ctx != null) {
@@ -72,7 +71,7 @@ public class ExtractActiveAuthenticationResults extends AbstractAuthenticationAc
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
 
         List<AuthenticationResult> actives = new ArrayList<>();
         for (AuthenticationResult result : session.getAuthenticationResults()) {

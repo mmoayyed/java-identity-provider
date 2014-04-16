@@ -28,7 +28,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
@@ -88,7 +87,7 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
     
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyCtx == null) {
@@ -111,7 +110,7 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         // TODO Incomplete, see https://wiki.shibboleth.net/confluence/display/IDP30/SAML+1.1+Browser+SSO
 

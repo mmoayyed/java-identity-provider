@@ -213,7 +213,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
     @Override
     protected boolean doPreExecute(
             @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
         
         // If the request mandates particular principals, evaluate this validating component to see if it
         // can produce a matching principal. This skips validators chained together in flows that aren't
@@ -262,12 +262,10 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
      * 
      * @param profileRequestContext the current profile request context
      * @param authenticationContext the current authentication context
-     * 
-     * @throws AuthenticationException thrown if there is a problem performing the authentication action
      */
     protected void buildAuthenticationResult(
             @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
         
         if (!principalsAdded && authenticationContext.getAttemptedFlow() != null) {
             log.debug("{} Adding custom Principal(s) defined on underlying flow descriptor", getLogPrefix());
@@ -307,9 +305,8 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
      * 
      * @param subject subject to populate
      * @return  the input subject
-     * @throws AuthenticationException  if an error occurs
      */
-    @Nonnull protected abstract Subject populateSubject(@Nonnull final Subject subject) throws AuthenticationException;
+    @Nonnull protected abstract Subject populateSubject(@Nonnull final Subject subject);
     
     /**
      * Adds an exception encountered during the action to an {@link AuthenticationErrorContext}, creating one if
@@ -330,7 +327,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
             @Nonnull final AuthenticationContext authenticationContext, @Nonnull final Exception e,
             @Nonnull @NotEmpty final String eventId) {
 
-        AuthenticationErrorContext errorCtx =
+        final AuthenticationErrorContext errorCtx =
                 authenticationContext.getSubcontext(AuthenticationErrorContext.class, true);
         errorCtx.addException(e);
 
@@ -357,14 +354,14 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
             @Nonnull final AuthenticationContext authenticationContext, @Nonnull @NotEmpty final String message,
             @Nonnull @NotEmpty final String eventId) {
         
-        AuthenticationErrorContext errorCtx =
+        final AuthenticationErrorContext errorCtx =
                 authenticationContext.getSubcontext(AuthenticationErrorContext.class, true);
         
-        MessageChecker checker = new MessageChecker(message);
+        final MessageChecker checker = new MessageChecker(message);
         
         boolean eventSet = false;
         
-        for (Map.Entry<String, Collection<String>> entry : classifiedMessages.entrySet()) {
+        for (final Map.Entry<String, Collection<String>> entry : classifiedMessages.entrySet()) {
             if (Iterables.any(entry.getValue(), checker)) {
                 errorCtx.getClassifiedErrors().add(entry.getKey());
                 if (!eventSet) {
@@ -399,10 +396,10 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
             @Nonnull final AuthenticationContext authenticationContext, @Nonnull @NotEmpty final String message,
             @Nonnull @NotEmpty final String eventId) {
         
-        AuthenticationWarningContext warningCtx =
+        final AuthenticationWarningContext warningCtx =
                 authenticationContext.getSubcontext(AuthenticationWarningContext.class, true);
         
-        MessageChecker checker = new MessageChecker(message);
+        final MessageChecker checker = new MessageChecker(message);
 
         boolean eventSet = false;
         

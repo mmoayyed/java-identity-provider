@@ -22,7 +22,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -199,7 +198,7 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
     
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
         final RelyingPartyContext rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (rpContext == null) {
@@ -237,7 +236,7 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
 // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         log.debug("{} Resolving EncryptionParameters for request", getLogPrefix());
         

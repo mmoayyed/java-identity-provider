@@ -35,7 +35,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
@@ -134,7 +133,7 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
     
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         final MessageContext<?> msgCtx = profileRequestContext.getInboundMessageContext();
         if (msgCtx == null || msgCtx.getMessage() == null) {
             log.debug("{} No inbound message", getLogPrefix());
@@ -160,7 +159,7 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
     
     /** {@inheritDoc} */
     @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         final Subject subject;
         if (nameIdentifier instanceof NameIdentifier) {

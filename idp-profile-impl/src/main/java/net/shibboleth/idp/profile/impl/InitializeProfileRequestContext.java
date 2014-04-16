@@ -24,7 +24,6 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -61,7 +60,7 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
     
     /** {@inheritDoc} */
     @Override
-    @Nonnull public Event execute(@Nonnull final RequestContext springRequestContext) throws ProfileException {
+    @Nonnull public Event execute(@Nonnull final RequestContext springRequestContext) {
 
         // We have to override execute() because the profile request context doesn't exist yet.
         
@@ -76,4 +75,5 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
 
         return ActionSupport.buildProceedEvent(this);
     }
+    
 }

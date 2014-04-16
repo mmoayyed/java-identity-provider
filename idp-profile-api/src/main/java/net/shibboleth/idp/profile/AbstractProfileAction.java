@@ -28,7 +28,6 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.action.ProfileAction;
 import org.opensaml.profile.context.EventContext;
@@ -113,7 +112,7 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull public Event execute(@Nonnull final RequestContext springRequestContext) throws ProfileException {
+    @Nonnull public Event execute(@Nonnull final RequestContext springRequestContext) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext =
@@ -141,11 +140,9 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
      * @param springRequestContext the Spring request context
      * @param profileRequestContext a profile request context
      * @return a Web Flow event produced by the action
-     * @throws ProfileException if an error occurs during execution
      */
     @Nonnull protected Event doExecute(@Nonnull final RequestContext springRequestContext,
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
-                    throws ProfileException {
+            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext) {
         
         // Attach the Spring context to the context tree.
         SpringRequestContext springSubcontext =

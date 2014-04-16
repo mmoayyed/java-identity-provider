@@ -22,7 +22,6 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractSubjectCanonicalizationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 
@@ -55,7 +54,7 @@ public class SelectSubjectCanonicalizationFlow extends AbstractSubjectCanonicali
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
+            @Nonnull final SubjectCanonicalizationContext c14nContext) {
         
         // Detect a previous attempted flow, and move it to the intermediate collection.
         // This will prevent re-selecting the same (probably failed) flow again.
@@ -72,7 +71,7 @@ public class SelectSubjectCanonicalizationFlow extends AbstractSubjectCanonicali
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
+            @Nonnull final SubjectCanonicalizationContext c14nContext) {
         
         final SubjectCanonicalizationFlowDescriptor flow = selectUnattemptedFlow(profileRequestContext, c14nContext);
         if (flow == null) {

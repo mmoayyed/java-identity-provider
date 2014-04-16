@@ -28,7 +28,6 @@ import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -80,7 +79,7 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (rpCtx == null) {
             log.debug("{} No relying party context associated with this profile request", getLogPrefix());
@@ -99,7 +98,7 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
     
     /** {@inheritDoc} */
     @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         final String profileId = profileRequestContext.getProfileId();
         final RelyingPartyConfiguration rpConfig = rpCtx.getConfiguration();

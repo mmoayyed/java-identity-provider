@@ -24,7 +24,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
-import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
@@ -103,7 +102,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
         
         requestedPrincipalCtx = authenticationContext.getSubcontext(RequestedPrincipalContext.class, false);
         
@@ -122,7 +121,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
 
         if (requestedPrincipalCtx == null || requestedPrincipalCtx.getOperator() == null
                 || requestedPrincipalCtx.getRequestedPrincipals().isEmpty()) {

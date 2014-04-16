@@ -33,7 +33,6 @@ import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginException;
 
 import net.shibboleth.idp.authn.AbstractValidationAction;
-import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
@@ -156,7 +155,7 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractValidationActio
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
         if (authenticationContext.getAttemptedFlow() == null) {
             log.debug("{} no attempted flow within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
@@ -182,7 +181,7 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractValidationActio
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
 
         for (String loginConfigName : loginConfigNames) {
             try {
@@ -204,7 +203,7 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractValidationActio
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) throws AuthenticationException {
+    @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
         subject.getPrincipals().add(new UsernamePrincipal(upContext.getUsername()));
         return subject;
     }

@@ -20,7 +20,6 @@ package net.shibboleth.idp.authn.impl;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.authn.AbstractExtractionAction;
-import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -32,8 +31,8 @@ public class ExtractKerberosTicketFromWssToken extends AbstractExtractionAction 
 
     /** {@inheritDoc} */
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
-        throw new AuthenticationException("Not implemented.");
+            @Nonnull final AuthenticationContext authenticationContext) {
+        throw new UnsupportedOperationException("Not implemented.");
     }
 
 }

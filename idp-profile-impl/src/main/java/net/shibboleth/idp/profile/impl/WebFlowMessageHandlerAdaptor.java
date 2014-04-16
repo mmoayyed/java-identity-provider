@@ -27,7 +27,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.handler.MessageHandler;
 import org.opensaml.messaging.handler.MessageHandlerException;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -124,7 +123,7 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
     
     /** {@inheritDoc} */
     @Override
-    public void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    public void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         if (handler == null) {

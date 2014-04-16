@@ -30,7 +30,6 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.IdPEventIds;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +52,7 @@ public final class OutputAttributes extends AbstractProfileAction {
     /** {@inheritDoc} */
     @Override
     protected Event doExecute(@Nonnull final RequestContext springRequestContext,
-            @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+            @Nonnull final ProfileRequestContext profileRequestContext) {
         
         AttributeContext attributeContext = profileRequestContext.getSubcontext(AttributeContext.class, false);
         if (attributeContext == null) {

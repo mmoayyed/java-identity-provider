@@ -19,7 +19,6 @@ package net.shibboleth.idp.profile.impl;
 
 import javax.annotation.Nonnull;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
@@ -94,7 +93,7 @@ public class InitializeRelyingPartyContext extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         final RelyingPartyContext rpContext = relyingPartyContextCreationStrategy.apply(profileRequestContext);
         if (rpContext == null) {

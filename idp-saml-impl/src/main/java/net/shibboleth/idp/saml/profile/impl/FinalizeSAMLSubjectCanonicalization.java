@@ -25,7 +25,6 @@ import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -55,7 +54,7 @@ public class FinalizeSAMLSubjectCanonicalization extends AbstractProfileAction {
     
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         final SubjectCanonicalizationContext c14nCtx =
                 profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class);
@@ -78,7 +77,7 @@ public class FinalizeSAMLSubjectCanonicalization extends AbstractProfileAction {
     
     /** {@inheritDoc} */
     @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         final SubjectContext subjectCtx = new SubjectContext();
         subjectCtx.setPrincipalName(canonicalPrincipalName);

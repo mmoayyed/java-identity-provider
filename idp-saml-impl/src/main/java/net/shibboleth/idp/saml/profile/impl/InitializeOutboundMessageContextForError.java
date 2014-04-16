@@ -32,7 +32,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -135,7 +134,7 @@ public class InitializeOutboundMessageContextForError extends AbstractProfileAct
 
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
         if (profileRequestContext.getOutboundMessageContext() != null) {
             log.debug("{} Outbound message context already exists, nothing to do", getLogPrefix());
@@ -155,7 +154,7 @@ public class InitializeOutboundMessageContextForError extends AbstractProfileAct
 
     /** {@inheritDoc} */
     @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         // Create outbound context if it doesn't exist.
         final MessageContext msgCtx = new MessageContext();

@@ -20,7 +20,6 @@ package net.shibboleth.idp.saml.profile;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 public class ActionTestSupportAction extends AbstractProfileAction {
@@ -32,7 +31,7 @@ public class ActionTestSupportAction extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     @Override
-    protected void doExecute(ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected void doExecute(ProfileRequestContext profileRequestContext) {
 
     }
     

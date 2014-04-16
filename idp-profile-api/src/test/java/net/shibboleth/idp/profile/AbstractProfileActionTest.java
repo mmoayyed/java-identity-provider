@@ -163,7 +163,7 @@ public class AbstractProfileActionTest {
 
         /** {@inheritDoc} */
         @Override
-        protected void doExecute(ProfileRequestContext profileRequestContext) throws ProfileException {
+        protected void doExecute(ProfileRequestContext profileRequestContext) {
 
             executed = true;
             

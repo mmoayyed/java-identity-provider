@@ -24,7 +24,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractExtractionAction;
-import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
@@ -62,7 +61,7 @@ public class ExtractUsernamePasswordFromWssToken extends AbstractExtractionActio
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
         
         final MessageContext inCtx = profileRequestContext.getInboundMessageContext();
         if (inCtx == null || !(inCtx.getMessage() instanceof Envelope)) {
@@ -78,7 +77,7 @@ public class ExtractUsernamePasswordFromWssToken extends AbstractExtractionActio
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
         
         final Pair<String, String> usernamePassword = extractUsernamePassword(inboundMessage);
         if (usernamePassword == null) {

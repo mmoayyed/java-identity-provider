@@ -24,7 +24,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
-import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry;
@@ -100,7 +99,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
 
         if (evalRegistry != null) {
             log.debug("{} Installing custom PrincipalEvalPredicateFactoryRegistry into AuthenticationContext",

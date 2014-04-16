@@ -104,7 +104,7 @@ public class NameIDCanonicalization extends AbstractSubjectCanonicalizationActio
 
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
+            @Nonnull final SubjectCanonicalizationContext c14nContext) {
 
         if (!embeddedPredicate.apply(profileRequestContext, c14nContext, true)) {
             return false;
@@ -115,7 +115,7 @@ public class NameIDCanonicalization extends AbstractSubjectCanonicalizationActio
 
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
+            @Nonnull final SubjectCanonicalizationContext c14nContext) {
 
         final Set<NameIDPrincipal> nameIDs = c14nContext.getSubject().getPrincipals(NameIDPrincipal.class);
         final NameID nameID = nameIDs.iterator().next().getNameID();

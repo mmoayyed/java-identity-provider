@@ -33,7 +33,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -149,7 +148,7 @@ public class UpdateSessionWithSPSession extends AbstractProfileAction {
     
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         if (enabled) {
             sessionCtx = profileRequestContext.getSubcontext(SessionContext.class, false);
@@ -164,7 +163,7 @@ public class UpdateSessionWithSPSession extends AbstractProfileAction {
     
     /** {@inheritDoc} */
     @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         final SPSession spSession = spSessionCreationStrategy.apply(profileRequestContext);
         if (spSession == null) {

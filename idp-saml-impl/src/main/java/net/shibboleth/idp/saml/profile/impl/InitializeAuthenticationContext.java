@@ -24,7 +24,6 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 
 import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.slf4j.Logger;
@@ -50,7 +49,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         final MessageContext<?> msgCtx = profileRequestContext.getInboundMessageContext();
         if (msgCtx == null) {
             log.debug("{} No inbound message context", getLogPrefix());
@@ -75,7 +74,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
     
     /** {@inheritDoc} */
     @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         AuthenticationContext authnCtx = new AuthenticationContext();
         

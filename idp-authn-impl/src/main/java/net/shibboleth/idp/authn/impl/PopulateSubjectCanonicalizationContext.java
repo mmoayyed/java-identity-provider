@@ -23,7 +23,6 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.authn.AbstractSubjectCanonicalizationAction;
-import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -75,7 +74,7 @@ public class PopulateSubjectCanonicalizationContext extends AbstractSubjectCanon
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final SubjectCanonicalizationContext c14nContext) throws SubjectCanonicalizationException {
+            @Nonnull final SubjectCanonicalizationContext c14nContext) {
 
         log.debug("{} Installing {} canonicalization flows into SubjectCanonicalizationContext", getLogPrefix(),
                 availableFlows.size());

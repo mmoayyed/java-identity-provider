@@ -34,7 +34,6 @@ import net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLo
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -209,7 +208,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
     
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         log.debug("{} Attempting to add an AttributeStatement to outgoing Response", getLogPrefix());
 
         idGenerator = idGeneratorLookupStrategy.apply(profileRequestContext);
@@ -244,7 +243,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     @Override
-   protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+   protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         try {
             final AttributeStatement statement = buildAttributeStatement(attributeCtx.getIdPAttributes().values());
             if (statement == null) {

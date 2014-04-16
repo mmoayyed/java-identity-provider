@@ -25,7 +25,6 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -77,8 +76,7 @@ public abstract class AbstractAuthenticationAction<InboundMessageType, OutboundM
     /** {@inheritDoc} */
     @Override
     protected final boolean doPreExecute(
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
-                    throws ProfileException {
+            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext) {
 
         authnContext = authnCtxLookupStrategy.apply(profileRequestContext);
         if (authnContext == null) {
@@ -96,8 +94,7 @@ public abstract class AbstractAuthenticationAction<InboundMessageType, OutboundM
     /** {@inheritDoc} */
     @Override
     protected final void doExecute(
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
-                    throws ProfileException {
+            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext) {
         doExecute(profileRequestContext, authnContext);
     }
 
@@ -108,12 +105,10 @@ public abstract class AbstractAuthenticationAction<InboundMessageType, OutboundM
      * @param authenticationContext the current authentication context
      * 
      * @return true iff execution should continue
-     * 
-     * @throws AuthenticationException thrown if there is a problem performing the authentication action
      */
     protected boolean doPreExecute(
             @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
         return true;
     }
     
@@ -122,13 +117,11 @@ public abstract class AbstractAuthenticationAction<InboundMessageType, OutboundM
      * 
      * @param profileRequestContext the current IdP profile request context
      * @param authenticationContext the current authentication context
-     * 
-     * @throws AuthenticationException thrown if there is a problem performing the authentication action
      */
     protected void doExecute(
             @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
-        throw new UnsupportedOperationException("This action is not implemented");
+            @Nonnull final AuthenticationContext authenticationContext) {
+        
     }
 
 }

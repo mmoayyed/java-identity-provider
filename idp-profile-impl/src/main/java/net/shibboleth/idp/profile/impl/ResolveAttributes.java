@@ -37,7 +37,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -146,7 +145,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (rpContext == null) {
@@ -172,7 +171,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         // Get the resolution context from the profile request
         // this may already exist but if not, auto-create it

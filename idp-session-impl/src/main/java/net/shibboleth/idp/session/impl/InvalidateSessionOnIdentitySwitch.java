@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
-import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
@@ -95,7 +94,7 @@ public class InvalidateSessionOnIdentitySwitch extends AbstractAuthenticationAct
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
 
         sessionCtx = profileRequestContext.getSubcontext(SessionContext.class, false);
         if (sessionCtx == null || sessionCtx.getIdPSession() == null) {
@@ -117,7 +116,7 @@ public class InvalidateSessionOnIdentitySwitch extends AbstractAuthenticationAct
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
 
         if (sessionCtx.getIdPSession().getPrincipalName().equals(newPrincipalName)) {
             log.debug("{} Identities from session and new authentication result match, nothing to do");

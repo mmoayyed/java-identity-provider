@@ -24,7 +24,6 @@ import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.authn.AbstractExtractionAction;
-import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernameContext;
@@ -121,7 +120,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
 
         final HttpServletRequest request = getHttpServletRequest();
         if (request == null) {

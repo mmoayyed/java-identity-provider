@@ -22,7 +22,6 @@ import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AbstractValidationAction;
-import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.LDAPResponseContext;
@@ -134,7 +133,7 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
         if (authenticationContext.getAttemptedFlow() == null) {
             log.debug("{} no attempted flow within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
@@ -160,7 +159,7 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
         try {
             log.debug("{} attempting to authenticate user {}", getLogPrefix(), upContext.getUsername());
             final AuthenticationRequest request =
@@ -207,7 +206,7 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) throws AuthenticationException {
+    @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
         subject.getPrincipals().add(new UsernamePrincipal(upContext.getUsername()));
         subject.getPrincipals().add(new LdapPrincipal(upContext.getUsername(), response.getLdapEntry()));
         return subject;

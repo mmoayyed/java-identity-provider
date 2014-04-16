@@ -33,7 +33,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,13 +93,13 @@ public class PopulateSessionContext extends AbstractProfileAction {
     
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected boolean doPreExecute(ProfileRequestContext profileRequestContext) {
         return enabled;
     }
 
     /** {@inheritDoc} */
     @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         IdPSession session = null;
         try {
             session = sessionResolver.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));

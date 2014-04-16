@@ -24,7 +24,6 @@ import java.util.Map.Entry;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
-import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 
@@ -48,7 +47,7 @@ public class FilterFlowsByForcedAuthn extends AbstractAuthenticationAction {
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
         
         if (!authenticationContext.isForceAuthn()) {
             log.debug("{} authentication request does not have forced authentication requirement, nothing to do",
@@ -62,7 +61,7 @@ public class FilterFlowsByForcedAuthn extends AbstractAuthenticationAction {
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
 
         final Map<String, AuthenticationFlowDescriptor> potentialFlows = authenticationContext.getPotentialFlows();
 

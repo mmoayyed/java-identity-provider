@@ -21,7 +21,6 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.Response;
 import org.springframework.webflow.execution.Event;
@@ -34,7 +33,7 @@ public class AddProxyRestrictionConditionToAssertions extends AbstractProfileAct
 
     /** {@inheritDoc} */
     protected Event doExecute(@Nonnull final RequestContext springRequestContext,
-            @Nonnull final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
+            @Nonnull final ProfileRequestContext<Object, Response> profileRequestContext) {
         // TODO Auto-generated method stub
         return null;
     }

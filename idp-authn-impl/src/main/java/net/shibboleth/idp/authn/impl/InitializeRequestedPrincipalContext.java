@@ -21,7 +21,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
-import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.profile.IdPEventIds;
@@ -86,7 +85,7 @@ public class InitializeRequestedPrincipalContext extends AbstractAuthenticationA
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
         final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (rpCtx == null) {
             log.debug("{} No relying party context", getLogPrefix());
@@ -119,7 +118,7 @@ public class InitializeRequestedPrincipalContext extends AbstractAuthenticationA
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
 
         final RequestedPrincipalContext principalCtx = new RequestedPrincipalContext();
         principalCtx.setOperator("exact");

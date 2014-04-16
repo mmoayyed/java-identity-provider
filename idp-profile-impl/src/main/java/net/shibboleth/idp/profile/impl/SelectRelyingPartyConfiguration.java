@@ -20,7 +20,6 @@ package net.shibboleth.idp.profile.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -111,7 +110,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
 
     /** {@inheritDoc} */
     @Override
-    public boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    public boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyCtx == null) {
             log.debug("{} No relying party context available", getLogPrefix());
@@ -124,7 +123,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
     
     /** {@inheritDoc} */
     @Override
-    public void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    public void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         try {
             final RelyingPartyConfiguration config = rpConfigResolver.resolveSingle(profileRequestContext);

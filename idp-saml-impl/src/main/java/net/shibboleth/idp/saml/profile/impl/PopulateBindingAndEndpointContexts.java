@@ -38,7 +38,6 @@ import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -262,7 +261,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (profileRequestContext.getInboundMessageContext() != null) {
             inboundMessage = profileRequestContext.getInboundMessageContext().getMessage();
         }
@@ -287,8 +286,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
 
     /** {@inheritDoc} */
 // Checkstyle: CyclomaticComplexity OFF
-    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext)
-            throws ProfileException {
+    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
         if (handleSynchronousRequest(profileRequestContext)) {
             return;

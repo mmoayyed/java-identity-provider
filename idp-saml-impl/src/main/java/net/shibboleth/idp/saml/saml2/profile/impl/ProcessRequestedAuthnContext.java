@@ -24,7 +24,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
-import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
@@ -93,7 +92,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         authnRequest = authnRequestLookupStrategy.apply(profileRequestContext);
@@ -109,7 +108,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) throws AuthenticationException {
+            @Nonnull final AuthenticationContext authenticationContext) {
         
         final RequestedAuthnContext requestedCtx = authnRequest.getRequestedAuthnContext();
         if (requestedCtx == null) {
