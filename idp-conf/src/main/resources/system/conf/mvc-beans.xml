@@ -36,7 +36,9 @@
              <prop key="FlowExecutionRestorationFailureException">backbutton</prop>
           </props>
        </property>
+       <!--
        <property name="defaultErrorView" value="error"/>
+       -->
     </bean>
     
     <!-- ViewResolvers -->

@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.handler.MessageHandler;
@@ -58,6 +59,7 @@ import com.google.common.base.Function;
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link EventIds#INVALID_MSG_CTX}
+ * @event any, as set
  */
 public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageType> 
         extends AbstractProfileAction<InboundMessageType, OutboundMessageType> {
@@ -85,6 +87,9 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
     
     /** The direction of execution for this action instance. */
     private final Direction direction;
+    
+    /** An event to signal in the event of a handler exception. */
+    @Nullable private String errorEvent;
 
     /**
      * Constructor.
@@ -119,6 +124,15 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
         this(executionDirection);
         
         handlerLookupStrategy = Constraint.isNotNull(lookupStrategy, "MessageHandler lookup strategy cannot be null");
+    }
+    
+    /**
+     * Set the event to signal in the event of a handler exception.
+     * 
+     * @param event event to signal
+     */
+    public void setErrorEvent(@Nullable final String event) {
+        errorEvent = StringSupport.trimOrNull(event);
     }
     
     /** {@inheritDoc} */
@@ -157,15 +171,21 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
             return;
         }
+
+        if (target.getMessage() != null) {
+            log.debug("{} Invoking message handler on message context containing a message of type '{}'",
+                    getLogPrefix(),  target.getMessage().getClass().getName());
+        }
         
-        log.debug("{} Invoking message handler on message context containing a message of type '{}'", getLogPrefix(), 
-                target.getMessage().getClass().getName());
         try {
             handler.invoke(target);
         } catch (final MessageHandlerException e) {
-            // TODO: probably should be a different event, but we really do need to trap the exception
             log.warn(getLogPrefix() + " Exception handling message", e);
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
+            if (errorEvent != null) {
+                ActionSupport.buildEvent(profileRequestContext, errorEvent);
+            } else {
+                ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
+            }
         }
     }
 

@@ -9,11 +9,21 @@
 
     <action-state id="DecodeMessage">
         <evaluate expression="DecodeMessage" />
-        <transition on="proceed" to="HandleInboundMessage" />
+        <transition on="proceed" to="CheckMessageVersion" />
     </action-state>
 
-    <action-state id="HandleInboundMessage">
-        <evaluate expression="HandleInboundMessage" />
+    <action-state id="CheckMessageVersion">
+        <evaluate expression="CheckMessageVersion" />
+        <transition on="proceed" to="SAMLProtocolAndRole" />
+    </action-state>
+
+    <action-state id="SAMLProtocolAndRole">
+        <evaluate expression="SAMLProtocolAndRole" />
+        <transition on="proceed" to="SAMLMetadataLookup" />
+    </action-state>
+
+    <action-state id="SAMLMetadataLookup">
+        <evaluate expression="SAMLMetadataLookup" />
         <transition on="proceed" to="InitializeRelyingPartyContexFromSAMLPeer" />
     </action-state>
 

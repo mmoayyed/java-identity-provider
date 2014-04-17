@@ -19,10 +19,44 @@
 
     <!-- These are beans that are common to most or all SAML profile flows, regardless of version. -->
 
-    <bean id="HandleInboundMessage"
-        class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
-        c:messageHandler-ref="inboundMessageHandlerChain"
-        c:executionDirection="INBOUND" />
+    <bean id="CheckMessageVersion"
+            class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
+            c:executionDirection="INBOUND">
+        <constructor-arg name="messageHandler">
+            <bean id="CheckMessageVersionHandler"
+                class="org.opensaml.saml.common.binding.impl.CheckMessageVersionHandler" scope="prototype"
+                p:ignoreMissingOrUnrecognized="true" />
+        </constructor-arg>
+        <property name="errorEvent">
+            <util:constant static-field="org.opensaml.profile.action.EventIds.INVALID_MESSAGE_VERSION" />
+        </property>
+    </bean>
+
+    <bean id="SAMLProtocolAndRole"
+            class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
+            c:executionDirection="INBOUND">
+        <constructor-arg name="messageHandler">
+            <bean id="SAMLProtocolAndRoleHandler"
+                class="org.opensaml.saml.common.binding.impl.SAMLProtocolAndRoleHandler" scope="prototype"
+                p:protocol-ref="Shibboleth.MetadataLookup.Protocol"
+                p:role-ref="Shibboleth.MetadataLookup.Role" />
+        </constructor-arg>
+    </bean>
+    
+    <!-- TODO: need to poke metadata source in from relying party config later -->
+    <bean id="SAMLMetadataLookup"
+            class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
+            c:executionDirection="INBOUND">
+        <constructor-arg name="messageHandler">
+            <bean id="SAMLMetadataLookupHandler"
+                    class="org.opensaml.saml.common.binding.impl.SAMLMetadataLookupHandler" scope="prototype">
+                <property name="roleDescriptorResolver">
+                    <bean class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
+                        c:mdResolver-ref="ExampleMetadataResolver" />
+                </property>
+            </bean>
+        </constructor-arg>
+    </bean>
 
     <bean id="InitializeRelyingPartyContexFromSAMLPeer"
         class="net.shibboleth.idp.saml.profile.impl.InitializeRelyingPartyContextFromSAMLPeer" scope="prototype" />

@@ -21,29 +21,11 @@
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
         p:profileId="#{T(net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration).PROFILE_ID}" />
 
-    <bean id="inboundMessageHandlerChain"
-            class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
-        <property name="handlers">
-            <util:list>
-                <bean class="org.opensaml.saml.common.binding.impl.SAMLProtocolAndRoleHandler" scope="prototype">
-                    <property name="protocol">
-                        <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML11P_NS" />
-                    </property>
-                    <property name="role">
-                        <util:constant static-field="org.opensaml.saml.saml2.metadata.SPSSODescriptor.DEFAULT_ELEMENT_NAME" />
-                    </property>
-                </bean>
-                
-                <!-- TODO: need to poke metadata source in from relying party config later -->
-                <bean class="org.opensaml.saml.common.binding.impl.SAMLMetadataLookupHandler" scope="prototype">
-                    <property name="roleDescriptorResolver">
-                        <bean class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
-                            c:mdResolver-ref="ExampleMetadataResolver" />
-                    </property>
-                </bean>
-            </util:list>
-        </property>
-    </bean>
+    <util:constant id="Shibboleth.MetadataLookup.Protocol"
+        static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML11P_NS" />
+
+    <util:constant id="Shibboleth.MetadataLookup.Role"
+        static-field="org.opensaml.saml.saml2.metadata.SPSSODescriptor.DEFAULT_ELEMENT_NAME" />
 
     <!-- TODO replace with eventual relying-party.xml config -->
     <bean
