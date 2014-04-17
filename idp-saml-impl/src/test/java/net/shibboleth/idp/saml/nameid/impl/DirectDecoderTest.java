@@ -17,13 +17,9 @@
 
 package net.shibboleth.idp.saml.nameid.impl;
 
-import java.io.IOException;
-
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml1.core.impl.NameIdentifierBuilder;
 import org.opensaml.saml.saml2.core.NameID;
@@ -36,7 +32,7 @@ public class DirectDecoderTest {
 
     private static final String PRINCIPAL="ThePrincipalName";
 
-    @Test public void testSucess() throws ProfileException, ComponentInitializationException, IOException {
+    @Test public void testSucess() throws Exception {
         final DirectNameIDDecoder decode = new DirectNameIDDecoder();
         decode.setId("Decoder");
         decode.initialize();
@@ -48,7 +44,7 @@ public class DirectDecoderTest {
     }
 
     @Test(expectedExceptions={UninitializedComponentException.class,})
-    public void testNoinit() throws ProfileException, ComponentInitializationException, IOException {
+    public void testNoinit() throws Exception {
         final DirectNameIDDecoder decode = new DirectNameIDDecoder();
         decode.setId("Decoder");
         
@@ -57,7 +53,7 @@ public class DirectDecoderTest {
         decode.decode(new SubjectCanonicalizationContext(), nameId);
     }
 
-    @Test public void testSAML1Success() throws ProfileException, ComponentInitializationException, IOException {
+    @Test public void testSAML1Success() throws Exception {
         final DirectNameIdentifierDecoder decode = new DirectNameIdentifierDecoder();
         decode.setId("Decoder");
         decode.initialize();
@@ -69,7 +65,7 @@ public class DirectDecoderTest {
     }
 
     @Test(expectedExceptions={UninitializedComponentException.class,})
-    public void testSAML1Noinit() throws ProfileException, ComponentInitializationException, IOException {
+    public void testSAML1Noinit() throws Exception {
         final DirectNameIdentifierDecoder decode = new DirectNameIdentifierDecoder();
         decode.setId("Decoder");
         

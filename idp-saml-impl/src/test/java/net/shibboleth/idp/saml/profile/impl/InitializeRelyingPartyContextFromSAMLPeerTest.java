@@ -19,7 +19,6 @@ package net.shibboleth.idp.saml.profile.impl;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
@@ -56,14 +55,14 @@ public class InitializeRelyingPartyContextFromSAMLPeerTest {
     }
 
     @Test
-    public void testNoPeerContext() throws ProfileException {
+    public void testNoPeerContext() {
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
     }
     
 
     @Test
-    public void testPeerContext() throws ProfileException {
+    public void testPeerContext() {
         final SAMLPeerEntityContext peer =
                 prc.getInboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
         peer.setEntityId("foo");

@@ -31,8 +31,8 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.saml1.profile.AbstractSAML1NameIdentifierGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,7 +99,7 @@ public class TransientSAML1NameIdentifierGenerator extends AbstractSAML1NameIden
     /** {@inheritDoc} */
     @Override
     @Nullable protected String getIdentifier(@Nonnull final ProfileRequestContext profileRequestContext)
-            throws ProfileException {
+            throws SAMLException {
         
         final Function<ProfileRequestContext,String> lookup = getDefaultSPNameQualifierLookupStrategy();
         final String relyingPartyId = lookup != null ? lookup.apply(profileRequestContext) : null;
@@ -116,7 +116,7 @@ public class TransientSAML1NameIdentifierGenerator extends AbstractSAML1NameIden
         
         try {
             return transientIdGenerator.generate(relyingPartyId, subjectCtx.getPrincipalName());
-        } catch (final ProfileException e) {
+        } catch (final SAMLException e) {
             log.debug("Exception generating transient ID", e);
             return null;
         }

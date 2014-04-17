@@ -26,7 +26,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.security.DataSealer;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml2.core.NameID;
@@ -80,7 +79,7 @@ public class CryptoTransientSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTes
         sealer.destroy();
     }
 
-    @Test public void testNoPrincipal() throws ComponentInitializationException, IOException, ProfileException {        
+    @Test public void testNoPrincipal() throws Exception {        
 
         final ProfileRequestContext prc = new RequestContextBuilder().buildProfileRequestContext();
         
@@ -89,7 +88,7 @@ public class CryptoTransientSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTes
         Assert.assertNull(name);
     }
 
-    @Test public void testNoRelyingParty() throws ComponentInitializationException, IOException, ProfileException {        
+    @Test public void testNoRelyingParty() throws Exception {        
 
         final ProfileRequestContext prc = new RequestContextBuilder().buildProfileRequestContext();
         prc.getSubcontext(RelyingPartyContext.class).setRelyingPartyId(null);

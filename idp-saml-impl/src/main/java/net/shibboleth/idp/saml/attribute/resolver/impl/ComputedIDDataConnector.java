@@ -31,7 +31,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
-import org.opensaml.profile.ProfileException;
+import org.opensaml.saml.common.SAMLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,7 +144,7 @@ public class ComputedIDDataConnector extends AbstractPersistentIdDataConnector {
         try {
             return encodeAsAttribute(idStrategy.generate(attributeIssuerId, attributeRecipientID, principalName,
                     sourceId));
-        } catch (final ProfileException e) {
+        } catch (final SAMLException e) {
             throw new ResolutionException(e);
         }
     }

@@ -32,7 +32,6 @@ import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.saml.nameid.NameIDDecoder;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.NameID;
@@ -123,12 +122,12 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
         flowDescriptor.getFormats().add("bar");
     }
 
-    @Test public void testNoContext() throws ProfileException {
+    @Test public void testNoContext() {
         action.execute(prc);
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
     }
 
-    @Test public void testNoPrincipal() throws ProfileException {
+    @Test public void testNoPrincipal() {
         final Subject subject = new Subject();
         setSubContext(subject, null, null);
 
@@ -137,7 +136,7 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
     }
 
-    @Test public void testMultiPrincipals() throws ProfileException {
+    @Test public void testMultiPrincipals() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIDPrincipal(nameId("value", NameID.KERBEROS)));
         subject.getPrincipals().add(new NameIDPrincipal(nameId("value2", NameID.X509_SUBJECT)));
@@ -149,7 +148,7 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
     }
 
-    @Test public void testWrongFormat() throws ProfileException {
+    @Test public void testWrongFormat() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIDPrincipal(nameId("value", NameID.X509_SUBJECT)));
 
@@ -160,7 +159,7 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
     }
 
-    @Test public void testWrongRequesterNameID() throws ProfileException {
+    @Test public void testWrongRequesterNameID() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIDPrincipal(nameId("value", NameID.KERBEROS)));
         setSubContext(subject, RESPONDER, RESPONDER);
@@ -169,7 +168,7 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
     }
 
-    @Test public void testWrongResponderNameID() throws ProfileException {
+    @Test public void testWrongResponderNameID() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIDPrincipal(nameId("value", NameID.KERBEROS)));
         setSubContext(subject, REQUESTER, REQUESTER);
@@ -178,7 +177,7 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
     }
 
-    @Test public void testWrongRequester() throws ProfileException {
+    @Test public void testWrongRequester() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIDPrincipal(nameId("value", NameID.KERBEROS, REQUESTER, REQUESTER)));
         setSubContext(subject, RESPONDER, RESPONDER);
@@ -187,7 +186,7 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
     }
 
-    @Test public void testWrongResponder() throws ProfileException {
+    @Test public void testWrongResponder() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIDPrincipal(nameId("value", NameID.KERBEROS, REQUESTER, REQUESTER)));
         setSubContext(subject, REQUESTER, REQUESTER);
@@ -196,7 +195,7 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
     }
 
-    @Test public void testSuccess() throws ProfileException {
+    @Test public void testSuccess() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new UsernamePrincipal("foo@osu.edu"));
         subject.getPrincipals().add(new NameIDPrincipal(nameId("works", NameID.KERBEROS)));

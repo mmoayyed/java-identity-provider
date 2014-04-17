@@ -32,8 +32,8 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.profile.NameIdentifierGenerator;
 import org.slf4j.Logger;
@@ -119,7 +119,7 @@ public class LegacyNameIdentifierGenerator<NameIdType extends SAMLObject>
     /** {@inheritDoc} */
     @Override
     @Nullable public NameIdType generate(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull @NotEmpty final String format) throws ProfileException {
+            @Nonnull @NotEmpty final String format) throws SAMLException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         Constraint.isNotNull(format, "Format cannot be null or empty");
         

@@ -35,7 +35,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.util.XMLObjectSupport;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.NameID;
@@ -98,7 +97,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
     }
     
     @Test
-    public void testNoResponderId() throws ComponentInitializationException, ProfileException {
+    public void testNoResponderId() throws Exception {
         generator.setPersistentIdGenerator(new ComputedPersistentIdGenerationStrategy());
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
@@ -107,7 +106,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
     }
 
     @Test
-    public void testNoRequesterId() throws ComponentInitializationException, ProfileException {
+    public void testNoRequesterId() throws Exception {
         generator.setPersistentIdGenerator(new ComputedPersistentIdGenerationStrategy());
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
@@ -118,7 +117,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
     }
     
     @Test
-    public void testNoSubject() throws ComponentInitializationException, ProfileException {
+    public void testNoSubject() throws Exception {
         generator.setPersistentIdGenerator(new ComputedPersistentIdGenerationStrategy());
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
@@ -127,7 +126,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
     }
 
     @Test
-    public void testNoSource() throws ComponentInitializationException, ProfileException {
+    public void testNoSource() throws Exception {
         generator.setPersistentIdGenerator(new ComputedPersistentIdGenerationStrategy());
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
@@ -141,7 +140,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
     }
     
     @Test
-    public void testComputedId() throws ComponentInitializationException, ProfileException {
+    public void testComputedId() throws Exception {
         final ComputedPersistentIdGenerationStrategy strategy = new ComputedPersistentIdGenerationStrategy();
         strategy.setId("test");
         strategy.setSalt(salt);
@@ -167,7 +166,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
     }
 
     @Test
-    public void testStoredId() throws ComponentInitializationException, ProfileException {
+    public void testStoredId() throws Exception {
         final JDBCPersistentIdStore store = new JDBCPersistentIdStore();
         store.setDataSource(testSource);
         store.initialize();

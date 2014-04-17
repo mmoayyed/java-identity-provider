@@ -31,7 +31,6 @@ import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -69,14 +68,14 @@ public class InvalidateSessionOnIdentitySwitchTest extends SessionManagerBaseTes
         action.initialize();
     }
 
-    @Test public void testNoSession() throws ProfileException {
+    @Test public void testNoSession() {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         c14n.setPrincipalName("joe");
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
     }
     
-    @Test public void testSesssion() throws ProfileException, SessionException {
+    @Test public void testSesssion() throws SessionException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         
         sc.setIdPSession(sessionManager.createSession("joe"));
@@ -88,7 +87,7 @@ public class InvalidateSessionOnIdentitySwitchTest extends SessionManagerBaseTes
         Assert.assertEquals(ac.getActiveResults().size(), 1);
     }
 
-    @Test public void testMatch() throws ProfileException, SessionException {
+    @Test public void testMatch() throws SessionException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         
         sc.setIdPSession(sessionManager.createSession("joe"));
@@ -101,7 +100,7 @@ public class InvalidateSessionOnIdentitySwitchTest extends SessionManagerBaseTes
         Assert.assertEquals(ac.getActiveResults().size(), 1);
     }
 
-    @Test public void testMismatch() throws ProfileException, SessionException {
+    @Test public void testMismatch() throws SessionException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         
         sc.setIdPSession(sessionManager.createSession("joe"));

@@ -27,7 +27,6 @@ import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -58,14 +57,14 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
         action.initialize();
     }
     
-    @Test public void testNoSession() throws ProfileException {
+    @Test public void testNoSession() {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNull(prc.getSubcontext(SessionContext.class, false));
     }
     
-    @Test public void testSession() throws ProfileException, SessionException {
+    @Test public void testSession() throws SessionException {
         Cookie cookie = createSession("joe");
         
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
@@ -79,7 +78,7 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
         Assert.assertEquals(sessionCtx.getIdPSession().getPrincipalName(), "joe");
     }
 
-    @Test public void testAddressRebind() throws ProfileException, SessionException {
+    @Test public void testAddressRebind() throws SessionException {
         Cookie cookie = createSession("joe");
         
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
@@ -94,7 +93,7 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
         Assert.assertEquals(sessionCtx.getIdPSession().getPrincipalName(), "joe");
     }
     
-    @Test public void testAddressMismatch() throws ProfileException, SessionException {
+    @Test public void testAddressMismatch() throws SessionException {
         Cookie cookie = createSession("joe");
         
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
@@ -106,7 +105,7 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
         Assert.assertNull(prc.getSubcontext(SessionContext.class, false));
     }
 
-    @Test public void testTimeout() throws ProfileException, SessionException, InterruptedException {
+    @Test public void testTimeout() throws SessionException, InterruptedException {
         Cookie cookie = createSession("joe");
         
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());

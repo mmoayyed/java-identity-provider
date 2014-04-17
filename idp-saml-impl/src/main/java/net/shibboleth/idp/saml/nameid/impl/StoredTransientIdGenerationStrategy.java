@@ -33,7 +33,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.RandomIdentifierGenerationStrategy;
 
-import org.opensaml.profile.ProfileException;
+import org.opensaml.saml.common.SAMLException;
 import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,7 +146,7 @@ public class StoredTransientIdGenerationStrategy extends AbstractIdentifiableIni
     /** {@inheritDoc} */
     @Override
     @Nonnull @NotEmpty public String generate(@Nonnull @NotEmpty final String relyingPartyId,
-            @Nonnull @NotEmpty final String principalName) throws ProfileException {
+            @Nonnull @NotEmpty final String principalName) throws SAMLException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         try {
@@ -175,9 +175,9 @@ public class StoredTransientIdGenerationStrategy extends AbstractIdentifiableIni
                 }
             }
         
-            throw new ProfileException("Exceeded allowable number of collisions");
+            throw new SAMLException("Exceeded allowable number of collisions");
         } catch (final IOException e) {
-            throw new ProfileException(e);
+            throw new SAMLException(e);
         }
     }
 

@@ -31,8 +31,8 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml1.core.impl.NameIdentifierBuilder;
 import org.opensaml.saml.saml2.core.NameID;
@@ -97,7 +97,7 @@ public class AttributeSourcedSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTe
         generator.initialize();
     }
     
-    @Test public void testNoSource() throws ComponentInitializationException, ProfileException {
+    @Test public void testNoSource() throws ComponentInitializationException, SAMLException {
         generator.setAttributeSourceIds(Collections.singletonList("bar"));
         generator.initialize();
         Assert.assertNull(generator.generate(prc, generator.getFormat()));

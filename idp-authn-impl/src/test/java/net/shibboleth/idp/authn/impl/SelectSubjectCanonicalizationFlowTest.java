@@ -19,7 +19,6 @@ package net.shibboleth.idp.authn.impl;
 
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -45,7 +44,7 @@ public class SelectSubjectCanonicalizationFlowTest extends PopulateSubjectCanoni
         c14nCtx = prc.getSubcontext(SubjectCanonicalizationContext.class, false);
     }
     
-    @Test public void testSelect() throws ProfileException {
+    @Test public void testSelect() {
         
         final Event event = action.execute(src);
         
@@ -53,7 +52,7 @@ public class SelectSubjectCanonicalizationFlowTest extends PopulateSubjectCanoni
         Assert.assertEquals(c14nCtx.getAttemptedFlow().getId(), "test1");
     }
 
-    @Test public void testIntermediate() throws ProfileException {
+    @Test public void testIntermediate() {
         c14nCtx.getIntermediateFlows().put("test1", c14nCtx.getPotentialFlows().get("test1"));
         
         final Event event = action.execute(src);
@@ -62,7 +61,7 @@ public class SelectSubjectCanonicalizationFlowTest extends PopulateSubjectCanoni
         Assert.assertEquals(c14nCtx.getAttemptedFlow().getId(), "test2");
     }
 
-    @Test public void testPredicate() throws ProfileException {
+    @Test public void testPredicate() {
         c14nCtx.getPotentialFlows().get("test1").setActivationCondition(Predicates.<ProfileRequestContext>alwaysFalse());
         
         final Event event = action.execute(src);

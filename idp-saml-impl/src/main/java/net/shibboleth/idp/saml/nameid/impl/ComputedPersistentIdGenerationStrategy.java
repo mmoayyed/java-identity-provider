@@ -31,7 +31,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.profile.ProfileException;
+import org.opensaml.saml.common.SAMLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,7 +106,7 @@ public class ComputedPersistentIdGenerationStrategy extends AbstractIdentifiable
     @Override
     @Nonnull @NotEmpty public String generate(@Nonnull @NotEmpty final String assertingPartyId,
             @Nonnull @NotEmpty final String relyingPartyId, @Nonnull @NotEmpty final String principalName,
-            @Nonnull @NotEmpty final String sourceId) throws ProfileException {
+            @Nonnull @NotEmpty final String sourceId) throws SAMLException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         try {
@@ -119,7 +119,7 @@ public class ComputedPersistentIdGenerationStrategy extends AbstractIdentifiable
             return Base64Support.encode(md.digest(salt), Base64Support.UNCHUNKED);
         } catch (final NoSuchAlgorithmException e) {
             log.error("Digest algorithm {} is not supported", algorithm);
-            throw new ProfileException("Digest algorithm was not supported, unable to compute ID", e);
+            throw new SAMLException("Digest algorithm was not supported, unable to compute ID", e);
         }
     }
     

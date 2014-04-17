@@ -31,7 +31,6 @@ import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactory;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 
-import org.opensaml.profile.ProfileException;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -56,7 +55,7 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         action.initialize();
     }
     
-    @Test public void testNoRequestNoneActive() throws ProfileException {
+    @Test public void testNoRequestNoneActive() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         
         final Event event = action.execute(src);
@@ -66,7 +65,7 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         Assert.assertEquals(authCtx.getAttemptedFlow().getId(), "test1");
     }
 
-    @Test public void testNoRequestNoneActiveIntermediate() throws ProfileException {
+    @Test public void testNoRequestNoneActiveIntermediate() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         authCtx.getIntermediateFlows().put("test1", authCtx.getPotentialFlows().get("test1"));
         
@@ -77,7 +76,7 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         Assert.assertEquals(authCtx.getAttemptedFlow().getId(), "test2");
     }
     
-    @Test public void testNoRequestActive() throws ProfileException {
+    @Test public void testNoRequestActive() {
         final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         authCtx.setActiveResults(Arrays.asList(active));
@@ -88,7 +87,7 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         Assert.assertEquals(active, authCtx.getAuthenticationResult());
     }
 
-    @Test public void testNoRequestForced() throws ProfileException {
+    @Test public void testNoRequestForced() {
         final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         authCtx.setActiveResults(Arrays.asList(active));
@@ -100,7 +99,7 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         Assert.assertEquals(authCtx.getAttemptedFlow(), authCtx.getPotentialFlows().get(event.getId()));
     }
 
-    @Test public void testRequestNoMatch() throws ProfileException {
+    @Test public void testRequestNoMatch() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
         rpc.setOperator("exact");
@@ -113,7 +112,7 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         Assert.assertNull(rpc.getMatchingPrincipal());
     }
 
-    @Test public void testRequestNoneActive() throws ProfileException {
+    @Test public void testRequestNoneActive() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"));
         final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
@@ -129,7 +128,7 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         Assert.assertEquals(rpc.getMatchingPrincipal().getName(), "test3");
     }
 
-    @Test public void testRequestNoneActiveIntermediate() throws ProfileException {
+    @Test public void testRequestNoneActiveIntermediate() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         authCtx.getIntermediateFlows().put("test2", authCtx.getPotentialFlows().get("test2"));
         final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
@@ -148,7 +147,7 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         Assert.assertEquals(rpc.getMatchingPrincipal().getName(), "test3");
     }
     
-    @Test public void testRequestPickInactive() throws ProfileException {
+    @Test public void testRequestPickInactive() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
                 new TestPrincipal("test2"));
@@ -168,7 +167,7 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         Assert.assertEquals(rpc.getMatchingPrincipal().getName(), "test3");
     }
 
-    @Test public void testRequestPickActive() throws ProfileException {
+    @Test public void testRequestPickActive() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
                 new TestPrincipal("test2"));
@@ -188,7 +187,7 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         Assert.assertEquals(rpc.getMatchingPrincipal().getName(), "test3");
     }
 
-    @Test public void testRequestFavorSSO() throws ProfileException {
+    @Test public void testRequestFavorSSO() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
                 new TestPrincipal("test2"));

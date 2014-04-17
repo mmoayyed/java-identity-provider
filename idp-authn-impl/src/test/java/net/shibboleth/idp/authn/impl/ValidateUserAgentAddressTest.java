@@ -30,9 +30,9 @@ import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactory;
 import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.net.IPRange;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -58,18 +58,18 @@ public class ValidateUserAgentAddressTest extends PopulateAuthenticationContextT
         action.initialize();
     }
 
-    @Test public void testMissingFlow() throws ProfileException {
+    @Test public void testMissingFlow() {
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
     }
     
-    @Test public void testMissingAddress() throws ProfileException {
+    @Test public void testMissingAddress() {
         prc.getSubcontext(AuthenticationContext.class, false).setAttemptedFlow(authenticationFlows.get(0));
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
-    @Test public void testMissingAddress2() throws Exception {
+    @Test public void testMissingAddress2() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr(null);
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
@@ -81,7 +81,7 @@ public class ValidateUserAgentAddressTest extends PopulateAuthenticationContextT
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
-    @Test public void testUnauthorized() throws Exception {
+    @Test public void testUnauthorized() throws ComponentInitializationException {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
@@ -91,7 +91,7 @@ public class ValidateUserAgentAddressTest extends PopulateAuthenticationContextT
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
     }
 
-    @Test public void testIncompatible() throws Exception {
+    @Test public void testIncompatible() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr("192.168.1.1");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
@@ -110,7 +110,7 @@ public class ValidateUserAgentAddressTest extends PopulateAuthenticationContextT
         ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
     }
 
-    @Test public void testCompatible() throws Exception {
+    @Test public void testCompatible() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr("192.168.1.1");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
@@ -132,7 +132,7 @@ public class ValidateUserAgentAddressTest extends PopulateAuthenticationContextT
                 UsernamePrincipal.class).iterator().next().getName(), "foo");
     }
     
-    private void doExtract(ProfileRequestContext prc) throws Exception {
+    private void doExtract(ProfileRequestContext prc) throws ComponentInitializationException {
         final ExtractUserAgentAddress extract = new ExtractUserAgentAddress();
         extract.setHttpServletRequest(action.getHttpServletRequest());
         extract.setId("extract");

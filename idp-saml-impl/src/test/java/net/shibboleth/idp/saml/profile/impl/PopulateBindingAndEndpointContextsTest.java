@@ -37,7 +37,6 @@ import net.shibboleth.utilities.java.support.xml.XMLParserException;
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.core.xml.io.Unmarshaller;
 import org.opensaml.core.xml.io.UnmarshallingException;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.binding.BindingDescriptor;
@@ -110,7 +109,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
     }
     
     @Test
-    public void testNoOutboundContext() throws ProfileException {
+    public void testNoOutboundContext() {
         prc.setOutboundMessageContext(null);
         
         final Event event = action.execute(rc);
@@ -118,7 +117,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
     }
 
     @Test
-    public void testNoBindings() throws ProfileException, ComponentInitializationException {
+    public void testNoBindings() throws ComponentInitializationException {
         final BindingDescriptor binding = new BindingDescriptor();
         binding.setId(SAMLConstants.SAML2_POST_BINDING_URI);
         binding.setActivationCondition(Predicates.<ProfileRequestContext>alwaysFalse());
@@ -134,14 +133,14 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
     }
     
     @Test
-    public void testNoMetadata() throws ProfileException {
+    public void testNoMetadata() {
         final Event event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
     }
 
     /** An SP with no endpoints in metadata. */
     @Test
-    public void testNoEndpoints() throws UnmarshallingException, ProfileException {
+    public void testNoEndpoints() throws UnmarshallingException {
         final RoleDescriptor role = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPNoEndpoints.xml");
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
         mdCtx.setRoleDescriptor(role);
@@ -153,7 +152,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
 
     /** No endpoint with the location requested. */
     @Test
-    public void testBadLocation() throws UnmarshallingException, ProfileException {
+    public void testBadLocation() throws UnmarshallingException {
         final RoleDescriptor role = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
         mdCtx.setRoleDescriptor(role);
@@ -167,7 +166,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
 
     /** No endpoint at a location with the right binding requested. */
     @Test
-    public void testBadBinding() throws UnmarshallingException, ProfileException {
+    public void testBadBinding() throws UnmarshallingException {
         final RoleDescriptor role = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
         mdCtx.setRoleDescriptor(role);
@@ -181,7 +180,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
 
     /** Endpoint matches but we don't support the binding. */
     @Test
-    public void testUnsupportedBinding() throws UnmarshallingException, ProfileException {
+    public void testUnsupportedBinding() throws UnmarshallingException {
         final RoleDescriptor role = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
         mdCtx.setRoleDescriptor(role);
@@ -196,7 +195,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
     
     /** No endpoint with a requested index. */
     @Test
-    public void testBadIndex() throws UnmarshallingException, ProfileException {
+    public void testBadIndex() throws UnmarshallingException {
         final RoleDescriptor role = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
         mdCtx.setRoleDescriptor(role);
@@ -212,7 +211,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
     
     /** Test SOAP case. */
     @Test
-    public void testSynchrnonous() throws ProfileException, ComponentInitializationException {
+    public void testSynchrnonous() throws ComponentInitializationException {
         prc.getInboundMessageContext().getSubcontext(SAMLBindingContext.class).setBindingUri(
                 SAMLConstants.SAML2_SOAP11_BINDING_URI);
         
@@ -236,7 +235,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
     
     /** Requested location/binding are in metadata. */
     @Test
-    public void testInMetadata() throws UnmarshallingException, ProfileException {
+    public void testInMetadata() throws UnmarshallingException {
         final RoleDescriptor role = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
         mdCtx.setRoleDescriptor(role);
@@ -260,7 +259,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
 
     /** Requested index is in metadata. */
     @Test
-    public void testIndexInMetadata() throws UnmarshallingException, ProfileException {
+    public void testIndexInMetadata() throws UnmarshallingException {
         final RoleDescriptor role = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
         mdCtx.setRoleDescriptor(role);
@@ -288,7 +287,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
 
     /** No endpoint with a requested index. */
     @Test
-    public void testIndexUnsupportedBinding() throws UnmarshallingException, ProfileException {
+    public void testIndexUnsupportedBinding() throws UnmarshallingException {
         final RoleDescriptor role = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
         mdCtx.setRoleDescriptor(role);
@@ -304,7 +303,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
     
     /** Get the default endpoint. */
     @Test
-    public void testDefault() throws UnmarshallingException, ProfileException {
+    public void testDefault() throws UnmarshallingException {
         final RoleDescriptor role = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
         mdCtx.setRoleDescriptor(role);
@@ -331,7 +330,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
     
     /** Test a SAML 1 request (use of SAML2 bindings here is just for simplicity in testing). */
     @Test
-    public void testSAML1InMetadata() throws UnmarshallingException, ProfileException {
+    public void testSAML1InMetadata() throws UnmarshallingException {
         final RoleDescriptor role = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
         mdCtx.setRoleDescriptor(role);

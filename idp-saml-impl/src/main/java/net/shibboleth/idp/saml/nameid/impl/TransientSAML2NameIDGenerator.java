@@ -30,8 +30,8 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.profile.AbstractSAML2NameIDGenerator;
 import org.slf4j.Logger;
@@ -99,7 +99,7 @@ public class TransientSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator 
     /** {@inheritDoc} */
     @Override
     @Nullable protected String getIdentifier(@Nonnull final ProfileRequestContext profileRequestContext)
-            throws ProfileException {
+            throws SAMLException {
 
         // Effective qualifier may override default in the case of an Affiliation.
         // This doesn't really impact transients typically, but for consistency...
@@ -121,7 +121,7 @@ public class TransientSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator 
         
         try {
             return transientIdGenerator.generate(relyingPartyId, subjectCtx.getPrincipalName());
-        } catch (final ProfileException e) {
+        } catch (final SAMLException e) {
             log.debug("Exception generating transient ID", e);
             return null;
         }

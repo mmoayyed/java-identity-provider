@@ -25,7 +25,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
@@ -68,14 +67,14 @@ public class InitializeOutboundMessageContextForErrorTest extends OpenSAMLInitBa
         action.initialize();
     }
 
-    @Test public void testWithOutboundContext() throws ProfileException {
+    @Test public void testWithOutboundContext() {
         prc.setOutboundMessageContext(new MessageContext());
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
     }
     
-    @Test public void testNoRelyingPartyContext() throws ProfileException {
+    @Test public void testNoRelyingPartyContext() {
         prc.removeSubcontext(RelyingPartyContext.class);
 
         final Event event = action.execute(src);
@@ -87,7 +86,7 @@ public class InitializeOutboundMessageContextForErrorTest extends OpenSAMLInitBa
         Assert.assertNull(prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class));
     }
 
-    @Test public void testNoPeerEntityContext() throws ProfileException {
+    @Test public void testNoPeerEntityContext() {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNotNull(prc.getOutboundMessageContext());
@@ -97,7 +96,7 @@ public class InitializeOutboundMessageContextForErrorTest extends OpenSAMLInitBa
         Assert.assertNull(prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class));
     }
 
-    @Test public void testPeerEntityContextNoIssuer() throws ProfileException {
+    @Test public void testPeerEntityContextNoIssuer() {
         SAMLPeerEntityContext ctx = prc.getInboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
         prc.getSubcontext(RelyingPartyContext.class).setRelyingPartyIdContextTree(ctx);
         
@@ -112,7 +111,7 @@ public class InitializeOutboundMessageContextForErrorTest extends OpenSAMLInitBa
         Assert.assertNull(ctx.getEntityId());
     }
 
-    @Test public void testPeerEntityContextIssuer() throws ProfileException {
+    @Test public void testPeerEntityContextIssuer() {
         SAMLPeerEntityContext ctx = prc.getInboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
         prc.getSubcontext(RelyingPartyContext.class).setRelyingPartyIdContextTree(ctx);
         attributeQuery.getAttributeQuery().setResource("issuer");

@@ -27,8 +27,8 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -54,18 +54,18 @@ public class ValidateRemoteUserTest extends PopulateAuthenticationContextTest {
         action.initialize();
     }
 
-    @Test public void testMissingFlow() throws ProfileException {
+    @Test public void testMissingFlow() {
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
     }
     
-    @Test public void testMissingUser() throws ProfileException {
+    @Test public void testMissingUser() {
         prc.getSubcontext(AuthenticationContext.class, false).setAttemptedFlow(authenticationFlows.get(0));
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
-    @Test public void testMissingUser2() throws Exception {
+    @Test public void testMissingUser2() throws ComponentInitializationException {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
@@ -75,7 +75,7 @@ public class ValidateRemoteUserTest extends PopulateAuthenticationContextTest {
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
-    @Test public void testUnauthorized() throws Exception {
+    @Test public void testUnauthorized() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser("bam");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
@@ -87,7 +87,7 @@ public class ValidateRemoteUserTest extends PopulateAuthenticationContextTest {
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
     }
 
-    @Test public void testAuthorized() throws Exception {
+    @Test public void testAuthorized() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser("baz");
         
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
@@ -102,7 +102,7 @@ public class ValidateRemoteUserTest extends PopulateAuthenticationContextTest {
                 UsernamePrincipal.class).iterator().next().getName(), "baz");
     }
 
-    @Test public void testBlacklist() throws Exception {
+    @Test public void testBlacklist() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser("foo");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
@@ -114,7 +114,7 @@ public class ValidateRemoteUserTest extends PopulateAuthenticationContextTest {
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
     }
     
-    @Test public void testPattern() throws Exception {
+    @Test public void testPattern() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser("ban");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
@@ -129,7 +129,7 @@ public class ValidateRemoteUserTest extends PopulateAuthenticationContextTest {
                 UsernamePrincipal.class).iterator().next().getName(), "ban");
     }
     
-    private void doExtract(ProfileRequestContext prc) throws Exception {
+    private void doExtract(ProfileRequestContext prc) throws ComponentInitializationException {
         final ExtractRemoteUser extract = new ExtractRemoteUser();
         extract.setHttpServletRequest(action.getHttpServletRequest());
         extract.setId("extract");

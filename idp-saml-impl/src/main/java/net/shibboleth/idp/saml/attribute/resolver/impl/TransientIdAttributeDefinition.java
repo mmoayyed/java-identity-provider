@@ -32,7 +32,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.opensaml.profile.ProfileException;
+import org.opensaml.saml.common.SAMLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +90,7 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
             final IdPAttribute result = new IdPAttribute(getId());
             result.setValues(Collections.singleton(new StringAttributeValue(transientId)));
             return result;
-        } catch (final ProfileException e) {
+        } catch (final SAMLException e) {
             throw new ResolutionException(e);
         }
     }

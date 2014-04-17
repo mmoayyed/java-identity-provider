@@ -26,7 +26,6 @@ import javax.security.auth.Subject;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinition;
@@ -38,7 +37,6 @@ import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.DataSealerException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml1.core.NameIdentifier;
@@ -67,8 +65,7 @@ public class CryptoTransientNameIdentifierDecoderTest extends OpenSAMLInitBaseTe
      * @throws DataSealerException
      * @throws ComponentInitializationException
      */
-    @BeforeClass public void setupDataSealer() throws IOException, DataSealerException,
-            ComponentInitializationException {
+    @BeforeClass public void setupDataSealer() throws Exception {
 
         final Resource keyStore =
                 new ClassPathResource("/net/shibboleth/idp/saml/impl/attribute/resolver/SealerKeyStore.jks");
@@ -91,8 +88,7 @@ public class CryptoTransientNameIdentifierDecoderTest extends OpenSAMLInitBaseTe
         decoder.initialize();
     }
 
-    @Test public void decode() throws ComponentInitializationException, ResolutionException, DataSealerException,
-            InterruptedException, ProfileException {
+    @Test public void decode() throws Exception {
         final CryptoTransientIdGenerationStrategy strategy = new CryptoTransientIdGenerationStrategy();
         strategy.setDataSealer(dataSealer);
         strategy.setId("strategy");

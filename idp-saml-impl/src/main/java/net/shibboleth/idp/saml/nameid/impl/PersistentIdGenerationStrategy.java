@@ -19,7 +19,7 @@ package net.shibboleth.idp.saml.nameid.impl;
 
 import javax.annotation.Nonnull;
 
-import org.opensaml.profile.ProfileException;
+import org.opensaml.saml.common.SAMLException;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
@@ -39,10 +39,10 @@ public interface PersistentIdGenerationStrategy {
      * @param sourceId          an underlying identifier for the subject
      * 
      * @return  the identifier
-     * @throws ProfileException  if an error occurs generating the identifier
+     * @throws SAMLException if an error occurs generating the identifier
      */
     @Nonnull @NotEmpty String generate(@Nonnull @NotEmpty final String assertingPartyId,
             @Nonnull @NotEmpty final String relyingPartyId, @Nonnull @NotEmpty final String principalName,
-            @Nonnull @NotEmpty final String sourceId) throws ProfileException;
+            @Nonnull @NotEmpty final String sourceId) throws SAMLException;
 
 }

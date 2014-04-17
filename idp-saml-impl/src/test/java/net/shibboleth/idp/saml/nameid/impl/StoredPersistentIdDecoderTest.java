@@ -36,7 +36,6 @@ import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Subject;
@@ -92,7 +91,7 @@ public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
     }
     
     @Test
-    public void testMissingID() throws ComponentInitializationException, ProfileException {
+    public void testMissingID() throws Exception {
 
         final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
         scc.setRequesterId(TestSources.SP_ENTITY_ID);
@@ -103,7 +102,7 @@ public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test(expectedExceptions={NameDecoderException.class})
-    public void testNoQualifiers() throws ComponentInitializationException, ProfileException {
+    public void testNoQualifiers() throws Exception {
 
         final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
         
@@ -112,7 +111,7 @@ public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
     }
     
     @Test(expectedExceptions={NameDecoderException.class})
-    public void testBadQualifier() throws ComponentInitializationException, ProfileException {
+    public void testBadQualifier() throws Exception {
         generator.initialize();
         
         prc.getSubcontext(SubjectContext.class, true).setPrincipalName("foo");
@@ -138,7 +137,7 @@ public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
     }
     
     @Test
-    public void testStoredIdDecode() throws ComponentInitializationException, ProfileException {
+    public void testStoredIdDecode() throws Exception {
         generator.initialize();
         
         prc.getSubcontext(SubjectContext.class, true).setPrincipalName("foo");
@@ -164,7 +163,7 @@ public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
     }
     
     @Test
-    public void testAffiliation() throws ComponentInitializationException, ProfileException {
+    public void testAffiliation() throws Exception {
         generator.setSPNameQualifier("http://affiliation.org");
         generator.initialize();
         

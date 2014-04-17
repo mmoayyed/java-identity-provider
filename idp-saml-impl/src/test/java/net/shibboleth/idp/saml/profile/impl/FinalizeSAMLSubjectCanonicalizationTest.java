@@ -24,7 +24,6 @@ import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -48,14 +47,14 @@ public class FinalizeSAMLSubjectCanonicalizationTest {
         action.initialize();
     }
     
-    @Test public void testNoContext() throws ProfileException {
+    @Test public void testNoContext() {
         final Event event = action.execute(rc);
         
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
         Assert.assertNull(prc.getSubcontext(SubjectContext.class));
     }
 
-    @Test public void testNoPrincipal() throws ProfileException {
+    @Test public void testNoPrincipal() {
         prc.getSubcontext(SubjectCanonicalizationContext.class, true);
         
         final Event event = action.execute(rc);
@@ -63,7 +62,7 @@ public class FinalizeSAMLSubjectCanonicalizationTest {
         Assert.assertNull(prc.getSubcontext(SubjectContext.class));
     }
     
-    @Test public void testMatch() throws ProfileException {
+    @Test public void testMatch() {
         prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("foo");
         
         final Event event = action.execute(rc);

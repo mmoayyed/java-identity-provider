@@ -23,7 +23,6 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UserAgentContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 
-import org.opensaml.profile.ProfileException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -50,12 +49,12 @@ public class ExtractUserAgentIdntifierTest extends PopulateAuthenticationContext
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
-    @Test public void testMissingHeader() throws ProfileException {
+    @Test public void testMissingHeader() {
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
-    @Test public void testValidHeader() throws ProfileException {
+    @Test public void testValidHeader() {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader("User-Agent", "foo bar baz");
         
         final Event event = action.execute(src);

@@ -30,7 +30,6 @@ import net.shibboleth.idp.saml.profile.impl.ExtractSubjectFromRequest.SubjectNam
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.profile.logic.DefaultNameIDPolicyPredicate;
 import org.opensaml.saml.saml1.core.Request;
@@ -71,7 +70,7 @@ public class ExtractSubjectFromRequestTest extends XMLObjectBaseTestCase {
     }
 
     @Test
-    public void testNoInboundContext() throws ProfileException {
+    public void testNoInboundContext() {
         prc.setInboundMessageContext(null);
         
         final Event event = action.execute(rc);
@@ -79,7 +78,7 @@ public class ExtractSubjectFromRequestTest extends XMLObjectBaseTestCase {
     }
    
     @Test
-    public void testNoMessage() throws ProfileException {
+    public void testNoMessage() {
         prc.getInboundMessageContext().setMessage(null);
         
         final Event event = action.execute(rc);
@@ -87,7 +86,7 @@ public class ExtractSubjectFromRequestTest extends XMLObjectBaseTestCase {
     }
 
     @Test
-    public void testNoSubject() throws ProfileException {
+    public void testNoSubject() {
         prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
         
         final Event event = action.execute(rc);
@@ -95,7 +94,7 @@ public class ExtractSubjectFromRequestTest extends XMLObjectBaseTestCase {
     }
 
     @Test
-    public void testSAML2Subject() throws ProfileException {
+    public void testSAML2Subject() {
         final AuthnRequest request = SAML2ActionTestingSupport.buildAuthnRequest();
         request.setSubject(SAML2ActionTestingSupport.buildSubject("foo"));
         prc.getInboundMessageContext().setMessage(request);
@@ -123,7 +122,7 @@ public class ExtractSubjectFromRequestTest extends XMLObjectBaseTestCase {
     }
     
     @Test
-    public void testSAML1Subject() throws ProfileException {
+    public void testSAML1Subject() {
         final Request request = SAML1ActionTestingSupport.buildAttributeQueryRequest(
                 SAML1ActionTestingSupport.buildSubject("foo"));
         prc.getInboundMessageContext().setMessage(request);

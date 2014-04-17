@@ -19,17 +19,15 @@ package net.shibboleth.idp.authn;
 
 import javax.annotation.Nullable;
 
-import org.opensaml.profile.ProfileException;
-
-/** Exception indicating a problem authenticating a user. */
-public class SubjectCanonicalizationException extends ProfileException {
+/** Exception indicating a problem translating a subject between forms. */
+public class SubjectCanonicalizationException extends Exception {
 
     /** Serial version UID. */
     private static final long serialVersionUID = -53582988179606741L;
 
     /** Constructor. */
     public SubjectCanonicalizationException() {
-        super();
+        
     }
 
     /**

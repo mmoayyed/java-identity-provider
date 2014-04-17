@@ -19,12 +19,10 @@ package net.shibboleth.idp.saml.nameid;
 
 import javax.annotation.Nullable;
 
-import org.opensaml.profile.ProfileException;
+import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 
-/**
- * Error thrown if decoding failed.
- */
-public class NameDecoderException extends ProfileException {
+/** Error thrown if decoding of a SAML subject identifier fails. */
+public class NameDecoderException extends SubjectCanonicalizationException {
 
     /**
      * serial ID.
@@ -36,7 +34,7 @@ public class NameDecoderException extends ProfileException {
      *
      */
     public NameDecoderException() {
-        super();
+        
     }
 
     /**
@@ -67,4 +65,5 @@ public class NameDecoderException extends ProfileException {
             @Nullable final Exception wrappedException) {
         super(message, wrappedException);
     }
+    
 }

@@ -30,7 +30,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.DataSealerException;
 
-import org.opensaml.profile.ProfileException;
+import org.opensaml.saml.common.SAMLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,7 +98,7 @@ public class CryptoTransientIdGenerationStrategy extends AbstractIdentifiableIni
     /** {@inheritDoc} */
     @Override
     @Nonnull @NotEmpty public String generate(@Nonnull @NotEmpty final String relyingPartyId,
-            @Nonnull @NotEmpty final String principalName) throws ProfileException {
+            @Nonnull @NotEmpty final String principalName) throws SAMLException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         final StringBuilder principalTokenIdBuilder = new StringBuilder();
@@ -107,7 +107,7 @@ public class CryptoTransientIdGenerationStrategy extends AbstractIdentifiableIni
         try {
             return dataSealer.wrap(principalTokenIdBuilder.toString(), System.currentTimeMillis() + idLifetime);
         } catch (final DataSealerException e) {
-            throw new ProfileException("Exception wrapping principal identifier", e);
+            throw new SAMLException("Exception wrapping principal identifier", e);
         }
     }
 

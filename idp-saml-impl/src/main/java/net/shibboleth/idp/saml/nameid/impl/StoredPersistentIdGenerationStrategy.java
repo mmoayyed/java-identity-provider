@@ -34,7 +34,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.profile.ProfileException;
+import org.opensaml.saml.common.SAMLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,7 +99,7 @@ public class StoredPersistentIdGenerationStrategy extends AbstractIdentifiableIn
     @Override
     @Nonnull @NotEmpty public String generate(@Nonnull @NotEmpty final String assertingPartyId,
             @Nonnull @NotEmpty final String relyingPartyId, @Nonnull @NotEmpty final String principalName,
-            @Nonnull @NotEmpty final String sourceId) throws ProfileException {
+            @Nonnull @NotEmpty final String sourceId) throws SAMLException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         try {
@@ -117,13 +117,13 @@ public class StoredPersistentIdGenerationStrategy extends AbstractIdentifiableIn
             final String pid = StringSupport.trimOrNull(idEntry.getPersistentId());
             if (null == pid) {
                 log.debug("Returned persistent ID was empty");
-                throw new ProfileException("Returned persistent ID was empty");
+                throw new SAMLException("Returned persistent ID was empty");
             }
     
             return pid;
         } catch (final IOException e) {
             log.debug("ID storage error retrieving persistent identifier", e);
-            throw new ProfileException("ID storage error retrieving persistent identifier", e);
+            throw new SAMLException("ID storage error retrieving persistent identifier", e);
         }
     }
     
@@ -144,11 +144,11 @@ public class StoredPersistentIdGenerationStrategy extends AbstractIdentifiableIn
      * @return the created identifier
      * 
      * @throws IOException if there is a problem communication with the database
-     * @throws ProfileException if there is a problem with generation
+     * @throws SAMLException if there is a problem with generation
      */
     @Nonnull protected PersistentIdEntry createPersistentId(@Nonnull @NotEmpty String principalName,
             @Nonnull @NotEmpty String localEntityId, @Nonnull @NotEmpty String peerEntityId,
-            @Nonnull @NotEmpty String localId) throws IOException, ProfileException {
+            @Nonnull @NotEmpty String localId) throws IOException, SAMLException {
         
         final PersistentIdEntry entry = new PersistentIdEntry();
         entry.setIssuerEntityId(Constraint.isNotNull(StringSupport.trimOrNull(localEntityId),

@@ -110,8 +110,7 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
         return code(principalName, attributeRecipientID, TIMEOUT);
     }
 
-    @Test public void testSucess() throws ProfileException, ComponentInitializationException, IOException,
-            DataSealerException {
+    @Test public void testSucess() throws Exception {
         final String ct = code(PRINCIPAL, ISSUER, RECIPIENT);
 
         Assert.assertEquals(decoder.decode(ct, RECIPIENT), PRINCIPAL);
@@ -147,7 +146,7 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void decode() throws ComponentInitializationException, ResolutionException, DataSealerException,
-            InterruptedException, ProfileException {
+            InterruptedException {
         
         final CryptoTransientIdGenerationStrategy strategy = new CryptoTransientIdGenerationStrategy();
         strategy.setDataSealer(dataSealer);

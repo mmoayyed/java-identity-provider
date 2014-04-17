@@ -35,7 +35,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
-import org.opensaml.profile.ProfileException;
+import org.opensaml.saml.common.SAMLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -164,7 +164,7 @@ public class StoredIDDataConnector extends ComputedIDDataConnector {
         try {
             return encodeAsAttribute(storedIdStrategy.generate(attributeIssuerID, attributeRecipientID, principalName,
                     sourceId));
-        } catch (final ProfileException e) {
+        } catch (final SAMLException e) {
             throw new ResolutionException(e);
         }
     }

@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.nameid.impl;
 
-import java.io.IOException;
 import java.util.Collections;
 
 import javax.security.auth.Subject;
@@ -31,10 +30,8 @@ import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.saml.nameid.TransientIdParameters;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.NameID;
@@ -49,7 +46,7 @@ public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
     private static final String RECIPIENT="TheRecipient";
     private static final String PRINCIPAL="ThePrincipalName";
 
-    @Test public void testSucess() throws ProfileException, ComponentInitializationException, IOException {
+    @Test public void testSucess() throws Exception {
 
         final StorageService store = new MemoryStorageService();
         store.initialize();

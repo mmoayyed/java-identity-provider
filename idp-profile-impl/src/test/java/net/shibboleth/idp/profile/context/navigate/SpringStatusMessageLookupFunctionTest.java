@@ -19,7 +19,6 @@ package net.shibboleth.idp.profile.context.navigate;
 
 import java.util.Locale;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.profile.RequestContextBuilder;
@@ -43,13 +42,13 @@ public class SpringStatusMessageLookupFunctionTest {
     
     private ProfileRequestContext prc;
     
-    @BeforeMethod public void setUp() throws ComponentInitializationException, ProfileException {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         springRequestContext = (MockRequestContext) new RequestContextBuilder().buildRequestContext();
         prc = (ProfileRequestContext) springRequestContext.getConversationScope().get(ProfileRequestContext.BINDING_KEY);
         prc.getSubcontext(SpringRequestContext.class, true).setRequestContext(springRequestContext);
     }
 
-    @Test public void testMappedMessage() throws ProfileException, ComponentInitializationException {
+    @Test public void testMappedMessage() {
         
         final SpringStatusMessageLookupFunction fn = new SpringStatusMessageLookupFunction();
         

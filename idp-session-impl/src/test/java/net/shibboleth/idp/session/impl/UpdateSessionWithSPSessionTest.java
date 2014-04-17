@@ -29,7 +29,6 @@ import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -62,7 +61,7 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
 
     /** {@inheritDoc} */
     @Override
-    protected void adjustProperties() throws ComponentInitializationException {
+    protected void adjustProperties() {
         sessionManager.setTrackSPSessions(true);
         sessionManager.setSecondaryServiceIndex(true);
         SPSessionSerializerRegistry registry = new SPSessionSerializerRegistry();
@@ -70,7 +69,7 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
         sessionManager.setSPSessionSerializerRegistry(registry);
     }
     
-    @Test public void testNoSession() throws ProfileException, ComponentInitializationException {
+    @Test public void testNoSession() throws ComponentInitializationException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         action.initialize();
         
@@ -79,7 +78,7 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
         Assert.assertNull(prc.getSubcontext(SessionContext.class, false));
     }
     
-    @Test public void testNullSession() throws SessionException, ComponentInitializationException, ProfileException {
+    @Test public void testNullSession() throws SessionException, ComponentInitializationException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         
         final IdPSession session = sessionManager.createSession("joe");
@@ -92,7 +91,7 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
         Assert.assertNull(session.getSPSession("https://sp.example.org"));
     }
 
-    @Test public void testBasicSession() throws SessionException, ComponentInitializationException, ProfileException {
+    @Test public void testBasicSession() throws SessionException, ComponentInitializationException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         
         final IdPSession session = sessionManager.createSession("joe");

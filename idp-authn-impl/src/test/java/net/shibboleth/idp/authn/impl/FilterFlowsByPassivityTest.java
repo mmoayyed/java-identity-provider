@@ -21,7 +21,6 @@ import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 
-import org.opensaml.profile.ProfileException;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -40,7 +39,7 @@ public class FilterFlowsByPassivityTest extends PopulateAuthenticationContextTes
         action.initialize();
     }
     
-    @Test public void testNonPassive() throws Exception {
+    @Test public void testNonPassive() {
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         authCtx.setIsPassive(false);
         
@@ -49,7 +48,7 @@ public class FilterFlowsByPassivityTest extends PopulateAuthenticationContextTes
         Assert.assertEquals(authCtx.getPotentialFlows().size(), 3);
     }
 
-    @Test public void testNoFiltering() throws ProfileException {
+    @Test public void testNoFiltering() {
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         authCtx.setIsPassive(true);
         for (AuthenticationFlowDescriptor fd : authCtx.getPotentialFlows().values()) {
@@ -61,7 +60,7 @@ public class FilterFlowsByPassivityTest extends PopulateAuthenticationContextTes
         Assert.assertEquals(authCtx.getPotentialFlows().size(), 3);
     }
 
-    @Test public void testPartialFiltering() throws ProfileException {
+    @Test public void testPartialFiltering() {
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         authCtx.setIsPassive(true);
         authCtx.getPotentialFlows().get("test2").setPassiveAuthenticationSupported(true);

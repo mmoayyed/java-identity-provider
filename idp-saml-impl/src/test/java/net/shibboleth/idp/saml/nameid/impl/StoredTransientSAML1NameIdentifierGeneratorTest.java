@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.saml.nameid.impl;
 
-import java.io.IOException;
-
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
@@ -26,7 +24,6 @@ import net.shibboleth.idp.saml.nameid.TransientIdParameters;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.storage.StorageRecord;
@@ -68,7 +65,7 @@ public class StoredTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLIni
         generator.destroy();
     }
 
-    @Test public void testNoPrincipal() throws ComponentInitializationException, IOException, ProfileException {        
+    @Test public void testNoPrincipal() throws Exception {        
 
         final ProfileRequestContext prc = new RequestContextBuilder().buildProfileRequestContext();
         
@@ -77,7 +74,7 @@ public class StoredTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLIni
         Assert.assertNull(name);
     }
 
-    @Test public void testNoRelyingParty() throws ComponentInitializationException, IOException, ProfileException {        
+    @Test public void testNoRelyingParty() throws Exception {        
 
         final ProfileRequestContext prc = new RequestContextBuilder().buildProfileRequestContext();
         prc.getSubcontext(RelyingPartyContext.class).setRelyingPartyId(null);
@@ -88,7 +85,7 @@ public class StoredTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLIni
         Assert.assertNull(name);
     }
     
-    @Test public void testTransient() throws ComponentInitializationException, IOException, ProfileException {        
+    @Test public void testTransient() throws Exception {        
 
         final ProfileRequestContext prc = new RequestContextBuilder().buildProfileRequestContext();
         final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);

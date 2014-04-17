@@ -41,8 +41,8 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.profile.AbstractSAML2NameIDGenerator;
 import org.opensaml.saml.saml2.profile.SAML2ObjectSupport;
@@ -118,7 +118,7 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
     /** {@inheritDoc} */
     @Override
     @Nullable protected NameID doGenerate(@Nonnull final ProfileRequestContext profileRequestContext)
-            throws ProfileException {
+            throws SAMLException {
         
         // Check for a natively generated NameIdentifier attribute value.
 
@@ -158,7 +158,7 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
     /** {@inheritDoc} */
     @Override
     @Nullable protected String getIdentifier(@Nonnull final ProfileRequestContext profileRequestContext)
-            throws ProfileException {
+            throws SAMLException {
         
         final AttributeContext attributeCtx = attributeContextLookupStrategy.apply(profileRequestContext);
         

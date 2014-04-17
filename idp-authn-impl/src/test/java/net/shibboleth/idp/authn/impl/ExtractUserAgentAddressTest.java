@@ -23,7 +23,6 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UserAgentContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 
-import org.opensaml.profile.ProfileException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -44,14 +43,14 @@ public class ExtractUserAgentAddressTest extends PopulateAuthenticationContextTe
         action.initialize();
     }
     
-    @Test public void testMissingAddress() throws ProfileException {
+    @Test public void testMissingAddress() {
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr(null);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
-    @Test public void testValidAddress() throws ProfileException {
+    @Test public void testValidAddress() {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
@@ -60,7 +59,7 @@ public class ExtractUserAgentAddressTest extends PopulateAuthenticationContextTe
         Assert.assertEquals(uaCtx.getAddress().getHostAddress(), MockHttpServletRequest.DEFAULT_REMOTE_ADDR);
     }
 
-    @Test public void testInvalidAddress() throws ProfileException {
+    @Test public void testInvalidAddress() {
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr("zorkmids");
         
         final Event event = action.execute(src);

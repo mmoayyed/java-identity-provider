@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -60,7 +59,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
     
     private SAMLObjectBuilder<AuthnContextDeclRef> declBuilder;
     
-    @BeforeMethod public void setUp() throws ComponentInitializationException, ProfileException {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         racBuilder = (SAMLObjectBuilder<RequestedAuthnContext>)
                 XMLObjectProviderRegistrySupport.getBuilderFactory().<RequestedAuthnContext>getBuilderOrThrow(
                         RequestedAuthnContext.DEFAULT_ELEMENT_NAME);
@@ -80,12 +79,12 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
         action.initialize();
     }
     
-    @Test public void testNoRequest() throws ProfileException {
+    @Test public void testNoRequest() {
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, EventIds.INVALID_MSG_CTX);
     }
 
-    @Test public void testNoRAC() throws ProfileException, ComponentInitializationException {
+    @Test public void testNoRAC() {
         prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
         
         final Event event = action.execute(src);
@@ -93,7 +92,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNull(ac.getSubcontext(RequestedPrincipalContext.class, false));
     }
     
-    @Test public void testEmptyRef() throws ProfileException {
+    @Test public void testEmptyRef() {
         prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
         final RequestedAuthnContext rac = racBuilder.buildObject();
         prc.getInboundMessageContext().getMessage().setRequestedAuthnContext(rac);
@@ -105,7 +104,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNull(ac.getSubcontext(RequestedPrincipalContext.class, false));
     }
 
-    @Test public void testNoOperator() throws ProfileException {
+    @Test public void testNoOperator() {
         prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
         final RequestedAuthnContext rac = racBuilder.buildObject();
         prc.getInboundMessageContext().getMessage().setRequestedAuthnContext(rac);
@@ -122,7 +121,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(rpc.getRequestedPrincipals().get(0).getName(), AuthnContext.PPT_AUTHN_CTX);
     }
 
-    @Test public void testOperator() throws ProfileException {
+    @Test public void testOperator() {
         prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
         final RequestedAuthnContext rac = racBuilder.buildObject();
         prc.getInboundMessageContext().getMessage().setRequestedAuthnContext(rac);
@@ -142,7 +141,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(rpc.getRequestedPrincipals().size(), 2);
     }
 
-    @Test public void testDecls() throws ProfileException {
+    @Test public void testDecls() {
         prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
         final RequestedAuthnContext rac = racBuilder.buildObject();
         prc.getInboundMessageContext().getMessage().setRequestedAuthnContext(rac);
@@ -161,4 +160,5 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(rpc.getOperator(), AuthnContextComparisonTypeEnumeration.MINIMUM.toString());
         Assert.assertEquals(rpc.getRequestedPrincipals().size(), 2);
     }
+
 }

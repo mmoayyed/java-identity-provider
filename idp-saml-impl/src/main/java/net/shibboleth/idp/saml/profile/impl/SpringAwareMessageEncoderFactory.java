@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.profile.impl;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.idp.saml.binding.BindingDescriptor;
@@ -30,7 +31,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.encoder.MessageEncoder;
-import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.MessageEncoderFactory;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
@@ -78,21 +78,23 @@ public class SpringAwareMessageEncoderFactory extends AbstractInitializableCompo
     
     /** {@inheritDoc} */
     @Override
-    @Nonnull public MessageEncoder getMessageEncoder(@Nonnull final ProfileRequestContext profileRequestContext)
-            throws ProfileException {
+    @Nullable public MessageEncoder getMessageEncoder(@Nonnull final ProfileRequestContext profileRequestContext) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         final SpringRequestContext springContext = profileRequestContext.getSubcontext(SpringRequestContext.class);
         if (springContext == null || springContext.getRequestContext() == null) {
-            throw new ProfileException("No outbound message context, unable to lookup message encoder");
+            log.warn("No outbound message context, unable to lookup message encoder");
+            return null;
         } else if (profileRequestContext.getOutboundMessageContext() == null) {
-            throw new ProfileException("No outbound message context, unable to lookup message encoder");
+            log.warn("No outbound message context, unable to lookup message encoder");
+            return null;
         }
         
         final SAMLBindingContext bindingContext =
                 profileRequestContext.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class);
         if (bindingContext == null || bindingContext.getBindingUri() == null) {
-            throw new ProfileException("Binding URI was not available, unable to lookup message encoder");
+            log.warn("Binding URI was not available, unable to lookup message encoder");
+            return null;
         }
         
         log.debug("Looking up message encoder based on binding URI: {}", bindingContext.getBindingUri());
@@ -104,14 +106,13 @@ public class SpringAwareMessageEncoderFactory extends AbstractInitializableCompo
                     return springContext.getRequestContext().getActiveFlow().getApplicationContext().getBean(
                             binding.getEncoderBeanId(), MessageEncoder.class);
                 } catch (final BeansException e) {
-                    log.error("Error instantiating message encoder from bean ID " + binding.getEncoderBeanId(), e);
+                    log.warn("Error instantiating message encoder from bean ID " + binding.getEncoderBeanId(), e);
                 }
             }
         }
         
         log.warn("Failed to find a message encoder based on binding URI: {}", bindingContext.getBindingUri());
-        throw new ProfileException("Unable to resolve MessageEncoder based on binding URI: "
-                + bindingContext.getBindingUri());
+        return null;
     }
 
 }
