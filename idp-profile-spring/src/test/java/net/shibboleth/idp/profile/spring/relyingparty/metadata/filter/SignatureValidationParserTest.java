@@ -24,6 +24,7 @@ import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -73,4 +74,25 @@ public class SignatureValidationParserTest extends AbstractMetadataParserTest {
         Assert.assertEquals(Sets.newHashSet(result).size(), 1);
     }
 
+    @Test public void cert() throws IOException, ResolverException {
+        MetadataResolver resolver =
+                getBean(MetadataResolver.class, true, "filter/switch-metadata-file.xml", "beans.xml");
+
+        final Iterable<EntityDescriptor> result = resolver.resolve(criteriaFor("urn:mace:switch.ch:SWITCHaai:ethz.ch"));
+        Assert.assertTrue(result.iterator().hasNext());
+        Assert.assertEquals(Sets.newHashSet(result).size(), 1);
+    }
+    
+    @Test public void pubkey() throws IOException, ResolverException {
+        MetadataResolver resolver =
+                getBean(MetadataResolver.class, true, "filter/switch-metadata-inline.xml", "beans.xml");
+
+        final Iterable<EntityDescriptor> result = resolver.resolve(criteriaFor("urn:mace:switch.ch:SWITCHaai:ethz.ch"));
+        Assert.assertTrue(result.iterator().hasNext());
+        Assert.assertEquals(Sets.newHashSet(result).size(), 1);
+    }
+
+    @Test(expectedExceptions={BeanDefinitionStoreException.class,}) public void none() throws IOException, ResolverException {
+                getBean(MetadataResolver.class, true, "filter/signingNone.xml", "beans.xml");
+    }
 }

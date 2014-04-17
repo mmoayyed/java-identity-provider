@@ -7,6 +7,16 @@
     requireValidMetadata="false" failFastInitialization="false"
     id="signed" xsi:type="metadata:FilesystemMetadataProvider" metadataFile="${DIR}/filter/metadata.switchaai_signed.xml">
     
-    <metadata:MetadataFilter xsi:type="metadata:SignatureValidation" trustEngineRef="bean.pem"/>
+    <metadata:MetadataFilter xsi:type="metadata:SignatureValidation" >
+    <metadata:PublicKey>
+    -----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCybIFg1nyYpi613JBKHO46CdXE
+M/VQFkT7ntLY5FmDWqLgkTE4kQ+e+Ie6HocRqOWOEAwYfGvrnqloOl9eSYar9huT
+fGZfLYVOcUamMWllRXp1j+gnzau97bsL81VzBnDadhGXkLloIKDH9CVawFPD733v
+bXjX7AEMft1eUn5QaQIDAQAB
+-----END PUBLIC KEY-----
+    </metadata:PublicKey>
+    </metadata:MetadataFilter>
+
     
 </metadata:MetadataProvider>
