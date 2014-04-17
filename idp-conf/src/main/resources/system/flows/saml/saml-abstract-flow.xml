@@ -137,7 +137,7 @@
 
     <action-state id="SavePreviousEventAsError">
         <evaluate expression="SavePreviousEventAsError" />
-        <transition on="proceed" to="error" />
+        <transition on="proceed" to="HandleError" />
     </action-state>
 
     <end-state id="error" view="error">
