@@ -372,7 +372,16 @@
         </annotation>
         <complexContent>
             <extension base="shibmd:MetadataFilterType">
-                <attribute name="trustEngineRef" use="required">
+                <sequence>
+                    <element name="PublicKey" type="string" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>
+                                The PEM of the public key used to sign the metadata.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+                <attribute name="trustEngineRef" type="string">
                     <annotation>
                         <documentation>The ID of the trust engine used to validate the signature.</documentation>
                     </annotation>
@@ -381,6 +390,13 @@
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether a signature is required on incoming metadata.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="certificateFile" type="string">
+                    <annotation>
+                        <documentation>
+                            The location of a file containing a certificate with the public key to test against.
                         </documentation>
                     </annotation>
                 </attribute>
