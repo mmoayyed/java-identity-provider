@@ -40,6 +40,9 @@ public abstract class AbstractCredentialFactoryBean<T extends Credential> extend
     /** Identifier for the owner of the credential. */
     private String entityID;
     
+    /** The privateKey Password (if any). */
+    @Nullable private char[] privateKeyPassword;
+    
     /**
      * Gets the names for the key represented by the credential.
      * 
@@ -93,4 +96,23 @@ public abstract class AbstractCredentialFactoryBean<T extends Credential> extend
     public void setEntityID(@Nullable final String newEntityID) {
         entityID = newEntityID;
     }
+    
+    /**
+     * Get the password for the private key.
+     * 
+     * @return Returns the privateKeyPassword.
+     */
+    @Nullable public char[] getPrivateKeyPassword() {
+        return privateKeyPassword;
+    }
+
+    /**
+     * Set the password for the private key.
+     * 
+     * @param password The password to set.
+     */
+    public void setPrivateKeyPassword(@Nullable char[] password) {
+        privateKeyPassword = password;
+    }
+
 }

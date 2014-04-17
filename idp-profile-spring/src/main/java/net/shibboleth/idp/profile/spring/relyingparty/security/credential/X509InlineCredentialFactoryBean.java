@@ -126,7 +126,7 @@ public class X509InlineCredentialFactoryBean extends AbstractX509CredentialFacto
             return null;
         }
         try {
-            return KeySupport.decodePrivateKey(privateKey, getPrivateKeyPassword().toCharArray());
+            return KeySupport.decodePrivateKey(privateKey, getPrivateKeyPassword());
         } catch (KeyException e) {
             throw new FatalBeanException("Could not decode provided Key", e);
         }

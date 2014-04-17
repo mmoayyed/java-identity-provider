@@ -37,9 +37,6 @@ import org.springframework.beans.factory.BeanCreationException;
  */
 public abstract class AbstractX509CredentialFactoryBean extends AbstractCredentialFactoryBean<BasicX509Credential> {
 
-    /** The privateKey Password (if any). */
-    @Nullable private String privateKeyPassword;
-
     /** {@inheritDoc} */
     // Checkstyle: CyclomaticComplexity OFF
     @Override protected BasicX509Credential createInstance() throws Exception {
@@ -91,24 +88,6 @@ public abstract class AbstractX509CredentialFactoryBean extends AbstractCredenti
     }
 
     // Checkstyle: CyclomaticComplexity ON
-
-    /**
-     * Get the password for the private key.
-     * 
-     * @return Returns the privateKeyPassword.
-     */
-    @Nullable public String getPrivateKeyPassword() {
-        return privateKeyPassword;
-    }
-
-    /**
-     * Set the password for the private key.
-     * 
-     * @param password The password to set.
-     */
-    public void setPrivateKeyPassword(@Nullable String password) {
-        privateKeyPassword = password;
-    }
 
     /** {@inheritDoc} */
     @Override public Class<BasicX509Credential> getObjectType() {

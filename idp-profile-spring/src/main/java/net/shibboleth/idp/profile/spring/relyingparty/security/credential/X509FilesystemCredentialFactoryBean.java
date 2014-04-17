@@ -128,7 +128,7 @@ public class X509FilesystemCredentialFactoryBean extends AbstractX509CredentialF
             return null;
         }
         try {
-            return KeySupport.decodePrivateKey(privateKeyFile, getPrivateKeyPassword().toCharArray());
+            return KeySupport.decodePrivateKey(privateKeyFile, getPrivateKeyPassword());
         } catch (KeyException e) {
             throw new FatalBeanException("Could not decode provided KeyFile " + privateKeyFile.getAbsolutePath(), e);
         }
