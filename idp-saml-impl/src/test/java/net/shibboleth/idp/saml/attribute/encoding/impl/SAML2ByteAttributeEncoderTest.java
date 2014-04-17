@@ -20,14 +20,13 @@ package net.shibboleth.idp.saml.attribute.encoding.impl;
 import java.util.Collection;
 import java.util.List;
 
-import javax.xml.bind.DatatypeConverter;
-
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -109,7 +108,7 @@ public class SAML2ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
         XSString childAsString = (XSString) child;
 
-        byte childAsBa[] = DatatypeConverter.parseBase64Binary(childAsString.getValue());
+        byte childAsBa[] = Base64Support.decode(childAsString.getValue());
 
         Assert.assertEquals(childAsBa, BYTE_ARRAY_1, "Input equals output");
     }
@@ -136,13 +135,13 @@ public class SAML2ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         XSString childAsString = (XSString) child;
         Assert.assertEquals(child.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
-        final byte[] res0 = DatatypeConverter.parseBase64Binary(childAsString.getValue());
+        final byte[] res0 = Base64Support.decode(childAsString.getValue());
         
         child = children.get(1);
         Assert.assertTrue(child instanceof XSString, "Child of result attribute should be a string");
 
         childAsString = (XSString) child;
-        final byte[] res1 = DatatypeConverter.parseBase64Binary(childAsString.getValue());
+        final byte[] res1 = Base64Support.decode(childAsString.getValue());
 
         //
         // order of results is not guaranteed so sense the result from the length
