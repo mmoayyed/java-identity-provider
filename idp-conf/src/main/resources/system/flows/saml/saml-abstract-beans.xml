@@ -152,13 +152,10 @@
         </property>
     </bean>
     
-    <!--
-    TODO: activate once resolver is available
     <bean id="PopulateEncryptionParameters"
             class="net.shibboleth.idp.saml.saml2.profile.impl.PopulateEncryptionParameters" scope="prototype"
             p:configurationLookupStrategy-ref="shibboleth.EncryptionConfigurationLookup"
             p:encryptionParametersResolver-ref="shibboleth.EncryptionParametersResolver" />
-    -->
 
     <bean id="InitializeAuthenticationContext"
         class="net.shibboleth.idp.saml.profile.impl.InitializeAuthenticationContext" scope="prototype" />
@@ -211,9 +208,13 @@
     </bean>
 
     <bean id="HandleOutboundMessage"
-        class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
-        c:messageHandler-ref="outboundMessageHandlerChain"
-        c:executionDirection="OUTBOUND" />
+            class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
+            c:messageHandler-ref="outboundMessageHandlerChain"
+            c:executionDirection="OUTBOUND">
+        <property name="errorEvent">
+            <util:constant static-field="org.opensaml.profile.action.EventIds.MESSAGE_PROC_ERROR" />
+        </property>
+    </bean>
 
     <bean id="messageEncoderFactory" class="net.shibboleth.idp.saml.profile.impl.SpringAwareMessageEncoderFactory"
         p:bindings-ref="shibboleth.OutgoingBindings" />
