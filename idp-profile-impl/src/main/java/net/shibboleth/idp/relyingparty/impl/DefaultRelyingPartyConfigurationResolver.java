@@ -183,9 +183,9 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
             return Collections.emptyList();
         }
 
-        log.debug("Resolving relying party configurations for profile request {}", context.getId());
+        log.debug("Resolving relying party configurations");
         if (isAnonymousPredicate.apply(context) && null != getAnonymousConfiguration()) {
-            log.debug("Profile Request {} is anonymous: returning configuration {} only", context.getId(),
+            log.debug("Profile Request is anonymous: returning configuration {} only",
                     getAnonymousConfiguration().getId());
             return Collections.singleton(getAnonymousConfiguration());
         }
@@ -193,21 +193,18 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
         final ArrayList<RelyingPartyConfiguration> matches = Lists.newArrayList();
 
         for (final RelyingPartyConfiguration configuration : rpConfigurations) {
-            log.debug("Checking if relying party configuration {} is applicable to profile request {}",
-                    configuration.getId(), context.getId());
+            log.debug("Checking if relying party configuration {} is applicable", configuration.getId());
             if (configuration.apply(context)) {
-                log.debug("Relying party configuration {} is applicable to profile request {}", configuration.getId(),
-                        context.getId());
+                log.debug("Relying party configuration {} is applicable", configuration.getId());
                 matches.add(configuration);
             } else {
-                log.debug("Relying party configuration {} is not applicable to profile request {}",
-                        configuration.getId(), context.getId());
+                log.debug("Relying party configuration {} is not applicable", configuration.getId());
             }
         }
 
         if (matches.isEmpty()) {
-            log.debug("No matching Relying Party Configuration found for profile request {}"
-                    + ", returning the default configuration {}", context.getId(), getDefaultConfiguration().getId());
+            log.debug("No matching Relying Party Configuration found, returning the default configuration {}",
+                    getDefaultConfiguration().getId());
             return Collections.singleton(getDefaultConfiguration());
         }
         return matches;
@@ -222,27 +219,25 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
             return null;
         }
         if (isAnonymousPredicate.apply(context) && null != getAnonymousConfiguration()) {
-            log.debug("Profile Request {} is anonymous: returning configuration {} only", context.getId(),
+            log.debug("Profile Request is anonymous: returning configuration {} only",
                     getAnonymousConfiguration().getId());
             return getAnonymousConfiguration();
         }
 
-        log.debug("Resolving relying party configuration for profile request {}", context.getId());
+        log.debug("Resolving relying party configuration");
         for (RelyingPartyConfiguration configuration : rpConfigurations) {
-            log.debug("Checking if relying party configuration {} is applicable to profile request {}",
-                    configuration.getId(), context.getId());
+            log.debug("Checking if relying party configuration {} is applicable", configuration.getId());
             if (configuration.apply(context)) {
-                log.debug("Relying party configuration {} is applicable to profile request {}", configuration.getId(),
-                        context.getId());
+                log.debug("Relying party configuration {} is applicable", configuration.getId());
                 return configuration;
             } else {
-                log.debug("Relying party configuration {} is not applicable to profile request {}",
-                        configuration.getId(), context.getId());
+                log.debug("Relying party configuration {} is not applicable", configuration.getId());
             }
         }
 
-        log.debug("No relying party configurations are applicable to profile request {}"
-                    + ", returning the default configuration {}", context.getId(), getDefaultConfiguration().getId());
+        log.debug("No relying party configurations are applicable, returning the default configuration {}",
+                getDefaultConfiguration().getId());
         return getDefaultConfiguration();
     }
+    
 }

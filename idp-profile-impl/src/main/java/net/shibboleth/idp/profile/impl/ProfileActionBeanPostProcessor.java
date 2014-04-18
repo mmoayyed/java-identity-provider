@@ -41,11 +41,10 @@ public class ProfileActionBeanPostProcessor implements BeanPostProcessor {
         if (bean instanceof ProfileAction && !(bean instanceof Action)) {
             final WebFlowProfileActionAdaptor wrapper = new WebFlowProfileActionAdaptor((ProfileAction) bean);
             try {
-                wrapper.setId(((ProfileAction)bean).getId());
                 wrapper.initialize();
             } catch (ComponentInitializationException e) {
                 throw new BeanCreationException("WebFlowProfileActionAdaptor failed to initialize around ProfileAction "
-                        + ((ProfileAction) bean).getId(), e);
+                        + beanName, e);
             }
             return wrapper;
         } else {

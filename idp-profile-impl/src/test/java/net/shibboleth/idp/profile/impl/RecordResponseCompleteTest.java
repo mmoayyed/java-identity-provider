@@ -34,17 +34,16 @@ public class RecordResponseCompleteTest {
 
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         action = new RecordResponseComplete();
-        action.setId("test");
         action.initialize();
     }
 
     @Test public void testRecordResponseComplete() throws Exception {
 
-        RequestContext requestContext = new RequestContextBuilder().buildRequestContext();
+        final RequestContext requestContext = new RequestContextBuilder().buildRequestContext();
 
         Assert.assertFalse(requestContext.getExternalContext().isResponseComplete());
 
-        Event result = action.execute(requestContext);
+        final Event result = action.execute(requestContext);
 
         Assert.assertTrue(requestContext.getExternalContext().isResponseComplete());
 
@@ -53,13 +52,13 @@ public class RecordResponseCompleteTest {
 
     @Test public void testResponseAlreadyCompleted() throws Exception {
 
-        RequestContext requestContext = new RequestContextBuilder().buildRequestContext();
+        final RequestContext requestContext = new RequestContextBuilder().buildRequestContext();
 
         requestContext.getExternalContext().recordResponseComplete();
 
         Assert.assertTrue(requestContext.getExternalContext().isResponseComplete());
 
-        Event result = action.execute(requestContext);
+        final Event result = action.execute(requestContext);
 
         Assert.assertTrue(requestContext.getExternalContext().isResponseComplete());
 

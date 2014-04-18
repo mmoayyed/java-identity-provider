@@ -167,8 +167,7 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
         context.put("resolutionContext", resolutionContext);
 
         if (isV2Compatibility()) {
-            final V2SAMLProfileRequestContext requestContext =
-                    new V2SAMLProfileRequestContext(resolutionContext, resolutionContext.getId());
+            final V2SAMLProfileRequestContext requestContext = new V2SAMLProfileRequestContext(resolutionContext, null);
             log.trace("Adding v2 request context {}", requestContext);
             context.put("requestContext", requestContext);
         }

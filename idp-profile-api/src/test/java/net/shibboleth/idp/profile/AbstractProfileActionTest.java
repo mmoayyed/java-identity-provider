@@ -17,10 +17,7 @@
 
 package net.shibboleth.idp.profile;
 
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.opensaml.profile.context.PreviousEventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -31,47 +28,6 @@ import org.testng.annotations.Test;
 
 /** Unit test for {@link AbstractProfileAction}. */
 public class AbstractProfileActionTest {
-
-    @Test public void testActionId() {
-        MockProfileAction action = new MockProfileAction();
-
-        action.setId(" mock");
-        Assert.assertEquals(action.getId(), "mock");
-
-        try {
-            action.setId(null);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-            // expected this
-        }
-
-        try {
-            action.setId("   ");
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-            // expected this
-        }
-    }
-
-    @Test public void testActionInitialization() {
-        MockProfileAction action = new MockProfileAction();
-        Assert.assertFalse(action.isInitialized());
-        action.setId("mock");
-
-        try {
-            action.initialize();
-        } catch (ComponentInitializationException e) {
-            Assert.fail();
-        }
-
-        Assert.assertEquals(action.getId(), "mock");
-        try {
-            action.setId("foo");
-        } catch (UnmodifiableComponentException e) {
-            // ignore
-        }
-        Assert.assertEquals(action.getId(), "mock");
-    }
 
     @Test public void testActionExecution() throws Exception {
         RequestContext springRequestContext = new RequestContextBuilder().buildRequestContext();
@@ -139,21 +95,18 @@ public class AbstractProfileActionTest {
             thrownException = null;
             newEvent = null;
             prevEvent = null;
-            setId("test");
         }
         
         public MockProfileAction(RuntimeException exception) {
             thrownException = exception;
             newEvent = null;
             prevEvent = null;
-            setId("test");
         }
 
         public MockProfileAction(String newEvent, String prevEvent) {
             this.newEvent = newEvent;
             this.prevEvent = prevEvent;
             thrownException = null;
-            setId("test");
         }
         
         public boolean isExecuted() {

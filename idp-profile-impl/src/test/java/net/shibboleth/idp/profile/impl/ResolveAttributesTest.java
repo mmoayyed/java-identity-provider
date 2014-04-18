@@ -75,7 +75,6 @@ public class ResolveAttributesTest {
         resolver.initialize();
 
         final ResolveAttributes action = new ResolveAttributes(new AttributeService(resolver));
-        action.setId("test");
         action.initialize();
 
         final Event event = action.execute(src);
@@ -98,7 +97,6 @@ public class ResolveAttributesTest {
         resolver.initialize();
 
         final ResolveAttributes action = new ResolveAttributes(new AttributeService(resolver));
-        action.setId("test");
         action.initialize();
 
         final Event event = action.execute(src);
@@ -137,7 +135,6 @@ public class ResolveAttributesTest {
         prc.addSubcontext(attributeResolutionCtx);
 
         final ResolveAttributes action = new ResolveAttributes(new AttributeService(resolver));
-        action.setId("test");
         action.initialize();
 
         Event event = action.execute(src);
@@ -193,7 +190,6 @@ public class ResolveAttributesTest {
         resolver.initialize();
 
         final ResolveAttributes action = new ResolveAttributes(new AttributeService(resolver));
-        action.setId("test");
         action.initialize();
 
         final Event event = action.execute(src);
@@ -211,7 +207,6 @@ public class ResolveAttributesTest {
         definitions.add(new MockAttributeDefinition("ad1", new ResolutionException()));
 
         final ResolveAttributes action = new ResolveAttributes(new AttributeService(null));
-        action.setId("test");
         action.initialize();
 
         final Event event = action.execute(src);

@@ -82,7 +82,6 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
         
         action = new AddAttributeStatementToAssertion();
-        action.setId("test");
     }
 
     /** Test that the action errors out properly if there is no relying party context. */

@@ -40,7 +40,6 @@ public class InitializeAuthenticationContextTest {
         prc.setInboundMessageContext(null);
 
         final InitializeAuthenticationContext action = new InitializeAuthenticationContext();
-        action.setId("test");
         action.initialize();
 
         final Event event = action.execute(requestCtx);
@@ -58,7 +57,6 @@ public class InitializeAuthenticationContextTest {
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(requestCtx);
 
         final InitializeAuthenticationContext action = new InitializeAuthenticationContext();
-        action.setId("test");
         action.initialize();
 
         final Event event = action.execute(requestCtx);
@@ -79,7 +77,6 @@ public class InitializeAuthenticationContextTest {
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(requestCtx);
 
         final InitializeAuthenticationContext action = new InitializeAuthenticationContext();
-        action.setId("test");
         action.initialize();
 
         final Event event = action.execute(requestCtx);
@@ -102,7 +99,6 @@ public class InitializeAuthenticationContextTest {
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(requestCtx);
 
         final InitializeAuthenticationContext action = new InitializeAuthenticationContext();
-        action.setId("test");
         action.initialize();
 
         final Event event = action.execute(requestCtx);

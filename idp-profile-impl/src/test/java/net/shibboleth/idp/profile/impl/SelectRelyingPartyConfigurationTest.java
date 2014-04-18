@@ -46,7 +46,6 @@ public class SelectRelyingPartyConfigurationTest {
     @Test(expectedExceptions = ComponentInitializationException.class)
     public void testNoResolver() throws ComponentInitializationException {
         final SelectRelyingPartyConfiguration action = new SelectRelyingPartyConfiguration();
-        action.setId("test");
         action.initialize();
     }
     
@@ -60,7 +59,6 @@ public class SelectRelyingPartyConfigurationTest {
         final RelyingPartyConfigurationResolver resolver = new MockResolver(null, null);
 
         final SelectRelyingPartyConfiguration action = new SelectRelyingPartyConfiguration();
-        action.setId("test");
         action.setRelyingPartyConfigurationResolver(resolver);
         action.initialize();
 
@@ -79,7 +77,6 @@ public class SelectRelyingPartyConfigurationTest {
         final RelyingPartyConfigurationResolver resolver = new MockResolver(null, null);
 
         final SelectRelyingPartyConfiguration action = new SelectRelyingPartyConfiguration();
-        action.setId("test");
         action.setRelyingPartyConfigurationResolver(resolver);
         action.initialize();
 
@@ -104,7 +101,6 @@ public class SelectRelyingPartyConfigurationTest {
         final RelyingPartyConfigurationResolver resolver = new MockResolver(config, new ResolverException());
 
         final SelectRelyingPartyConfiguration action = new SelectRelyingPartyConfiguration();
-        action.setId("test");
         action.setRelyingPartyConfigurationResolver(resolver);
         action.initialize();
 
@@ -129,7 +125,6 @@ public class SelectRelyingPartyConfigurationTest {
         final RelyingPartyConfigurationResolver resolver = new MockResolver(config, null);
 
         final SelectRelyingPartyConfiguration action = new SelectRelyingPartyConfiguration();
-        action.setId("test");
         action.setRelyingPartyConfigurationResolver(resolver);
         action.initialize();
 

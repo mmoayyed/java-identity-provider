@@ -51,7 +51,6 @@ public class PopulateAuthenticationContextTest {
 
         PopulateAuthenticationContext action = new PopulateAuthenticationContext();
         action.setAvailableFlows(authenticationFlows);
-        action.setId("test");
         action.initialize();
 
         action.execute(src);

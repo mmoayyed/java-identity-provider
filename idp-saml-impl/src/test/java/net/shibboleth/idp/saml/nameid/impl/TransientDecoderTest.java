@@ -160,7 +160,6 @@ public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
         descriptor.setId("NameIdFlowDescriptor");
         descriptor.initialize();
         final NameIDCanonicalization canon = new NameIDCanonicalization();
-        canon.setId("test");
        
         final TransientNameIDDecoder decoder = new TransientNameIDDecoder();
         decoder.setId("decoder");

@@ -11,22 +11,18 @@
 
     <bean
         id="MockIdPActionWithoutScopeProperty"
-        p:id="MockIdPActionWithoutScopeProperty"
         class="net.shibboleth.idp.profile.impl.ProfileActionBeanFactoryPostProcessorTest$MockIdPAction" />
 
     <bean
         id="MockPrototypeAnnotatedIdPActionWithoutScopeProperty"
-        p:id="MockPrototypeAnnotatedIdPActionWithoutScopeProperty"
         class="net.shibboleth.idp.profile.impl.ProfileActionBeanFactoryPostProcessorTest$MockPrototypeAnnotatedIdPAction" />
 
     <bean
         id="MockOpenSAMLActionWithoutScopeProperty"
-        p:id="MockIdPActionWithoutScopeProperty"
         class="net.shibboleth.idp.profile.impl.ProfileActionBeanFactoryPostProcessorTest$MockOpenSAMLAction" />
 
     <bean
         id="MockPrototypeAnnotatedOpenSAMLActionWithoutScopeProperty"
-        p:id="MockIdPActionWithoutScopeProperty"
         class="net.shibboleth.idp.profile.impl.ProfileActionBeanFactoryPostProcessorTest$MockPrototypeAnnotatedOpenSAMLAction" />
 
 </beans>

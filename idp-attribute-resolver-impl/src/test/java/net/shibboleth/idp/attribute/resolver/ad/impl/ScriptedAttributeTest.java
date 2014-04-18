@@ -358,13 +358,11 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
             Assert.fail("resolution failed", e);
         }
 
-        // The script just put the resolution context in as the attribute value. Yea it makes
-        // no sense but it is easy to test.
         final IdPAttribute attribute = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME);
         final Collection<IdPAttributeValue<?>> values = attribute.getValues();
 
         Assert.assertEquals(values.size(), 1, "looking for context");
-        Assert.assertEquals(values.iterator().next().getValue(), "TestContainerContextid");
+        Assert.assertEquals(values.iterator().next().getValue(), "TestContextContainer");
     }
 
     protected IdPAttribute runExample(String exampleScript, String exampleData, String attributeName)

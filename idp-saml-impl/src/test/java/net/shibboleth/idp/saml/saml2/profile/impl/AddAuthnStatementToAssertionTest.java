@@ -65,7 +65,6 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
 
         action = new AddAuthnStatementToAssertion();
         action.setHttpServletRequest(new MockHttpServletRequest());
-        action.setId("test");
         action.initialize();
     }
     

@@ -50,7 +50,6 @@ public class InitializeRelyingPartyContextFromSAMLPeerTest {
         prc.removeSubcontext(RelyingPartyContext.class);
 
         action = new InitializeRelyingPartyContextFromSAMLPeer();
-        action.setId("test");
         action.initialize();
     }
 

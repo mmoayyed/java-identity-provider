@@ -74,7 +74,6 @@ public class FilterAttributesTest {
         engine.initialize();
 
         final FilterAttributes action = new FilterAttributes(new FilterService(engine));
-        action.setId("test");
         action.initialize();
 
         final Event event = action.execute(src);
@@ -89,7 +88,6 @@ public class FilterAttributesTest {
         engine.initialize();
 
         final FilterAttributes action = new FilterAttributes(new FilterService(engine));
-        action.setId("test");
         action.initialize();
 
         final Event event = action.execute(src);
@@ -106,7 +104,6 @@ public class FilterAttributesTest {
         engine.initialize();
         
         final FilterAttributes action = new FilterAttributes(new FilterService(engine));
-        action.setId("test");
         action.initialize();
 
         final Event event = action.execute(src);
@@ -150,7 +147,6 @@ public class FilterAttributesTest {
         prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
 
         final FilterAttributes action = new FilterAttributes(new FilterService(engine));
-        action.setId("test");
         action.initialize();
 
         final Event event = action.execute(src);
@@ -213,7 +209,6 @@ public class FilterAttributesTest {
         prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeFilterCtx);
 
         final FilterAttributes action = new FilterAttributes(new FilterService(engine));
-        action.setId("test");
         action.initialize();
 
         final Event event = action.execute(src);
@@ -273,7 +268,6 @@ public class FilterAttributesTest {
         prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeFilterCtx);
 
         final FilterAttributes action = new FilterAttributes(new FilterService(engine));
-        action.setId("test");
         action.initialize();
 
         final Event event = action.execute(src);
@@ -296,7 +290,6 @@ public class FilterAttributesTest {
         prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeFilterCtx);
 
         final FilterAttributes action = new FilterAttributes(new FilterService(null));
-        action.setId("test");
         action.initialize();
 
         final Event event = action.execute(src);

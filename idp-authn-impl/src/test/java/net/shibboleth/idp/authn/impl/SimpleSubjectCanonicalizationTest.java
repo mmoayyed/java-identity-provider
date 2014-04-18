@@ -42,7 +42,6 @@ public class SimpleSubjectCanonicalizationTest extends PopulateAuthenticationCon
         
         action = new SimpleSubjectCanonicalization();
         action.setTransforms(Arrays.asList(new Pair<>("^(.+)@osu\\.edu$", "$1")));
-        action.setId("test");
         action.initialize();
     }
     

@@ -35,14 +35,7 @@ public class ProfileActionBeanPostProcessorTest extends AbstractTestNGSpringCont
         bean = applicationContext.getBean("IdPActionWithDefaultID");
         Assert.assertFalse(bean instanceof WebFlowProfileActionAdaptor);
 
-        bean = applicationContext.getBean("IdPActionWithCustomID");
-        Assert.assertFalse(bean instanceof WebFlowProfileActionAdaptor);
-
         bean = applicationContext.getBean("OpenSAMLActionWithDefaultID");
-        Assert.assertTrue(bean instanceof WebFlowProfileActionAdaptor);
-        Assert.assertTrue(((WebFlowProfileActionAdaptor) bean).isInitialized());
-
-        bean = applicationContext.getBean("OpenSAMLActionWithCustomID");
         Assert.assertTrue(bean instanceof WebFlowProfileActionAdaptor);
         Assert.assertTrue(((WebFlowProfileActionAdaptor) bean).isInitialized());
     }

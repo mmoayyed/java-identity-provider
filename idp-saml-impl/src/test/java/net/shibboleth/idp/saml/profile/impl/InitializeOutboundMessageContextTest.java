@@ -53,7 +53,6 @@ public class InitializeOutboundMessageContextTest extends OpenSAMLInitBaseTestCa
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         prc.setOutboundMessageContext(null);
         action = new InitializeOutboundMessageContext();
-        action.setId("test");
         action.initialize();
     }
 

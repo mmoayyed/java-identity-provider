@@ -4,4 +4,4 @@ clazloader = resolutionContext.getClass().getClassLoader();
 claz = clazloader.loadClass("net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext");
 child = resolutionContext.getParent().getSubcontext(claz);
 
-Scripted.addValue(child.getParent().getId());
+Scripted.addValue(child.getParent().getClass().getSimpleName());

@@ -25,7 +25,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 public class ActionTestSupportAction extends AbstractProfileAction {
 
     public ActionTestSupportAction() throws ComponentInitializationException {
-        setId("Test Component");
         initialize();
     }
 

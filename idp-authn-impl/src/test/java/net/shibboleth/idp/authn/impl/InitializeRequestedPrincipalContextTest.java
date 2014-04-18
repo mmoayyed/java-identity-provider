@@ -56,7 +56,6 @@ public class InitializeRequestedPrincipalContextTest {
         src = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         action = new InitializeRequestedPrincipalContext();
-        action.setId("test");
         action.initialize();
     }
     

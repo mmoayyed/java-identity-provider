@@ -55,7 +55,6 @@ public class InitializeOutboundMessageContextForErrorTest extends OpenSAMLInitBa
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         prc.setOutboundMessageContext(null);
         action = new InitializeOutboundMessageContextForError();
-        action.setId("test");
         action.setOutboundBinding(SAMLConstants.SAML1_SOAP11_BINDING_URI);
         action.initialize();
     }
@@ -63,7 +62,6 @@ public class InitializeOutboundMessageContextForErrorTest extends OpenSAMLInitBa
     @Test(expectedExceptions=ComponentInitializationException.class)
     public void testBadConfig() throws ComponentInitializationException {
         final InitializeOutboundMessageContextForError action = new InitializeOutboundMessageContextForError();
-        action.setId("test");
         action.initialize();
     }
 

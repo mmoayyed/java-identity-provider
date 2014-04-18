@@ -30,7 +30,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link ExtractUserAgentIdentifier} unit test. */
-public class ExtractUserAgentIdntifierTest extends PopulateAuthenticationContextTest {
+public class ExtractUserAgentIdentifierTest extends PopulateAuthenticationContextTest {
     
     private ExtractUserAgentIdentifier action; 
     
@@ -39,7 +39,6 @@ public class ExtractUserAgentIdntifierTest extends PopulateAuthenticationContext
         
         action = new ExtractUserAgentIdentifier();
         action.setHttpServletRequest(new MockHttpServletRequest());
-        action.setId("test");
         action.initialize();
     }
     

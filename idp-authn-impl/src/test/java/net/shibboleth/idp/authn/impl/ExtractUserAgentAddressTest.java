@@ -39,7 +39,6 @@ public class ExtractUserAgentAddressTest extends PopulateAuthenticationContextTe
         
         action = new ExtractUserAgentAddress();
         action.setHttpServletRequest(new MockHttpServletRequest());
-        action.setId("test");
         action.initialize();
     }
     

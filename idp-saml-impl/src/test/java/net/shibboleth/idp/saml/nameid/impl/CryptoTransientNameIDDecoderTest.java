@@ -179,7 +179,6 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
         desc.initialize();
         
         final NameIDCanonicalization canon = new NameIDCanonicalization();
-        canon.setId("test");
         canon.setDecoder(decoder);
         canon.initialize();
 

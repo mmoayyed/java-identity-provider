@@ -53,7 +53,6 @@ public class SelectProfileConfigurationTest {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
 
         action = new SelectProfileConfiguration();
-        action.setId("test");
         action.initialize();        
     }
     

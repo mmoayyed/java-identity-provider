@@ -64,7 +64,6 @@ public class ExtractSubjectFromRequestTest extends XMLObjectBaseTestCase {
         nameIDPolicyPredicate.initialize();
         
         action = new ExtractSubjectFromRequest();
-        action.setId("test");
         action.setNameIDPolicyPredicate(nameIDPolicyPredicate);
         action.initialize();
     }

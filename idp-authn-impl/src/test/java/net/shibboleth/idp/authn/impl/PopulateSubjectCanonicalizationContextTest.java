@@ -55,7 +55,6 @@ public class PopulateSubjectCanonicalizationContextTest {
 
         PopulateSubjectCanonicalizationContext action = new PopulateSubjectCanonicalizationContext();
         action.setAvailableFlows(c14nFlows);
-        action.setId("test");
         action.initialize();
 
         action.execute(src);

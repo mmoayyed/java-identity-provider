@@ -73,7 +73,6 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
         flowDescriptor.initialize();
         
         action = new NameIDCanonicalization();
-        action.setId("test");
         action.setDecoder(new NameIDDecoder() {
             public String decode(SubjectCanonicalizationContext scc, NameID nameID) throws NameDecoderException {
                 if (RESPONDER.equals(scc.getResponderId()) && REQUESTER.equals(scc.getRequesterId())) {

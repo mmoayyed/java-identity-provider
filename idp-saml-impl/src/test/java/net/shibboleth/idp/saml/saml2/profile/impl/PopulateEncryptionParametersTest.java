@@ -59,7 +59,6 @@ public class PopulateEncryptionParametersTest extends OpenSAMLInitBaseTestCase {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
         
         action = new PopulateEncryptionParameters();
-        action.setId("test");
     }
     
     @Test(expectedExceptions=ComponentInitializationException.class)

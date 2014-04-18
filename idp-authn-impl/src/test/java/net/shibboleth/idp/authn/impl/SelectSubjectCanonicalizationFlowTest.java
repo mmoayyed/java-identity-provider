@@ -38,7 +38,6 @@ public class SelectSubjectCanonicalizationFlowTest extends PopulateSubjectCanoni
         super.setUp();
         
         action = new SelectSubjectCanonicalizationFlow();
-        action.setId("test");
         action.initialize();
 
         c14nCtx = prc.getSubcontext(SubjectCanonicalizationContext.class, false);

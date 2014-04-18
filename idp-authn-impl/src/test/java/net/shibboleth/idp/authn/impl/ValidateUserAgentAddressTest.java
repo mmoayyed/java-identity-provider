@@ -54,7 +54,6 @@ public class ValidateUserAgentAddressTest extends PopulateAuthenticationContextT
                 "foo", Arrays.asList(IPRange.parseCIDRBlock("192.168.1.0/24"))));
         action.setSupportedPrincipals(Arrays.asList(new TestPrincipal("UserAgentAuthentication")));
         action.setHttpServletRequest(new MockHttpServletRequest());
-        action.setId("test");
         action.initialize();
     }
 
@@ -135,7 +134,6 @@ public class ValidateUserAgentAddressTest extends PopulateAuthenticationContextT
     private void doExtract(ProfileRequestContext prc) throws ComponentInitializationException {
         final ExtractUserAgentAddress extract = new ExtractUserAgentAddress();
         extract.setHttpServletRequest(action.getHttpServletRequest());
-        extract.setId("extract");
         extract.initialize();
         extract.execute(src);
     }

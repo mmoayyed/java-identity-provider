@@ -19,7 +19,6 @@ package net.shibboleth.idp.profile;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -32,6 +31,7 @@ public final class ActionSupport {
 
     /** Constructor. */
     private ActionSupport() {
+        
     }
 
     /**
@@ -41,7 +41,7 @@ public final class ActionSupport {
      * 
      * @return the proceed event
      */
-    @Nonnull public static Event buildProceedEvent(@Nonnull final IdentifiedComponent source) {
+    @Nonnull public static Event buildProceedEvent(@Nonnull final Object source) {
         return buildEvent(source, EventIds.PROCEED_EVENT_ID);
     }
 
@@ -53,7 +53,7 @@ public final class ActionSupport {
      * 
      * @return the constructed event
      */
-    @Nonnull public static Event buildEvent(@Nonnull final IdentifiedComponent source,
+    @Nonnull public static Event buildEvent(@Nonnull final Object source,
             @Nonnull final String eventId) {
         
         return buildEvent(source, eventId, null);
@@ -62,24 +62,24 @@ public final class ActionSupport {
     /**
      * Builds an event, to be returned by the given component.
      * 
-     * @param source IdP component that will return the constructed event, never null
-     * @param eventId ID of the event, never null or empty
-     * @param eventAttributes attributes associated with the event, may be null
+     * @param source IdP component that will return the constructed event
+     * @param eventId ID of the event
+     * @param eventAttributes attributes associated with the event
      * 
      * @return the constructed {@link Event}
      */
-    @Nonnull public static Event buildEvent(@Nonnull final IdentifiedComponent source, @Nonnull final String eventId,
+    @Nonnull public static Event buildEvent(@Nonnull final Object source, @Nonnull final String eventId,
             @Nonnull final AttributeMap eventAttributes) {
-        Constraint.isNotNull(source, "Component may not be null");
+        Constraint.isNotNull(source, "Component cannot be null");
 
         final String trimmedEventId =
-                Constraint.isNotNull(StringSupport.trimOrNull(eventId), "ID of event for action " + source.getId()
-                        + " may not be null");
+                Constraint.isNotNull(StringSupport.trimOrNull(eventId), "ID of event cannot be null or empty");
 
         if (eventAttributes == null || eventAttributes.isEmpty()) {
-            return new Event(source.getId(), trimmedEventId);
+            return new Event(source, trimmedEventId);
         } else {
-            return new Event(source.getId(), trimmedEventId, eventAttributes);
+            return new Event(source, trimmedEventId, eventAttributes);
         }
     }
+    
 }

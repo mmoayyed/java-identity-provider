@@ -43,7 +43,6 @@ public class FinalizeSAMLSubjectCanonicalizationTest {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
 
         action = new FinalizeSAMLSubjectCanonicalization();
-        action.setId("test");
         action.initialize();
     }
     

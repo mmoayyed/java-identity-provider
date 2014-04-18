@@ -85,7 +85,6 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         prc.getInboundMessageContext().getSubcontext(SAMLBindingContext.class, true).setRelayState(RELAY_STATE);
         
         action = new PopulateBindingAndEndpointContexts();
-        action.setId("test");
         action.setEndpointResolver(new DefaultEndpointResolver());
         final List<BindingDescriptor> bindings = Lists.newArrayList();
         bindings.add(new BindingDescriptor());
@@ -123,7 +122,6 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         binding.setActivationCondition(Predicates.<ProfileRequestContext>alwaysFalse());
         binding.initialize();
         final PopulateBindingAndEndpointContexts badaction = new PopulateBindingAndEndpointContexts();
-        badaction.setId("test");
         badaction.setEndpointResolver(new DefaultEndpointResolver());
         badaction.setBindings(Collections.singletonList(binding));
         badaction.initialize();
@@ -220,7 +218,6 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         binding.setSynchronous(true);
         binding.initialize();
         final PopulateBindingAndEndpointContexts badaction = new PopulateBindingAndEndpointContexts();
-        badaction.setId("test");
         badaction.setEndpointResolver(new DefaultEndpointResolver());
         badaction.setBindings(Collections.singletonList(binding));
         badaction.initialize();

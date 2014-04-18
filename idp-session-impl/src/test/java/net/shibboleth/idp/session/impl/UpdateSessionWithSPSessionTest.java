@@ -56,7 +56,6 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
         action = new UpdateSessionWithSPSession();
         action.setSessionManager(sessionManager);
         action.setSessionLifetime(3600 * 60 * 1000);
-        action.setId("test");
     }
 
     /** {@inheritDoc} */

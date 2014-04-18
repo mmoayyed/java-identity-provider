@@ -120,7 +120,6 @@ public class CryptoTransientNameIdentifierDecoderTest extends OpenSAMLInitBaseTe
         desc.initialize();
         
         final NameIdentifierCanonicalization canon = new NameIdentifierCanonicalization();
-        canon.setId("test");
         canon.setDecoder(decoder);
         canon.initialize();
 

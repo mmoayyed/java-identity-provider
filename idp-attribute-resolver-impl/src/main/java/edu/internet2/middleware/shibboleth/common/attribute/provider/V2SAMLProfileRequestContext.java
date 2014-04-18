@@ -21,10 +21,10 @@ import java.util.Collection;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -43,18 +43,16 @@ import com.google.common.base.Objects;
 /**
  * Emulation code for Scripted Attributes.
  */
-public class V2SAMLProfileRequestContext implements IdentifiedComponent {
+public class V2SAMLProfileRequestContext {
 
-    /**
-     * The Attribute Resolution Context, used to local the Principal.
-     */
-    private final AttributeResolutionContext resolutionContext;
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(V2SAMLProfileRequestContext.class);
 
-    /** log. */
-    private final Logger log = LoggerFactory.getLogger(V2SAMLProfileRequestContext.class);
-
-    /** Id - taken from the resolver. */
-    private final String id;
+    /** The Attribute Resolution Context, used to local the Principal. */
+    @Nonnull private final AttributeResolutionContext resolutionContext;
+    
+    /** Attribute Id being resolved, if any. */
+    @Nullable private final String id;
 
     /**
      * Constructor.
@@ -63,14 +61,18 @@ public class V2SAMLProfileRequestContext implements IdentifiedComponent {
      * @param attributeId the id of the attribute being resolved.
      */
     public V2SAMLProfileRequestContext(@Nonnull final AttributeResolutionContext attributeResolutionContext,
-            final String attributeId) {
+            @Nullable final String attributeId) {
+        
         resolutionContext = Constraint.isNotNull(attributeResolutionContext, "Attribute Resolution Context was null");
-        id = Constraint.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute Id was null or empty");
+        id = StringSupport.trimOrNull(attributeId);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    @Nonnull public String getId() {
+    /**
+     * Get the attribute ID being resolved, if available.
+     * 
+     * @return  attribute ID
+     */
+    @Nullable public String getId() {
         return id;
     }
 
