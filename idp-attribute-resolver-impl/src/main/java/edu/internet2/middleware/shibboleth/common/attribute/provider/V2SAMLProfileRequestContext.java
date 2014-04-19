@@ -50,7 +50,7 @@ public class V2SAMLProfileRequestContext {
 
     /** The Attribute Resolution Context, used to local the Principal. */
     @Nonnull private final AttributeResolutionContext resolutionContext;
-    
+
     /** Attribute Id being resolved, if any. */
     @Nullable private final String id;
 
@@ -62,7 +62,7 @@ public class V2SAMLProfileRequestContext {
      */
     public V2SAMLProfileRequestContext(@Nonnull final AttributeResolutionContext attributeResolutionContext,
             @Nullable final String attributeId) {
-        
+
         resolutionContext = Constraint.isNotNull(attributeResolutionContext, "Attribute Resolution Context was null");
         id = StringSupport.trimOrNull(attributeId);
     }
@@ -70,9 +70,9 @@ public class V2SAMLProfileRequestContext {
     /**
      * Get the attribute ID being resolved, if available.
      * 
-     * @return  attribute ID
+     * @return attribute ID
      */
-    @Nullable public String getId() {
+    @Nullable protected String getId() {
         return id;
     }
 
@@ -111,7 +111,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public SAMLObject getInboundSAMLMessage() {
-        log.error("AttributeDefinition: '{}' call unsupported method getInboundSAMLMessage", getId());
+        unsupportedMethod("getInboundSAMLMessage");
         return null;
     }
 
@@ -121,7 +121,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public String getInboundSAMLMessageId() {
-        log.error("AttributeDefinition: '{}' call unsupported method getInboundSAMLMessageId", getId());
+        unsupportedMethod("getInboundSAMLMessageId");
         return null;
     }
 
@@ -131,7 +131,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public DateTime getInboundSAMLMessageIssueInstant() {
-        log.error("AttributeDefinition: '{}' call unsupported method getInboundSAMLMessageIssueInstant", getId());
+        unsupportedMethod("getInboundSAMLMessageIssueInstant");
         return null;
     }
 
@@ -141,7 +141,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public String getInboundSAMLProtocol() {
-        log.error("AttributeDefinition: '{}' call unsupported method getInboundSAMLProtocol", getId());
+        unsupportedMethod("getInboundSAMLProtocol");
         return null;
     }
 
@@ -151,7 +151,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public EntityDescriptor getLocalEntityMetadata() {
-        log.error("AttributeDefinition: '{}' call unsupported method getLocalEntityMetadata", getId());
+        unsupportedMethod("getLocalEntityMetadata");
         return null;
     }
 
@@ -161,7 +161,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public QName getLocalEntityRole() {
-        log.error("AttributeDefinition: '{}' call unsupported method getLocalEntityRole", getId());
+        unsupportedMethod("getLocalEntityRole");
         return null;
     }
 
@@ -171,7 +171,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public RoleDescriptor getLocalEntityRoleMetadata() {
-        log.error("AttributeDefinition: '{}' call unsupported method getLocalEntityRoleMetadata", getId());
+        unsupportedMethod("getLocalEntityRoleMetadata");
         return null;
     }
 
@@ -181,7 +181,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public MetadataResolver getMetadataResolver() {
-        log.error("AttributeDefinition: '{}' call unsupported method getMetadataResolver", getId());
+        unsupportedMethod("getMetadataResolver");
         return null;
     }
 
@@ -191,7 +191,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public Object getOuboundSAMLMessageSigningCredential() {
-        log.error("AttributeDefinition: '{}' call unsupported method getOuboundSAMLMessageSigningCredential", getId());
+        unsupportedMethod("getOuboundSAMLMessageSigningCredential");
         return null;
     }
 
@@ -201,7 +201,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public byte[] getOutboundMessageArtifactType() {
-        log.error("AttributeDefinition: '{}' call unsupported method getOutboundMessageArtifactType", getId());
+        unsupportedMethod("getOutboundMessageArtifactType");
         return null;
     }
 
@@ -211,7 +211,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public SAMLObject getOutboundSAMLMessage() {
-        log.error("AttributeDefinition: '{}' call unsupported method getOutboundSAMLMessage", getId());
+        unsupportedMethod("getOutboundSAMLMessage");
         return null;
     }
 
@@ -221,7 +221,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public String getOutboundSAMLMessageId() {
-        log.error("AttributeDefinition: '{}' call unsupported method getOutboundSAMLMessageId", getId());
+        unsupportedMethod("getOutboundSAMLMessageId");
         return null;
     }
 
@@ -231,7 +231,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public DateTime getOutboundSAMLMessageIssueInstant() {
-        log.error("AttributeDefinition: '{}' call unsupported method getOutboundSAMLMessageIssueInstant", getId());
+        unsupportedMethod("getOutboundSAMLMessageIssueInstant");
         return null;
     }
 
@@ -241,7 +241,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public String getOutboundSAMLProtocol() {
-        log.error("AttributeDefinition: '{}' call unsupported method getOutboundSAMLProtocol", getId());
+        unsupportedMethod("getOutboundSAMLProtocol");
         return null;
     }
 
@@ -251,7 +251,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public Endpoint getPeerEntityEndpoint() {
-        log.error("AttributeDefinition: '{}' call unsupported method getPeerEntityEndpoint", getId());
+        unsupportedMethod("getPeerEntityEndpoint");
         return null;
     }
 
@@ -261,7 +261,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public EntityDescriptor getPeerEntityMetadata() {
-        log.error("AttributeDefinition: '{}' call unsupported method getPeerEntityMetadata", getId());
+        unsupportedMethod("getPeerEntityMetadata");
         return null;
     }
 
@@ -271,7 +271,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public QName getPeerEntityRole() {
-        log.error("AttributeDefinition: '{}' call unsupported method getPeerEntityRole", getId());
+        unsupportedMethod("getPeerEntityRole");
         return null;
     }
 
@@ -281,7 +281,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public RoleDescriptor getPeerEntityRoleMetadata() {
-        log.error("AttributeDefinition: '{}' call unsupported method getPeerEntityRoleMetadata", getId());
+        unsupportedMethod("getPeerEntityRoleMetadata");
         return null;
     }
 
@@ -291,7 +291,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public String getRelayState() {
-        log.error("AttributeDefinition: '{}' call unsupported method getRelayState", getId());
+        unsupportedMethod("getRelayState");
         return null;
     }
 
@@ -301,7 +301,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public SAMLObject getSubjectNameIdentifier() {
-        log.error("AttributeDefinition: '{}' call unsupported method getSubjectNameIdentifier", getId());
+        unsupportedMethod("getSubjectNameIdentifier");
         return null;
     }
 
@@ -311,7 +311,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public boolean isInboundSAMLMessageAuthenticated() {
-        log.error("AttributeDefinition: '{}' call unsupported method isInboundSAMLMessageAuthenticated", getId());
+        unsupportedMethod("isInboundSAMLMessageAuthenticated");
         return false;
     }
 
@@ -321,8 +321,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setInboundSAMLMessage(SAMLObject param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setInboundSAMLMessage", getId());
-
+        unsupportedMethod("setInboundSAMLMessage");
     }
 
     /**
@@ -331,8 +330,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setInboundSAMLMessageAuthenticated(boolean param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setInboundSAMLMessageAuthenticated", getId());
-
+        unsupportedMethod("setInboundSAMLMessageAuthenticated");
     }
 
     /**
@@ -341,8 +339,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setInboundSAMLMessageId(String param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setInboundSAMLMessageId", getId());
-
+        unsupportedMethod("setInboundSAMLMessageId");
     }
 
     /**
@@ -351,8 +348,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setInboundSAMLMessageIssueInstant(DateTime param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setInboundSAMLMessageIssueInstant", getId());
-
+        unsupportedMethod("setInboundSAMLMessageIssueInstant");
     }
 
     /**
@@ -361,8 +357,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setInboundSAMLProtocol(String param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setInboundSAMLProtocol", getId());
-
+        unsupportedMethod("setInboundSAMLProtocol");
     }
 
     /**
@@ -371,8 +366,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setLocalEntityId(String param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setLocalEntityId", getId());
-
+        unsupportedMethod("setLocalEntityId");
     }
 
     /**
@@ -381,8 +375,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setLocalEntityMetadata(EntityDescriptor param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setLocalEntityMetadata", getId());
-
+        unsupportedMethod("setLocalEntityMetadata");
     }
 
     /**
@@ -391,8 +384,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setLocalEntityRole(QName param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setLocalEntityRole", getId());
-
+        unsupportedMethod("setLocalEntityRole");
     }
 
     /**
@@ -401,8 +393,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setLocalEntityRoleMetadata(RoleDescriptor param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setLocalEntityRoleMetadata", getId());
-
+        unsupportedMethod("setLocalEntityRoleMetadata");
     }
 
     /**
@@ -411,7 +402,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setMetadataResolver(Object param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setMetadataResolver", getId());
+        unsupportedMethod("setMetadataResolver");
 
     }
 
@@ -421,7 +412,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setOutboundMessageArtifactType(byte[] param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setOutboundMessageArtifactType", getId());
+        unsupportedMethod("setOutboundMessageArtifactType");
 
     }
 
@@ -431,7 +422,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setOutboundSAMLMessage(SAMLObject param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setOutboundSAMLMessage", getId());
+        unsupportedMethod("setOutboundSAMLMessage");
 
     }
 
@@ -441,7 +432,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setOutboundSAMLMessageId(String param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setOutboundSAMLMessageId", getId());
+        unsupportedMethod("setOutboundSAMLMessageId");
 
     }
 
@@ -451,7 +442,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setOutboundSAMLMessageIssueInstant(DateTime param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setOutboundSAMLMessageIssueInstant", getId());
+        unsupportedMethod("setOutboundSAMLMessageIssueInstant");
 
     }
 
@@ -461,7 +452,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setOutboundSAMLMessageSigningCredential(Object param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setOutboundSAMLMessageSigningCredential", getId());
+        unsupportedMethod("setOutboundSAMLMessageSigningCredential");
 
     }
 
@@ -471,7 +462,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setOutboundSAMLProtocol(String param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setOutboundSAMLProtocol", getId());
+        unsupportedMethod("setOutboundSAMLProtocol");
 
     }
 
@@ -481,7 +472,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setPeerEntityEndpoint(Endpoint param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setPeerEntityEndpoint", getId());
+        unsupportedMethod("setPeerEntityEndpoint");
 
     }
 
@@ -491,7 +482,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setPeerEntityId(String param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setPeerEntityId", getId());
+        unsupportedMethod("setPeerEntityId");
 
     }
 
@@ -501,7 +492,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setPeerEntityMetadata(EntityDescriptor param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setPeerEntityMetadata", getId());
+        unsupportedMethod("setPeerEntityMetadata");
 
     }
 
@@ -511,7 +502,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setPeerEntityRole(QName param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setPeerEntityRole", getId());
+        unsupportedMethod("setPeerEntityRole");
 
     }
 
@@ -521,7 +512,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setPeerEntityRoleMetadata(RoleDescriptor param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setPeerEntityRoleMetadata", getId());
+        unsupportedMethod("setPeerEntityRoleMetadata");
 
     }
 
@@ -531,7 +522,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setRelayState(String param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setRelayState", getId());
+        unsupportedMethod("setRelayState");
 
     }
 
@@ -541,7 +532,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setSubjectNameIdentifier(SAMLObject param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setSubjectNameIdentifier", getId());
+        unsupportedMethod("setSubjectNameIdentifier");
 
     }
 
@@ -551,7 +542,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public String getCommunicationProfileId() {
-        log.error("AttributeDefinition: '{}' call unsupported method getCommunicationProfileId", getId());
+        unsupportedMethod("getCommunicationProfileId");
         return null;
     }
 
@@ -561,7 +552,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public XMLObject getInboundMessage() {
-        log.error("AttributeDefinition: '{}' call unsupported method getInboundMessage", getId());
+        unsupportedMethod("getInboundMessage");
         return null;
     }
 
@@ -571,7 +562,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public String getInboundMessageIssuer() {
-        log.error("AttributeDefinition: '{}' call unsupported method getInboundMessageIssuer", getId());
+        unsupportedMethod("getInboundMessageIssuer");
         return null;
     }
 
@@ -581,7 +572,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public Object getInboundMessageTransport() {
-        log.error("AttributeDefinition: '{}' call unsupported method getInboundMessageTransport", getId());
+        unsupportedMethod("getInboundMessageTransport");
         return null;
     }
 
@@ -591,7 +582,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public XMLObject getOutboundMessage() {
-        log.error("AttributeDefinition: '{}' call unsupported method getOutboundMessage", getId());
+        unsupportedMethod("getOutboundMessage");
         return null;
     }
 
@@ -601,7 +592,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public String getOutboundMessageIssuer() {
-        log.error("AttributeDefinition: '{}' call unsupported method getOutboundMessageIssuer", getId());
+        unsupportedMethod("getOutboundMessageIssuer");
         return null;
     }
 
@@ -611,7 +602,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public Object getOutboundMessageTransport() {
-        log.error("AttributeDefinition: '{}' call unsupported method getOutboundMessageTransport", getId());
+        unsupportedMethod("getOutboundMessageTransport");
         return null;
     }
 
@@ -621,7 +612,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public Object getSecurityPolicyResolver() {
-        log.error("AttributeDefinition: '{}' call unsupported method getSecurityPolicyResolver", getId());
+        unsupportedMethod("getSecurityPolicyResolver");
         return null;
     }
 
@@ -631,7 +622,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public boolean isIssuerAuthenticated() {
-        log.error("AttributeDefinition: '{}' call unsupported method isIssuerAuthenticated", getId());
+        unsupportedMethod("isIssuerAuthenticated");
         return false;
     }
 
@@ -641,8 +632,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setCommunicationProfileId(String param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setCommunicationProfileId", getId());
-
+        unsupportedMethod("setCommunicationProfileId");
     }
 
     /**
@@ -651,8 +641,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setInboundMessage(XMLObject param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setInboundMessage", getId());
-
+        unsupportedMethod("setInboundMessage");
     }
 
     /**
@@ -661,8 +650,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setInboundMessageIssuer(String param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setInboundMessageIssuer", getId());
-
+        unsupportedMethod("setInboundMessageIssuer");
     }
 
     /**
@@ -671,7 +659,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setInboundMessageTransport(Object param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setInboundMessageTransport", getId());
+        unsupportedMethod("setInboundMessageTransport");
 
     }
 
@@ -681,8 +669,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setOutboundMessage(XMLObject param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setOutboundMessage", getId());
-
+        unsupportedMethod("setOutboundMessage");
     }
 
     /**
@@ -691,8 +678,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setOutboundMessageIssuer(String param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setOutboundMessageIssuer", getId());
-
+        unsupportedMethod("setOutboundMessageIssuer");
     }
 
     /**
@@ -701,8 +687,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setOutboundMessageTransport(Object param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setOutboundMessageTransport", getId());
-
+        unsupportedMethod("setOutboundMessageTransport");
     }
 
     /**
@@ -711,8 +696,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setSecurityPolicyResolver(Object param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setSecurityPolicyResolver", getId());
-
+        unsupportedMethod("setSecurityPolicyResolver");
     }
 
     /**
@@ -721,8 +705,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public Object getPreSecurityInboundHandlerChainResolver() {
-        log.error("AttributeDefinition: '{}' call unsupported method getPreSecurityInboundHandlerChainResolver",
-                getId());
+        unsupportedMethod("getPreSecurityInboundHandlerChainResolver");
         return null;
     }
 
@@ -732,9 +715,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setPreSecurityInboundHandlerChainResolver(Object param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setPreSecurityInboundHandlerChainResolver",
-                getId());
-
+        unsupportedMethod("setPreSecurityInboundHandlerChainResolver");
     }
 
     /**
@@ -743,8 +724,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public Object getPostSecurityInboundHandlerChainResolver() {
-        log.error("AttributeDefinition: '{}' call unsupported method getPostSecurityInboundHandlerChainResolver",
-                getId());
+        unsupportedMethod("getPostSecurityInboundHandlerChainResolver");
         return null;
     }
 
@@ -754,9 +734,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setPostSecurityInboundHandlerChainResolver(Object param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setPostSecurityInboundHandlerChainResolver",
-                getId());
-
+        unsupportedMethod("setPostSecurityInboundHandlerChainResolver");
     }
 
     /**
@@ -765,7 +743,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public Object getOutboundHandlerChainResolver() {
-        log.error("AttributeDefinition: '{}' call unsupported method getOutboundHandlerChainResolver", getId());
+        unsupportedMethod("getOutboundHandlerChainResolver");
         return null;
     }
 
@@ -775,8 +753,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setOutboundHandlerChainResolver(Object param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setOutboundHandlerChainResolver", getId());
-
+        unsupportedMethod("setOutboundHandlerChainResolver");
     }
 
     /**
@@ -785,7 +762,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public Object getProfileConfiguration() {
-        log.error("AttributeDefinition: '{}' call unsupported method getProfileConfiguration", getId());
+        unsupportedMethod("getProfileConfiguration");
         return null;
     }
 
@@ -795,7 +772,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public Object getRelyingPartyConfiguration() {
-        log.error("AttributeDefinition: '{}' call unsupported method getRelyingPartyConfiguration", getId());
+        unsupportedMethod("getRelyingPartyConfiguration");
         return null;
     }
 
@@ -805,7 +782,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public Object getUserSession() {
-        log.error("AttributeDefinition: '{}' call unsupported method getUserSession", getId());
+        unsupportedMethod("getUserSession");
         return null;
     }
 
@@ -815,8 +792,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setProfileConfiguration(Object param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setProfileConfiguration", getId());
-
+        unsupportedMethod("setProfileConfiguration");
     }
 
     /**
@@ -825,8 +801,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setRelyingPartyConfiguration(Object param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setRelyingPartyConfiguration", getId());
-
+        unsupportedMethod("setRelyingPartyConfiguration");
     }
 
     /**
@@ -835,8 +810,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setUserSession(Object param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setUserSession", getId());
-
+        unsupportedMethod("setUserSession");
     }
 
     /**
@@ -845,7 +819,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public Collection getReleasedAttributes() {
-        log.error("AttributeDefinition: '{}' call unsupported method getReleasedAttributes", getId());
+        unsupportedMethod("getReleasedAttributes");
         return null;
     }
 
@@ -855,8 +829,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setReleasedAttributes(Collection param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setReleasedAttributes", getId());
-
+        unsupportedMethod("setReleasedAttributes");
     }
 
     /**
@@ -865,7 +838,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public Collection<String> getRequestedAttributesIds() {
-        log.error("AttributeDefinition: '{}' call unsupported method getRequestedAttributesIds", getId());
+        unsupportedMethod("getRequestedAttributesIds");
         return null;
     }
 
@@ -875,8 +848,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setRequestedAttributes(Collection<String> param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setRequestedAttributes", getId());
-
+        unsupportedMethod("setRequestedAttributes");
     }
 
     /**
@@ -885,7 +857,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public Map<String, Object> getAttributes() {
-        log.error("AttributeDefinition: '{}' call unsupported method getAttributes", getId());
+        unsupportedMethod("getAttributes");
         return null;
     }
 
@@ -895,8 +867,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setAttributes(Map<String, Object> param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setAttributes", getId());
-
+        unsupportedMethod("setAttributes");
     }
 
     /**
@@ -905,7 +876,7 @@ public class V2SAMLProfileRequestContext {
      * @return null
      */
     public String getPrincipalAuthenticationMethod() {
-        log.error("AttributeDefinition: '{}' call unsupported method getPrincipalAuthenticationMethod", getId());
+        unsupportedMethod("getPrincipalAuthenticationMethod");
         return null;
     }
 
@@ -915,8 +886,7 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setPrincipalAuthenticationMethod(String param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setPrincipalAuthenticationMethod", getId());
-
+        unsupportedMethod("setPrincipalAuthenticationMethod");
     }
 
     /**
@@ -925,18 +895,27 @@ public class V2SAMLProfileRequestContext {
      * @param param ignored.
      */
     public void setPrincipalName(String param) {
-        log.error("AttributeDefinition: '{}' call unsupported method setPrincipalName", getId());
+        unsupportedMethod("setPrincipalName");
 
     }
 
+    /**
+     * Emit an appropriate message when an unsupported method is called.
+     * 
+     * @param method the method
+     */
+    protected void unsupportedMethod(@Nonnull final String method) {
+        if (null == getId()) {
+            log.error("Template definition referenced unsupported method {}", method);
+        } else {
+            log.error("AttributeDefinition: '{}' called unsupported method {}", getId(), method);
+        }
+    }
+
     /** {@inheritDoc}. */
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(V2SAMLProfileRequestContext.class).
-                                      add("Id", getId()).
-                                      add("PrincipalName", getPrincipalName()).
-                                      add("PeerEntityId", getPeerEntityId()).
-                                      add("LocalEntityId", getLocalEntityId()).
-                                      toString();
+    @Override public String toString() {
+        return Objects.toStringHelper(V2SAMLProfileRequestContext.class).add("Id", getId())
+                .add("PrincipalName", getPrincipalName()).add("PeerEntityId", getPeerEntityId())
+                .add("LocalEntityId", getLocalEntityId()).toString();
     }
 }
