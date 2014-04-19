@@ -21,24 +21,22 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 
-import org.opensaml.messaging.handler.MessageHandler;
-
 /** Represents the configuration of a particular communication profile. */
 public interface ProfileConfiguration extends IdentifiedComponent {
     
     /**
-     * Get the inbound message handler to execute at the beginning of profile processing.
+     * Get the subflow ID to execute prior to mainline profile processing.
      * 
-     * @return  a message handler, or null
+     * @return  a subflow ID, or null
      */
-    @Nullable MessageHandler getInboundMessageHandler();
+    @Nullable String getInboundSubflowId();
     
     /**
-     * Get the outbound message handler to execute at the end of profile processing.
+     * Get the subflow ID to execute after mainline profile processing.
      * 
-     * @return  a message handler, or null
+     * @return  a subflow ID, or null
      */
-    @Nullable MessageHandler getOutboundMessageHandler();
+    @Nullable String getOutboundSubflowId();
     
     /**
      * Get the {@link SecurityConfiguration} to use with this profile.
@@ -46,4 +44,5 @@ public interface ProfileConfiguration extends IdentifiedComponent {
      * @return security configuration to use with this profile
      */
     @Nullable SecurityConfiguration getSecurityConfiguration();
+    
 }

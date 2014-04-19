@@ -24,21 +24,19 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.messaging.handler.MessageHandler;
-
 import com.google.common.base.Objects;
 
 /** Base class for {@link ProfileConfiguration} implementations. */
 public abstract class AbstractProfileConfiguration implements ProfileConfiguration {
 
     /** ID of the profile configured. */
-    @Nonnull @NotEmpty private final String id;
+    @Nonnull @NotEmpty private final String profileId;
 
-    /** Inbound message handler. */
-    @Nullable private MessageHandler inboundHandler;
+    /** Inbound flow ID. */
+    @Nullable private String inboundFlowId;
 
-    /** Outbound message handler. */
-    @Nullable private MessageHandler outboundHandler;
+    /** Outbound flow ID. */
+    @Nullable private String outboundFlowId;
     
     /** The security configuration for this profile. */
     @Nullable private SecurityConfiguration securityConfiguration;
@@ -46,16 +44,16 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
     /**
      * Constructor.
      * 
-     * @param profileId ID of the the communication profile, never null or empty
+     * @param id ID of the the communication profile, never null or empty
      */
-    public AbstractProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
-        id = Constraint.isNotNull(StringSupport.trimOrNull(profileId), "Profile identifier cannot be null or empty");
+    public AbstractProfileConfiguration(@Nonnull @NotEmpty final String id) {
+        profileId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Profile identifier cannot be null or empty");
     }
 
     /** {@inheritDoc} */
     @Override
     @Nonnull @NotEmpty public String getId() {
-        return id;
+        return profileId;
     }
 
     /** {@inheritDoc} */
@@ -75,38 +73,38 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
 
     /** {@inheritDoc} */
     @Override
-    @Nullable public MessageHandler getInboundMessageHandler() {
-        return inboundHandler;
+    @Nullable public String getInboundSubflowId() {
+        return inboundFlowId;
     }
 
     /**
-     * Set the inbound message handler to run.
+     * Set the subflow ID to execute prior to mainline profile processing.
      * 
-     * @param handler inbound message handler
+     * @param id subflow ID
      */
-    public void setInboundHandler(@Nullable final MessageHandler handler) {
-        inboundHandler = handler;
+    public void setInboundSubflowId(@Nullable final String id) {
+        inboundFlowId = StringSupport.trimOrNull(id);
     }
 
     /** {@inheritDoc} */
     @Override
-    @Nullable public MessageHandler getOutboundMessageHandler() {
-        return outboundHandler;
+    @Nullable public String getOutboundSubflowId() {
+        return outboundFlowId;
     }
 
     /**
-     * Set the outbound message handler to run.
+     * Set the subflow ID to execute after mainline profile processing.
      * 
-     * @param handler outbound message handler
+     * @param id subflow ID
      */
-    public void setOutboundHandler(@Nullable final MessageHandler handler) {
-        outboundHandler = handler;
+    public void setOutboundSubflowId(@Nullable final String id) {
+        outboundFlowId = StringSupport.trimOrNull(id);
     }
 
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        return id.hashCode();
+        return profileId.hashCode();
     }
 
     /** {@inheritDoc} */
@@ -125,7 +123,7 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
         }
 
         AbstractProfileConfiguration other = (AbstractProfileConfiguration) obj;
-        return Objects.equal(id, other.getId());
+        return Objects.equal(profileId, other.getId());
     }
     
 }
