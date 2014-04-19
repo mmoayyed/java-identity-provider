@@ -22,9 +22,9 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -37,31 +37,45 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Function;
 
 /**
- * Action that selects the {@link ProfileConfiguration} for the given request and sets it in the looked-up
- * {@link RelyingPartyContext}.
+ * Action that checks a {@link net.shibboleth.idp.profile.config.ProfileConfiguration} for an inbound
+ * or outbound subflow ID and signals it as the action's event.
+ * 
+ * <p>The profile configuration is obtained from a {@link RelyingPartyContext} obtained from a lookup
+ * function, by default a child of the profile request context.</p>
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
- * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CONFIG}
  * @event {@link IdPEventIds#INVALID_PROFILE_CONFIG}
- * 
- * @post ProfileRequestContext.getSubcontext(RelyingPartyContext.class).getProfileConfiguration() != null
+ * @event subflow ID
  */
-public class SelectProfileConfiguration extends AbstractProfileAction {
+public class CheckForProfileSubflow extends AbstractProfileAction {
 
+    /** Used to indicate which type of subflow to check for. */
+    public enum Direction {
+        /** Check for an inbound subflow. */
+        INBOUND, 
+        
+        /** Check for an outbound subflow. */
+        OUTBOUND,
+        
+        };
+    
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(SelectProfileConfiguration.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(CheckForProfileSubflow.class);
 
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
      */
     @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
 
+    /** The direction of execution for this action instance. */
+    @NonnullAfterInit private Direction direction;
+    
     /** The RelyingPartyContext to operate on. */
     @Nullable private RelyingPartyContext rpCtx;
     
     /** Constructor. */
-    public SelectProfileConfiguration() {
+    public CheckForProfileSubflow() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
     }
 
@@ -80,6 +94,27 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
                 "RelyingPartyContext lookup strategy cannot be null");
     }
 
+    /**
+     * Set the subflow direction to check for.
+     *
+     * @param executionDirection the direction to check for
+     */
+    public void setDirection(@Nonnull final Direction executionDirection) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        direction = Constraint.isNotNull(executionDirection, "Execution direction cannot be null");
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (direction == null) {
+            throw new ComponentInitializationException("Execution direction cannot be null");
+        }
+    }
+
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -90,9 +125,9 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
             return false;
         }
 
-        if (rpCtx.getConfiguration() == null) {
-            log.debug("{} No relying party configuration associated with this profile request", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);
+        if (rpCtx.getProfileConfig() == null) {
+            log.debug("{} No profile configuration associated with this profile request", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
             return false;
         }
         
@@ -103,18 +138,15 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        final String profileId = profileRequestContext.getProfileId();
-        final RelyingPartyConfiguration rpConfig = rpCtx.getConfiguration();
-
-        final ProfileConfiguration profileConfiguration = rpConfig.getProfileConfiguration(profileId);
-        if (profileConfiguration == null) {
-            log.debug("{} Profile {} is not available for relying party configuration {}",
-                    new Object[] {getLogPrefix(), profileId, rpConfig.getId(),});
-            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
-            return;
+        if (direction == Direction.INBOUND && rpCtx.getProfileConfig().getInboundSubflowId() != null) {
+            log.debug("{} Found inbound subflow in profile configuration: {}",
+                    getLogPrefix(), rpCtx.getProfileConfig().getInboundSubflowId());
+            ActionSupport.buildEvent(profileRequestContext, rpCtx.getProfileConfig().getInboundSubflowId());
+        } else if (direction == Direction.OUTBOUND && rpCtx.getProfileConfig().getOutboundSubflowId() != null) {
+            log.debug("{} Found outbound subflow in profile configuration: {}",
+                    getLogPrefix(), rpCtx.getProfileConfig().getOutboundSubflowId());
+            ActionSupport.buildEvent(profileRequestContext, rpCtx.getProfileConfig().getOutboundSubflowId());
         }
-
-        rpCtx.setProfileConfig(profileConfiguration);
     }
     
 }
