@@ -1,0 +1,49 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
+    parent="SecurityPolicy.Abstract">
+
+    <!-- Default inbound security processing for SAML 2 SSO profile. -->
+
+    <action-state id="ReceivedEndpointSecurityHandler">
+        <evaluate expression="ReceivedEndpointSecurityHandler" />
+        <transition on="proceed" to="MessageReplaySecurityHandler" />
+    </action-state>
+
+    <action-state id="MessageReplaySecurityHandler">
+        <evaluate expression="MessageReplaySecurityHandler" />
+        <transition on="proceed" to="MessageLifetimeSecurityHandler" />
+    </action-state>
+
+    <action-state id="MessageLifetimeSecurityHandler">
+        <evaluate expression="MessageLifetimeSecurityHandler" />
+        <transition on="proceed" to="SAML2AuthnRequestsSignedSecurityHandler" />
+    </action-state>
+    
+    <action-state id="SAML2AuthnRequestsSignedSecurityHandler">
+        <evaluate expression="SAML2AuthnRequestsSignedSecurityHandler" />
+        <transition on="proceed" to="SAMLProtocolMessageXMLSignatureSecurityHandler" />
+    </action-state>
+
+    <action-state id="SAMLProtocolMessageXMLSignatureSecurityHandler">
+        <evaluate expression="SAMLProtocolMessageXMLSignatureSecurityHandler" />
+        <transition on="proceed" to="SAML2HTTPRedirectDeflateSignatureSecurityHandler" />
+    </action-state>
+
+    <action-state id="SAML2HTTPRedirectDeflateSignatureSecurityHandler">
+        <evaluate expression="SAML2HTTPRedirectDeflateSignatureSecurityHandler" />
+        <transition on="proceed" to="SAML2HTTPPostSimpleSignSecurityHandler" />
+    </action-state>
+
+    <action-state id="SAML2HTTPPostSimpleSignSecurityHandler">
+        <evaluate expression="SAML2HTTPPostSimpleSignSecurityHandler" />
+        <transition on="proceed" to="CheckMandatoryIssuer" />
+    </action-state>
+
+    <action-state id="CheckMandatoryIssuer">
+        <evaluate expression="CheckMandatoryIssuer" />
+    </action-state>
+
+    <bean-import resource="../security-beans.xml" />
+
+</flow>

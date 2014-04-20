@@ -44,15 +44,27 @@
 
     <action-state id="PopulateSignatureValidationParameters">
         <evaluate expression="PopulateSignatureValidationParameters" />
-        <transition on="proceed" to="HandleInboundSecurityPolicy" />
+        <transition on="proceed" to="CheckForInboundSubflow" />
     </action-state>
     
-    <action-state id="HandleInboundSecurityPolicy">
-        <evaluate expression="HandleInboundSecurityPolicy" />
-        <transition on="proceed" to="InitializeOutboundMessageContext" />
-    </action-state>
-
     <!-- Request Checking and Preliminaries -->
+
+    <action-state id="CheckForInboundSubflow">
+        <evaluate expression="CheckForInboundSubflow" />
+        
+        <!-- proceed indicates no flow to call -->
+        <transition on="proceed" to="InitializeOutboundMessageContext" />
+        
+        <!-- Handle possible errors. -->
+        <transition on="#{currentEvent.id.startsWith('Invalid')}" to="SavePreviousEventAsError" />
+        
+        <!-- Call a subflow with the same ID as the event. -->
+        <transition on="#{true}" to="CallInboundSubflow" />
+    </action-state>
+    
+    <subflow-state id="CallInboundSubflow" subflow="#{currentEvent.id}">
+        <transition on="proceed" to="InitializeOutboundMessageContext" />
+    </subflow-state>
 
     <action-state id="InitializeOutboundMessageContext">
         <evaluate expression="InitializeOutboundMessageContext" />
@@ -122,6 +134,24 @@
     These actions handle errors by routing to the catch-all end-state, because it's assumed that
     any error here is unrecoverable and would prevent returning a SAML protocol message regardless.
     -->
+
+    <action-state id="ReturnToParentFlow">
+        <evaluate expression="CheckForOutboundSubflow" />
+        
+        <!-- proceed indicates no flow to call -->
+        <transition on="proceed" to="HandleOutboundMessage" />
+        
+        <!-- Handle possible errors. -->
+        <transition on="#{currentEvent.id.startsWith('Invalid')}" to="error" />
+        
+        <!-- Call a subflow with the same ID as the event. -->
+        <transition on="#{true}" to="CallOutboundSubflow" />
+    </action-state>
+    
+    <subflow-state id="CallOutboundSubflow" subflow="#{currentEvent.id}">
+        <transition on="proceed" to="HandleOutboundMessage" />
+        <transition on="#{true}" to="error" />
+    </subflow-state>
 
     <action-state id="HandleOutboundMessage">
         <evaluate expression="HandleOutboundMessage" />

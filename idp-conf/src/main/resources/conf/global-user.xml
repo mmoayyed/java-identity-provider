@@ -25,6 +25,10 @@
         
         <entry key="UnableToEncode" value-ref="Shibboleth.SAML1Status.Requester" />
 
+        <entry key="MessageReplay" value-ref="Shibboleth.SAML1Status.Requester" />
+        <entry key="MessageExpired" value-ref="Shibboleth.SAML1Status.Requester" />
+        <entry key="MessageAuthenticationError" value-ref="Shibboleth.SAML1Status.Requester" />
+
         <entry key="RequestUnsupported" value-ref="Shibboleth.SAML1Status.Requester" />
         
         <entry key="NoPassive" value-ref="Shibboleth.SAML1Status.Requester" />
@@ -44,6 +48,10 @@
         <entry key="UnableToDecode" value-ref="Shibboleth.SAML2Status.RequestUnsupported" />
         
         <entry key="UnableToEncode" value-ref="Shibboleth.SAML2Status.UnsupportedBinding" />
+
+        <entry key="MessageReplay" value-ref="Shibboleth.SAML2Status.RequestDenied" />
+        <entry key="MessageExpired" value-ref="Shibboleth.SAML2Status.RequestDenied" />
+        <entry key="MessageAuthenticationError" value-ref="Shibboleth.SAML2Status.RequestDenied" />
         
         <entry key="RequestUnsupported" value-ref="Shibboleth.SAML2Status.NoAuthnContext" />
         
@@ -60,5 +68,38 @@
         
         <entry key="InvalidNameIDPolicy" value-ref="Shibboleth.SAML2Status.InvalidNameIDPolicy" />
     </util:map>
+
+    <!-- TODO: remove once we get real metadata config in place -->
+    <bean id="ExampleMetadata" class="org.springframework.core.io.FileSystemResource" c:path="${idp.home}/metadata/example-metadata.xml" />
+    <bean id="ExampleMetadataResolver" class="org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolver"
+            p:parserPool-ref="shibboleth.ParserPool">
+        <constructor-arg>
+            <util:property-path path="ExampleMetadata.File" />
+        </constructor-arg>
+    </bean>
+    
+    <!-- TODO: all this is probably wrong, but need it to get something working -->
+    
+    <bean id="shibboleth.MetadataCredentialResolver" class="org.opensaml.saml.security.impl.MetadataCredentialResolver">
+        <constructor-arg>
+            <bean class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
+                c:mdResolver-ref="ExampleMetadataResolver" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="shibboleth.GlobalSecurityConfiguration" class="org.opensaml.xmlsec.SecurityConfigurationSupport"
+        factory-method="getGlobalXMLSecurityConfiguration" />
+    
+    <bean id="shibboleth.KeyInfoCredentialResolver" factory-bean="shibboleth.GlobalSecurityConfiguration"
+        factory-method="getDefaultKeyInfoCredentialResolver" />
+
+    <bean id="shibboleth.SignatureTrustEngine" class="org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine">
+        <constructor-arg ref="shibboleth.MetadataCredentialResolver" />
+        <constructor-arg ref="shibboleth.KeyInfoCredentialResolver" />
+    </bean>
+
+    <bean id="shibboleth.X509TrustEngine" class="org.opensaml.security.trust.impl.ExplicitX509CertificateTrustEngine">
+        <constructor-arg ref="shibboleth.MetadataCredentialResolver" />
+    </bean>
 
 </beans>

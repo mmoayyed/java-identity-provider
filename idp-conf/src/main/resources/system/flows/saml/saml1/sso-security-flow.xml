@@ -1,0 +1,24 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
+    parent="SecurityPolicy.Abstract">
+
+    <!-- Default inbound security processing for Shibboleth SSO profile. -->
+
+    <action-state id="OptionalMessageReplaySecurityHandler">
+        <evaluate expression="OptionalMessageReplaySecurityHandler" />
+        <transition on="proceed" to="OptionalMessageLifetimeSecurityHandler" />
+    </action-state>
+
+    <action-state id="OptionalMessageLifetimeSecurityHandler">
+        <evaluate expression="OptionalMessageLifetimeSecurityHandler" />
+        <transition on="proceed" to="CheckMandatoryIssuer" />
+    </action-state>
+
+    <action-state id="CheckMandatoryIssuer">
+        <evaluate expression="CheckMandatoryIssuer" />
+    </action-state>
+
+    <bean-import resource="../security-beans.xml" />
+
+</flow>

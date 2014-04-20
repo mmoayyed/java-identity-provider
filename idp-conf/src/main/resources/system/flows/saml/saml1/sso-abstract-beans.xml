@@ -34,12 +34,8 @@
     <bean
         id="SAML1BrowserSSOProfileConfiguration"
             class="net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration"
-            p:securityConfiguration-ref="SecurityConfiguration">
-        <property name="inboundHandler">
-            <bean class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain"
-                p:handlers-ref="shibboleth.ShibbolethSSOSecurityPolicy" />
-        </property>
-    </bean>
+            p:inboundSubflowId="SecurityPolicy.ShibbolethSSO"
+            p:securityConfiguration-ref="SecurityConfiguration" />
     <bean
         id="RelyingPartyConfiguration"
         class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"

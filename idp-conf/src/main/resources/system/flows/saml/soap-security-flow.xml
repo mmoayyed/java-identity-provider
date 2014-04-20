@@ -1,0 +1,44 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
+    parent="SecurityPolicy.Abstract">
+
+    <!-- Default inbound security processing for SOAP-bound profiles. -->
+
+    <action-state id="ReceivedEndpointSecurityHandler">
+        <evaluate expression="ReceivedEndpointSecurityHandler" />
+        <transition on="proceed" to="MessageReplaySecurityHandler" />
+    </action-state>
+
+    <action-state id="MessageReplaySecurityHandler">
+        <evaluate expression="MessageReplaySecurityHandler" />
+        <transition on="proceed" to="MessageLifetimeSecurityHandler" />
+    </action-state>
+
+    <action-state id="MessageLifetimeSecurityHandler">
+        <evaluate expression="MessageLifetimeSecurityHandler" />
+        <transition on="proceed" to="SAMLMDClientCertAuthSecurityHandler" />
+    </action-state>
+
+    <action-state id="SAMLMDClientCertAuthSecurityHandler">
+        <evaluate expression="SAMLMDClientCertAuthSecurityHandler" />
+        <transition on="proceed" to="SAMLProtocolMessageXMLSignatureSecurityHandler" />
+    </action-state>
+
+    <action-state id="SAMLProtocolMessageXMLSignatureSecurityHandler">
+        <evaluate expression="SAMLProtocolMessageXMLSignatureSecurityHandler" />
+        <transition on="proceed" to="CheckMandatoryIssuer" />
+    </action-state>
+
+    <action-state id="CheckMandatoryIssuer">
+        <evaluate expression="CheckMandatoryIssuer" />
+        <transition on="proceed" to="CheckMandatoryAuthentication" />
+    </action-state>
+    
+    <action-state id="CheckMandatoryAuthentication">
+        <evaluate expression="CheckMandatoryAuthentication" />
+    </action-state>
+
+    <bean-import resource="security-beans.xml" />
+
+</flow>

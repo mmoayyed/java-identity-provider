@@ -74,10 +74,9 @@
         p:configurationLookupStrategy-ref="shibboleth.SignatureValidationConfigurationLookup"
         p:signatureValidationParametersResolver-ref="shibboleth.SignatureValidationParametersResolver" />
 
-    <bean id="HandleInboundSecurityPolicy"
-        class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
-        c:lookupStrategy-ref="shibboleth.InboundMessageHandlerConfigurationLookup"
-        c:executionDirection="INBOUND" />
+    <bean id="CheckForInboundSubflow"
+        class="net.shibboleth.idp.profile.impl.CheckForProfileSubflow" scope="prototype"
+        p:direction="INBOUND" />
 
     <bean id="InitializeOutboundMessageContext"
         class="net.shibboleth.idp.saml.profile.impl.InitializeOutboundMessageContext" scope="prototype" />
@@ -203,6 +202,10 @@
                 c:f-ref="shibboleth.ChildLookup.RelyingParty" />
         </property>
     </bean>
+
+    <bean id="CheckForOutboundSubflow"
+        class="net.shibboleth.idp.profile.impl.CheckForProfileSubflow" scope="prototype"
+        p:direction="OUTBOUND" />
 
     <bean id="HandleOutboundMessage"
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"

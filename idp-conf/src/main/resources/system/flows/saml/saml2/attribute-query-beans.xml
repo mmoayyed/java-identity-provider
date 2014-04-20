@@ -42,12 +42,8 @@
     <bean
         id="AttributeQueryProfileConfiguration"
             class="net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration"
-            p:securityConfiguration-ref="SecurityConfiguration">
-        <property name="inboundHandler">
-            <bean class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain"
-                p:handlers-ref="shibboleth.SAML2AttributeQuerySecurityPolicy" />
-        </property>
-    </bean>
+            p:inboundSubflowId="SecurityPolicy.SAML2AttributeQuery"
+            p:securityConfiguration-ref="SecurityConfiguration" />
     <bean
         id="RelyingPartyConfiguration"
         class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"

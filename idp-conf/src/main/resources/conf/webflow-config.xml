@@ -27,18 +27,27 @@
     <!-- System-supplied flows, do not modify. -->
     <webflow:flow-registry id="flowRegistry" parent="userFlowRegistry" base-path="file://${idp.home}/system/flows" flow-builder-services="flowBuilderServices">
 
-        <!-- Use dot-separated convention for abstract flows. -->
+        <!-- Abstract flows underpinning SAML profiles. -->
         <webflow:flow-location id="SAML.Abstract" path="/saml/saml-abstract-flow.xml" />
         <webflow:flow-location id="SAML1.SSO.Abstract" path="/saml/saml1/sso-abstract-flow.xml" />
         <webflow:flow-location id="SAML2.SSO.Abstract" path="/saml/saml2/sso-abstract-flow.xml" />
         
-        <!-- Use slash-separated convention for web-executable flows. -->
+        <!-- SAML profile flows. -->
         <webflow:flow-location id="Shibboleth/SSO" path="/saml/saml1/sso-unsolicited-flow.xml"  />
         <webflow:flow-location id="SAML1/AttributeQuery" path="/saml/saml1/attribute-query-flow.xml"  />
         <webflow:flow-location id="SAML2/Redirect/SSO" path="/saml/saml2/sso-redirect-flow.xml" />
         <webflow:flow-location id="SAML2/POST/SSO" path="/saml/saml2/sso-post-flow.xml"  />
         <webflow:flow-location id="SAML2/Unsolicited/SSO" path="/saml/saml2/sso-unsolicited-flow.xml"  />
         <webflow:flow-location id="SAML2/AttributeQuery" path="/saml/saml2/attribute-query-flow.xml"  />
+    
+        <!-- Inbound security processing of SAML messages. -->
+        <webflow:flow-location id="SecurityPolicy.Abstract" path="/saml/security-abstract-flow.xml" />
+        <webflow:flow-location id="SecurityPolicy.ShibbolethSSO" path="/saml/saml1/sso-security-flow.xml" />
+        <webflow:flow-location id="SecurityPolicy.SAML1AttributeQuery" path="/saml/soap-security-flow.xml" />
+        <webflow:flow-location id="SecurityPolicy.SAML1ArtifactResolution" path="/saml/soap-security-flow.xml" />
+        <webflow:flow-location id="SecurityPolicy.SAML2SSO" path="/saml/saml2/sso-security-flow.xml" />
+        <webflow:flow-location id="SecurityPolicy.SAML2AttributeQuery" path="/saml/soap-security-flow.xml" />
+        <webflow:flow-location id="SecurityPolicy.SAML2ArtifactResolution" path="/saml/soap-security-flow.xml" />
     
         <!-- Master flow for authentication. -->
         <webflow:flow-location id="Authentication.Abstract" path="/authn/authn-abstract-flow.xml" />

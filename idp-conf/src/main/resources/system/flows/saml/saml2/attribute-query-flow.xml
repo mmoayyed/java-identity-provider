@@ -75,7 +75,7 @@
 
     <action-state id="SignAssertions">
         <evaluate expression="SignAssertions" />
-        <transition on="proceed" to="HandleOutboundMessage" />
+        <transition on="proceed" to="ReturnToParentFlow" />
     </action-state>
 
     <!-- Outbound message handling completes in the parent flow. -->

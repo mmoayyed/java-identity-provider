@@ -105,9 +105,9 @@
 
     <action-state id="UpdateSessionWithSPSession">
         <evaluate expression="UpdateSessionWithSPSession" />
-        <transition on="proceed" to="HandleOutboundMessage" />
+        <transition on="proceed" to="ReturnToParentFlow" />
         <!-- Mask storage failure. -->
-        <transition on="IOError" to="HandleOutboundMessage" />
+        <transition on="IOError" to="ReturnToParentFlow" />
     </action-state>
     
     <!-- Outbound message handling completes in the parent flow. -->
