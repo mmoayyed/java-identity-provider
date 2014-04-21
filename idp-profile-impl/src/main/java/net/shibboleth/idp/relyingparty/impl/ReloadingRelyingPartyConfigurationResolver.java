@@ -47,11 +47,11 @@ import com.google.common.collect.Sets;
  * {@link #destroy()} since the returned value is not covered by the 
  * </p>
  */
-public class ReloadableRelyingPartyConfigurationResolver extends AbstractIdentifiableInitializableComponent implements
+public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifiableInitializableComponent implements
         RelyingPartyConfigurationResolver {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ReloadableRelyingPartyConfigurationResolver.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ReloadingRelyingPartyConfigurationResolver.class);
 
     /** The service which managed the reloading. */
     private final ReloadableService<RelyingPartyConfigurationResolver> service;
@@ -59,7 +59,7 @@ public class ReloadableRelyingPartyConfigurationResolver extends AbstractIdentif
     /** Constructor. 
     * @param resolverService the service which will manage the loading.
     */
-    public ReloadableRelyingPartyConfigurationResolver(
+    public ReloadingRelyingPartyConfigurationResolver(
             @Nonnull ReloadableService<RelyingPartyConfigurationResolver> resolverService) {
         service = Constraint.isNotNull(resolverService, "RelyingParty Service cannot be null");
     }

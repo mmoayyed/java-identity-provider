@@ -20,7 +20,8 @@ package net.shibboleth.idp.saml.metadata.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
+import net.shibboleth.idp.service.AbstractServiceableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
@@ -29,11 +30,12 @@ import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
 /**
- * This class exists primarily to allow the parsing of relying-party.xml to create a distinct implementation of
- * {@link MetadataResolver}. This will allow a service to look for this top level element.
+ * This class exists primarily to allow the parsing of relying-party.xml to create a serviceable implementation of
+ * {@link MetadataResolver}.
  * 
  */
-public class RelyingPartyMetadataProvider extends AbstractIdentifiedInitializableComponent implements MetadataResolver {
+public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<MetadataResolver> implements
+        MetadataResolver {
 
     /** The embedded resolver. */
     private final MetadataResolver resolver;
@@ -44,7 +46,6 @@ public class RelyingPartyMetadataProvider extends AbstractIdentifiedInitializabl
      * @param child The {@link MetadataResolver} to embed.
      */
     public RelyingPartyMetadataProvider(MetadataResolver child) {
-        setId(child.getId());
         resolver = child;
     }
 
@@ -75,9 +76,21 @@ public class RelyingPartyMetadataProvider extends AbstractIdentifiedInitializabl
     @Override public MetadataFilter getMetadataFilter() {
         return resolver.getMetadataFilter();
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        setId(resolver.getId());
+        super.doInitialize();
+    }
 
     /** {@inheritDoc} */
     @Override public void setMetadataFilter(MetadataFilter newFilter) {
         resolver.setMetadataFilter(newFilter);
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nonnull public MetadataResolver getComponent() {
+        return this;
     }
 }

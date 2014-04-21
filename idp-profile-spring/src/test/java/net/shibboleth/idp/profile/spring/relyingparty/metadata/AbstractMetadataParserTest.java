@@ -141,7 +141,7 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         return context.getBean(claz);
     }
     
-    static protected CriteriaSet criteriaFor(String entityId) {
+    static public CriteriaSet criteriaFor(String entityId) {
         EntityIdCriterion criterion = new EntityIdCriterion(entityId);
         return  new CriteriaSet(criterion);
     }

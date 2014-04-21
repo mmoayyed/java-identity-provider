@@ -58,7 +58,8 @@ import com.google.common.collect.Sets;
  * </p>
  */
 public class DefaultRelyingPartyConfigurationResolver extends
-        AbstractServiceableComponent<RelyingPartyConfigurationResolver> implements RelyingPartyConfigurationResolver, IdentifiableComponent {
+        AbstractServiceableComponent<RelyingPartyConfigurationResolver> implements RelyingPartyConfigurationResolver,
+        IdentifiableComponent {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(DefaultRelyingPartyConfigurationResolver.class);
@@ -240,11 +241,11 @@ public class DefaultRelyingPartyConfigurationResolver extends
                 getDefaultConfiguration().getId());
         return getDefaultConfiguration();
     }
-    
-    /** {@inheritDoc} 
-     * This service is identifiable. */
-    @Override
-    public void setId(@Nonnull String componentId) {
+
+    /**
+     * {@inheritDoc} This service is an {@link IdentifiableComponent).
+     */
+    @Override public void setId(@Nonnull String componentId) {
         // TODO Auto-generated method stub
         super.setId(componentId);
     }
@@ -253,5 +254,4 @@ public class DefaultRelyingPartyConfigurationResolver extends
     @Override @Nonnull public RelyingPartyConfigurationResolver getComponent() {
         return this;
     }
-
 }

@@ -60,12 +60,18 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
     /** The class we are looking for. */
     private final Class<T> theClaz;
 
+    /**
+     * The precise class to look for. This is required if the parsed file may produce more than one
+     * {@link ServiceableComponent}.
+     */
+    private final Class<? extends ServiceableComponent> theServiceClaz;
+
     /** Application context owning this engine. */
     private ApplicationContext parentContext;
 
     /** The bean name. */
     private String beanName;
-    
+
     /** The last known good component. */
     private ServiceableComponent<T> cachedComponent;
 
@@ -85,6 +91,18 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
      */
     public ReloadableSpringService(Class<T> claz) {
         theClaz = claz;
+        theServiceClaz = ServiceableComponent.class;
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param claz The interface being implemented.
+     * @param servicableClaz the service to look for.
+     */
+    public ReloadableSpringService(Class<T> claz, Class<? extends ServiceableComponent> servicableClaz) {
+        theClaz = claz;
+        theServiceClaz = servicableClaz;
     }
 
     /**
@@ -157,7 +175,7 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
 
     /** {@inheritDoc} */
     // Checkstyle: CyclomaticComplexity OFF
-    protected boolean shouldReload() {
+    @Override protected boolean shouldReload() {
         // Loop over each resource and check if the any resources have been changed since
         // the last time the service was reloaded. I believe a read lock is all we need here
         // to allow use of the service to proceed while we check on the state. Actual reloading
@@ -218,7 +236,7 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
     // Checkstyle: CyclomaticComplexity ON
 
     /** {@inheritDoc} */
-    protected void doReload() throws ServiceException {
+    @Override protected void doReload() throws ServiceException {
         super.doReload();
 
         log.debug("Creating new ApplicationContext for service '{}'", getId());
@@ -231,14 +249,15 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
 
         log.trace("{} New Application Context created.", getLogPrefix());
 
-        final Collection<ServiceableComponent> components =
-                appContext.getBeansOfType(ServiceableComponent.class).values();
+        final Collection<? extends ServiceableComponent> components =
+                appContext.getBeansOfType(theServiceClaz).values();
 
         log.debug("{} Context yielded {} beans", getLogPrefix(), components.size());
 
         if (components.size() == 0) {
             appContext.close();
-            throw new ServiceException(getLogPrefix() + "Reload did not produce any ServiceableComponents");
+            throw new ServiceException(getLogPrefix() + "Reload did not produce any bean of type"
+                    + theServiceClaz.getName());
         }
         if (components.size() > 1) {
             appContext.close();
@@ -287,7 +306,7 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
     }
 
     /** {@inheritDoc} */
-    protected void doDestroy() {
+    @Override protected void doDestroy() {
         final ServiceableComponent<T> oldComponent = cachedComponent;
         cachedComponent = null;
         // And tear down. Note that we are synchronized on this right now
@@ -303,7 +322,7 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
      * 
      * @return the <em>pinned</em> component.
      */
-    public synchronized ServiceableComponent<T> getServiceableComponent() {
+    @Override public synchronized ServiceableComponent<T> getServiceableComponent() {
         if (null == cachedComponent) {
             return null;
         }
@@ -312,17 +331,17 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
     }
 
     /** {@inheritDoc} */
-    public void setApplicationContext(ApplicationContext applicationContext) {
+    @Override public void setApplicationContext(ApplicationContext applicationContext) {
         setParentContext(applicationContext);
     }
 
     /** {@inheritDoc} */
-    public void setBeanName(String name) {
-        beanName = name;        
+    @Override public void setBeanName(String name) {
+        beanName = name;
     }
-    
+
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         if (getId() == null) {
             setId(beanName);
         }
