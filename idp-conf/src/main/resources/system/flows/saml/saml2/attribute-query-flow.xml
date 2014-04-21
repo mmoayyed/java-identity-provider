@@ -10,11 +10,16 @@
         <transition on="proceed" to="DecodeMessage" />
     </action-state>
 
-    <!-- This picks up from the parent flow with the transition step. -->
+    <!-- This picks up from the parent flow with the transition step or the error step. -->
     
     <action-state id="DoProfileWork">
         <evaluate expression="true" />
         <transition on="#{true}" to="ResolveAttributes" />
+    </action-state>
+
+    <action-state id="HandleError">
+        <evaluate expression="true" />
+        <transition on="#{true}" to="InitializeOutboundMessageContextForError" />
     </action-state>
 
     <!-- Attribute Resolution -->
@@ -79,6 +84,39 @@
     </action-state>
 
     <!-- Outbound message handling completes in the parent flow. -->
+
+    <!-- Error Response Generation -->
+
+    <!-- We need to trap non-proceed transitions in these actions to avoid an infinite loop. -->
+
+    <action-state id="InitializeOutboundMessageContextForError">
+        <evaluate expression="InitializeOutboundMessageContextForError" />
+        <transition on="proceed" to="Error_AddResponseShell" />
+        <transition on="#{true}" to="error" />
+    </action-state>
+
+    <action-state id="Error_AddResponseShell">
+        <evaluate expression="AddResponseShell" />
+        <transition on="proceed" to="Error_AddInResponseToToResponse" />
+        <transition on="#{true}" to="error" />
+    </action-state>
+
+    <action-state id="Error_AddInResponseToToResponse">
+        <evaluate expression="AddInResponseToToResponse" />
+        <transition on="proceed" to="Error_AddStatusToResponse" />
+        <transition on="#{true}" to="error" />
+    </action-state>
+    
+    <action-state id="Error_AddStatusToResponse">
+        <evaluate expression="AddStatusToResponse" />
+        <transition on="proceed" to="CallErrorSubflow" />
+        <transition on="#{true}" to="error" />
+    </action-state>
+
+    <subflow-state id="CallErrorSubflow" subflow="SAML.Error.BackChannel">
+        <transition on="proceed" to="ReturnToParentFlow" />
+        <transition on="#{true}" to="error" />
+    </subflow-state>
 
     <bean-import resource="attribute-query-beans.xml" />
 

@@ -76,6 +76,33 @@
         <property name="recipientLookupStrategy"><null/></property>
     </bean>
 
+    <bean id="InitializeOutboundMessageContextForError"
+            class="net.shibboleth.idp.saml.profile.impl.InitializeOutboundMessageContextForError" scope="prototype">
+        <property name="outboundBinding">
+            <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML2_SOAP11_BINDING_URI"/>
+        </property>
+    </bean>
+
+    <bean id="AddStatusToResponse"
+            class="org.opensaml.saml.saml2.profile.impl.AddStatusToResponse" scope="prototype"
+            p:statusMessage="An error occurred.">
+        <property name="detailedErrorsCondition">
+            <bean class="net.shibboleth.idp.profile.config.logic.DetailedErrorsPredicate" />
+        </property>
+        <property name="statusCodes">
+            <util:list>
+                <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.RESPONDER_URI" />
+            </util:list>
+        </property>
+        <property name="statusCodesLookupStrategy">
+            <bean class="org.opensaml.saml.saml2.profile.impl.AddStatusToResponse.StatusCodeMappingFunction"
+                 c:mappings-ref="shibboleth.SAML2StatusMappings"/>
+        </property>
+        <property name="statusMessageLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.context.navigate.SpringStatusMessageLookupFunction" />
+        </property>
+    </bean>
+
     <bean id="outboundMessageHandlerChain"
             class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
         <property name="handlers">
