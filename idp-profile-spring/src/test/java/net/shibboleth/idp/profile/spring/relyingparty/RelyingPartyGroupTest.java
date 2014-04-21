@@ -124,7 +124,7 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
         DefaultRelyingPartyConfigurationResolver resolver =
                 context.getBean(DefaultRelyingPartyConfigurationResolver.class);
 
-        Assert.assertEquals(resolver.getId(), "RelyingPartyGroup");
+        Assert.assertEquals(resolver.getId(), "RelyingPartyGroup[relying-party-group2.xml]");
 
         final List<RelyingPartyConfiguration> rps = resolver.getRelyingPartyConfigurations();
         Assert.assertEquals(rps.size(), 2);

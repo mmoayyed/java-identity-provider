@@ -59,9 +59,10 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
         builder.setLazyInit(true);
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
+        
 
-        builder.addPropertyValue("id", "RelyingPartyGroup from "
-                + parserContext.getReaderContext().getResource().getFilename());
+        builder.addPropertyValue("id", "RelyingPartyGroup["
+                + parserContext.getReaderContext().getResource().getFilename()+"]");
 
         // All the Relying Parties
         final List<BeanDefinition> relyingParties =
