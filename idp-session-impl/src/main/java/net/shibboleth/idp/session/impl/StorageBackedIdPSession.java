@@ -386,6 +386,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
         }
     }
     
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     @Nullable public SPSession addSPSession(@Nonnull final SPSession spSession)
@@ -429,6 +430,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             return null;
         }
     }
+ // Checkstyle: CyclomaticComplexity ON
 
     /** {@inheritDoc} */
     @Override
