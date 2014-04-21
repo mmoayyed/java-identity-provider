@@ -2,6 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns:util="http://www.springframework.org/schema/util"
         xmlns:c="http://www.springframework.org/schema/c"
+        xmlns:p="http://www.springframework.org/schema/p"
         xmlns:context="http://www.springframework.org/schema/context"
         xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
@@ -31,6 +32,23 @@
     <bean id="shibboleth.SAML1.BrowserSSO.ServiceURL" class="java.lang.String" c:_0="https://idp.example.org/SSO/SAML1"/>
     <bean id="shibboleth.SAML1.BrowserSSO.ServiceIndex" class="java.lang.String" c:_0="1111"/>
 
+    <bean id="shibboleth.ParserPool"
+        class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
+        p:maxPoolSize="100"
+        p:coalescing="true" p:ignoreComments="true"
+        p:ignoreElementContentWhitespace="true" p:namespaceAware="true" />
+
+
+    <bean id="myParserPool"
+        class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
+        p:maxPoolSize="1000"
+        p:coalescing="true" p:ignoreComments="true"
+        p:ignoreElementContentWhitespace="true" p:namespaceAware="true" />
+
+    <bean id="shibboleth.TaskTimer" class="java.util.Timer"
+        destroy-method="cancel" /> <!-- only needed if you do reloading -->
+        
+    <bean id="shibboleth.SchemaBuilder" class="org.opensaml.saml.common.xml.SAMLSchemaBuilder" c:ver="SAML_11"/>
     
 </beans>
                             

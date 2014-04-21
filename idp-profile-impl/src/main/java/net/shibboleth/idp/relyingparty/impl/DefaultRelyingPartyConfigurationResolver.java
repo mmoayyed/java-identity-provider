@@ -28,13 +28,14 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.profile.logic.AnonymousProfilePredicate;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
+import net.shibboleth.idp.service.AbstractServiceableComponent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
@@ -56,8 +57,8 @@ import com.google.common.collect.Sets;
  * Note that this resolver does not permit more than one {@link RelyingPartyConfiguration} with the same ID.
  * </p>
  */
-public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiableInitializableComponent implements
-        RelyingPartyConfigurationResolver {
+public class DefaultRelyingPartyConfigurationResolver extends
+        AbstractServiceableComponent<RelyingPartyConfigurationResolver> implements RelyingPartyConfigurationResolver, IdentifiableComponent {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(DefaultRelyingPartyConfigurationResolver.class);
@@ -185,8 +186,8 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
 
         log.debug("Resolving relying party configurations");
         if (isAnonymousPredicate.apply(context) && null != getAnonymousConfiguration()) {
-            log.debug("Profile Request is anonymous: returning configuration {} only",
-                    getAnonymousConfiguration().getId());
+            log.debug("Profile Request is anonymous: returning configuration {} only", getAnonymousConfiguration()
+                    .getId());
             return Collections.singleton(getAnonymousConfiguration());
         }
 
@@ -219,8 +220,8 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
             return null;
         }
         if (isAnonymousPredicate.apply(context) && null != getAnonymousConfiguration()) {
-            log.debug("Profile Request is anonymous: returning configuration {} only",
-                    getAnonymousConfiguration().getId());
+            log.debug("Profile Request is anonymous: returning configuration {} only", getAnonymousConfiguration()
+                    .getId());
             return getAnonymousConfiguration();
         }
 
@@ -240,4 +241,17 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
         return getDefaultConfiguration();
     }
     
+    /** {@inheritDoc} 
+     * This service is identifiable. */
+    @Override
+    public void setId(@Nonnull String componentId) {
+        // TODO Auto-generated method stub
+        super.setId(componentId);
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nonnull public RelyingPartyConfigurationResolver getComponent() {
+        return this;
+    }
+
 }

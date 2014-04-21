@@ -18,15 +18,20 @@
 package net.shibboleth.idp.profile.spring.relyingparty;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver;
 import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
+import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
@@ -70,10 +75,11 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
     }
 
     // TODO re-enable when all parsers are complete
-    @Test(enabled=false) public void relyingParty() {
+    @Test(enabled = true) public void relyingParty() throws ResolverException {
         GenericApplicationContext context = getContext("beans.xml", "relying-party-group.xml");
 
-        DefaultRelyingPartyConfigurationResolver resolver = context.getBean(DefaultRelyingPartyConfigurationResolver.class);
+        DefaultRelyingPartyConfigurationResolver resolver =
+                context.getBean(DefaultRelyingPartyConfigurationResolver.class);
         Assert.assertTrue(resolver.getRelyingPartyConfigurations().isEmpty());
 
         RelyingPartyConfiguration anon = resolver.getAnonymousConfiguration();
@@ -82,15 +88,41 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
 
         RelyingPartyConfiguration def = resolver.getDefaultConfiguration();
         Assert.assertEquals(def.getProfileConfigurations().size(), 8);
+
+        ProfileRequestContext ctx = new ProfileRequestContext<>();
+        RelyingPartyContext rpCtx = ctx.getSubcontext(RelyingPartyContext.class, true);
+        rpCtx.setRelyingPartyId("https://idp.example.org");
+        final HashSet<RelyingPartyConfiguration> set = Sets.newHashSet(resolver.resolve(ctx));
+        Assert.assertEquals(set.size(), 1);
         
-        final Collection<RelyingPartyMetadataProvider> metadataProviders = context.getBeansOfType(RelyingPartyMetadataProvider.class).values();
+        Assert.assertNotNull(resolver.resolveSingle(ctx));
+        // TODO - more testing
         
+
+        final Collection<RelyingPartyMetadataProvider> metadataProviders =
+                context.getBeansOfType(RelyingPartyMetadataProvider.class).values();
+
         Assert.assertEquals(metadataProviders.size(), 1);
+    }
+
+    @Test(enabled=true) public void relyingPartyService() throws ResolverException {
+        GenericApplicationContext context = getContext("beans.xml", "services.xml");
+
+        RelyingPartyConfigurationResolver resolver = context.getBean(RelyingPartyConfigurationResolver.class);
+        ProfileRequestContext ctx = new ProfileRequestContext<>();
+        RelyingPartyContext rpCtx = ctx.getSubcontext(RelyingPartyContext.class, true);
+        rpCtx.setRelyingPartyId("https://idp.example.org");
+        final HashSet<RelyingPartyConfiguration> set = Sets.newHashSet(resolver.resolve(ctx));
+        Assert.assertEquals(set.size(), 1);
+        
+        Assert.assertNotNull(resolver.resolveSingle(ctx));
+
     }
 
     @Test public void relyingParty2() {
         GenericApplicationContext context = getContext("relying-party-group2.xml");
-        DefaultRelyingPartyConfigurationResolver resolver = context.getBean(DefaultRelyingPartyConfigurationResolver.class);
+        DefaultRelyingPartyConfigurationResolver resolver =
+                context.getBean(DefaultRelyingPartyConfigurationResolver.class);
 
         Assert.assertEquals(resolver.getId(), "RelyingPartyGroup");
 

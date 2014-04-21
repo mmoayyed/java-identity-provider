@@ -56,8 +56,12 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
         final Map<QName, List<Element>> configChildren = ElementSupport.getIndexedChildElements(element);
+        builder.setLazyInit(true);
+        builder.setInitMethodName("initialize");
+        builder.setDestroyMethodName("destroy");
 
-        builder.addPropertyValue("id", "RelyingPartyGroup");
+        builder.addPropertyValue("id", "RelyingPartyGroup from "
+                + parserContext.getReaderContext().getResource().getFilename());
 
         // All the Relying Parties
         final List<BeanDefinition> relyingParties =
@@ -85,6 +89,9 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
             for (BeanDefinition metadataProvider : metadataProviders) {
                 final BeanDefinitionBuilder metadataBuilder =
                         BeanDefinitionBuilder.genericBeanDefinition(RelyingPartyMetadataProvider.class);
+                metadataBuilder.setLazyInit(true);
+                metadataBuilder.setInitMethodName("initialize");
+                metadataBuilder.setDestroyMethodName("destroy");
 
                 metadataBuilder.setInitMethodName("initialize");
                 metadataBuilder.setDestroyMethodName("destroy");

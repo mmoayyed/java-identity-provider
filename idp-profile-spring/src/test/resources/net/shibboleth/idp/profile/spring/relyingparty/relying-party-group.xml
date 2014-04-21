@@ -21,9 +21,9 @@
     <!-- ========================================== -->
     <!--      Relying Party Configurations          -->
     <!-- ========================================== -->
-    <rp:AnonymousRelyingParty provider="$(IDP_ENTITY_ID)" defaultSigningCredentialRef="IdPCredential"/>
+    <rp:AnonymousRelyingParty provider="${IDP_ENTITY_ID}" defaultSigningCredentialRef="IdPCredential"/>
     
-    <rp:DefaultRelyingParty provider="$(IDP_ENTITY_ID)" defaultSigningCredentialRef="IdPCredential">
+    <rp:DefaultRelyingParty provider="${IDP_ENTITY_ID}" defaultSigningCredentialRef="IdPCredential">
         <!-- 
             Each attribute in these profiles configuration is set to its default value,
             that is, the values that would be in effect if those attributes were not present.
@@ -75,11 +75,7 @@
     <!-- MetadataProvider the combining other MetadataProviders -->
     <metadata:MetadataProvider id="ShibbolethMetadata" xsi:type="metadata:ChainingMetadataProvider">
     
-    	<!-- Load the IdP's own metadata.  This is necessary for artifact support. -->
-        <metadata:MetadataProvider id="IdPMD" xsi:type="metadata:FilesystemMetadataProvider"
-                                   metadataFile="$IDP_HOME$/metadata/idp-metadata.xml"
-                                   maxRefreshDelay="P1D" />
-        
+     
         <!-- Example metadata provider. -->
         <!-- Reads metadata from a URL and store a backup copy on the file system. -->
         <!-- Validates the signature of the metadata and filters out all by SP entities in order to save memory -->
@@ -106,11 +102,11 @@
     
     <!-- ========================================== -->
     <!--     Security Configurations                -->
-    <!-- ========================================== -->
+    <!-- ========================================== 
     <security:Credential id="IdPCredential" xsi:type="security:X509Filesystem">
         <security:PrivateKey>$IDP_HOME$/credentials/idp.key</security:PrivateKey>
         <security:Certificate>$IDP_HOME$/credentials/idp.crt</security:Certificate>
-    </security:Credential>
+    </security:Credential> -->
     
     <!-- Trust engine used to evaluate the signature on loaded metadata. -->
     <!--

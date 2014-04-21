@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:c="http://www.springframework.org/schema/c" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<bean id="shibboleth.RelyingPartyResolverService" class="net.shibboleth.idp.service.ReloadableSpringService"
+		init-method="start" destroy-method="stop" depends-on="shibboleth.ParserPool"
+		c:claz="net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver"
+		p:failFast="true" p:reloadCheckDelay="0" p:reloadTaskTimer="shibboleth.TaskTimer">
+		<property name="serviceConfigurations">
+			<util:list>
+				<value>classpath:/net/shibboleth/idp/profile/spring/relyingparty/relying-party-group.xml
+				</value>
+			</util:list>
+
+		</property>
+	</bean>
+
+	<bean id="reloadableResolver"
+		class="net.shibboleth.idp.relyingparty.impl.ReloadableRelyingPartyConfigurationResolver"
+		init-method="initialize" destroy-method="destroy"
+		c:resolverService-ref="shibboleth.RelyingPartyResolverService" />
+</beans>
+                            
