@@ -91,8 +91,4 @@
         <value>file://${idp.home}/conf/property-placeholder.xml</value>
     </util:list>
 
-    <!-- TODO: replace ExampleMetadataResolver in configs with  shibboleth.MetadataResolver -->
-    <alias name="shibboleth.MetadataResolver" alias="ExampleMetadataResolver"/>
-    
-
 </beans>

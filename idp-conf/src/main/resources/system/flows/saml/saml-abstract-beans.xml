@@ -49,7 +49,7 @@
             <bean class="org.opensaml.saml.common.binding.impl.SAMLMetadataLookupHandler" scope="prototype">
                 <property name="roleDescriptorResolver">
                     <bean class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
-                        c:mdResolver-ref="ExampleMetadataResolver" />
+                        c:mdResolver-ref="shibboleth.MetadataResolver" />
                 </property>
             </bean>
         </constructor-arg>
@@ -97,7 +97,7 @@
             class="net.shibboleth.idp.saml.profile.impl.ExtractSubjectFromRequest" scope="prototype">
         <property name="nameIDPolicyPredicate">
             <bean class="org.opensaml.saml.common.profile.logic.AffiliationNameIDPolicyPredicate"
-                    p:metadataResolver-ref="ExampleMetadataResolver"
+                    p:metadataResolver-ref="shibboleth.MetadataResolver"
                     p:responderIdLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"
                     p:requesterIdLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple">
                 <property name="objectLookupStrategy">
