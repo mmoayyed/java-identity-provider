@@ -77,6 +77,30 @@
         p:enabled="${idp.session.enabled}"
         p:sessionManager-ref="shibboleth.SessionManager"
         p:sessionLifetime="${idp.session.defaultSPlifetime}" />
+        
+    <bean id="CheckErrorHandlingStrategy"
+        class="org.opensaml.saml.common.profile.impl.CheckErrorHandlingStrategy" scope="prototype"
+        p:localEvents-ref="shibboleth.LocalEvents" />
+
+    <bean id="AddStatusToResponse"
+            class="org.opensaml.saml.saml1.profile.impl.AddStatusToResponse" scope="prototype"
+            p:statusMessage="An error occurred.">
+        <property name="detailedErrorsCondition">
+            <bean class="net.shibboleth.idp.profile.config.logic.DetailedErrorsPredicate" />
+        </property>
+        <property name="statusCodes">
+            <util:list>
+                <util:constant static-field="org.opensaml.saml.saml1.core.StatusCode.RESPONDER" />
+            </util:list>
+        </property>
+        <property name="statusCodesLookupStrategy">
+            <bean class="org.opensaml.saml.saml1.profile.impl.AddStatusToResponse.StatusCodeMappingFunction"
+                 c:mappings-ref="shibboleth.SAML1StatusMappings"/>
+        </property>
+        <property name="statusMessageLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.context.navigate.SpringStatusMessageLookupFunction" />
+        </property>
+    </bean>
 
     <bean id="outboundMessageHandlerChain"
             class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">

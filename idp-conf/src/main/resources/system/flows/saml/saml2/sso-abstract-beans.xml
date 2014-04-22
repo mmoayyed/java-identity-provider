@@ -48,6 +48,9 @@
         p:profileConfigurations-ref="SAML2BrowserSSOProfileConfiguration" />
         
     <alias name="shibboleth.OutgoingSAML2SSOBindings" alias="shibboleth.OutgoingBindings"/>
+    
+    <bean id="ProcessRequestedAuthnContext"
+        class="net.shibboleth.idp.saml.saml2.profile.impl.ProcessRequestedAuthnContext" scope="prototype" />
         
     <bean id="AddResponseShell" class="org.opensaml.saml.saml2.profile.impl.AddResponseShell" scope="prototype"
             p:issuerLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple">
@@ -94,6 +97,30 @@
         <property name="SPSessionCreationStrategy">
             <bean class="net.shibboleth.idp.saml.session.impl.SAML2SPSessionCreationStrategy"
                 c:lifetime="${idp.session.defaultSPlifetime}"/>
+        </property>
+    </bean>
+
+    <bean id="CheckErrorHandlingStrategy"
+        class="org.opensaml.saml.common.profile.impl.CheckErrorHandlingStrategy" scope="prototype"
+        p:localEvents-ref="shibboleth.LocalEvents" />
+
+    <bean id="AddStatusToResponse"
+            class="org.opensaml.saml.saml2.profile.impl.AddStatusToResponse" scope="prototype"
+            p:statusMessage="An error occurred.">
+        <property name="detailedErrorsCondition">
+            <bean class="net.shibboleth.idp.profile.config.logic.DetailedErrorsPredicate" />
+        </property>
+        <property name="statusCodes">
+            <util:list>
+                <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.RESPONDER_URI" />
+            </util:list>
+        </property>
+        <property name="statusCodesLookupStrategy">
+            <bean class="org.opensaml.saml.saml2.profile.impl.AddStatusToResponse.StatusCodeMappingFunction"
+                 c:mappings-ref="shibboleth.SAML2StatusMappings"/>
+        </property>
+        <property name="statusMessageLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.context.navigate.SpringStatusMessageLookupFunction" />
         </property>
     </bean>
 

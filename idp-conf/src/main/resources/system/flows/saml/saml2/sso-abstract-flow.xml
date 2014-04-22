@@ -16,13 +16,29 @@
         <evaluate expression="true" />
         <transition on="#{true}" to="InitializeAuthenticationContext" />
     </action-state>
+
+    <action-state id="HandleError">
+        <evaluate expression="CheckErrorHandlingStrategy" />
+        <transition on="proceed" to="Error_AddResponseShell" />
+        <transition on="#{true}" to="error" />
+    </action-state>
         
+    <!-- Authentication Handoff -->
+    
     <action-state id="InitializeAuthenticationContext">
         <evaluate expression="InitializeAuthenticationContext" />
+        <transition on="proceed" to="InitializeRequestedPrincipalContext" />
+    </action-state>
+
+    <action-state id="InitializeRequestedPrincipalContext">
+        <evaluate expression="InitializeRequestedPrincipalContext" />
+        <transition on="proceed" to="ProcessRequestedAuthnContext" />
+    </action-state>
+
+    <action-state id="ProcessRequestedAuthnContext">
+        <evaluate expression="ProcessRequestedAuthnContext" />
         <transition on="proceed" to="DoAuthenticationSubflow" />
     </action-state>
-    
-    <!-- Authentication Handoff -->
     
     <subflow-state id="DoAuthenticationSubflow" subflow="Authentication">
         <transition on="proceed" to="ResolveAttributes" />
@@ -104,6 +120,33 @@
     </action-state>
     
     <!-- Outbound message handling completes in the parent flow. -->
+
+    <!-- Error Response Generation -->
+
+    <!-- We need to trap non-proceed transitions in these actions to avoid an infinite loop. -->
+
+    <action-state id="Error_AddResponseShell">
+        <evaluate expression="AddResponseShell" />
+        <transition on="proceed" to="Error_AddInResponseToToResponse" />
+        <transition on="#{true}" to="error" />
+    </action-state>
+
+    <action-state id="Error_AddInResponseToToResponse">
+        <evaluate expression="AddInResponseToToResponse" />
+        <transition on="proceed" to="Error_AddStatusToResponse" />
+        <transition on="#{true}" to="error" />
+    </action-state>
+    
+    <action-state id="Error_AddStatusToResponse">
+        <evaluate expression="AddStatusToResponse" />
+        <transition on="proceed" to="CallErrorSubflow" />
+        <transition on="#{true}" to="error" />
+    </action-state>
+
+    <subflow-state id="CallErrorSubflow" subflow="SAML.Error.FrontChannel">
+        <transition on="proceed" to="ReturnToParentFlow" />
+        <transition on="#{true}" to="error" />
+    </subflow-state>
 
     <bean-import resource="sso-abstract-beans.xml" />
 

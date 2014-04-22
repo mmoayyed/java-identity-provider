@@ -16,6 +16,14 @@
     <import resource="subject-config.xml" />
 	<import resource="attribute-params-config.xml" />
 
+    <!-- List of event/error codes during SSO to trap and handle without returning to SPs. -->
+
+    <util:list id="shibboleth.LocalEvents">
+        <!--
+        <value>NoPotentialFlow</value>
+        -->
+    </util:list>
+
     <!-- Mappings of error events during requests to SAML status codes. -->
 
     <util:map id="shibboleth.SAML1StatusMappings">
