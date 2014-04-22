@@ -10,21 +10,53 @@
         that the cookie will only ever be sent to the IdP host. -->
     <!-- <context-param> <param-name>cookieDomain</param-name> <param-value>example.org</param-value> </context-param> -->
 
-    <!-- Spring 2.0 application context files. Files are loaded in the order they appear with subsequent files overwriting 
+    <!-- Spring application context files. Files are loaded in the order they appear with subsequent files overwriting 
         same named beans in previous files. -->
-    
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <!-- 
-        <param-value>/opt/idp/conf/internal.xml; $IDP_HOME$/conf/service.xml;</param-value>
-         -->
-         <param-value>file:/opt/idp/conf/internal.xml</param-value>
+         <param-value>file://${idp.home}/system/conf/global-system.xml file://${idp.home}/conf/global-user.xml</param-value>
     </context-param>
 
-    <!-- Spring 2.0 listener used to load up the configuration -->
+    <!-- Spring listener used to load up the configuration -->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+    
+    <!-- Filters and filter mappings -->
+    <filter>
+        <filter-name>CookieBufferingFilter</filter-name>
+        <filter-class>net.shibboleth.utilities.java.support.net.CookieBufferingFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>DelegatingFilterProxy</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <init-param>
+            <param-name>targetBeanName</param-name>
+            <param-value>shibboleth.ClientStorageService</param-value>
+        </init-param>
+    </filter>
+    <filter>
+        <filter-name>RequestResponseContextFilter</filter-name>
+        <filter-class>net.shibboleth.utilities.java.support.net.RequestResponseContextFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CookieBufferingFilter</filter-name>
+        <url-pattern>/idp/Shibboleth/SSO</url-pattern>
+        <url-pattern>/idp/SAML2/Unsolicited/SSO</url-pattern>
+        <url-pattern>/idp/SAML2/Redirect/SSO</url-pattern>
+        <url-pattern>/idp/SAML2/POST/SSO</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>DelegatingFilterProxy</filter-name>
+        <url-pattern>/idp/Shibboleth/SSO</url-pattern>
+        <url-pattern>/idp/SAML2/Unsolicited/SSO</url-pattern>
+        <url-pattern>/idp/SAML2/Redirect/SSO</url-pattern>
+        <url-pattern>/idp/SAML2/POST/SSO</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>RequestResponseContextFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
     <!-- <servlet> <servlet-name>dispatcherServlet</servlet-name> <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class> 
         <load-on-startup>1</load-on-startup> </servlet> -->
@@ -41,70 +73,48 @@
     <!-- <filter> <filter-name>IdPNoCacheFilter</filter-name> <filter-class>edu.internet2.middleware.shibboleth.idp.util.NoCacheFilter</filter-class> 
         </filter> <filter-mapping> <filter-name>IdPNoCacheFilter</filter-name> <url-pattern>/*</url-pattern> </filter-mapping> -->
 
-    <!-- Profile Request Dispatcher -->
-    <!-- <servlet> <servlet-name>ProfileRequestDispatcher</servlet-name> <servlet-class>edu.internet2.middleware.shibboleth.common.profile.ProfileRequestDispatcherServlet</servlet-class> 
-        <load-on-startup>1</load-on-startup> </servlet> <servlet-mapping> <servlet-name>ProfileRequestDispatcher</servlet-name> <url-pattern>/profile/*</url-pattern> 
-        </servlet-mapping> -->
-        
+    <!-- Servlets and servlet mappings -->    
     <servlet>
-        <servlet-name>profile</servlet-name>
+        <servlet-name>idp</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>file:/opt/idp/conf/profile-servlet.xml</param-value>
+            <param-value>file://${idp.home}/system/conf/mvc-beans.xml file://${idp.home}/conf/webflow-config.xml</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
-
     <servlet-mapping>
-        <servlet-name>profile</servlet-name>
+        <servlet-name>idp</servlet-name>
         <url-pattern>/profile/*</url-pattern>
     </servlet-mapping>
-
-    <!-- Authentication Engine Entry Point -->
-    <!-- ... <servlet-mapping> <servlet-name>AuthenticationEngine</servlet-name> <url-pattern>/AuthnEngine</url-pattern> 
-        </servlet-mapping> -->
-
-    <!-- Servlet protected by container used for RemoteUser authentication -->
-    <!-- <servlet> <servlet-name>RemoteUserAuthHandler</servlet-name> <servlet-class>edu.internet2.middleware.shibboleth.idp.authn.provider.RemoteUserAuthServlet</servlet-class> 
-        <load-on-startup>3</load-on-startup> </servlet> <servlet-mapping> <servlet-name>RemoteUserAuthHandler</servlet-name> <url-pattern>/Authn/RemoteUser</url-pattern> 
-        </servlet-mapping> -->
-
-    <!-- Servlet for doing Username/Password authentication -->
-    <!-- <servlet> <servlet-name>UsernamePasswordAuthHandler</servlet-name> <servlet-class>edu.internet2.middleware.shibboleth.idp.authn.provider.UsernamePasswordLoginServlet</servlet-class> 
-        <load-on-startup>3</load-on-startup> </servlet> <servlet-mapping> <servlet-name>UsernamePasswordAuthHandler</servlet-name> 
-        <url-pattern>/Authn/UserPassword</url-pattern> </servlet-mapping> -->
-
+ 
     <!-- Servlet for displaying IdP status. -->
     <servlet>
         <servlet-name>Status</servlet-name>
         <servlet-class>net.shibboleth.idp.StatusServlet</servlet-class>
-
         <!-- Space separated list of CIDR blocks allowed to access the status page -->
         <init-param>
             <param-name>AllowedIPs</param-name>
             <param-value>127.0.0.1/32 ::1/128</param-value>
         </init-param>
-
         <load-on-startup>2</load-on-startup>
     </servlet>
-
     <servlet-mapping>
         <servlet-name>Status</servlet-name>
         <url-pattern>/status</url-pattern>
     </servlet-mapping>
 
-
     <!-- Send request to the EntityID to the SAML metadata handler. -->
+    <!-- 
     <servlet>
         <servlet-name>shibboleth_jsp</servlet-name>
         <jsp-file>/shibboleth.jsp</jsp-file>
     </servlet>
-
     <servlet-mapping>
         <servlet-name>shibboleth_jsp</servlet-name>
         <url-pattern>/shibboleth</url-pattern>
     </servlet-mapping>
+    -->
 
     <error-page>
         <error-code>500</error-code>
