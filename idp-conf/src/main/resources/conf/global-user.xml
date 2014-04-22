@@ -77,37 +77,22 @@
         <entry key="InvalidNameIDPolicy" value-ref="Shibboleth.SAML2Status.InvalidNameIDPolicy" />
     </util:map>
 
-    <!-- TODO: remove once we get real metadata config in place -->
-    <bean id="ExampleMetadata" class="org.springframework.core.io.FileSystemResource" c:path="${idp.home}/metadata/example-metadata.xml" />
-    <bean id="ExampleMetadataResolver" class="org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolver"
-            p:parserPool-ref="shibboleth.ParserPool">
-        <constructor-arg>
-            <util:property-path path="ExampleMetadata.File" />
-        </constructor-arg>
-    </bean>
-    
-    <!-- TODO: all this is probably wrong, but need it to get something working -->
-    
-    <bean id="shibboleth.MetadataCredentialResolver" class="org.opensaml.saml.security.impl.MetadataCredentialResolver">
-        <constructor-arg>
-            <bean class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
-                c:mdResolver-ref="ExampleMetadataResolver" />
-        </constructor-arg>
-    </bean>
+    <!--  The (currently single) file which provides relying party configuration -->
 
-    <bean id="shibboleth.GlobalSecurityConfiguration" class="org.opensaml.xmlsec.SecurityConfigurationSupport"
-        factory-method="getGlobalXMLSecurityConfiguration" />
+    <util:list id="shibboleth.MetadataResolverResources">
+        <value>file://${idp.home}/conf/relying-party.xml</value>
+        <value>file://${idp.home}/conf/property-placeholder.xml</value>
+    </util:list>
+
+    <!--  The (currently single) file which provides metdata configuration -->
+
+    <util:list id="shibboleth.RelyingPartyResolverResources">
+        <value>file://${idp.home}/conf/relying-party.xml</value>
+        <value>file://${idp.home}/conf/property-placeholder.xml</value>
+    </util:list>
+
+    <!-- TODO: replace ExampleMetadataResolver in configs with  shibboleth.MetadataResolver -->
+    <alias name="shibboleth.MetadataResolver" alias="ExampleMetadataResolver"/>
     
-    <bean id="shibboleth.KeyInfoCredentialResolver" factory-bean="shibboleth.GlobalSecurityConfiguration"
-        factory-method="getDefaultKeyInfoCredentialResolver" />
-
-    <bean id="shibboleth.SignatureTrustEngine" class="org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine">
-        <constructor-arg ref="shibboleth.MetadataCredentialResolver" />
-        <constructor-arg ref="shibboleth.KeyInfoCredentialResolver" />
-    </bean>
-
-    <bean id="shibboleth.X509TrustEngine" class="org.opensaml.security.trust.impl.ExplicitX509CertificateTrustEngine">
-        <constructor-arg ref="shibboleth.MetadataCredentialResolver" />
-    </bean>
 
 </beans>
