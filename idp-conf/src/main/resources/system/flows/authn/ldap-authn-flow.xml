@@ -24,7 +24,7 @@
             <evaluate expression="authenticationContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationErrorContext))" result="viewScope.authenticationErrorContext" />
             <evaluate expression="authenticationContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationWarningContext))" result="viewScope.authenticationWarningContext" />
             <evaluate expression="authenticationContext.getSubcontext(T(net.shibboleth.idp.authn.context.LDAPResponseContext))" result="viewScope.ldapResponseContext" />
-            <evaluate expression="T(net.shibboleth.utilities.java.support.encoder.HTMLEncoder)" result="viewScope.encoder" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.code.HTMLEncoder)" result="viewScope.encoder" />
         </on-render>
         <transition on="proceed" to="ExtractUsernamePasswordFromFormRequest" />
     </view-state>

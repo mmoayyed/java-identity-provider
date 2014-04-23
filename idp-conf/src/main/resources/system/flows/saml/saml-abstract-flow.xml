@@ -190,7 +190,7 @@
         <on-entry>
             <evaluate expression="flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext')" result="requestScope.profileRequestContext" />
             <evaluate expression="profileRequestContext.getSubcontext(T(org.opensaml.profile.context.ErrorEventContext))" result="requestScope.errorEventContext" />
-            <evaluate expression="T(net.shibboleth.utilities.java.support.encoder.HTMLEncoder)" result="requestScope.encoder" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.code.HTMLEncoder)" result="requestScope.encoder" />
         </on-entry>
     </end-state>
 
