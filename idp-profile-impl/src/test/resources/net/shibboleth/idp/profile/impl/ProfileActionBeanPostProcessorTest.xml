@@ -8,7 +8,7 @@
     default-destroy-method="destroy">
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
-    <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
     <bean
         id="IdPActionWithDefaultID"

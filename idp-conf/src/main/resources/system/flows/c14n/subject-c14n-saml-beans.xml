@@ -15,7 +15,7 @@
     <context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
-    <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     
     <bean id="PopulateSubjectCanonicalizationContext" class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
         p:availableFlows-ref="shibboleth.SAMLSubjectCanonicalizationFlows" />

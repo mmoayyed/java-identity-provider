@@ -14,7 +14,7 @@
         location="classpath:/net/shibboleth/idp/profile/spring/relyingparty/file.properties"/>
 
     <!-- This BeanPostProcessor auto-sets identifiable beans with the bean name (if not already set). -->
-    <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
     <bean id="shibboleth.SAML2.Artifact.ServiceURL" class="java.lang.String" c:_0="https://idp.example.org/Artifact"/>
     <bean id="shibboleth.SAML2.Artifact.ServiceIndex" class="java.lang.String" c:_0="4321"/>

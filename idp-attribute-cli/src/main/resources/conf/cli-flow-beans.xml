@@ -9,7 +9,7 @@
     <!-- This BeanPostProcessor auto-wraps OpenSAML ProfileActions in WebFlowProfileActionAdaptor. -->
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <!-- This BeanPostProcessor auto-sets identifiable beans with the bean name (if not already set). -->
-    <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
     <!-- Spring-aware action that bootstraps us. We need *something* to create a profile context. -->
     <bean id="InitializeProfileRequestContext" class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype" />

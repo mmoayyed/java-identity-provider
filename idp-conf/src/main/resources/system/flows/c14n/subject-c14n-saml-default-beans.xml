@@ -12,7 +12,7 @@
     <context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
-    <bean class="net.shibboleth.idp.spring.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
 	<bean id="Shibboleth.C14N.LegacyPrincipalConnector"
 		class="net.shibboleth.idp.saml.nameid.impl.LegacyCanonicalization"
