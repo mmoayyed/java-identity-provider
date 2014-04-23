@@ -15,7 +15,7 @@
 
     <!-- Default is to turn any event into its own end-state. -->
     <global-transitions>
-        <transition on="#{true}" to="#{currentEvent.id}" />
+        <transition to="#{currentEvent.id}" />
     </global-transitions>
 
 </flow>

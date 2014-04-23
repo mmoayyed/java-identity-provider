@@ -19,7 +19,7 @@
     <!-- Default is to turn any event into its own end-state, except InvalidSubject, which triggers a Reselect. -->
     <global-transitions>
         <transition on="InvalidSubject" to="ReselectFlow" />
-        <transition on="#{true}" to="#{currentEvent.id}" />
+        <transition to="#{currentEvent.id}" />
     </global-transitions>
 
 </flow>

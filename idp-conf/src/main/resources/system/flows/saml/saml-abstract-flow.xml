@@ -59,7 +59,7 @@
         <transition on="#{currentEvent.id.startsWith('Invalid')}" to="SavePreviousEventAsError" />
         
         <!-- Call a subflow with the same ID as the event. -->
-        <transition on="#{true}" to="CallInboundSubflow" />
+        <transition to="CallInboundSubflow" />
     </action-state>
     
     <subflow-state id="CallInboundSubflow" subflow="#{currentEvent.id}">
@@ -145,30 +145,30 @@
         <transition on="#{currentEvent.id.startsWith('Invalid')}" to="error" />
         
         <!-- Call a subflow with the same ID as the event. -->
-        <transition on="#{true}" to="CallOutboundSubflow" />
+        <transition to="CallOutboundSubflow" />
     </action-state>
     
     <subflow-state id="CallOutboundSubflow" subflow="#{currentEvent.id}">
         <transition on="proceed" to="HandleOutboundMessage" />
-        <transition on="#{true}" to="error" />
+        <transition to="error" />
     </subflow-state>
 
     <action-state id="HandleOutboundMessage">
         <evaluate expression="HandleOutboundMessage" />
         <transition on="proceed" to="EncodeMessage" />
-        <transition on="#{true}" to="error" />
+        <transition to="error" />
     </action-state>
 
     <action-state id="EncodeMessage">
         <evaluate expression="EncodeMessage" />
         <transition on="proceed" to="RecordResponseComplete" />
-        <transition on="#{true}" to="error" />
+        <transition to="error" />
     </action-state>
 
     <action-state id="RecordResponseComplete">
         <evaluate expression="RecordResponseComplete" />
         <transition on="proceed" to="end" />
-        <transition on="#{true}" to="error" />
+        <transition to="error" />
     </action-state>
 
     <!-- Terminus -->
@@ -196,7 +196,7 @@
 
     <!-- Default is to turn any event into an error, preserve it, and initiate error handling sequence. -->
     <global-transitions>
-        <transition on="#{true}" to="SavePreviousEventAsError" />
+        <transition to="SavePreviousEventAsError" />
     </global-transitions>
 
     <!-- The import references the parent folder because the abstract flow is used only from one level down. -->

@@ -14,13 +14,13 @@
     
     <action-state id="DoProfileWork">
         <evaluate expression="true" />
-        <transition on="#{true}" to="InitializeAuthenticationContext" />
+        <transition to="InitializeAuthenticationContext" />
     </action-state>
 
     <action-state id="HandleError">
         <evaluate expression="CheckErrorHandlingStrategy" />
         <transition on="proceed" to="Error_AddResponseShell" />
-        <transition on="#{true}" to="error" />
+        <transition to="error" />
     </action-state>
         
     <!-- Authentication Handoff -->
@@ -128,24 +128,24 @@
     <action-state id="Error_AddResponseShell">
         <evaluate expression="AddResponseShell" />
         <transition on="proceed" to="Error_AddInResponseToToResponse" />
-        <transition on="#{true}" to="error" />
+        <transition to="error" />
     </action-state>
 
     <action-state id="Error_AddInResponseToToResponse">
         <evaluate expression="AddInResponseToToResponse" />
         <transition on="proceed" to="Error_AddStatusToResponse" />
-        <transition on="#{true}" to="error" />
+        <transition to="error" />
     </action-state>
     
     <action-state id="Error_AddStatusToResponse">
         <evaluate expression="AddStatusToResponse" />
         <transition on="proceed" to="CallErrorSubflow" />
-        <transition on="#{true}" to="error" />
+        <transition to="error" />
     </action-state>
 
     <subflow-state id="CallErrorSubflow" subflow="SAML.Error.FrontChannel">
         <transition on="proceed" to="ReturnToParentFlow" />
-        <transition on="#{true}" to="error" />
+        <transition to="error" />
     </subflow-state>
 
     <bean-import resource="sso-abstract-beans.xml" />
