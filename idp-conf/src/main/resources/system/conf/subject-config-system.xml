@@ -52,22 +52,22 @@
         </property>
     </bean>
 
-    <bean id="SubjectC14NFlow/SAML2/Persistent" parent="shibboleth.AbstractSAML2C14NFlowBean"
+    <bean id="SubjectC14NFlow/SAML2Persistent" parent="shibboleth.AbstractSAML2C14NFlowBean"
         p:formats="#{ {'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent'} }" />
 
-    <bean id="SubjectC14NFlow/SAML2/Transient" parent="shibboleth.AbstractSAML2C14NFlowBean"
+    <bean id="SubjectC14NFlow/SAML2Transient" parent="shibboleth.AbstractSAML2C14NFlowBean"
         p:formats="#{ {'urn:oasis:names:tc:SAML:2.0:nameid-format:transient'} }" />
     
-    <bean id="SubjectC14NFlow/SAML2/CryptoTransient" parent="shibboleth.AbstractSAML2C14NFlowBean"
+    <bean id="SubjectC14NFlow/SAML2CryptoTransient" parent="shibboleth.AbstractSAML2C14NFlowBean"
         p:formats="#{ {'urn:oasis:names:tc:SAML:2.0:nameid-format:transient'} }" />
 
-    <bean id="SubjectC14NFlow/SAML1/Transient" parent="shibboleth.AbstractSAML1C14NFlowBean"
+    <bean id="SubjectC14NFlow/SAML1Transient" parent="shibboleth.AbstractSAML1C14NFlowBean"
         p:formats="#{ {'urn:mace:shibboleth:1.0:nameIdentifier'} }" /> 
 
-    <bean id="SubjectC14NFlow/SAML1/CryptoTransient" parent="shibboleth.AbstractSAML1C14NFlowBean" 
+    <bean id="SubjectC14NFlow/SAML1CryptoTransient" parent="shibboleth.AbstractSAML1C14NFlowBean" 
         p:formats="#{ {'urn:mace:shibboleth:1.0:nameIdentifier'} }" /> 
 
-    <bean id="SubjectC14NFlow/SAML2/Direct" parent="shibboleth.AbstractSAML2C14NFlowBean"
+    <bean id="SubjectC14NFlow/SAML2Direct" parent="shibboleth.AbstractSAML2C14NFlowBean"
             p:formats-ref="shibboleth.DirectNameFormats">
         <property name="activationCondition">
             <bean class="com.google.common.base.Predicates" factory-method="and">
@@ -81,7 +81,7 @@
         </property>
     </bean>
                
-    <bean id="SubjectC14NFlow/SAML1/Direct" parent="shibboleth.AbstractSAML1C14NFlowBean"
+    <bean id="SubjectC14NFlow/SAML1Direct" parent="shibboleth.AbstractSAML1C14NFlowBean"
             p:formats-ref="shibboleth.DirectNameFormats"> 
         <property name="activationCondition">
             <bean class="com.google.common.base.Predicates" factory-method="and">

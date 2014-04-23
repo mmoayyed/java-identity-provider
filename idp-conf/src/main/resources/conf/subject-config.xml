@@ -104,10 +104,10 @@
         <ref bean="SubjectC14NFlow/LegacyPrincipalConnector" />
         
         <!-- The next four are for handling transient IDs (in-storage and stateless variants). -->
-        <ref bean="SubjectC14NFlow/SAML2/Transient" />
-        <ref bean="SubjectC14NFlow/SAML2/CryptoTransient" />
-        <ref bean="SubjectC14NFlow/SAML1/Transient" /> 
-        <ref bean="SubjectC14NFlow/SAML1/CryptoTransient" /> 
+        <ref bean="SubjectC14NFlow/SAML2Transient" />
+        <ref bean="SubjectC14NFlow/SAML2CryptoTransient" />
+        <ref bean="SubjectC14NFlow/SAML1Transient" /> 
+        <ref bean="SubjectC14NFlow/SAML1CryptoTransient" /> 
         
         <!-- Handle a SAML 2 persistent ID, provided a stored strategy is in use. -->
         <!-- <ref bean="SubjectC14NFlow/SAML2/Persistent" /> -->
@@ -116,8 +116,8 @@
         Finally we have beans for decoding arbitrary SAML formats directly. By default, these are turned off,
         having *no* relying parties for which they apply (see shibboleth.DirectNamePredicate below).
         -->
-        <ref bean="SubjectC14NFlow/SAML2/Direct" />
-        <ref bean="SubjectC14NFlow/SAML1/Direct" />
+        <ref bean="SubjectC14NFlow/SAML2Direct" />
+        <ref bean="SubjectC14NFlow/SAML1Direct" />
     </util:list>
     
     <!-- What SAML formats do you want to support direct mapping for? -->
