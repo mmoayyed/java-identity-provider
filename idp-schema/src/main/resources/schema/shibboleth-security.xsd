@@ -21,8 +21,6 @@
             <documentation>
                 Allows credential components to be specified by filesystem path. Keys, Certificates, and CRLs may be
                 PKCS#12, DER, or PEM encoded and may be encrypted or not.
-                
-                This method is deprecated in favor of the X509ResourceBacked type employing a filesystem resource.
             </documentation>
         </annotation>
         <complexContent>
@@ -32,10 +30,7 @@
     
     <complexType name="X509ResourceBacked">
         <annotation>
-            <documentation>
-                Allows credential components to be retrieved via a resource. Keys, Certificates, and CRLs may be
-                PKCS#12, DER, or PEM encoded and may be encrypted or not.
-            </documentation>
+            <documentation>This credential type is not supported by the Shibboleth IdP</documentation>
         </annotation>
         <complexContent>
             <extension base="sec:X509Credential"/>
@@ -96,9 +91,6 @@
             <documentation>
                 Allows credential components to be specified by filesystem path.
                 Keys may be PKCS#12, DER, or PEM encoded and may be encrypted or not.
-                
-                This method is deprecated in favor of the BasicResourceBacked type 
-                employing a filesystem resource.
             </documentation>
         </annotation>
         <complexContent>
@@ -108,10 +100,7 @@
     
     <complexType name="BasicResourceBacked">
         <annotation>
-            <documentation>
-                Allows credential components to be read from resources.
-                Keys may be PKCS#12, DER, or PEM encoded and may be encrypted or not.
-            </documentation>
+            <documentation>This credential type is not supported by the Shibboleth IdP</documentation>
         </annotation>
         <complexContent>
             <extension base="sec:BasicCredential"/>
