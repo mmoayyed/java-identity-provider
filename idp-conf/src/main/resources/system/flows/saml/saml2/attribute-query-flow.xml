@@ -7,79 +7,29 @@
     
     <action-state id="InitializeProfileRequestContext">
         <evaluate expression="InitializeProfileRequestContext" />
+        <evaluate expression="'proceed'" />
+
         <transition on="proceed" to="DecodeMessage" />
     </action-state>
 
-    <!-- This picks up from the parent flow with the transition step or the error step. -->
+    <!-- This picks up from the parent flow. -->
     
     <action-state id="DoProfileWork">
-        <evaluate expression="true" />
-        <transition to="ResolveAttributes" />
-    </action-state>
-
-    <action-state id="HandleError">
-        <evaluate expression="true" />
-        <transition to="InitializeOutboundMessageContextForError" />
-    </action-state>
-
-    <!-- Attribute Resolution -->
-
-    <action-state id="ResolveAttributes">
         <evaluate expression="ResolveAttributes" />
-        <transition on="proceed" to="FilterAttributes" />
-    </action-state>
-
-    <action-state id="FilterAttributes">
         <evaluate expression="FilterAttributes" />
-        <transition on="proceed" to="AddResponseShell" />
-    </action-state>
 
-    <!-- Response Generation -->
-
-    <action-state id="AddResponseShell">
         <evaluate expression="AddResponseShell" />
-        <transition on="proceed" to="AddInResponseToToResponse" />
-    </action-state>
-
-    <action-state id="AddInResponseToToResponse">
         <evaluate expression="AddInResponseToToResponse" />
-        <transition on="proceed" to="AddAttributeStatementToAssertion" />
-    </action-state>
-
-    <!-- Assertion Generation -->
-
-    <action-state id="AddAttributeStatementToAssertion">
+        
         <evaluate expression="AddAttributeStatementToAssertion" />
-        <transition on="proceed" to="CopyNameIDFromRequest" />
-    </action-state>
-
-    <action-state id="CopyNameIDFromRequest">
         <evaluate expression="CopyNameIDFromRequest" />
-        <transition on="proceed" to="AddSubjectConfirmationToSubjects" />
-    </action-state>
-
-    <action-state id="AddSubjectConfirmationToSubjects">
         <evaluate expression="AddSubjectConfirmationToSubjects" />
-        <transition on="proceed" to="AddNotBeforeConditionToAssertions" />
-    </action-state>
-
-    <action-state id="AddNotBeforeConditionToAssertions">
         <evaluate expression="AddNotBeforeConditionToAssertions" />
-        <transition on="proceed" to="AddNotOnOrAfterConditionToAssertions" />
-    </action-state>
-
-    <action-state id="AddNotOnOrAfterConditionToAssertions">
         <evaluate expression="AddNotOnOrAfterConditionToAssertions" />
-        <transition on="proceed" to="AddAudienceRestrictionToAssertions" />
-    </action-state>
-
-    <action-state id="AddAudienceRestrictionToAssertions">
         <evaluate expression="AddAudienceRestrictionToAssertions" />
-        <transition on="proceed" to="SignAssertions" />
-    </action-state>
-
-    <action-state id="SignAssertions">
         <evaluate expression="SignAssertions" />
+        <evaluate expression="'proceed'" />
+        
         <transition on="proceed" to="ReturnToParentFlow" />
     </action-state>
 
@@ -89,26 +39,13 @@
 
     <!-- We need to trap non-proceed transitions in these actions to avoid an infinite loop. -->
 
-    <action-state id="InitializeOutboundMessageContextForError">
+    <action-state id="HandleError">
         <evaluate expression="InitializeOutboundMessageContextForError" />
-        <transition on="proceed" to="Error_AddResponseShell" />
-        <transition to="error" />
-    </action-state>
-
-    <action-state id="Error_AddResponseShell">
         <evaluate expression="AddResponseShell" />
-        <transition on="proceed" to="Error_AddInResponseToToResponse" />
-        <transition to="error" />
-    </action-state>
-
-    <action-state id="Error_AddInResponseToToResponse">
         <evaluate expression="AddInResponseToToResponse" />
-        <transition on="proceed" to="Error_AddStatusToResponse" />
-        <transition to="error" />
-    </action-state>
-    
-    <action-state id="Error_AddStatusToResponse">
         <evaluate expression="AddStatusToResponse" />
+        <evaluate expression="'proceed'" />
+        
         <transition on="proceed" to="CallErrorSubflow" />
         <transition to="error" />
     </action-state>

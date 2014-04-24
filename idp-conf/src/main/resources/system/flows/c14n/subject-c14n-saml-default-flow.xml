@@ -11,6 +11,8 @@
     
     <action-state id="DoCanonicalization">
         <evaluate expression="flowExecutionContext.getActiveSession().getDefinition().getApplicationContext().getBean('Shibboleth.C14N.' + flowExecutionContext.getActiveSession().getDefinition().getId().split('/')[1]).execute(flowRequestContext)" />
+
+        <transition on="success" to="proceed" />
     </action-state>
 
     <bean-import resource="subject-c14n-saml-default-beans.xml" />

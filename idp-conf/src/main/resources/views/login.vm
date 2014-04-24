@@ -17,11 +17,11 @@
 #end
 
 #if ( $authenticationErrorContext && $authenticationErrorContext.getClassifiedErrors().size() > 0 )
-        <p>Classified errors: $encoder.encodeForHTML($authenticationErrorContext.getClassifiedErrors())</p>
+        <p>Classified errors: $encoder.encodeForHTML($authenticationErrorContext.getClassifiedErrors().toString())</p>
 #end
         
 #if ( $authenticationWarningContext && $authenticationWarningContext.getClassifiedWarnings().size() > 0 )
-        <p>Classified warnings: $encoder.encodeForHTML($authenticationWarningContext.getClassifiedWarnings())</p>
+        <p>Classified warnings: $encoder.encodeForHTML($authenticationWarningContext.getClassifiedWarnings().toString())</p>
 #end
         
         <form action="$flowExecutionUrl" method="post">

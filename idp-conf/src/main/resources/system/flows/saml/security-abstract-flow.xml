@@ -13,9 +13,9 @@
     <end-state id="MessageReplay" />
     <end-state id="MessageAuthenticationError" />
 
-    <!-- Default is to turn any event into its own end-state. -->
+    <!-- Default is to turn any error event into its own end-state. -->
     <global-transitions>
-        <transition to="#{currentEvent.id}" />
+        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="#{currentEvent.id}" />
     </global-transitions>
 
 </flow>

@@ -7,11 +7,10 @@
     
     <action-state id="ExtractRemoteUser">
         <evaluate expression="ExtractRemoteUser" />
-        <transition on="proceed" to="ValidateRemoteUser" />
-    </action-state>
-    
-    <action-state id="ValidateRemoteUser">
         <evaluate expression="ValidateRemoteUser" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="proceed" />
     </action-state>
 
     <bean-import resource="remoteuser-authn-beans.xml" />

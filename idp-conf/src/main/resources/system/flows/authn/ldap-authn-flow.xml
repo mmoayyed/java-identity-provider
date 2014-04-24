@@ -7,6 +7,7 @@
 
     <action-state id="ExtractUsernamePasswordFromBasicAuth">
         <evaluate expression="ExtractUsernamePasswordFromBasicAuth" />
+        <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="ValidateUsernamePasswordAgainstLDAP" />
         
@@ -24,18 +25,21 @@
             <evaluate expression="authenticationContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationErrorContext))" result="viewScope.authenticationErrorContext" />
             <evaluate expression="authenticationContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationWarningContext))" result="viewScope.authenticationWarningContext" />
             <evaluate expression="authenticationContext.getSubcontext(T(net.shibboleth.idp.authn.context.LDAPResponseContext))" result="viewScope.ldapResponseContext" />
-            <evaluate expression="T(net.shibboleth.utilities.java.support.code.HTMLEncoder)" result="viewScope.encoder" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="viewScope.encoder" />
         </on-render>
         <transition on="proceed" to="ExtractUsernamePasswordFromFormRequest" />
     </view-state>
     
     <action-state id="ExtractUsernamePasswordFromFormRequest">
         <evaluate expression="ExtractUsernamePasswordFromFormRequest" />
+        <evaluate expression="'proceed'" />
+        
         <transition on="proceed" to="ValidateUsernamePasswordAgainstLDAP" />
     </action-state>
     
     <action-state id="ValidateUsernamePasswordAgainstLDAP" parent="Authentication.Conditions#ValidateUsernamePassword">
         <evaluate expression="ValidateUsernamePasswordAgainstLDAP" />
+        <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="proceed" />
         

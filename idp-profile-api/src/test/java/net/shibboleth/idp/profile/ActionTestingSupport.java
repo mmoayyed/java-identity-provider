@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.profile;
 
-import org.opensaml.profile.action.EventIds;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 
@@ -51,12 +50,12 @@ public class ActionTestingSupport {
     }
 
     /**
-     * Checks that the given event is a proceed event. That is, that the event is not null, that its source is not null,
-     * and that its ID is {@link EventIds#PROCEED_EVENT_ID}.
+     * Checks that the given event is a proceed event.
      * 
      * @param event the event to check
      */
     public static void assertProceedEvent(final Event event) {
-        assertEvent(event, EventIds.PROCEED_EVENT_ID);
+        Assert.assertNull(event);
     }
+    
 }

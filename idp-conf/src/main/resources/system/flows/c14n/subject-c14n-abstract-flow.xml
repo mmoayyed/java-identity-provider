@@ -16,10 +16,10 @@
     <end-state id="NoPotentialFlow" />
     <end-state id="SubjectCanonicalizationError" />
 
-    <!-- Default is to turn any event into its own end-state, except InvalidSubject, which triggers a Reselect. -->
+    <!-- Default is to turn any error event into its own end-state, except InvalidSubject, which triggers a Reselect. -->
     <global-transitions>
         <transition on="InvalidSubject" to="ReselectFlow" />
-        <transition to="#{currentEvent.id}" />
+        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="#{currentEvent.id}" />
     </global-transitions>
 
 </flow>

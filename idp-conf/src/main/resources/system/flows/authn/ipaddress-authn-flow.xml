@@ -5,16 +5,12 @@
 
     <!-- This is a login flow for IP Address-based pseudo-authentication. -->
     
-    <action-state id="ExtractUserAgentAddress">
+    <action-state id="UserAgentAddress">
         <evaluate expression="ExtractUserAgentAddress" />
-        <transition on="proceed" to="ValidateUserAgentAddress" />
-    </action-state>
-    
-    <action-state id="ValidateUserAgentAddress">
         <evaluate expression="ValidateUserAgentAddress" />
+        <evaluate expression="'proceed'" />
         
-        <!--  Example to wire a second validation range in using a differently named bean. -->
-        <!-- <transition on="InvalidCredentials" to="ValidateUserAgentAddress2" /> -->
+        <transition on="proceed" to="proceed" />
     </action-state>
 
     <!-- As a "fall-through" method, remap selected events to select a different flow. -->    

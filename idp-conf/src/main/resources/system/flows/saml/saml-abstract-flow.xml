@@ -5,56 +5,27 @@
 
     <!--  Actions common to most SAML profile flows. -->
 
-    <!-- Preamble / Decode / Configuration Lookup -->
+    <!-- Decode / Configuration Lookup / Request Checking -->
 
     <action-state id="DecodeMessage">
         <evaluate expression="DecodeMessage" />
-        <transition on="proceed" to="CheckMessageVersion" />
-    </action-state>
 
-    <action-state id="CheckMessageVersion">
         <evaluate expression="CheckMessageVersion" />
-        <transition on="proceed" to="SAMLProtocolAndRole" />
-    </action-state>
-
-    <action-state id="SAMLProtocolAndRole">
         <evaluate expression="SAMLProtocolAndRole" />
-        <transition on="proceed" to="SAMLMetadataLookup" />
-    </action-state>
-
-    <action-state id="SAMLMetadataLookup">
         <evaluate expression="SAMLMetadataLookup" />
-        <transition on="proceed" to="InitializeRelyingPartyContexFromSAMLPeer" />
-    </action-state>
 
-    <action-state id="InitializeRelyingPartyContexFromSAMLPeer">
         <evaluate expression="InitializeRelyingPartyContexFromSAMLPeer" />
-        <transition on="proceed" to="SelectRelyingPartyConfiguration" />
-    </action-state>
-
-    <action-state id="SelectRelyingPartyConfiguration">
         <evaluate expression="SelectRelyingPartyConfiguration" />
-        <transition on="proceed" to="SelectProfileConfiguration" />
-    </action-state>
-
-    <action-state id="SelectProfileConfiguration">
         <evaluate expression="SelectProfileConfiguration" />
-        <transition on="proceed" to="PopulateSignatureValidationParameters" />
-    </action-state>
 
-    <action-state id="PopulateSignatureValidationParameters">
         <evaluate expression="PopulateSignatureValidationParameters" />
-        <transition on="proceed" to="CheckForInboundSubflow" />
-    </action-state>
-    
-    <!-- Request Checking and Preliminaries -->
-
-    <action-state id="CheckForInboundSubflow">
         <evaluate expression="CheckForInboundSubflow" />
+
+        <evaluate expression="'proceed'" />
         
         <!-- proceed indicates no flow to call -->
-        <transition on="proceed" to="InitializeOutboundMessageContext" />
-        
+        <transition on="proceed" to="OutboundContexts" />
+
         <!-- Handle possible errors. -->
         <transition on="#{currentEvent.id.startsWith('Invalid')}" to="SavePreviousEventAsError" />
         
@@ -63,36 +34,27 @@
     </action-state>
     
     <subflow-state id="CallInboundSubflow" subflow="#{currentEvent.id}">
-        <transition on="proceed" to="InitializeOutboundMessageContext" />
+        <transition on="proceed" to="OutboundContexts" />
     </subflow-state>
 
-    <action-state id="InitializeOutboundMessageContext">
+    <action-state id="OutboundContexts">
         <evaluate expression="InitializeOutboundMessageContext" />
-        <transition on="proceed" to="PopulateBindingAndEndpointContexts" />
-    </action-state>
-    
-    <action-state id="PopulateBindingAndEndpointContexts">
         <evaluate expression="PopulateBindingAndEndpointContexts" />
-        <transition on="proceed" to="PopulateDecryptionParameters" />
+        <evaluate expression="'proceed'" />
+
+        <transition on="proceed" to="ExtractSubject" />
     </action-state>
 
     <!-- Pull SAML Subject if present and turn it into a principal name. -->
 
-    <action-state id="PopulateDecryptionParameters">
+    <action-state id="ExtractSubject">
         <evaluate expression="PopulateDecryptionParameters" />
-        <transition on="proceed" to="DecryptNameIDs" />
-    </action-state>
-    
-    <action-state id="DecryptNameIDs">
         <evaluate expression="DecryptNameIDs" />
-        <transition on="proceed" to="ExtractSubjectFromRequest" />
-    </action-state>
-
-    <action-state id="ExtractSubjectFromRequest">
         <evaluate expression="ExtractSubjectFromRequest" />
+        <evaluate expression="'proceed'" />
         
         <!-- No subject to operate on, so just skip back to the profile. -->
-        <transition on="NoSubject" to="PopulateResponseSignatureSigningParameters" />
+        <transition on="NoSubject" to="PopulateSecurityParameters" />
         
         <transition on="proceed" to="CallSubjectCanonicalization" />
     </action-state>
@@ -103,21 +65,17 @@
     
     <action-state id="FinalizeSAMLSubjectCanonicalization">
         <evaluate expression="FinalizeSAMLSubjectCanonicalization" />
-        <transition on="proceed" to="PopulateResponseSignatureSigningParameters" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="PopulateSecurityParameters" />
     </action-state>
 
-    <action-state id="PopulateResponseSignatureSigningParameters">
+    <action-state id="PopulateSecurityParameters">
         <evaluate expression="PopulateResponseSignatureSigningParameters" />
-        <transition on="proceed" to="PopulateAssertionSignatureSigningParameters" />
-    </action-state>
-    
-    <action-state id="PopulateAssertionSignatureSigningParameters">
         <evaluate expression="PopulateAssertionSignatureSigningParameters" />
-        <transition on="proceed" to="PopulateEncryptionParameters" />
-    </action-state>
-
-    <action-state id="PopulateEncryptionParameters">
         <evaluate expression="PopulateEncryptionParameters" />
+        <evaluate expression="'proceed'" />
+        
         <transition on="proceed" to="DoProfileWork" />
         <!-- TODO: remove once encryption stuff is tested/working -->
         <transition on="InvalidSecurityConfiguration" to="DoProfileWork" />
@@ -138,6 +96,8 @@
     <action-state id="ReturnToParentFlow">
         <evaluate expression="CheckForOutboundSubflow" />
         
+        <evaluate expression="'proceed'" />
+
         <!-- proceed indicates no flow to call -->
         <transition on="proceed" to="HandleOutboundMessage" />
         
@@ -155,18 +115,10 @@
 
     <action-state id="HandleOutboundMessage">
         <evaluate expression="HandleOutboundMessage" />
-        <transition on="proceed" to="EncodeMessage" />
-        <transition to="error" />
-    </action-state>
-
-    <action-state id="EncodeMessage">
         <evaluate expression="EncodeMessage" />
-        <transition on="proceed" to="RecordResponseComplete" />
-        <transition to="error" />
-    </action-state>
-
-    <action-state id="RecordResponseComplete">
         <evaluate expression="RecordResponseComplete" />
+        <evaluate expression="'proceed'" />
+        
         <transition on="proceed" to="end" />
         <transition to="error" />
     </action-state>
@@ -179,24 +131,19 @@
             value="flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext')" />
     </end-state>
 
-    <!-- Handle errors by preserving state and transitioning to an action defined below us.  -->
-
-    <action-state id="SavePreviousEventAsError">
-        <evaluate expression="SavePreviousEventAsError" />
-        <transition on="proceed" to="HandleError" />
-    </action-state>
+    <!-- Handle errors by transitioning to an action defined below us.  -->
 
     <end-state id="error" view="error">
         <on-entry>
             <evaluate expression="flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext')" result="requestScope.profileRequestContext" />
             <evaluate expression="profileRequestContext.getSubcontext(T(org.opensaml.profile.context.ErrorEventContext))" result="requestScope.errorEventContext" />
-            <evaluate expression="T(net.shibboleth.utilities.java.support.code.HTMLEncoder)" result="requestScope.encoder" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
         </on-entry>
     </end-state>
 
-    <!-- Default is to turn any event into an error, preserve it, and initiate error handling sequence. -->
+    <!-- Default is to turn non-proceed events into an error, preserve it, and initiate error handling sequence. -->
     <global-transitions>
-        <transition to="SavePreviousEventAsError" />
+        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="HandleError" />
     </global-transitions>
 
     <!-- The import references the parent folder because the abstract flow is used only from one level down. -->

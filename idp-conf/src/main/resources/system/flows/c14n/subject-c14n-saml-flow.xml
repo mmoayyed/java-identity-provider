@@ -11,6 +11,8 @@
     
     <action-state id="PopulateSubjectCanonicalizationContext">
         <evaluate expression="PopulateSubjectCanonicalizationContext" />
+        <evaluate expression="'proceed'" />
+        
         <transition on="proceed" to="SelectSubjectCanonicalizationFlow" />
     </action-state>
     
@@ -33,6 +35,7 @@
     except for a ReselectFlow signal to loop back up and try another.
     -->
     <subflow-state id="CallSubjectCanonicalizationFlow" subflow="#{currentEvent.id}">
+        <transition on="proceed" to="proceed" />
         <transition on="ReselectFlow" to="SelectSubjectCanonicalizationFlow" />
     </subflow-state>
 

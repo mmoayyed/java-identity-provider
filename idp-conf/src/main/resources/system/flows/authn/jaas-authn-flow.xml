@@ -7,6 +7,8 @@
 
     <action-state id="ExtractUsernamePasswordFromBasicAuth">
         <evaluate expression="ExtractUsernamePasswordFromBasicAuth" />
+        <evaluate expression="'proceed'" />
+        
         
         <transition on="proceed" to="ValidateUsernamePasswordAgainstJAAS" />
         
@@ -22,18 +24,21 @@
             <evaluate expression="flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext')" result="viewScope.profileRequestContext" />
             <evaluate expression="profileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext))" result="viewScope.authenticationContext" />
             <evaluate expression="authenticationContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationErrorContext))" result="viewScope.authenticationErrorContext" />
-            <evaluate expression="T(net.shibboleth.utilities.java.support.code.HTMLEncoder)" result="viewScope.encoder" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="viewScope.encoder" />
         </on-render>
         <transition on="proceed" to="ExtractUsernamePasswordFromFormRequest" />
     </view-state>
     
     <action-state id="ExtractUsernamePasswordFromFormRequest">
         <evaluate expression="ExtractUsernamePasswordFromFormRequest" />
+        <evaluate expression="'proceed'" />
+        
         <transition on="proceed" to="ValidateUsernamePasswordAgainstJAAS" />
     </action-state>
     
     <action-state id="ValidateUsernamePasswordAgainstJAAS" parent="Authentication.Conditions#ValidateUsernamePassword">
         <evaluate expression="ValidateUsernamePasswordAgainstJAAS" />
+        <evaluate expression="'proceed'" />
 
         <transition on="proceed" to="proceed" />
         

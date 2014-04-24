@@ -13,11 +13,11 @@
         
         <transition on="InvalidPassword" to="CallExpiredPassword" />
         
-        <transition on="#{true}" to="DisplayUsernamePasswordPage" />
+        <transition to="DisplayUsernamePasswordPage" />
     </action-state>
 
     <subflow-state id="CallExpiringPassword" subflow="Authentication.ExpiringPassword">
-        <transition on="proceed" to="CallSubjectCanonicalization" />
+        <transition on="proceed" to="proceed" />
     </subflow-state>
 
     <subflow-state id="CallExpiredPassword" subflow="Authentication.ExpiredPassword">

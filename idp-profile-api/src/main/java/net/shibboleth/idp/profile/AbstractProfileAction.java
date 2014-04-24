@@ -160,7 +160,7 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
     }
     
     /**
-     * Examines the profile context for an event to return, or signals a "proceed" event if
+     * Examines the profile context for an event to return, or signals a successful outcome if
      * no {@link EventContext} is located; the EventContext will be removed upon completion.
      * 
      * <p>The EventContext must contain a Spring Web Flow {@link Event} or a {@link String}.
@@ -185,13 +185,11 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
             } else if (event instanceof AttributeMap) {
                 final AttributeMap map = (AttributeMap) eventCtx.getEvent();
                 return ActionSupport.buildEvent(action, map.getString("eventId", EventIds.PROCEED_EVENT_ID), map); 
-            } else {
-                return null;
             }
-        } else {
-            // Assume the result is to proceed.
-            return ActionSupport.buildProceedEvent(action);
         }
+        
+        // A null value can be used to implicitly continue evaluating an action-state until the last step.
+        return null;
     }
 
     /** {@inheritDoc} */

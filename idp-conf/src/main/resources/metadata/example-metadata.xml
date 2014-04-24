@@ -58,7 +58,7 @@ wJUl9NY7VG+HjvHrr6xeiDAq0g==
         <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="http://localhost/sp/SAML2/POST/ACS" index="3"/>
         <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="http://localhost:8080/sp/SAML2/POST/ACS" index="4"/>
         
-        <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:1.0:profiles:browser-post" Location="https://sp.example.org/SAML1/POST/ACS" index="10"/>
+        <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:1.0:profiles:browser-post" Location="https://localhost:8443/sp/SAML1/POST/ACS" index="10"/>
         
     </SPSSODescriptor>
 </EntityDescriptor>

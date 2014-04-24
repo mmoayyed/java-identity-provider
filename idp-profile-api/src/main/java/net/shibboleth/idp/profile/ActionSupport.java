@@ -18,11 +18,11 @@
 package net.shibboleth.idp.profile;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.profile.action.EventIds;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.execution.Event;
 
@@ -35,14 +35,14 @@ public final class ActionSupport {
     }
 
     /**
-     * Builds a {@link EventIds#PROCEED_EVENT_ID} event with no related attributes.
+     * Signals a successful outcome by an action.
      * 
      * @param source the source of the event
      * 
-     * @return the proceed event
+     * @return the proceed event (which may be null, based on implementation details)
      */
-    @Nonnull public static Event buildProceedEvent(@Nonnull final Object source) {
-        return buildEvent(source, EventIds.PROCEED_EVENT_ID);
+    @Nullable public static Event buildProceedEvent(@Nonnull final Object source) {
+        return null;
     }
 
     /**

@@ -22,7 +22,7 @@
 
     <!-- Default is to turn any event into its own end-state. -->
     <global-transitions>
-        <transition to="#{currentEvent.id}" />
+        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="#{currentEvent.id}" />
     </global-transitions>
 
 </flow>
