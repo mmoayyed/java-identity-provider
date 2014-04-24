@@ -69,6 +69,7 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
         }
         final QName qName = DomTypeSupport.getXSIType(resources.get(0));
         if (null == qName) {
+            log.error("No type specified for a <Resource> within a ResourceBackedMetadataProvider");
             throw new BeanCreationException(
                     "No type specified for a <Resource> within a ResourceBackedMetadataProvider");
         }
@@ -86,6 +87,7 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
             return FilesystemMetadataResolver.class;
         }
 
+        log.error("ResourceBackedMetadataProvider : Unrecognised resource type: {} ", qName.getLocalPart());
         throw new BeanCreationException("ResourceBackedMetadataProvider : Unrecognised resource type: "
                 + qName.getLocalPart());
     }
@@ -96,6 +98,8 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
 
         final List<Element> resources = ElementSupport.getChildElements(element, RESOURCES_NAME);
         if (resources.size() != 1) {
+            log.error("{}: Only one Resource may be supplied to a ResourceBackedMetadataProvider", parserContext
+                    .getReaderContext().getResource().getDescription());
             throw new BeanDefinitionParsingException(new Problem(
                     "Only one Resource may be supplied to a ResourceBackedMetadataProvider", new Location(parserContext
                             .getReaderContext().getResource())));

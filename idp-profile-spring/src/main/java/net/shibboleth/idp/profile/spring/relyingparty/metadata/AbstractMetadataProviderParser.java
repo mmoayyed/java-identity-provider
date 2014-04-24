@@ -85,16 +85,22 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
         }
 
         if (element.hasAttributeNS(null, "maxCacheDuration")) {
+            log.error("{}: maxCacheDuration is not supported", parserContext.getReaderContext().getResource()
+                    .getDescription());
             throw new BeanDefinitionParsingException(new Problem("maxCacheDuration is not supported", new Location(
                     parserContext.getReaderContext().getResource())));
         }
 
         if (element.hasAttributeNS(null, "cacheDuration")) {
+            log.error("{}: cacheDuration is not supported", parserContext.getReaderContext().getResource()
+                    .getDescription());
             throw new BeanDefinitionParsingException(new Problem("cacheDuration is not supported", new Location(
                     parserContext.getReaderContext().getResource())));
         }
 
         if (element.hasAttributeNS(null, "maintainExpiredMetadata")) {
+            log.error("{}: maintainExpiredMetadata is not supported", parserContext.getReaderContext().getResource()
+                    .getDescription());
             throw new BeanDefinitionParsingException(new Problem("maintainExpiredMetadata is not supported",
                     new Location(parserContext.getReaderContext().getResource())));
         }

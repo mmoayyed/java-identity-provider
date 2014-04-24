@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
@@ -50,33 +51,40 @@ public abstract class AbstractBasicCredentialParser extends AbstractCredentialPa
     public static final QName SECRET_KEY_ELEMENT_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "SecretKey");
 
     /** log. */
-    private Logger log = LoggerFactory.getLogger(AbstractBasicCredentialParser.class);
+    private final Logger log = LoggerFactory.getLogger(AbstractBasicCredentialParser.class);
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, BeanDefinitionBuilder builder) {
-        super.doParse(element, builder);
-        parsePrivateKey(ElementSupport.getChildElements(element, PRIVATE_KEY_ELEMENT_NAME), builder);
-        parsePublicKey(ElementSupport.getChildElements(element, PUBLIC_KEY_ELEMENT_NAME), builder);
-        parseSecretKey(ElementSupport.getChildElements(element, SECRET_KEY_ELEMENT_NAME), builder);
+    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(element, parserContext, builder);
+        builder.addPropertyValue("configFile", parserContext.getReaderContext().getResource().getDescription());
+        
+        parsePrivateKey(ElementSupport.getChildElements(element, PRIVATE_KEY_ELEMENT_NAME), parserContext, builder);
+        parsePublicKey(ElementSupport.getChildElements(element, PUBLIC_KEY_ELEMENT_NAME), parserContext, builder);
+        parseSecretKey(ElementSupport.getChildElements(element, SECRET_KEY_ELEMENT_NAME), parserContext, builder);
     }
 
     /**
      * Parse the &lt;PrivateKey&gt; element.
      * 
      * @param childElements the elements containing the private key, may be null or empty.
-     * @param builder the builder
+     * @param parserContext used for logging.
+     * @param builder the builder.
      */
-    private void parsePrivateKey(@Nullable final List<Element> childElements,
+    private void parsePrivateKey(@Nullable final List<Element> childElements, ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         if (null == childElements || childElements.isEmpty()) {
             return;
         }
         if (childElements.size() > 1) {
+            log.error("{}: More than one <PrivateKey> Elements present.", parserContext.getReaderContext()
+                    .getResource().getDescription());
             throw new BeanCreationException("More than one <PrivateKey> Elements present.");
         }
         final Element key = childElements.get(0);
         final String value = StringSupport.trimOrNull(key.getTextContent());
         if (null == value) {
+            log.error("{}: <PrivateKey> Must contain text.", parserContext.getReaderContext().getResource()
+                    .getDescription());
             throw new BeanCreationException("<PrivateKey> Must contain text.");
         }
         log.debug("Found a private key <Supressed>");
@@ -88,19 +96,24 @@ public abstract class AbstractBasicCredentialParser extends AbstractCredentialPa
      * Parse the &lt;PublicKey&gt; elements.
      * 
      * @param childElements the elements containing the public key, must have exactly one element
+     * @param parserContext used for logging.
      * @param builder the builder
      */
-    private void parsePublicKey(@Nullable final List<Element> childElements,
+    private void parsePublicKey(@Nullable final List<Element> childElements, ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         if (null == childElements || childElements.isEmpty()) {
-            throw new BeanCreationException("A <PublicKey> Element should be present.");
+            return;
         }
         if (childElements.size() > 1) {
-            throw new BeanCreationException("More than one <PublicKey> Elements present.");
+            log.error("{}: More than one <PublicKey> elements present.", parserContext.getReaderContext().getResource()
+                    .getDescription());
+            throw new BeanCreationException("More than one <PublicKey> elements present.");
         }
         final Element key = childElements.get(0);
         final String value = StringSupport.trimOrNull(key.getTextContent());
         if (null == value) {
+            log.error("{}: <PublicKey> Must contain text.", parserContext.getReaderContext().getResource()
+                    .getDescription());
             throw new BeanCreationException("<PublicKey> Must contain text.");
         }
         log.debug("Found a public key {}", value);
@@ -115,20 +128,25 @@ public abstract class AbstractBasicCredentialParser extends AbstractCredentialPa
      * Parse the &lt;SecretKey&gt; element.
      * 
      * @param childElements the elements containing the private key, may be null or empty.
+     * @param parserContext used for logging.
      * @param builder the builder
      */
-    private void parseSecretKey(@Nullable final List<Element> childElements,
+    private void parseSecretKey(@Nullable final List<Element> childElements, ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         if (null == childElements || childElements.isEmpty()) {
             return;
         }
         if (childElements.size() > 1) {
+            log.error("{}: More than one <SecretKey> Elements present.", parserContext.getReaderContext().getResource()
+                    .getDescription());
             throw new BeanCreationException("More than one <SecretKey> Elements present.");
         }
         log.warn("<SecretKey> is not supported");
         final Element key = childElements.get(0);
         final String value = StringSupport.trimOrNull(key.getTextContent());
         if (null == value) {
+            log.error("{}: <SecretKey> Must contain text.", parserContext.getReaderContext().getResource()
+                    .getDescription());
             throw new BeanCreationException("<SecretKey> Must contain text.");
         }
         log.debug("Found a secret key <Supressed>");

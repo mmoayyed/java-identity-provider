@@ -42,7 +42,10 @@ public abstract class AbstractCredentialFactoryBean<T extends Credential> extend
     
     /** The privateKey Password (if any). */
     @Nullable private char[] privateKeyPassword;
-    
+
+    /** For logging: The config file.*/
+    private String configFile;
+   
     /**
      * Gets the names for the key represented by the credential.
      * 
@@ -113,6 +116,20 @@ public abstract class AbstractCredentialFactoryBean<T extends Credential> extend
      */
     public void setPrivateKeyPassword(@Nullable char[] password) {
         privateKeyPassword = password;
+    }
+
+    /** For logging, get the file that defined this bean.
+     * @return Returns the configFile.
+     */
+    public String getConfigFile() {
+        return configFile;
+    }
+
+    /** For logging, set the file that defined this bean.
+     * @param file The configFile to set.
+     */
+    public void setConfigFile(String file) {
+        configFile = file;
     }
 
 }

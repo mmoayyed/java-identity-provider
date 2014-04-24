@@ -35,12 +35,17 @@ import net.shibboleth.utilities.java.support.collection.LazyList;
 
 import org.opensaml.security.crypto.KeySupport;
 import org.opensaml.security.x509.X509Support;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.FatalBeanException;
 
 /**
  * A factory bean to understand X509Filesystem credentials.
  */
 public class X509FilesystemCredentialFactoryBean extends AbstractX509CredentialFactoryBean {
+
+    /** log. */
+    private final Logger log = LoggerFactory.getLogger(X509FilesystemCredentialFactoryBean.class);
 
     /** The specification of where the entity File is to be found. */
     private File entityFile;
@@ -99,11 +104,15 @@ public class X509FilesystemCredentialFactoryBean extends AbstractX509CredentialF
         try {
             final Collection<X509Certificate> certs = X509Support.decodeCertificates(entityFile);
             if (certs.size() > 1) {
+                log.error("{}: Configuration element indicated an entityCertificate,"
+                        + " but multiple certificates were decoded", getConfigFile());
                 throw new FatalBeanException("Configuration element indicated an entityCertificate,"
-                        + " but multiple certificates where decoded");
+                        + " but multiple certificates were decoded");
             }
             return certs.iterator().next();
         } catch (CertificateException e) {
+            log.error("{}: {}: Could not decode provided Entity Certificate: {}", getConfigFile(),
+                    entityFile.getAbsolutePath(), e);
             throw new FatalBeanException("Could not decode provided Entity Certificate file "
                     + entityFile.getAbsolutePath(), e);
         }
@@ -116,6 +125,7 @@ public class X509FilesystemCredentialFactoryBean extends AbstractX509CredentialF
             try {
                 certificates.addAll(X509Support.decodeCertificates(f));
             } catch (CertificateException e) {
+                log.error("{}: {}: could not decode CertificateFile: {}", getConfigFile(), f.getAbsolutePath(), e);
                 throw new FatalBeanException("Could not decode provided CertificateFile: " + f.getAbsolutePath(), e);
             }
         }
@@ -130,6 +140,7 @@ public class X509FilesystemCredentialFactoryBean extends AbstractX509CredentialF
         try {
             return KeySupport.decodePrivateKey(privateKeyFile, getPrivateKeyPassword());
         } catch (KeyException e) {
+            log.error("{}: {}: Could not decode KeyFile: {}", getConfigFile(), privateKeyFile.getAbsolutePath(), e);
             throw new FatalBeanException("Could not decode provided KeyFile " + privateKeyFile.getAbsolutePath(), e);
         }
     }
@@ -144,6 +155,7 @@ public class X509FilesystemCredentialFactoryBean extends AbstractX509CredentialF
             try {
                 crls.addAll(X509Support.decodeCRLs(crlFile));
             } catch (CRLException e) {
+                log.error("{}: {}: Could not decode CRL file: {}", getConfigFile(), crlFile.getAbsolutePath(), e);
                 throw new FatalBeanException("Could not decode provided CRL file " + crlFile.getAbsolutePath(), e);
             }
         }

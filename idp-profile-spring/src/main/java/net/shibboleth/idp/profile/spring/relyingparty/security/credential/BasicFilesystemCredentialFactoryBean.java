@@ -28,15 +28,20 @@ import javax.crypto.SecretKey;
 
 import org.cryptacular.util.KeyPairUtil;
 import org.opensaml.security.crypto.KeySupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanCreationException;
 
 import com.google.common.io.Files;
 
 /**
- * Factory bean for BasicFilesystem Credentials. 
+ * Factory bean for BasicFilesystem Credentials.
  */
 public class BasicFilesystemCredentialFactoryBean extends AbstractBasicCredentialFactoryBean {
+
+    /** log. */
+    private final Logger log = LoggerFactory.getLogger(BasicFilesystemCredentialFactoryBean.class);
 
     /** Configured public key Info. */
     @Nullable private File publicKeyInfo;
@@ -52,7 +57,7 @@ public class BasicFilesystemCredentialFactoryBean extends AbstractBasicCredentia
      * 
      * @return Returns the info.
      */
-    @Nullable public File  getPublicKeyInfo() {
+    @Nullable public File getPublicKeyInfo() {
         return publicKeyInfo;
     }
 
@@ -109,6 +114,7 @@ public class BasicFilesystemCredentialFactoryBean extends AbstractBasicCredentia
         try {
             return KeyPairUtil.readPublicKey(getPublicKeyInfo());
         } catch (IOException e) {
+            log.error("{}: Could not decode public key: {}", getConfigFile(), e);
             throw new FatalBeanException("Could not decode public key", e);
         }
     }
@@ -121,18 +127,20 @@ public class BasicFilesystemCredentialFactoryBean extends AbstractBasicCredentia
         try {
             return KeySupport.decodePrivateKey(getPrivateKeyInfo(), getSecretKeyPassword());
         } catch (KeyException e) {
-            throw new BeanCreationException("Could not decode private key", e);
+            log.error("{}: Could not decode private key: {}", e);
+            throw new BeanCreationException("Could not decode private key", getConfigFile(), e);
         }
     }
 
     /** {@inheritDoc} */
     @Override @Nullable protected SecretKey getSecretKey() {
-        if (null ==  getSecretKeyInfo()) {
+        if (null == getSecretKeyInfo()) {
             return null;
         }
         try {
             return KeySupport.decodeSecretKey(Files.toByteArray(getSecretKeyInfo()), getSecretKeyPassword());
         } catch (KeyException | IOException e) {
+            log.error("{} Could not decode secret key: {}", getConfigFile(), e);
             throw new BeanCreationException("Could not decode secret key", e);
         }
     }

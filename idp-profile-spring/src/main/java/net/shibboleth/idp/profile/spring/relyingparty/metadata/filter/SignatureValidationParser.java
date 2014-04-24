@@ -36,11 +36,14 @@ import org.opensaml.xmlsec.keyinfo.impl.provider.DSAKeyValueProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.InlineX509DataProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
@@ -54,33 +57,44 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
     /** Element for embedded public keys. */
     public static final QName PUBLIC_KEY = new QName(MetadataNamespaceHandler.NAMESPACE, "PublicKey");
 
+    /** Logger. */
+    private final Logger log = LoggerFactory.getLogger(SignatureValidationParser.class);
+
     /** {@inheritDoc} */
     @Override protected Class getBeanClass(Element element) {
         return SignatureValidationFilter.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         final boolean hasEngineRef = element.hasAttributeNS(null, "trustEngineRef");
         final boolean hasCertFile = element.hasAttributeNS(null, "certificateFile");
         final List<Element> publicKeys = ElementSupport.getChildElements(element, PUBLIC_KEY);
 
+        super.doParse(element, parserContext, builder);
+
         if (hasEngineRef) {
             if (hasCertFile) {
+                log.error("{}: trustEngineRef and certificateFile are mutually exlusive", parserContext
+                        .getReaderContext().getResource().getDescription());
                 throw new BeanCreationException("trustEngineRef and certificateFile are mutually exlusive");
             }
             if (null != publicKeys && !publicKeys.isEmpty()) {
+                log.error("{}: trustEngineRef and certificateFile are mutually exlusive", parserContext
+                        .getReaderContext().getResource().getDescription());
                 throw new BeanCreationException("trustEngineRef and embedded public keys are mutually exlusive");
             }
             builder.addConstructorArgReference(StringSupport.trimOrNull(element.getAttributeNS(null, 
-                    "trustEngineRef")));
+                "trustEngineRef")));
         } else if (hasCertFile) {
             if (null != publicKeys && !publicKeys.isEmpty()) {
+                log.error("{}: certificateFile and embedded public keys are mutually exlusive", parserContext
+                        .getReaderContext().getResource().getDescription());
                 throw new BeanCreationException("certificateFile and embedded public keys are mutually exlusive");
             }
             buildTrustEngine(builder, buildCertificateCredential(element.getAttributeNS(null, "certificateFile")));
         } else {
-            buildTrustEngine(builder, buildPublicKeyCredential(publicKeys));
+            buildTrustEngine(builder, buildPublicKeyCredential(parserContext, publicKeys));
         }
 
         if (element.hasAttributeNS(null, "requireSignedMetadata")) {
@@ -102,7 +116,7 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
                 BeanDefinitionBuilder.genericBeanDefinition(StaticCredentialResolver.class);
         // Casting a singleton to a list
         resolver.addConstructorArgValue(credential);
-        
+
         trustEngineBuilder.addConstructorArgValue(resolver.getBeanDefinition());
 
         List<KeyInfoProvider> keyInfoProviders = new ArrayList<KeyInfoProvider>();
@@ -116,15 +130,22 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
 
     /**
      * Build (the definition) for a BasicInline Credential.
+     * 
+     * @param parserContext used for logging
      * @param publicKeys the list of &lt;PublicKey&gt; elements
      * @return the definition.
      */
-    private BeanDefinition buildPublicKeyCredential(List<Element> publicKeys) {
+    private BeanDefinition buildPublicKeyCredential(ParserContext parserContext, List<Element> publicKeys) {
         if (null == publicKeys || publicKeys.isEmpty()) {
+            log.error("{}: SignatureValidation filter must have a 'trustEngineRef' attribute"
+                    + ", a 'certificateFile' attribute or <PublicKey> elements", parserContext.getReaderContext()
+                    .getResource().getDescription());
             throw new BeanCreationException("SignatureValidation filter must have a 'trustEngineRef' attribute"
                     + ", a 'certificateFile' attribute or <PublicKey> elements");
         }
         if (publicKeys.size() > 1) {
+            log.error("{}: Only one <PublicKey> element may be specified", parserContext.getReaderContext()
+                    .getResource().getDescription());
             throw new BeanCreationException("Only one <PublicKey> element may be specified");
         }
 
@@ -133,6 +154,8 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
 
         final String keyAsString = StringSupport.trimOrNull(publicKeys.get(0).getTextContent());
         if (null == keyAsString) {
+            log.error("{}: <PublicKey> must contain the public key", parserContext.getReaderContext().getResource()
+                    .getDescription());
             throw new BeanCreationException("<PublicKey> must contain the public key");
         }
 

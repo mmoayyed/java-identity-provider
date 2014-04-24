@@ -24,6 +24,8 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.parsing.BeanDefinitionParsingException;
 import org.springframework.beans.factory.parsing.Location;
 import org.springframework.beans.factory.parsing.Problem;
@@ -51,17 +53,20 @@ public class ResourceNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** The schema type for a file backed HTTP Resource. */
     public static final QName FILE_HTTP_ELEMENT_NAME = new QName(NAMESPACE, "FileBackedHttpResource");
+    
+    /** Logger. */
+    private static final Logger LOG = LoggerFactory.getLogger(ResourceNamespaceHandler.class);
 
     /** {@inheritDoc} */
-    @Override
-    public void init() {
+    @Override public void init() {
         // Relying party Configuration
         registerBeanDefinitionParser(ClasspathResourceParser.ELEMENT_NAME, new ClasspathResourceParser());
         registerBeanDefinitionParser(SVNResourceParser.ELEMENT_NAME, new SVNResourceParser());
     }
 
-
-    /** Check that there are no filters on the resource.
+    /**
+     * Check that there are no filters on the resource.
+     * 
      * @param resourceElement the element to look at
      * @param readerContext the reader context
      * @throws BeanDefinitionParsingException if we encounter a filter
@@ -72,6 +77,7 @@ public class ResourceNamespaceHandler extends BaseSpringNamespaceHandler {
         if (null == filters || filters.isEmpty()) {
             return;
         }
+        LOG.error("{}: Resource filters are not supported", readerContext.getResource().getDescription());
         throw new BeanDefinitionParsingException(new Problem("Resource filters are not supported", new Location(
                 readerContext.getResource())));
     }

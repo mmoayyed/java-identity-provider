@@ -25,11 +25,14 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.ResourceBackedMetadataProviderParser;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 import org.opensaml.security.credential.UsageType;
 import org.opensaml.security.crypto.KeySupport;
 import org.opensaml.security.x509.BasicX509Credential;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 
 /**
@@ -37,12 +40,16 @@ import org.springframework.beans.factory.BeanCreationException;
  */
 public abstract class AbstractX509CredentialFactoryBean extends AbstractCredentialFactoryBean<BasicX509Credential> {
 
+    /** Log. */
+    private final Logger log = LoggerFactory.getLogger(ResourceBackedMetadataProviderParser.class);
+
     /** {@inheritDoc} */
     // Checkstyle: CyclomaticComplexity OFF
     @Override protected BasicX509Credential createInstance() throws Exception {
 
         final List<X509Certificate> certificates = getCertificates();
         if (null == certificates || certificates.isEmpty()) {
+            log.error("{}: No Certificates provided", getConfigFile());
             throw new BeanCreationException("No Certificates provided");
         }
 
@@ -60,6 +67,7 @@ public abstract class AbstractX509CredentialFactoryBean extends AbstractCredenti
             credential = new BasicX509Credential(entityCertificate, privateKey);
 
             if (!KeySupport.matchKeyPair(entityCertificate.getPublicKey(), privateKey)) {
+                log.error("{}: Public and private keys do not match", getConfigFile());
                 throw new BeanCreationException("Public and private keys do not match");
             }
         }

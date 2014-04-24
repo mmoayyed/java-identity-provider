@@ -23,8 +23,12 @@ import java.security.PublicKey;
 import javax.annotation.Nullable;
 import javax.crypto.SecretKey;
 
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.ResourceBackedMetadataProviderParser;
+
 import org.opensaml.security.credential.BasicCredential;
 import org.opensaml.security.crypto.KeySupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 
 /**
@@ -32,6 +36,9 @@ import org.springframework.beans.factory.BeanCreationException;
  */
 public abstract class AbstractBasicCredentialFactoryBean extends AbstractCredentialFactoryBean<BasicCredential> {
     
+    /** Log. */
+    private final Logger log = LoggerFactory.getLogger(ResourceBackedMetadataProviderParser.class);
+
     /** The secretKey Password (if any). */
     @Nullable private char[] secretKeyPassword;
 
@@ -44,12 +51,14 @@ public abstract class AbstractBasicCredentialFactoryBean extends AbstractCredent
         final BasicCredential credential;
         
         if (null == publicKey) {
+            log.error("{}: No Public Key Specified", getConfigFile());
             throw new BeanCreationException("No Public Key specified");            
         }
         if (null == privateKey) {
             credential = new BasicCredential(publicKey);
         } else {
             if (!KeySupport.matchKeyPair(publicKey, privateKey)) {
+                log.error("{}: Public and private keys do not match", getConfigFile());
                 throw new BeanCreationException("Public and private keys do not match");
             }
             credential = new BasicCredential(publicKey, privateKey);
