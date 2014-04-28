@@ -24,6 +24,7 @@ import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration;
 
+import org.springframework.beans.factory.parsing.BeanDefinitionParsingException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -97,6 +98,13 @@ public class SAML2ECPProfileTest extends BaseSAMLProfileTest {
         Assert.assertEquals(nameIDPrefs.size(), 2);
         Assert.assertTrue(nameIDPrefs.contains("three"));
         Assert.assertTrue(nameIDPrefs.contains("four"));
+    }
 
+    @Test(expectedExceptions = {BeanDefinitionParsingException.class,}) public void localityAddress() {
+        getBean(BrowserSSOProfileConfiguration.class, true, "beans.xml", "saml/ecpLocalityAddress.xml");
+    }
+
+    @Test(expectedExceptions = {BeanDefinitionParsingException.class,}) public void localityDnsname() {
+        getBean(BrowserSSOProfileConfiguration.class, true, "beans.xml", "saml/ecpLocalityDNSName.xml");
     }
 }

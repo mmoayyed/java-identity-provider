@@ -7,9 +7,7 @@
 	nameIDFormatPrecedence="three four"
 	defaultAuthenticationMethod="urn:oasis:names:tc:SAML:2.0:ac:classes:Password">
 	<rp:ProfileConfiguration xsi:type="saml:SAML2ECPProfile"
-		includeAttributeStatement="false" securityPolicyRef="ignore"
-		maximumSPSessionLifetime="1" skipEndpointValidationWhenSigned="true"
-		outboundArtifactType="65437" inboundFlowId="ecpibfid" outboundFlowId="ecpobfid">
+		localityDNSName="ignore">
 	</rp:ProfileConfiguration>
 
 </rp:RelyingParty>

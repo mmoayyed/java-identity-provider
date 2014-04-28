@@ -22,8 +22,6 @@ import java.util.List;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -35,9 +33,6 @@ import org.w3c.dom.Element;
  * from <code>saml:SAML2ProfileConfigutationType</code>.
  */
 public abstract class BaseSAML2ProfileConfigurationParser extends BaseSAMLProfileConfigurationParser {
-
-    /** logger. */
-    private Logger log = LoggerFactory.getLogger(BaseSAML2ProfileConfigurationParser.class);
 
     /**
      * Get the list of proxy audiences from the &lt;ProxyAudience&gt; sub-elements.
@@ -74,13 +69,6 @@ public abstract class BaseSAML2ProfileConfigurationParser extends BaseSAMLProfil
         // default encryptAttributesPredicate
         if (element.hasAttributeNS(null, "assertionProxyCount")) {
             builder.addPropertyValue("proxyCount", element.getAttributeNS(null, "assertionProxyCount"));
-        }
-        if (element.hasAttributeNS(null, "attributeAuthority")) {
-            final String attributeAuthority =
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "attributeAuthority"));
-            if (null != attributeAuthority && !"shibboleth.SAML2AttributeAuthority".equals(attributeAuthority)) {
-                log.warn("Non default value for attributeAuthority of '{}' has been ignored", attributeAuthority);
-            }
         }
         builder.addPropertyValue("proxyAudiences", getProxyAudiences(element));
     }

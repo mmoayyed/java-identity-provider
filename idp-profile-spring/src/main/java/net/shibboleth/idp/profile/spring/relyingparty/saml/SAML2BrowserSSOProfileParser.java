@@ -30,6 +30,9 @@ import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.parsing.BeanDefinitionParsingException;
+import org.springframework.beans.factory.parsing.Location;
+import org.springframework.beans.factory.parsing.Problem;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -119,11 +122,17 @@ public class SAML2BrowserSSOProfileParser extends BaseSAML2ProfileConfigurationP
         super.doParse(element, parserContext, builder);
 
         if (element.hasAttributeNS(null, "localityAddress")) {
-            log.warn("Deprecated attribute 'localityAdress' is being ignored");
+            log.error("Deprecated attribute 'localityAddress' is being ignored");
+            throw new BeanDefinitionParsingException(new Problem(
+                    "Deprecated attribute 'localityAddress' is being ignored", new Location(parserContext
+                            .getReaderContext().getResource())));
         }
 
         if (element.hasAttributeNS(null, "localityDNSName")) {
-            log.warn("Deprecated attribute 'localityDNSName' is being ignored");
+            log.error("Deprecated attribute 'localityDNSName' is being ignored");
+            throw new BeanDefinitionParsingException(new Problem(
+                    "Deprecated attribute 'localityDNSName' is being ignored", new Location(parserContext
+                            .getReaderContext().getResource())));
         }
 
         if (element.hasAttributeNS(null, "includeAttributeStatement")) {
@@ -142,13 +151,6 @@ public class SAML2BrowserSSOProfileParser extends BaseSAML2ProfileConfigurationP
         }
 
         setPropertiesFromRelyingParty(element, builder);
-
-        if (element.hasAttributeNS(null, "securityPolicyRef")) {
-            //TODO
-            log.warn("I do not (yet) know how to deal with 'securityPolicyRef=\"{}\"'",
-                    element.getAttributeNS(null, "securityPolicyRef"));
-        }
-
     }
 
 }

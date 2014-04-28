@@ -21,10 +21,6 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.saml2.profile.config.SingleLogoutProfileConfiguration;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
@@ -36,9 +32,6 @@ public class SAML2LogoutRequestProfileParser extends BaseSAML2ProfileConfigurati
     /** Element name. */
     public static final QName ELEMENT_NAME = new QName(RelyingPartySAMLNamespaceHandler.NAMESPACE,
             "SAML2LogoutRequestProfile");
-
-    /** logger. */
-    private Logger log = LoggerFactory.getLogger(SAML2LogoutRequestProfileParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class<SingleLogoutProfileConfiguration> getBeanClass(Element element) {
@@ -59,16 +52,4 @@ public class SAML2LogoutRequestProfileParser extends BaseSAML2ProfileConfigurati
     @Override protected String getSignAssertionsDefault() {
         return "never";
     }
-
-    /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(element, parserContext, builder);
-
-        if (element.hasAttributeNS(null, "securityPolicyRef")) {
-            //TODO
-            log.warn("I do not (yet) know how to deal with 'securityPolicyRef=\"{}\"'",
-                    element.getAttributeNS(null, "securityPolicyRef"));
-        }
-    }
-
 }

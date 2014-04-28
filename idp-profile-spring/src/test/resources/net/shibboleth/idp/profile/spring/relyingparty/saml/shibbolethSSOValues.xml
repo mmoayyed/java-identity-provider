@@ -7,8 +7,9 @@
 	nameIDFormatPrecedence="three four"
 	defaultAuthenticationMethod="urn:oasis:names:tc:SAML:2.0:ac:classes:Password">
 
-	<rp:ProfileConfiguration xsi:type="saml:ShibbolethSSOProfile" localityAddress="ignore" localityDNSName="ignore" includeAttributeStatement="true" securityPolicyRef="ignore" 
-       outboundArtifactType="765432"     inboundFlowId="shibssoibfid" outboundFlowId="shibssoobfid"
-       />
+	<rp:ProfileConfiguration xsi:type="saml:ShibbolethSSOProfile"
+		includeAttributeStatement="true" securityPolicyRef="ignore"
+		outboundArtifactType="765432" inboundFlowId="shibssoibfid"
+		outboundFlowId="shibssoobfid" />
 </rp:RelyingParty>
 

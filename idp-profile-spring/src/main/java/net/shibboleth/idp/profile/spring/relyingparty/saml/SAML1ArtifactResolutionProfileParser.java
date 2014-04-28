@@ -20,15 +20,11 @@ package net.shibboleth.idp.profile.spring.relyingparty.saml;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.saml1.profile.config.ArtifactResolutionProfileConfiguration;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.w3c.dom.Element;
 
 /**
- Parser to generate {@link ArtifactResolutionProfileConfiguration} from a
+ * Parser to generate {@link ArtifactResolutionProfileConfiguration} from a
  * <code>saml:SAML1ArtifactResolutionProfile</code>.
  */
 public class SAML1ArtifactResolutionProfileParser extends BaseSAMLProfileConfigurationParser {
@@ -37,51 +33,23 @@ public class SAML1ArtifactResolutionProfileParser extends BaseSAMLProfileConfigu
     public static final QName ELEMENT_NAME = new QName(RelyingPartySAMLNamespaceHandler.NAMESPACE,
             "SAML1ArtifactResolutionProfile");
 
-    /** logger. */
-    private Logger log = LoggerFactory.getLogger(SAML1ArtifactResolutionProfileParser.class);
-
     /** {@inheritDoc} */
-    @Override
-    protected Class<ArtifactResolutionProfileConfiguration> getBeanClass(Element element) {
+    @Override protected Class<ArtifactResolutionProfileConfiguration> getBeanClass(Element element) {
         return ArtifactResolutionProfileConfiguration.class;
     }
-    
+
     /** {@inheritDoc} */
     @Override protected String getProfileBeanNamePrefix() {
         return "shibboleth.SAML1.Artifact.";
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected String getSignResponsesDefault() {
+    @Override protected String getSignResponsesDefault() {
         return "conditional";
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected String getSignAssertionsDefault() {
+    @Override protected String getSignAssertionsDefault() {
         return "never";
     }
-    
-    /** {@inheritDoc} */
-    @Override
-    protected void doParse(Element element, BeanDefinitionBuilder builder) {
-        super.doParse(element, builder);
-
-        if (element.hasAttributeNS(null, "attributeAuthority")) {
-            final String attributeAuthority =
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "attributeAuthority"));
-            if (null != attributeAuthority && !"shibboleth.SAML1AttributeAuthority".equals(attributeAuthority)) {
-                log.warn("Non default value for attributeAuthority of '{}' has been ignored", attributeAuthority);
-            }
-        }
-        
-        if (element.hasAttributeNS(null, "securityPolicyRef")) {
-            //TODO
-            log.warn("I do not (yet) know how to deal with 'securityPolicyRef=\"{}\"'",
-                    element.getAttributeNS(null, "securityPolicyRef"));
-        }
-
-    }
-
 }
