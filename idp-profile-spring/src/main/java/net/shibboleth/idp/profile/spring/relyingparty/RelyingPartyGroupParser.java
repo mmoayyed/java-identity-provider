@@ -79,6 +79,11 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
                 SpringSupport.parseCustomElements(configChildren.get(AnonymousRelyingPartyParser.ELEMENT_NAME),
                         parserContext);
         builder.addPropertyValue("anonymousConfiguration", anonRps.get(0));
+        
+        //
+        // The default security is specified in an external bean file.
+        //
+        builder.addPropertyReference("securityConfigurationMap", "shibboleth.default.security.configuration.map");
 
         // Metadata
 
