@@ -22,6 +22,7 @@ import java.util.Collections;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.idp.service.ReloadableService;
@@ -39,12 +40,12 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Sets;
 
 /**
- * Retrieves a per-relying party configuration for a given profile request based on the request context.  The
- * configuration is loaded via the  supplied service.
- *
+ * Retrieves a per-relying party configuration for a given profile request based on the request context. The
+ * configuration is loaded via the supplied service.
+ * 
  * <p>
  * Note that this resolver requires that none of the returned structures do any operations on receipt of
- * {@link #destroy()} since the returned value is not covered by the 
+ * {@link #destroy()} since the returned value is not covered by the
  * </p>
  */
 public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifiableInitializableComponent implements
@@ -56,9 +57,11 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
     /** The service which managed the reloading. */
     private final ReloadableService<RelyingPartyConfigurationResolver> service;
 
-    /** Constructor. 
-    * @param resolverService the service which will manage the loading.
-    */
+    /**
+     * Constructor.
+     * 
+     * @param resolverService the service which will manage the loading.
+     */
     public ReloadingRelyingPartyConfigurationResolver(
             @Nonnull ReloadableService<RelyingPartyConfigurationResolver> resolverService) {
         service = Constraint.isNotNull(resolverService, "RelyingParty Service cannot be null");
@@ -112,4 +115,26 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
         return null;
     }
 
+    /** {@inheritDoc} */
+    @Override public SecurityConfiguration getDefaultSecurityConfiguration(String profileId) {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ServiceableComponent<RelyingPartyConfigurationResolver> component = null;
+        try {
+            component = service.getServiceableComponent();
+            if (null == component) {
+                log.error("RelyingPartyResolver '{}': error looking up default security config:"
+                        + " Invalid configuration.", getId());
+            } else {
+                final RelyingPartyConfigurationResolver resolver = component.getComponent();
+                return resolver.getDefaultSecurityConfiguration(profileId);
+            }
+        } finally {
+            if (null != component) {
+                component.unpinComponent();
+            }
+        }
+        return null;
+    }
 }

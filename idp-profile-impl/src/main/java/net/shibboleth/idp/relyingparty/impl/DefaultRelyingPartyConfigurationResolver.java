@@ -21,10 +21,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.profile.logic.AnonymousProfilePredicate;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
@@ -75,6 +77,9 @@ public class DefaultRelyingPartyConfigurationResolver extends
 
     /** The predicate which decides if this context is "Anonymous". */
     @NonnullAfterInit private Predicate<ProfileRequestContext> isAnonymousPredicate;
+
+    /** The map from profile ID to {@link SecurtyConfiguration}. */
+    @Nonnull private Map<String, SecurityConfiguration> securityConfigurationMap = Collections.EMPTY_MAP;
 
     /** Constructor. */
     public DefaultRelyingPartyConfigurationResolver() {
@@ -162,6 +167,24 @@ public class DefaultRelyingPartyConfigurationResolver extends
         isAnonymousPredicate = predicate;
     }
 
+    /**
+     * Return the map we use to look up default configuration.
+     * 
+     * @return Returns the Map.
+     */
+    @Nonnull public Map<String, SecurityConfiguration> getSecurityConfigurationMap() {
+        return Collections.unmodifiableMap(securityConfigurationMap);
+    }
+
+    /**
+     * Set the map we use to look up default configuration.
+     * 
+     * @param map what to set.
+     */
+    public void setSecurityConfigurationMap(Map<String, SecurityConfiguration> map) {
+        securityConfigurationMap = Constraint.isNotNull(map, "configuration to security map must be non null");
+    }
+
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
@@ -242,15 +265,19 @@ public class DefaultRelyingPartyConfigurationResolver extends
         return getDefaultConfiguration();
     }
 
+    /** {@inheritDoc} */
+    @Override public SecurityConfiguration getDefaultSecurityConfiguration(String profileId) {
+        return securityConfigurationMap.get(profileId);
+    }
+
     /**
-     * {@inheritDoc} This service is an {@link IdentifiableComponent).
+     * {@inheritDoc}. This is an {@link IdentifiableComponent).
      */
     @Override public void setId(@Nonnull String componentId) {
-        // TODO Auto-generated method stub
         super.setId(componentId);
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}. This is service is a {@link net.shibboleth.idp.service.ServiceableComponent}. */
     @Override @Nonnull public RelyingPartyConfigurationResolver getComponent() {
         return this;
     }

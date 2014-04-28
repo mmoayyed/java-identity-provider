@@ -33,7 +33,12 @@ import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataP
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver;
+import net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration;
 import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
+import net.shibboleth.idp.saml.saml1.profile.config.ArtifactResolutionProfileConfiguration;
+import net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration;
+import net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration;
+import net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -139,9 +144,9 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
 
         Assert.assertEquals(metadataProviders.size(), 1);
         RelyingPartyMetadataProvider provider = metadataProviders.iterator().next();
-        
+
         Assert.assertNotNull(provider.resolveSingle(AbstractMetadataParserTest.criteriaFor("http://sp.example.org/")));
-        
+
     }
 
     @Test(enabled = true) public void relyingPartyService() throws ResolverException, FileNotFoundException,
@@ -157,21 +162,20 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
 
         Assert.assertNotNull(resolver.resolveSingle(ctx));
     }
-    
+
     @Test(enabled = true) public void metadataService() throws ResolverException, FileNotFoundException, IOException {
         GenericApplicationContext context = getContext("beans.xml", "services.xml");
-        final Collection<MetadataResolver> resolvers =
-                context.getBeansOfType(MetadataResolver.class).values();
+        final Collection<MetadataResolver> resolvers = context.getBeansOfType(MetadataResolver.class).values();
 
         Assert.assertEquals(resolvers.size(), 1);
-        
-        Assert.assertNotNull(resolvers.iterator().next().resolveSingle(AbstractMetadataParserTest.criteriaFor("http://sp.example.org/")));
-        
+
+        Assert.assertNotNull(resolvers.iterator().next()
+                .resolveSingle(AbstractMetadataParserTest.criteriaFor("http://sp.example.org/")));
+
     }
 
-
     @Test public void relyingParty2() throws FileNotFoundException, IOException {
-        GenericApplicationContext context = getContext("relying-party-group2.xml");
+        GenericApplicationContext context = getContext("relying-party-group2.xml", "beans.xml");
         DefaultRelyingPartyConfigurationResolver resolver =
                 context.getBean(DefaultRelyingPartyConfigurationResolver.class);
 
@@ -197,4 +201,27 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(rp.getId(), "DefaultRelyingParty");
     }
 
+    @Test public void defaults() throws ResolverException, FileNotFoundException, IOException {
+        GenericApplicationContext context = getContext("beans.xml", "relying-party-group.xml");
+
+        DefaultRelyingPartyConfigurationResolver resolver =
+                context.getBean(DefaultRelyingPartyConfigurationResolver.class);
+
+        Assert.assertNotNull(resolver
+                .getDefaultSecurityConfiguration(ArtifactResolutionProfileConfiguration.PROFILE_ID));
+        Assert.assertNotNull(resolver.getDefaultSecurityConfiguration(AttributeQueryProfileConfiguration.PROFILE_ID));
+        Assert.assertNotNull(resolver.getDefaultSecurityConfiguration(BrowserSSOProfileConfiguration.PROFILE_ID));
+
+        Assert.assertNotNull(resolver
+                .getDefaultSecurityConfiguration(net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration.PROFILE_ID));
+        Assert.assertNotNull(resolver
+                .getDefaultSecurityConfiguration(net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration.PROFILE_ID));
+        Assert.assertNotNull(resolver
+                .getDefaultSecurityConfiguration(net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration.PROFILE_ID));
+        Assert.assertNotNull(resolver.getDefaultSecurityConfiguration(ECPProfileConfiguration.PROFILE_ID));
+
+        Assert.assertNotNull(resolver.getDefaultSecurityConfiguration(SSOSProfileConfiguration.PROFILE_ID));
+
+        Assert.assertNull(resolver.getDefaultSecurityConfiguration("foobar"));
+    }
 }

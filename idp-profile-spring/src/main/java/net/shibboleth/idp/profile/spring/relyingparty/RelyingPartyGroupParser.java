@@ -83,7 +83,7 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
         //
         // The default security is specified in an external bean file.
         //
-        //builder.addPropertyReference("securityConfigurationMap", "shibboleth.default.security.configuration.map");
+        builder.addPropertyReference("securityConfigurationMap", "shibboleth.default.security.configuration.map");
 
         // Metadata
 
@@ -109,6 +109,9 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
         }
         
         // TODO Security
+        // <Credential> (for metadata)
+        // <TrustEngine> (for metadata>
+        // <SecurityPolicy> (warn and ignore).
 
     }
 

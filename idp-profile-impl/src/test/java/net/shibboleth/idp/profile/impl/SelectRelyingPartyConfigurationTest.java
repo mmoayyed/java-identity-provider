@@ -23,10 +23,8 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.IdPEventIds;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-
 import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
@@ -35,6 +33,7 @@ import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitial
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
@@ -43,15 +42,14 @@ import org.testng.annotations.Test;
 /** {@link SelectRelyingPartyConfiguration} unit test. */
 public class SelectRelyingPartyConfigurationTest {
 
-    @Test(expectedExceptions = ComponentInitializationException.class)
-    public void testNoResolver() throws ComponentInitializationException {
+    @Test(expectedExceptions = ComponentInitializationException.class) public void testNoResolver()
+            throws ComponentInitializationException {
         final SelectRelyingPartyConfiguration action = new SelectRelyingPartyConfiguration();
         action.initialize();
     }
-    
+
     /** Test that the action errors out properly if there is no relying party context. */
-    @Test
-    public void testNoRelyingPartyContext() throws Exception {
+    @Test public void testNoRelyingPartyContext() throws Exception {
         final RequestContext src = new RequestContextBuilder().buildRequestContext();
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         prc.removeSubcontext(RelyingPartyContext.class);
@@ -68,8 +66,7 @@ public class SelectRelyingPartyConfigurationTest {
     }
 
     /** Test that the action errors out properly if there is no relying party configuration. */
-    @Test
-    public void testNoRelyingPartyConfiguration() throws Exception {
+    @Test public void testNoRelyingPartyConfiguration() throws Exception {
         final RequestContext src = new RequestContextBuilder().buildRequestContext();
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         prc.getSubcontext(RelyingPartyContext.class).setConfiguration(null);
@@ -86,8 +83,7 @@ public class SelectRelyingPartyConfigurationTest {
     }
 
     /** Test that the action errors out properly if the relying party configuration can not be resolved. */
-    @Test
-    public void testUnableToResolveRelyingPartyConfiguration() throws Exception {
+    @Test public void testUnableToResolveRelyingPartyConfiguration() throws Exception {
         final RequestContext src = new RequestContextBuilder().buildRequestContext();
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         prc.getSubcontext(RelyingPartyContext.class).setConfiguration(null);
@@ -110,8 +106,7 @@ public class SelectRelyingPartyConfigurationTest {
     }
 
     /** Test that the action resolves the relying party and proceeds properly. */
-    @Test
-    public void testResolveRelyingPartyConfiguration() throws Exception {
+    @Test public void testResolveRelyingPartyConfiguration() throws Exception {
         final RequestContext src = new RequestContextBuilder().buildRequestContext();
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         prc.getSubcontext(RelyingPartyContext.class).setConfiguration(null);
@@ -163,7 +158,7 @@ public class SelectRelyingPartyConfigurationTest {
         }
 
         /** {@inheritDoc} */
-        public Iterable<RelyingPartyConfiguration> resolve(final ProfileRequestContext context)
+        @Override public Iterable<RelyingPartyConfiguration> resolve(final ProfileRequestContext context)
                 throws ResolverException {
             if (exception != null) {
                 throw exception;
@@ -172,12 +167,18 @@ public class SelectRelyingPartyConfigurationTest {
         }
 
         /** {@inheritDoc} */
-        public RelyingPartyConfiguration resolveSingle(final ProfileRequestContext context) throws ResolverException {
+        @Override public RelyingPartyConfiguration resolveSingle(final ProfileRequestContext context)
+                throws ResolverException {
             if (exception != null) {
                 throw exception;
             }
             return configuration;
         }
+
+        /** {@inheritDoc} */
+        @Override public SecurityConfiguration getDefaultSecurityConfiguration(String profileId) {
+            return null;
+        }
     }
-    
+
 }

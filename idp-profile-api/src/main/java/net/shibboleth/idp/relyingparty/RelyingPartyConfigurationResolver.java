@@ -17,14 +17,23 @@
 
 package net.shibboleth.idp.relyingparty;
 
-import org.opensaml.profile.context.ProfileRequestContext;
-
+import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import net.shibboleth.utilities.java.support.resolver.Resolver;
+
+import org.opensaml.profile.context.ProfileRequestContext;
 
 /** Resolves a {@link RelyingPartyConfiguration} for a given profile request context. */
 public interface RelyingPartyConfigurationResolver extends Resolver<RelyingPartyConfiguration, ProfileRequestContext>,
         IdentifiedComponent, InitializableComponent {
 
+    /**
+     * Return the default security configuration for the profile.
+     * 
+     * @param profileId The profile id (available from
+     *            {@link net.shibboleth.idp.profile.config.ProfileConfiguration#getId()}
+     * @return the configured default configuration.
+     */
+    SecurityConfiguration getDefaultSecurityConfiguration(String profileId);
 }
