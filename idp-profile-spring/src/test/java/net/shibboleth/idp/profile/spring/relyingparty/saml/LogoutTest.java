@@ -30,7 +30,7 @@ public class LogoutTest extends BaseSAMLProfileTest {
 
     @Test public void defaults() {
 
-        SingleLogoutProfileConfiguration profile = getBean(SingleLogoutProfileConfiguration.class, true, "saml/logout.xml");
+        SingleLogoutProfileConfiguration profile = getBean(SingleLogoutProfileConfiguration.class, true, "saml/logout.xml", "beans.xml");
 
         // defaults for AbstractSAML2ProfileConfiguration
 
@@ -47,6 +47,10 @@ public class LogoutTest extends BaseSAMLProfileTest {
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
+        
+        Assert.assertEquals(profile.getInboundSubflowId(), "SecurityPolicy.SAML2Logout");
+        Assert.assertNull(profile.getOutboundSubflowId());
+        
         Assert.assertNull(profile.getArtifactConfiguration());
     }
 
@@ -72,6 +76,10 @@ public class LogoutTest extends BaseSAMLProfileTest {
         Assert.assertEquals(audiences.size(), 0);
 
         Assert.assertTrue(profile.includeConditionsNotBefore());
+
+        Assert.assertEquals(profile.getInboundSubflowId(), "logoutibfid");
+        Assert.assertEquals(profile.getOutboundSubflowId(), "logoutobfid");
+        
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
         Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/Logout");

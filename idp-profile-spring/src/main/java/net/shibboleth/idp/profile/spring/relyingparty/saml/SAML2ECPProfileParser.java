@@ -39,12 +39,8 @@ public class SAML2ECPProfileParser extends SAML2BrowserSSOProfileParser {
     }
 
     /** {@inheritDoc} */
-    @Override protected String getArtifactResolutionServiceURLRef() {
-        return "shibboleth.SAML2.ECP.ServiceURL";
+    @Override protected String getProfileBeanNamePrefix() {
+        return "shibboleth.SAML2.ECP.";
     }
 
-    /** {@inheritDoc} */
-    @Override protected String getArtifactResolutionServiceIndexRef() {
-        return "shibboleth.SAML2.ECP.ServiceIndex";
-    }
 }

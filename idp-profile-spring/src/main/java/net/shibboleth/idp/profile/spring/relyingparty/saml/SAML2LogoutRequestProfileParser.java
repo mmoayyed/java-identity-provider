@@ -46,13 +46,8 @@ public class SAML2LogoutRequestProfileParser extends BaseSAML2ProfileConfigurati
     }
 
     /** {@inheritDoc} */
-    @Override protected String getArtifactResolutionServiceURLRef() {
-        return "shibboleth.SAML2.Logout.ServiceURL";
-    }
-
-    /** {@inheritDoc} */
-    @Override protected String getArtifactResolutionServiceIndexRef() {
-        return "shibboleth.SAML2.Logout.ServiceIndex";
+    @Override protected String getProfileBeanNamePrefix() {
+        return "shibboleth.SAML2.Logout.";
     }
 
     /** {@inheritDoc} */

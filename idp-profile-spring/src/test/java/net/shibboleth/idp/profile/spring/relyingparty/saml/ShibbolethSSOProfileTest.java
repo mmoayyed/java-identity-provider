@@ -30,7 +30,7 @@ public class ShibbolethSSOProfileTest extends BaseSAMLProfileTest {
 
     @Test public void defaults() {
 
-        BrowserSSOProfileConfiguration profile = getBean(BrowserSSOProfileConfiguration.class, true, "saml/shibbolethSSO.xml");
+        BrowserSSOProfileConfiguration profile = getBean(BrowserSSOProfileConfiguration.class, true, "saml/shibbolethSSO.xml", "beans.xml");
 
         Assert.assertFalse(profile.includeAttributeStatement());
 
@@ -41,6 +41,8 @@ public class ShibbolethSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
         Assert.assertNull(profile.getArtifactConfiguration());
+        Assert.assertEquals(profile.getInboundSubflowId(), "SecurityPolicy.ShibbolethSSO");
+        Assert.assertNull(profile.getOutboundSubflowId());
     }
 
     @Test public void values() {
@@ -55,6 +57,8 @@ public class ShibbolethSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
+        Assert.assertEquals(profile.getInboundSubflowId(), "shibssoibfid");
+        Assert.assertEquals(profile.getOutboundSubflowId(), "shibssoobfid");
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
         Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/SSO/SAML1");

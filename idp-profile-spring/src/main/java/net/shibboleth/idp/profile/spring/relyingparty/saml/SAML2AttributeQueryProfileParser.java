@@ -46,13 +46,8 @@ public class SAML2AttributeQueryProfileParser extends BaseSAML2ProfileConfigurat
     }
 
     /** {@inheritDoc} */
-    @Override protected String getArtifactResolutionServiceURLRef() {
-        return "shibboleth.SAML2.AttributeQuery.ServiceURL";
-    }
-
-    /** {@inheritDoc} */
-    @Override protected String getArtifactResolutionServiceIndexRef() {
-        return "shibboleth.SAML2.AttributeQuery.ServiceIndex";
+    @Override protected String getProfileBeanNamePrefix() {
+        return "shibboleth.SAML2.AttributeQuery.";
     }
 
     /** {@inheritDoc} */

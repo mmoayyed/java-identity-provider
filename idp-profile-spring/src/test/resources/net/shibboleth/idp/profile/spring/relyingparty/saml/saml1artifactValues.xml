@@ -9,6 +9,8 @@
     
     assertionLifetime="${prop.tenMins}" includeConditionsNotBefore="${prop.false}" outboundArtifactType="${prop.artifactType}0" 
     signingCredentialRef="credref" signAssertions="${prop.never}" signRequests="never" signResponses="conditional"
+    inboundFlowId="artifactibfid" outboundFlowId="artifactobfid"
+    
 >
     <saml:Audience>${prop.String1}${prop.String1}</saml:Audience>
 </rp:ProfileConfiguration>

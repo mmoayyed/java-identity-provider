@@ -31,7 +31,7 @@ public class SAML2ECPProfileTest extends BaseSAMLProfileTest {
 
     @Test public void defaults() {
 
-        ECPProfileConfiguration profile = getBean(ECPProfileConfiguration.class, true, "saml/ecp.xml");
+        ECPProfileConfiguration profile = getBean(ECPProfileConfiguration.class, true, "saml/ecp.xml", "beans.xml");
 
         Assert.assertTrue(profile.includeAttributeStatement());
         Assert.assertFalse(profile.skipEndpointValidationWhenSigned());
@@ -53,6 +53,8 @@ public class SAML2ECPProfileTest extends BaseSAMLProfileTest {
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
         Assert.assertNull(profile.getArtifactConfiguration());
+        Assert.assertEquals(profile.getInboundSubflowId(), "SecurityPolicy.SAML2ECP");
+        Assert.assertNull(profile.getOutboundSubflowId());
     }
 
     @Test public void values() {
@@ -76,6 +78,8 @@ public class SAML2ECPProfileTest extends BaseSAMLProfileTest {
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
+        Assert.assertEquals(profile.getInboundSubflowId(), "ecpibfid");
+        Assert.assertEquals(profile.getOutboundSubflowId(), "ecpobfid");
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
         Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/ECP");

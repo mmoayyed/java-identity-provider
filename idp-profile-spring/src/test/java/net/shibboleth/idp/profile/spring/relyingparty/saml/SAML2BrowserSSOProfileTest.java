@@ -30,7 +30,7 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
 
     @Test public void defaults() {
 
-        BrowserSSOProfileConfiguration profile = getBean(BrowserSSOProfileConfiguration.class, true, "saml/saml2SSO.xml");
+        BrowserSSOProfileConfiguration profile = getBean(BrowserSSOProfileConfiguration.class, true, "saml/saml2SSO.xml", "beans.xml");
 
         Assert.assertTrue(profile.includeAttributeStatement());
         Assert.assertFalse(profile.skipEndpointValidationWhenSigned());
@@ -52,6 +52,8 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
         Assert.assertNull(profile.getArtifactConfiguration());
+        Assert.assertEquals(profile.getInboundSubflowId(), "SecurityPolicy.SAML2SSO");
+        Assert.assertNull(profile.getOutboundSubflowId());
     }
 
     @Test public void values() {
@@ -76,6 +78,8 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
+        Assert.assertEquals(profile.getInboundSubflowId(), "sso2ibfid");
+        Assert.assertEquals(profile.getOutboundSubflowId(), "sso2obfid");
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
         Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/SSO");

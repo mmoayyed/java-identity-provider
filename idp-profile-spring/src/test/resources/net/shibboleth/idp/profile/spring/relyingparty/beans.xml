@@ -15,41 +15,68 @@
 		(if not already set). -->
 	<bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
-	<!-- The profile defaults. Firstly the artifact parameters -->
+	<!-- The profile defaults. Firstly the artifact and InbouldFlowId parameters -->
 
-	<bean id="shibboleth.SAML2.Artifact.ServiceURL" class="java.lang.String"
+    <!--  SAML2 -->
+	<bean id="shibboleth.SAML2.Artifact.ArtifactServiceURL" class="java.lang.String"
 		c:_0="https://idp.example.org/Artifact" />
-	<bean id="shibboleth.SAML2.Artifact.ServiceIndex" class="java.lang.String"
+	<bean id="shibboleth.SAML2.Artifact.ArtifactServiceIndex" class="java.lang.String"
 		c:_0="4321" />
-	<bean id="shibboleth.SAML2.Logout.ServiceURL" class="java.lang.String"
+    <bean id="shibboleth.SAML2.Artifact.InboundFlowId" class="java.lang.String"
+        c:_0="SecurityPolicy.SAML2ArtifactQuery" /><!-- TODO -->
+		
+	<bean id="shibboleth.SAML2.Logout.ArtifactServiceURL" class="java.lang.String"
 		c:_0="https://idp.example.org/Logout" />
-	<bean id="shibboleth.SAML2.Logout.ServiceIndex" class="java.lang.String"
+	<bean id="shibboleth.SAML2.Logout.ArtifactServiceIndex" class="java.lang.String"
 		c:_0="3214" />
-	<bean id="shibboleth.SAML2.AttributeQuery.ServiceURL" class="java.lang.String"
-		c:_0="https://idp.example.org/AttributeQuery" />
-	<bean id="shibboleth.SAML2.AttributeQuery.ServiceIndex" class="java.lang.String"
-		c:_0="2143" />
-	<bean id="shibboleth.SAML2.BrowserSSO.ServiceURL" class="java.lang.String"
-		c:_0="https://idp.example.org/SSO" />
-	<bean id="shibboleth.SAML2.BrowserSSO.ServiceIndex" class="java.lang.String"
-		c:_0="1111" />
-	<bean id="shibboleth.SAML2.ECP.ServiceURL" class="java.lang.String"
-		c:_0="https://idp.example.org/ECP" />
-	<bean id="shibboleth.SAML2.ECP.ServiceIndex" class="java.lang.String"
-		c:_0="2222" />
+    <bean id="shibboleth.SAML2.Logout.InboundFlowId" class="java.lang.String"
+        c:_0="SecurityPolicy.SAML2Logout" /><!-- TODO -->
 
-	<bean id="shibboleth.SAML1.Artifact.ServiceURL" class="java.lang.String"
-		c:_0="https://idp.example.org/Artifact/SAML1" />
-	<bean id="shibboleth.SAML1.Artifact.ServiceIndex" class="java.lang.String"
-		c:_0="43210" />
-	<bean id="shibboleth.SAML1.AttributeQuery.ServiceURL" class="java.lang.String"
-		c:_0="https://idp.example.org/AttributeQuery/SAML1" />
-	<bean id="shibboleth.SAML1.AttributeQuery.ServiceIndex" class="java.lang.String"
-		c:_0="432100" />
-	<bean id="shibboleth.SAML1.BrowserSSO.ServiceURL" class="java.lang.String"
-		c:_0="https://idp.example.org/SSO/SAML1" />
-	<bean id="shibboleth.SAML1.BrowserSSO.ServiceIndex" class="java.lang.String"
+	<bean id="shibboleth.SAML2.AttributeQuery.ArtifactServiceURL" class="java.lang.String"
+		c:_0="https://idp.example.org/AttributeQuery" />
+	<bean id="shibboleth.SAML2.AttributeQuery.ArtifactServiceIndex" class="java.lang.String"
+		c:_0="2143" />
+    <bean id="shibboleth.SAML2.AttributeQuery.InboundFlowId" class="java.lang.String"
+        c:_0="SecurityPolicy.SAML2AttributeQuery" />
+
+	<bean id="shibboleth.SAML2.BrowserSSO.ArtifactServiceURL" class="java.lang.String"
+		c:_0="https://idp.example.org/SSO" />
+	<bean id="shibboleth.SAML2.BrowserSSO.ArtifactServiceIndex" class="java.lang.String"
 		c:_0="1111" />
+    <bean id="shibboleth.SAML2.BrowserSSO.InboundFlowId" class="java.lang.String"
+        c:_0="SecurityPolicy.SAML2SSO" />
+		
+	<bean id="shibboleth.SAML2.ECP.ArtifactServiceURL" class="java.lang.String"
+		c:_0="https://idp.example.org/ECP" />
+	<bean id="shibboleth.SAML2.ECP.ArtifactServiceIndex" class="java.lang.String"
+		c:_0="2222" />
+    <bean id="shibboleth.SAML2.ECP.InboundFlowId" class="java.lang.String"
+        c:_0="SecurityPolicy.SAML2ECP" />
+
+    <!--  SAML2 - Liberty -->
+
+    <!--  SAML1 -->
+	<bean id="shibboleth.SAML1.Artifact.ArtifactServiceURL" class="java.lang.String"
+		c:_0="https://idp.example.org/Artifact/SAML1" />
+	<bean id="shibboleth.SAML1.Artifact.ArtifactServiceIndex" class="java.lang.String"
+		c:_0="43210" />
+    <bean id="shibboleth.SAML1.Artifact.InboundFlowId" class="java.lang.String"
+        c:_0="SecurityPolicy.SAML1ArtifactQuery" /><!-- TODO -->
+		
+	<bean id="shibboleth.SAML1.AttributeQuery.ArtifactServiceURL" class="java.lang.String"
+		c:_0="https://idp.example.org/AttributeQuery/SAML1" />
+	<bean id="shibboleth.SAML1.AttributeQuery.ArtifactServiceIndex" class="java.lang.String"
+		c:_0="432100" />
+    <bean id="shibboleth.SAML1.AttributeQuery.InboundFlowId" class="java.lang.String"
+        c:_0="SecurityPolicy.SAML1AttributeQuery" />
+		
+	<bean id="shibboleth.SAML1.BrowserSSO.ArtifactServiceURL" class="java.lang.String"
+		c:_0="https://idp.example.org/SSO/SAML1" />
+	<bean id="shibboleth.SAML1.BrowserSSO.ArtifactServiceIndex" class="java.lang.String"
+		c:_0="1111" />
+    <bean id="shibboleth.SAML1.BrowserSSO.InboundFlowId" class="java.lang.String"
+        c:_0="SecurityPolicy.ShibbolethSSO" />
+		
 
 	<!-- And the default security Policy -->
 

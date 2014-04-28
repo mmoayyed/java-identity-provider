@@ -54,13 +54,8 @@ public class ShibbolethSSOProfileParser extends BaseSAMLProfileConfigurationPars
     }
 
     /** {@inheritDoc} */
-    @Override protected String getArtifactResolutionServiceURLRef() {
-        return "shibboleth.SAML1.BrowserSSO.ServiceURL";
-    }
-
-    /** {@inheritDoc} */
-    @Override protected String getArtifactResolutionServiceIndexRef() {
-        return "shibboleth.SAML1.BrowserSSO.ServiceIndex";
+    @Override protected String getProfileBeanNamePrefix() {
+        return "shibboleth.SAML1.BrowserSSO.";
     }
 
     /** {@inheritDoc} */

@@ -30,7 +30,7 @@ public class SAML1ArtifactTest extends BaseSAMLProfileTest {
     @Test public void defaults() {
 
         ArtifactResolutionProfileConfiguration profile =
-                getBean(ArtifactResolutionProfileConfiguration.class, true, "saml/saml1artifact.xml");
+                getBean(ArtifactResolutionProfileConfiguration.class, true, "beans.xml", "saml/saml1artifact.xml");
 
         // defaults for AbstractSAMLProfileConfiguration
         assertConditionalPredicate(profile.getSignRequestsPredicate());
@@ -40,6 +40,9 @@ public class SAML1ArtifactTest extends BaseSAMLProfileTest {
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
         Assert.assertNull(profile.getArtifactConfiguration());
+
+        Assert.assertEquals(profile.getInboundSubflowId(), "SecurityPolicy.SAML1ArtifactQuery");
+        Assert.assertNull(profile.getOutboundSubflowId());
     }
 
     @Test public void values() {
@@ -57,6 +60,9 @@ public class SAML1ArtifactTest extends BaseSAMLProfileTest {
         Assert.assertEquals(audiences.iterator().next(), "NibbleAHappyWarthogNibbleAHappyWarthog");
 
         Assert.assertFalse(profile.includeConditionsNotBefore());
+
+        Assert.assertEquals(profile.getInboundSubflowId(), "artifactibfid");
+        Assert.assertEquals(profile.getOutboundSubflowId(), "artifactobfid");
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
         Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/Artifact/SAML1");

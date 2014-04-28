@@ -31,7 +31,7 @@ public class SAML2AttributeQueryTest extends BaseSAMLProfileTest {
     @Test public void defaults() {
 
         AttributeQueryProfileConfiguration profile =
-                getBean(AttributeQueryProfileConfiguration.class, true, "saml/saml2attributeQuery.xml");
+                getBean(AttributeQueryProfileConfiguration.class, true, "saml/saml2attributeQuery.xml", "beans.xml");
 
         // defaults for AbstractSAML2ProfileConfiguration
 
@@ -49,6 +49,8 @@ public class SAML2AttributeQueryTest extends BaseSAMLProfileTest {
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
         Assert.assertNull(profile.getArtifactConfiguration());
+        Assert.assertEquals(profile.getInboundSubflowId(), "SecurityPolicy.SAML2AttributeQuery");
+        Assert.assertNull(profile.getOutboundSubflowId());
     }
 
     @Test public void values() {
@@ -63,6 +65,9 @@ public class SAML2AttributeQueryTest extends BaseSAMLProfileTest {
         Assert.assertEquals(proxyAudiences.size(), 2);
         Assert.assertTrue(proxyAudiences.contains("ProxyAudience1"));
         Assert.assertTrue(proxyAudiences.contains("NibbleAHappyWarthog"));
+        
+        Assert.assertEquals(profile.getInboundSubflowId(), "attribute2ibfid");
+        Assert.assertEquals(profile.getOutboundSubflowId(), "attribute2obfid");
 
         assertFalsePredicate(profile.getSignRequestsPredicate());
         assertFalsePredicate(profile.getSignAssertionsPredicate());

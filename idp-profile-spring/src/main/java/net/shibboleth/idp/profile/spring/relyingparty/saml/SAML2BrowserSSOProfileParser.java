@@ -53,13 +53,8 @@ public class SAML2BrowserSSOProfileParser extends BaseSAML2ProfileConfigurationP
     }
 
     /** {@inheritDoc} */
-    @Override protected String getArtifactResolutionServiceURLRef() {
-        return "shibboleth.SAML2.BrowserSSO.ServiceURL";
-    }
-
-    /** {@inheritDoc} */
-    @Override protected String getArtifactResolutionServiceIndexRef() {
-        return "shibboleth.SAML2.BrowserSSO.ServiceIndex";
+    @Override protected String getProfileBeanNamePrefix() {
+        return "shibboleth.SAML2.BrowserSSO.";
     }
 
     /** {@inheritDoc} */

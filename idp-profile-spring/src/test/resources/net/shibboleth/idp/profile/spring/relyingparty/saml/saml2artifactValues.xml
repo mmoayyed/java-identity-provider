@@ -11,6 +11,8 @@
     
     assertionLifetime="${prop.tenMins}" includeConditionsNotBefore="${prop.false}" outboundArtifactType="${prop.artifactType}" 
     signingCredentialRef="credref" signAssertions="${prop.never}" signRequests="never" signResponses="conditional"
+        inboundFlowId="artifact2ibfid" outboundFlowId="artifact2obfid"
+    
 >
     <saml:ProxyAudience>ProxyAudience1</saml:ProxyAudience>
     <saml:ProxyAudience>ProxyAudience2</saml:ProxyAudience>

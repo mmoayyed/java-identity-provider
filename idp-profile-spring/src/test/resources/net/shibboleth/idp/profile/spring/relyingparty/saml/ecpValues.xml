@@ -7,7 +7,8 @@
 	<rp:ProfileConfiguration xsi:type="saml:SAML2ECPProfile"
 		localityAddress="ignore" localityDNSName="ignore" includeAttributeStatement="false" securityPolicyRef="ignore" 
 		maximumSPSessionLifetime="1"
-		skipEndpointValidationWhenSigned="true" outboundArtifactType="65437">
+		skipEndpointValidationWhenSigned="true" outboundArtifactType="65437"    inboundFlowId="ecpibfid" outboundFlowId="ecpobfid"
+		>
 	</rp:ProfileConfiguration>
 
 </rp:RelyingParty>

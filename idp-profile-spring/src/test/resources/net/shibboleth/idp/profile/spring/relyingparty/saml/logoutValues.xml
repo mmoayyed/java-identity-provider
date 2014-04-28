@@ -9,6 +9,8 @@
     
     assertionLifetime="PT8M" includeConditionsNotBefore="true" outboundArtifactType="7" 
     signAssertions="${prop.never}" signRequests="conditional" signResponses="never"
+    
+    inboundFlowId="logoutibfid" outboundFlowId="logoutobfid"
 >
     <saml:ProxyAudience>${prop.String1}</saml:ProxyAudience>
 </rp:ProfileConfiguration>

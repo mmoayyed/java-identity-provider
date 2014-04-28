@@ -46,13 +46,8 @@ public class SAML2ArtifactResolutionProfileParser extends BaseSAML2ProfileConfig
     }
 
     /** {@inheritDoc} */
-    @Override protected String getArtifactResolutionServiceURLRef() {
-        return "shibboleth.SAML2.Artifact.ServiceURL";
-    }
-
-    /** {@inheritDoc} */
-    @Override protected String getArtifactResolutionServiceIndexRef() {
-        return "shibboleth.SAML2.Artifact.ServiceIndex";
+    @Override protected String getProfileBeanNamePrefix() {
+        return "shibboleth.SAML2.Artifact.";
     }
 
     /** {@inheritDoc} */

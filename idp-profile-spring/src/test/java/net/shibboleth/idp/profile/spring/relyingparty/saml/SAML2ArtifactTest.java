@@ -31,7 +31,7 @@ public class SAML2ArtifactTest extends BaseSAMLProfileTest {
     @Test public void defaults() {
 
         ArtifactResolutionProfileConfiguration profile =
-                getBean(ArtifactResolutionProfileConfiguration.class, true, "saml/saml2artifact.xml");
+                getBean(ArtifactResolutionProfileConfiguration.class, true, "beans.xml", "saml/saml2artifact.xml");
 
         // defaults for AbstractSAML2ProfileConfiguration
 
@@ -49,6 +49,8 @@ public class SAML2ArtifactTest extends BaseSAMLProfileTest {
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
         Assert.assertNull(profile.getArtifactConfiguration());
+        Assert.assertEquals(profile.getInboundSubflowId(), "SecurityPolicy.SAML2ArtifactQuery");
+        Assert.assertNull(profile.getOutboundSubflowId());
     }
 
     @Test public void values() {
@@ -67,6 +69,10 @@ public class SAML2ArtifactTest extends BaseSAMLProfileTest {
         assertFalsePredicate(profile.getSignRequestsPredicate());
         assertFalsePredicate(profile.getSignAssertionsPredicate());
         assertConditionalPredicate(profile.getSignResponsesPredicate());
+        
+        Assert.assertEquals(profile.getInboundSubflowId(), "artifact2ibfid");
+        Assert.assertEquals(profile.getOutboundSubflowId(), "artifact2obfid");
+
 
         Assert.assertEquals(profile.getAssertionLifetime(), 10 * 60 * 1000);
 

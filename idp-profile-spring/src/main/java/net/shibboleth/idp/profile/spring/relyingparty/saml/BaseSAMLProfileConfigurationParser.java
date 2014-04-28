@@ -70,11 +70,23 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
                 BeanDefinitionBuilder.genericBeanDefinition(BasicSAMLArtifactConfiguration.class);
 
         definition.addPropertyValue("artifactType", artifactType);
-        //
-        // TODO(rdw) For now we plant a bean reference for the unknown artifact parameters
-        //
-        definition.addPropertyReference("artifactResolutionServiceURL", getArtifactResolutionServiceURLRef());
-        definition.addPropertyReference("artifactResolutionServiceIndex", getArtifactResolutionServiceIndexRef());
+
+        if (element.hasAttributeNS(null, "artifactResolutionServiceURL")) {
+            definition.addPropertyValue("artifactResolutionServiceURL",
+                    element.getAttributeNS(null, "artifactResolutionServiceURL"));
+        } else {
+            definition.addPropertyReference("artifactResolutionServiceURL", getProfileBeanNamePrefix()
+                    + "ArtifactServiceURL");
+        }
+        
+        if (element.hasAttributeNS(null, "artifactResolutionServiceIndex")) {
+            definition.addPropertyValue("artifactResolutionServiceIndex",
+                    element.getAttributeNS(null, "artifactResolutionServiceIndex"));
+        } else {
+
+            definition.addPropertyReference("artifactResolutionServiceIndex", getProfileBeanNamePrefix()
+                    + "ArtifactServiceIndex");
+        }
 
         return definition.getBeanDefinition();
     }
@@ -167,8 +179,25 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
 
         builder.addPropertyValue("artifactConfiguration", getArtifactConfiguration(element));
 
+        if (element.hasAttributeNS(null, "attributeAuthority")) {
+            log.warn("Deprecated attribute 'attributeAuthority=\"{}\"' has been ignored",
+                    element.getAttributeNS(null, "attributeAuthority"));
+        }
+
+        if (element.hasAttributeNS(null, "securityPolicyRef")) {
+            log.warn("Deprecated attribute 'securityPolicyRef=\"{}\"' has been ignored",
+                    element.getAttributeNS(null, "securityPolicyRef"));
+        }
+        
+        if (element.hasAttributeNS(null, "inboundFlowId")) {
+            builder.addPropertyValue("inboundSubflowId", element.getAttributeNS(null, "inboundFlowId"));
+        } else {
+            builder.addPropertyReference("inboundSubflowId", getProfileBeanNamePrefix()+"InboundFlowId");
+        }
+
+        builder.addPropertyValue("outboundSubflowId", element.getAttributeNS(null, "outboundFlowId"));
+        
         if (element.hasAttributeNS(null, "signingCredentialRef")) {
-            //TODO
             log.warn("I do not (yet) know how to handle 'signingCredential=\"{}\"' yet",
                     element.getAttributeNS(null, "signingCredentialRef"));
         }
@@ -189,18 +218,12 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
     }
 
     /**
-     * Get the appropriate URL for the artifactResolutionService.
+     * Get the prefix for the default beans. This prefix will have on of "ArtifactServiceURL", "ArtifactServiceId" or
+     * "InboundFlowId" appended as a bean name.
      * 
-     * @return the ref of the bean with the URL
+     * @return the prefix
      */
-    protected abstract String getArtifactResolutionServiceURLRef();
-
-    /**
-     * Get the appropriate Index for the artifactResolutionService.
-     * 
-     * @return the ref of the bean with the index
-     */
-    protected abstract String getArtifactResolutionServiceIndexRef();
+    protected abstract String getProfileBeanNamePrefix();
 
     /**
      * Gets the default value for the signResponses property.
