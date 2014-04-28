@@ -161,8 +161,6 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
         
-        builder.setLazyInit(true);
-
         if (element.hasAttributeNS(null, "assertionLifetime")) {
             // Set as a string and let the converter to the work
             builder.addPropertyValue("assertionLifetime", element.getAttributeNS(null, "assertionLifetime"));
