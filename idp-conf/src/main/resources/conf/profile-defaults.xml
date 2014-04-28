@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:c="http://www.springframework.org/schema/c" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+	default-init-method="initialize" default-destroy-method="destroy">
+	
+	<context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
+	
+	<!-- The profile defaults. Firstly the artifact parameters
+	
+	   TODO establish final parameters
+	
+	 -->
+
+	<bean id="shibboleth.SAML2.Artifact.ArtifactServiceURL" class="java.lang.String"
+		c:_0="https://idp.example.org/Artifact" />
+	<bean id="shibboleth.SAML2.Artifact.ArtifactServiceIndex" class="java.lang.String"
+		c:_0="4321" />
+	<bean id="shibboleth.SAML2.Logout.ArtifactServiceURL" class="java.lang.String"
+		c:_0="https://idp.example.org/Logout" />
+	<bean id="shibboleth.SAML2.Logout.ArtifactServiceIndex" class="java.lang.String"
+		c:_0="3214" />
+	<bean id="shibboleth.SAML2.AttributeQuery.ArtifactServiceURL"
+		class="java.lang.String" c:_0="https://idp.example.org/AttributeQuery" />
+	<bean id="shibboleth.SAML2.AttributeQuery.ArtifactServiceIndex"
+		class="java.lang.String" c:_0="2143" />
+	<bean id="shibboleth.SAML2.BrowserSSO.ArtifactServiceURL" class="java.lang.String"
+		c:_0="https://idp.example.org/SSO" />
+	<bean id="shibboleth.SAML2.BrowserSSO.ArtifactServiceIndex" class="java.lang.String"
+		c:_0="1111" />
+	<bean id="shibboleth.SAML2.ECP.ArtifactServiceURL" class="java.lang.String"
+		c:_0="https://idp.example.org/ECP" />
+	<bean id="shibboleth.SAML2.ECP.ArtifactServiceIndex" class="java.lang.String"
+		c:_0="2222" />
+
+	<bean id="shibboleth.SAML1.Artifact.ArtifactServiceURL" class="java.lang.String"
+		c:_0="https://idp.example.org/Artifact/SAML1" />
+	<bean id="shibboleth.SAML1.Artifact.ArtifactServiceIndex" class="java.lang.String"
+		c:_0="43210" />
+	<bean id="shibboleth.SAML1.AttributeQuery.ArtifactServiceURL"
+		class="java.lang.String" c:_0="https://idp.example.org/AttributeQuery/SAML1" />
+	<bean id="shibboleth.SAML1.AttributeQuery.ArtifactServiceIndex"
+		class="java.lang.String" c:_0="432100" />
+	<bean id="shibboleth.SAML1.BrowserSSO.ArtifactServiceURL" class="java.lang.String"
+		c:_0="https://idp.example.org/SSO/SAML1" />
+	<bean id="shibboleth.SAML1.BrowserSSO.ArtifactServiceIndex" class="java.lang.String"
+		c:_0="1111" />
+
+	<!-- And the default security Policy -->
+
+	<util:map id="shibboleth.default.security.configuration.map">
+		<!-- SAML1 -->
+		<entry key="http://shibboleth.net/ns/profiles/saml1/query/artifact">
+			<bean class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
+		</entry>
+		<entry key="http://shibboleth.net/ns/profiles/saml1/query/attribute">
+			<bean class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
+		</entry>
+		<entry key="http://shibboleth.net/ns/profiles/saml1/sso/browser">
+			<bean class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
+		</entry>
+
+		<!-- SAML2 -->
+		<entry key="http://shibboleth.net/ns/profiles/saml2/query/artifact">
+			<bean class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
+		</entry>
+		<entry key="http://shibboleth.net/ns/profiles/saml2/query/attribute">
+			<bean class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
+		</entry>
+		<entry key="http://shibboleth.net/ns/profiles/saml2/sso/browser">
+			<bean class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
+		</entry>
+		<entry key="http://shibboleth.net/ns/profiles/saml2/sso/ecp">
+			<bean class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
+		</entry>
+
+		<entry key="http://shibboleth.net/ns/profiles/liberty/ssos">
+			<bean class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
+		</entry>
+
+	</util:map>
+
+</beans>
