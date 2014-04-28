@@ -2,7 +2,6 @@
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
 import org.joda.time.DateTime;
-import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.opensaml.messaging.context.InOutOperationContext;
 import org.opensaml.messaging.context.MessageContext;
 
@@ -16,9 +15,6 @@ class TestContextContainer extends InOutOperationContext {
         super();
         setAutoCreateSubcontexts(false);
         inbound = new MyMessageContext();
-
-        final BasicMessageMetadataContext basic = new BasicMessageMetadataContext();
-        basic.setMessageIssuer(relyingParty);
     }
 
     public TestContextContainer() {
