@@ -8,15 +8,7 @@
             <documentation>SAML 2.0 artifact query communication profile configuration.</documentation>
         </annotation>
         <complexContent>
-            <extension base="samlrp:SAML2ProfileConfigurationType">
-                <attribute name="securityPolicyRef" type="string" default="shibboleth.SAML2ArtifactResolutionSecurityPolicy">
-                    <annotation>
-                        <documentation>
-                            Reference, by ID, to the security policy to use for this profile.
-                        </documentation>
-                    </annotation>
-                </attribute>
-            </extension>
+            <extension base="samlrp:SAML2ProfileConfigurationType"/>
         </complexContent>
     </complexType>
 
@@ -25,15 +17,7 @@
             <documentation>SAML 2.0 attribute query communication profile configuration.</documentation>
         </annotation>
         <complexContent>
-            <extension base="samlrp:SAML2ProfileConfigurationType">
-                <attribute name="securityPolicyRef" type="string" default="shibboleth.SAML2AttributeQuerySecurityPolicy">
-                    <annotation>
-                        <documentation>
-                            Reference, by ID, to the security policy to use for this profile.
-                        </documentation>
-                    </annotation>
-                </attribute>
-            </extension>
+            <extension base="samlrp:SAML2ProfileConfigurationType"/>
         </complexContent>
     </complexType>
 
@@ -42,15 +26,7 @@
             <documentation>SAML 2.0 logout request communication profile configuration.</documentation>
         </annotation>
         <complexContent>
-            <extension base="samlrp:SAML2ProfileConfigurationType">
-                <attribute name="securityPolicyRef" type="string" default="shibboleth.SAML2SLOSecurityPolicy">
-                    <annotation>
-                        <documentation>
-                            Reference, by ID, to the security policy to use for this profile.
-                        </documentation>
-                    </annotation>
-                </attribute>
-            </extension>
+            <extension base="samlrp:SAML2ProfileConfigurationType"/>
         </complexContent>
     </complexType>
 
@@ -63,12 +39,43 @@
         </complexContent>
     </complexType>
 
+    <complexType name="SAML2SSOSProfile">
+        <annotation>
+            <documentation>SAML 2.0 Liberty ID-WSF SSOS profile configuration.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="samlrp:SAML2SSOProfile">
+                <attribute name="maximumTokenDelegationChainLength" type="integer">
+                    <annotation>
+                        <documentation>
+                            Maximum number of times a given token is allowed to have been delegated.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="delegationPredicateRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Reference to a predicate used to determine if a token may be delegated to a relying party.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <complexType name="SAML2SSOProfile">
         <annotation>
             <documentation>SAML 2.0 single sign-on communication profile configuration.</documentation>
         </annotation>
         <complexContent>
             <extension base="samlrp:SAML2ProfileConfigurationType">
+                <attribute name="allowDelegation" type="boolean">
+                    <annotation>
+                        <documentation>
+                            Whether produced assertions may be delegated.
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="localityAddress" type="string">
                     <annotation>
                         <documentation>
@@ -88,13 +95,6 @@
                         <documentation>
                             Boolean flag indicating whether an attribute statement should be included with the
                             authentication statement in the response sent back to the relying party.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="securityPolicyRef" type="string" default="shibboleth.SAML2SSOSecurityPolicy">
-                    <annotation>
-                        <documentation>
-                            Reference, by ID, to the security policy to use for this profile.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -150,16 +150,14 @@
                         <documentation>A flag indicating whether assertions should be encrypted.</documentation>
                     </annotation>
                 </attribute>
+                <attribute name="encryptAttributes" type="samlrp:cryptoReqType">
+                    <annotation>
+                        <documentation>A flag indicating whether attributes should be encrypted.</documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="assertionProxyCount" type="nonNegativeInteger">
                     <annotation>
                         <documentation>The maximum number of times an assertion may be proxied.</documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="attributeAuthority" type="string" default="shibboleth.SAML2AttributeAuthority">
-                    <annotation>
-                        <documentation>
-                            Name of the attribute authority component to make available within this configuration.
-                        </documentation>
                     </annotation>
                 </attribute>
             </extension>
@@ -171,15 +169,7 @@
             <documentation>SAML 1.0 and 1.1 artifact query communication profile configurations.</documentation>
         </annotation>
         <complexContent>
-            <extension base="samlrp:SAML1ProfileConfigurationType">
-                <attribute name="securityPolicyRef" type="string" default="shibboleth.SAML1ArtifactResolutionSecurityPolicy">
-                    <annotation>
-                        <documentation>
-                            Reference, by ID, to the security policy to use for this profile.
-                        </documentation>
-                    </annotation>
-                </attribute>
-            </extension>
+            <extension base="samlrp:SAMLProfileConfigurationType"/>
         </complexContent>
     </complexType>
 
@@ -188,15 +178,7 @@
             <documentation>SAML 1.0 and 1.1 attribute query communication profile configurations.</documentation>
         </annotation>
         <complexContent>
-            <extension base="samlrp:SAML1ProfileConfigurationType">
-                <attribute name="securityPolicyRef" type="string" default="shibboleth.SAML1AttributeQuerySecurityPolicy">
-                    <annotation>
-                        <documentation>
-                            Reference, by ID, to the security policy to use for this profile.
-                        </documentation>
-                    </annotation>
-                </attribute>
-            </extension>
+            <extension base="samlrp:SAMLProfileConfigurationType"/>
         </complexContent>
     </complexType>
 
@@ -205,7 +187,7 @@
             <documentation>Shibboleth 1 single sign-on communication profile configurations.</documentation>
         </annotation>
         <complexContent>
-            <extension base="samlrp:SAML1ProfileConfigurationType">
+            <extension base="samlrp:SAMLProfileConfigurationType">
                 <attribute name="localityAddress" type="string">
                     <annotation>
                         <documentation>
@@ -228,30 +210,6 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="securityPolicyRef" type="string" default="shibboleth.ShibbolethSSOSecurityPolicy">
-                    <annotation>
-                        <documentation>
-                            Reference, by ID, to the security policy to use for this profile.
-                        </documentation>
-                    </annotation>
-                </attribute>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <complexType name="SAML1ProfileConfigurationType" abstract="true">
-        <annotation>
-            <documentation>Base type for SAML 1.0 and 1.1 communication profile configurations.</documentation>
-        </annotation>
-        <complexContent>
-            <extension base="samlrp:SAMLProfileConfigurationType">
-                <attribute name="attributeAuthority" type="string" default="shibboleth.SAML1AttributeAuthority">
-                    <annotation>
-                        <documentation>
-                            Name of the attribute authority component to make available within this configuration.
-                        </documentation>
-                    </annotation>
-                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -269,12 +227,40 @@
                         </annotation>
                     </element>
                 </sequence>
+                <attribute name="artifactResolutionServiceURL" type="string">
+                    <annotation>
+                        <documentation>
+                            The location, as a URL, of the issuer's resolution service endpoint.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="artifactResolutionServiceIndex" type="string">
+                    <annotation>
+                        <documentation>
+                            The index of the issuer's resolution service endpoint, corresponding to its metadata.
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="assertionLifetime" type="string">
                     <annotation>
                         <documentation>
                             The amount of time before an issued assertion expires.
                             
                             Lifetime is expressed in ISO8601 duration notation.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="attributeAuthority" type="string">
+                    <annotation>
+                        <documentation>
+                            Deprecated in V3
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="inboundFlowId" type="string">
+                    <annotation>
+                        <documentation>
+                            The subflow ID to execute prior to mainline profile processing.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -289,6 +275,20 @@
                 <attribute name="outboundArtifactType" type="integer">
                     <annotation>
                         <documentation>The artifact type to use when sending an outbound, artifact encoded, message.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="outboundFlowId" type="string">
+                    <annotation>
+                        <documentation>
+                            The subflow ID to execute after mainline profile processing.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="securityPolicyRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Deprecated in V3. 
+                        </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="signingCredentialRef" type="string">
