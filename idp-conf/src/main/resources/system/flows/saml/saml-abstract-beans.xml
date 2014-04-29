@@ -223,5 +223,8 @@
         p:messageEncoderFactory-ref="messageEncoderFactory" />
 
     <bean id="RecordResponseComplete" class="net.shibboleth.idp.profile.impl.RecordResponseComplete" scope="prototype" />
+
+    <bean id="LocalErrorPredicate" class="org.opensaml.saml.common.profile.logic.DefaultLocalErrorPredicate"
+        p:localEvents-ref="shibboleth.LocalEvents" />
     
 </beans>

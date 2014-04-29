@@ -100,10 +100,6 @@
         </property>
     </bean>
 
-    <bean id="CheckErrorHandlingStrategy"
-        class="org.opensaml.saml.common.profile.impl.CheckErrorHandlingStrategy" scope="prototype"
-        p:localEvents-ref="shibboleth.LocalEvents" />
-
     <bean id="AddStatusToResponse"
             class="org.opensaml.saml.saml2.profile.impl.AddStatusToResponse" scope="prototype"
             p:statusMessage="An error occurred.">

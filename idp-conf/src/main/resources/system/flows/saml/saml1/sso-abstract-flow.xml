@@ -56,10 +56,14 @@
 
     <!-- Error Response Generation -->
 
+    <decision-state id="HandleError">
+        <if test="LocalErrorPredicate.apply(flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext'))"
+            then="error" else="HandleErrorWithResponse" />
+    </decision-state>
+
     <!-- We need to trap non-proceed transitions in these actions to avoid an infinite loop. -->
 
-    <action-state id="HandleError">
-        <evaluate expression="CheckErrorHandlingStrategy" />
+    <action-state id="HandleErrorWithResponse">
         <evaluate expression="AddResponseShell" />
         <evaluate expression="AddInResponseToToResponse" />
         <evaluate expression="AddStatusToResponse" />
