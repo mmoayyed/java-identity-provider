@@ -45,7 +45,7 @@
         </annotation>
         <complexContent>
             <extension base="samlrp:SAML2SSOProfile">
-                <attribute name="maximumTokenDelegationChainLength" type="integer">
+                <attribute name="maximumTokenDelegationChainLength" type="string">
                     <annotation>
                         <documentation>
                             Maximum number of times a given token is allowed to have been delegated.
@@ -69,7 +69,7 @@
         </annotation>
         <complexContent>
             <extension base="samlrp:SAML2ProfileConfigurationType">
-                <attribute name="allowDelegation" type="boolean">
+                <attribute name="allowDelegation" type="string">
                     <annotation>
                         <documentation>
                             Whether produced assertions may be delegated.
@@ -90,7 +90,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="includeAttributeStatement" type="boolean">
+                <attribute name="includeAttributeStatement" type="string">
                     <annotation>
                         <documentation>
                             Boolean flag indicating whether an attribute statement should be included with the
@@ -110,7 +110,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="skipEndpointValidationWhenSigned" type="boolean">
+                <attribute name="skipEndpointValidationWhenSigned" type="string">
                     <annotation>
                         <documentation>
                             If true, allows signed AuthnRequests to bypass validation of the response
@@ -140,22 +140,34 @@
                         <documentation>A flag indicating whether encryption is optional.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="encryptNameIds" type="samlrp:cryptoReqType">
+                <attribute name="encryptNameIds" type="string">
                     <annotation>
-                        <documentation>A flag indicating whether NameIDs should be encrypted.</documentation>
+                        <documentation>
+                            A flag indicating whether NameIDs should be encrypted.
+                        
+                            One of "always", "conditional", "never"
+                        </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="encryptAssertions" type="samlrp:cryptoReqType">
+                <attribute name="encryptAssertions" type="string">
                     <annotation>
-                        <documentation>A flag indicating whether assertions should be encrypted.</documentation>
+                        <documentation>
+                            A flag indicating whether assertions should be encrypted.
+                        
+                            One of "always", "conditional", "never"
+                        </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="encryptAttributes" type="samlrp:cryptoReqType">
+                <attribute name="encryptAttributes" type="string">
                     <annotation>
-                        <documentation>A flag indicating whether attributes should be encrypted.</documentation>
+                        <documentation>
+                            A flag indicating whether attributes should be encrypted.
+
+                            One of "always", "conditional", "never"
+                        </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="assertionProxyCount" type="nonNegativeInteger">
+                <attribute name="assertionProxyCount" type="string">
                     <annotation>
                         <documentation>The maximum number of times an assertion may be proxied.</documentation>
                     </annotation>
@@ -202,7 +214,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="includeAttributeStatement" type="boolean">
+                <attribute name="includeAttributeStatement" type="string">
                     <annotation>
                         <documentation>
                             Boolean flag indicating whether an attribute statement should be included with the
@@ -264,7 +276,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="includeConditionsNotBefore" type="boolean">
+                <attribute name="includeConditionsNotBefore" type="string">
                     <annotation>
                         <documentation>
                             Boolean flag indicating whether a NotBefore condition should be included in any
@@ -272,7 +284,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="outboundArtifactType" type="integer">
+                <attribute name="outboundArtifactType" type="string">
                     <annotation>
                         <documentation>The artifact type to use when sending an outbound, artifact encoded, message.</documentation>
                     </annotation>
@@ -296,45 +308,40 @@
                         <documentation>ID of the credential to use to sign SAML assertions.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="signAssertions" type="samlrp:cryptoReqType">
+                <attribute name="signAssertions" type="string">
                     <annotation>
                         <documentation>
                             A flag indicating whether issued assertions should be signed. If no signing
                             credential is provided on this configuration and no default signing credential is provided
                             on the relying party configuration then signing will not occur regardless of this setting.
+
+                            One of "always", "conditional", "never"
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="signRequests" type="samlrp:cryptoReqType">
+                <attribute name="signRequests" type="string">
                     <annotation>
                         <documentation>
                             A flag indicating whether protocol requests should be signed. If no signing
                             credential is provided on this configuration and no default signing credential is provided
                             on the relying party configuration then signing will not occur regardless of this setting.
+
+                            One of "always", "conditional", "never"
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="signResponses" type="samlrp:cryptoReqType">
+                <attribute name="signResponses" type="string">
                     <annotation>
                         <documentation>
                             A flag indicating whether protocol responses should be signed. If no signing
                             credential is provided on this configuration and no default signing credential is provided
                             on the relying party configuration then signing will not occur regardless of this setting.
+                            
+                            One of "always", "conditional", "never"
                         </documentation>
                     </annotation>
                 </attribute>
             </extension>
         </complexContent>
     </complexType>
-
-    <simpleType name="cryptoReqType">
-        <annotation>
-            <documentation>Requirement level for crypto functions like signing and encryption</documentation>
-        </annotation>
-        <restriction base="string">
-            <enumeration value="always"/>
-            <enumeration value="conditional"/>
-            <enumeration value="never"/>
-        </restriction>
-    </simpleType>
 </schema>
