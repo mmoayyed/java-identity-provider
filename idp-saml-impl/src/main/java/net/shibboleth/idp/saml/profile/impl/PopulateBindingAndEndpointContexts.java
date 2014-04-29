@@ -378,8 +378,10 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
             return;
         }
         
+        final String bindingURI = resolvedEndpoint.getBinding();
+        
         log.debug("{} Resolved endpoint at location {} using binding {}",
-                new Object[] {getLogPrefix(), resolvedEndpoint.getLocation(), resolvedEndpoint.getBinding(),});
+                new Object[] {getLogPrefix(), resolvedEndpoint.getLocation(), bindingURI,});
         
         // Transfer results to contexts.
         
@@ -388,24 +390,28 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         
         final SAMLBindingContext bindingCtx = bindingContextLookupStrategy.apply(profileRequestContext);
         bindingCtx.setRelayState(SAMLBindingSupport.getRelayState(profileRequestContext.getInboundMessageContext()));
-        bindingCtx.setBindingUri(resolvedEndpoint.getBinding());
+        
+        final Optional<BindingDescriptor> bindingDescriptor = Iterables.tryFind(bindingDescriptors,
+                new Predicate<BindingDescriptor>() {
+                    public boolean apply(BindingDescriptor input) {
+                        return input.getId().equals(bindingURI);
+                    }
+        });
+
+        if (bindingDescriptor.isPresent()) {
+            bindingCtx.setBindingDescriptor(bindingDescriptor.get());
+        } else {
+            bindingCtx.setBindingUri(resolvedEndpoint.getBinding());
+        }
         
         // Handle artifact details.
-        if (artifactConfiguration != null) {
-            final Optional<BindingDescriptor> bindingDescriptor = Iterables.tryFind(bindingDescriptors,
-                    new Predicate<BindingDescriptor>() {
-                        public boolean apply(BindingDescriptor input) {
-                            return input.getId().equals(bindingCtx.getBindingUri());
-                        }
-            });
-            if (bindingDescriptor.isPresent() && bindingDescriptor.get().isArtifact()) {
-                final SAMLArtifactContext artifactCtx = artifactContextLookupStrategy.apply(profileRequestContext);
-                artifactCtx.setArtifactType(artifactConfiguration.getArtifactType());
-                artifactCtx.setSourceArtifactResolutionServiceEndpointURL(
-                        artifactConfiguration.getArtifactResolutionServiceURL());
-                artifactCtx.setSourceArtifactResolutionServiceEndpointIndex(
-                        artifactConfiguration.getArtifactResolutionServiceIndex());
-            }
+        if (artifactConfiguration != null && bindingDescriptor.isPresent() && bindingDescriptor.get().isArtifact()) {
+            final SAMLArtifactContext artifactCtx = artifactContextLookupStrategy.apply(profileRequestContext);
+            artifactCtx.setArtifactType(artifactConfiguration.getArtifactType());
+            artifactCtx.setSourceArtifactResolutionServiceEndpointURL(
+                    artifactConfiguration.getArtifactResolutionServiceURL());
+            artifactCtx.setSourceArtifactResolutionServiceEndpointIndex(
+                    artifactConfiguration.getArtifactResolutionServiceIndex());
         }
     }
 // Checkstyle: CyclomaticComplexity|MethodLength ON
@@ -435,7 +441,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
                     final SAMLBindingContext outboundCtx = bindingContextLookupStrategy.apply(profileRequestContext);
                     outboundCtx.setRelayState(SAMLBindingSupport.getRelayState(
                             profileRequestContext.getInboundMessageContext()));
-                    outboundCtx.setBindingUri(binding.get().getId());
+                    outboundCtx.setBindingDescriptor(binding.get());
                     return true;
                 }
             }

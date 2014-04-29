@@ -224,10 +224,11 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         
         final Event event = badaction.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
-        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class, false);
+        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class);
         Assert.assertNotNull(bindingCtx);
         Assert.assertEquals(bindingCtx.getRelayState(), RELAY_STATE);
         Assert.assertEquals(bindingCtx.getBindingUri(), SAMLConstants.SAML2_SOAP11_BINDING_URI);
+        Assert.assertSame(binding, bindingCtx.getBindingDescriptor());
     }
     
     /** Requested location/binding are in metadata. */
@@ -241,8 +242,9 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
         
-        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class, false);
+        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class);
         Assert.assertNotNull(bindingCtx);
+        Assert.assertNotNull(bindingCtx.getBindingDescriptor());
         Assert.assertEquals(bindingCtx.getRelayState(), RELAY_STATE);
         Assert.assertEquals(bindingCtx.getBindingUri(), SAMLConstants.SAML2_POST_BINDING_URI);
         
@@ -269,8 +271,9 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
 
-        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class, false);
+        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class);
         Assert.assertNotNull(bindingCtx);
+        Assert.assertNotNull(bindingCtx.getBindingDescriptor());
         Assert.assertEquals(bindingCtx.getRelayState(), RELAY_STATE);
         Assert.assertEquals(bindingCtx.getBindingUri(), SAMLConstants.SAML2_POST_BINDING_URI);
         
@@ -312,8 +315,9 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
 
-        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class, false);
+        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class);
         Assert.assertNotNull(bindingCtx);
+        Assert.assertNotNull(bindingCtx.getBindingDescriptor());
         Assert.assertEquals(bindingCtx.getRelayState(), RELAY_STATE);
         Assert.assertEquals(bindingCtx.getBindingUri(), SAMLConstants.SAML2_POST_BINDING_URI);
         
@@ -339,8 +343,9 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
         
-        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class, false);
+        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class);
         Assert.assertNotNull(bindingCtx);
+        Assert.assertNotNull(bindingCtx.getBindingDescriptor());
         Assert.assertEquals(bindingCtx.getRelayState(), RELAY_STATE);
         Assert.assertEquals(bindingCtx.getBindingUri(), SAMLConstants.SAML2_POST_BINDING_URI);
         
