@@ -9,7 +9,7 @@
 
 	<rp:ProfileConfiguration xsi:type="saml:ShibbolethSSOProfile"
 		includeAttributeStatement="true" securityPolicyRef="ignore"
-		outboundArtifactType="765432" inboundFlowId="shibssoibfid"
+		outboundArtifactType="32767" inboundFlowId="shibssoibfid"
 		outboundFlowId="shibssoobfid" />
 </rp:RelyingParty>
 

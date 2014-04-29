@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.saml;
 
+import java.math.BigInteger;
 import java.util.Set;
 
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
@@ -66,7 +67,7 @@ public class SAML1ArtifactTest extends BaseSAMLProfileTest {
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
         Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/Artifact/SAML1");
-        Assert.assertEquals(artifact.getArtifactType().intValue(), 12340);
+        Assert.assertEquals(artifact.getArtifactType(), BigInteger.valueOf(12340).toByteArray());
         Assert.assertEquals(artifact.getArtifactResolutionServiceIndex().intValue(), 43210);
 
     }

@@ -83,7 +83,7 @@ public class LogoutTest extends BaseSAMLProfileTest {
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
         Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/Logout");
-        Assert.assertEquals(artifact.getArtifactType().intValue(), 7);
+        Assert.assertEquals(artifact.getArtifactType(), new byte[] { 0x0, 0x7, });
         Assert.assertEquals(artifact.getArtifactResolutionServiceIndex().intValue(), 3214);
 
     }

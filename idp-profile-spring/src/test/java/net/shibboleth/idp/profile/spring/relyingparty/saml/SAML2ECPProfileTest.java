@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.saml;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
@@ -84,7 +85,7 @@ public class SAML2ECPProfileTest extends BaseSAMLProfileTest {
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
         Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/ECP");
-        Assert.assertEquals(artifact.getArtifactType().intValue(), 65437);
+        Assert.assertEquals(artifact.getArtifactType(), BigInteger.valueOf(5437).toByteArray());
         Assert.assertEquals(artifact.getArtifactResolutionServiceIndex().intValue(), 2222);
 
         Assert.assertEquals(profile.getDefaultAuthenticationMethods().size(), 1);

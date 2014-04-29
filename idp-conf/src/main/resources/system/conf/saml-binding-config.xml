@@ -25,10 +25,12 @@
     <bean id="shibboleth.BindingDescriptor" class="net.shibboleth.idp.saml.binding.BindingDescriptor" abstract="true" />
     
     <util:list id="shibboleth.OutgoingSAML1SSOBindings">
+    <!-- 
         <bean parent="shibboleth.BindingDescriptor" id="urn:oasis:names:tc:SAML:1.0:profiles:browser-post"
             p:encoderBeanId="shibboleth.Encoders.SAML1PostEncoder" />
+             -->
         <bean parent="shibboleth.BindingDescriptor" id="urn:oasis:names:tc:SAML:1.0:profiles:artifact-01"
-            p:encoderBeanId="shibboleth.Encoders.SAML1ArtifactEncoder" />
+            p:encoderBeanId="shibboleth.Encoders.SAML1ArtifactEncoder" p:artifact="true" />
     </util:list>
 
     <util:list id="shibboleth.OutgoingSAML2SSOBindings">
@@ -37,7 +39,7 @@
         <bean parent="shibboleth.BindingDescriptor" id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
             p:encoderBeanId="shibboleth.Encoders.SAML2PostSimpleSignEncoder" />
         <bean parent="shibboleth.BindingDescriptor" id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-Artifact"
-            p:encoderBeanId="shibboleth.Encoders.SAML2ArtifactEncoder" />
+            p:encoderBeanId="shibboleth.Encoders.SAML2ArtifactEncoder" p:artifact="true" />
     </util:list>
 
     <util:list id="shibboleth.OutgoingSAML2SLOBindings">
@@ -48,7 +50,7 @@
         <bean parent="shibboleth.BindingDescriptor" id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
             p:encoderBeanId="shibboleth.Encoders.SAML2PostSimpleSignEncoder" />
         <bean parent="shibboleth.BindingDescriptor" id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-Artifact"
-            p:encoderBeanId="shibboleth.Encoders.SAML2ArtifactEncoder" />
+            p:encoderBeanId="shibboleth.Encoders.SAML2ArtifactEncoder" p:artifact="true" />
     </util:list>
 
     <util:list id="shibboleth.OutgoingSOAPBindings">

@@ -17,8 +17,11 @@
 
 package net.shibboleth.idp.saml.profile.config;
 
+import java.nio.ByteBuffer;
+
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
@@ -30,7 +33,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 public class BasicSAMLArtifactConfiguration implements SAMLArtifactConfiguration {
 
     /** The artifact type code. */
-    @Nullable private Integer artifactType;
+    @Nullable private byte[] artifactType;
     
     /** The artifact resolution URL. */
     @Nullable private String artifactResolutionURL;
@@ -39,7 +42,8 @@ public class BasicSAMLArtifactConfiguration implements SAMLArtifactConfiguration
     @Nullable private Integer artifactResolutionIndex;
     
     /** {@inheritDoc} */
-    @Nullable public Integer getArtifactType() {
+    @Override
+    @Nullable public byte[] getArtifactType() {
         return artifactType;
     }
     
@@ -49,10 +53,24 @@ public class BasicSAMLArtifactConfiguration implements SAMLArtifactConfiguration
      * @param type  type code of artifact
      */
     public void setArtifactType(@Nullable final Integer type) {
-        artifactType = type;
+        if (type == null) {
+            artifactType = null;
+        } else {
+            if (type <= 0) {
+                throw new ConstraintViolationException("Artifact type code must be positive");
+            } else if (type > 32767) {
+                throw new ConstraintViolationException("Artifact type code must fit in two bytes");
+            }
+            
+            final byte[] typeCode = ByteBuffer.allocate(4).putInt(type).array();
+            artifactType = new byte[2];
+            artifactType[0] = typeCode[2];
+            artifactType[1] = typeCode[3];
+        }
     }
     
     /** {@inheritDoc} */
+    @Override
     @Nullable public String getArtifactResolutionServiceURL() {
         return artifactResolutionURL;
     }
@@ -67,6 +85,7 @@ public class BasicSAMLArtifactConfiguration implements SAMLArtifactConfiguration
     }
     
     /** {@inheritDoc} */
+    @Override
     @Nullable public Integer getArtifactResolutionServiceIndex() {
         return artifactResolutionIndex;
     }

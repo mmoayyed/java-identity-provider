@@ -32,7 +32,7 @@ public interface SAMLArtifactConfiguration {
      * 
      * @return the artifact type code
      */
-    @Nullable public Integer getArtifactType();
+    @Nullable public byte[] getArtifactType();
     
     /**
      * Get the location, as a URL, of the issuer's resolution service endpoint.

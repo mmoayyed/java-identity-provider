@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.saml;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
@@ -62,7 +63,7 @@ public class ShibbolethSSOProfileTest extends BaseSAMLProfileTest {
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
         Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/SSO/SAML1");
-        Assert.assertEquals(artifact.getArtifactType().intValue(), 765432);
+        Assert.assertEquals(artifact.getArtifactType(), BigInteger.valueOf(32767).toByteArray());
         Assert.assertEquals(artifact.getArtifactResolutionServiceIndex().intValue(), 1111);
 
         Assert.assertEquals(profile.getDefaultAuthenticationMethods().size(), 1);

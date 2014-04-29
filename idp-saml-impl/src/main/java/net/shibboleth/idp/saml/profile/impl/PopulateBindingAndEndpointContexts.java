@@ -26,6 +26,8 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
+import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -45,6 +47,7 @@ import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
 import org.opensaml.saml.common.binding.BindingDescriptor;
 import org.opensaml.saml.common.binding.EndpointResolver;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
+import org.opensaml.saml.common.messaging.context.SAMLArtifactContext;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
@@ -85,6 +88,9 @@ import com.google.common.collect.Lists;
  * <p>The binding context is populated based on the computed endpoint's binding, and the
  * inbound {@link SAMLBindingContext}'s relay state.</p>
  * 
+ * <p>If the outbound binding is an artifact-based binding, then the action also creates
+ * a {@link SAMLArtifactContext} populated by settings from the {@link SAMLArtifactConfiguration}.</p> 
+ * 
  * <p>The base action understands SAML 2 {@link AuthnRequest} messages. Subclasses may
  * override the {@link #supplementResolverCriteria(ProfileRequestContext, CriteriaSet)} method
  * to implement support for other message types or advanced criteria.</p>
@@ -118,9 +124,15 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
 
     /** Strategy function for access to {@link SAMLEndpointContext} to populate. */
     @Nonnull private Function<ProfileRequestContext,SAMLEndpointContext> endpointContextLookupStrategy;
+
+    /** Strategy function for access to {@link SAMLArtifactContext} to populate. */
+    @Nonnull private Function<ProfileRequestContext,SAMLArtifactContext> artifactContextLookupStrategy;
     
     /** Builder for template endpoints. */
     @NonnullAfterInit private XMLObjectBuilder<?> endpointBuilder;
+    
+    /** Artifact configuration. */
+    @Nullable private SAMLArtifactConfiguration artifactConfiguration;
     
     /** Optional inbound message. */
     @Nullable private Object inboundMessage;
@@ -147,6 +159,10 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         // Default: outbound msg context -> SAMLBindingContext
         bindingContextLookupStrategy = Functions.compose(
                 new ChildContextLookup<>(SAMLBindingContext.class, true), new OutboundMessageContextLookup());
+
+        // Default: outbound msg context -> SAMLArtifactContext
+        artifactContextLookupStrategy = Functions.compose(
+                new ChildContextLookup<>(SAMLArtifactContext.class, true), new OutboundMessageContextLookup());
         
         // Default: outbound msg context -> SAMLPeerEntityContext -> SAMLEndpointContext
         endpointContextLookupStrategy = Functions.compose(
@@ -240,6 +256,19 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         endpointContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SAMLEndpointContext lookup strategy cannot be null");
     }
+
+    /**
+     * Set lookup strategy for {@link SAMLArtifactContext} to populate.
+     * 
+     * @param strategy  lookup strategy
+     */
+    public void setArtifactContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,SAMLArtifactContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        artifactContextLookupStrategy = Constraint.isNotNull(strategy,
+                "SAMLArtifactContext lookup strategy cannot be null");
+    }
     
     /** {@inheritDoc} */
     @Override
@@ -267,10 +296,17 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         }
         
         final RelyingPartyContext rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (rpContext != null && rpContext.getProfileConfig() != null
-                && rpContext.getProfileConfig() instanceof BrowserSSOProfileConfiguration) {
-            skipValidationWhenSigned =
-                    ((BrowserSSOProfileConfiguration) rpContext.getProfileConfig()).skipEndpointValidationWhenSigned();
+        if (rpContext != null) {
+            if (rpContext.getProfileConfig() != null
+                    && rpContext.getProfileConfig() instanceof SAMLProfileConfiguration) {
+                final SAMLProfileConfiguration profileConfiguration =
+                        (SAMLProfileConfiguration) rpContext.getProfileConfig();
+                artifactConfiguration = profileConfiguration.getArtifactConfiguration();
+                if (profileConfiguration instanceof BrowserSSOProfileConfiguration) {
+                    skipValidationWhenSigned =
+                            ((BrowserSSOProfileConfiguration) profileConfiguration).skipEndpointValidationWhenSigned();
+                }
+            }
         }
         
         if (profileRequestContext.getOutboundMessageContext() == null) {
@@ -284,8 +320,8 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         return super.doPreExecute(profileRequestContext);
     }
 
+// Checkstyle: CyclomaticComplexity|MethodLength OFF
     /** {@inheritDoc} */
-// Checkstyle: CyclomaticComplexity OFF
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
         if (handleSynchronousRequest(profileRequestContext)) {
@@ -349,8 +385,26 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         final SAMLBindingContext bindingCtx = bindingContextLookupStrategy.apply(profileRequestContext);
         bindingCtx.setRelayState(SAMLBindingSupport.getRelayState(profileRequestContext.getInboundMessageContext()));
         bindingCtx.setBindingUri(resolvedEndpoint.getBinding());
+        
+        // Handle artifact details.
+        if (artifactConfiguration != null) {
+            final Optional<BindingDescriptor> bindingDescriptor = Iterables.tryFind(bindingDescriptors,
+                    new Predicate<BindingDescriptor>() {
+                        public boolean apply(BindingDescriptor input) {
+                            return input.getId().equals(bindingCtx.getBindingUri());
+                        }
+            });
+            if (bindingDescriptor.isPresent() && bindingDescriptor.get().isArtifact()) {
+                final SAMLArtifactContext artifactCtx = artifactContextLookupStrategy.apply(profileRequestContext);
+                artifactCtx.setArtifactType(artifactConfiguration.getArtifactType());
+                artifactCtx.setSourceArtifactResolutionServiceEndpointURL(
+                        artifactConfiguration.getArtifactResolutionServiceURL());
+                artifactCtx.setSourceArtifactResolutionServiceEndpointIndex(
+                        artifactConfiguration.getArtifactResolutionServiceIndex());
+            }
+        }
     }
- // Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity|MethodLength ON
     
     /**
      * Check for an inbound request binding that is synchronous and handle appropriately.

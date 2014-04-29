@@ -9,6 +9,6 @@
 	defaultAuthenticationMethod="urn:oasis:names:tc:SAML:2.0:ac:classes:Password">
 
 	<rp:ProfileConfiguration xsi:type="saml:ShibbolethSSOProfile" includeAttributeStatement="true" securityPolicyRef="ignore" 
-       outboundArtifactType="765432" />
+       outboundArtifactType="65432" />
 </rp:RelyingParty>
 

@@ -9,7 +9,7 @@
 
     encryptNameIds="always"	 encryptAssertions="${prop.never}" assertionProxyCount="99" attributeAuthority="wibble"
     
-    assertionLifetime="${prop.tenMins}" includeConditionsNotBefore="${prop.false}" outboundArtifactType="98765" 
+    assertionLifetime="${prop.tenMins}" includeConditionsNotBefore="${prop.false}" outboundArtifactType="765" 
     signingCredentialRef="credref" signAssertions="${prop.never}" signRequests="never" signResponses="conditional"
     inboundFlowId="attribute2ibfid" outboundFlowId="attribute2obfid"
     
