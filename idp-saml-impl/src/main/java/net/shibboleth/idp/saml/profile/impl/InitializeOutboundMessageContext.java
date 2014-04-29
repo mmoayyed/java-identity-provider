@@ -23,6 +23,8 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
@@ -32,6 +34,7 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
+import org.opensaml.saml.common.messaging.context.SAMLSelfEntityContext;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.xmlsec.SecurityConfigurationSupport;
 import org.opensaml.xmlsec.SignatureSigningParameters;
@@ -65,6 +68,9 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
 
     /** Relying party context lookup strategy. */
     @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
+
+    /** Strategy used to obtain the self identity value. */
+    @Nullable private Function<ProfileRequestContext,String> selfIdentityLookupStrategy;
     
     /** The {@link SAMLPeerEntityContext} to base the outbound context on. */
     @Nullable private SAMLPeerEntityContext peerEntityCtx;
@@ -72,6 +78,7 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
     /** Constructor. */
     public InitializeOutboundMessageContext() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
+        selfIdentityLookupStrategy = new ResponderIdLookupFunction();
     }
     
     /**
@@ -81,8 +88,21 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
      */
     public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
+    }
+    
+    /**
+     * Set the strategy used to locate the self identity value to use.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setSelfIdentityLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        selfIdentityLookupStrategy = Constraint.isNotNull(strategy, "Self identity lookup strategy cannot be null");
     }
     
     /** {@inheritDoc} */
@@ -117,6 +137,9 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
         final MessageContext msgCtx = new MessageContext();
         profileRequestContext.setOutboundMessageContext(msgCtx);
 
+        final SAMLSelfEntityContext selfContext = msgCtx.getSubcontext(SAMLSelfEntityContext.class, true);
+        selfContext.setEntityId(selfIdentityLookupStrategy.apply(profileRequestContext));
+        
         final SAMLPeerEntityContext peerContext = msgCtx.getSubcontext(SAMLPeerEntityContext.class, true);
         peerContext.setEntityId(peerEntityCtx.getEntityId());
         

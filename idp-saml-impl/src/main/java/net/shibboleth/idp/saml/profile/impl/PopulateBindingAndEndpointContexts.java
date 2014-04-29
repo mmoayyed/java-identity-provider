@@ -26,6 +26,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
@@ -115,6 +116,9 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
 
     /** Strategy function for access to {@link RelyingPartyContext}. */
     @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
+
+    /** Strategy used to obtain the self identity value. */
+    @Nullable private Function<ProfileRequestContext,String> selfIdentityLookupStrategy;
     
     /** Strategy function for access to {@link SAMLMetadataContext} for input to resolver. */
     @Nonnull private Function<ProfileRequestContext,SAMLMetadataContext> metadataContextLookupStrategy;
@@ -149,6 +153,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         bindingDescriptors = Collections.emptyList();
         
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
+        selfIdentityLookupStrategy = new ResponderIdLookupFunction();
         
         // Default: outbound msg context -> SAMLPeerEntityContext -> SAMLMetadataContext
         metadataContextLookupStrategy = Functions.compose(
@@ -216,6 +221,17 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         
         relyingPartyContextLookupStrategy = Constraint.isNotNull(strategy,
                 "RelyingPartyContext lookup strategy cannot be null");
+    }
+
+    /**
+     * Set the strategy used to locate the self identity value to use.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setSelfIdentityLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        selfIdentityLookupStrategy = Constraint.isNotNull(strategy, "Self identity lookup strategy cannot be null");
     }
     
     /**
@@ -387,15 +403,16 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         bindingCtx.setBindingUri(resolvedEndpoint.getBinding());
         
         // Handle artifact details.
-        if (artifactConfiguration != null) {
-            final Optional<BindingDescriptor> bindingDescriptor = Iterables.tryFind(bindingDescriptors,
-                    new Predicate<BindingDescriptor>() {
-                        public boolean apply(BindingDescriptor input) {
-                            return input.getId().equals(bindingCtx.getBindingUri());
-                        }
-            });
-            if (bindingDescriptor.isPresent() && bindingDescriptor.get().isArtifact()) {
-                final SAMLArtifactContext artifactCtx = artifactContextLookupStrategy.apply(profileRequestContext);
+        final Optional<BindingDescriptor> bindingDescriptor = Iterables.tryFind(bindingDescriptors,
+                new Predicate<BindingDescriptor>() {
+                    public boolean apply(BindingDescriptor input) {
+                        return input.getId().equals(bindingCtx.getBindingUri());
+                    }
+        });
+        if (bindingDescriptor.isPresent() && bindingDescriptor.get().isArtifact()) {
+            final SAMLArtifactContext artifactCtx = artifactContextLookupStrategy.apply(profileRequestContext);
+            artifactCtx.setSourceEntityId(selfIdentityLookupStrategy.apply(profileRequestContext));
+            if (artifactConfiguration != null) {
                 artifactCtx.setArtifactType(artifactConfiguration.getArtifactType());
                 artifactCtx.setSourceArtifactResolutionServiceEndpointURL(
                         artifactConfiguration.getArtifactResolutionServiceURL());
