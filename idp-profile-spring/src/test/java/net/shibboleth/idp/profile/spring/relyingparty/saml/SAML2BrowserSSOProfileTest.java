@@ -54,9 +54,13 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
         Assert.assertFalse(profile.isAllowingDelegation());
-        Assert.assertNull(profile.getArtifactConfiguration());
         Assert.assertEquals(profile.getInboundSubflowId(), "SecurityPolicy.SAML2SSO");
         Assert.assertNull(profile.getOutboundSubflowId());
+
+        final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
+        Assert.assertNull(artifact.getArtifactType());
+        Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/SSO");
+        Assert.assertEquals(artifact.getArtifactResolutionServiceIndex().intValue(), 1111);
     }
 
     @Test public void values() {

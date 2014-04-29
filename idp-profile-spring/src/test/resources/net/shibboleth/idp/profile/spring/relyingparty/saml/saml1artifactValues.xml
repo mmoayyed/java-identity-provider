@@ -7,7 +7,7 @@
 
     securityPolicyRef="wobble" attributeAuthority="wibble"
     
-    assertionLifetime="${prop.tenMins}" includeConditionsNotBefore="${prop.false}" outboundArtifactType="${prop.artifactType}0" 
+    assertionLifetime="${prop.tenMins}" includeConditionsNotBefore="${prop.false}" 
     signingCredentialRef="credref" signAssertions="${prop.never}" signRequests="never" signResponses="conditional"
     inboundFlowId="artifactibfid" outboundFlowId="artifactobfid"
     

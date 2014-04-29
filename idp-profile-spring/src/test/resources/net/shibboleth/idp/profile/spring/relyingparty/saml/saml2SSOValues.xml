@@ -11,7 +11,7 @@
 		maximumSPSessionLifetime="1" encryptionOptional="true"
 		encryptAttributes="always"
 		allowDelegation="true"
-		skipEndpointValidationWhenSigned="true" outboundArtifactType="7654"
+		skipEndpointValidationWhenSigned="true" artifactType="7654"
 		inboundFlowId="sso2ibfid" outboundFlowId="sso2obfid">
 	</rp:ProfileConfiguration>
 

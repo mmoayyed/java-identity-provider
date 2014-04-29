@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
@@ -31,6 +32,8 @@ import com.google.common.collect.Lists;
 import net.shibboleth.idp.profile.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
@@ -38,13 +41,16 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /** Configuration for SAML 1 Browser SSO profile requests. */
-public class BrowserSSOProfileConfiguration
-        extends AbstractSAMLProfileConfiguration
-        implements SAML1ProfileConfiguration, AuthenticationProfileConfiguration {
+public class BrowserSSOProfileConfiguration extends AbstractSAMLProfileConfiguration
+        implements SAML1ProfileConfiguration, SAMLArtifactAwareProfileConfiguration,
+            AuthenticationProfileConfiguration {
 
     /** ID for this profile configuration. */
     public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml1/sso/browser";
 
+    /** SAML artifact configuration. */
+    @Nullable private SAMLArtifactConfiguration artifactConfig;
+    
     /**
      * Whether responses to the authentication request should include an attribute statement.
      * 
@@ -75,6 +81,20 @@ public class BrowserSSOProfileConfiguration
         nameIDFormatPrecedence = Collections.emptyList();
     }
 
+    /** {@inheritDoc} */
+    @Override @Nullable public SAMLArtifactConfiguration getArtifactConfiguration() {
+        return artifactConfig;
+    }
+
+    /**
+     * Set the SAML artifact configuration, if any.
+     * 
+     * @param config configuration to set
+     */
+    public void setArtifactConfiguration(@Nullable final SAMLArtifactConfiguration config) {
+        artifactConfig = config;
+    }
+    
     /**
      * Get whether responses to the authentication request should include an attribute statement.
      * 

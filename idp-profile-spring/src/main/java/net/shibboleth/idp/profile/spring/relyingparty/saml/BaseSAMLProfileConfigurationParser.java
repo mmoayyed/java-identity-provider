@@ -47,10 +47,22 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
 
     /** default value when assertionLifetime isn't set. */
     private static final long DEFAULT_ASSERTION_LIFETIME = 300000L;
+    
+    /** Class logger. */
+    @Nonnull private Logger log = LoggerFactory.getLogger(BaseSAMLProfileConfigurationParser.class);
 
-    /** logger. */
-    private Logger log = LoggerFactory.getLogger(BaseSAMLProfileConfigurationParser.class);
+    /** Flag controlling whether to parse artifact configuration. */
+    private boolean artifactAware;
 
+    /**
+     * Set whether to parse artifact configuration.
+     * 
+     * @param flag  flag to set
+     */
+    protected void setArtifactAware(final boolean flag) {
+        artifactAware = flag;
+    }
+    
     /**
      * Construct the builder for the the artifact configuration.
      * 
@@ -60,16 +72,12 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
      */
     @Nullable protected BeanDefinition getArtifactConfiguration(Element element) {
 
-        final String artifactType = StringSupport.trimOrNull(element.getAttributeNS(null, "outboundArtifactType"));
-
-        if (null == artifactType) {
-            return null;
-        }
-
         final BeanDefinitionBuilder definition =
                 BeanDefinitionBuilder.genericBeanDefinition(BasicSAMLArtifactConfiguration.class);
 
-        definition.addPropertyValue("artifactType", artifactType);
+        if (element.hasAttributeNS(null, "artifactType")) {
+            definition.addPropertyValue("artifactType", element.getAttributeNS(null, "artifactType"));
+        }
 
         if (element.hasAttributeNS(null, "artifactResolutionServiceURL")) {
             definition.addPropertyValue("artifactResolutionServiceURL",
@@ -83,7 +91,6 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
             definition.addPropertyValue("artifactResolutionServiceIndex",
                     element.getAttributeNS(null, "artifactResolutionServiceIndex"));
         } else {
-
             definition.addPropertyReference("artifactResolutionServiceIndex", getProfileBeanNamePrefix()
                     + "ArtifactServiceIndex");
         }
@@ -177,7 +184,9 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
             builder.addPropertyValue("includeConditionsNotBefore", true);
         }
 
-        builder.addPropertyValue("artifactConfiguration", getArtifactConfiguration(element));
+        if (artifactAware) {
+            builder.addPropertyValue("artifactConfiguration", getArtifactConfiguration(element));
+        }
 
         if (element.hasAttributeNS(null, "attributeAuthority")) {
             log.warn("Deprecated attribute 'attributeAuthority=\"{}\"' has been ignored",
@@ -187,6 +196,11 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
         if (element.hasAttributeNS(null, "securityPolicyRef")) {
             log.warn("Deprecated attribute 'securityPolicyRef=\"{}\"' has been ignored",
                     element.getAttributeNS(null, "securityPolicyRef"));
+        }
+
+        if (element.hasAttributeNS(null, "outboundArtifactType")) {
+            log.warn("Deprecated attribute 'outboundArtifactType=\"{}\"' has been ignored",
+                    element.getAttributeNS(null, "outboundArtifactType"));
         }
         
         if (element.hasAttributeNS(null, "inboundFlowId")) {

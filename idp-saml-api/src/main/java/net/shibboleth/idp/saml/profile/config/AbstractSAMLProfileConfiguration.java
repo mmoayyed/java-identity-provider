@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.Duration;
@@ -61,9 +60,6 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
 
     /** Additional audiences to which an assertion may be released. Default value: empty */
     @Nonnull @NonnullElements private Set<String> assertionAudiences;
-
-    /** SAML artifact configuration. */
-    @Nullable private SAMLArtifactConfiguration artifactConfig;
 
     /**
      * Constructor.
@@ -180,20 +176,6 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
                 assertionAudiences.add(trimmedAudience);
             }
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override @Nullable public SAMLArtifactConfiguration getArtifactConfiguration() {
-        return artifactConfig;
-    }
-
-    /**
-     * Set the SAML artifact configuration, if any.
-     * 
-     * @param config configuration to set
-     */
-    public void setArtifactConfiguration(@Nullable final SAMLArtifactConfiguration config) {
-        artifactConfig = config;
     }
 
 }

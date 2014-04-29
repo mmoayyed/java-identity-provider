@@ -51,7 +51,10 @@ public class LogoutTest extends BaseSAMLProfileTest {
         Assert.assertEquals(profile.getInboundSubflowId(), "SecurityPolicy.SAML2Logout");
         Assert.assertNull(profile.getOutboundSubflowId());
         
-        Assert.assertNull(profile.getArtifactConfiguration());
+        final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
+        Assert.assertNull(artifact.getArtifactType());
+        Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/Logout");
+        Assert.assertEquals(artifact.getArtifactResolutionServiceIndex().intValue(), 3214);
     }
 
     @Test public void values() {

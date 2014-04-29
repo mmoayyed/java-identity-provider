@@ -26,6 +26,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
@@ -301,7 +302,10 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
                     && rpContext.getProfileConfig() instanceof SAMLProfileConfiguration) {
                 final SAMLProfileConfiguration profileConfiguration =
                         (SAMLProfileConfiguration) rpContext.getProfileConfig();
-                artifactConfiguration = profileConfiguration.getArtifactConfiguration();
+                if (profileConfiguration instanceof SAMLArtifactAwareProfileConfiguration) {
+                    artifactConfiguration =
+                            ((SAMLArtifactAwareProfileConfiguration) profileConfiguration).getArtifactConfiguration();
+                }
                 if (profileConfiguration instanceof BrowserSSOProfileConfiguration) {
                     skipValidationWhenSigned =
                             ((BrowserSSOProfileConfiguration) profileConfiguration).skipEndpointValidationWhenSigned();

@@ -40,10 +40,14 @@ public class SAML1AttributeQueryTest extends BaseSAMLProfileTest {
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
-        Assert.assertNull(profile.getArtifactConfiguration());
         Assert.assertEquals(profile.getInboundSubflowId(), "SecurityPolicy.SAML1AttributeQuery");
         Assert.assertNull(profile.getOutboundSubflowId());
-   }
+
+        final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
+        Assert.assertNull(artifact.getArtifactType());
+        Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/AttributeQuery/SAML1");
+        Assert.assertEquals(artifact.getArtifactResolutionServiceIndex().intValue(), 432100);
+    }
 
     @Test public void values() {
         AttributeQueryProfileConfiguration profile =

@@ -33,6 +33,11 @@ public class SAML2AttributeQueryProfileParser extends BaseSAML2ProfileConfigurat
     public static final QName ELEMENT_NAME = new QName(RelyingPartySAMLNamespaceHandler.NAMESPACE,
             "SAML2AttributeQueryProfile");
 
+    /** Constructor. */
+    public SAML2AttributeQueryProfileParser() {
+        setArtifactAware(true);
+    }
+    
     /** {@inheritDoc} */
     @Override protected Class<AttributeQueryProfileConfiguration> getBeanClass(Element element) {
         return AttributeQueryProfileConfiguration.class;

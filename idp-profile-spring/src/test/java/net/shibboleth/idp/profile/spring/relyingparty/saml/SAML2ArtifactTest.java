@@ -17,11 +17,9 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.saml;
 
-import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Set;
 
-import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration;
 
 import org.testng.Assert;
@@ -49,7 +47,6 @@ public class SAML2ArtifactTest extends BaseSAMLProfileTest {
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
-        Assert.assertNull(profile.getArtifactConfiguration());
         Assert.assertEquals(profile.getInboundSubflowId(), "SecurityPolicy.SAML2ArtifactQuery");
         Assert.assertNull(profile.getOutboundSubflowId());
     }
@@ -82,12 +79,6 @@ public class SAML2ArtifactTest extends BaseSAMLProfileTest {
         Assert.assertEquals(audiences.iterator().next(), "NibbleAHappyWarthog");
 
         Assert.assertFalse(profile.includeConditionsNotBefore());
-
-        final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
-        Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/Artifact");
-        Assert.assertEquals(artifact.getArtifactType(), BigInteger.valueOf(1234).toByteArray());
-        Assert.assertEquals(artifact.getArtifactResolutionServiceIndex().intValue(), 4321);
-
     }
 
 }

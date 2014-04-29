@@ -33,6 +33,11 @@ public class SAML2LogoutRequestProfileParser extends BaseSAML2ProfileConfigurati
     public static final QName ELEMENT_NAME = new QName(RelyingPartySAMLNamespaceHandler.NAMESPACE,
             "SAML2LogoutRequestProfile");
 
+    /** Constructor. */
+    public SAML2LogoutRequestProfileParser() {
+        setArtifactAware(true);
+    }
+
     /** {@inheritDoc} */
     @Override protected Class<SingleLogoutProfileConfiguration> getBeanClass(Element element) {
         return SingleLogoutProfileConfiguration.class;

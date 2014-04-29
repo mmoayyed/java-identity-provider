@@ -20,7 +20,6 @@ package net.shibboleth.idp.saml.profile.config;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -28,6 +27,7 @@ import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
 import com.google.common.base.Predicate;
 
@@ -39,28 +39,28 @@ public interface SAMLProfileConfiguration extends ProfileConfiguration {
      * 
      * @return predicate used to determine if generated assertions should be signed
      */
-    @Nonnull public Predicate<ProfileRequestContext> getSignAssertionsPredicate();
+    @Nonnull Predicate<ProfileRequestContext> getSignAssertionsPredicate();
 
     /**
      * Get the predicate used to determine if generated requests should be signed.
      * 
      * @return predicate used to determine if generated requests should be signed
      */
-    @Nonnull public Predicate<ProfileRequestContext> getSignRequestsPredicate();
+    @Nonnull Predicate<ProfileRequestContext> getSignRequestsPredicate();
 
     /**
      * Get the predicate used to determine if generated responses should be signed.
      * 
      * @return predicate used to determine if generated responses should be signed
      */
-    public Predicate<ProfileRequestContext> getSignResponsesPredicate();
+    Predicate<ProfileRequestContext> getSignResponsesPredicate();
 
     /**
      * Get the lifetime of generated assertions in milliseconds.
      * 
      * @return lifetime of generated assertions in milliseconds
      */
-    @Positive public long getAssertionLifetime();
+    @Positive long getAssertionLifetime();
 
     /**
      * Get an unmodifiable set of audiences, in addition to the relying party(ies) to which the IdP is issuing the
@@ -68,20 +68,13 @@ public interface SAMLProfileConfiguration extends ProfileConfiguration {
      * 
      * @return additional audiences to which an assertion may be shared
      */
-    @Nonnull @NonnullElements @NotLive public Set<String> getAdditionalAudiencesForAssertion();
+    @Nonnull @NonnullElements @NotLive @Unmodifiable Set<String> getAdditionalAudiencesForAssertion();
     
     /**
      * Get whether to include a NotBefore attribute in the Conditions of generated assertions.
      * 
      * @return  whether to include a NotBefore attribute in the Conditions of generated assertions
      */
-    public boolean includeConditionsNotBefore();
-    
-    /**
-     * Get the associated {@link SAMLArtifactConfiguration} for the profile, if any.
-     * 
-     * @return  an associated artifact configuration, or null
-     */
-    @Nullable public SAMLArtifactConfiguration getArtifactConfiguration(); 
+    boolean includeConditionsNotBefore();
     
 }

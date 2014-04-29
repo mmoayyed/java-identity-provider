@@ -18,15 +18,22 @@
 package net.shibboleth.idp.saml.saml2.profile.config;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import net.shibboleth.idp.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /** Configuration support for SAML 2 attribute query requests. */
-public class AttributeQueryProfileConfiguration extends AbstractSAML2ProfileConfiguration {
+public class AttributeQueryProfileConfiguration extends AbstractSAML2ProfileConfiguration
+        implements SAMLArtifactAwareProfileConfiguration {
 
     /** ID for this profile configuration. */
     public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/query/attribute";
 
+    /** SAML artifact configuration. */
+    @Nullable private SAMLArtifactConfiguration artifactConfig;
+    
     /** Constructor. */
     public AttributeQueryProfileConfiguration() {
         this(PROFILE_ID);
@@ -41,4 +48,18 @@ public class AttributeQueryProfileConfiguration extends AbstractSAML2ProfileConf
         super(profileId);
     }
     
+    /** {@inheritDoc} */
+    @Override @Nullable public SAMLArtifactConfiguration getArtifactConfiguration() {
+        return artifactConfig;
+    }
+
+    /**
+     * Set the SAML artifact configuration, if any.
+     * 
+     * @param config configuration to set
+     */
+    public void setArtifactConfiguration(@Nullable final SAMLArtifactConfiguration config) {
+        artifactConfig = config;
+    }
+
 }

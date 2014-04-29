@@ -50,6 +50,11 @@ public class SAML2BrowserSSOProfileParser extends BaseSAML2ProfileConfigurationP
     /** logger. */
     private Logger log = LoggerFactory.getLogger(SAML2BrowserSSOProfileParser.class);
 
+    /** Constructor. */
+    public SAML2BrowserSSOProfileParser() {
+        setArtifactAware(true);
+    }
+    
     /** {@inheritDoc} */
     @Override protected Class<? extends BrowserSSOProfileConfiguration> getBeanClass(Element element) {
         return BrowserSSOProfileConfiguration.class;

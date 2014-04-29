@@ -35,10 +35,15 @@
         id="SecurityConfiguration"
         class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
     <bean
+        id="ArtifactConfiguration"
+        class="net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration"
+        p:artifactResolutionServiceIndex="1" />
+    <bean
         id="SAML2BrowserSSOProfileConfiguration"
             class="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration"
             p:inboundSubflowId="SecurityPolicy.SAML2SSO"
-            p:securityConfiguration-ref="SecurityConfiguration" />
+            p:securityConfiguration-ref="SecurityConfiguration"
+            p:artifactConfiguration-ref="ArtifactConfiguration" />
     <bean
         id="RelyingPartyConfiguration"
         class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"

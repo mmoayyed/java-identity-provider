@@ -17,11 +17,9 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.saml;
 
-import java.math.BigInteger;
 import java.util.List;
 
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
-import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration;
 
@@ -54,9 +52,10 @@ public class SAML2ECPProfileTest extends BaseSAMLProfileTest {
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
-        Assert.assertNull(profile.getArtifactConfiguration());
         Assert.assertEquals(profile.getInboundSubflowId(), "SecurityPolicy.SAML2ECP");
         Assert.assertNull(profile.getOutboundSubflowId());
+
+        Assert.assertNull(profile.getArtifactConfiguration());
     }
 
     @Test public void values() {
@@ -83,10 +82,7 @@ public class SAML2ECPProfileTest extends BaseSAMLProfileTest {
         Assert.assertEquals(profile.getInboundSubflowId(), "ecpibfid");
         Assert.assertEquals(profile.getOutboundSubflowId(), "ecpobfid");
 
-        final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
-        Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/ECP");
-        Assert.assertEquals(artifact.getArtifactType(), BigInteger.valueOf(5437).toByteArray());
-        Assert.assertEquals(artifact.getArtifactResolutionServiceIndex().intValue(), 2222);
+        Assert.assertNull(profile.getArtifactConfiguration());
 
         Assert.assertEquals(profile.getDefaultAuthenticationMethods().size(), 1);
         final AuthnContextClassRefPrincipal authnMethod =

@@ -18,7 +18,9 @@
             <documentation>SAML 2.0 attribute query communication profile configuration.</documentation>
         </annotation>
         <complexContent>
-            <extension base="samlrp:SAML2ProfileConfigurationType"/>
+            <extension base="samlrp:SAML2ProfileConfigurationType">
+                <attributeGroup ref="samlrp:artifactSettingsGroup"/>
+            </extension>
         </complexContent>
     </complexType>
 
@@ -27,7 +29,9 @@
             <documentation>SAML 2.0 logout request communication profile configuration.</documentation>
         </annotation>
         <complexContent>
-            <extension base="samlrp:SAML2ProfileConfigurationType"/>
+            <extension base="samlrp:SAML2ProfileConfigurationType">
+                <attributeGroup ref="samlrp:artifactSettingsGroup"/>
+            </extension>
         </complexContent>
     </complexType>
 
@@ -70,6 +74,7 @@
         </annotation>
         <complexContent>
             <extension base="samlrp:SAML2ProfileConfigurationType">
+                <attributeGroup ref="samlrp:artifactSettingsGroup"/>
                 <attribute name="allowDelegation" type="string">
                     <annotation>
                         <documentation>
@@ -191,7 +196,9 @@
             <documentation>SAML 1.0 and 1.1 attribute query communication profile configurations.</documentation>
         </annotation>
         <complexContent>
-            <extension base="samlrp:SAMLProfileConfigurationType"/>
+            <extension base="samlrp:SAMLProfileConfigurationType">
+                <attributeGroup ref="samlrp:artifactSettingsGroup"/>
+            </extension>
         </complexContent>
     </complexType>
 
@@ -201,6 +208,7 @@
         </annotation>
         <complexContent>
             <extension base="samlrp:SAMLProfileConfigurationType">
+                <attributeGroup ref="samlrp:artifactSettingsGroup"/>
                 <attribute name="localityAddress" type="string">
                     <annotation>
                         <documentation>
@@ -251,20 +259,6 @@
                         </element>
                     </choice>
                 </sequence>
-                <attribute name="artifactResolutionServiceURL" type="string">
-                    <annotation>
-                        <documentation>
-                            The location, as a URL, of the issuer's resolution service endpoint.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="artifactResolutionServiceIndex" type="string">
-                    <annotation>
-                        <documentation>
-                            The index of the issuer's resolution service endpoint, corresponding to its metadata.
-                        </documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="assertionLifetime" type="string">
                     <annotation>
                         <documentation>
@@ -298,7 +292,7 @@
                 </attribute>
                 <attribute name="outboundArtifactType" type="string">
                     <annotation>
-                        <documentation>The artifact type to use when sending an outbound, artifact encoded, message.</documentation>
+                        <documentation>Deprecated in V3.</documentation>
                     </annotation>
                 </attribute>
                 <attribute name="outboundFlowId" type="string">
@@ -356,4 +350,32 @@
             </extension>
         </complexContent>
     </complexType>
+    
+    <attributeGroup name="artifactSettingsGroup">
+        <annotation>
+            <documentation>
+                Settings involved in artifact issuance for the subset of profiles that use them.
+            </documentation>
+        </annotation>
+        <attribute name="artifactType" type="string">
+            <annotation>
+                <documentation>An integral type code for the artifact type to issue.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="artifactResolutionServiceURL" type="string">
+            <annotation>
+                <documentation>
+                    The location, as a URL, of the issuer's resolution service endpoint.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="artifactResolutionServiceIndex" type="string">
+            <annotation>
+                <documentation>
+                    The index of the issuer's resolution service endpoint, corresponding to its metadata.
+                </documentation>
+            </annotation>
+        </attribute>
+    </attributeGroup>
+    
 </schema>

@@ -33,6 +33,11 @@ public class SAML1AttributeQueryProfileParser extends BaseSAMLProfileConfigurati
     public static final QName ELEMENT_NAME = new QName(RelyingPartySAMLNamespaceHandler.NAMESPACE,
             "SAML1AttributeQueryProfile");
 
+    /** Constructor. */
+    public SAML1AttributeQueryProfileParser() {
+        setArtifactAware(true);
+    }
+    
     /** {@inheritDoc} */
     @Override
     protected Class<AttributeQueryProfileConfiguration> getBeanClass(Element element) {

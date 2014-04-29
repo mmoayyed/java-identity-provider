@@ -51,6 +51,11 @@ public class ShibbolethSSOProfileParser extends BaseSAMLProfileConfigurationPars
     /** logger. */
     private Logger log = LoggerFactory.getLogger(ShibbolethSSOProfileParser.class);
 
+    /** Constructor. */
+    public ShibbolethSSOProfileParser() {
+        setArtifactAware(true);
+    }
+    
     /** {@inheritDoc} */
     @Override protected Class<? extends BrowserSSOProfileConfiguration> getBeanClass(Element element) {
         return BrowserSSOProfileConfiguration.class;

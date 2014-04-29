@@ -33,6 +33,11 @@ public class SAML2ECPProfileParser extends SAML2BrowserSSOProfileParser {
     public static final QName ELEMENT_NAME = new QName(RelyingPartySAMLNamespaceHandler.NAMESPACE,
             "SAML2ECPProfile");
 
+    /** Constructor. */
+    public SAML2ECPProfileParser() {
+        setArtifactAware(false);
+    }
+    
     /** {@inheritDoc} */
     @Override protected Class<ECPProfileConfiguration> getBeanClass(Element element) {
         return ECPProfileConfiguration.class;
