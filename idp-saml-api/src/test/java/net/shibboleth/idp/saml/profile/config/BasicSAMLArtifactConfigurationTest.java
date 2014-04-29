@@ -29,7 +29,7 @@ public class BasicSAMLArtifactConfigurationTest {
         Assert.assertNull(config.getArtifactType());
 
         config.setArtifactType(1);
-        Assert.assertEquals(config.getArtifactType(), Integer.valueOf(1));
+        Assert.assertEquals(config.getArtifactType(), new byte[] {0x0, 0x1});
         
         config.setArtifactType(null);
         Assert.assertNull(config.getArtifactType());
