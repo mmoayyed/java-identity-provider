@@ -49,6 +49,7 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         assertConditionalPredicate(profile.getSignRequestsPredicate());
         assertTruePredicate(profile.getSignAssertionsPredicate());
         assertFalsePredicate(profile.getSignResponsesPredicate());
+        assertFalsePredicate(profile.getEncryptAttributesPredicate());
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
@@ -76,6 +77,7 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         assertConditionalPredicate(profile.getSignRequestsPredicate());
         assertTruePredicate(profile.getSignAssertionsPredicate());
         assertFalsePredicate(profile.getSignResponsesPredicate());
+        assertTruePredicate(profile.getEncryptAttributesPredicate());
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());

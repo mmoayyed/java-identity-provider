@@ -61,12 +61,15 @@ public abstract class BaseSAML2ProfileConfigurationParser extends BaseSAMLProfil
         if (element.hasAttributeNS(null, "encryptionOptional")) {
             builder.addPropertyValue("encryptionOptional", element.getAttributeNS(null, "encryptionOptional"));
         }
-        
+
         builder.addPropertyValue("encryptAssertionsPredicate",
                 predicateForEncryption(element.getAttributeNS(null, "encryptAssertions"), "conditional"));
         builder.addPropertyValue("encryptNameIDsPredicate",
                 predicateForEncryption(element.getAttributeNS(null, "encryptNameIds"), "never"));
-        // default encryptAttributesPredicate
+        if (element.hasAttributeNS(null, "encryptAttributes")) {
+            builder.addPropertyValue("encryptAttributesPredicate",
+                    predicateForEncryption(element.getAttributeNS(null, "encryptAttributes"), "never"));
+        }
         if (element.hasAttributeNS(null, "assertionProxyCount")) {
             builder.addPropertyValue("proxyCount", element.getAttributeNS(null, "assertionProxyCount"));
         }

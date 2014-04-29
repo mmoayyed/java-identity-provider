@@ -9,6 +9,7 @@
 	<rp:ProfileConfiguration xsi:type="saml:SAML2SSOProfile"
 		includeAttributeStatement="false" securityPolicyRef="ignore"
 		maximumSPSessionLifetime="1" encryptionOptional="true"
+		encryptAttributes="always"
 		skipEndpointValidationWhenSigned="true" outboundArtifactType="7654"
 		inboundFlowId="sso2ibfid" outboundFlowId="sso2obfid">
 	</rp:ProfileConfiguration>
