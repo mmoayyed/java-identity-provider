@@ -150,6 +150,10 @@ public class SAML2BrowserSSOProfileParser extends BaseSAML2ProfileConfigurationP
                     element.getAttributeNS(null, "skipEndpointValidationWhenSigned"));
         }
 
+        if (element.hasAttributeNS(null, "allowDelegation")) {
+            builder.addPropertyValue("allowingDelegation", element.getAttributeNS(null, "allowDelegation"));
+        }
+
         setPropertiesFromRelyingParty(element, builder);
     }
 

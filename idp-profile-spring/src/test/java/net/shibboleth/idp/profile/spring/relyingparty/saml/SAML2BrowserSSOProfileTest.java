@@ -53,6 +53,7 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
+        Assert.assertFalse(profile.isAllowingDelegation());
         Assert.assertNull(profile.getArtifactConfiguration());
         Assert.assertEquals(profile.getInboundSubflowId(), "SecurityPolicy.SAML2SSO");
         Assert.assertNull(profile.getOutboundSubflowId());
@@ -69,6 +70,7 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         assertConditionalPredicate(profile.getEncryptAssertionsPredicate());
         assertFalsePredicate(profile.getEncryptNameIDsPredicate());
         Assert.assertTrue(profile.isEncryptionOptional());
+        Assert.assertTrue(profile.isAllowingDelegation());
 
         Assert.assertEquals(profile.getProxyCount(), 0);
         Assert.assertTrue(profile.getProxyAudiences().isEmpty());
