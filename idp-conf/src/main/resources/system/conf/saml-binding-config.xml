@@ -36,7 +36,7 @@
             p:encoderBeanId="shibboleth.Encoders.SAML2PostEncoder" />
         <bean parent="shibboleth.BindingDescriptor" id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
             p:encoderBeanId="shibboleth.Encoders.SAML2PostSimpleSignEncoder" />
-        <bean parent="shibboleth.BindingDescriptor" id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-Artifact"
+        <bean parent="shibboleth.BindingDescriptor" id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
             p:encoderBeanId="shibboleth.Encoders.SAML2ArtifactEncoder" p:artifact="true" />
     </util:list>
 
@@ -47,7 +47,7 @@
             p:encoderBeanId="shibboleth.Encoders.SAML2PostEncoder" />
         <bean parent="shibboleth.BindingDescriptor" id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
             p:encoderBeanId="shibboleth.Encoders.SAML2PostSimpleSignEncoder" />
-        <bean parent="shibboleth.BindingDescriptor" id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-Artifact"
+        <bean parent="shibboleth.BindingDescriptor" id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
             p:encoderBeanId="shibboleth.Encoders.SAML2ArtifactEncoder" p:artifact="true" />
     </util:list>
 
