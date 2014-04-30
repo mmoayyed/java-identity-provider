@@ -32,15 +32,22 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Namespace for this handler. */
     public static final String NAMESPACE = "urn:mace:shibboleth:2.0:security";
+
     /** Credential element name. */
     public static final QName CREDENTIAL_ELEMENT_NAME = new QName(NAMESPACE, "Credential");
+
+    /** TrustEngine element name. */
+    public static final QName TRUST_ENGINE_ELEMENT_NAME = new QName(NAMESPACE, "TrustEngine");
+
+    /** SecurityPolicy element name. */
+    public static final QName SECRURITY_POLICY_NAME = new QName(NAMESPACE, "SecurityPolicy");
 
     /** {@inheritDoc} */
     @Override public void init() {
         registerBeanDefinitionParser(X509FilesystemCredentialParser.SCHEMA_TYPE, new X509FilesystemCredentialParser());
         registerBeanDefinitionParser(X509InlineCredentialParser.SCHEMA_TYPE, new X509InlineCredentialParser());
         registerBeanDefinitionParser(BasicInlineCredentialParser.SCHEMA_TYPE, new BasicInlineCredentialParser());
-        registerBeanDefinitionParser(BasicFilesystemCredentialParser.SCHEMA_TYPE,
+        registerBeanDefinitionParser(BasicFilesystemCredentialParser.SCHEMA_TYPE, 
                 new BasicFilesystemCredentialParser());
         registerBeanDefinitionParser(ResourceCredentialParser.X509_RESOURCE_TYPE, new ResourceCredentialParser());
         registerBeanDefinitionParser(ResourceCredentialParser.BASIC_RESOURCE_TYPE, new ResourceCredentialParser());

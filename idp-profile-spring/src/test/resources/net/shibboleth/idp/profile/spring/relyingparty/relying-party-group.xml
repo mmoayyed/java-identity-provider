@@ -119,7 +119,7 @@ E2N6GVnKs5PZTg9sP0FtIpAbYm/+zCx7Yj1ET/Er8mDd6tNVGSQsn9s5xUBwGqn1
         security policies establish a set of checks that an incoming message must pass in order to be considered
         secure.  Naturally some of these checks require the validation of the tokens evaluated by the trust 
         engines and so you'll see some rules that reference the declared trust engines.
-    -->
+
     <security:TrustEngine id="shibboleth.SignatureTrustEngine" xsi:type="security:SignatureChaining">
         <security:TrustEngine id="shibboleth.SignatureMetadataExplicitKeyTrustEngine" xsi:type="security:MetadataExplicitKeySignature" metadataProviderRef="ShibbolethMetadata"/>                              
         <security:TrustEngine id="shibboleth.SignatureMetadataPKIXTrustEngine" xsi:type="security:MetadataPKIXSignature" metadataProviderRef="ShibbolethMetadata"/>
@@ -129,7 +129,7 @@ E2N6GVnKs5PZTg9sP0FtIpAbYm/+zCx7Yj1ET/Er8mDd6tNVGSQsn9s5xUBwGqn1
         <security:TrustEngine id="shibboleth.CredentialMetadataExplictKeyTrustEngine" xsi:type="security:MetadataExplicitKey" metadataProviderRef="ShibbolethMetadata"/>
         <security:TrustEngine id="shibboleth.CredentialMetadataPKIXTrustEngine" xsi:type="security:MetadataPKIXX509Credential" metadataProviderRef="ShibbolethMetadata"/>
     </security:TrustEngine>
-     
+         -->
     <security:SecurityPolicy id="shibboleth.ShibbolethSSOSecurityPolicy" xsi:type="security:SecurityPolicyType">
         <security:Rule xsi:type="samlsec:Replay" required="false"/>
         <security:Rule xsi:type="samlsec:IssueInstant" required="false"/>

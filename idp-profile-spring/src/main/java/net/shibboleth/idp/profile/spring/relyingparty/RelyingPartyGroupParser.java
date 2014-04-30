@@ -29,6 +29,8 @@ import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
 import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -45,6 +47,9 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
 
     /** Element name. */
     public static final QName ELEMENT_NAME = new QName(RelyingPartyNamespaceHandler.NAMESPACE, "RelyingPartyGroup");
+    
+    /** Logger.*/
+    private final Logger log = LoggerFactory.getLogger(RelyingPartyGroupParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class<DefaultRelyingPartyConfigurationResolver> getBeanClass(Element element) {
@@ -110,9 +115,16 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
         // <Credential> (for metadata & signing)
         SpringSupport.parseCustomElements(configChildren.get(SecurityNamespaceHandler.CREDENTIAL_ELEMENT_NAME),
                 parserContext);
-        // TODO Security
         // <TrustEngine> (for metadata)
+        SpringSupport.parseCustomElements(configChildren.get(SecurityNamespaceHandler.TRUST_ENGINE_ELEMENT_NAME),
+                parserContext);
+
         // <SecurityPolicy> (warn and ignore).
+        final List<Element> policies = configChildren.get(SecurityNamespaceHandler.SECRURITY_POLICY_NAME);
+        if (null != policies && !policies.isEmpty()) {
+            log.warn("{}: {} Occurence(s of unsupported <SecurityPolicy/> elements have been ignored",
+                    parserContext.getReaderContext().getResource().getDescription(), policies.size());
+        }
 
     }
 
