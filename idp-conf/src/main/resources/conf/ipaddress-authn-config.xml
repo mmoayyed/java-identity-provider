@@ -37,19 +37,4 @@
         -->
     </util:map>
 
-
-    <!-- Bean definitions for tests. This will probably change. -->
-    <beans profile="dev">
-        
-        <util:map id="shibboleth.authn.IPAddress.Mappings">
-            <entry key="jdoe">
-                <list>
-                    <value>127.0.0.1/32</value>
-                    <value>::1/128</value>
-                </list>
-            </entry>
-        </util:map>
-
-    </beans>
-
 </beans>
