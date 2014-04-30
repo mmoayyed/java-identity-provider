@@ -21,7 +21,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -44,8 +43,6 @@ import com.google.common.base.Function;
  * function, by default a child of the profile request context.</p>
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
- * @event {@link IdPEventIds#INVALID_PROFILE_CONFIG}
  * @event subflow ID
  */
 public class CheckForProfileSubflow extends AbstractProfileAction {
@@ -121,13 +118,11 @@ public class CheckForProfileSubflow extends AbstractProfileAction {
         rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (rpCtx == null) {
             log.debug("{} No relying party context associated with this profile request", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
             return false;
         }
 
         if (rpCtx.getProfileConfig() == null) {
             log.debug("{} No profile configuration associated with this profile request", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
             return false;
         }
         

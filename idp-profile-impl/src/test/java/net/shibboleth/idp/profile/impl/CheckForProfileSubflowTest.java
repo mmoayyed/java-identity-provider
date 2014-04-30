@@ -18,7 +18,6 @@
 package net.shibboleth.idp.profile.impl;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
-import net.shibboleth.idp.profile.IdPEventIds;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -57,7 +56,7 @@ public class CheckForProfileSubflowTest {
         action.initialize();
         
         final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+        ActionTestingSupport.assertProceedEvent(event);
     }
 
     @Test public void testNoProfileConfiguration() throws Exception {
@@ -66,7 +65,7 @@ public class CheckForProfileSubflowTest {
         action.initialize();
         
         final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_PROFILE_CONFIG);
+        ActionTestingSupport.assertProceedEvent(event);
     }
 
     @Test public void testNoFlow() throws Exception {
