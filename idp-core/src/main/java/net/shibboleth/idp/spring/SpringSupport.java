@@ -24,6 +24,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
@@ -55,6 +56,10 @@ import com.google.common.collect.Sets;
  */
 public final class SpringSupport {
     
+    /** Spring beans element name. */
+    public static final QName SPRING_BEANS_ELEMENT_NAME = new QName("http://www.springframework.org/schema/beans",
+            "beans");
+
     /** Log. */
     static final Logger LOG = LoggerFactory.getLogger(SpringSupport.class);
 

@@ -248,7 +248,7 @@
                                 <documentation>Additional audiences to which an assertion may be released.</documentation>
                             </annotation>
                         </element>
-                        <element ref="spring:beans" minOccurs="0" maxOccurs="unbounded">
+                        <element ref="spring:beans" minOccurs="0" >
                             <annotation>
                                 <documentation>
                                     Additional Spring beans for Configuration.  If a bean of class

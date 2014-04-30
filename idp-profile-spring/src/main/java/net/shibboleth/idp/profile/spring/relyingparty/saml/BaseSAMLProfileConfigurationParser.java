@@ -22,20 +22,25 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.profile.config.logic.LegacyEncryptionRequirementPredicate;
 import net.shibboleth.idp.saml.profile.config.logic.LegacySigningRequirementPredicate;
+import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
+import org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import com.google.common.base.Predicate;
 
@@ -47,22 +52,34 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
 
     /** default value when assertionLifetime isn't set. */
     private static final long DEFAULT_ASSERTION_LIFETIME = 300000L;
-    
+
     /** Class logger. */
     @Nonnull private Logger log = LoggerFactory.getLogger(BaseSAMLProfileConfigurationParser.class);
 
     /** Flag controlling whether to parse artifact configuration. */
     private boolean artifactAware;
 
+    /** Where we store any &lt;spring:beans&gt; statements. */
+    private BeanFactory embeddedBeans;
+
     /**
      * Set whether to parse artifact configuration.
      * 
-     * @param flag  flag to set
+     * @param flag flag to set
      */
     protected void setArtifactAware(final boolean flag) {
         artifactAware = flag;
     }
-    
+
+    /**
+     * returns the factory for any embedded beans.
+     * 
+     * @return Returns the beans.
+     */
+    @Nullable protected BeanFactory getEmbeddedBeans() {
+        return embeddedBeans;
+    }
+
     /**
      * Construct the builder for the the artifact configuration.
      * 
@@ -86,7 +103,7 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
             definition.addPropertyReference("artifactResolutionServiceURL", getProfileBeanNamePrefix()
                     + "ArtifactServiceURL");
         }
-        
+
         if (element.hasAttributeNS(null, "artifactResolutionServiceIndex")) {
             definition.addPropertyValue("artifactResolutionServiceIndex",
                     element.getAttributeNS(null, "artifactResolutionServiceIndex"));
@@ -164,10 +181,81 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
         return result;
     }
 
+    /**
+     * Setup the {@link SecurityConfiguration} for this profile. We look first at the embedded beans for a bean of the
+     * correct type. Failing that we look for a defaultSigningCredential.
+     * 
+     * @param element the element with the profile in it.
+     * @param builder the builder for the profile.
+     */
+    private void setSecurityConfiguration(Element element, BeanDefinitionBuilder builder) {
+        
+        if (null != getEmbeddedBeans()) {
+            // Ask the embedded beans first
+            final SecurityConfiguration configuration;
+            configuration = SpringSupport.getBean(getEmbeddedBeans(), SecurityConfiguration.class);
+            if (null != configuration) {
+                builder.addPropertyValue("securityConfiguration", configuration);
+                if (element.hasAttributeNS(null, "signingCredentialRef")) {
+                    log.warn("local beans defined, explicit signingCredentialRef is ignored");
+                }
+                return;
+            }
+            log.debug("embedded beans but no SecurityConfiguration");
+        }
+        
+        final String credentialRef;
+        if (element.hasAttributeNS(null, "signingCredentialRef")) {
+            credentialRef = element.getAttributeNS(null, "signingCredentialRef");
+            log.debug("using explicit signing credential reference {}", credentialRef);
+        } else {
+            log.debug("Looking for default signing credential reference"); 
+
+            final Node parentNode = element.getParentNode();
+            if (parentNode == null) {
+                log.debug("no parent to ProfileConfiguration, no defaultSigningCredential set");
+                return;
+            }
+            if (!(parentNode instanceof Element)) {
+                log.debug("parent of ProfileConfiguration was unrecognizable, no defaultSigningCredential set");
+                return;
+            }
+            
+            Element relyingParty = (Element) parentNode;
+            if (!relyingParty.hasAttributeNS(null, "defaultSigningCredentialRef")) {
+                // no defaults
+                return;
+            }
+            credentialRef = relyingParty.getAttributeNS(null, "defaultSigningCredentialRef");
+            log.debug("Using default signing credential reference {}", credentialRef);
+        }
+        
+        final BeanDefinitionBuilder signingConfiguration =
+                BeanDefinitionBuilder.genericBeanDefinition(BasicSignatureSigningConfiguration.class);
+        signingConfiguration.addPropertyReference("signingCredentials", credentialRef);
+
+        final BeanDefinitionBuilder configuration =
+                BeanDefinitionBuilder.genericBeanDefinition(SecurityConfiguration.class);
+        configuration.addPropertyValue("signatureSigningConfiguration", signingConfiguration.getBeanDefinition());
+
+        builder.addPropertyValue("securityConfiguration", configuration.getBeanDefinition());
+
+    }
+
     /** {@inheritDoc} */
+    // Checkstyle: CyclomaticComplexity OFF
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
-        
+
+        final List<Element> springBeans =
+                ElementSupport.getChildElements(element, SpringSupport.SPRING_BEANS_ELEMENT_NAME);
+
+        if (null != springBeans && !springBeans.isEmpty()) {
+            embeddedBeans = SpringSupport.createBeanFactory(springBeans.get(0), null);
+        }
+
+        setSecurityConfiguration(element, builder);
+
         if (element.hasAttributeNS(null, "assertionLifetime")) {
             // Set as a string and let the converter to the work
             builder.addPropertyValue("assertionLifetime", element.getAttributeNS(null, "assertionLifetime"));
@@ -202,19 +290,14 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
             log.warn("Deprecated attribute 'outboundArtifactType=\"{}\"' has been ignored",
                     element.getAttributeNS(null, "outboundArtifactType"));
         }
-        
+
         if (element.hasAttributeNS(null, "inboundFlowId")) {
             builder.addPropertyValue("inboundSubflowId", element.getAttributeNS(null, "inboundFlowId"));
         } else {
-            builder.addPropertyReference("inboundSubflowId", getProfileBeanNamePrefix()+"InboundFlowId");
+            builder.addPropertyReference("inboundSubflowId", getProfileBeanNamePrefix() + "InboundFlowId");
         }
 
         builder.addPropertyValue("outboundSubflowId", element.getAttributeNS(null, "outboundFlowId"));
-        
-        if (element.hasAttributeNS(null, "signingCredentialRef")) {
-            log.warn("I do not (yet) know how to handle 'signingCredential=\"{}\"' yet",
-                    element.getAttributeNS(null, "signingCredentialRef"));
-        }
 
         builder.addPropertyValue("signAssertionsPredicate",
                 predicateForSigning(element.getAttributeNS(null, "signAssertions"), getSignAssertionsDefault()));
@@ -225,7 +308,8 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
 
         builder.addPropertyValue("additionalAudienceForAssertion", getAudiences(element));
     }
-
+    // Checkstyle: CyclomaticComplexity ON
+    
     /** {@inheritDoc} */
     @Override protected boolean shouldGenerateId() {
         return true;

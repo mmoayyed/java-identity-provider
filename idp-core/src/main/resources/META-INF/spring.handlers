@@ -1,2 +1,1 @@
-urn\:mace\:shibboleth\:2.0\:resource =  net.shibboleth.idp.spring.resource.ResourceNamespaceHandler
 urn\:mace\:shibboleth\:2.0\:services = net.shibboleth.idp.spring.service.ServiceNamespaceHandler

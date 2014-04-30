@@ -49,6 +49,7 @@ public class SAML2ArtifactTest extends BaseSAMLProfileTest {
         Assert.assertTrue(profile.includeConditionsNotBefore());
         Assert.assertEquals(profile.getInboundSubflowId(), "SecurityPolicy.SAML2ArtifactQuery");
         Assert.assertNull(profile.getOutboundSubflowId());
+        Assert.assertNull(profile.getSecurityConfiguration());
     }
 
     @Test public void values() {
@@ -70,6 +71,7 @@ public class SAML2ArtifactTest extends BaseSAMLProfileTest {
         
         Assert.assertEquals(profile.getInboundSubflowId(), "artifact2ibfid");
         Assert.assertEquals(profile.getOutboundSubflowId(), "artifact2obfid");
+        Assert.assertNull(profile.getSecurityConfiguration());
 
 
         Assert.assertEquals(profile.getAssertionLifetime(), 10 * 60 * 1000);

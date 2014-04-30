@@ -41,6 +41,7 @@ public class SAML1ArtifactTest extends BaseSAMLProfileTest {
 
         Assert.assertEquals(profile.getInboundSubflowId(), "SecurityPolicy.SAML1ArtifactQuery");
         Assert.assertNull(profile.getOutboundSubflowId());
+        Assert.assertNull(profile.getSecurityConfiguration());
     }
 
     @Test public void values() {
@@ -61,6 +62,7 @@ public class SAML1ArtifactTest extends BaseSAMLProfileTest {
 
         Assert.assertEquals(profile.getInboundSubflowId(), "artifactibfid");
         Assert.assertEquals(profile.getOutboundSubflowId(), "artifactobfid");
+        Assert.assertNotNull(profile.getSecurityConfiguration());
     }
 
 }

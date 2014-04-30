@@ -8,7 +8,7 @@
     securityPolicyRef="wobble" attributeAuthority="wibble"
     
     assertionLifetime="${prop.tenMins}" includeConditionsNotBefore="${prop.false}" artifactType="${prop.artifactType}1" 
-    signingCredentialRef="credref" signAssertions="${prop.never}" signRequests="never" signResponses="conditional"
+    signAssertions="${prop.never}" signRequests="never" signResponses="conditional"
     inboundFlowId="attributeibfid" outboundFlowId="attributeobfid"
 >
     <saml:Audience>${prop.String1}${prop.String1}</saml:Audience>

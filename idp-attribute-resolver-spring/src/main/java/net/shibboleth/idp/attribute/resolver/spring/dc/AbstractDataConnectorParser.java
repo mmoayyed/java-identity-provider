@@ -60,10 +60,6 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
     public static final QName FAILOVER_DATA_CONNECTOR_ELEMENT_NAME = new QName(
             AttributeResolverNamespaceHandler.NAMESPACE, "FailoverDataConnector");
 
-    /** Spring beans element name. */
-    public static final QName SPRING_BEANS_ELEMENT_NAME = new QName("http://www.springframework.org/schema/beans",
-            "beans");
-
     /** cache for the log prefix - to save multiple recalculations. */
     private String logPrefix;
 

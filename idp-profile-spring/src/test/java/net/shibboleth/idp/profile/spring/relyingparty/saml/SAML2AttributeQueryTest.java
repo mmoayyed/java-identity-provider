@@ -51,6 +51,7 @@ public class SAML2AttributeQueryTest extends BaseSAMLProfileTest {
         Assert.assertTrue(profile.includeConditionsNotBefore());
         Assert.assertEquals(profile.getInboundSubflowId(), "SecurityPolicy.SAML2AttributeQuery");
         Assert.assertNull(profile.getOutboundSubflowId());
+        Assert.assertNull(profile.getSecurityConfiguration());
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
         Assert.assertNull(artifact.getArtifactType());
@@ -73,6 +74,7 @@ public class SAML2AttributeQueryTest extends BaseSAMLProfileTest {
         
         Assert.assertEquals(profile.getInboundSubflowId(), "attribute2ibfid");
         Assert.assertEquals(profile.getOutboundSubflowId(), "attribute2obfid");
+        Assert.assertNull(profile.getSecurityConfiguration());
 
         assertFalsePredicate(profile.getSignRequestsPredicate());
         assertFalsePredicate(profile.getSignAssertionsPredicate());

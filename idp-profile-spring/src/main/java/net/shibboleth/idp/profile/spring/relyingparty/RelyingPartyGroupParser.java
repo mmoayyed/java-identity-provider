@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.MetadataNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
 import net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver;
 import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
 import net.shibboleth.idp.spring.SpringSupport;
@@ -107,9 +108,11 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
                         parserContext.getReaderContext().generateBeanName(rpDefinition), rpDefinition);
             }
         }
-        
+
+        // <Credential> (for metadata & signing)
+        SpringSupport.parseCustomElements(configChildren.get(SecurityNamespaceHandler.CREDENTIAL_ELEMENT_NAME),
+                parserContext);
         // TODO Security
-        // <Credential> (for metadata)
         // <TrustEngine> (for metadata>
         // <SecurityPolicy> (warn and ignore).
 

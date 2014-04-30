@@ -12,7 +12,7 @@
     encryptNameIds="always"	 encryptAssertions="${prop.never}" assertionProxyCount="99" attributeAuthority="wibble"
     
     assertionLifetime="${prop.tenMins}" includeConditionsNotBefore="${prop.false}" artifactType="765" 
-    signingCredentialRef="credref" signAssertions="${prop.never}" signRequests="never" signResponses="conditional"
+    signAssertions="${prop.never}" signRequests="never" signResponses="conditional"
     inboundFlowId="attribute2ibfid" outboundFlowId="attribute2obfid"
     
 >

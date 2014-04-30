@@ -56,6 +56,7 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertFalse(profile.isAllowingDelegation());
         Assert.assertEquals(profile.getInboundSubflowId(), "SecurityPolicy.SAML2SSO");
         Assert.assertNull(profile.getOutboundSubflowId());
+        Assert.assertNull(profile.getSecurityConfiguration());
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
         Assert.assertNull(artifact.getArtifactType());
@@ -106,6 +107,8 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertEquals(nameIDPrefs.size(), 2);
         Assert.assertTrue(nameIDPrefs.contains("one"));
         Assert.assertTrue(nameIDPrefs.contains("two"));
+        
+        Assert.assertNotNull(profile.getSecurityConfiguration());
 
     }
 }

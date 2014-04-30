@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.security;
 
+import javax.xml.namespace.QName;
+
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicFilesystemCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicInlineCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.ResourceCredentialParser;
@@ -30,6 +32,8 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Namespace for this handler. */
     public static final String NAMESPACE = "urn:mace:shibboleth:2.0:security";
+    /** Credential element name. */
+    public static final QName CREDENTIAL_ELEMENT_NAME = new QName(NAMESPACE, "Credential");
 
     /** {@inheritDoc} */
     @Override public void init() {
