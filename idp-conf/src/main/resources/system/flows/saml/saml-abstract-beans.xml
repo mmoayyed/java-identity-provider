@@ -31,13 +31,22 @@
         </property>
     </bean>
 
+    <bean id="SAML1ArtifactRequestIssuer"
+            class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
+            c:executionDirection="INBOUND">
+        <constructor-arg name="messageHandler">
+            <bean class="org.opensaml.saml.saml1.binding.impl.SAML1ArtifactRequestIssuerHandler" scope="prototype"
+                p:artifactMap-ref="shibboleth.SAMLArtifactMap" />
+        </constructor-arg>
+    </bean>
+
     <bean id="SAMLProtocolAndRole"
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
             c:executionDirection="INBOUND">
         <constructor-arg name="messageHandler">
             <bean class="org.opensaml.saml.common.binding.impl.SAMLProtocolAndRoleHandler" scope="prototype"
-                p:protocol-ref="Shibboleth.MetadataLookup.Protocol"
-                p:role-ref="Shibboleth.MetadataLookup.Role" />
+                p:protocol-ref="shibboleth.MetadataLookup.Protocol"
+                p:role-ref="shibboleth.MetadataLookup.Role" />
         </constructor-arg>
     </bean>
     

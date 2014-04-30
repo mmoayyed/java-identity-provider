@@ -35,10 +35,12 @@
         <!-- SAML profile flows. -->
         <webflow:flow-location id="Shibboleth/SSO" path="/saml/saml1/sso-unsolicited-flow.xml"  />
         <webflow:flow-location id="SAML1/AttributeQuery" path="/saml/saml1/attribute-query-flow.xml"  />
+        <webflow:flow-location id="SAML1/ArtifactResolution" path="/saml/saml1/artifact-resolution-flow.xml"  />
         <webflow:flow-location id="SAML2/Redirect/SSO" path="/saml/saml2/sso-redirect-flow.xml" />
         <webflow:flow-location id="SAML2/POST/SSO" path="/saml/saml2/sso-post-flow.xml"  />
         <webflow:flow-location id="SAML2/Unsolicited/SSO" path="/saml/saml2/sso-unsolicited-flow.xml"  />
         <webflow:flow-location id="SAML2/AttributeQuery" path="/saml/saml2/attribute-query-flow.xml"  />
+        <webflow:flow-location id="SAML2/ArtifactResolution" path="/saml/saml2/artifact-resolution-flow.xml"  />
     
         <!-- Inbound security processing of SAML messages. -->
         <webflow:flow-location id="SecurityPolicy.Abstract" path="/saml/security-abstract-flow.xml" />
