@@ -29,10 +29,10 @@
         </constructor-arg>
     </bean>
 
-    <util:constant id="Shibboleth.MetadataLookup.Protocol"
+    <util:constant id="shibboleth.MetadataLookup.Protocol"
         static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML20P_NS" />
 
-    <util:constant id="Shibboleth.MetadataLookup.Role"
+    <util:constant id="shibboleth.MetadataLookup.Role"
         static-field="org.opensaml.saml.saml2.metadata.SPSSODescriptor.DEFAULT_ELEMENT_NAME" />
 
     <!-- TODO replace with eventual relying-party.xml config -->
