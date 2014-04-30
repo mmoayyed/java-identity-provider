@@ -17,6 +17,8 @@
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
+    <import resource="common-beans.xml" />
+    
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
         p:profileId="#{T(net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration).PROFILE_ID}" />
@@ -29,42 +31,7 @@
         </constructor-arg>
     </bean>
 
-    <util:constant id="Shibboleth.MetadataLookup.Protocol"
-        static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML11P_NS" />
-
-    <util:constant id="Shibboleth.MetadataLookup.Role"
-        static-field="org.opensaml.saml.saml2.metadata.SPSSODescriptor.DEFAULT_ELEMENT_NAME" />
-
-    <!-- TODO replace with eventual relying-party.xml config -->
-    <bean
-        id="SecurityConfiguration"
-        class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
-    <bean
-        id="AttributeQueryProfileConfiguration"
-            class="net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration"
-            p:inboundSubflowId="SecurityPolicy.SAML1AttributeQuery"
-            p:securityConfiguration-ref="SecurityConfiguration" />
-    <bean
-        id="RelyingPartyConfiguration"
-        class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"
-        p:id="ActivatedRelyingPartyConfiguration"
-        p:responderId="https://idp.example.org"
-        p:detailedErrors="true"
-        p:profileConfigurations-ref="AttributeQueryProfileConfiguration" />
-
     <alias name="shibboleth.OutgoingSOAPBindings" alias="shibboleth.OutgoingBindings"/>
-
-    <bean id="AddResponseShell"
-            class="org.opensaml.saml.saml1.profile.impl.AddResponseShell" scope="prototype"
-            p:overwriteExisting="true">
-        <property name="identifierGeneratorLookupStrategy">
-            <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
-                p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />
-        </property>
-    </bean>
-
-    <bean id="AddAttributeStatementToAssertion"
-        class="net.shibboleth.idp.saml.saml1.profile.impl.AddAttributeStatementToAssertion" scope="prototype" />
 
     <bean id="CopyNameIdentifierFromRequest"
             class="org.opensaml.saml.saml1.profile.impl.CopyNameIdentifierFromRequest" scope="prototype" />
@@ -72,33 +39,6 @@
     <bean id="AddSubjectConfirmationToSubjects"
         class="org.opensaml.saml.saml1.profile.impl.AddSubjectConfirmationToSubjects" scope="prototype"
         p:methods="#{ {'urn:oasis:names:tc:SAML:1.0:cm:sender-vouches'} }" />
-
-    <bean id="InitializeOutboundMessageContextForError"
-            class="net.shibboleth.idp.saml.profile.impl.InitializeOutboundMessageContextForError" scope="prototype">
-        <property name="outboundBinding">
-            <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML1_SOAP11_BINDING_URI"/>
-        </property>
-    </bean>
-
-    <bean id="AddStatusToResponse"
-            class="org.opensaml.saml.saml1.profile.impl.AddStatusToResponse" scope="prototype"
-            p:statusMessage="An error occurred.">
-        <property name="detailedErrorsCondition">
-            <bean class="net.shibboleth.idp.profile.config.logic.DetailedErrorsPredicate" />
-        </property>
-        <property name="statusCodes">
-            <util:list>
-                <util:constant static-field="org.opensaml.saml.saml1.core.StatusCode.RESPONDER" />
-            </util:list>
-        </property>
-        <property name="statusCodesLookupStrategy">
-            <bean class="org.opensaml.saml.saml1.profile.impl.AddStatusToResponse.StatusCodeMappingFunction"
-                 c:mappings-ref="shibboleth.SAML1StatusMappings"/>
-        </property>
-        <property name="statusMessageLookupStrategy">
-            <bean class="net.shibboleth.idp.profile.context.navigate.SpringStatusMessageLookupFunction" />
-        </property>
-    </bean>
 
     <bean id="outboundMessageHandlerChain"
             class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
