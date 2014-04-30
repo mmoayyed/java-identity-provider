@@ -130,11 +130,7 @@
 
     <!-- Terminus -->
 
-    <end-state id="end">
-        <!-- TODO: Probably remove later. For tests, map the profile request context as an output attribute -->
-        <output name="ProfileRequestContext"
-            value="flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext')" />
-    </end-state>
+    <end-state id="end" />
 
     <!-- Handle errors by transitioning to an action defined below us.  -->
 
