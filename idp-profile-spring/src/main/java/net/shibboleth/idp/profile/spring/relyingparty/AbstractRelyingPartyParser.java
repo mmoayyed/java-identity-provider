@@ -21,14 +21,11 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.saml.SAML2ArtifactResolutionProfileParser;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -46,9 +43,6 @@ public abstract class AbstractRelyingPartyParser extends AbstractSingleBeanDefin
     public static final QName PROFILE_CONFIGURATION = new QName(RelyingPartyNamespaceHandler.NAMESPACE,
             "ProfileConfiguration");
 
-    /** logger. */
-    private Logger log = LoggerFactory.getLogger(SAML2ArtifactResolutionProfileParser.class);
-
     /** {@inheritDoc} */
     @Override protected java.lang.Class<RelyingPartyConfiguration> getBeanClass(Element element) {
         return RelyingPartyConfiguration.class;
@@ -58,11 +52,7 @@ public abstract class AbstractRelyingPartyParser extends AbstractSingleBeanDefin
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
-        if (element.hasAttributeNS(null, "defaultSigningCredentialRef")) {
-            // TODO
-            log.warn("I do not (yet) know how to deal with 'defaultSigningCredentialRef=\"{}\"'",
-                    element.getAttributeNS(null, "defaultSigningCredentialRef"));
-        }
+        // defaultSigningCredentialRef
         // defaultAuthenticationMethod and nameIDFormatPrecedence is dealt with in the specific SSO
         // profileConfigurations
 

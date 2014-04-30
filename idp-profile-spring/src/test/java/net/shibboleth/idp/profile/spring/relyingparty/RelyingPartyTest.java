@@ -75,6 +75,7 @@ public class RelyingPartyTest extends OpenSAMLInitBaseTestCase {
         Assert.assertTrue(rpConf.apply(ctx));
         //
         // TODO the EntitiesGroup thing
+        //
     }
 
 }

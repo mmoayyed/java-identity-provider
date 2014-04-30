@@ -112,7 +112,6 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
         return context;
     }
 
-    // TODO re-enable when all parsers are complete
     @Test(enabled = true) public void relyingPartyConfig() throws ResolverException, FileNotFoundException, IOException {
         GenericApplicationContext context = getContext("beans.xml", "relying-party-group.xml");
 

@@ -28,7 +28,6 @@ import net.shibboleth.idp.profile.spring.resource.ClasspathResourceParser;
 import net.shibboleth.idp.profile.spring.resource.SVNResourceParser;
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
-// TODO incomplete
 /** Namespace handler for <code>urn:mace:shibboleth:2.0:metadata</code>. */
 public class MetadataNamespaceHandler extends BaseSpringNamespaceHandler {
 

@@ -36,10 +36,8 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * TODO Security.
- * 
  * Parser for &lt;AnonymousRelyingParty&gt;<br/>
- * This parser summons up two (TODO three) beans a {@link DefaultRelyingPartyConfigurationResolver} which deals with the
+ * This parser summons up two beans: a {@link DefaultRelyingPartyConfigurationResolver} which deals with the
  * RelyingParty bit of the file, a series of {@link RelyingPartyMetadataProvider}s which deal with the metadata
  * configuration and a series of {@link TBD} which deals with the security configuration.
  */
@@ -113,7 +111,7 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
         SpringSupport.parseCustomElements(configChildren.get(SecurityNamespaceHandler.CREDENTIAL_ELEMENT_NAME),
                 parserContext);
         // TODO Security
-        // <TrustEngine> (for metadata>
+        // <TrustEngine> (for metadata)
         // <SecurityPolicy> (warn and ignore).
 
     }
