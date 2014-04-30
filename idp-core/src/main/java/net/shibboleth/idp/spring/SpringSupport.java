@@ -31,7 +31,10 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 import net.shibboleth.utilities.java.support.xml.XmlConstants;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -51,6 +54,9 @@ import com.google.common.collect.Sets;
  * Helper class for performing some common Spring-related functions.
  */
 public final class SpringSupport {
+    
+    /** Log. */
+    static final Logger LOG = LoggerFactory.getLogger(SpringSupport.class);
 
     /** Constructor. */
     private SpringSupport() {
@@ -112,10 +118,12 @@ public final class SpringSupport {
      * Creates a Spring bean factory from the supplied Spring beans element.
      * 
      * @param springBeans to create bean factory from
+     * @param parentContext the parent context, if required
      * 
      * @return bean factory
      */
-    @Nonnull public static BeanFactory createBeanFactory(@Nonnull final Element springBeans) {
+    @Nonnull public static BeanFactory createBeanFactory(@Nonnull final Element springBeans,
+            @Nullable ApplicationContext parentContext) {
 
         // Pull in the closest xsi:schemaLocation attribute we can find.
         if (!springBeans.hasAttributeNS(XmlConstants.XSI_SCHEMA_LOCATION_ATTRIB_NAME.getNamespaceURI(),
@@ -138,6 +146,9 @@ public final class SpringSupport {
         }
 
         final GenericApplicationContext ctx = new GenericApplicationContext();
+        if (null != parentContext) {
+            ctx.setParent(parentContext);
+        }
         final XmlBeanDefinitionReader definitionReader = new XmlBeanDefinitionReader(ctx);
         definitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
         definitionReader.setNamespaceAware(true);
@@ -146,5 +157,27 @@ public final class SpringSupport {
         definitionReader.loadBeanDefinitions(new InputSource(new ByteArrayInputStream(outputStream.toByteArray())));
         ctx.refresh();
         return ctx.getBeanFactory();
+    }
+
+    /**
+     * Retrieves the bean of the supplied type from the supplied bean factory. Returns null if no bean definition is
+     * found.
+     * 
+     * @param <T> type of bean to return
+     * @param beanFactory to get the bean from
+     * @param clazz type of the bean to retrieve
+     * 
+     * @return spring bean
+     */
+    @Nullable
+    public static <T> T getBean(@Nonnull final BeanFactory beanFactory, @Nonnull final Class<T> clazz) {
+        T bean = null;
+        try {
+            bean = beanFactory.getBean(clazz);
+            LOG.debug("created spring bean {}", bean);
+        } catch (NoSuchBeanDefinitionException e) {
+            LOG.debug("no spring bean configured of type {}", clazz);
+        }
+        return bean;
     }
 }

@@ -30,6 +30,7 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginParser;
+import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -37,7 +38,6 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
@@ -102,27 +102,6 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
     }
 
     /**
-     * Retrieves the bean of the supplied type from the supplied bean factory. Returns null if no bean definition is
-     * found.
-     * 
-     * @param <T> type of bean to return
-     * @param beanFactory to get the bean from
-     * @param clazz type of the bean to retrieve
-     * 
-     * @return spring bean
-     */
-    @Nullable protected <T> T getBean(@Nonnull final BeanFactory beanFactory, @Nonnull final Class<T> clazz) {
-        T bean = null;
-        try {
-            bean = beanFactory.getBean(clazz);
-            log.debug("created spring bean {}", bean);
-        } catch (NoSuchBeanDefinitionException e) {
-            log.debug("no spring bean configured of type {}", clazz);
-        }
-        return bean;
-    }
-
-    /**
      * Returns the results of {@link Introspector#getBeanInfo(Class, Class)} for the supplied connector class.
      * 
      * @param connectorClass to introspect
@@ -153,7 +132,7 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
             @Nonnull BeanFactory beanFactory, @Nonnull final Class<? extends AbstractDataConnector> connectorClass) {
         for (PropertyDescriptor descriptor : getBeanPropertyDescriptors(connectorClass)) {
             log.debug("parsing property descriptor {}", descriptor);
-            final Object value = getBean(beanFactory, descriptor.getPropertyType());
+            final Object value = SpringSupport.getBean(beanFactory, descriptor.getPropertyType());
             if (value != null) {
                 builder.addPropertyValue(descriptor.getName(), value);
                 log.debug("added property value {}", value);
