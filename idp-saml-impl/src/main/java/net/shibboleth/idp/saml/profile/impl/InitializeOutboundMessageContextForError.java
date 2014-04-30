@@ -168,7 +168,10 @@ public class InitializeOutboundMessageContextForError extends AbstractProfileAct
             return;
         }
         
-        bindingCtx.setRelayState(SAMLBindingSupport.getRelayState(profileRequestContext.getInboundMessageContext()));
+        if (profileRequestContext.getInboundMessageContext() != null) {
+            bindingCtx.setRelayState(SAMLBindingSupport.getRelayState(
+                    profileRequestContext.getInboundMessageContext()));
+        }
         bindingCtx.setBindingUri(outboundBinding);
                 
         // Copy SAML peer context and metadata if it exists.
