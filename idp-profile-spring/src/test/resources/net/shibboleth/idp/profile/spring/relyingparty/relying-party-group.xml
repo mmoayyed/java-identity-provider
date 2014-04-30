@@ -105,11 +105,11 @@ E2N6GVnKs5PZTg9sP0FtIpAbYm/+zCx7Yj1ET/Er8mDd6tNVGSQsn9s5xUBwGqn1
     
     <!-- ========================================== -->
     <!--     Security Configurations                -->
-    <!-- ========================================== 
+    <!-- ========================================== -->
     <security:Credential id="IdPCredential" xsi:type="security:X509Filesystem">
-        <security:PrivateKey>$IDP_HOME$/credentials/idp.key</security:PrivateKey>
-        <security:Certificate>$IDP_HOME$/credentials/idp.crt</security:Certificate>
-    </security:Credential> -->
+        <security:PrivateKey>${DIR}/security/credential/key.pem</security:PrivateKey>
+        <security:Certificate>${DIR}/security/credential/cert.pem</security:Certificate>
+    </security:Credential>
     
    
     <!-- DO NOT EDIT BELOW THIS POINT -->
