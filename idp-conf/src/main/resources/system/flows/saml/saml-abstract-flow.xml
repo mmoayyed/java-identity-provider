@@ -19,17 +19,22 @@
         <evaluate expression="SelectProfileConfiguration" />
 
         <evaluate expression="PopulateSignatureValidationParameters" />
-        <evaluate expression="CheckForInboundSubflow" />
-
         <evaluate expression="'proceed'" />
         
-        <!-- proceed indicates no flow to call -->
-        <transition on="proceed" to="OutboundContexts" />
-
-        <!-- Handle possible errors. -->
-        <transition on="#{currentEvent.id.startsWith('Invalid')}" to="SavePreviousEventAsError" />
+        <transition on="proceed" to="CheckForInboundSubflow" />
+    </action-state>
+    
+    <action-state id="CheckForInboundSubflow">
+        <evaluate expression="CheckForInboundSubflow" />
+        <evaluate expression="'proceed'" />
         
-        <!-- Call a subflow with the same ID as the event. -->
+        <!-- No inbound flow to call. -->
+        <transition on="proceed" to="OutboundContexts" />
+        
+        <!-- Anything starting with Invalid is an error. -->
+        <transition on="#{currentEvent.id.startsWith('Invalid')}" to="HandleError" />
+        
+        <!-- Anything else is a subflow to call. -->
         <transition to="CallInboundSubflow" />
     </action-state>
     
