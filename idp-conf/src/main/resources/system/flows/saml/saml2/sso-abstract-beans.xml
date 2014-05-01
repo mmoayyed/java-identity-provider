@@ -32,11 +32,15 @@
         class="net.shibboleth.idp.saml.saml2.profile.impl.ProcessRequestedAuthnContext" scope="prototype" />
         
     <bean id="AddNameIDToSubjects"
-            class="org.opensaml.saml.saml2.profile.impl.AddNameIDToSubjects" scope="prototype"
-            p:defaultNameIDGenerator="#{getObject('shibboleth.LegacySAML2NameIdentifierGenerator')}"
-            p:nameIDGenerators-ref="shibboleth.SAML2NameIDGenerators">
+            class="org.opensaml.saml.saml2.profile.impl.AddNameIDToSubjects" scope="prototype">
         <property name="formatLookupStrategy">
-            <bean class="net.shibboleth.idp.saml.profile.logic.DefaultNameIdentifierFormatStrategy" />
+            <bean class="net.shibboleth.idp.saml.profile.logic.DefaultNameIdentifierFormatStrategy"
+                p:defaultFormat="${idp.saml2.nameid.default}" />
+        </property>
+        <property name="nameIDGenerator">
+            <bean class="org.opensaml.saml.saml2.profile.impl.ChainingSAML2NameIDGenerator"
+                p:nameIdentifierGenerators-ref="shibboleth.SAML2NameIDGenerators"
+                p:defaultNameIDGenerator="#{getObject('shibboleth.LegacySAML2NameIDGenerator')}" />
         </property>
         <property name="nameIDPolicyPredicate">
             <bean class="org.opensaml.saml.common.profile.logic.AffiliationNameIDPolicyPredicate"

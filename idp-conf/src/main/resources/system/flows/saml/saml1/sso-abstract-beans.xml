@@ -26,11 +26,15 @@
     <alias name="shibboleth.OutgoingSAML1SSOBindings" alias="shibboleth.OutgoingBindings"/>
 
     <bean id="AddNameIdentifierToSubjects"
-            class="org.opensaml.saml.saml1.profile.impl.AddNameIdentifierToSubjects" scope="prototype"
-            p:defaultNameIDGenerator="#{getObject('shibboleth.LegacySAML1NameIdentifierGenerator')}"
-            p:nameIdentifierGenerators-ref="shibboleth.SAML1NameIdentifierGenerators">
+            class="org.opensaml.saml.saml1.profile.impl.AddNameIdentifierToSubjects" scope="prototype">
         <property name="formatLookupStrategy">
-            <bean class="net.shibboleth.idp.saml.profile.logic.DefaultNameIdentifierFormatStrategy" />
+            <bean class="net.shibboleth.idp.saml.profile.logic.DefaultNameIdentifierFormatStrategy"
+                p:defaultFormat="${idp.saml1.nameid.default}" />
+        </property>
+        <property name="nameIdentifierGenerator">
+            <bean class="org.opensaml.saml.saml1.profile.impl.ChainingSAML1NameIdentifierGenerator"
+                p:nameIdentifierGenerators-ref="shibboleth.SAML1NameIdentifierGenerators"
+                p:defaultNameIDGenerator="#{getObject('shibboleth.LegacySAML1NameIdentifierGenerator')}" />
         </property>
     </bean>
 

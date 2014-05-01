@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.profile.logic;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -25,11 +26,14 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.profile.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.profile.logic.MetadataNameIdentifierFormatStrategy;
+import org.opensaml.saml.saml2.core.NameID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,9 +54,13 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
      */
     @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
     
+    /** Default format to use if nothing else is known. */
+    @Nonnull @NotEmpty private String defaultFormat; 
+    
     /** Constructor. */
     public DefaultNameIdentifierFormatStrategy() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
+        defaultFormat = NameID.UNSPECIFIED;
     }
     
     /**
@@ -67,6 +75,16 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
 
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
+    }
+    
+    /**
+     * Set the default format to return.
+     * 
+     * @param format    default format
+     */
+    public synchronized void setDefaultFormat(@Nonnull @NotEmpty final String format) {
+        defaultFormat = Constraint.isNotNull(StringSupport.trimOrNull(format),
+                "Default format cannot be null or empty");
     }
     
     /** {@inheritDoc} */
@@ -90,8 +108,8 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
         
         if (fromConfig.isEmpty()) {
             if (fromMetadata.isEmpty()) {
-                log.debug("No formats specified in configuration or in metadata");
-                return fromConfig;
+                log.debug("No formats specified in configuration or in metadata, returning default");
+                return Collections.singletonList(defaultFormat);
             } else {
                 log.debug("Configuration did not specify any formats, relying on metadata alone");
                 return fromMetadata;
