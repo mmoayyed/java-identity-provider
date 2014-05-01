@@ -115,6 +115,7 @@ public abstract class AbstractServiceableComponent<T> extends AbstractIdentified
      */
     @Override protected void doDestroy() {
         unloadComponent();
+        super.doDestroy();
     }
 
     /** {@inheritDoc} */
