@@ -163,7 +163,8 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
             throw new ComponentInitializationException(getLogPrefix() + " No value mapper present");
         }
         if (attributeIds.isEmpty()) {
-            throw new ComponentInitializationException(getLogPrefix() + " At least one attribute Id should be provided");
+            throw new ComponentInitializationException(getLogPrefix()
+                    + " At least one attribute Id should be provided");
         }
         logPrefix = null;
         valueMapper.setLogPrefix(getLogPrefix());
