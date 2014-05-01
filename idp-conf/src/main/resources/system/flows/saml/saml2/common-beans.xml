@@ -62,8 +62,9 @@
         </property>
     </bean>
 
-    <bean id="AddResponseShell" class="org.opensaml.saml.saml2.profile.impl.AddResponseShell" scope="prototype"
-            p:issuerLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple">
+    <bean id="AddResponseShell" class="org.opensaml.saml.saml2.profile.impl.AddStatusResponseShell" scope="prototype"
+            p:issuerLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"
+            p:messageType="#{T(org.opensaml.saml.saml2.core.Response).DEFAULT_ELEMENT_NAME}">
         <property name="identifierGeneratorLookupStrategy">
             <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
                 p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />
