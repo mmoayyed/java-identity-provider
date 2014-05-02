@@ -24,6 +24,7 @@ import net.shibboleth.idp.profile.spring.relyingparty.saml.SAML2AttributeQueryPr
 import net.shibboleth.idp.profile.spring.relyingparty.saml.SAML2BrowserSSOProfileParser;
 import net.shibboleth.idp.profile.spring.relyingparty.saml.SAML2ECPProfileParser;
 import net.shibboleth.idp.profile.spring.relyingparty.saml.SAML2LogoutRequestProfileParser;
+import net.shibboleth.idp.profile.spring.relyingparty.saml.SAML2SSOSProfileParser;
 import net.shibboleth.idp.profile.spring.relyingparty.saml.ShibbolethSSOProfileParser;
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
@@ -45,6 +46,7 @@ public class RelyingPartyNamespaceHandler extends BaseSpringNamespaceHandler {
                 new SAML2AttributeQueryProfileParser());
         registerBeanDefinitionParser(SAML2BrowserSSOProfileParser.ELEMENT_NAME, new SAML2BrowserSSOProfileParser());
         registerBeanDefinitionParser(SAML2ECPProfileParser.ELEMENT_NAME, new SAML2ECPProfileParser());
+        registerBeanDefinitionParser(SAML2SSOSProfileParser.ELEMENT_NAME, new SAML2SSOSProfileParser());
 
         registerBeanDefinitionParser(SAML1ArtifactResolutionProfileParser.ELEMENT_NAME,
                 new SAML1ArtifactResolutionProfileParser());

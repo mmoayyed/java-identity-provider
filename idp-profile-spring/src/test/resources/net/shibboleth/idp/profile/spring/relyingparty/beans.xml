@@ -54,6 +54,8 @@
         c:_0="SecurityPolicy.SAML2ECP" />
 
     <!--  SAML2 - Liberty -->
+    <bean id="shibboleth.SAML2.SSOS.InboundFlowId" class="java.lang.String"
+        c:_0="SecurityPolicy.SAML2SSOS" />
 
     <!--  SAML1 -->
 	<bean id="shibboleth.SAML1.Artifact.ArtifactServiceURL" class="java.lang.String"
