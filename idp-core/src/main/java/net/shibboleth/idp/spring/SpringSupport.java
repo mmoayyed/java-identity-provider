@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
@@ -55,7 +56,7 @@ import com.google.common.collect.Sets;
  * Helper class for performing some common Spring-related functions.
  */
 public final class SpringSupport {
-    
+
     /** Spring beans element name. */
     public static final QName SPRING_BEANS_ELEMENT_NAME = new QName("http://www.springframework.org/schema/beans",
             "beans");
@@ -120,15 +121,29 @@ public final class SpringSupport {
     }
 
     /**
+     * Parse the provided Element into the provided registry.
+     * @param springBeans the element to parse
+     * @param registry the registry to populate
+     */
+    public static void parseNativeElement(@Nonnull final Element springBeans, 
+            @Nullable BeanDefinitionRegistry registry) {
+        final XmlBeanDefinitionReader definitionReader = new XmlBeanDefinitionReader(registry);
+        definitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
+        definitionReader.setNamespaceAware(true);
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        SerializeSupport.writeNode(springBeans, outputStream);
+        definitionReader.loadBeanDefinitions(new InputSource(new ByteArrayInputStream(outputStream.toByteArray())));
+
+    }
+
+    /**
      * Creates a Spring bean factory from the supplied Spring beans element.
      * 
      * @param springBeans to create bean factory from
-     * @param parentContext the parent context, if required
      * 
      * @return bean factory
      */
-    @Nonnull public static BeanFactory createBeanFactory(@Nonnull final Element springBeans,
-            @Nullable ApplicationContext parentContext) {
+    @Nonnull public static BeanFactory createBeanFactory(@Nonnull final Element springBeans) {
 
         // Pull in the closest xsi:schemaLocation attribute we can find.
         if (!springBeans.hasAttributeNS(XmlConstants.XSI_SCHEMA_LOCATION_ATTRIB_NAME.getNamespaceURI(),
@@ -151,15 +166,7 @@ public final class SpringSupport {
         }
 
         final GenericApplicationContext ctx = new GenericApplicationContext();
-        if (null != parentContext) {
-            ctx.setParent(parentContext);
-        }
-        final XmlBeanDefinitionReader definitionReader = new XmlBeanDefinitionReader(ctx);
-        definitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
-        definitionReader.setNamespaceAware(true);
-        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        SerializeSupport.writeNode(springBeans, outputStream);
-        definitionReader.loadBeanDefinitions(new InputSource(new ByteArrayInputStream(outputStream.toByteArray())));
+        parseNativeElement(springBeans, ctx);
         ctx.refresh();
         return ctx.getBeanFactory();
     }
@@ -174,8 +181,7 @@ public final class SpringSupport {
      * 
      * @return spring bean
      */
-    @Nullable
-    public static <T> T getBean(@Nonnull final BeanFactory beanFactory, @Nonnull final Class<T> clazz) {
+    @Nullable public static <T> T getBean(@Nonnull final BeanFactory beanFactory, @Nonnull final Class<T> clazz) {
         T bean = null;
         try {
             bean = beanFactory.getBean(clazz);

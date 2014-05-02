@@ -251,7 +251,7 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
                 ElementSupport.getChildElements(element, SpringSupport.SPRING_BEANS_ELEMENT_NAME);
 
         if (null != springBeans && !springBeans.isEmpty()) {
-            embeddedBeans = SpringSupport.createBeanFactory(springBeans.get(0), null);
+            embeddedBeans = SpringSupport.createBeanFactory(springBeans.get(0));
         }
 
         setSecurityConfiguration(element, builder);
