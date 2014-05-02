@@ -44,7 +44,7 @@
         </property>
         <property name="nameIDPolicyPredicate">
             <bean class="org.opensaml.saml.common.profile.logic.AffiliationNameIDPolicyPredicate"
-                    p:metadataResolver-ref="Shibboleth.MetadataResolver"
+                    p:metadataResolver-ref="shibboleth.MetadataResolver"
                     p:responderIdLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"
                     p:requesterIdLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple">
                 <property name="objectLookupStrategy">

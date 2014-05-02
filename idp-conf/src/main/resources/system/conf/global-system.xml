@@ -164,16 +164,15 @@
         p:reloadCheckDelay="${idp.service.attribute.resolver.checkInterval}"
         p:reloadTaskTimer="shibboleth.TaskTimer" />
 
-    <bean id="rpResolverService" class="net.shibboleth.idp.service.ReloadableSpringService"
+    <bean id="shibboleth.RelyingPartyResolverService" class="net.shibboleth.idp.service.ReloadableSpringService"
         c:claz="net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver"
         c:servicableClaz="net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver"
         p:serviceConfigurations-ref="shibboleth.RelyingPartyResolverResources"
         p:failFast="${idp.service.relyingparty.failFast}"
         p:reloadCheckDelay="${idp.service.relyingparty.checkInterval}"
         p:reloadTaskTimer="shibboleth.TaskTimer" />
-
     
-    <bean id="metadataResolverService" class="net.shibboleth.idp.service.ReloadableSpringService"
+    <bean id="shibboleth.MetadataResolverService" class="net.shibboleth.idp.service.ReloadableSpringService"
         c:claz="org.opensaml.saml.metadata.resolver.MetadataResolver"
         c:servicableClaz="net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider"
         p:serviceConfigurations-ref="shibboleth.MetadataResolverResources"
@@ -181,20 +180,20 @@
         p:reloadCheckDelay="${idp.service.metadata.checkInterval}"
         p:reloadTaskTimer="shibboleth.TaskTimer" />
     
-    <bean id="Shibboleth.RelyingPartyResolver"
+    <bean id="shibboleth.RelyingPartyConfigurationResolver"
         class="net.shibboleth.idp.relyingparty.impl.ReloadingRelyingPartyConfigurationResolver"
-        c:resolverService-ref="rpResolverService" />
+        c:resolverService-ref="shibboleth.RelyingPartyResolverService" />
         
-    <bean id="Shibboleth.MetadataResolver"
+    <bean id="shibboleth.MetadataResolver"
         class="net.shibboleth.idp.saml.metadata.impl.ReloadingRelyingPartyMetadataProvider"
-        c:resolverService-ref="metadataResolverService" />
+        c:resolverService-ref="shibboleth.MetadataResolverService" />
 
     <!-- TODO: all this is probably wrong, but need it to get something working -->
     
     <bean id="shibboleth.MetadataCredentialResolver" class="org.opensaml.saml.security.impl.MetadataCredentialResolver">
         <constructor-arg>
             <bean class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
-                c:mdResolver-ref="Shibboleth.MetadataResolver" />
+                c:mdResolver-ref="shibboleth.MetadataResolver" />
         </constructor-arg>
     </bean>
 
