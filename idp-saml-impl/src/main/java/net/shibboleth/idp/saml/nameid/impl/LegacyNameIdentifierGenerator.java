@@ -109,12 +109,6 @@ public class LegacyNameIdentifierGenerator<NameIdType extends SAMLObject>
         attributeContextLookupStrategy = Constraint.isNotNull(strategy,
                 "AttributeContext lookup strategy cannot be null");
     }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean apply(@Nullable final ProfileRequestContext input) {
-        return activationCondition.apply(input);
-    }
     
     /** {@inheritDoc} */
     @Override
@@ -122,6 +116,10 @@ public class LegacyNameIdentifierGenerator<NameIdType extends SAMLObject>
             @Nonnull @NotEmpty final String format) throws SAMLException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         Constraint.isNotNull(format, "Format cannot be null or empty");
+        
+        if (!activationCondition.apply(profileRequestContext)) {
+            return null;
+        }
         
         final AttributeContext attributeContext = attributeContextLookupStrategy.apply(profileRequestContext);
         if (attributeContext == null || attributeContext.getIdPAttributes().isEmpty()) {
