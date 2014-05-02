@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file is an EXAMPLE metadata configuration file. -->
+<MetadataProvider id="ShibbolethMetadata"
+	xsi:type="ChainingMetadataProvider" xmlns:rp="urn:mace:shibboleth:2.0:relying-party"
+	xmlns:saml="urn:mace:shibboleth:2.0:relying-party:saml" xmlns="urn:mace:shibboleth:2.0:metadata"
+	xmlns:resource="urn:mace:shibboleth:2.0:resource" xmlns:security="urn:mace:shibboleth:2.0:security"
+	xmlns:samlsec="urn:mace:shibboleth:2.0:security:saml" xmlns:samlmd="urn:oasis:names:tc:SAML:2.0:metadata"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:mace:shibboleth:2.0:relying-party classpath:/schema/shibboleth-2.0-relying-party.xsd
+                                          urn:mace:shibboleth:2.0:relying-party:saml classpath:/schema/shibboleth-2.0-relying-party-saml.xsd
+                                          urn:mace:shibboleth:2.0:metadata classpath:/schema/shibboleth-2.0-metadata.xsd
+                                          urn:mace:shibboleth:2.0:resource classpath:/schema/shibboleth-2.0-resource.xsd 
+                                          urn:mace:shibboleth:2.0:security classpath:/schema/shibboleth-2.0-security.xsd
+                                          urn:mace:shibboleth:2.0:security:saml classpath:/schema/shibboleth-2.0-security-policy-saml.xsd
+                                          urn:oasis:names:tc:SAML:2.0:metadata classpath:/schema/saml-schema-metadata-2.0.xsd">
+	<!-- ========================================== -->
+	<!-- Metadata Configuration -->
+	<!-- ========================================== -->
+	<!-- MetadataProvider the combining other MetadataProviders -->
+
+
+	<!-- Example metadata provider. -->
+	<!-- Reads metadata from a URL and store a backup copy on the file system. -->
+	<!-- Validates the signature of the metadata and filters out all by SP entities 
+		in order to save memory -->
+	<MetadataProvider id="URLMD"
+		xsi:type="FilesystemMetadataProvider" metadataFile="${idp.home}/metadata/example-metadata.xml">
+		<MetadataFilter xsi:type="ChainingFilter">
+			<MetadataFilter xsi:type="SignatureValidation"
+				requireSignedMetadata="false"> <!-- TODO -->
+				<PublicKey>-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxg0TyQAP/tIvOH89EtaX
+uRRn8SYzTj7W1TbNY4VvBmobjkRmSkki4hH9x4sQpi635wn6WtXTN/FNNmkTK3N/
+LspmBWxfZS+n+cc7I82E5yvCAPX67QsZgqgglp2W5dvK/FsMMCS6X6SVqzBLMP88
+NenXKxY+HMxMs0sT0UKYh1cAEqadrHRBO65aDBcm5a0sBVYt9K6pgaOHrp/zSIbh
+nR5tFFLjBbtFktDpHL3AdGBH3OYidNGKBO3tJ3Ms7LeKXsM0+0Y4P+9fHZINL2X3
+E2N6GVnKs5PZTg9sP0FtIpAbYm/+zCx7Yj1ET/Er8mDd6tNVGSQsn9s5xUBwGqn1
+4wIDAQAB
+-----END PUBLIC KEY-----
+				</PublicKey>
+			</MetadataFilter>
+			<MetadataFilter xsi:type="EntityRoleWhiteList">
+				<RetainedRole>samlmd:SPSSODescriptor</RetainedRole>
+			</MetadataFilter>
+		</MetadataFilter>
+	</MetadataProvider>
+
+</MetadataProvider>
+

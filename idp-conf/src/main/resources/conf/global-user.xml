@@ -80,8 +80,7 @@
     <!--  The (currently single) file which provides relying party configuration -->
 
     <util:list id="shibboleth.MetadataResolverResources">
-        <value>file://${idp.home}/conf/relying-party.xml</value>
-        <value>file://${idp.home}/conf/profile-defaults.xml</value>
+        <value>file://${idp.home}/conf/metadata-providers.xml</value>
         <value>file://${idp.home}/conf/property-placeholder.xml</value>
     </util:list>
 
