@@ -50,7 +50,7 @@ public class FileBackedHTTPMetadataProviderParserTest extends AbstractMetadataPa
     
     @Test public void entities() throws Exception {
 
-        MetadataResolver resolver = getBean(MetadataResolver.class, true, "fileBackedHTTPEntities.xml", "beans.xml");
+        MetadataResolver resolver = getBean(FileBackedHTTPMetadataResolver.class, true, "fileBackedHTTPEntities.xml", "beans.xml");
 
         Assert.assertEquals(resolver.getId(), "fileBackedHTTPEntities");
         

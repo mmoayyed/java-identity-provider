@@ -20,7 +20,10 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 import java.util.Iterator;
 
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.metadata.resolver.impl.FileBackedHTTPMetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolver;
+import org.opensaml.saml.metadata.resolver.impl.HTTPMetadataResolver;
+import org.opensaml.saml.metadata.resolver.impl.ResourceBackedMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.beans.factory.BeanCreationException;
 import org.testng.Assert;
@@ -69,7 +72,7 @@ public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
     
     @Test public void classpathEntity() throws Exception {
 
-        MetadataResolver resolver = getBean(MetadataResolver.class, true, "resourceClasspathEntity.xml", "beans.xml");
+        MetadataResolver resolver = getBean(ResourceBackedMetadataResolver.class, true, "resourceClasspathEntity.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "resourceClasspathEntity");
    
@@ -79,7 +82,7 @@ public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
 
     @Test public void classpathEntities() throws Exception {
 
-        MetadataResolver resolver = getBean(MetadataResolver.class, true, "resourceClasspathEntities.xml", "beans.xml");
+        MetadataResolver resolver = getBean(ResourceBackedMetadataResolver.class, true, "resourceClasspathEntities.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "resourceClasspathEntities");
 
@@ -89,7 +92,7 @@ public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
 
     @Test public void httpEntity() throws Exception {
 
-        MetadataResolver resolver = getBean(MetadataResolver.class, true, "resourceHTTPEntity.xml", "beans.xml");
+        MetadataResolver resolver = getBean(HTTPMetadataResolver.class, true, "resourceHTTPEntity.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "resourceHTTPEntity");
    
@@ -99,7 +102,7 @@ public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
 
     @Test public void httpEntities() throws Exception {
 
-        MetadataResolver resolver = getBean(MetadataResolver.class, true, "resourceHTTPEntities.xml", "beans.xml");
+        MetadataResolver resolver = getBean(HTTPMetadataResolver.class, true, "resourceHTTPEntities.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "resourceHTTPEntities");
 
@@ -109,7 +112,7 @@ public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
     
     @Test public void fileHttpEntity() throws Exception {
 
-        MetadataResolver resolver = getBean(MetadataResolver.class, true, "resourceFileBackedHTTPEntity.xml", "beans.xml");
+        MetadataResolver resolver = getBean(FileBackedHTTPMetadataResolver.class, true, "resourceFileBackedHTTPEntity.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "resourceFileBackedHTTPEntity");
    
@@ -119,7 +122,7 @@ public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
 
     @Test public void fileHttpEntities() throws Exception {
 
-        MetadataResolver resolver = getBean(MetadataResolver.class, true, "resourceFileBackedHTTPEntities.xml", "beans.xml");
+        MetadataResolver resolver = getBean(FileBackedHTTPMetadataResolver.class, true, "resourceFileBackedHTTPEntities.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "resourceFileBackedHTTPEntities");
 
@@ -129,7 +132,7 @@ public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
 
     @Test public void svnEntity() throws Exception {
 
-        MetadataResolver resolver = getBean(MetadataResolver.class, true, "svnEntity.xml", "beans.xml");
+        MetadataResolver resolver = getBean(ResourceBackedMetadataResolver.class, true, "svnEntity.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "SVNEntity");
    

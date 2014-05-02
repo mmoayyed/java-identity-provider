@@ -44,13 +44,14 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
     private static final String BASIC_AUTH_PASSWORD = "basicAuthPassword";
 
     /** {@inheritDoc} */
-    @Override protected Class<?> getBeanClass(Element element) {
+    @Override protected Class<? extends HTTPMetadataResolver> getNativeBeanClass(Element element) {
         return HTTPMetadataResolver.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(element, parserContext, builder);
+    @Override protected void doNativeParse(Element element, ParserContext parserContext, 
+            BeanDefinitionBuilder builder) {
+        super.doNativeParse(element, parserContext, builder);
 
         builder.addConstructorArgValue(buildHttpClient(element));
         builder.addConstructorArgValue(element.getAttributeNS(null, METADATA_URL));

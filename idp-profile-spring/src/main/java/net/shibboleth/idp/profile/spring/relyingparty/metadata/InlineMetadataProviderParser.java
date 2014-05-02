@@ -36,13 +36,14 @@ public class InlineMetadataProviderParser extends AbstractMetadataProviderParser
     public static final QName ELEMENT_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "InlineMetadataProvider");
 
     /** {@inheritDoc} */
-    @Override protected Class<DOMMetadataResolver> getBeanClass(Element element) {
+    @Override protected Class<DOMMetadataResolver> getNativeBeanClass(Element element) {
         return DOMMetadataResolver.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(element, parserContext, builder);
+    @Override protected void doNativeParse(Element element, ParserContext parserContext, 
+            BeanDefinitionBuilder builder) {
+        super.doNativeParse(element, parserContext, builder);
 
         List<Element> metadataContent =
                 ElementSupport.getChildElementsByTagNameNS(element, SAMLConstants.SAML20MD_NS, "EntitiesDescriptor");

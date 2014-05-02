@@ -44,9 +44,10 @@ public abstract class AbstractReloadingMetadataProviderParser extends AbstractMe
      * We assume that we will be summoning up a class which extends an
      * {@link org.opensaml.saml.metadata.resolver.impl.AbstractReloadingMetadataResolver}.
      */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doNativeParse(Element element, ParserContext parserContext, 
+            BeanDefinitionBuilder builder) {
 
-        super.doParse(element, parserContext, builder);
+        super.doNativeParse(element, parserContext, builder);
         builder.addConstructorArgReference(getTaskTimerRef(element));
         
         if (element.hasAttributeNS(null, "refreshDelayFactor")) {

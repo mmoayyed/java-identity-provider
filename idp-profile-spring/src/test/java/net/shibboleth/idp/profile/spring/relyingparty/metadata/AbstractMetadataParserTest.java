@@ -24,6 +24,8 @@ import java.nio.file.Path;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
+import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
+import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -137,8 +139,15 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         } else {
             parserPool = null;
         }
+        
+        T result = SpringSupport.getBean(context, claz);
+        if (result != null) {
+            return result;
+        }
+        
+        RelyingPartyMetadataProvider rpProvider = context.getBean(RelyingPartyMetadataProvider.class);
 
-        return context.getBean(claz);
+        return claz.cast(rpProvider.getEmbeddedResolver());
     }
     
     static public CriteriaSet criteriaFor(String entityId) {

@@ -61,7 +61,7 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
     private final Logger log = LoggerFactory.getLogger(ResourceBackedMetadataProviderParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<? extends AbstractBatchMetadataResolver> getBeanClass(Element element) {
+    @Override protected Class<? extends AbstractBatchMetadataResolver> getNativeBeanClass(Element element) {
 
         final List<Element> resources = ElementSupport.getChildElements(element, RESOURCES_NAME);
         if (null == resources || resources.isEmpty()) {
@@ -93,8 +93,9 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(element, parserContext, builder);
+    @Override protected void doNativeParse(Element element, ParserContext parserContext, 
+            BeanDefinitionBuilder builder) {
+        super.doNativeParse(element, parserContext, builder);
 
         final List<Element> resources = ElementSupport.getChildElements(element, RESOURCES_NAME);
         if (resources.size() != 1) {

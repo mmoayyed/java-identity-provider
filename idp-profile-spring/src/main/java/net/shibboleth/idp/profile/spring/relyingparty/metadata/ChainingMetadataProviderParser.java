@@ -38,13 +38,14 @@ public class ChainingMetadataProviderParser extends AbstractMetadataProviderPars
     public static final QName ELEMENT_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "ChainingMetadataProvider");
 
     /** {@inheritDoc} */
-    @Override protected Class<ChainingMetadataResolver> getBeanClass(Element element) {
+    @Override protected Class<ChainingMetadataResolver> getNativeBeanClass(Element element) {
         return ChainingMetadataResolver.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(element, parserContext, builder);
+    @Override protected void doNativeParse(Element element, ParserContext parserContext, 
+            BeanDefinitionBuilder builder) {
+        super.doNativeParse(element, parserContext, builder);
 
         final List<Element> childProviders =
                 ElementSupport.getChildElements(element, MetadataNamespaceHandler.METADATA_ELEMENT_NAME);

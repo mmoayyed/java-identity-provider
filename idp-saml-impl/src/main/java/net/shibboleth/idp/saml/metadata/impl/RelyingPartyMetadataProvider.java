@@ -48,6 +48,14 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
     public RelyingPartyMetadataProvider(MetadataResolver child) {
         resolver = child;
     }
+    
+    /** Return what we are build around. Used for testing.
+     * 
+     * @return the parameter we got as a constructor 
+     */
+    public MetadataResolver getEmbeddedResolver() {
+        return resolver;
+    }
 
     /** {@inheritDoc} */
     @Override @Nonnull public Iterable<EntityDescriptor> resolve(CriteriaSet criteria) throws ResolverException {
