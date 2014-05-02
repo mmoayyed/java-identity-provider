@@ -25,7 +25,6 @@ import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespace
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
-import org.opensaml.security.credential.UsageType;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
@@ -67,11 +66,7 @@ public abstract class AbstractCredentialParser extends AbstractSingleBeanDefinit
      */
     protected void parseAttributes(final Element element, final BeanDefinitionBuilder builder) {
         final String usage = StringSupport.trimOrNull(element.getAttributeNS(null, "usage"));
-        if (usage != null) {
-            builder.addPropertyValue("usageType", UsageType.valueOf(usage.toUpperCase()));
-        } else {
-            builder.addPropertyValue("usageType", UsageType.UNSPECIFIED);
-        }
+        builder.addPropertyValue("usageType", usage);
 
         final String entityID = StringSupport.trimOrNull(element.getAttributeNS(null, "entityID"));
         if (entityID != null) {

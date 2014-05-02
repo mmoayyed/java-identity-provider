@@ -88,7 +88,11 @@ public abstract class AbstractCredentialFactoryBean<T extends Credential> extend
      * @param type usage type of the credential
      */
     public void setUsageType(@Nullable final String type) {
-        usageType = type;
+        if (null != type) {
+            usageType = type.toUpperCase();
+        } else {
+            usageType = type;
+        }
     }
 
     /**

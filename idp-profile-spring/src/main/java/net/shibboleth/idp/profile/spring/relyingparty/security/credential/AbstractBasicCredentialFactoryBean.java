@@ -27,6 +27,7 @@ import net.shibboleth.idp.profile.spring.relyingparty.metadata.ResourceBackedMet
 
 import org.cryptacular.util.KeyPairUtil;
 import org.opensaml.security.credential.BasicCredential;
+import org.opensaml.security.credential.UsageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
@@ -65,6 +66,9 @@ public abstract class AbstractBasicCredentialFactoryBean extends AbstractCredent
         }
         if(null != secretKey) {
             credential.setSecretKey(secretKey);
+        }
+        if (null != getUsageType()) {
+            credential.setUsageType(UsageType.valueOf(getUsageType()));
         }
         return credential;
     }
