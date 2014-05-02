@@ -115,7 +115,11 @@ public abstract class AbstractCredentialFactoryBean<T extends Credential> extend
      * @param password The password to set.
      */
     public void setPrivateKeyPassword(@Nullable char[] password) {
-        privateKeyPassword = password;
+        if (null != password && password.length > 0) {
+            privateKeyPassword = password;
+        } else {
+            privateKeyPassword = null;
+        }
     }
 
     /** For logging, get the file that defined this bean.

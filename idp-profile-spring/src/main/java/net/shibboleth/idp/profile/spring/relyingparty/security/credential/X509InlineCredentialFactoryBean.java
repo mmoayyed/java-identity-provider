@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.security.credential;
 
-import java.security.KeyException;
 import java.security.PrivateKey;
 import java.security.cert.CRLException;
 import java.security.cert.CertificateException;
@@ -32,7 +31,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.LazyList;
 
-import org.opensaml.security.crypto.KeySupport;
+import org.cryptacular.util.KeyPairUtil;
 import org.opensaml.security.x509.X509Support;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,12 +133,7 @@ public class X509InlineCredentialFactoryBean extends AbstractX509CredentialFacto
         if (null == privateKey) {
             return null;
         }
-        try {
-            return KeySupport.decodePrivateKey(privateKey, getPrivateKeyPassword());
-        } catch (KeyException e) {
-            log.error("{}: Could not decode provided Key:{}", getConfigFile(), e);
-            throw new FatalBeanException("Could not decode provided Key", e);
-        }
+        return KeyPairUtil.decodePrivateKey(privateKey, getPrivateKeyPassword());
     }
 
     /** {@inheritDoc} */

@@ -110,11 +110,7 @@ public class BasicInlineCredentialFactoryBean extends AbstractBasicCredentialFac
         if (null == getPrivateKeyInfo()) {
             return null;
         }
-        try {
-            return KeySupport.decodePrivateKey(getPrivateKeyInfo(), getSecretKeyPassword());
-        } catch (KeyException e) {
-            throw new BeanCreationException("Could not decode private key", e);
-        }
+        return KeyPairUtil.decodePrivateKey(getPrivateKeyInfo(), getSecretKeyPassword());
     }
 
     /** {@inheritDoc} */
