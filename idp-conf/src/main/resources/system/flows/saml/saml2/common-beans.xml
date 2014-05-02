@@ -23,45 +23,6 @@
     <util:constant id="shibboleth.MetadataLookup.Role"
         static-field="org.opensaml.saml.saml2.metadata.SPSSODescriptor.DEFAULT_ELEMENT_NAME" />
     
-    <!-- TODO replace with eventual relying-party.xml config -->
-    <bean
-        id="SecurityConfiguration"
-        class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
-    <bean
-        id="ArtifactConfiguration"
-        class="net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration"
-        p:artifactResolutionServiceIndex="1" />
-    <bean
-        id="SAML2BrowserSSOProfileConfiguration"
-            class="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration"
-            p:inboundSubflowId="SecurityPolicy.SAML2SSO"
-            p:securityConfiguration-ref="SecurityConfiguration"
-            p:artifactConfiguration-ref="ArtifactConfiguration" />
-    <bean
-        id="AttributeQueryProfileConfiguration"
-            class="net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration"
-            p:inboundSubflowId="SecurityPolicy.SAML2AttributeQuery"
-            p:securityConfiguration-ref="SecurityConfiguration" />
-    <bean
-        id="ArtifactResolutionProfileConfiguration"
-            class="net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration"
-            p:inboundSubflowId="SecurityPolicy.SAML2ArtifactResolution"
-            p:securityConfiguration-ref="SecurityConfiguration" />
-    <bean
-        id="RelyingPartyConfiguration"
-            class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"
-            p:id="ActivatedRelyingPartyConfiguration"
-            p:responderId="https://idp.example.org"
-            p:detailedErrors="true">
-        <property name="profileConfigurations">
-            <util:list>
-                <ref bean="SAML2BrowserSSOProfileConfiguration" />
-                <ref bean="AttributeQueryProfileConfiguration" />
-                <ref bean="ArtifactResolutionProfileConfiguration" />
-            </util:list>
-        </property>
-    </bean>
-
     <bean id="AddResponseShell" class="org.opensaml.saml.saml2.profile.impl.AddStatusResponseShell" scope="prototype"
             p:issuerLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"
             p:messageType="#{T(org.opensaml.saml.saml2.core.Response).DEFAULT_ELEMENT_NAME}">

@@ -181,11 +181,11 @@
         p:reloadCheckDelay="${idp.service.metadata.checkInterval}"
         p:reloadTaskTimer="shibboleth.TaskTimer" />
     
-    <bean id="shibboleth.RelyingPartyResolver"
+    <bean id="Shibboleth.RelyingPartyResolver"
         class="net.shibboleth.idp.relyingparty.impl.ReloadingRelyingPartyConfigurationResolver"
         c:resolverService-ref="rpResolverService" />
         
-    <bean id="shibboleth.MetadataResolver"
+    <bean id="Shibboleth.MetadataResolver"
         class="net.shibboleth.idp.saml.metadata.impl.ReloadingRelyingPartyMetadataProvider"
         c:resolverService-ref="metadataResolverService" />
 
@@ -194,7 +194,7 @@
     <bean id="shibboleth.MetadataCredentialResolver" class="org.opensaml.saml.security.impl.MetadataCredentialResolver">
         <constructor-arg>
             <bean class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
-                c:mdResolver-ref="shibboleth.MetadataResolver" />
+                c:mdResolver-ref="Shibboleth.MetadataResolver" />
         </constructor-arg>
     </bean>
 

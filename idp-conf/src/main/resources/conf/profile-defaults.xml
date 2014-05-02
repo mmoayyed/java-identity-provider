@@ -19,7 +19,7 @@
 
     <!--  SAML2 -->
     <bean id="shibboleth.SAML2.Artifact.InboundFlowId" class="java.lang.String"
-        c:_0="SecurityPolicy.SAML2ArtifactQuery" /><!-- TODO -->
+        c:_0="SecurityPolicy.SAML2ArtifactResolution" /><!-- TODO -->
         
     <bean id="shibboleth.SAML2.Logout.ArtifactServiceURL" class="java.lang.String"
         c:_0="https://idp.example.org/Logout" />
@@ -43,13 +43,13 @@
         c:_0="SecurityPolicy.SAML2SSO" />
         
     <bean id="shibboleth.SAML2.ECP.InboundFlowId" class="java.lang.String"
-        c:_0="SecurityPolicy.SAML2ECP" />
+        c:_0="SecurityPolicy.SAML2ECP" /><!-- TODO -->
 
     <!--  SAML2 - Liberty -->
 
     <!--  SAML1 -->
     <bean id="shibboleth.SAML1.Artifact.InboundFlowId" class="java.lang.String"
-        c:_0="SecurityPolicy.SAML1ArtifactQuery" /><!-- TODO -->
+        c:_0="SecurityPolicy.SAML1ArtifactResolution" />
         
     <bean id="shibboleth.SAML1.AttributeQuery.ArtifactServiceURL" class="java.lang.String"
         c:_0="https://idp.example.org/AttributeQuery/SAML1" />

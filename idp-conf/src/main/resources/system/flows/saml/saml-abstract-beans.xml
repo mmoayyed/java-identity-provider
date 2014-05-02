@@ -58,7 +58,7 @@
             <bean class="org.opensaml.saml.common.binding.impl.SAMLMetadataLookupHandler" scope="prototype">
                 <property name="roleDescriptorResolver">
                     <bean class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
-                        c:mdResolver-ref="shibboleth.MetadataResolver" />
+                        c:mdResolver-ref="Shibboleth.MetadataResolver" />
                 </property>
             </bean>
         </constructor-arg>
@@ -71,9 +71,7 @@
         class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration" scope="prototype"
         p:relyingPartyConfigurationResolver-ref="RelyingPartyConfigurationResolver" />
 
-    <bean id="RelyingPartyConfigurationResolver"
-        class="net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver" scope="prototype"
-        p:relyingPartyConfigurations-ref="RelyingPartyConfiguration" />
+    <alias name="Shibboleth.RelyingPartyResolver" alias="RelyingPartyConfigurationResolver"/>
 
     <bean id="SelectProfileConfiguration"
         class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration" scope="prototype" />
@@ -106,7 +104,7 @@
             class="net.shibboleth.idp.saml.profile.impl.ExtractSubjectFromRequest" scope="prototype">
         <property name="nameIDPolicyPredicate">
             <bean class="org.opensaml.saml.common.profile.logic.AffiliationNameIDPolicyPredicate"
-                    p:metadataResolver-ref="shibboleth.MetadataResolver"
+                    p:metadataResolver-ref="Shibboleth.MetadataResolver"
                     p:responderIdLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"
                     p:requesterIdLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple">
                 <property name="objectLookupStrategy">
