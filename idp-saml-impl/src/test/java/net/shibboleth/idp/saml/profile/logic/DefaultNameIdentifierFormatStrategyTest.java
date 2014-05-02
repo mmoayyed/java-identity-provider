@@ -80,13 +80,13 @@ public class DefaultNameIdentifierFormatStrategyTest extends OpenSAMLInitBaseTes
     public void testNoConfiguration() {
         final ProfileRequestContext context = new ProfileRequestContext();
         final List<String> formats = strategy.apply(context);
-        Assert.assertTrue(formats.isEmpty());
+        Assert.assertEquals(formats, Collections.singletonList(NameID.UNSPECIFIED));
     }
 
     @Test
     public void testNoFormats() {
         final List<String> formats = strategy.apply(prc);
-        Assert.assertTrue(formats.isEmpty());
+        Assert.assertEquals(formats, Collections.singletonList(NameID.UNSPECIFIED));
     }
     
     @Test
