@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc.ldap;
 
-import java.security.PrivateKey;
-import java.security.cert.X509Certificate;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -30,6 +28,7 @@ import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.TemplatedExecutableSea
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.CacheConfigParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.DataConnectorNamespaceHandler;
+import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
@@ -56,9 +55,7 @@ import org.ldaptive.pool.SoftLimitConnectionPool;
 import org.ldaptive.provider.ConnectionStrategy;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.SaslConfig;
-import org.ldaptive.ssl.CredentialConfigFactory;
 import org.ldaptive.ssl.SslConfig;
-import org.opensaml.security.x509.X509Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -197,6 +194,9 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
         /** LDAPDirectory XML element. */
         private final Element configElement;
 
+        /** Class logger. */
+        private final Logger log = LoggerFactory.getLogger(V2Parser.class);
+
         /**
          * Creates a new V2Parser with the supplied LDAPDirectory element.
          * 
@@ -228,8 +228,7 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
             if (useStartTLS != null) {
                 connectionConfig.addPropertyValue("useStartTLS", useStartTLS);
             }
-            final BeanDefinitionBuilder sslConfig =
-                    BeanDefinitionBuilder.genericBeanDefinition(SslConfig.class);
+            final BeanDefinitionBuilder sslConfig = BeanDefinitionBuilder.genericBeanDefinition(SslConfig.class);
             sslConfig.addPropertyValue("credentialConfig", createCredentialConfig(parserContext));
             connectionConfig.addPropertyValue("sslConfig", sslConfig.getBeanDefinition());
             final BeanDefinitionBuilder connectionInitializer =
@@ -263,31 +262,35 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
          * @return credential config
          */
         @Nonnull protected BeanDefinition createCredentialConfig(@Nonnull final ParserContext parserContext) {
-            X509Certificate[] trustCerts = null;
-                      
-            final X509Credential trustCredential =
-                    X509CredentialSupport.parseX509Credential(ElementSupport.getFirstChildElement(configElement,
-                            new QName(DataConnectorNamespaceHandler.NAMESPACE, "StartTLSTrustCredential")));
-            if (trustCredential != null) {
-                trustCerts =
-                        trustCredential.getEntityCertificateChain().toArray(
-                                new X509Certificate[trustCredential.getEntityCertificateChain().size()]);
+            BeanDefinitionBuilder result =
+                    BeanDefinitionBuilder.genericBeanDefinition(CredentialConfigFactoryBean.class);
+
+            final List<Element> trustElements =
+                    ElementSupport.getChildElements(configElement, new QName(DataConnectorNamespaceHandler.NAMESPACE,
+                            "StartTLSTrustCredential"));
+            if (trustElements != null && !trustElements.isEmpty()) {
+                if (trustElements.size() > 1) {
+                    log.warn("Too many StartTLSTrustCredential elements in {}; only the first has been consulted",
+                            parserContext.getReaderContext().getResource().getDescription());
+                }
+                result.addPropertyValue("trustCredential",
+                        SpringSupport.parseCustomElements(trustElements, parserContext).get(0));
             }
 
-            X509Certificate authCert = null;
-            PrivateKey authKey = null;
-            final X509Credential authCredential =
-                    X509CredentialSupport.parseX509Credential(ElementSupport.getFirstChildElement(configElement,
-                            new QName(DataConnectorNamespaceHandler.NAMESPACE, "StartTLSAuthenticationCredential")));
-            if (authCredential != null) {
-                authCert = authCredential.getEntityCertificate();
-                authKey = authCredential.getPrivateKey();
+            final List<Element> authElements =
+                    ElementSupport.getChildElements(configElement, new QName(DataConnectorNamespaceHandler.NAMESPACE,
+                            "StartTLSAuthenticationCredential"));
+
+            if (authElements != null && !authElements.isEmpty()) {
+                if (authElements.size() > 1) {
+                    log.warn("Too many StartTLSAuthenticationCredential elements in {};"
+                            + " only the first has been consulted", parserContext.getReaderContext().getResource()
+                            .getDescription());
+                }
+                result.addPropertyValue("authCredential",
+                        SpringSupport.parseCustomElements(authElements, parserContext).get(0));
             }
-            BeanDefinitionBuilder result = BeanDefinitionBuilder.genericBeanDefinition(CredentialConfigFactory.class);
-            result.setFactoryMethod("createX509CredentialConfig");
-            result.addConstructorArgValue(trustCerts);
-            result.addConstructorArgValue(authCert);
-            result.addConstructorArgValue(authKey);
+
             return result.getBeanDefinition();
         }
 
