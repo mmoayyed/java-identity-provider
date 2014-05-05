@@ -12,9 +12,9 @@
 	<context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
 
     <import resource="services-user.xml" />
+    <import resource="subject-c14n-user.xml" />
 	<import resource="authn-comparison.xml" />
 	<import resource="general-authn-config.xml" />
-    <import resource="subject-config.xml" />
 
     <!-- List of event/error codes during SSO to trap and handle without returning to SPs. -->
 
