@@ -25,8 +25,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -38,8 +36,7 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Predicate to determine whether the supplied ids are in the EntitiesDescriptor or any of its parents.
  */
-public class EntitiesDescriptorPredicate extends AbstractIdentifiableInitializableComponent implements
-        Predicate<ProfileRequestContext> {
+public class EntitiesDescriptorPredicate implements Predicate<ProfileRequestContext> {
 
     /** Relying parties to match against. */
     @Nonnull @NonnullElements private Set<String> entitiesDescriptorIds;
@@ -50,7 +47,6 @@ public class EntitiesDescriptorPredicate extends AbstractIdentifiableInitializab
      * @param ids relying party IDs to match against
      */
     public synchronized void setEntitiesDescriptorIds(@Nonnull @NonnullElements final Collection<String> ids) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(ids, "Relying party ID collection cannot be null");
         
         Set<String> newIds = new HashSet<>(ids.size());
