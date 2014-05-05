@@ -38,9 +38,8 @@
                 p:defaultFormat="${idp.saml2.nameid.default}" />
         </property>
         <property name="nameIDGenerator">
-            <bean class="org.opensaml.saml.saml2.profile.impl.ChainingSAML2NameIDGenerator"
-                p:nameIdentifierGenerators-ref="shibboleth.SAML2NameIDGenerators"
-                p:defaultNameIDGenerator="#{getObject('shibboleth.LegacySAML2NameIDGenerator')}" />
+            <bean class="net.shibboleth.idp.saml.nameid.impl.ProxySAML2NameIDGenerator"
+                c:service-ref="shibboleth.NameIdentifierGenerationService" />
         </property>
         <property name="nameIDPolicyPredicate">
             <bean class="org.opensaml.saml.common.profile.logic.AffiliationNameIDPolicyPredicate"

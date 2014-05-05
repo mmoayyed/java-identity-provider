@@ -31,6 +31,7 @@
             p:cacheSeconds="300" p:basename="file://${idp.home}/conf/messages" />
 
     <import resource="session-manager.xml" />
+    <import resource="services-system.xml" />
     <import resource="saml-binding-config.xml" />
     <import resource="subject-config-system.xml" />
     <import resource="utilities.xml" />
@@ -148,45 +149,6 @@
         class="org.opensaml.xmlsec.impl.BasicSignatureSigningParametersResolver" />
     <bean id="shibboleth.DecryptionParametersResolver" class="org.opensaml.xmlsec.impl.BasicDecryptionParametersResolver" />
     <bean id="shibboleth.EncryptionParametersResolver" class="org.opensaml.xmlsec.impl.BasicEncryptionParametersResolver" />
-
-    <bean id="shibboleth.AttributeFilterService" class="net.shibboleth.idp.service.ReloadableSpringService" depends-on="shibboleth.VelocityEngine"
-        c:claz="net.shibboleth.idp.attribute.filter.AttributeFilter"
-        p:serviceConfigurations-ref="shibboleth.AttributeFilterResources"
-        p:failFast="${idp.service.attribute.filter.failFast}"
-        p:reloadCheckDelay="${idp.service.attribute.filter.checkInterval}"
-        p:reloadTaskTimer="shibboleth.TaskTimer" />
-
-    <bean id="shibboleth.AttributeResolverService" class="net.shibboleth.idp.service.ReloadableSpringService" 
-          init-method="start" destroy-method="stop" depends-on="shibboleth.VelocityEngine"
-        c:claz="net.shibboleth.idp.attribute.resolver.AttributeResolver"
-        p:serviceConfigurations-ref="shibboleth.AttributeResolverResources"
-        p:failFast="${idp.service.attribute.resolver.failFast}"
-        p:reloadCheckDelay="${idp.service.attribute.resolver.checkInterval}"
-        p:reloadTaskTimer="shibboleth.TaskTimer" />
-
-    <bean id="shibboleth.RelyingPartyResolverService" class="net.shibboleth.idp.service.ReloadableSpringService"
-        c:claz="net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver"
-        c:servicableClaz="net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver"
-        p:serviceConfigurations-ref="shibboleth.RelyingPartyResolverResources"
-        p:failFast="${idp.service.relyingparty.failFast}"
-        p:reloadCheckDelay="${idp.service.relyingparty.checkInterval}"
-        p:reloadTaskTimer="shibboleth.TaskTimer" />
-    
-    <bean id="shibboleth.MetadataResolverService" class="net.shibboleth.idp.service.ReloadableSpringService"
-        c:claz="org.opensaml.saml.metadata.resolver.MetadataResolver"
-        c:servicableClaz="net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider"
-        p:serviceConfigurations-ref="shibboleth.MetadataResolverResources"
-        p:failFast="${idp.service.metadata.failFast}"
-        p:reloadCheckDelay="${idp.service.metadata.checkInterval}"
-        p:reloadTaskTimer="shibboleth.TaskTimer" />
-    
-    <bean id="shibboleth.RelyingPartyConfigurationResolver"
-        class="net.shibboleth.idp.relyingparty.impl.ReloadingRelyingPartyConfigurationResolver"
-        c:resolverService-ref="shibboleth.RelyingPartyResolverService" />
-        
-    <bean id="shibboleth.MetadataResolver"
-        class="net.shibboleth.idp.saml.metadata.impl.ReloadingRelyingPartyMetadataProvider"
-        c:resolverService-ref="shibboleth.MetadataResolverService" />
 
     <!-- TODO: all this is probably wrong, but need it to get something working -->
     

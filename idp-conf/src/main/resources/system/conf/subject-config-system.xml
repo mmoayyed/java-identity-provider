@@ -14,23 +14,6 @@
        
     <context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
 
-    <bean id="shibboleth.StoredTransientIdGenerator"
-        class="net.shibboleth.idp.saml.nameid.impl.StoredTransientIdGenerationStrategy"
-        p:idStore-ref="shibboleth.StorageService" />
-
-    <bean id="shibboleth.CryptoTransientIdGenerator"
-        class="net.shibboleth.idp.saml.nameid.impl.CryptoTransientIdGenerationStrategy"
-        p:dataSealer-ref="shibboleth.DataSealer" />
-
-    <bean id="shibboleth.ComputedPersistentIdGenerator"
-        class="net.shibboleth.idp.saml.nameid.impl.ComputedPersistentIdGenerationStrategy"
-        p:salt="${idp.persistentId.salt}" p:algorithm="${idp.persistentId.algorithm}" />
-
-    <bean id="shibboleth.StoredPersistentIdGenerator" lazy-init="true"
-        class="net.shibboleth.idp.saml.nameid.impl.StoredPersistentIdGenerationStrategy"
-        p:computedIdStrategy-ref="shibboleth.ComputedPersistentIdGenerator"
-        p:IDStore-ref="${idp.persistentId.store}" />
-
     <bean id="SubjectC14NFlow/LegacyPrincipalConnector" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
         <property name="activationCondition">
             <bean class="net.shibboleth.idp.saml.nameid.impl.LegacyCanonicalization.ActivationCondition" 

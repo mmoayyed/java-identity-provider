@@ -11,10 +11,10 @@
 
 	<context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
 
+    <import resource="services-user.xml" />
 	<import resource="authn-comparison.xml" />
 	<import resource="general-authn-config.xml" />
     <import resource="subject-config.xml" />
-	<import resource="attribute-params-config.xml" />
 
     <!-- List of event/error codes during SSO to trap and handle without returning to SPs. -->
 
@@ -76,20 +76,5 @@
         
         <entry key="InvalidNameIDPolicy" value-ref="Shibboleth.SAML2Status.InvalidNameIDPolicy" />
     </util:map>
-
-    <!--  The (currently single) file which provides relying party configuration -->
-
-    <util:list id="shibboleth.MetadataResolverResources">
-        <value>file://${idp.home}/conf/metadata-providers.xml</value>
-        <value>file://${idp.home}/conf/property-placeholder.xml</value>
-    </util:list>
-
-    <!--  The (currently single) file which provides metdata configuration -->
-
-    <util:list id="shibboleth.RelyingPartyResolverResources">
-        <value>file://${idp.home}/conf/relying-party.xml</value>
-        <value>file://${idp.home}/conf/profile-defaults.xml</value>
-        <value>file://${idp.home}/conf/property-placeholder.xml</value>
-    </util:list>
 
 </beans>
