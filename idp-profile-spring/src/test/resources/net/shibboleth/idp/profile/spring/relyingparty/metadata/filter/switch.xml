@@ -6,7 +6,7 @@ xmlns:security="urn:mace:shibboleth:2.0:security"
 >
 <security:Credential 
     id="IdPCredential" xsi:type="security:X509Inline">
-    <security:Certificate>-----BEGIN CERTIFICATE-----
+    <security:Certificate>
 MIICrzCCAhgCAQAwDQYJKoZIhvcNAQEEBQAwgZ8xCzAJBgNVBAYTAkNIMUAwPgYDVQQKEzdTV0lU
 Q0ggLSBUZWxlaW5mb3JtYXRpa2RpZW5zdGUgZnVlciBMZWhyZSB1bmQgRm9yc2NodW5nMQwwCgYD
 VQQLEwNBQUkxIjAgBgNVBAMTGVNXSVRDSGFhaSBNZXRhZGF0YSBTaWduZXIxHDAaBgkqhkiG9w0B
@@ -20,7 +20,6 @@ aCCgx/QlWsBTw+9972141+wBDH7dXlJ+UGkCAwEAATANBgkqhkiG9w0BAQQFAAOBgQCcLuNwTINk
 fhBlVCIuTixR1R6mYu/+4KUJWtHlRCOUZhSLFept8HxEvfwnuX9xm+Q6Ju/sOgmI1INuSstUGWwV
 y0AbpCphUDDmIh9A85ye8DrVaBHQrj5b/JEjCvkY0zhLJzgDzZ6btT40TuCnk2GpdAClu5SyCTiy
 56+zDYqPqg==
------END CERTIFICATE-----
     </security:Certificate>
 </security:Credential>
     </security:TrustEngine>
