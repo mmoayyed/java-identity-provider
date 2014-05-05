@@ -37,6 +37,7 @@
     </action-state>
     
     <subflow-state id="CallInboundSubflow" subflow="#{currentEvent.id}">
+        <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="OutboundContexts" />
     </subflow-state>
 
@@ -63,6 +64,7 @@
     </action-state>
 
     <subflow-state id="CallSubjectCanonicalization" subflow="SubjectC14N/SAML">
+        <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="FinalizeSAMLSubjectCanonicalization" />
     </subflow-state>
     
@@ -109,6 +111,7 @@
     </action-state>
     
     <subflow-state id="CallOutboundSubflow" subflow="#{currentEvent.id}">
+        <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="HandleOutboundMessage" />
         <transition to="error" />
     </subflow-state>

@@ -44,12 +44,14 @@
     ReselectFlow signal to loop back up and try another.
     -->
     <subflow-state id="CallAuthenticationFlow" subflow="#{currentEvent.id}">
+        <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="CallSubjectCanonicalization" />
         <transition on="ReselectFlow" to="SelectAuthenticationFlow" />
     </subflow-state>
 
     <!-- This runs a canonicalization step on the result of the authentication. -->
     <subflow-state id="CallSubjectCanonicalization" subflow="SubjectC14N/Authn">
+        <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="InvalidateSessionOnIdentitySwitch" />
     </subflow-state>
 

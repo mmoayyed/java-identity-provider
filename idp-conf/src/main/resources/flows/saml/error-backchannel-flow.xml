@@ -4,6 +4,9 @@
 
     <!-- This is a placeholder flow that does nothing out of the box but reserves a subflow ID. -->
 
+    <!-- Rudimentary impediment to direct execution of subflow. -->
+    <input name="calledAsSubflow" type="boolean" required="true" />
+    
     <on-start>
         <evaluate expression="'proceed'" />
     </on-start>    

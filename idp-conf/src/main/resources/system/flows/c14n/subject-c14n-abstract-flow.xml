@@ -3,6 +3,9 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
       abstract="true">
 
+    <!-- Rudimentary impediment to direct execution of subflow. -->
+    <input name="calledAsSubflow" type="boolean" required="true" />
+
     <!-- Defines the possible end-state events, and a global transition rule. -->
 
     <!-- Successful completion of subflow. -->

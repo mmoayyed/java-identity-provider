@@ -42,6 +42,7 @@
     </action-state>
 
     <subflow-state id="CallErrorSubflow" subflow="SAML.Error.BackChannel">
+        <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="ReturnToParentFlow" />
         <transition to="error" />
     </subflow-state>

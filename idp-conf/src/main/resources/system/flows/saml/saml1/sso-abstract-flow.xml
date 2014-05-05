@@ -25,6 +25,7 @@
     </action-state>
 
     <subflow-state id="DoAuthenticationSubflow" subflow="Authentication">
+        <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="DoProfileWorkAfterLogin" />
     </subflow-state>
 
@@ -74,6 +75,7 @@
     </action-state>
 
     <subflow-state id="CallErrorSubflow" subflow="SAML.Error.FrontChannel">
+        <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="ReturnToParentFlow" />
         <transition to="error" />
     </subflow-state>

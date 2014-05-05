@@ -3,6 +3,9 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
       abstract="true">
 
+    <!-- Rudimentary impediment to direct execution of subflow. -->
+    <input name="calledAsSubflow" type="boolean" required="true" />
+
     <action-state id="ValidateUsernamePassword">
         
         <!-- Call outs for exceptional conditions. -->
@@ -17,14 +20,17 @@
     </action-state>
 
     <subflow-state id="CallExpiringPassword" subflow="Authentication.ExpiringPassword">
+        <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="proceed" />
     </subflow-state>
 
     <subflow-state id="CallExpiredPassword" subflow="Authentication.ExpiredPassword">
+        <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="DisplayUsernamePasswordPage" />
     </subflow-state>
 
     <subflow-state id="CallAccountLocked" subflow="Authentication.AccountLocked">
+        <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="DisplayUsernamePasswordPage" />
     </subflow-state>
 
