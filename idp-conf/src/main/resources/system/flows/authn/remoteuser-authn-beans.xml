@@ -12,7 +12,7 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
     
-    <import resource="../../../conf/remoteuser-authn-config.xml" />
+    <import resource="../../../conf/authn/remoteuser-authn-config.xml" />
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />

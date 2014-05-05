@@ -15,7 +15,7 @@
     <context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
     
     <!-- Specify your JAAS config. -->
-    <bean id="JAASConfig" class="org.springframework.core.io.FileSystemResource" c:path="${idp.home}/conf/jaas.config" />
+    <bean id="JAASConfig" class="org.springframework.core.io.FileSystemResource" c:path="${idp.home}/conf/authn/jaas.config" />
     
     <util:property-path id="shibboleth.authn.JAAS.JAASConfigURI" path="JAASConfig.URI" />
     
