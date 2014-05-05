@@ -22,7 +22,6 @@ import java.security.cert.CRLException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
-import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -46,24 +45,24 @@ public class X509InlineCredentialFactoryBean extends AbstractX509CredentialFacto
     private final Logger log = LoggerFactory.getLogger(X509InlineCredentialFactoryBean.class);
 
     /** The entity certificate. */
-    private byte[] entityCertificate;
+    private String entityCertificate;
 
     /** The certificates. */
-    private List<byte[]> certificates;
+    private List<String> certificates;
 
     /** The private key. */
     private byte[] privateKey;
 
     /** The crls. */
-    private List<byte[]> crls;
+    private List<String> crls;
     
     /**
      * Set the file with the entity certificate.
      * 
-     * @param file The file to set.
+     * @param entityCert The file to set.
      */
-    public void setEntity(@Nonnull final byte[] file) {
-        entityCertificate = file;
+    public void setEntity(@Nonnull final String entityCert) {
+        entityCertificate = entityCert;
     }
 
     /**
@@ -71,7 +70,7 @@ public class X509InlineCredentialFactoryBean extends AbstractX509CredentialFacto
      * 
      * @param certs The value to set.
      */
-    public void setCertificates(@Nullable @NotEmpty final List<byte[]> certs) {
+    public void setCertificates(@Nullable @NotEmpty final List<String> certs) {
         certificates = certs;
     }
 
@@ -89,7 +88,7 @@ public class X509InlineCredentialFactoryBean extends AbstractX509CredentialFacto
      * 
      * @param list The value to set.
      */
-    public void setCrls(@Nullable @NotEmpty final List<byte[]> list) {
+    public void setCrls(@Nullable @NotEmpty final List<String> list) {
         crls = list;
     }
 
@@ -100,14 +99,7 @@ public class X509InlineCredentialFactoryBean extends AbstractX509CredentialFacto
             return null;
         }
         try {
-            final Collection<X509Certificate> certs = X509Support.decodeCertificates(entityCertificate);
-            if (certs.size() > 1) {
-                log.error("{}: Configuration element indicated an entityCertificate,"
-                        + " but multiple certificates were decoded");
-                throw new FatalBeanException("Configuration element indicated an entityCertificate,"
-                        + " but multiple certificates were decoded");
-            }
-            return certs.iterator().next();
+            return X509Support.decodeCertificate(entityCertificate);
         } catch (CertificateException e) {
             log.error("{}: Could not decode provided Entity Certificate:{}", getConfigFile(), e);
             throw new FatalBeanException("Could not decode provided Entity Certificate", e);
@@ -117,9 +109,9 @@ public class X509InlineCredentialFactoryBean extends AbstractX509CredentialFacto
     /** {@inheritDoc} */
     @Override @Nonnull protected List<X509Certificate> getCertificates() {
         List<X509Certificate> certs = new LazyList<>();
-        for (byte[] cert : certificates) {
+        for (String cert : certificates) {
             try {
-                certs.addAll(X509Support.decodeCertificates(cert));
+                certs.add(X509Support.decodeCertificate(cert.trim()));
             } catch (CertificateException e) {
                 log.error("{}: Could not decode provided Certificate:{}", getConfigFile(), e);
                 throw new FatalBeanException("Could not decode provided Certificate", e);
@@ -142,10 +134,10 @@ public class X509InlineCredentialFactoryBean extends AbstractX509CredentialFacto
             return null;
         }
         List<X509CRL> result = new LazyList<>();
-        for (byte[] crl : crls) {
+        for (String crl : crls) {
             try {
-                result.addAll(X509Support.decodeCRLs(crl));
-            } catch (CRLException e) {
+                result.add(X509Support.decodeCRL(crl));
+            } catch (CRLException | CertificateException e) {
                 log.error("{}: Could not decode provided CRL:{}", getConfigFile(), e);
                 throw new FatalBeanException("Could not decode provided CRL", e);
             }
