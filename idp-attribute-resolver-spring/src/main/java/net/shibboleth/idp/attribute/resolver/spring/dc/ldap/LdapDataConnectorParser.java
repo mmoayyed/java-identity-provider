@@ -56,7 +56,6 @@ import org.ldaptive.pool.SoftLimitConnectionPool;
 import org.ldaptive.provider.ConnectionStrategy;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.SaslConfig;
-import org.ldaptive.ssl.CredentialConfig;
 import org.ldaptive.ssl.CredentialConfigFactory;
 import org.ldaptive.ssl.SslConfig;
 import org.opensaml.security.x509.X509Credential;
@@ -84,14 +83,12 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
     private final Logger log = LoggerFactory.getLogger(LdapDataConnectorParser.class);
 
     /** {@inheritDoc} */
-    @Override
-    protected Class<LdapDataConnector> getBeanClass(@Nullable final Element element) {
+    @Override protected Class<LdapDataConnector> getBeanClass(@Nullable final Element element) {
         return LdapDataConnector.class;
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
         log.debug("doParse {}", config);
@@ -141,7 +138,7 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
 
         final BeanDefinitionBuilder connectionFactory =
                 BeanDefinitionBuilder.genericBeanDefinition(DefaultConnectionFactory.class);
-        connectionFactory.addConstructorArgValue(v2Parser.createConnectionConfig());
+        connectionFactory.addConstructorArgValue(v2Parser.createConnectionConfig(parserContext));
 
         final BeanDefinitionBuilder provider =
                 BeanDefinitionBuilder.genericBeanDefinition(DefaultConnectionFactory.getDefaultProvider().getClass());
@@ -213,9 +210,10 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
         /**
          * Creates a connection config bean definition from a v2 XML configuration.
          * 
+         * @param parserContext bean definition parsing context
          * @return connection config bean definition
          */
-        @Nonnull public BeanDefinition createConnectionConfig() {
+        @Nonnull public BeanDefinition createConnectionConfig(@Nonnull final ParserContext parserContext) {
             final String url = AttributeSupport.getAttributeValue(configElement, new QName("ldapURL"));
             final String useStartTLS = AttributeSupport.getAttributeValue(configElement, new QName("useStartTLS"));
             final String principal = AttributeSupport.getAttributeValue(configElement, new QName("principal"));
@@ -230,9 +228,10 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
             if (useStartTLS != null) {
                 connectionConfig.addPropertyValue("useStartTLS", useStartTLS);
             }
-            final SslConfig sslConfig = new SslConfig();
-            sslConfig.setCredentialConfig(createCredentialConfig());
-            connectionConfig.addPropertyValue("sslConfig", sslConfig);
+            final BeanDefinitionBuilder sslConfig =
+                    BeanDefinitionBuilder.genericBeanDefinition(SslConfig.class);
+            sslConfig.addPropertyValue("credentialConfig", createCredentialConfig(parserContext));
+            connectionConfig.addPropertyValue("sslConfig", sslConfig.getBeanDefinition());
             final BeanDefinitionBuilder connectionInitializer =
                     BeanDefinitionBuilder.genericBeanDefinition(BindConnectionInitializer.class);
             if (principal != null) {
@@ -260,10 +259,12 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
         /**
          * Uses {@link X509CredentialSupport} to read StartTLS trust and authentication credentials.
          * 
+         * @param parserContext bean definition parsing context
          * @return credential config
          */
-        @Nonnull protected CredentialConfig createCredentialConfig() {
+        @Nonnull protected BeanDefinition createCredentialConfig(@Nonnull final ParserContext parserContext) {
             X509Certificate[] trustCerts = null;
+                      
             final X509Credential trustCredential =
                     X509CredentialSupport.parseX509Credential(ElementSupport.getFirstChildElement(configElement,
                             new QName(DataConnectorNamespaceHandler.NAMESPACE, "StartTLSTrustCredential")));
@@ -282,8 +283,12 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
                 authCert = authCredential.getEntityCertificate();
                 authKey = authCredential.getPrivateKey();
             }
-
-            return CredentialConfigFactory.createX509CredentialConfig(trustCerts, authCert, authKey);
+            BeanDefinitionBuilder result = BeanDefinitionBuilder.genericBeanDefinition(CredentialConfigFactory.class);
+            result.setFactoryMethod("createX509CredentialConfig");
+            result.addConstructorArgValue(trustCerts);
+            result.addConstructorArgValue(authCert);
+            result.addConstructorArgValue(authKey);
+            return result.getBeanDefinition();
         }
 
         /**
