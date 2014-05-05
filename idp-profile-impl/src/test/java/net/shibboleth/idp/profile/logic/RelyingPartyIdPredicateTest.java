@@ -43,8 +43,6 @@ public class RelyingPartyIdPredicateTest {
     @Test
     public void testNone() throws ComponentInitializationException {
         final RelyingPartyIdPredicate pred = new RelyingPartyIdPredicate();
-        pred.setId("test");
-        pred.initialize();
         
         Assert.assertFalse(pred.apply(prc));
         
@@ -55,9 +53,7 @@ public class RelyingPartyIdPredicateTest {
     @Test
     public void testMatch() throws ComponentInitializationException {
         final RelyingPartyIdPredicate pred = new RelyingPartyIdPredicate();
-        pred.setId("test");
         pred.setRelyingPartyIds(Collections.singleton("foo"));
-        pred.initialize();
         
         Assert.assertFalse(pred.apply(prc));
         
@@ -68,9 +64,7 @@ public class RelyingPartyIdPredicateTest {
     @Test
     public void testNoMatch() throws ComponentInitializationException {
         final RelyingPartyIdPredicate pred = new RelyingPartyIdPredicate();
-        pred.setId("test");
         pred.setRelyingPartyIds(Collections.singleton("bar"));
-        pred.initialize();
         
         Assert.assertFalse(pred.apply(prc));
         
