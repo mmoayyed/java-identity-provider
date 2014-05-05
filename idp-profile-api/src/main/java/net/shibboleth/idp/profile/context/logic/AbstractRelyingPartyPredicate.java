@@ -20,8 +20,6 @@ package net.shibboleth.idp.profile.context.logic;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -34,8 +32,7 @@ import com.google.common.base.Predicate;
  * Base class for a predicate that evaluates a {@link ProfileRequestContext} and requires access to a
  * {@link RelyingPartyContext}.
  */
-public abstract class AbstractRelyingPartyPredicate extends AbstractIdentifiableInitializableComponent
-        implements Predicate<ProfileRequestContext> {
+public abstract class AbstractRelyingPartyPredicate implements Predicate<ProfileRequestContext> {
 
     /** Strategy function to lookup RelyingPartyContext. */
     @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
@@ -61,7 +58,6 @@ public abstract class AbstractRelyingPartyPredicate extends AbstractIdentifiable
      */
     public synchronized void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
