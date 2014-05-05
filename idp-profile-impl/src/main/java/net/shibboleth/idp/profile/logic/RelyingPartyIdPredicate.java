@@ -24,38 +24,54 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.profile.context.logic.AbstractRelyingPartyPredicate;
+import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 
 /**
- * Predicate that evaluates a {@link ProfileRequestContext} by looking for a {@link RelyingPartyContext} with a relying
- * party ID that matches one of a designated set.
+ * Predicate that evaluates a {@link ProfileRequestContext} by looking for relying party ID
+ * that matches one of a designated set, obtained from a lookup function, by default from
+ * a {@link net.shibboleth.idp.profile.context.RelyingPartyContext} child.
  */
-public class RelyingPartyIdPredicate extends AbstractRelyingPartyPredicate {
+public class RelyingPartyIdPredicate implements Predicate<ProfileRequestContext> {
 
+    /** Lookup strategy for relying party ID. */
+    @Nonnull private Function<ProfileRequestContext,String> relyingPartyIdLookupStrategy;
+    
     /** Relying parties to match against. */
     @Nonnull @NonnullElements private Set<String> relyingPartyIds;
 
     /** Constructor. */
     public RelyingPartyIdPredicate() {
+        relyingPartyIdLookupStrategy = new RelyingPartyIdLookupFunction();
         relyingPartyIds = Collections.emptySet();
     }
 
+    /**
+     * Set the strategy used to obtain the relying party ID for this request.
+     * 
+     * @param strategy  lookup strategy
+     */
+    public synchronized void setRelyingPartyIdLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,String> strategy) {
+        
+        relyingPartyIdLookupStrategy = Constraint.isNotNull(strategy,
+                "Relying party ID lookup strategy cannot be null");
+    }
+    
     /**
      * Set the relying parties to match against.
      * 
      * @param ids relying party IDs to match against
      */
     public synchronized void setRelyingPartyIds(@Nonnull @NonnullElements final Collection<String> ids) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(ids, "Relying party ID collection cannot be null");
         
         relyingPartyIds = Sets.newHashSet();
@@ -69,15 +85,11 @@ public class RelyingPartyIdPredicate extends AbstractRelyingPartyPredicate {
 
     /** {@inheritDoc} */
     @Override public boolean apply(@Nullable final ProfileRequestContext input) {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         if (input != null) {
-            final RelyingPartyContext rpContext = getRelyingPartyContextLookupStrategy().apply(input);
-            if (rpContext != null) {
-                final String id = rpContext.getRelyingPartyId();
-                if (id != null) {
-                    return relyingPartyIds.contains(id);
-                }
+            final String id = relyingPartyIdLookupStrategy.apply(input);
+            if (id != null) {
+                return relyingPartyIds.contains(id);
             }
         }
 
