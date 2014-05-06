@@ -9,19 +9,8 @@
     <context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
 
     <!-- Define custom flows, or override system flows, inside here. -->
-    <webflow:flow-registry id="userFlowRegistry" base-path="file://${idp.home}/flows" flow-builder-services="flowBuilderServices">
-    
-        <!-- Directs event handling during the login process to custom flows like those below. -->
-        <webflow:flow-location id="Authentication.Conditions" path="/authn/authn-conditions-flow.xml" />
-
-        <!-- Login error/warning subflows that can be customized. -->
-        <webflow:flow-location id="Authentication.ExpiringPassword" path="/authn/expiring-password-flow.xml" />
-        <webflow:flow-location id="Authentication.ExpiredPassword" path="/authn/expired-password-flow.xml" />
-        <webflow:flow-location id="Authentication.AccountLocked" path="/authn/account-locked-flow.xml" />
-        
-        <!-- SAML profile error interception subflows that can be customized. -->
-        <webflow:flow-location id="SAML.Error.FrontChannel" path="/saml/error-frontchannel-flow.xml" />
-        <webflow:flow-location id="SAML.Error.BackChannel" path="/saml/error-backchannel-flow.xml" />
+    <webflow:flow-registry id="userFlowRegistry" base-path="file:${idp.home}/flows" flow-builder-services="flowBuilderServices">
+        <webflow:flow-location-pattern value="/**/*-flow.xml" />
     </webflow:flow-registry>
 
     <!-- System-supplied flows, do not modify. -->

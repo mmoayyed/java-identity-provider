@@ -1,7 +1,7 @@
 <flow xmlns="http://www.springframework.org/schema/webflow"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
-      parent="Authentication.Abstract, Authentication.Conditions">
+      parent="Authentication.Abstract, authn/conditions">
 
     <!-- This is a login flow for form-based JAAS-backed authentication. -->
 
@@ -36,7 +36,7 @@
         <transition on="proceed" to="ValidateUsernamePasswordAgainstJAAS" />
     </action-state>
     
-    <action-state id="ValidateUsernamePasswordAgainstJAAS" parent="Authentication.Conditions#ValidateUsernamePassword">
+    <action-state id="ValidateUsernamePasswordAgainstJAAS" parent="authn/conditions#ValidateUsernamePassword">
         <evaluate expression="ValidateUsernamePasswordAgainstJAAS" />
         <evaluate expression="'proceed'" />
 
@@ -45,7 +45,7 @@
         <!-- Fall through to a different flow if login fails on a passive request. -->
         <transition on="#{ flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext').getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext), false).isPassive() }" to="ReselectFlow" />
 
-        <!-- Error or warning transitions are determined by deployer in /flows/authn/authn-conditions-flow.xml -->
+        <!-- Error or warning transitions are determined by deployer in /flows/authn/conditions/conditions-flow.xml -->
     </action-state>
 
     <bean-import resource="jaas-authn-beans.xml" />
