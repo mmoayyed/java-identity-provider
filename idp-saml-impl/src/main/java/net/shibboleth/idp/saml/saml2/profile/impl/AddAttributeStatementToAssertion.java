@@ -39,7 +39,7 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
 
-import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML2AttributeEncoder;
+import net.shibboleth.idp.saml.attribute.encoding.SAML2AttributeEncoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -245,7 +245,8 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
     @Override
    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         try {
-            final AttributeStatement statement = buildAttributeStatement(attributeCtx.getIdPAttributes().values());
+            final AttributeStatement statement = buildAttributeStatement(profileRequestContext,
+                    attributeCtx.getIdPAttributes().values());
             if (statement == null) {
                 log.debug("{} No AttributeStatement was built, nothing to do", getLogPrefix());
                 return;
@@ -276,12 +277,14 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
     /**
      * Builds an attribute statement from a collection of attributes.
      * 
+     * @param profileRequestContext current profile request context
      * @param attributes the collection of attributes
      * 
      * @return the attribute statement or null if no attributes can be encoded
      * @throws AttributeEncodingException thrown if there is a problem encoding an attribute
      */
     @Nullable private AttributeStatement buildAttributeStatement(
+            @Nonnull final ProfileRequestContext profileRequestContext,
             @Nullable @NullableElements final Collection<IdPAttribute> attributes)
             throws AttributeEncodingException {
         if (attributes == null || attributes.isEmpty()) {
@@ -291,7 +294,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
 
         final ArrayList<Attribute> encodedAttributes = Lists.newArrayListWithExpectedSize(attributes.size());
         for (final IdPAttribute attribute : Collections2.filter(attributes, Predicates.notNull())) {
-            final Attribute encodedAttribute = encodeAttribute(attribute);
+            final Attribute encodedAttribute = encodeAttribute(profileRequestContext, attribute);
             if (encodedAttribute != null) {
                 encodedAttributes.add(encodedAttribute);
             }
@@ -314,13 +317,14 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
     /**
      * Encodes a {@link IdPAttribute} into a {@link Attribute} if a proper encoder is available.
      * 
+     * @param profileRequestContext current profile request context
      * @param attribute the attribute to be encoded
      * 
      * @return the encoded attribute, or null if the attribute could not be encoded
      * @throws AttributeEncodingException thrown if there is a problem encoding an attribute
      */
-    @Nullable private Attribute encodeAttribute(@Nonnull final IdPAttribute attribute)
-            throws AttributeEncodingException {
+    @Nullable private Attribute encodeAttribute(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final IdPAttribute attribute) throws AttributeEncodingException {
 
         log.debug("{} Attempting to encode attribute {} as a SAML 2 Attribute", getLogPrefix(), attribute.getId());
         
@@ -332,7 +336,8 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
 
         for (final AttributeEncoder<?> encoder : encoders) {
             if (SAMLConstants.SAML20P_NS.equals(encoder.getProtocol())
-                    && encoder instanceof AbstractSAML2AttributeEncoder) {
+                    && encoder instanceof SAML2AttributeEncoder
+                    && encoder.getActivationCondition().apply(profileRequestContext)) {
                 log.debug("{} Encoding attribute {} as a SAML 2 Attribute", getLogPrefix(), attribute.getId());
                 try {
                     return (Attribute) encoder.encode(attribute);
@@ -347,7 +352,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
             }
         }
 
-        log.debug("{} Attribute {} did not have a SAML 2 Attribute encoder associated with it, nothing to do",
+        log.debug("{} Attribute {} did not have a usable SAML 2 Attribute encoder associated with it, nothing to do",
                 getLogPrefix(), attribute.getId());
         return null;
     }

@@ -45,7 +45,7 @@ import com.google.common.base.Objects;
  * @param <EncodedType> the type of data that can be encoded by the encoder
  */
 public abstract class AbstractSAML2AttributeEncoder<EncodedType extends IdPAttributeValue> extends
-        AbstractSAMLAttributeEncoder<Attribute, EncodedType> {
+        AbstractSAMLAttributeEncoder<Attribute, EncodedType> implements SAML2AttributeEncoder<EncodedType> {
 
     /** Builder used to construct {@link Attribute} objects. */
     @Nonnull private final SAMLObjectBuilder<Attribute> attributeBuilder;

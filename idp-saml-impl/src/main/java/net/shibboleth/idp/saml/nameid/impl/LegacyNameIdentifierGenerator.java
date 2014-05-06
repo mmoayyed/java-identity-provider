@@ -110,6 +110,7 @@ public class LegacyNameIdentifierGenerator<NameIdType extends SAMLObject>
                 "AttributeContext lookup strategy cannot be null");
     }
     
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     @Nullable public NameIdType generate(@Nonnull final ProfileRequestContext profileRequestContext,
@@ -132,7 +133,8 @@ public class LegacyNameIdentifierGenerator<NameIdType extends SAMLObject>
                 continue;
             }
             for (final AttributeEncoder encoder : idpAttribute.getEncoders()) {
-                if (encoderType.isInstance(encoder) && ((NameIdentifierAttributeEncoder) encoder).apply(format)) {
+                if (encoderType.isInstance(encoder) && ((NameIdentifierAttributeEncoder) encoder).apply(format)
+                        && encoder.getActivationCondition().apply(profileRequestContext)) {
                     try {
                         // The encoders throw unless they return an object.
                         final NameIdType nameId = (NameIdType) encoder.encode(idpAttribute);
@@ -149,5 +151,6 @@ public class LegacyNameIdentifierGenerator<NameIdType extends SAMLObject>
         log.debug("Unable to obtain name identifier from legacy attribute encoders");
         return null;
     }
+// Checkstyle: CyclomaticComplexity ON
 
 }
