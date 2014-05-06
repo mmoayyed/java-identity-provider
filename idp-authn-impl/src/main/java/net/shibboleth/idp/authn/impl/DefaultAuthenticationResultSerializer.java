@@ -174,12 +174,13 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
             gen.writeEnd().writeEnd().close();
 
             return sink.toString();
-        } catch (JsonException e) {
+        } catch (final JsonException e) {
             log.error("Exception while serializing AuthenticationResult", e);
             throw new IOException("Exception while serializing AuthenticationResult", e);
         }
     }
 
+// Checkstyle: CyclomaticComplexity OFF    
     /** {@inheritDoc} */
     @Override
     @Nonnull public AuthenticationResult deserialize(final int version, @Nonnull @NotEmpty final String context,
@@ -234,10 +235,11 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
 
             return result;
 
-        } catch (NullPointerException | ClassCastException | ArithmeticException | JsonException e) {
+        } catch (final NullPointerException | ClassCastException | ArithmeticException | JsonException e) {
             log.error("Exception while parsing AuthenticationResult", e);
             throw new IOException("Found invalid data structure while parsing AuthenticationResult", e);
         }
     }
-
+ // Checkstyle: CyclomaticComplexity ON
+    
 }
