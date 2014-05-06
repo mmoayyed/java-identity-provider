@@ -16,38 +16,8 @@
     <packaging>pom</packaging>
 
     <properties>
-        <assembly-directory>target/${project.artifactId}</assembly-directory>
-        <!-- TODO Remove Jetty version override later -->
-        <jetty.version>9.1.0-SNAPSHOT</jetty.version>
+        <assembly-directory>${project.build.directory}/${project.build.finalName}</assembly-directory>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>shib-release</id>
-            <url>https://shibboleth.net/nexus/content/groups/public</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>shib-snapshot</id>
-            <url>https://shibboleth.net/nexus/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-
-        <!-- TODO Jetty SNAPSHOT repository, to be removed later. -->
-        <repository>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <id>sonatype-snapshots</id>
-            <name>Sonatype Jetty Snapshots</name>
-            <url>http://oss.sonatype.org/content/groups/jetty</url>
-        </repository>
-
-    </repositories>
 
     <dependencies>
         <!-- Compile Dependencies -->
@@ -63,10 +33,32 @@
 
     <build>
         <plugins>
-            <!-- Unpack the IdP war and Jetty distribution to assembly directory. -->
+
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
+                    <!-- Copy war to assembly directory. -->
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>idp-war</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>war</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${assembly-directory}/war/</outputDirectory>
+                                    <destFileName>idp.war</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                    <!-- Unpack idp-conf to assembly directory. -->
                     <execution>
                         <id>unpack-dependencies</id>
                         <phase>generate-resources</phase>
@@ -75,104 +67,15 @@
                         </goals>
                         <configuration>
                             <artifactItems>
-                                <!-- Expand the war to webapps/ -->
                                 <artifactItem>
-                                    <groupId>net.shibboleth.idp</groupId>
-                                    <artifactId>idp-war</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>war</type>
-                                    <outputDirectory>${assembly-directory}/webapps</outputDirectory>
-                                </artifactItem>
-                                <!-- Unpack Jetty distribution -->
-                                <artifactItem>
-                                    <groupId>${jetty.groupId}</groupId>
-                                    <artifactId>jetty-distribution</artifactId>
-                                    <!-- TODO Build against specific snapshot version until start.d/ directory stabilizes. -->
-                                    <version>9.1.0-20130823.093112-37</version>
-                                    <type>zip</type>
-                                    <outputDirectory>${assembly-directory}</outputDirectory>
-                                    <excludes>
-                                        **/.donotdelete,
-                                        **/webapps/**,
-                                        **/webapps.demo/**
-                                    </excludes>
-                                </artifactItem>
-                                <!-- Copy flows and templates -->
-                                <!-- TODO Deal with clobbering of identical filenames across modules -->
-                                <artifactItem>
-                                    <groupId>net.shibboleth.idp</groupId>
-                                    <artifactId>idp-authn-impl</artifactId>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>idp-conf</artifactId>
                                     <version>${project.version}</version>
                                     <type>jar</type>
-                                    <includes>
-                                        flows/**,
-                                        templates/**
-                                    </includes>
                                     <outputDirectory>${assembly-directory}</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>net.shibboleth.idp</groupId>
-                                    <artifactId>idp-saml-impl</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>jar</type>
-                                    <includes>
-                                        flows/**,
-                                        templates/**
-                                    </includes>
-                                    <outputDirectory>${assembly-directory}</outputDirectory>
+                                    <excludes>**/META-INF/**</excludes>
                                 </artifactItem>
                             </artifactItems>
-                        </configuration>
-                    </execution>
-                    <!-- Copy endorsed libraries to assembly-directory/jetty/lib/endorsed. -->
-                    <execution>
-                        <id>copy-endorsed-dependencies</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>${xerces.groupId}</groupId>
-                                    <artifactId>xml-apis</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>${xerces.groupId}</groupId>
-                                    <artifactId>xercesImpl</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>${xerces.groupId}</groupId>
-                                    <artifactId>serializer</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>xml-resolver</groupId>
-                                    <artifactId>xml-resolver</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>${xalan.groupId}</groupId>
-                                    <artifactId>xalan</artifactId>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${assembly-directory}/jetty/lib/endorsed</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <!-- Copy jetty9-dta-ssl to assembly-directory/jetty/lib/shibboleth -->
-                    <execution>
-                        <id>copy-jetty-delegate-ssl-dependency</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>net.shibboleth.utilities.jetty9</groupId>
-                                    <artifactId>jetty9-dta-ssl</artifactId>
-                                    <version>1.0-SNAPSHOT</version>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${assembly-directory}/jetty/lib/shibboleth</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -214,19 +117,6 @@
                             <target>
                                 <!-- Make files in bin executable. -->
                                 <chmod dir="${assembly-directory}/bin" perm="755" includes="**/*.sh" />
-                                <!-- For the following <move/> tasks, set failonerror to false so that 'mvn clean <goal>' 
-                                    is not required. -->
-                                <!-- Disable Jetty start.d/*.ini files by renaming with ".disabled" suffix. -->
-                                <move todir="${assembly-directory}/jetty-distribution-${jetty.version}/start.d"
-                                    failonerror="false">
-                                    <fileset dir="${assembly-directory}/jetty-distribution-${jetty.version}/start.d">
-                                        <include name="**/*.ini" />
-                                    </fileset>
-                                    <mapper type="glob" from="*" to="*.disabled" />
-                                </move>
-                                <!-- Rename "jetty-distribution-<version>" to "jetty". -->
-                                <move file="${assembly-directory}/jetty-distribution-${jetty.version}" tofile="${assembly-directory}/jetty"
-                                    failonerror="false" />
                             </target>
                         </configuration>
                     </execution>
