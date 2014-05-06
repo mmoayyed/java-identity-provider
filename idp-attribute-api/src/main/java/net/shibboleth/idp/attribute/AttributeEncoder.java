@@ -20,16 +20,21 @@ package net.shibboleth.idp.attribute;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+
+import com.google.common.base.Predicate;
+
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /**
- * Attribute encoders convert {@link IdPAttribute}s into protocol specific representations. Implementations must take in
- * to account that an {@link IdPAttribute} may contain values of multiple types. An encoder implementation encountering
+ * Attribute encoders convert an {@link IdPAttribute} into a protocol specific representation. Implementations must take
+ * into account that an {@link IdPAttribute} may contain values of multiple types. An implementation encountering
  * a value type it does not understand may either decide to ignore it or throw an {@link AttributeEncodingException}.
- * <p>
- * Encoders <strong>MUST</strong> be thread-safe and stateless and <strong>MUST</strong> implement appropriate
- * {@link Object#equals(Object)} and {@link Object#hashCode()} methods.
- * </p>
+ * 
+ * <p>Encoders implement a {@link Predicate} interface to determine their applicability to a request.</p>
+ * 
+ * <p>Encoders <strong>MUST</strong> be thread-safe and stateless and <strong>MUST</strong> implement appropriate
+ * {@link Object#equals(Object)} and {@link Object#hashCode()} methods.</p>
  * 
  * @param <EncodedType> the type of object created by encoding the attribute
  */
@@ -37,16 +42,23 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 public interface AttributeEncoder<EncodedType> {
 
     /**
-     * Gets the identifier of the protocol targeted by this encoder. Note, some protocols may have different types of
+     * Get the identifier of the protocol targeted by this encoder. Note, some protocols may have different types of
      * encoders that are used to encode attributes in to different parts of the protocol message. This identifier should
      * not be used to distinguish between the different message structure, it should only identify the protocol itself.
      * 
      * @return identifier of the protocol targeted by this encounter
      */
-    @Nonnull @NotEmpty public String getProtocol();
+    @Nonnull @NotEmpty String getProtocol();
+    
+    /**
+     * Get an activation condition for this encoder.
+     * 
+     * @return  a predicate indicating whether the encoder should be applied
+     */
+    @Nonnull Predicate<ProfileRequestContext> getActivationCondition();
 
     /**
-     * Encodes the attribute into a protocol specific representations.
+     * Encode the supplied attribute into a protocol specific representation.
      * 
      * @param attribute the attribute to encode
      * 
@@ -54,5 +66,5 @@ public interface AttributeEncoder<EncodedType> {
      * 
      * @throws AttributeEncodingException if unable to successfully encode attribute
      */
-    @Nonnull public EncodedType encode(@Nonnull final IdPAttribute attribute) throws AttributeEncodingException;
+    @Nonnull EncodedType encode(@Nonnull final IdPAttribute attribute) throws AttributeEncodingException;
 }

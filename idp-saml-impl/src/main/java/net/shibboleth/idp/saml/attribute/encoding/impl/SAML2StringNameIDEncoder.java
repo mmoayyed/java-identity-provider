@@ -26,6 +26,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML2NameIDEncoder;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -81,6 +82,8 @@ public class SAML2StringNameIDEncoder extends AbstractSAML2NameIDEncoder {
      * @param nameFormat format of the name identifier
      */
     public final void setNameFormat(@Nullable final String nameFormat) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         format = StringSupport.trimOrNull(nameFormat);
     }
 
@@ -99,6 +102,8 @@ public class SAML2StringNameIDEncoder extends AbstractSAML2NameIDEncoder {
      * @param nameQualifier security or administrative domain that qualifies the name identifier
      */
     @Nullable public final void setNameQualifier(final String nameQualifier) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         qualifier = StringSupport.trimOrNull(nameQualifier);
     }
 

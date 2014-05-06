@@ -38,11 +38,14 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.core.xml.XMLObject;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 /**
  * Base class for encoders that produce SAML attributes.
@@ -50,17 +53,41 @@ import com.google.common.base.Objects;
  * @param <AttributeType> type of attribute produced
  * @param <EncodedType> the type of data that can be encoded by the encoder
  */
-
 public abstract class AbstractSAMLAttributeEncoder<AttributeType extends SAMLObject,
-                                                   EncodedType extends IdPAttributeValue>
-        extends AbstractInitializableComponent implements AttributeEncoder<AttributeType>, UnmodifiableComponent {
+            EncodedType extends IdPAttributeValue> extends AbstractInitializableComponent
+                implements AttributeEncoder<AttributeType>, UnmodifiableComponent {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractSAMLAttributeEncoder.class);
 
+    /** Condition for use of this encoder. */
+    @Nonnull private Predicate<ProfileRequestContext> activationCondition;
+    
     /** The name of the attribute. */
     @NonnullAfterInit private String name;
 
+    /** Constructor. */
+    public AbstractSAMLAttributeEncoder() {
+        activationCondition = Predicates.alwaysTrue();
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull public Predicate<ProfileRequestContext> getActivationCondition() {
+        return activationCondition;
+    }
+    
+    /**
+     * Set the activation condition for this encoder.
+     * 
+     * @param condition condition to set
+     */
+    public void setActivationCondition(@Nonnull final Predicate<ProfileRequestContext> condition) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        activationCondition = Constraint.isNotNull(condition, "Activation condition cannot be null");
+    }
+    
     /**
      * Get the name of the attribute.
      * 
@@ -75,7 +102,7 @@ public abstract class AbstractSAMLAttributeEncoder<AttributeType extends SAMLObj
      * 
      * @param attributeName name of the attribute
      */
-    public synchronized void setName(@Nonnull @NotEmpty final String attributeName) {
+    public void setName(@Nonnull @NotEmpty final String attributeName) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         name = Constraint.isNotNull(StringSupport.trimOrNull(attributeName),
@@ -91,8 +118,9 @@ public abstract class AbstractSAMLAttributeEncoder<AttributeType extends SAMLObj
             throw new ComponentInitializationException("Attribute name cannot be null or empty");
         }
     }
-
+    
     /** {@inheritDoc} */
+    @Override
     @Nonnull public AttributeType encode(@Nonnull final IdPAttribute attribute) throws AttributeEncodingException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         Constraint.isNotNull(attribute, "Attribute to encode cannot be null");

@@ -20,13 +20,47 @@ package net.shibboleth.idp.saml.attribute.encoding;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.saml.nameid.SAML2NameIDAttributeEncoder;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 
-/** Base class for {@link SAML2NameIDAttributeEncoder}s. */
-public abstract class AbstractSAML2NameIDEncoder implements SAML2NameIDAttributeEncoder {
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
+/** Base class for {@link SAML2NameIDAttributeEncoder}s. */
+public abstract class AbstractSAML2NameIDEncoder extends AbstractInitializableComponent
+        implements SAML2NameIDAttributeEncoder {
+
+    /** Condition for use of this encoder. */
+    @Nonnull private Predicate<ProfileRequestContext> activationCondition;
+    
+    /** Constructor. */
+    public AbstractSAML2NameIDEncoder() {
+        activationCondition = Predicates.alwaysTrue();
+    }
+    
     /** {@inheritDoc} */
+    @Override
+    @Nonnull public Predicate<ProfileRequestContext> getActivationCondition() {
+        return activationCondition;
+    }
+    
+    /**
+     * Set the activation condition for this encoder.
+     * 
+     * @param condition condition to set
+     */
+    public void setActivationCondition(@Nonnull final Predicate<ProfileRequestContext> condition) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        activationCondition = Constraint.isNotNull(condition, "Activation condition cannot be null");
+    }
+    
+    /** {@inheritDoc} */
+    @Override
     @Nonnull public final String getProtocol() {
         return SAMLConstants.SAML20P_NS;
     }

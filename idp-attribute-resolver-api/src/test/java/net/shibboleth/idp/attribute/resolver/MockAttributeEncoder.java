@@ -17,6 +17,11 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -53,4 +58,11 @@ public class MockAttributeEncoder extends AbstractInitializableComponent impleme
     public String encode(IdPAttribute attribute) throws AttributeEncodingException {
         return staticValue;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public Predicate<ProfileRequestContext> getActivationCondition() {
+        return Predicates.alwaysTrue();
+    }
+
 }
