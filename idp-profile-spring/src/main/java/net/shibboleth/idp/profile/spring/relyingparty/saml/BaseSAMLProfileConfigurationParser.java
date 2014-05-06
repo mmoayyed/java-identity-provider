@@ -50,9 +50,6 @@ import com.google.common.base.Predicate;
  */
 public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleBeanDefinitionParser {
 
-    /** default value when assertionLifetime isn't set. */
-    private static final long DEFAULT_ASSERTION_LIFETIME = 300000L;
-
     /** Class logger. */
     @Nonnull private Logger log = LoggerFactory.getLogger(BaseSAMLProfileConfigurationParser.class);
 
@@ -259,17 +256,11 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
         if (element.hasAttributeNS(null, "assertionLifetime")) {
             // Set as a string and let the converter to the work
             builder.addPropertyValue("assertionLifetime", element.getAttributeNS(null, "assertionLifetime"));
-        } else {
-            log.debug("assertionLifetime not specified, defaulting to {}", DEFAULT_ASSERTION_LIFETIME);
-            builder.addPropertyValue("assertionLifetime", DEFAULT_ASSERTION_LIFETIME);
         }
 
         if (element.hasAttributeNS(null, "includeConditionsNotBefore")) {
             builder.addPropertyValue("includeConditionsNotBefore",
                     element.getAttributeNS(null, "includeConditionsNotBefore"));
-        } else {
-            log.debug("includeConditionsNotBefore not specified, defaulting to 'true'");
-            builder.addPropertyValue("includeConditionsNotBefore", true);
         }
 
         if (artifactAware) {
