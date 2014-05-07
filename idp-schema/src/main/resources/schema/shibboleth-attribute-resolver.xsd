@@ -204,6 +204,11 @@
                 <documentation>A reference to a predicate to decide whether this plugin is applicable</documentation>
             </annotation>
         </attribute>
+        <attribute name="profileContextStrategy" type="string" >
+            <annotation>
+                <documentation>A reference to a function to locate the profile context</documentation>
+            </annotation>
+        </attribute>
         
     </complexType>
 

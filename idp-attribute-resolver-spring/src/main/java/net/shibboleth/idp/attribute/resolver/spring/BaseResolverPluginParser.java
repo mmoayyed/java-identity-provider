@@ -51,8 +51,7 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
         String id = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
@@ -63,9 +62,14 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
         }
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
-        
+
         if (config.hasAttributeNS(null, "activationPredicateRef")) {
             builder.addPropertyReference("activationCriteria", config.getAttributeNS(null, "activationPredicateRef"));
+        }
+
+        if (config.hasAttributeNS(null, "profileContextStrategy")) {
+            builder.addPropertyReference("profileContextStrategy",
+                    config.getAttributeNS(null, "profileContextStrategy"));
         }
 
         List<Element> dependencyElements =

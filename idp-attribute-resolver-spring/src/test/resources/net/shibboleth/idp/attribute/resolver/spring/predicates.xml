@@ -12,6 +12,7 @@
 	<bean id="peter" class="net.shibboleth.idp.attribute.resolver.spring.AttributeResolverTest.TestPredicate"
 	    c:profileFinder-ref="principalFn"
 		c:compare="PETER" />
+		
 	<bean id="principal"
 		class="net.shibboleth.idp.attribute.resolver.spring.AttributeResolverTest.TestPredicate"
         c:profileFinder-ref="issuerFn"

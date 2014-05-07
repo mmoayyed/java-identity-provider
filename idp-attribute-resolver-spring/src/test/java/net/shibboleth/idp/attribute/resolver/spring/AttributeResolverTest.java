@@ -332,6 +332,45 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         Assert.assertTrue(resolutionContext.getResolvedIdPAttributes().isEmpty());
     }
     
+    @Test public void selectiveNavigate() throws ResolutionException {
+        GenericApplicationContext context = new GenericApplicationContext();
+        context.setDisplayName("ApplicationContext: " + AttributeResolverTest.class);
+
+        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+                new SchemaTypeAwareXMLBeanDefinitionReader(context);
+
+        beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(
+                "net/shibboleth/idp/attribute/resolver/spring/attribute-resolver-selective-navigate.xml"),
+                new ClassPathResource("net/shibboleth/idp/attribute/resolver/spring/predicates-navigate.xml"));
+        context.refresh();
+
+        final AttributeResolver resolver = context.getBean(AttributeResolver.class);
+        AttributeResolutionContext resolutionContext =
+                TestSources.createResolutionContext("PETER", "issuer", "recipient");
+        resolver.resolveAttributes(resolutionContext);
+        // this should fail since navigation failed.
+        Assert.assertEquals(resolutionContext.getResolvedIdPAttributes().size(), 0);
+
+        resolutionContext =
+                TestSources.createResolutionContext("PETER", "issuer", "recipient");
+        // add a child so we can navigate via that
+        resolutionContext.getSubcontext(ProfileRequestContext.class, true);
+        resolver.resolveAttributes(resolutionContext);
+        Assert.assertEquals(resolutionContext.getResolvedIdPAttributes().size(), 1);
+        Assert.assertNotNull(resolutionContext.getResolvedIdPAttributes().get("EPA1"));
+
+        resolutionContext = TestSources.createResolutionContext("PRINCIPAL", "ISSUER", "recipient");
+        resolutionContext.getSubcontext(ProfileRequestContext.class, true);
+        resolver.resolveAttributes(resolutionContext);
+        Assert.assertEquals(resolutionContext.getResolvedIdPAttributes().size(), 1);
+        Assert.assertNotNull(resolutionContext.getResolvedIdPAttributes().get("EPE"));
+
+        resolutionContext = TestSources.createResolutionContext("OTHER", "issuer", "recipient");
+        resolver.resolveAttributes(resolutionContext);
+        Assert.assertTrue(resolutionContext.getResolvedIdPAttributes().isEmpty());
+    }
+    
+    
     static class TestPredicate implements Predicate<ProfileRequestContext> {
 
         private final String value;
