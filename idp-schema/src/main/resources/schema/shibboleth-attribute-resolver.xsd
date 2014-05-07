@@ -83,7 +83,7 @@
                     </element>
                     <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="dependencyOnly" type="boolean">
+                <attribute name="dependencyOnly" type="string">
                     <annotation>
                         <documentation>
                             A boolean flag that indicates whether this attribute definition is only defined becaue its
@@ -176,7 +176,7 @@
                         </annotation>
                     </element>
                 </sequence>
-                <attribute name="nameIDFormat" type="anyURI" use="required">
+                <attribute name="nameIDFormat" type="string" use="required">
                     <annotation>
                         <documentation>The format of the NameID for which this connector is valid.</documentation>
                     </annotation>
@@ -199,6 +199,12 @@
                 <documentation>A unique identifier for this definition.</documentation>
             </annotation>
         </attribute>
+        <attribute name="activationPredicateRef" type="string" >
+            <annotation>
+                <documentation>A reference to a predicate to decide whether this plugin is applicable</documentation>
+            </annotation>
+        </attribute>
+        
     </complexType>
 
     <element name="Dependency" type="resolver:PluginDependencyType">

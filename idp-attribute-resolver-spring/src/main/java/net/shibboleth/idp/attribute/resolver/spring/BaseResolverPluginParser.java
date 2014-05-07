@@ -63,6 +63,10 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
         }
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
+        
+        if (config.hasAttributeNS(null, "activationPredicateRef")) {
+            builder.addPropertyReference("activationCriteria", config.getAttributeNS(null, "activationPredicateRef"));
+        }
 
         List<Element> dependencyElements =
                 ElementSupport.getChildElements(config, ResolverPluginDependencyParser.ELEMENT_NAME);

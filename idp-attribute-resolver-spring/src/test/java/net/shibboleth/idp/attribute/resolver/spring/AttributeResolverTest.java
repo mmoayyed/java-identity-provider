@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 import javax.sql.DataSource;
 
@@ -39,25 +40,30 @@ import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
 
 /** A work in progress to test the attribute resolver service. */
-// TODO incomplete
+
 public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
 
     /** Class logger. */
@@ -293,6 +299,53 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
                 serviceableComponent.unpinComponent();
             }
         }
+    }
 
+    @Test public void selective() throws ResolutionException {
+        GenericApplicationContext context = new GenericApplicationContext();
+        context.setDisplayName("ApplicationContext: " + AttributeResolverTest.class);
+
+        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+                new SchemaTypeAwareXMLBeanDefinitionReader(context);
+
+        beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(
+                "net/shibboleth/idp/attribute/resolver/spring/attribute-resolver-selective.xml"),
+                new ClassPathResource("net/shibboleth/idp/attribute/resolver/spring/predicates.xml"));
+        context.refresh();
+
+        final AttributeResolver resolver = context.getBean(AttributeResolver.class);
+        AttributeResolutionContext resolutionContext =
+                TestSources.createResolutionContext("PETER", "issuer", "recipient");
+
+        resolver.resolveAttributes(resolutionContext);
+
+        Assert.assertEquals(resolutionContext.getResolvedIdPAttributes().size(), 1);
+        Assert.assertNotNull(resolutionContext.getResolvedIdPAttributes().get("EPA1"));
+
+        resolutionContext = TestSources.createResolutionContext("PRINCIPAL", "ISSUER", "recipient");
+        resolver.resolveAttributes(resolutionContext);
+        Assert.assertEquals(resolutionContext.getResolvedIdPAttributes().size(), 1);
+        Assert.assertNotNull(resolutionContext.getResolvedIdPAttributes().get("EPE"));
+
+        resolutionContext = TestSources.createResolutionContext("OTHER", "issuer", "recipient");
+        resolver.resolveAttributes(resolutionContext);
+        Assert.assertTrue(resolutionContext.getResolvedIdPAttributes().isEmpty());
+    }
+    
+    static class TestPredicate implements Predicate<ProfileRequestContext> {
+
+        private final String value;
+        
+        private final Function<ProfileRequestContext, String> navigate; 
+
+        public TestPredicate(Function<ProfileRequestContext, String> profileFinder, String compare) {
+            value = Constraint.isNotNull(compare, "provided compare name must not be null");
+            navigate = Constraint.isNotNull(profileFinder, "provided prinicpal locator must not be null");
+        }
+
+        /** {@inheritDoc} */
+        @Override public boolean apply(@Nullable ProfileRequestContext input) {
+            return value.equals(navigate.apply(input));
+        }
     }
 }
