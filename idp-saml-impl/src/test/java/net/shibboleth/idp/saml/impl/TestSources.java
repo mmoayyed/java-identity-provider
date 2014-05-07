@@ -46,6 +46,8 @@ import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
@@ -199,7 +201,8 @@ public final class TestSources {
 
     public static AttributeResolutionContext createResolutionContext(String principal, String issuerID,
             String recipientId) {
-        AttributeResolutionContext retVal = new AttributeResolutionContext();
+        ProfileRequestContext parent = new ProfileRequestContext<>();
+        AttributeResolutionContext retVal = parent.getSubcontext(AttributeResolutionContext.class, true);
 
         retVal.setAttributeIssuerID(issuerID);
         retVal.setAttributeRecipientID(recipientId);

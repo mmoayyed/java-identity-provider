@@ -338,8 +338,6 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         
         private final Function<ProfileRequestContext, String> navigate; 
 
-        private final Logger log = LoggerFactory.getLogger(TestPredicate.class);
-        
         public TestPredicate(Function<ProfileRequestContext, String> profileFinder, String compare) {
             value = Constraint.isNotNull(compare, "provided compare name must not be null");
             navigate = Constraint.isNotNull(profileFinder, "provided prinicpal locator must not be null");
@@ -347,7 +345,6 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
 
         /** {@inheritDoc} */
         @Override public boolean apply(@Nullable ProfileRequestContext input) {
-            log.debug("Predicate, comparing '{}' with '{}' returns '{}'", value, navigate.apply(input),  value.equals(navigate.apply(input)));
             return value.equals(navigate.apply(input));
         }
     }
