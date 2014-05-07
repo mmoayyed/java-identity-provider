@@ -24,6 +24,7 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.Function;
@@ -34,17 +35,16 @@ import com.google.common.base.Function;
  * 
  * <p>If a specific setting is unavailable, a null value is returned.</p>
  */
-public class RelyingPartyIdLookupFunction implements Function<ProfileRequestContext, String> {
+public class RelyingPartyIdLookupFunction implements ContextDataLookupFunction<ProfileRequestContext,String> {
 
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
      */
-    @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
     
     /** Constructor. */
     public RelyingPartyIdLookupFunction() {
-        relyingPartyContextLookupStrategy =
-                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class, false);
+        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
     }
 
     /**
@@ -55,7 +55,7 @@ public class RelyingPartyIdLookupFunction implements Function<ProfileRequestCont
      *            {@link ProfileRequestContext}
      */
     public synchronized void setRelyingPartyContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
+            @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
