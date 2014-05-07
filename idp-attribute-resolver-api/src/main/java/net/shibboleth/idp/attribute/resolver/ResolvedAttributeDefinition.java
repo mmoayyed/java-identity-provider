@@ -32,8 +32,9 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContex
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 
 /**
  * A proxy which wraps a resolved attribute definition and always returns the same attribute. The goal being that once
@@ -98,8 +99,8 @@ public final class ResolvedAttributeDefinition extends AbstractAttributeDefiniti
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull public Predicate<AttributeResolutionContext> getActivationCriteria() {
-        return Predicates.alwaysTrue();
+    @Override @Nullable public Predicate<ProfileRequestContext> getActivationCriteria() {
+        return null;
     }
 
     /** {@inheritDoc} */

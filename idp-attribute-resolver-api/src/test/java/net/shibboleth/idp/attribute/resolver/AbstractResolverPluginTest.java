@@ -26,6 +26,7 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -40,7 +41,7 @@ public class AbstractResolverPluginTest {
 
         Assert.assertEquals(plugin.getId(), "foo");
         Assert.assertTrue(plugin.isPropagateResolutionExceptions());
-        Assert.assertEquals(plugin.getActivationCriteria(), Predicates.alwaysTrue());
+        Assert.assertNull(plugin.getActivationCriteria());
         Assert.assertNotNull(plugin.getDependencies());
         Assert.assertTrue(plugin.getDependencies().isEmpty());
     }
@@ -49,7 +50,7 @@ public class AbstractResolverPluginTest {
     @Test public void activationCriteria() {
         MockBaseResolverPlugin plugin = new MockBaseResolverPlugin(" foo ", "bar");
 
-        plugin.setActivationCriteria(Predicates.<AttributeResolutionContext> alwaysFalse());
+        plugin.setActivationCriteria(Predicates.<ProfileRequestContext> alwaysFalse());
         Assert.assertEquals(plugin.getActivationCriteria(), Predicates.alwaysFalse());
 
         try {
@@ -124,7 +125,7 @@ public class AbstractResolverPluginTest {
 
         context = new AttributeResolutionContext();
         plugin = new MockBaseResolverPlugin(" foo ", "bar");
-        plugin.setActivationCriteria(Predicates.<AttributeResolutionContext> alwaysFalse());
+        plugin.setActivationCriteria(Predicates.<ProfileRequestContext> alwaysFalse());
 
         plugin.initialize();
         Assert.assertNull(plugin.resolve(context));

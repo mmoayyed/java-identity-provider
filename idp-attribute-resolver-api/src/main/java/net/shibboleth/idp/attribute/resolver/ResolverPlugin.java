@@ -32,6 +32,8 @@ import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+
 import com.google.common.base.Predicate;
 
 /**
@@ -54,9 +56,9 @@ public interface ResolverPlugin<ResolvedType> extends UnmodifiableComponent,
     /**
      * Get the criteria that must be met for this plugin to be active for a given request.
      * 
-     * @return criteria that must be met for this plugin to be active for a given request, never null
+     * @return criteria that must be met for this plugin to be active for a given request
      */
-    @NonnullAfterInit Predicate<AttributeResolutionContext> getActivationCriteria();
+    @Nullable Predicate<ProfileRequestContext> getActivationCriteria();
 
     /**
      * Get the unmodifiable list of dependencies for this plugin.

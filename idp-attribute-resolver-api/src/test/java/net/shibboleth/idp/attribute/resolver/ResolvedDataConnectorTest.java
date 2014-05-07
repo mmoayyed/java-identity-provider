@@ -111,7 +111,7 @@ public class ResolvedDataConnectorTest {
         Assert.assertTrue(resolvedDataConnector.isInitialized());
 
         Assert.assertEquals(resolvedDataConnector.getDependencies(), dc.getDependencies());
-        Assert.assertTrue(resolvedDataConnector.getActivationCriteria().apply(null));
+        Assert.assertNull(resolvedDataConnector.getActivationCriteria());
         Assert.assertFalse(resolvedDataConnector.isPropagateResolutionExceptions());
 
         //

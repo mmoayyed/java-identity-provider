@@ -32,6 +32,11 @@
             <artifactId>idp-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-messaging-api</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>${spring.groupId}</groupId>

@@ -36,10 +36,13 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.messaging.context.navigate.ParentContextLookup;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -51,8 +54,8 @@ import com.google.common.collect.ImmutableSet;
  * @param <ResolvedType> object type this plug-in resolves to
  */
 @ThreadSafe
-public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdentifiableInitializableComponent
-        implements ResolverPlugin<ResolvedType>, DisposableBean {
+public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdentifiableInitializableComponent implements
+        ResolverPlugin<ResolvedType>, DisposableBean {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractResolverPlugin.class);
@@ -60,8 +63,12 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
     /** Whether an {@link AttributeResolutionContext} that occurred resolving attributes will be re-thrown. */
     private boolean propagateResolutionExceptions = true;
 
+    /** Strategy to get the {@link ProfileRequestContext}. */
+    @Nonnull private Function<AttributeResolutionContext, ProfileRequestContext> profileContextStrategy =
+            new ParentContextLookup<>();
+
     /** Criterion that must be met for this plugin to be active for the given request. */
-    @Nonnull private Predicate<AttributeResolutionContext> activationCriteria = Predicates.alwaysTrue();
+    @Nullable private Predicate<ProfileRequestContext> activationCriteria;
 
     /** IDs of the {@link ResolutionPlugIn}s this plug-in depends on. */
     @Nonnull @NonnullElements private Set<ResolverPluginDependency> dependencies = Collections.emptySet();
@@ -74,6 +81,25 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
      */
     @Override public boolean isPropagateResolutionExceptions() {
         return propagateResolutionExceptions;
+    }
+
+    /**
+     * Sets the mechanism to find out the {@link ProfileRequestContext}.
+     * 
+     * @param strategy the mechanism
+     */
+    public void setProfileContextStrategy(Function<AttributeResolutionContext, ProfileRequestContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        profileContextStrategy = Constraint.isNotNull(strategy, "Profile Context Strategy cannot be null");
+    }
+
+    /**
+     * Gets the mechanism to find out the {@link ProfileRequestContext}.
+     * 
+     * @return the mechanism
+     */
+    public Function<AttributeResolutionContext, ProfileRequestContext> getProfileContextStrategy() {
+        return profileContextStrategy;
     }
 
     /**
@@ -94,7 +120,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
      * 
      * @return criteria that must be met for this plugin to be active for a given request, never null
      */
-    @Override @Nonnull public Predicate<AttributeResolutionContext> getActivationCriteria() {
+    @Override @Nullable public Predicate<ProfileRequestContext> getActivationCriteria() {
         return activationCriteria;
     }
 
@@ -103,7 +129,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
      * 
      * @param criteria criteria that must be met for this plugin to be active for a given request
      */
-    public void setActivationCriteria(@Nonnull final Predicate<AttributeResolutionContext> criteria) {
+    public void setActivationCriteria(@Nonnull final Predicate<ProfileRequestContext> criteria) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         activationCriteria = Constraint.isNotNull(criteria, "Activiation criteria cannot be null");
@@ -156,9 +182,12 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
 
         Constraint.isNotNull(resolutionContext, "AttributeResolutionContext cannot be null");
 
-        if (!activationCriteria.apply(resolutionContext)) {
-            log.debug("Resolver plugin '{}': activation criteria not met, nothing to do", getId());
-            return null;
+        if (null != activationCriteria) {
+            ProfileRequestContext profileRequestContext = profileContextStrategy.apply(resolutionContext);
+            if (!activationCriteria.apply(profileRequestContext)) {
+                log.debug("Resolver plugin '{}': activation criteria not met, nothing to do", getId());
+                return null;
+            }
         }
 
         final AttributeResolverWorkContext workContext =

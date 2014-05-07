@@ -104,7 +104,7 @@ public class ResolvedAttributeDefinitionTest {
         resolvedAttributeDefinition.getActivationCriteria();
 
         Assert.assertEquals(resolvedAttributeDefinition.getDependencies(), attrDef.getDependencies());
-        Assert.assertTrue(resolvedAttributeDefinition.getActivationCriteria().apply(null));
+        Assert.assertNull(resolvedAttributeDefinition.getActivationCriteria());
         Assert.assertFalse(resolvedAttributeDefinition.isPropagateResolutionExceptions());
 
         //

@@ -30,8 +30,9 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContex
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 
 /**
  * A proxy which wraps a resolved data connector and always returns the same attributes. The goal being that once a data
@@ -81,8 +82,8 @@ public final class ResolvedDataConnector extends AbstractDataConnector {
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull public Predicate<AttributeResolutionContext> getActivationCriteria() {
-        return Predicates.alwaysTrue();
+    @Override @Nullable public Predicate<ProfileRequestContext> getActivationCriteria() {
+        return null;
     }
 
     /** {@inheritDoc} */
