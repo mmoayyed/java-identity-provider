@@ -6,8 +6,8 @@
                         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <bean id="principalFn" class="net.shibboleth.idp.attribute.resolver.context.AttributePrincipalLookupFunction"/>
-    <bean id="issuerFn" class="net.shibboleth.idp.attribute.resolver.context.AttributeIssuerIdLookupFunction"/>
+    <bean id="principalFn" class="net.shibboleth.idp.attribute.resolver.context.navigate.AttributePrincipalLookupFunction"/>
+    <bean id="issuerFn" class="net.shibboleth.idp.attribute.resolver.context.navigate.AttributeIssuerIdLookupFunction"/>
 
 	<bean id="peter" class="net.shibboleth.idp.attribute.resolver.spring.AttributeResolverTest.TestPredicate"
 	    c:profileFinder-ref="principalFn"
