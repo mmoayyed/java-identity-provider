@@ -20,13 +20,25 @@ package net.shibboleth.idp.attribute.resolver;
 import java.util.HashSet;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.resolver.context.AttributeIssuerIdLookupFunction;
+import net.shibboleth.idp.attribute.resolver.context.AttributePrincipalLookupFunction;
+import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientIdLookupFunction;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 
+import org.opensaml.messaging.context.navigate.ParentContextLookup;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Function;
+
 /** Unit test for {@link AttributeResolutionContext}. */
 public class AttributeResolutionContextTest {
+    
+    static private final String THE_ISSUER = "Issuer"; 
+    static private final String THE_RECIPIENT = "Recipient";
+    static private final String THE_PRINCIPAL = "Principal"; 
+
 
     /** Test instantiation and post-instantiation state. */
     @Test public void instantiation() {
@@ -96,5 +108,52 @@ public class AttributeResolutionContextTest {
         Assert.assertNotNull(context.getResolvedIdPAttributes());
         Assert.assertEquals(context.getResolvedIdPAttributes().size(), 1);
     }
+    
+    @Test public void lookupsParent() {
+        final ProfileRequestContext profileCtx = new ProfileRequestContext<>();
+        final AttributeResolutionContext context = profileCtx.getSubcontext(AttributeResolutionContext.class, true);
+        
+        context.setPrincipal(THE_PRINCIPAL);
+        context.setAttributeIssuerID(THE_ISSUER);
+        context.setAttributeRecipientID(THE_RECIPIENT);
+        
+        Assert.assertSame(context.getPrincipal(), THE_PRINCIPAL);
+        Assert.assertSame(context.getAttributeIssuerID(), THE_ISSUER);
+        Assert.assertSame(context.getAttributeRecipientID(), THE_RECIPIENT);
+        
+        final Function<ProfileRequestContext, String> principalFn = new AttributePrincipalLookupFunction();
+        final Function<ProfileRequestContext, String> recipientFn = new AttributeRecipientIdLookupFunction();
+        final Function<ProfileRequestContext, String> issuerFn = new AttributeIssuerIdLookupFunction();
+        
+        Assert.assertSame(principalFn.apply(profileCtx), THE_PRINCIPAL);
+        Assert.assertSame(issuerFn.apply(profileCtx), THE_ISSUER);
+        Assert.assertSame(recipientFn.apply(profileCtx), THE_RECIPIENT);
+    }
+        
+    @Test public void lookupsChild() {
+        final AttributeResolutionContext context = new AttributeResolutionContext();
+        final ProfileRequestContext profileCtx = context.getSubcontext(ProfileRequestContext.class, true);
+        
+        context.setPrincipal(THE_PRINCIPAL);
+        context.setAttributeIssuerID(THE_ISSUER);
+        context.setAttributeRecipientID(THE_RECIPIENT);
+        
+        final AttributePrincipalLookupFunction principalFn = new AttributePrincipalLookupFunction();
+        final AttributeRecipientIdLookupFunction recipientFn = new AttributeRecipientIdLookupFunction();
+        final AttributeIssuerIdLookupFunction issuerFn = new AttributeIssuerIdLookupFunction();
+
+        Assert.assertNull(principalFn.apply(profileCtx), THE_PRINCIPAL);
+        Assert.assertNull(issuerFn.apply(profileCtx), THE_ISSUER);
+        Assert.assertNull(recipientFn.apply(profileCtx), THE_RECIPIENT);
+
+        principalFn.setAttributeResolutionContextLookupStrategy(new ParentContextLookup<ProfileRequestContext, AttributeResolutionContext>());
+        recipientFn.setAttributeResolutionContextLookupStrategy(new ParentContextLookup<ProfileRequestContext, AttributeResolutionContext>());
+        issuerFn.setAttributeResolutionContextLookupStrategy(new ParentContextLookup<ProfileRequestContext, AttributeResolutionContext>());
+        
+        Assert.assertSame(principalFn.apply(profileCtx), THE_PRINCIPAL);
+        Assert.assertSame(issuerFn.apply(profileCtx), THE_ISSUER);
+        Assert.assertSame(recipientFn.apply(profileCtx), THE_RECIPIENT);
+    }
+        
 
 }
