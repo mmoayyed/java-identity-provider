@@ -26,10 +26,12 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
+import org.opensaml.messaging.context.navigate.ParentContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 
 /** Unit test for {@link ResolverPlugin}. */
@@ -52,13 +54,19 @@ public class AbstractResolverPluginTest {
 
         plugin.setActivationCriteria(Predicates.<ProfileRequestContext> alwaysFalse());
         Assert.assertEquals(plugin.getActivationCriteria(), Predicates.alwaysFalse());
-
         try {
             plugin.setActivationCriteria(null);
             Assert.fail("Able to set a null activiation criteria");
         } catch (ConstraintViolationException e) {
             // expected this
         }
+    }
+    
+    @Test public void nativation() {
+        MockBaseResolverPlugin plugin = new MockBaseResolverPlugin(" foo ", "bar");
+        Assert.assertEquals(plugin.getProfileContextStrategy().getClass(), ParentContextLookup.class);
+        plugin.setProfileContextStrategy(new TestFunc());
+        Assert.assertEquals(plugin.getProfileContextStrategy().getClass(), TestFunc.class);
     }
 
     /** Test setters to {@link ResolverPlugin#setPropagateResolutionExceptions(boolean)}. */
@@ -153,11 +161,18 @@ public class AbstractResolverPluginTest {
         }
 
         /** {@inheritDoc} */
-        @Override
-        @Nullable protected String doResolve(@Nonnull final AttributeResolutionContext resolutionContext,
+        @Override @Nullable protected String doResolve(@Nonnull final AttributeResolutionContext resolutionContext,
                 @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
             return resolverValue;
         }
     }
-    
+
+    static class TestFunc implements Function<AttributeResolutionContext, ProfileRequestContext> {
+
+        /** {@inheritDoc} */
+        @Override @Nullable public ProfileRequestContext apply(@Nullable AttributeResolutionContext input) {
+            return null;
+        }
+
+    }
 }
