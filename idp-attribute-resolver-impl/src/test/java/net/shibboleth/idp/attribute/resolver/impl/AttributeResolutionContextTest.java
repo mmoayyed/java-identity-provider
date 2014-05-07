@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver;
+package net.shibboleth.idp.attribute.resolver.impl;
 
 import java.util.HashSet;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.resolver.context.AttributeIssuerIdLookupFunction;
-import net.shibboleth.idp.attribute.resolver.context.AttributePrincipalLookupFunction;
-import net.shibboleth.idp.attribute.resolver.context.AttributeRecipientIdLookupFunction;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.navigate.AttributeIssuerIdLookupFunction;
+import net.shibboleth.idp.attribute.resolver.context.navigate.AttributePrincipalLookupFunction;
+import net.shibboleth.idp.attribute.resolver.context.navigate.AttributeRecipientIdLookupFunction;
 
 import org.opensaml.messaging.context.navigate.ParentContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
