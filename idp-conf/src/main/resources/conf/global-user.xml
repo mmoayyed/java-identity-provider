@@ -9,7 +9,7 @@
 
 	default-init-method="initialize" default-destroy-method="destroy">
 
-	<context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
+	<context:property-placeholder location="file:///${idp.home}/conf/idp.properties" />
 
     <import resource="services-user.xml" />
     <import resource="subject-c14n-user.xml" />

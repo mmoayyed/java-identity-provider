@@ -6,7 +6,7 @@
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                            http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd">
     
-    <context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
+    <context:property-placeholder location="file:///${idp.home}/conf/idp.properties" />
 
     <!--
     Define custom flows, or override system flows, by using filesystem directly. Flows will be
@@ -17,7 +17,7 @@
     </webflow:flow-registry>
 
     <!-- System-supplied flows, do not modify. -->
-    <webflow:flow-registry id="flowRegistry" parent="userFlowRegistry" base-path="file://${idp.home}/system/flows" flow-builder-services="flowBuilderServices">
+    <webflow:flow-registry id="flowRegistry" parent="userFlowRegistry" base-path="file:///${idp.home}/system/flows" flow-builder-services="flowBuilderServices">
 
         <!-- Abstract flows underpinning SAML profiles. -->
         <webflow:flow-location id="SAML.Abstract" path="/saml/saml-abstract-flow.xml" />

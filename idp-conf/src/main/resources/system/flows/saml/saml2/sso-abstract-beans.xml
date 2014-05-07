@@ -11,7 +11,7 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
+    <context:property-placeholder location="file:///${idp.home}/conf/idp.properties" />
     
     <!-- Note: Don't define DecodeMessage action here, that is defined in beans definition for concrete flow. -->
 

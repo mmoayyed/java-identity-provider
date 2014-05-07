@@ -60,28 +60,28 @@
     -->
 
     <util:list id ="shibboleth.AttributeResolverResources">
-        <value>file://${idp.home}/conf/attribute-resolver.xml</value>
-        <value>file://${idp.home}/conf/property-placeholder.xml</value>
+        <value>file:///${idp.home}/conf/attribute-resolver.xml</value>
+        <value>file:///${idp.home}/conf/property-placeholder.xml</value>
     </util:list>
 
     <util:list id ="shibboleth.AttributeFilterResources">
-        <value>file://${idp.home}/conf/attribute-filter.xml</value>
-        <value>file://${idp.home}/conf/property-placeholder.xml</value>
+        <value>file:///${idp.home}/conf/attribute-filter.xml</value>
+        <value>file:///${idp.home}/conf/property-placeholder.xml</value>
     </util:list>
 
     <util:list id="shibboleth.MetadataResolverResources">
-        <value>file://${idp.home}/conf/metadata-providers.xml</value>
-        <value>file://${idp.home}/conf/property-placeholder.xml</value>
+        <value>file:///${idp.home}/conf/metadata-providers.xml</value>
+        <value>file:///${idp.home}/conf/property-placeholder.xml</value>
     </util:list>
 
     <util:list id="shibboleth.RelyingPartyResolverResources">
-        <value>file://${idp.home}/conf/relying-party.xml</value>
-        <value>file://${idp.home}/conf/profile-defaults.xml</value>
-        <value>file://${idp.home}/conf/property-placeholder.xml</value>
+        <value>file:///${idp.home}/conf/relying-party.xml</value>
+        <value>file:///${idp.home}/conf/profile-defaults.xml</value>
+        <value>file:///${idp.home}/conf/property-placeholder.xml</value>
     </util:list>
 
     <util:list id ="shibboleth.NameIdentifierGenerationResources">
-        <value>file://${idp.home}/conf/saml-nameid-gen.xml</value>
+        <value>file:///${idp.home}/conf/saml-nameid-gen.xml</value>
     </util:list>
 
 </beans>
