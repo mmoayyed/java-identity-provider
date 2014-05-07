@@ -61,7 +61,7 @@
                     <!-- Unpack idp-conf to assembly directory. -->
                     <execution>
                         <id>unpack-dependencies</id>
-                        <phase>generate-resources</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>unpack</goal>
                         </goals>
