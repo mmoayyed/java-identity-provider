@@ -26,6 +26,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.Function;
@@ -37,7 +38,7 @@ import com.google.common.base.Function;
  * <p>If a specific setting is unavailable, a default generator can be returned.</p>
  */
 public class IdentifierGenerationStrategyLookupFunction
-        implements Function<ProfileRequestContext, IdentifierGenerationStrategy> {
+        implements ContextDataLookupFunction<ProfileRequestContext,IdentifierGenerationStrategy> {
     
     /** Default strategy to return. */
     @Nullable private IdentifierGenerationStrategy defaultGenerator;
@@ -49,8 +50,7 @@ public class IdentifierGenerationStrategyLookupFunction
     
     /** Constructor. */
     public IdentifierGenerationStrategyLookupFunction() {
-        relyingPartyContextLookupStrategy =
-                new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class, false);
+        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
     }
     
     /**
