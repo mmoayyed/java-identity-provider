@@ -28,7 +28,7 @@
         have more complex needs such as mapping a certificate DN into a principal name, an alternative may
         be required.
         -->
-        <bean id="SubjectC14NFlow/Simple" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
+        <bean id="c14n/simple" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
             <property name="activationCondition">
                 <bean class="net.shibboleth.idp.authn.impl.SimpleSubjectCanonicalization.ActivationCondition" />
             </property>
@@ -46,23 +46,23 @@
         to map SAML Subjects back into principals. If you don't use those (or this is a new install) you can
         remove this.
         -->
-        <ref bean="SubjectC14NFlow/LegacyPrincipalConnector" />
+        <ref bean="c14n/LegacyPrincipalConnector" />
         
         <!-- The next four are for handling transient IDs (in-storage and stateless variants). -->
-        <ref bean="SubjectC14NFlow/SAML2Transient" />
-        <ref bean="SubjectC14NFlow/SAML2CryptoTransient" />
-        <ref bean="SubjectC14NFlow/SAML1Transient" /> 
-        <ref bean="SubjectC14NFlow/SAML1CryptoTransient" /> 
+        <ref bean="c14n/SAML2Transient" />
+        <ref bean="c14n/SAML2CryptoTransient" />
+        <ref bean="c14n/SAML1Transient" /> 
+        <ref bean="c14n/SAML1CryptoTransient" /> 
         
         <!-- Handle a SAML 2 persistent ID, provided a stored strategy is in use. -->
-        <!-- <ref bean="SubjectC14NFlow/SAML2/Persistent" /> -->
+        <!-- <ref bean="c14n/SAML2/Persistent" /> -->
         
         <!--
         Finally we have beans for decoding arbitrary SAML formats directly. By default, these are turned off,
         having *no* relying parties for which they apply (see shibboleth.DirectNamePredicate below).
         -->
-        <ref bean="SubjectC14NFlow/SAML2Direct" />
-        <ref bean="SubjectC14NFlow/SAML1Direct" />
+        <ref bean="c14n/SAML2Direct" />
+        <ref bean="c14n/SAML1Direct" />
     </util:list>
     
     <!-- What SAML formats do you want to support direct mapping for? -->

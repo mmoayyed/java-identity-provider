@@ -14,7 +14,7 @@
        
     <context:property-placeholder location="file://${idp.home}/conf/idp.properties" />
 
-    <bean id="SubjectC14NFlow/LegacyPrincipalConnector" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
+    <bean id="c14n/LegacyPrincipalConnector" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
         <property name="activationCondition">
             <bean class="net.shibboleth.idp.saml.nameid.impl.LegacyCanonicalization.ActivationCondition" 
                 c:service-ref="shibboleth.AttributeResolverService"/>
@@ -35,22 +35,22 @@
         </property>
     </bean>
 
-    <bean id="SubjectC14NFlow/SAML2Persistent" parent="shibboleth.AbstractSAML2C14NFlowBean"
+    <bean id="c14n/SAML2Persistent" parent="shibboleth.AbstractSAML2C14NFlowBean"
         p:formats="#{ {'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent'} }" />
 
-    <bean id="SubjectC14NFlow/SAML2Transient" parent="shibboleth.AbstractSAML2C14NFlowBean"
+    <bean id="c14n/SAML2Transient" parent="shibboleth.AbstractSAML2C14NFlowBean"
         p:formats="#{ {'urn:oasis:names:tc:SAML:2.0:nameid-format:transient'} }" />
     
-    <bean id="SubjectC14NFlow/SAML2CryptoTransient" parent="shibboleth.AbstractSAML2C14NFlowBean"
+    <bean id="c14n/SAML2CryptoTransient" parent="shibboleth.AbstractSAML2C14NFlowBean"
         p:formats="#{ {'urn:oasis:names:tc:SAML:2.0:nameid-format:transient'} }" />
 
-    <bean id="SubjectC14NFlow/SAML1Transient" parent="shibboleth.AbstractSAML1C14NFlowBean"
+    <bean id="c14n/SAML1Transient" parent="shibboleth.AbstractSAML1C14NFlowBean"
         p:formats="#{ {'urn:mace:shibboleth:1.0:nameIdentifier'} }" /> 
 
-    <bean id="SubjectC14NFlow/SAML1CryptoTransient" parent="shibboleth.AbstractSAML1C14NFlowBean" 
+    <bean id="c14n/SAML1CryptoTransient" parent="shibboleth.AbstractSAML1C14NFlowBean" 
         p:formats="#{ {'urn:mace:shibboleth:1.0:nameIdentifier'} }" /> 
 
-    <bean id="SubjectC14NFlow/SAML2Direct" parent="shibboleth.AbstractSAML2C14NFlowBean"
+    <bean id="c14n/SAML2Direct" parent="shibboleth.AbstractSAML2C14NFlowBean"
             p:formats-ref="shibboleth.DirectNameFormats">
         <property name="activationCondition">
             <bean class="com.google.common.base.Predicates" factory-method="and">
@@ -64,7 +64,7 @@
         </property>
     </bean>
                
-    <bean id="SubjectC14NFlow/SAML1Direct" parent="shibboleth.AbstractSAML1C14NFlowBean"
+    <bean id="c14n/SAML1Direct" parent="shibboleth.AbstractSAML1C14NFlowBean"
             p:formats-ref="shibboleth.DirectNameFormats"> 
         <property name="activationCondition">
             <bean class="com.google.common.base.Predicates" factory-method="and">

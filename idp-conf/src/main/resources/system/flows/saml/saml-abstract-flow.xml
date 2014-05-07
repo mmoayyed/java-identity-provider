@@ -63,7 +63,7 @@
         <transition on="proceed" to="CallSubjectCanonicalization" />
     </action-state>
 
-    <subflow-state id="CallSubjectCanonicalization" subflow="SubjectC14N/SAML">
+    <subflow-state id="CallSubjectCanonicalization" subflow="c14n/saml">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="FinalizeSAMLSubjectCanonicalization" />
     </subflow-state>

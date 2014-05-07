@@ -55,26 +55,26 @@
         <webflow:flow-location id="AuthenticationFlow/LDAP" path="/authn/ldap-authn-flow.xml" />        
         
         <!-- Master flows for post-authn and SAML subject c14n. -->
-        <webflow:flow-location id="SubjectC14N.Abstract" path="/c14n/subject-c14n-abstract-flow.xml" />
-        <webflow:flow-location id="SubjectC14N/Authn" path="/c14n/subject-c14n-authn-flow.xml" />
-        <webflow:flow-location id="SubjectC14N/SAML" path="/c14n/subject-c14n-saml-flow.xml" />
+        <webflow:flow-location id="c14n.abstract" path="/c14n/subject-c14n-abstract-flow.xml" />
+        <webflow:flow-location id="c14n/authn" path="/c14n/subject-c14n-authn-flow.xml" />
+        <webflow:flow-location id="c14n/saml" path="/c14n/subject-c14n-saml-flow.xml" />
         
         <!-- Standard post-login C14N method. -->
-        <webflow:flow-location id="SubjectC14NFlow/Simple" path="/c14n/simple-subject-c14n-flow.xml" />
+        <webflow:flow-location id="c14n/simple" path="/c14n/simple-subject-c14n-flow.xml" />
         
         <!--
         Standard SAML C14N methods, including one supporting legacy use of the attribute resolver.
         These all map to the same flow, and they derive the bean ID of an action to run based on the
-        flow id.
+        flow id after the slash.
         -->
-        <webflow:flow-location id="SubjectC14NFlow/SAML2Transient" path="/c14n/subject-c14n-saml-default-flow.xml"  />
-        <webflow:flow-location id="SubjectC14NFlow/SAML2CryptoTransient" path="/c14n/subject-c14n-saml-default-flow.xml"  />
-        <webflow:flow-location id="SubjectC14NFlow/SAML2Persistent" path="/c14n/subject-c14n-saml-default-flow.xml"  />
-        <webflow:flow-location id="SubjectC14NFlow/SAML2Direct" path="/c14n/subject-c14n-saml-default-flow.xml"  />
-        <webflow:flow-location id="SubjectC14NFlow/SAML1Transient" path="/c14n/subject-c14n-saml-default-flow.xml"  />
-        <webflow:flow-location id="SubjectC14NFlow/SAML1CryptoTransient" path="/c14n/subject-c14n-saml-default-flow.xml"  />
-        <webflow:flow-location id="SubjectC14NFlow/SAML1Direct" path="/c14n/subject-c14n-saml-default-flow.xml"  />
-        <webflow:flow-location id="SubjectC14NFlow/LegacyPrincipalConnector" path="/c14n/subject-c14n-saml-default-flow.xml"  />
+        <webflow:flow-location id="c14n/SAML2Transient" path="/c14n/subject-c14n-saml-default-flow.xml"  />
+        <webflow:flow-location id="c14n/SAML2CryptoTransient" path="/c14n/subject-c14n-saml-default-flow.xml"  />
+        <webflow:flow-location id="c14n/SAML2Persistent" path="/c14n/subject-c14n-saml-default-flow.xml"  />
+        <webflow:flow-location id="c14n/SAML2Direct" path="/c14n/subject-c14n-saml-default-flow.xml"  />
+        <webflow:flow-location id="c14n/SAML1Transient" path="/c14n/subject-c14n-saml-default-flow.xml"  />
+        <webflow:flow-location id="c14n/SAML1CryptoTransient" path="/c14n/subject-c14n-saml-default-flow.xml"  />
+        <webflow:flow-location id="c14n/SAML1Direct" path="/c14n/subject-c14n-saml-default-flow.xml"  />
+        <webflow:flow-location id="c14n/LegacyPrincipalConnector" path="/c14n/subject-c14n-saml-default-flow.xml"  />
                 
     </webflow:flow-registry>
     

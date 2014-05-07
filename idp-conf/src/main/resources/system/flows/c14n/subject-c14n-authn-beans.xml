@@ -17,9 +17,11 @@
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     
-    <bean id="PopulateSubjectCanonicalizationContext" class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
-        p:availableFlows="#{@'shibboleth.PostLoginSubjectCanonicalizationFlows'.?[id matches 'SubjectC14NFlow/(${idp.c14n.flows})']}" />
+    <bean id="PopulateSubjectCanonicalizationContext"
+        class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
+        p:availableFlows-ref="shibboleth.PostLoginSubjectCanonicalizationFlows" />
 
-    <bean id="SelectSubjectCanonicalizationFlow" class="net.shibboleth.idp.authn.impl.SelectSubjectCanonicalizationFlow" scope="prototype" />
+    <bean id="SelectSubjectCanonicalizationFlow"
+        class="net.shibboleth.idp.authn.impl.SelectSubjectCanonicalizationFlow" scope="prototype" />
     
 </beans>
