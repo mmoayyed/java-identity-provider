@@ -22,8 +22,11 @@ import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringAttributeEncod
 
 import org.opensaml.saml.saml2.core.Attribute;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Predicates;
 
 /**
  * Test for {@link SAML2StringAttributeEncoderParser}.
@@ -43,6 +46,8 @@ public class SAML2StringAttributeEncoderParserTest extends BaseAttributeDefiniti
         SAML2StringAttributeEncoder encoder =
                 getAttributeEncoder("saml2StringDefault.xml", SAML2StringAttributeEncoder.class);
 
+        Assert.assertSame(encoder.getActivationCondition(), Predicates.alwaysTrue());
+        Assert.assertTrue(encoder.getActivationCondition().apply(null));
         Assert.assertEquals(encoder.getName(), "Saml2StringName");
         Assert.assertNull(encoder.getFriendlyName()); 
         Assert.assertEquals(encoder.getNameFormat(), Attribute.URI_REFERENCE);
@@ -51,4 +56,17 @@ public class SAML2StringAttributeEncoderParserTest extends BaseAttributeDefiniti
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {
         getAttributeEncoder("saml2StringNoName.xml", SAML2StringAttributeEncoder.class);
     }
+    
+    @Test public void conditional() {
+        GenericApplicationContext context = new GenericApplicationContext();
+
+        loadFile(ENCODER_FILE_PATH + "predicates.xml", context, false);
+        
+        SAML2StringAttributeEncoder encoder =
+                getAttributeEncoder("saml2StringConditional.xml", SAML2StringAttributeEncoder.class, context);
+
+        Assert.assertSame(encoder.getActivationCondition(), Predicates.alwaysFalse());
+        Assert.assertFalse(encoder.getActivationCondition().apply(null));
+    }
+
 }

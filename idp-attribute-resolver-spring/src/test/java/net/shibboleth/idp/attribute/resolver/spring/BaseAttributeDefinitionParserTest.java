@@ -41,7 +41,7 @@ import com.google.common.collect.Sets;
  * Test for {@link SimpleAttributeDefinitionParser} and by extension {@link BaseAttributeDefinitionParser}.
  */
 public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBaseTestCase {
-    
+
     public static final String BEAN_FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/";
 
     public static final String ATTRIBUTE_FILE_PATH = BEAN_FILE_PATH + "ad/";
@@ -52,15 +52,7 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
 
     public static final String PRINCIPALCONNECTOR_FILE_PATH = BEAN_FILE_PATH + "pc/";
 
-    protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context,
-            boolean supressValid) {
-
-        ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
-        service.setConverters(Sets.newHashSet(new DurationToLongConverter(), new StringToIPRangeConverter()));
-        service.afterPropertiesSet();
-
-        context.getBeanFactory().setConversionService(service.getObject());    
-
+    protected void loadFile(String fileName, GenericApplicationContext context, boolean supressValid) {
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
@@ -68,9 +60,21 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
             beanDefinitionReader.setValidating(false);
         }
         beanDefinitionReader.loadBeanDefinitions(fileName);
-        
+    }
+
+    protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context,
+            boolean supressValid) {
+
+        ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
+        service.setConverters(Sets.newHashSet(new DurationToLongConverter(), new StringToIPRangeConverter()));
+        service.afterPropertiesSet();
+
+        context.getBeanFactory().setConversionService(service.getObject());
+
+        loadFile(fileName, context, supressValid);
+
         context.refresh();
-        
+
         Collection<Type> beans = context.getBeansOfType(claz).values();
         Assert.assertEquals(beans.size(), 1);
 
@@ -100,17 +104,17 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
     }
 
     protected <Type extends AttributeDefinition> Type getAttributeDefn(String fileName, String beanFileName,
-                Class<Type> claz, boolean supressValidation) {
+            Class<Type> claz, boolean supressValidation) {
 
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + claz);
         XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
-        
+
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         service.setConverters(Sets.newHashSet(new DurationToLongConverter(), new StringToIPRangeConverter()));
         service.afterPropertiesSet();
 
-        context.getBeanFactory().setConversionService(service.getObject());            
+        context.getBeanFactory().setConversionService(service.getObject());
 
         configReader.loadBeanDefinitions(BEAN_FILE_PATH + beanFileName);
 
@@ -119,9 +123,11 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
 
     protected <Type extends AttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz) {
         return getAttributeDefn(fileName, claz, false);
-        
+
     }
-        protected <Type extends AttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz, boolean supressValid) {
+
+    protected <Type extends AttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz,
+            boolean supressValid) {
 
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + claz);
@@ -133,7 +139,8 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         return getDataConnector(fileName, claz, false);
     }
 
-    protected <Type extends DataConnector> Type getDataConnector(String fileName, Class<Type> claz, boolean supressValid) {
+    protected <Type extends DataConnector> Type
+            getDataConnector(String fileName, Class<Type> claz, boolean supressValid) {
 
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + claz);
@@ -146,10 +153,17 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + claz);
 
+        return getAttributeEncoder(fileName, claz, context);
+
+    }
+
+    protected <Type extends AttributeEncoder> Type getAttributeEncoder(String fileName, Class<Type> claz,
+            GenericApplicationContext context) {
+
         return getBean(ENCODER_FILE_PATH + fileName, claz, context);
 
     }
-    
+
     protected PrincipalConnector getPrincipalConnector(String fileName) {
 
         GenericApplicationContext context = new GenericApplicationContext();
@@ -157,7 +171,7 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
 
         return getBean(PRINCIPALCONNECTOR_FILE_PATH + fileName, PrincipalConnector.class, context);
     }
-    
+
     protected PrincipalConnector getPrincipalConnector(String fileName, String beanFileName) {
 
         GenericApplicationContext context = new GenericApplicationContext();
@@ -168,6 +182,5 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
 
         return getBean(PRINCIPALCONNECTOR_FILE_PATH + fileName, PrincipalConnector.class, context);
     }
-
 
 }

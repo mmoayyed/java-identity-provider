@@ -115,7 +115,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="scopeType" type="encoder:ScopeType" use="optional">
+                <attribute name="scopeType" type="string" use="optional">
                     <annotation>
                         <documentation>
                             The type of scoping to use for the encoded attribute. Valid values are "inline" or
@@ -177,13 +177,6 @@
             </extension>
         </complexContent>
     </complexType>
-
-    <simpleType name="ScopeType">
-        <restriction base="string">
-            <enumeration value="inline"/>
-            <enumeration value="attribute"/>
-        </restriction>
-    </simpleType>
 
 <!-- Encoders that produce SAML 1 or 2 name identifiers -->
     <complexType name="SAML1StringNameIdentifier">
