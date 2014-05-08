@@ -18,82 +18,47 @@
 package net.shibboleth.idp.profile.logic;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.CollectionContainmentPredicate;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Sets;
 
 /**
  * Predicate that evaluates a {@link ProfileRequestContext} by looking for relying party ID
- * that matches one of a designated set, obtained from a lookup function, by default from
- * a {@link net.shibboleth.idp.profile.context.RelyingPartyContext} child.
+ * that matches one of a designated set. The ID is obtained from a lookup function, by default from
+ * a {@link net.shibboleth.idp.profile.context.RelyingPartyContext} child of the profile request context.
  */
-public class RelyingPartyIdPredicate implements Predicate<ProfileRequestContext> {
+public class RelyingPartyIdPredicate extends CollectionContainmentPredicate<ProfileRequestContext,String> {
 
-    /** Lookup strategy for relying party ID. */
-    @Nonnull private Function<ProfileRequestContext,String> relyingPartyIdLookupStrategy;
-    
-    /** Relying parties to match against. */
-    @Nonnull @NonnullElements private Set<String> relyingPartyIds;
-
-    /** Constructor. */
-    public RelyingPartyIdPredicate() {
-        relyingPartyIdLookupStrategy = new RelyingPartyIdLookupFunction();
-        relyingPartyIds = Collections.emptySet();
+    /**
+     * Constructor.
+     * 
+     * @param candidates hardwired set of values to check against
+     */
+    public RelyingPartyIdPredicate(@Nonnull @NonnullElements final Collection<String> candidates) {
+        super(new RelyingPartyIdLookupFunction(),
+                FunctionSupport.<ProfileRequestContext,Collection<String>>constant(
+                        StringSupport.normalizeStringCollection(candidates)));
     }
 
     /**
-     * Set the strategy used to obtain the relying party ID for this request.
+     * Constructor.
      * 
-     * @param strategy  lookup strategy
+     * @param relyingPartyIdLookupStrategy  lookup strategy for relying party ID
+     * @param candidates hardwired set of values to check against
      */
-    public synchronized void setRelyingPartyIdLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,String> strategy) {
-        
-        relyingPartyIdLookupStrategy = Constraint.isNotNull(strategy,
-                "Relying party ID lookup strategy cannot be null");
+    public RelyingPartyIdPredicate(@Nonnull final Function<ProfileRequestContext,String> relyingPartyIdLookupStrategy,
+            @Nonnull @NonnullElements final Collection<String> candidates) {
+        super(relyingPartyIdLookupStrategy,
+                FunctionSupport.<ProfileRequestContext,Collection<String>>constant(
+                        StringSupport.normalizeStringCollection(candidates)));
     }
-    
-    /**
-     * Set the relying parties to match against.
-     * 
-     * @param ids relying party IDs to match against
-     */
-    public synchronized void setRelyingPartyIds(@Nonnull @NonnullElements final Collection<String> ids) {
-        Constraint.isNotNull(ids, "Relying party ID collection cannot be null");
-        
-        relyingPartyIds = Sets.newHashSet();
-        for (final String id : ids) {
-            final String trimmed = StringSupport.trimOrNull(id);
-            if (trimmed != null) {
-                relyingPartyIds.add(trimmed);
-            }
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override public boolean apply(@Nullable final ProfileRequestContext input) {
-
-        if (input != null) {
-            final String id = relyingPartyIdLookupStrategy.apply(input);
-            if (id != null) {
-                return relyingPartyIds.contains(id);
-            }
-        }
-
-        return false;
-    }
-
 }

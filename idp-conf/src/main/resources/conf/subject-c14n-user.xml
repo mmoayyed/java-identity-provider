@@ -77,11 +77,11 @@
     <!-- Under what conditions should direct mapping be allowed? By default, never. -->
     <!-- TODO: can we override this from the tests so we can remove it here? -->
     <bean id="shibboleth.DirectNamePredicate" class="net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate">
-        <property name="relyingPartyIds">
+        <constructor-arg>
             <util:list>
                 <value>https://sp.example.org</value>
             </util:list>
-        </property>
+        </constructor-arg>
     </bean>
             
 </beans>
