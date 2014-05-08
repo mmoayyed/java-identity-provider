@@ -24,7 +24,6 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.CollectionContainmentPredicate;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -44,9 +43,7 @@ public class RelyingPartyIdPredicate extends CollectionContainmentPredicate<Prof
      * @param candidates hardwired set of values to check against
      */
     public RelyingPartyIdPredicate(@Nonnull @NonnullElements final Collection<String> candidates) {
-        super(new RelyingPartyIdLookupFunction(),
-                FunctionSupport.<ProfileRequestContext,Collection<String>>constant(
-                        StringSupport.normalizeStringCollection(candidates)));
+        super(new RelyingPartyIdLookupFunction(), StringSupport.normalizeStringCollection(candidates));
     }
 
     /**
@@ -57,8 +54,6 @@ public class RelyingPartyIdPredicate extends CollectionContainmentPredicate<Prof
      */
     public RelyingPartyIdPredicate(@Nonnull final Function<ProfileRequestContext,String> relyingPartyIdLookupStrategy,
             @Nonnull @NonnullElements final Collection<String> candidates) {
-        super(relyingPartyIdLookupStrategy,
-                FunctionSupport.<ProfileRequestContext,Collection<String>>constant(
-                        StringSupport.normalizeStringCollection(candidates)));
+        super(relyingPartyIdLookupStrategy, StringSupport.normalizeStringCollection(candidates));
     }
 }
