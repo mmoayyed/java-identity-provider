@@ -1,7 +1,7 @@
 <flow xmlns="http://www.springframework.org/schema/webflow"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
-      abstract="true" parent="SAML.Abstract">
+      abstract="true" parent="saml.abstract">
 
     <!-- Bootstrap action has to be at the "top" of the flow after this flow prepends itself to parent. -->
     
@@ -21,7 +21,7 @@
         <transition on="proceed" to="DoAuthenticationSubflow" />
     </action-state>
     
-    <subflow-state id="DoAuthenticationSubflow" subflow="Authentication">
+    <subflow-state id="DoAuthenticationSubflow" subflow="authn">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="DoProfileWorkAfterLogin" />
     </subflow-state>

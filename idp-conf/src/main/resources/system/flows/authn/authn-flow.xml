@@ -1,7 +1,7 @@
 <flow xmlns="http://www.springframework.org/schema/webflow"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
-      parent="Authentication.Abstract">
+      parent="authn.abstract">
 
     <!--
     This is the Authentication subflow. It handles retrieval of an existing session,
@@ -24,7 +24,7 @@
     <!--
     The Select action is the "dispatching" step. Proceed here routes around
     calling a new subflow, and goes directly to the Finalize step. Anything
-    starting with "AuthenticationFlow/" is a flow descriptor that we send
+    starting with "authn/" is a flow descriptor that we send
     control to to attempt a login.
     -->
     <action-state id="SelectAuthenticationFlow">
@@ -35,7 +35,7 @@
         <transition on="proceed" to="FinalizeAuthentication" />
 
         <!-- Call a subflow with the same ID as the event. -->
-        <transition on="#{currentEvent.id.startsWith('AuthenticationFlow/')}" to="CallAuthenticationFlow" />
+        <transition on="#{currentEvent.id.startsWith('authn/')}" to="CallAuthenticationFlow" />
     </action-state>
 
     <!--

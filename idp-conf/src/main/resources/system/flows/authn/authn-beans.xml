@@ -18,7 +18,7 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     
     <bean id="PopulateAuthenticationContext" class="net.shibboleth.idp.authn.impl.PopulateAuthenticationContext" scope="prototype"
-        p:availableFlows="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'AuthenticationFlow/(${idp.authn.flows})']}"
+        p:availableFlows="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'authn/(${idp.authn.flows})']}"
         p:principalEvalPredicateFactoryRegistry-ref="shibboleth.AuthnComparisonRegistry" />
 
     <bean id="PopulateSessionContext" class="net.shibboleth.idp.session.impl.PopulateSessionContext" scope="prototype"

@@ -20,9 +20,9 @@
     <webflow:flow-registry id="flowRegistry" parent="userFlowRegistry" base-path="file:///${idp.home}/system/flows" flow-builder-services="flowBuilderServices">
 
         <!-- Abstract flows underpinning SAML profiles. -->
-        <webflow:flow-location id="SAML.Abstract" path="/saml/saml-abstract-flow.xml" />
-        <webflow:flow-location id="SAML1.SSO.Abstract" path="/saml/saml1/sso-abstract-flow.xml" />
-        <webflow:flow-location id="SAML2.SSO.Abstract" path="/saml/saml2/sso-abstract-flow.xml" />
+        <webflow:flow-location id="saml.abstract" path="/saml/saml-abstract-flow.xml" />
+        <webflow:flow-location id="saml1.sso.abstract" path="/saml/saml1/sso-abstract-flow.xml" />
+        <webflow:flow-location id="saml2.sso.abstract" path="/saml/saml2/sso-abstract-flow.xml" />
         
         <!-- SAML profile flows. -->
         <webflow:flow-location id="profile/Shibboleth/SSO" path="/saml/saml1/sso-unsolicited-flow.xml"  />
@@ -45,14 +45,14 @@
         <webflow:flow-location id="SecurityPolicy.SAML2ArtifactResolution" path="/saml/soap-security-flow.xml" />
     
         <!-- Master flow for authentication. -->
-        <webflow:flow-location id="Authentication.Abstract" path="/authn/authn-abstract-flow.xml" />
-        <webflow:flow-location id="Authentication" path="/authn/authn-flow.xml" />
+        <webflow:flow-location id="authn.abstract" path="/authn/authn-abstract-flow.xml" />
+        <webflow:flow-location id="authn" path="/authn/authn-flow.xml" />
 
         <!-- Login methods. -->
-        <webflow:flow-location id="AuthenticationFlow/IPAddress" path="/authn/ipaddress-authn-flow.xml" />
-        <webflow:flow-location id="AuthenticationFlow/RemoteUser" path="/authn/remoteuser-authn-flow.xml" />
-        <webflow:flow-location id="AuthenticationFlow/JAAS" path="/authn/jaas-authn-flow.xml" />
-        <webflow:flow-location id="AuthenticationFlow/LDAP" path="/authn/ldap-authn-flow.xml" />        
+        <webflow:flow-location id="authn/IPAddress" path="/authn/ipaddress-authn-flow.xml" />
+        <webflow:flow-location id="authn/RemoteUser" path="/authn/remoteuser-authn-flow.xml" />
+        <webflow:flow-location id="authn/JAAS" path="/authn/jaas-authn-flow.xml" />
+        <webflow:flow-location id="authn/LDAP" path="/authn/ldap-authn-flow.xml" />        
         
         <!-- Master flows for post-authn and SAML subject c14n. -->
         <webflow:flow-location id="c14n.abstract" path="/c14n/subject-c14n-abstract-flow.xml" />

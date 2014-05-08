@@ -1,7 +1,7 @@
 <flow xmlns="http://www.springframework.org/schema/webflow"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
-      parent="Authentication.Abstract, authn/conditions">
+      parent="authn.abstract, authn/conditions">
 
     <!-- This is a login flow for form-based JAAS-backed authentication. -->
 
