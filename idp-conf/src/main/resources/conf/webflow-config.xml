@@ -36,13 +36,10 @@
         <webflow:flow-location id="profile/SAML2/SOAP/ArtifactResolution" path="/saml/saml2/artifact-resolution-flow.xml"  />
     
         <!-- Inbound security processing of SAML messages. -->
-        <webflow:flow-location id="SecurityPolicy.Abstract" path="/saml/security-abstract-flow.xml" />
-        <webflow:flow-location id="SecurityPolicy.ShibbolethSSO" path="/saml/saml1/sso-security-flow.xml" />
-        <webflow:flow-location id="SecurityPolicy.SAML1AttributeQuery" path="/saml/soap-security-flow.xml" />
-        <webflow:flow-location id="SecurityPolicy.SAML1ArtifactResolution" path="/saml/soap-security-flow.xml" />
-        <webflow:flow-location id="SecurityPolicy.SAML2SSO" path="/saml/saml2/sso-security-flow.xml" />
-        <webflow:flow-location id="SecurityPolicy.SAML2AttributeQuery" path="/saml/soap-security-flow.xml" />
-        <webflow:flow-location id="SecurityPolicy.SAML2ArtifactResolution" path="/saml/soap-security-flow.xml" />
+        <webflow:flow-location id="security-policy.abstract" path="/saml/security-abstract-flow.xml" />
+        <webflow:flow-location id="security-policy/shibboleth-sso" path="/saml/saml1/sso-security-flow.xml" />
+        <webflow:flow-location id="security-policy/saml2-sso" path="/saml/saml2/sso-security-flow.xml" />
+        <webflow:flow-location id="security-policy/soap" path="/saml/soap-security-flow.xml" />
     
         <!-- Master flow for authentication. -->
         <webflow:flow-location id="authn.abstract" path="/authn/authn-abstract-flow.xml" />
