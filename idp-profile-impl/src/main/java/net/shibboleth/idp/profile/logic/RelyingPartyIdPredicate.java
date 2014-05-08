@@ -28,8 +28,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import com.google.common.base.Function;
-
 /**
  * Predicate that evaluates a {@link ProfileRequestContext} by looking for relying party ID
  * that matches one of a designated set. The ID is obtained from a lookup function, by default from
@@ -46,14 +44,4 @@ public class RelyingPartyIdPredicate extends CollectionContainmentPredicate<Prof
         super(new RelyingPartyIdLookupFunction(), StringSupport.normalizeStringCollection(candidates));
     }
 
-    /**
-     * Constructor.
-     * 
-     * @param relyingPartyIdLookupStrategy  lookup strategy for relying party ID
-     * @param candidates hardwired set of values to check against
-     */
-    public RelyingPartyIdPredicate(@Nonnull final Function<ProfileRequestContext,String> relyingPartyIdLookupStrategy,
-            @Nonnull @NonnullElements final Collection<String> candidates) {
-        super(relyingPartyIdLookupStrategy, StringSupport.normalizeStringCollection(candidates));
-    }
 }
