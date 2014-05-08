@@ -54,7 +54,7 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
         Assert.assertFalse(profile.isAllowingDelegation());
-        Assert.assertEquals(profile.getInboundSubflowId(), "SecurityPolicy.SAML2SSO");
+        Assert.assertEquals(profile.getInboundSubflowId(), "security-policy/saml2-sso");
         Assert.assertNull(profile.getOutboundSubflowId());
         Assert.assertNull(profile.getSecurityConfiguration());
 

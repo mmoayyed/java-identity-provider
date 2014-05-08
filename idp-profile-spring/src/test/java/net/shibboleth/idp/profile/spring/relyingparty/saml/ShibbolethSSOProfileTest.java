@@ -41,7 +41,7 @@ public class ShibbolethSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
-        Assert.assertEquals(profile.getInboundSubflowId(), "SecurityPolicy.ShibbolethSSO");
+        Assert.assertEquals(profile.getInboundSubflowId(), "security-policy/shibboleth-sso");
         Assert.assertNull(profile.getOutboundSubflowId());
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();

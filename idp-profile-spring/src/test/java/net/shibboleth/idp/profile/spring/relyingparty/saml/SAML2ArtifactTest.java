@@ -47,7 +47,7 @@ public class SAML2ArtifactTest extends BaseSAMLProfileTest {
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
-        Assert.assertEquals(profile.getInboundSubflowId(), "SecurityPolicy.SAML2ArtifactQuery");
+        Assert.assertEquals(profile.getInboundSubflowId(), "security-policy/soap");
         Assert.assertNull(profile.getOutboundSubflowId());
         Assert.assertNull(profile.getSecurityConfiguration());
     }

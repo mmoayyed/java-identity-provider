@@ -40,7 +40,7 @@ public class SAML1AttributeQueryTest extends BaseSAMLProfileTest {
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
-        Assert.assertEquals(profile.getInboundSubflowId(), "SecurityPolicy.SAML1AttributeQuery");
+        Assert.assertEquals(profile.getInboundSubflowId(), "security-policy/soap");
         Assert.assertNull(profile.getOutboundSubflowId());
         Assert.assertNull(profile.getSecurityConfiguration());
 
