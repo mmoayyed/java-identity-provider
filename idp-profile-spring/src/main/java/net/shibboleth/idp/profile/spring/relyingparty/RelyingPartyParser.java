@@ -53,7 +53,7 @@ public class RelyingPartyParser extends AbstractRelyingPartyParser {
 
         final BeanDefinitionBuilder rpPredicate =
                 BeanDefinitionBuilder.genericBeanDefinition(RelyingPartyIdPredicate.class);
-        rpPredicate.addPropertyValue("relyingPartyIds", id);
+        rpPredicate.addConstructorArgValue(id);
 
         final BeanDefinitionBuilder egPredicate =
                 BeanDefinitionBuilder.genericBeanDefinition(EntitiesDescriptorPredicate.class);
