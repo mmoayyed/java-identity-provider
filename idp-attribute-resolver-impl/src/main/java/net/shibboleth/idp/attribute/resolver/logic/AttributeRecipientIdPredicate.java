@@ -23,10 +23,12 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.resolver.context.navigate.AttributeRecipientIdLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.logic.CollectionContainmentPredicate;
+import net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+
+import com.google.common.base.Predicate;
 
 /**
  * Predicate that evaluates a {@link ProfileRequestContext} by looking for an attribute recipient
@@ -34,7 +36,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
  * a {@link net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext} child of the
  * profile request context.
  */
-public class AttributeRecipientIdPredicate extends CollectionContainmentPredicate<ProfileRequestContext,String> {
+public class AttributeRecipientIdPredicate extends StrategyIndirectedPredicate<ProfileRequestContext,String> {
 
     /**
      * Constructor.
@@ -43,6 +45,15 @@ public class AttributeRecipientIdPredicate extends CollectionContainmentPredicat
      */
     public AttributeRecipientIdPredicate(@Nonnull @NonnullElements final Collection<String> candidates) {
         super(new AttributeRecipientIdLookupFunction(), StringSupport.normalizeStringCollection(candidates));
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param pred generalized predicate
+     */
+    public AttributeRecipientIdPredicate(@Nonnull final Predicate<String> pred) {
+        super(new AttributeRecipientIdLookupFunction(), pred);
     }
 
 }

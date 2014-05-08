@@ -23,18 +23,20 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.resolver.context.navigate.AttributePrincipalLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.logic.CollectionContainmentPredicate;
+import net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
+import com.google.common.base.Predicate;
+
 /**
  * Predicate that evaluates a {@link ProfileRequestContext} by looking for an attribute subject
- * that matches one of a designated set. The ID is obtained from a lookup function, by default from
- * a {@link net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext} child of the
- * profile request context.
+ * that matches one of a designated set or a generic predicate. The ID is obtained from a lookup
+ * function, by default from a {@link net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext}
+ * child of the profile request context.
  */
-public class AttributePrincipalPredicate extends CollectionContainmentPredicate<ProfileRequestContext,String> {
+public class AttributePrincipalPredicate extends StrategyIndirectedPredicate<ProfileRequestContext,String> {
 
     /**
      * Constructor.
@@ -43,6 +45,15 @@ public class AttributePrincipalPredicate extends CollectionContainmentPredicate<
      */
     public AttributePrincipalPredicate(@Nonnull @NonnullElements final Collection<String> candidates) {
         super(new AttributePrincipalLookupFunction(), StringSupport.normalizeStringCollection(candidates));
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param pred generalized predicate
+     */
+    public AttributePrincipalPredicate(@Nonnull final Predicate<String> pred) {
+        super(new AttributePrincipalLookupFunction(), pred);
     }
 
 }
