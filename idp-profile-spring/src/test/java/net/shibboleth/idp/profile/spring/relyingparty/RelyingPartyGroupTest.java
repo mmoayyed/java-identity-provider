@@ -221,6 +221,6 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
 
         Assert.assertNotNull(resolver.getDefaultSecurityConfiguration(SSOSProfileConfiguration.PROFILE_ID));
 
-        Assert.assertNull(resolver.getDefaultSecurityConfiguration("foobar"));
+        Assert.assertNotNull(resolver.getDefaultSecurityConfiguration("foobar"));
     }
 }

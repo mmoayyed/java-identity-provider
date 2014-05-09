@@ -17,7 +17,11 @@
 
 package net.shibboleth.idp.relyingparty;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import net.shibboleth.utilities.java.support.resolver.Resolver;
@@ -25,15 +29,15 @@ import net.shibboleth.utilities.java.support.resolver.Resolver;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 /** Resolves a {@link RelyingPartyConfiguration} for a given profile request context. */
-public interface RelyingPartyConfigurationResolver extends Resolver<RelyingPartyConfiguration, ProfileRequestContext>,
+public interface RelyingPartyConfigurationResolver extends Resolver<RelyingPartyConfiguration,ProfileRequestContext>,
         IdentifiedComponent, InitializableComponent {
 
     /**
      * Return the default security configuration for the profile.
      * 
-     * @param profileId The profile id (available from
-     *            {@link net.shibboleth.idp.profile.config.ProfileConfiguration#getId()}
-     * @return the configured default configuration.
+     * @param profileId the profile ID (available via
+     *      {@link net.shibboleth.idp.profile.config.ProfileConfiguration#getId()}
+     * @return the configured default configuration
      */
-    SecurityConfiguration getDefaultSecurityConfiguration(String profileId);
+    @Nullable SecurityConfiguration getDefaultSecurityConfiguration(@Nonnull @NotEmpty final String profileId);
 }

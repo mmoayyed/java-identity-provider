@@ -82,7 +82,9 @@
 
 	<!-- And the default security Policy -->
 
-	<util:map id="shibboleth.default.security.configuration.map">
+    <bean id="shibboleth.DefaultSecurityConfiguration" class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
+
+	<util:map id="shibboleth.DefaultSecurityConfigurationMap">
 		<!-- SAML1 -->
 		<entry key="http://shibboleth.net/ns/profiles/saml1/query/artifact">
 			<bean class="net.shibboleth.idp.profile.config.SecurityConfiguration" />

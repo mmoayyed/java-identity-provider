@@ -33,12 +33,14 @@ import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.idp.service.AbstractServiceableComponent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -49,7 +51,9 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -79,12 +83,16 @@ public class DefaultRelyingPartyConfigurationResolver extends
     @NonnullAfterInit private Predicate<ProfileRequestContext> isAnonymousPredicate;
 
     /** The map from profile ID to {@link SecurtyConfiguration}. */
-    @Nonnull private Map<String, SecurityConfiguration> securityConfigurationMap = Collections.EMPTY_MAP;
+    @Nonnull @NonnullElements private Map<String,SecurityConfiguration> securityConfigurationMap;
+    
+    /** A global default security configuration. */
+    @Nullable private SecurityConfiguration defaultSecurityConfiguration;
 
     /** Constructor. */
     public DefaultRelyingPartyConfigurationResolver() {
         rpConfigurations = Collections.emptyList();
         isAnonymousPredicate = new AnonymousProfilePredicate();
+        securityConfigurationMap = Collections.emptyMap();
     }
 
     /**
@@ -125,8 +133,10 @@ public class DefaultRelyingPartyConfigurationResolver extends
      * 
      * @param configuration The defaultConfiguration to set.
      */
-    public void setDefaultConfiguration(RelyingPartyConfiguration configuration) {
-        defaultConfiguration = configuration;
+    public void setDefaultConfiguration(@Nonnull final RelyingPartyConfiguration configuration) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        defaultConfiguration = Constraint.isNotNull(configuration, "Default RP configuration cannot be null");
     }
 
     /**
@@ -145,35 +155,40 @@ public class DefaultRelyingPartyConfigurationResolver extends
      * 
      * @param configuration The anonymousConfiguration to set.
      */
-    public void setAnonymousConfiguration(RelyingPartyConfiguration configuration) {
-        anonymousConfiguration = configuration;
+    public void setAnonymousConfiguration(@Nonnull final RelyingPartyConfiguration configuration) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        anonymousConfiguration = Constraint.isNotNull(configuration, "Anonymous RP configuration cannot be null");
     }
 
     /**
-     * Gets the definition of what an anonymous Profile is.
+     * Get the definition of what an anonymous Profile is.
      * 
-     * @return Returns the Predicate.
+     * @return the Ppredicate
      */
-    public Predicate<ProfileRequestContext> getIsAnonymousPredicate() {
+    @Nonnull public Predicate<ProfileRequestContext> isAnonymousPredicate() {
         return isAnonymousPredicate;
     }
 
     /**
-     * Sets the definition of what an anonymous Profile is.
+     * Set the definition of what an anonymous Profile is.
      * 
-     * @param predicate The Predicate to set.
+     * @param predicate the predicate to set
      */
-    public void setIsAnonymousPredicate(Predicate<ProfileRequestContext> predicate) {
-        isAnonymousPredicate = predicate;
+    public void setIsAnonymousPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        isAnonymousPredicate = Constraint.isNotNull(predicate, "Anonymous profile predicate cannot be null");
     }
 
     /**
-     * Return the map we use to look up default configuration.
+     * Get the map we use to look up default configuration.
      * 
      * @return Returns the Map.
      */
-    @Nonnull public Map<String, SecurityConfiguration> getSecurityConfigurationMap() {
-        return Collections.unmodifiableMap(securityConfigurationMap);
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public Map<String,SecurityConfiguration>
+            getSecurityConfigurationMap() {
+        return ImmutableMap.copyOf(securityConfigurationMap);
     }
 
     /**
@@ -181,8 +196,30 @@ public class DefaultRelyingPartyConfigurationResolver extends
      * 
      * @param map what to set.
      */
-    public void setSecurityConfigurationMap(Map<String, SecurityConfiguration> map) {
-        securityConfigurationMap = Constraint.isNotNull(map, "configuration to security map must be non null");
+    public void setSecurityConfigurationMap(@Nonnull @NonnullElements final Map<String,SecurityConfiguration> map) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        Constraint.isNotNull(map, "SecurityConfiguration map cannot be null");
+        
+        securityConfigurationMap = Maps.newHashMapWithExpectedSize(map.size());
+        for (final Map.Entry<String,SecurityConfiguration> entry : map.entrySet()) {
+            if (entry.getValue() != null) {
+                final String trimmed = StringSupport.trimOrNull(entry.getKey());
+                if (trimmed != null) {
+                    securityConfigurationMap.put(trimmed, entry.getValue());
+                }
+            }
+        }
+    }
+    
+    /**
+     * Set the global default {@link SecurityConfiguration}.
+     * 
+     * @param config  global default
+     */
+    public void setDefaultSecurityConfiguration(@Nullable final SecurityConfiguration config) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        defaultSecurityConfiguration = config;
     }
 
     /** {@inheritDoc} */
@@ -266,8 +303,10 @@ public class DefaultRelyingPartyConfigurationResolver extends
     }
 
     /** {@inheritDoc} */
-    @Override public SecurityConfiguration getDefaultSecurityConfiguration(String profileId) {
-        return securityConfigurationMap.get(profileId);
+    @Override
+    @Nullable public SecurityConfiguration getDefaultSecurityConfiguration(@Nonnull @NotEmpty String profileId) {
+        final SecurityConfiguration config = securityConfigurationMap.get(profileId);
+        return config != null ? config : defaultSecurityConfiguration;
     }
 
     /**
