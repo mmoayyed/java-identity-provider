@@ -33,10 +33,20 @@
     </bean>
 
     <bean id="AddAuthenticationStatementToAssertion"
-        class="net.shibboleth.idp.saml.saml1.profile.impl.AddAuthenticationStatementToAssertion" scope="prototype" />
+            class="net.shibboleth.idp.saml.saml1.profile.impl.AddAuthenticationStatementToAssertion" scope="prototype">
+        <property name="identifierGeneratorLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
+                p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />
+        </property>
+    </bean>
 
     <bean id="AddAttributeStatementToAssertion"
-        class="net.shibboleth.idp.saml.saml1.profile.impl.AddAttributeStatementToAssertion" scope="prototype" />
+            class="net.shibboleth.idp.saml.saml1.profile.impl.AddAttributeStatementToAssertion" scope="prototype">
+        <property name="identifierGeneratorLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
+                p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />
+        </property>
+    </bean>
 
     <bean id="InitializeOutboundMessageContextForError"
             class="net.shibboleth.idp.saml.profile.impl.InitializeOutboundMessageContextForError" scope="prototype">
