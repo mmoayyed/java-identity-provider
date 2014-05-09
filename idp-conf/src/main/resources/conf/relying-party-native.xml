@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <context:property-placeholder location="file:///${idp.home}/conf/idp.properties" />
+
+    <!-- This BeanPostProcessor auto-sets identifiable beans with the bean name (if not already set). -->
+    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+
+    <bean class="net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver"
+        p:anonymousConfiguration-ref="AnonymousRelyingParty" p:defaultConfiguration-ref="DefaultRelyingParty"
+        p:relyingPartyConfigurations-ref="RelyingPartyOverrides"
+        p:defaultSecurityConfiguration-ref="DefaultSecurityConfiguration" />
+
+    <bean id="RelyingParty" class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration" abstract="true"
+        p:responderId-ref="entityID" p:detailedErrors="${idp.errors.detailed}" />
+        
+    <!-- Your IdP's default name, set via property file. -->
+    <bean id="entityID" class="java.lang.String" c:_0="${idp.entity.id}" />
+    
+    <!-- Your IdP's default signing key, set via property file. -->
+    <bean id="signingCredential" class="org.opensaml.security.x509.BasicX509Credential"
+            p:entityId-ref="entityID">
+        <constructor-arg name="privateKey">
+            <bean class="net.shibboleth.ext.spring.factory.PrivateKeyFactoryBean">
+                <property name="privateKeyFile">
+                    <bean class="java.io.File" c:_0="${idp.home}/creds/idp.key" />
+                </property>
+            </bean>
+        </constructor-arg>
+        <constructor-arg name="entityCertificate">
+            <bean class="net.shibboleth.ext.spring.factory.X509CertificateFactoryBean">
+                <property name="certificateFile">
+                    <bean class="java.io.File" c:_0="${idp.home}/creds/idp.crt" />
+                </property>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <!-- Security Configuration Defaults -->
+
+    <bean id="DefaultSecurityConfiguration" class="net.shibboleth.idp.profile.config.SecurityConfiguration">
+        <property name="signatureSigningConfiguration">
+            <bean class="org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration"
+                p:signingCredentials-ref="signingCredential" />
+        </property>
+        <!--
+        <property name="signatureValidationConfiguration">
+        </property>
+        <property name="encryptionConfiguration">
+        </property>
+        <property name="decryptionConfiguration">
+        </property>
+        -->
+    </bean>
+
+    <!-- Profile Configuration Defaults -->
+    
+    <bean id="Shibboleth.SSO" class="net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration" />
+
+    <bean id="SAML1.AttributeQuery" class="net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration" />
+
+    <bean id="SAML1.ArtifactResolution" class="net.shibboleth.idp.saml.saml1.profile.config.ArtifactResolutionProfileConfiguration" />
+
+    <bean id="SAML2.SSO" class="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration" />
+
+    <bean id="SAML2.ECP" class="net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration" />
+
+    <bean id="SAML2.AttributeQuery" class="net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration" />
+
+    <bean id="SAML2.ArtifactResolution" class="net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration" />
+    
+    <bean id="Liberty.SSOS" class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration" />    
+    
+    <!--
+    Anonymous configuration, defaults to no support for any profiles. Add <ref> elements to the list
+    to enable specific default profile settings above, or create new beans inline to override defaults. 
+    -->
+    
+    <bean id="AnonymousRelyingParty" parent="RelyingParty">
+        <property name="profileConfigurations">
+            <util:list>
+            <!-- <ref bean="SAML2.SSO" /> -->
+            </util:list>
+        </property>
+    </bean>
+
+    <!-- Default configuration, with default settings applied for all profiles. -->
+
+    <bean id="DefaultRelyingParty" parent="RelyingParty">
+        <property name="profileConfigurations">
+            <util:list>
+                <ref bean="Shibboleth.SSO" />
+                <ref bean="SAML1.AttributeQuery" />
+                <ref bean="SAML1.ArtifactResolution" />
+                <ref bean="SAML2.SSO" />
+                <ref bean="SAML2.ECP" />
+                <ref bean="SAML2.AttributeQuery" />
+                <ref bean="SAML2.ArtifactResolution" />
+                <ref bean="Liberty.SSOS" />
+            </util:list>
+        </property>
+    </bean>
+
+    <util:list id="RelyingPartyOverrides">
+    </util:list>
+
+</beans>
