@@ -24,6 +24,7 @@
         static-field="org.opensaml.saml.saml2.metadata.SPSSODescriptor.DEFAULT_ELEMENT_NAME" />
     
     <bean id="AddResponseShell" class="org.opensaml.saml.saml2.profile.impl.AddStatusResponseShell" scope="prototype"
+            p:overwriteExisting="true"
             p:issuerLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"
             p:messageType="#{T(org.opensaml.saml.saml2.core.Response).DEFAULT_ELEMENT_NAME}">
         <property name="identifierGeneratorLookupStrategy">
