@@ -32,7 +32,7 @@
 
     <bean id="shibboleth.SessionManager" class="net.shibboleth.idp.session.impl.StorageBackedSessionManager"
             p:httpServletRequest-ref="shibboleth.HttpServletRequest" p:httpServletResponse-ref="shibboleth.HttpServletResponse"
-            p:authenticationFlowDescriptors="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'AuthenticationFlow/(${idp.authn.flows})']}"
+            p:authenticationFlowDescriptors="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'authn/(${idp.authn.flows})']}"
             p:cookieManager-ref="shibboleth.CookieManager"
             p:storageService-ref="${idp.session.StorageService}"
             p:consistentAddress="${idp.session.consistentAddress}"
