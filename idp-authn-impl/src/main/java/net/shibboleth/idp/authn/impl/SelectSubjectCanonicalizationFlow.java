@@ -59,7 +59,7 @@ public class SelectSubjectCanonicalizationFlow extends AbstractSubjectCanonicali
         // Detect a previous attempted flow, and move it to the intermediate collection.
         // This will prevent re-selecting the same (probably failed) flow again.
         if (c14nContext.getAttemptedFlow() != null) {
-            log.info("{} moving incomplete flow {} to intermediate set, reselecting a different one", getLogPrefix(),
+            log.info("{} Moving incomplete flow {} to intermediate set, reselecting a different one", getLogPrefix(),
                     c14nContext.getAttemptedFlow().getId());
             c14nContext.getIntermediateFlows().put(
                     c14nContext.getAttemptedFlow().getId(), c14nContext.getAttemptedFlow());
@@ -75,12 +75,12 @@ public class SelectSubjectCanonicalizationFlow extends AbstractSubjectCanonicali
         
         final SubjectCanonicalizationFlowDescriptor flow = selectUnattemptedFlow(profileRequestContext, c14nContext);
         if (flow == null) {
-            log.error("{} no potential flows left to choose from, canonicalization will fail", getLogPrefix());
+            log.error("{} No potential flows left to choose from, canonicalization will fail", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_POTENTIAL_FLOW);
             return;
         }
 
-        log.debug("{} selecting canonicalization flow {}", getLogPrefix(), flow.getId());
+        log.debug("{} Selecting canonicalization flow {}", getLogPrefix(), flow.getId());
         ActionSupport.buildEvent(profileRequestContext, flow.getId());
     }
 
