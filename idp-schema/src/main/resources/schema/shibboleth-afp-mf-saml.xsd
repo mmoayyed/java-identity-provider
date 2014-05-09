@@ -198,14 +198,14 @@
         </annotation>
         <complexContent>
             <extension base="afp:MatchFunctorType">
-                <attribute name="onlyIfRequired" type="boolean">
+                <attribute name="onlyIfRequired" type="string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether attributes noted as optional should match.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="matchIfMetadataSilent" type="boolean">
+                <attribute name="matchIfMetadataSilent" type="string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether a match should occur if the metadata does
@@ -243,7 +243,7 @@
     </complexType>
     
     <simpleType name="anyURIListType">
-        <list itemType="anyURI"/>
+        <list itemType="string"/>
     </simpleType>
     
 </schema>

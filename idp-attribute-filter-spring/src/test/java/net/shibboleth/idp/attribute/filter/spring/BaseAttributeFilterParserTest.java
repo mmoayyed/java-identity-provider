@@ -52,7 +52,7 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
 
     private static final String MATCHER_PATH = "/net/shibboleth/idp/attribute/filter/matcher/";
 
-    private static final String POLICY_RULE_PATH = "/net/shibboleth/idp/attribute/filter/policyrule/";
+    protected static final String POLICY_RULE_PATH = "/net/shibboleth/idp/attribute/filter/policyrule/";
 
     /**
      * Helper function to return attributes pulled from a file (on the classpath). The file is expected to contain a
@@ -71,8 +71,8 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
         SAMLAttributeDataConnector connector = new SAMLAttributeDataConnector();
         connector.setId(xmlFileName);
         connector.setAttributesStrategy(new Function<AttributeResolutionContext, List<Attribute>>() {
-            @Nullable public List<Attribute> apply(@Nullable AttributeResolutionContext input) {
-                return (List<Attribute>) obj.getAttributes();
+            @Override @Nullable public List<Attribute> apply(@Nullable AttributeResolutionContext input) {
+                return obj.getAttributes();
             }
         });
 
@@ -97,7 +97,7 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
             beanDefinitionReader.setValidating(false);
         }
         beanDefinitionReader.loadBeanDefinitions(fileName);
-        
+
         context.refresh();
 
         Collection<Type> beans = context.getBeansOfType(claz).values();

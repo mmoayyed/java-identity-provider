@@ -28,6 +28,7 @@ import net.shibboleth.idp.attribute.filter.spring.policyrule.AttributeRequesterR
 import net.shibboleth.idp.attribute.filter.spring.policyrule.AuthenticationMethodRegexRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.AuthenticationMethodRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.NumOfAttributeValuesRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.PredicateRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.PrincipalNameRegexRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.PrincipalNameRuleParser;
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
@@ -39,6 +40,7 @@ public class AttributeFilterBasicNamespaceHandler extends BaseSpringNamespaceHan
     public static final String NAMESPACE = "urn:mace:shibboleth:2.0:afp:mf:basic";
 
     /** {@inheritDoc} */
+    @Override
     public void init() {
 
         registerBeanDefinitionParser(AnyParser.SCHEMA_TYPE, new AnyParser());
@@ -85,5 +87,7 @@ public class AttributeFilterBasicNamespaceHandler extends BaseSpringNamespaceHan
         registerBeanDefinitionParser(NumOfAttributeValuesRuleParser.SCHEMA_TYPE, new NumOfAttributeValuesRuleParser());
 
         registerBeanDefinitionParser(ScriptedMatcherParser.SCHEMA_TYPE, new ScriptedMatcherParser());
+        
+        registerBeanDefinitionParser(PredicateRuleParser.SCHEMA_TYPE, new PredicateRuleParser());
     }
 }

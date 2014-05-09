@@ -98,6 +98,34 @@
         </complexContent>
     </complexType>
 
+    <!-- Predicate Plugin Function -->
+    <complexType name="Predicate">
+        <annotation>
+            <documentation>
+                A match function that matches the attribute request against the
+                specified value.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:MatchFunctorType">
+                <attribute name="rulePredicateRef" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The reference to an externally defined bean to do the predicate work
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="contextStrategyRef" type="string">
+                    <annotation>
+                        <documentation>
+                            The reference to an externally define bean to lookup the context
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <!--  Literal String Match Functions -->
     <complexType name="AttributeRequesterString">
         <annotation>
@@ -187,7 +215,7 @@
                         <documentation>The string value to match.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="ignoreCase" type="boolean">
+                <attribute name="ignoreCase" type="string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether case should be ignored when evaluating the match.
@@ -344,12 +372,12 @@
                         <documentation>The ID of the attribute whose value should be matched.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="minimum" type="nonNegativeInteger">
+                <attribute name="minimum" type="string">
                     <annotation>
                         <documentation>Minimum number of values an attribute may have.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maximum" type="positiveInteger">
+                <attribute name="maximum" type="string">
                     <annotation>
                         <documentation>Maximum number of values an attribute may have.</documentation>
                     </annotation>
