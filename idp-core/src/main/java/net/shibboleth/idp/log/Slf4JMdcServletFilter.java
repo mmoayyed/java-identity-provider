@@ -43,6 +43,8 @@ public class Slf4JMdcServletFilter implements Filter {
         try {
             MDC.put(Version.MDC_ATTRIBUTE, Version.getVersion());
             // TODO populate the MDC will other interesting things
+            
+            chain.doFilter(request, response);
         } finally {
             MDC.clear();
         }
