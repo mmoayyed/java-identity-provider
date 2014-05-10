@@ -17,36 +17,52 @@
 
 package net.shibboleth.idp.profile.config.navigate;
 
-import javax.annotation.Nonnull;
+import java.util.List;
+
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.xmlsec.SignatureValidationConfiguration;
+import org.opensaml.xmlsec.SecurityConfigurationSupport;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 /**
- * A function that returns a {@link SignatureValidationConfiguration} by way of a {@link RelyingPartyContext}
- * obtained via a lookup function, by default a child of the {@link ProfileRequestContext}.
+ * A function that returns a {@link SignatureValidationConfiguration} list by way of various lookup strategies.
  * 
  * <p>If a specific setting is unavailable, a null value is returned.</p>
  */
 public class SignatureValidationConfigurationLookupFunction
-        implements Function<ProfileRequestContext,SignatureValidationConfiguration> {
-
+        implements Function<ProfileRequestContext,List<SignatureValidationConfiguration>> {
+    
+    /** A resolver for default security configurations. */
+    @Nullable private RelyingPartyConfigurationResolver rpResolver;
+    
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
      */
-    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
+    @Nullable private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
     
     /** Constructor. */
     public SignatureValidationConfigurationLookupFunction() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
+    }
+
+    /**
+     * Set the resolver for default security configurations.
+     * 
+     * @param resolver the resolver to use
+     */
+    public synchronized void setRelyingPartyConfigurationResolver(
+            @Nullable final RelyingPartyConfigurationResolver resolver) {
+        rpResolver = resolver;
     }
 
     /**
@@ -56,25 +72,38 @@ public class SignatureValidationConfigurationLookupFunction
      * @param strategy lookup strategy
      */
     public synchronized void setRelyingPartyContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
-        relyingPartyContextLookupStrategy =
-                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
+            @Nullable final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
+        relyingPartyContextLookupStrategy = strategy;
     }
 
     /** {@inheritDoc} */
     @Override
-    @Nullable public SignatureValidationConfiguration apply(@Nullable final ProfileRequestContext input) {
-        if (input != null) {
+    @Nullable public List<SignatureValidationConfiguration> apply(@Nullable final ProfileRequestContext input) {
+        
+        final List<SignatureValidationConfiguration> configs = Lists.newArrayList();
+        
+        configs.add(SecurityConfigurationSupport.getGlobalSignatureValidationConfiguration());
+        
+        // Check for a per-profile default (relying party independent) config.
+        if (input != null && rpResolver != null) {
+            final SecurityConfiguration defaultConfig =
+                    rpResolver.getDefaultSecurityConfiguration(input.getProfileId());
+            if (defaultConfig != null && defaultConfig.getSignatureValidationConfiguration() != null) {
+                configs.add(defaultConfig.getSignatureValidationConfiguration());
+            }
+        }
+
+        if (input != null && relyingPartyContextLookupStrategy != null) {
             final RelyingPartyContext rpc = relyingPartyContextLookupStrategy.apply(input);
             if (rpc != null) {
                 final ProfileConfiguration pc = rpc.getProfileConfig();
                 if (pc != null && pc.getSecurityConfiguration() != null) {
-                    return pc.getSecurityConfiguration().getSignatureValidationConfiguration();
+                    configs.add(pc.getSecurityConfiguration().getSignatureValidationConfiguration());
                 }
             }
         }
         
-        return null;
+        return configs;
     }
 
 }

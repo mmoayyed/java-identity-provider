@@ -39,13 +39,17 @@
         class="net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction" />
 
     <bean id="shibboleth.SignatureValidationConfigurationLookup"
-        class="net.shibboleth.idp.profile.config.navigate.SignatureValidationConfigurationLookupFunction" />
+        class="net.shibboleth.idp.profile.config.navigate.SignatureValidationConfigurationLookupFunction"
+        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
     <bean id="shibboleth.SignatureSigningConfigurationLookup"
-        class="net.shibboleth.idp.profile.config.navigate.SignatureSigningConfigurationLookupFunction" />
+        class="net.shibboleth.idp.profile.config.navigate.SignatureSigningConfigurationLookupFunction"
+        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
     <bean id="shibboleth.DecryptionConfigurationLookup"
-        class="net.shibboleth.idp.profile.config.navigate.DecryptionConfigurationLookupFunction" />
+        class="net.shibboleth.idp.profile.config.navigate.DecryptionConfigurationLookupFunction"
+        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
     <bean id="shibboleth.EncryptionConfigurationLookup"
-        class="net.shibboleth.idp.profile.config.navigate.EncryptionConfigurationLookupFunction" />
+        class="net.shibboleth.idp.profile.config.navigate.EncryptionConfigurationLookupFunction"
+        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
 
     <util:list id="Shibboleth.SAML1Status.VersionMismatch">
         <util:constant static-field="org.opensaml.saml.saml1.core.StatusCode.VERSION_MISMATCH" />

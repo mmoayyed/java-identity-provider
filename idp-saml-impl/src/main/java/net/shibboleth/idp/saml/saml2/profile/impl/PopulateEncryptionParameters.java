@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -30,10 +31,10 @@ import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.criterion.RoleDescriptorCriterion;
 import org.opensaml.saml.saml2.profile.context.EncryptionContext;
-import org.opensaml.xmlsec.SecurityConfigurationSupport;
 import org.opensaml.xmlsec.EncryptionConfiguration;
 import org.opensaml.xmlsec.EncryptionParameters;
 import org.opensaml.xmlsec.EncryptionParametersResolver;
+import org.opensaml.xmlsec.SecurityConfigurationSupport;
 import org.opensaml.xmlsec.criterion.EncryptionConfigurationCriterion;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
@@ -41,6 +42,7 @@ import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.saml2.profile.config.SAML2ProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -53,7 +55,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
-import com.google.common.collect.Lists;
 
 /**
  * Action that resolves and populates {@link EncryptionParameters} on a {@link SecurityParametersContext}
@@ -62,6 +63,10 @@ import com.google.common.collect.Lists;
  * 
  * <p>The resolution process is contingent on the active profile configuration requesting encryption
  * of some kind, and an {@link EncryptionContext} is also created to capture these requirements.</p>
+ * 
+ * <p>The OpenSAML default, per-RelyingParty, and default per-profile {@link EncryptionConfiguration}
+ * objects are input to the resolution process, along with the relying party's SAML metadata, which in
+ * most cases will be the source of the eventual encryption key.</p>
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
@@ -79,15 +84,18 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
     
     /** Strategy used to look up the {@link EncryptionContext} to store parameters in. */
     @Nonnull private Function<ProfileRequestContext,EncryptionContext> encryptionContextLookupStrategy;
-    
-    /** Strategy used to look up a per-request {@link EncryptionConfiguration}. */
-    @Nullable private Function<ProfileRequestContext,EncryptionConfiguration> configurationLookupStrategy;
 
     /** Strategy used to look up a SAML metadata context. */
     @Nullable private Function<ProfileRequestContext,SAMLMetadataContext> metadataContextLookupStrategy;
     
+    /** Strategy used to look up a per-request {@link EncryptionConfiguration} list. */
+    @NonnullAfterInit private Function<ProfileRequestContext,List<EncryptionConfiguration>> configurationLookupStrategy;
+    
     /** Resolver for parameters to store into context. */
-    @NonnullAfterInit private EncryptionParametersResolver resolver;
+    @NonnullAfterInit private EncryptionParametersResolver encParamsresolver;
+    
+    /** Active configurations to feed into resolver. */
+    @Nullable @NonnullElements private List<EncryptionConfiguration> encryptionConfigurations;
     
     /** Is encryption optional in the case no parameters can be resolved? */
     private boolean encryptionOptional;
@@ -151,15 +159,16 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
     
     
     /**
-     * Set the strategy used to look up a per-request {@link EncryptionConfiguration}.
+     * Set the strategy used to look up a per-request {@link EncryptionConfiguration} list.
      * 
      * @param strategy lookup strategy
      */
     public void setConfigurationLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,EncryptionConfiguration> strategy) {
+            @Nonnull final Function<ProfileRequestContext,List<EncryptionConfiguration>> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        configurationLookupStrategy = strategy;
+        configurationLookupStrategy = Constraint.isNotNull(strategy,
+                "EncryptionConfiguration lookup strategy cannot be null");
     }
     
     /**
@@ -175,15 +184,15 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
     }
     
     /**
-     * Set the resolver to use for the parameters to store into the context.
+     * Set the encParamsresolver to use for the parameters to store into the context.
      * 
-     * @param newResolver   resolver to use
+     * @param newResolver   encParamsresolver to use
      */
     public void setEncryptionParametersResolver(
             @Nonnull final EncryptionParametersResolver newResolver) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        resolver = Constraint.isNotNull(newResolver, "EncryptionParametersResolver cannot be null");
+        encParamsresolver = Constraint.isNotNull(newResolver, "EncryptionParametersResolver cannot be null");
     }
     
     /** {@inheritDoc} */
@@ -191,8 +200,14 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         
-        if (resolver == null) {
+        if (encParamsresolver == null) {
             throw new ComponentInitializationException("EncryptionParametersResolver cannot be null");
+        } else if (configurationLookupStrategy == null) {
+            configurationLookupStrategy = new Function<ProfileRequestContext,List<EncryptionConfiguration>>() {
+                public List<EncryptionConfiguration> apply(ProfileRequestContext input) {
+                    return Collections.singletonList(SecurityConfigurationSupport.getGlobalEncryptionConfiguration());
+                }
+            };
         }
     }
     
@@ -214,7 +229,7 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
             return false;
         }
         
-        SAML2ProfileConfiguration profileConfiguration = (SAML2ProfileConfiguration) rpContext.getProfileConfig();
+        final SAML2ProfileConfiguration profileConfiguration = (SAML2ProfileConfiguration) rpContext.getProfileConfig();
         
         encryptAssertions = profileConfiguration.getEncryptAssertionsPredicate().apply(profileRequestContext);
         encryptIdentifiers = profileConfiguration.getEncryptNameIDsPredicate().apply(profileRequestContext);
@@ -226,6 +241,8 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
         }
         
         encryptionOptional = profileConfiguration.isEncryptionOptional();
+
+        encryptionConfigurations = configurationLookupStrategy.apply(profileRequestContext);
         
         log.debug("{} Encryption for assertions ({}), identifiers ({}), attributes({})", getLogPrefix(),
                 encryptAssertions, encryptIdentifiers, encryptAttributes);
@@ -247,32 +264,13 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
             return;
         }
         
-        // TODO: do we include anything but the global default and the per-profile configs?
-        // Maybe a global IdP config in addition or instead of the OpenSAML one?
-        
-        final List<EncryptionConfiguration> configs = Lists.newArrayList();
-        configs.add(SecurityConfigurationSupport.getGlobalEncryptionConfiguration());
-        
-        if (configurationLookupStrategy != null) {
-            log.debug("{} Looking up per-request EncryptionConfiguration", getLogPrefix());
-            final EncryptionConfiguration perRequestConfig = configurationLookupStrategy.apply(profileRequestContext);
-            if (perRequestConfig != null) {
-                configs.add(perRequestConfig);
-            }
-        }
-        
-        final CriteriaSet criteria = new CriteriaSet(new EncryptionConfigurationCriterion(configs));
-        
-        if (metadataContextLookupStrategy != null) {
-            final SAMLMetadataContext metadataCtx = metadataContextLookupStrategy.apply(profileRequestContext);
-            if (metadataCtx != null && metadataCtx.getRoleDescriptor() != null) {
-                log.debug("{} Adding metadata to resolution criteria for signing/digest algorithms", getLogPrefix());
-                criteria.add(new RoleDescriptorCriterion(metadataCtx.getRoleDescriptor()));
-            }
-        }
-        
         try {
-            final EncryptionParameters params = resolver.resolveSingle(criteria);
+            if (encryptionConfigurations == null || encryptionConfigurations.isEmpty()) {
+                throw new ResolverException("No EncryptionConfigurations returned by lookup strategy");
+            }
+            
+            final EncryptionParameters params =
+                    encParamsresolver.resolveSingle(buildCriteriaSet(profileRequestContext));
             log.debug("{} {} EncryptionParameters", getLogPrefix(),
                     params != null ? "Resolved" : "Failed to resolve");
             if (params != null) {
@@ -303,5 +301,27 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
         }
     }
 // Checkstyle: CyclomaticComplexity ON
+    
+    /**
+     * Build the criteria used as input to the {@link EncryptionParametersResolver}.
+     * 
+     * @param profileRequestContext current profile request context
+     * 
+     * @return  the criteria set to use
+     */
+    @Nonnull private CriteriaSet buildCriteriaSet(@Nonnull final ProfileRequestContext profileRequestContext) {
+        
+        final CriteriaSet criteria = new CriteriaSet(new EncryptionConfigurationCriterion(encryptionConfigurations));
+        
+        if (metadataContextLookupStrategy != null) {
+            final SAMLMetadataContext metadataCtx = metadataContextLookupStrategy.apply(profileRequestContext);
+            if (metadataCtx != null && metadataCtx.getRoleDescriptor() != null) {
+                log.debug("{} Adding metadata to resolution", getLogPrefix());
+                criteria.add(new RoleDescriptorCriterion(metadataCtx.getRoleDescriptor()));
+            }
+        }
+        
+        return criteria;
+    }
     
 }
