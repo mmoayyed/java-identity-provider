@@ -141,7 +141,7 @@
 			</documentation>
 		</annotation>
 		<attribute name="name" type="string" />
-		<attribute name="activationConditionRef" type="string">
+		<attribute name="activationCriterionRef" type="string">
 			<annotation>
 				<documentation>
 					The reference to a Predicate which controls whether this encoder will
@@ -238,13 +238,13 @@
 				</documentation>
 			</annotation>
 		</attribute>
-		<attribute name="activationPredicateRef" type="string">
+		<attribute name="activationCriterionRef" type="string">
 			<annotation>
 				<documentation>A reference to a predicate to decide whether this
 					plugin is applicable</documentation>
 			</annotation>
 		</attribute>
-		<attribute name="profileContextStrategy" type="string">
+		<attribute name="profileContextStrategyRef" type="string">
 			<annotation>
 				<documentation>A reference to a function to locate the profile
 					context</documentation>

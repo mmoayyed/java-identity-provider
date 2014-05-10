@@ -22,15 +22,15 @@
 
 	<resolver:AttributeDefinition xsi:type="Simple"
 		xmlns="urn:mace:shibboleth:2.0:resolver:ad" id="EPA1"
-		sourceAttributeID="staticEpA" activationPredicateRef="peter"
-		profileContextStrategy="findProfileCtx">
+		sourceAttributeID="staticEpA" activationCriterionRef="peter"
+		profileContextStrategyRef="findProfileCtx">
 		<resolver:Dependency ref="staticAttributes" />
 	</resolver:AttributeDefinition>
 
 	<resolver:AttributeDefinition xsi:type="Simple"
 		xmlns="urn:mace:shibboleth:2.0:resolver:ad" id="EPE"
-		sourceAttributeID="eduPersonEntitlement" activationPredicateRef="principal"
-		profileContextStrategy="findProfileCtx">
+		sourceAttributeID="eduPersonEntitlement" activationCriterionRef="principal"
+		profileContextStrategyRef="findProfileCtx">
 		<resolver:Dependency ref="staticAttributes" />
 	</resolver:AttributeDefinition>
 
