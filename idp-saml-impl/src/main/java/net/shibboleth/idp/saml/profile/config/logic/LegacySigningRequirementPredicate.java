@@ -23,16 +23,14 @@ import javax.annotation.Nullable;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.opensaml.messaging.context.MessageChannelSecurityContext;
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Predicate;
+import org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate;
 
 /**
  * A predicate implementation that supports the legacy V2 configuration options of
  * "always", "conditional", and "never" for signing.
  */
-public class LegacySigningRequirementPredicate implements Predicate<ProfileRequestContext> {
+public class LegacySigningRequirementPredicate extends NoIntegrityMessageChannelPredicate {
 
     /** Internal enum for the options supported. */
     private enum SigningRequirementSetting {
@@ -78,12 +76,7 @@ public class LegacySigningRequirementPredicate implements Predicate<ProfileReque
                 return false;
                 
             case CONDITIONAL:
-                if (input == null || input.getOutboundMessageContext() == null) {
-                    throw new IllegalArgumentException(
-                            "Conditional setting for signing requires non-null outbound message context");
-                }
-                return !input.getOutboundMessageContext().getSubcontext(
-                        MessageChannelSecurityContext.class, true).isIntegrityActive();
+                return super.apply(input);
                 
             default:
                 throw new IllegalArgumentException("Signing requirement setting not one of the supported values");

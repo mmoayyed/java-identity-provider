@@ -23,16 +23,14 @@ import javax.annotation.Nullable;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.opensaml.messaging.context.MessageChannelSecurityContext;
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Predicate;
+import org.opensaml.profile.logic.NoConfidentialityMessageChannelPredicate;
 
 /**
  * A predicate implementation that supports the legacy V2 configuration options of
  * "always", "conditional", and "never" for encryption.
  */
-public class LegacyEncryptionRequirementPredicate implements Predicate<ProfileRequestContext> {
+public class LegacyEncryptionRequirementPredicate extends NoConfidentialityMessageChannelPredicate {
 
     /** Internal enum for the options supported. */
     private enum EncryptionRequirementSetting {
@@ -78,12 +76,7 @@ public class LegacyEncryptionRequirementPredicate implements Predicate<ProfileRe
                 return false;
                 
             case CONDITIONAL:
-                if (input == null || input.getOutboundMessageContext() == null) {
-                    throw new IllegalArgumentException(
-                            "Conditional setting for encryption requires non-null outbound message context");
-                }
-                return !input.getOutboundMessageContext().getSubcontext(
-                        MessageChannelSecurityContext.class, true).isConfidentialityActive();
+                return super.apply(input);
                 
             default:
                 throw new IllegalArgumentException("Encryption requirement setting not one of the supported values");
