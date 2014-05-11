@@ -19,10 +19,12 @@ package net.shibboleth.idp.profile.spring.relyingparty.saml;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
+import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.messaging.context.MessageChannelSecurityContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.ConversionServiceFactoryBean;
@@ -72,14 +74,20 @@ public class BaseSAMLProfileTest extends OpenSAMLInitBaseTestCase {
     }
     
     protected static void assertConditionalPredicate(Predicate<ProfileRequestContext> predicate) {
-        // a conditional predicate will look at the parameter and fail immediately
         try {
-            predicate.apply(null);
-            Assert.fail("Was not a conditional Predicate");
-        } catch (ConstraintViolationException  ex) {
-            // expected   
-        } catch ( IllegalArgumentException ex) {
-            // expected
+            final ProfileRequestContext prc = new RequestContextBuilder().buildProfileRequestContext();
+            final MessageChannelSecurityContext mc =
+                    prc.getOutboundMessageContext().getSubcontext(MessageChannelSecurityContext.class, true);
+            
+            mc.setConfidentialityActive(true);
+            mc.setIntegrityActive(true);
+            Assert.assertFalse(predicate.apply(prc));
+            
+            mc.setConfidentialityActive(false);
+            mc.setIntegrityActive(false);
+            Assert.assertTrue(predicate.apply(prc));
+        } catch (final ComponentInitializationException e) {
+            Assert.fail("ComponentInitializationException");
         }
     }
 
