@@ -24,6 +24,8 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+
 import net.shibboleth.idp.profile.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
@@ -84,6 +86,8 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      */
     protected BrowserSSOProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
+        setSignResponsesPredicate(Predicates.<ProfileRequestContext>alwaysTrue());
+        setEncryptAssertionsPredicate(Predicates.<ProfileRequestContext>alwaysTrue());
 
         includeAttributeStatement = true;
         skipEndpointValidationWhenSigned = false;

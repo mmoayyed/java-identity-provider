@@ -20,6 +20,9 @@ package net.shibboleth.idp.saml.saml2.profile.config;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.profile.logic.NoConfidentialityMessageChannelPredicate;
+import org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate;
+
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -36,7 +39,7 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ProfileConfig
     
     /** Constructor. */
     public SingleLogoutProfileConfiguration() {
-        super(PROFILE_ID);
+        this(PROFILE_ID);
     }
     
     /**
@@ -46,6 +49,8 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ProfileConfig
      */
     protected SingleLogoutProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
+        setSignResponsesPredicate(new NoIntegrityMessageChannelPredicate());
+        setEncryptNameIDsPredicate(new NoConfidentialityMessageChannelPredicate());
     }
     
     /** {@inheritDoc} */

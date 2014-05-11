@@ -20,6 +20,8 @@ package net.shibboleth.idp.saml.saml1.profile.config;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate;
+
 import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
@@ -48,6 +50,7 @@ public class AttributeQueryProfileConfiguration
      */
     protected AttributeQueryProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
+        setSignResponsesPredicate(new NoIntegrityMessageChannelPredicate());
     }
     
     /** {@inheritDoc} */

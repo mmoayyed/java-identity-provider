@@ -24,6 +24,8 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
@@ -76,6 +78,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAMLProfileConfigura
      */
     protected BrowserSSOProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
+        setSignResponsesPredicate(Predicates.<ProfileRequestContext>alwaysTrue());
         includeAttributeStatement = false;
         defaultAuthenticationMethods = Collections.emptyList();
         nameIDFormatPrecedence = Collections.emptyList();

@@ -19,6 +19,8 @@ package net.shibboleth.idp.saml.saml1.profile.config;
 
 import javax.annotation.Nonnull;
 
+import org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate;
+
 import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
@@ -41,6 +43,7 @@ public class ArtifactResolutionProfileConfiguration
      */
     protected ArtifactResolutionProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
+        setSignResponsesPredicate(new NoIntegrityMessageChannelPredicate());
     }
     
 }

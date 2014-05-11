@@ -71,7 +71,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
 
         includeConditionsNotBefore = true;
         signedRequestsPredicate = Predicates.alwaysFalse();
-        signResponsesPredicate = Predicates.alwaysTrue();
+        signResponsesPredicate = Predicates.alwaysFalse();
         signAssertionsPredicate = Predicates.alwaysFalse();
         assertionLifetime = 5 * 60 * 1000;
         assertionAudiences = Collections.emptySet();

@@ -68,7 +68,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
         super(profileId);
 
         encryptionOptional = false;
-        encryptAssertionsPredicate = Predicates.alwaysTrue();
+        encryptAssertionsPredicate = Predicates.alwaysFalse();
         encryptNameIDsPredicate = Predicates.alwaysFalse();
         encryptAttributesPredicate = Predicates.alwaysFalse();
         proxyCount = 0;
