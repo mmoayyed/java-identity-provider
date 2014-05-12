@@ -126,11 +126,8 @@
             class="org.opensaml.saml.common.profile.impl.PopulateSignatureSigningParameters" scope="prototype"
             p:configurationLookupStrategy-ref="shibboleth.SignatureSigningConfigurationLookup"
             p:signatureSigningParametersResolver-ref="shibboleth.SignatureSigningParametersResolver">
-        <!-- TODO: disable until parameter resolver in OpenSAML is working -->
-        <property name="activationCondition" ref="shibboleth.Predicates.False">
-            <!--
+        <property name="activationCondition">
             <bean class="net.shibboleth.idp.saml.profile.config.logic.SignResponsesPredicate" />
-            -->
         </property>
     </bean>
 

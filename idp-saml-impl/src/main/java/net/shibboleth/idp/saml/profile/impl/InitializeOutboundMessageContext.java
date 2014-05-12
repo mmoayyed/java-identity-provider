@@ -35,16 +35,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.messaging.context.SAMLSelfEntityContext;
-import org.opensaml.security.credential.Credential;
-import org.opensaml.xmlsec.SecurityConfigurationSupport;
-import org.opensaml.xmlsec.SignatureSigningParameters;
-import org.opensaml.xmlsec.context.SecurityParametersContext;
-import org.opensaml.xmlsec.keyinfo.KeyInfoGenerator;
-import org.opensaml.xmlsec.signature.support.SignatureConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.google.common.base.Function;
 
@@ -53,18 +45,17 @@ import com.google.common.base.Function;
  * {@link ProfileRequestContext} based on the identity of a relying party accessed via
  * a lookup strategy, by default an immediate child of the profile request context.
  * 
+ * <p>A {@link SAMLSelfEntityContext} is created based on the identity of the IdP, as
+ * derived by a lookup strategy. A {@link SAMLPeerEntityContext} and {@link SAMLMetadataContext}
+ * are created based on the {@link SAMLPeerEntityContext} that underlies the {@link RelyingPartyContext}.</p>
+ * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
  */
-// TODO Finish Javadoc.
 public class InitializeOutboundMessageContext extends AbstractProfileAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(InitializeOutboundMessageContext.class);
-
-    // TODO Remove autowired credential
-    /** Test signing credential. */
-    @Autowired @Qualifier("idp.Credential") private Credential testSigningCredential;
 
     /** Relying party context lookup strategy. */
     @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
@@ -132,8 +123,6 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        // TODO Incomplete, see https://wiki.shibboleth.net/confluence/display/IDP30/SAML+1.1+Browser+SSO
-
         final MessageContext msgCtx = new MessageContext();
         profileRequestContext.setOutboundMessageContext(msgCtx);
 
@@ -150,54 +139,7 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
             outboundMetadataCtx.setRoleDescriptor(inboundMetadataCtx.getRoleDescriptor());
         }
 
-        // TODO this will be handled by a separate action, leaving for now to keep testbed working
-        final SecurityParametersContext secParamCtx = msgCtx.getSubcontext(SecurityParametersContext.class, true);
-        secParamCtx.setSignatureSigningParameters(getSignatureSigningParameters(profileRequestContext));
-
         log.debug("{} Initialized outbound message context", getLogPrefix());
     }
-    
-    /**
-     * Get the signing credential.
-     * 
-     * @param profileRequestContext the current IdP profile request context
-     * @return the signing credential
-     */
-    @Nonnull private Credential getSigningCredential(@Nonnull final ProfileRequestContext profileRequestContext) {
-        // TODO Get signing credential from security configuration.
-        return testSigningCredential;
-    }
 
-    /**
-     * Get the signature signing parameters.
-     * 
-     * @param profileRequestContext the current IdP profile request context
-     * @return the signature signing parameters
-     */
-    @Nonnull private SignatureSigningParameters getSignatureSigningParameters(
-            @Nonnull final ProfileRequestContext profileRequestContext) {
-
-        final Credential signingCredential = getSigningCredential(profileRequestContext);
-        
-        // TODO: check for null to allow testing without Spring auto-wiring.
-        if (signingCredential == null) {
-            return new SignatureSigningParameters();
-        }
-
-        final KeyInfoGenerator kiGenerator =
-                SecurityConfigurationSupport.getGlobalXMLSecurityConfiguration().getKeyInfoGeneratorManager()
-                        .getDefaultManager().getFactory(signingCredential).newInstance();
-
-        final SignatureSigningParameters signingParameters = new SignatureSigningParameters();
-        signingParameters.setSigningCredential(signingCredential);
-
-        // TODO We know it's an RSA key, so just hardcoding for now.
-        signingParameters.setSignatureAlgorithmURI(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256);
-        signingParameters.setSignatureReferenceDigestMethod(SignatureConstants.ALGO_ID_DIGEST_SHA256);
-        signingParameters.setSignatureCanonicalizationAlgorithm(SignatureConstants.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
-        signingParameters.setKeyInfoGenerator(kiGenerator);
-
-        return signingParameters;
-    }
-    
 }
