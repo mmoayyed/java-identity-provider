@@ -49,6 +49,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
+import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,8 +86,8 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
     /** Strategy used to look up the {@link EncryptionContext} to store parameters in. */
     @Nonnull private Function<ProfileRequestContext,EncryptionContext> encryptionContextLookupStrategy;
 
-    /** Strategy used to look up a SAML metadata context. */
-    @Nullable private Function<ProfileRequestContext,SAMLMetadataContext> metadataContextLookupStrategy;
+    /** Strategy used to look up a SAML peer context. */
+    @Nullable private Function<ProfileRequestContext,SAMLPeerEntityContext> peerContextLookupStrategy;
     
     /** Strategy used to look up a per-request {@link EncryptionConfiguration} list. */
     @NonnullAfterInit private Function<ProfileRequestContext,List<EncryptionConfiguration>> configurationLookupStrategy;
@@ -123,11 +124,10 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
                 new ChildContextLookup<>(EncryptionContext.class, true),
                 new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
 
-        // Default: outbound msg context -> SAMLPeerEntityContext -> SAMLMetadataContext
-        metadataContextLookupStrategy = Functions.compose(
-                new ChildContextLookup<>(SAMLMetadataContext.class),
+        // Default: outbound msg context -> SAMLPeerEntityContext
+        peerContextLookupStrategy =
                 Functions.compose(new ChildContextLookup<>(SAMLPeerEntityContext.class),
-                        new OutboundMessageContextLookup()));
+                        new OutboundMessageContextLookup());
     }
     
     /**
@@ -170,17 +170,17 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
         configurationLookupStrategy = Constraint.isNotNull(strategy,
                 "EncryptionConfiguration lookup strategy cannot be null");
     }
-    
+
     /**
-     * Set lookup strategy for {@link SAMLMetadataContext} for input to resolution.
+     * Set lookup strategy for {@link SAMLPeerEntityContext} for input to resolution.
      * 
      * @param strategy  lookup strategy
      */
-    public void setMetadataContextLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
+    public void setPeerContextLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,SAMLPeerEntityContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        metadataContextLookupStrategy = strategy;
+        peerContextLookupStrategy = strategy;
     }
     
     /**
@@ -313,11 +313,18 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
         
         final CriteriaSet criteria = new CriteriaSet(new EncryptionConfigurationCriterion(encryptionConfigurations));
         
-        if (metadataContextLookupStrategy != null) {
-            final SAMLMetadataContext metadataCtx = metadataContextLookupStrategy.apply(profileRequestContext);
-            if (metadataCtx != null && metadataCtx.getRoleDescriptor() != null) {
-                log.debug("{} Adding metadata to resolution", getLogPrefix());
-                criteria.add(new RoleDescriptorCriterion(metadataCtx.getRoleDescriptor()));
+        if (peerContextLookupStrategy != null) {
+            final SAMLPeerEntityContext peerCtx = peerContextLookupStrategy.apply(profileRequestContext);
+            if (peerCtx != null) {
+                if (peerCtx.getEntityId() != null) {
+                    log.debug("{} Adding entityID to resolution criteria", getLogPrefix());
+                    criteria.add(new EntityIdCriterion(peerCtx.getEntityId()));
+                }
+                final SAMLMetadataContext metadataCtx = peerCtx.getSubcontext(SAMLMetadataContext.class);
+                if (metadataCtx != null && metadataCtx.getRoleDescriptor() != null) {
+                    log.debug("{} Adding role metadata to resolution criteria", getLogPrefix());
+                    criteria.add(new RoleDescriptorCriterion(metadataCtx.getRoleDescriptor()));
+                }
             }
         }
         
