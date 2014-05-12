@@ -66,16 +66,6 @@ public class ShibbolethSSOProfileParser extends BaseSAMLProfileConfigurationPars
         return "shibboleth.SAML1.BrowserSSO.";
     }
 
-    /** {@inheritDoc} */
-    @Override protected String getSignResponsesDefault() {
-        return "always";
-    }
-
-    /** {@inheritDoc} */
-    @Override protected String getSignAssertionsDefault() {
-        return "never";
-    }
-
     /**
      * We need to extract the defaultAuthenticationMethod and nameIDFormatPrecedence from the parent element, which will
      * be a &lt;RelyingParty&gt;. If there is no parent we set nothing.

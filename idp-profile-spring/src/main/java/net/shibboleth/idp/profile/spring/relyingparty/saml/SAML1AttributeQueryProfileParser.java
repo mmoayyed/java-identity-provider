@@ -24,8 +24,7 @@ import net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfigu
 import org.w3c.dom.Element;
 
 /**
- Parser to generate {@link AttributeQueryProfileConfiguration} from a
- * <code>saml:SAML1AttributeQueryProfile</code>.
+ * Parser to generate {@link AttributeQueryProfileConfiguration} from a <code>saml:SAML1AttributeQueryProfile</code>.
  */
 public class SAML1AttributeQueryProfileParser extends BaseSAMLProfileConfigurationParser {
 
@@ -37,28 +36,14 @@ public class SAML1AttributeQueryProfileParser extends BaseSAMLProfileConfigurati
     public SAML1AttributeQueryProfileParser() {
         setArtifactAware(true);
     }
-    
+
     /** {@inheritDoc} */
-    @Override
-    protected Class<AttributeQueryProfileConfiguration> getBeanClass(Element element) {
+    @Override protected Class<AttributeQueryProfileConfiguration> getBeanClass(Element element) {
         return AttributeQueryProfileConfiguration.class;
     }
-    
+
     /** {@inheritDoc} */
     @Override protected String getProfileBeanNamePrefix() {
         return "shibboleth.SAML1.AttributeQuery.";
     }
-
-    /** {@inheritDoc} */
-    @Override
-    protected String getSignResponsesDefault() {
-        return "conditional";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected String getSignAssertionsDefault() {
-        return "never";
-    }
-    
 }

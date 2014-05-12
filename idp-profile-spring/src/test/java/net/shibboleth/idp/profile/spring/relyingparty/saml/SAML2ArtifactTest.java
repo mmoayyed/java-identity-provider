@@ -41,9 +41,9 @@ public class SAML2ArtifactTest extends BaseSAMLProfileTest {
         Assert.assertTrue(profile.getProxyAudiences().isEmpty());
 
         // defaults for AbstractSAMLProfileConfiguration
-        assertConditionalPredicate(profile.getSignRequestsPredicate());
-        assertTruePredicate(profile.getSignAssertionsPredicate());
-        assertFalsePredicate(profile.getSignResponsesPredicate());
+        assertFalsePredicate(profile.getSignRequestsPredicate());
+        assertFalsePredicate(profile.getSignAssertionsPredicate());
+        assertConditionalPredicate(profile.getSignResponsesPredicate());
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());

@@ -43,13 +43,4 @@ public class SAML1ArtifactResolutionProfileParser extends BaseSAMLProfileConfigu
         return "shibboleth.SAML1.Artifact.";
     }
 
-    /** {@inheritDoc} */
-    @Override protected String getSignResponsesDefault() {
-        return "conditional";
-    }
-
-    /** {@inheritDoc} */
-    @Override protected String getSignAssertionsDefault() {
-        return "never";
-    }
 }

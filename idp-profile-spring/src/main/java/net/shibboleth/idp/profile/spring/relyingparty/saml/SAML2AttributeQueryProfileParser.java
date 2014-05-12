@@ -47,14 +47,4 @@ public class SAML2AttributeQueryProfileParser extends BaseSAML2ProfileConfigurat
     @Override protected String getProfileBeanNamePrefix() {
         return "shibboleth.SAML2.AttributeQuery.";
     }
-
-    /** {@inheritDoc} */
-    @Override protected String getSignResponsesDefault() {
-        return "conditional";
-    }
-
-    /** {@inheritDoc} */
-    @Override protected String getSignAssertionsDefault() {
-        return "never";
-    }
 }

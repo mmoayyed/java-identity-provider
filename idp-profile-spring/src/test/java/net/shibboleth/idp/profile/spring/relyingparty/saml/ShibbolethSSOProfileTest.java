@@ -35,7 +35,7 @@ public class ShibbolethSSOProfileTest extends BaseSAMLProfileTest {
 
         Assert.assertFalse(profile.includeAttributeStatement());
 
-        assertConditionalPredicate(profile.getSignRequestsPredicate());
+        assertFalsePredicate(profile.getSignRequestsPredicate());
         assertFalsePredicate(profile.getSignAssertionsPredicate());
         assertTruePredicate(profile.getSignResponsesPredicate());
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);

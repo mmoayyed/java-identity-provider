@@ -32,7 +32,7 @@ public class SAML1ArtifactTest extends BaseSAMLProfileTest {
                 getBean(ArtifactResolutionProfileConfiguration.class, true, "beans.xml", "saml/saml1artifact.xml");
 
         // defaults for AbstractSAMLProfileConfiguration
-        assertConditionalPredicate(profile.getSignRequestsPredicate());
+        assertFalsePredicate(profile.getSignRequestsPredicate());
         assertFalsePredicate(profile.getSignAssertionsPredicate());
         assertConditionalPredicate(profile.getSignResponsesPredicate());
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);

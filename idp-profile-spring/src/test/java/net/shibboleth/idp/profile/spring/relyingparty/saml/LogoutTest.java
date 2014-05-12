@@ -34,13 +34,10 @@ public class LogoutTest extends BaseSAMLProfileTest {
 
         // defaults for AbstractSAML2ProfileConfiguration
 
-        assertConditionalPredicate(profile.getEncryptAssertionsPredicate());
-        assertFalsePredicate(profile.getEncryptNameIDsPredicate());
-
+        assertFalsePredicate(profile.getEncryptAssertionsPredicate());
         Assert.assertEquals(profile.getProxyCount(), 0);
-        Assert.assertTrue(profile.getProxyAudiences().isEmpty());
+        assertConditionalPredicate(profile.getEncryptNameIDsPredicate());
 
-        // defaults for AbstractSAMLProfileConfiguration
         assertConditionalPredicate(profile.getSignRequestsPredicate());
         assertFalsePredicate(profile.getSignAssertionsPredicate());
         assertConditionalPredicate(profile.getSignResponsesPredicate());

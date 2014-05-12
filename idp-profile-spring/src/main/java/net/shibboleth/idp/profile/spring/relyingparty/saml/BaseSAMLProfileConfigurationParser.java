@@ -117,45 +117,36 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
      * specified.
      * 
      * @param value the value as a string should be "always", "conditional", "never"
-     * @param defaultValue the default value if no explicit one.
      * @param claz the predicate type to summon up (one of {@link LegacySigningRequirementPredicate} or
      *            {@link LegacyEncryptionRequirementPredicate}
      * @return the bean for the appropriate predicate.
      */
-    @Nonnull private BeanDefinition predicateFor(@Nullable String value, String defaultValue,
-            Class<? extends Predicate> claz) {
+    @Nonnull private BeanDefinition predicateFor(@Nullable String value, Class<? extends Predicate> claz) {
 
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(claz);
-        final String trimmedValue = StringSupport.trimOrNull(value);
-        if (null != trimmedValue) {
-            builder.addConstructorArgValue(trimmedValue);
-        } else {
-            builder.addConstructorArgValue(StringSupport.trimOrNull(defaultValue));
-        }
+        builder.addConstructorArgValue(StringSupport.trimOrNull(value));
 
         return builder.getBeanDefinition();
-    }
-
-    /**
-     * Return the definition of the predicate for encryption derived from the provided string.
-     * 
-     * @param value the value
-     * @param defaultValue the default.
-     * @return the definition of an appropriate {@link LegacyEncryptionRequirementPredicate}
-     */
-    @Nonnull protected BeanDefinition predicateForSigning(@Nullable String value, String defaultValue) {
-        return predicateFor(value, defaultValue, LegacySigningRequirementPredicate.class);
     }
 
     /**
      * Return the definition of the predicate for signing derived from the provided string.
      * 
      * @param value the value
-     * @param defaultValue the default.
+     * @return the definition of an appropriate {@link LegacySigningRequirementPredicate}
+     */
+    @Nonnull protected BeanDefinition predicateForSigning(@Nullable String value) {
+        return predicateFor(value, LegacySigningRequirementPredicate.class);
+    }
+
+    /**
+     * Return the definition of the predicate for encryption derived from the provided string.
+     * 
+     * @param value the value
      * @return the definition of an appropriate {@link LegacyEncryptionRequirementPredicate}
      */
-    @Nonnull protected BeanDefinition predicateForEncryption(@Nullable String value, String defaultValue) {
-        return predicateFor(value, defaultValue, LegacyEncryptionRequirementPredicate.class);
+    @Nonnull protected BeanDefinition predicateForEncryption(@Nullable String value) {
+        return predicateFor(value, LegacyEncryptionRequirementPredicate.class);
     }
 
     /**
@@ -186,7 +177,7 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
      * @param builder the builder for the profile.
      */
     private void setSecurityConfiguration(Element element, BeanDefinitionBuilder builder) {
-        
+
         if (null != getEmbeddedBeans()) {
             // Ask the embedded beans first
             final SecurityConfiguration configuration;
@@ -200,13 +191,13 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
             }
             log.debug("embedded beans but no SecurityConfiguration");
         }
-        
+
         final String credentialRef;
         if (element.hasAttributeNS(null, "signingCredentialRef")) {
             credentialRef = element.getAttributeNS(null, "signingCredentialRef");
             log.debug("using explicit signing credential reference {}", credentialRef);
         } else {
-            log.debug("Looking for default signing credential reference"); 
+            log.debug("Looking for default signing credential reference");
 
             final Node parentNode = element.getParentNode();
             if (parentNode == null) {
@@ -217,7 +208,7 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
                 log.debug("parent of ProfileConfiguration was unrecognizable, no defaultSigningCredential set");
                 return;
             }
-            
+
             Element relyingParty = (Element) parentNode;
             if (!relyingParty.hasAttributeNS(null, "defaultSigningCredentialRef")) {
                 // no defaults
@@ -226,7 +217,7 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
             credentialRef = relyingParty.getAttributeNS(null, "defaultSigningCredentialRef");
             log.debug("Using default signing credential reference {}", credentialRef);
         }
-        
+
         final BeanDefinitionBuilder signingConfiguration =
                 BeanDefinitionBuilder.genericBeanDefinition(BasicSignatureSigningConfiguration.class);
         signingConfiguration.addPropertyReference("signingCredentials", credentialRef);
@@ -290,17 +281,23 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
 
         builder.addPropertyValue("outboundSubflowId", element.getAttributeNS(null, "outboundFlowId"));
 
-        builder.addPropertyValue("signAssertionsPredicate",
-                predicateForSigning(element.getAttributeNS(null, "signAssertions"), getSignAssertionsDefault()));
-        builder.addPropertyValue("signRequestsPredicate",
-                predicateForSigning(element.getAttributeNS(null, "signRequests"), "conditional"));
-        builder.addPropertyValue("signResponsesPredicate",
-                predicateForSigning(element.getAttributeNS(null, "signResponses"), getSignResponsesDefault()));
-
+        if (element.hasAttributeNS(null, "signAssertions")) {
+            builder.addPropertyValue("signAssertionsPredicate",
+                    predicateForSigning(element.getAttributeNS(null, "signAssertions")));
+        }
+        if (element.hasAttributeNS(null, "signRequests")) {
+            builder.addPropertyValue("signRequestsPredicate",
+                    predicateForSigning(element.getAttributeNS(null, "signRequests")));
+        }
+        if (element.hasAttributeNS(null, "signResponses")) {
+            builder.addPropertyValue("signResponsesPredicate",
+                    predicateForSigning(element.getAttributeNS(null, "signResponses")));
+        }
         builder.addPropertyValue("additionalAudienceForAssertion", getAudiences(element));
     }
+
     // Checkstyle: CyclomaticComplexity ON
-    
+
     /** {@inheritDoc} */
     @Override protected boolean shouldGenerateId() {
         return true;
@@ -313,19 +310,4 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
      * @return the prefix
      */
     protected abstract String getProfileBeanNamePrefix();
-
-    /**
-     * Gets the default value for the signResponses property.
-     * 
-     * @return default value for the signResponses property
-     */
-    protected abstract String getSignResponsesDefault();
-
-    /**
-     * Gets the default value for the signAssertions property.
-     * 
-     * @return default value for the signAssertions property
-     */
-    protected abstract String getSignAssertionsDefault();
-
 }

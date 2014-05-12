@@ -42,14 +42,4 @@ public class SAML2ArtifactResolutionProfileParser extends BaseSAML2ProfileConfig
     @Override protected String getProfileBeanNamePrefix() {
         return "shibboleth.SAML2.Artifact.";
     }
-
-    /** {@inheritDoc} */
-    @Override protected String getSignResponsesDefault() {
-        return "never";
-    }
-
-    /** {@inheritDoc} */
-    @Override protected String getSignAssertionsDefault() {
-        return "always";
-    }
 }

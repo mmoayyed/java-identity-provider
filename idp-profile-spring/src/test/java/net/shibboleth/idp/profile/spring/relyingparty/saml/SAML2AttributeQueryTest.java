@@ -43,7 +43,7 @@ public class SAML2AttributeQueryTest extends BaseSAMLProfileTest {
         Assert.assertTrue(profile.getProxyAudiences().isEmpty());
 
         // defaults for AbstractSAMLProfileConfiguration
-        assertConditionalPredicate(profile.getSignRequestsPredicate());
+        assertFalsePredicate(profile.getSignRequestsPredicate());
         assertFalsePredicate(profile.getSignAssertionsPredicate());
         assertConditionalPredicate(profile.getSignResponsesPredicate());
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);

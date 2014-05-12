@@ -47,14 +47,4 @@ public class SAML2LogoutRequestProfileParser extends BaseSAML2ProfileConfigurati
     @Override protected String getProfileBeanNamePrefix() {
         return "shibboleth.SAML2.Logout.";
     }
-
-    /** {@inheritDoc} */
-    @Override protected String getSignResponsesDefault() {
-        return "conditional";
-    }
-
-    /** {@inheritDoc} */
-    @Override protected String getSignAssertionsDefault() {
-        return "never";
-    }
 }
