@@ -50,7 +50,6 @@
         </constructor-arg>
     </bean>
     
-    <!-- TODO: need to poke metadata source in from relying party config later -->
     <bean id="SAMLMetadataLookup"
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
             c:executionDirection="INBOUND">
@@ -153,7 +152,9 @@
     <bean id="PopulateEncryptionParameters"
             class="net.shibboleth.idp.saml.saml2.profile.impl.PopulateEncryptionParameters" scope="prototype"
             p:configurationLookupStrategy-ref="shibboleth.EncryptionConfigurationLookup"
-            p:encryptionParametersResolver-ref="shibboleth.EncryptionParametersResolver" />
+            p:encryptionParametersResolver-ref="shibboleth.EncryptionParametersResolver"
+            p:protocol-ref="shibboleth.MetadataLookup.Protocol"
+            p:role-ref="shibboleth.MetadataLookup.Role" />
 
     <bean id="InitializeAuthenticationContext"
         class="net.shibboleth.idp.saml.profile.impl.InitializeAuthenticationContext" scope="prototype" />

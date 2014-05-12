@@ -30,7 +30,7 @@
             read the documentation).
         -->
         <rp:ProfileConfiguration xsi:type="saml:ShibbolethSSOProfile" includeAttributeStatement="false" 
-                                 assertionLifetime="PT5M" signResponses="conditional" signAssertions="never"
+                                 assertionLifetime="PT5M" signResponses="always" signAssertions="never"
                                  includeConditionsNotBefore="true"/>
                               
         <rp:ProfileConfiguration xsi:type="saml:SAML1AttributeQueryProfile" assertionLifetime="PT5M" 
@@ -42,13 +42,13 @@
         
         <rp:ProfileConfiguration xsi:type="saml:SAML2SSOProfile" includeAttributeStatement="true" 
                                  assertionLifetime="PT5M" assertionProxyCount="0" 
-                                 signResponses="never" signAssertions="always" 
+                                 signResponses="always" signAssertions="never" 
                                  encryptAssertions="conditional" encryptNameIds="never"
                                  includeConditionsNotBefore="true"/>
 
         <rp:ProfileConfiguration xsi:type="saml:SAML2ECPProfile" includeAttributeStatement="true" 
                                  assertionLifetime="PT5M" assertionProxyCount="0" 
-                                 signResponses="never" signAssertions="always" 
+                                 signResponses="always" signAssertions="never" 
                                  encryptAssertions="conditional" encryptNameIds="never"
                                  includeConditionsNotBefore="true"/>
 
@@ -59,7 +59,7 @@
                                  includeConditionsNotBefore="true"/>
         
         <rp:ProfileConfiguration xsi:type="saml:SAML2ArtifactResolutionProfile" 
-                                 signResponses="never" signAssertions="always" 
+                                 signResponses="conditional" signAssertions="never" 
                                  encryptAssertions="conditional" encryptNameIds="never"/>
 
         <rp:ProfileConfiguration xsi:type="saml:SAML2LogoutRequestProfile"

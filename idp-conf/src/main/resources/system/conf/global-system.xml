@@ -146,9 +146,12 @@
     <bean id="shibboleth.SignatureValidationParametersResolver"
         class="org.opensaml.xmlsec.impl.BasicSignatureValidationParametersResolver" />
     <bean id="shibboleth.SignatureSigningParametersResolver"
-        class="org.opensaml.xmlsec.impl.BasicSignatureSigningParametersResolver" />
-    <bean id="shibboleth.DecryptionParametersResolver" class="org.opensaml.xmlsec.impl.BasicDecryptionParametersResolver" />
-    <bean id="shibboleth.EncryptionParametersResolver" class="org.opensaml.xmlsec.impl.BasicEncryptionParametersResolver" />
+        class="org.opensaml.saml.security.impl.SAMLMetadataSignatureSigningParametersResolver" />
+    <bean id="shibboleth.DecryptionParametersResolver"
+        class="org.opensaml.xmlsec.impl.BasicDecryptionParametersResolver" />
+    <bean id="shibboleth.EncryptionParametersResolver"
+        class="org.opensaml.saml.security.impl.SAMLMetadataEncryptionParametersResolver"
+        c:resolver-ref="shibboleth.MetadataCredentialResolver" />
 
     <!-- TODO: all this is probably wrong, but need it to get something working -->
     

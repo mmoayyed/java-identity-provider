@@ -73,14 +73,14 @@
             <bean class="org.opensaml.xmlsec.impl.BasicEncryptionConfiguration">
                 <property name="dataEncryptionAlgorithms">
                     <util:list>
-                        <util:constant static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128_GCM" />
                         <util:constant static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128" />
+                        <util:constant static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128_GCM" />
                     </util:list>
                 </property>
                 <property name="keyTransportEncryptionAlgorithms">
                     <util:list>
-                        <util:constant static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSAOAEP11" />
                         <util:constant static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSAOAEP" />
+                        <util:constant static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSAOAEP11" />
                     </util:list>
                 </property>
             </bean>
