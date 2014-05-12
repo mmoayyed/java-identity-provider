@@ -1,7 +1,6 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
-import org.joda.time.DateTime;
 import org.opensaml.messaging.context.InOutOperationContext;
 import org.opensaml.messaging.context.MessageContext;
 
@@ -23,11 +22,6 @@ class TestContextContainer extends InOutOperationContext {
         setAutoCreateSubcontexts(false);
     }
 
-    /** Not used. */
-    @Override public DateTime getCreationTime() {
-        return null;
-    }
-
     public String getId() {
         return "TestContainerContextid";
     }
@@ -43,11 +37,6 @@ class TestContextContainer extends InOutOperationContext {
     }
 
     private class MyMessageContext extends MessageContext {
-
-        /** Not used. */
-        @Override public DateTime getCreationTime() {
-            return null;
-        }
 
         /** Not used. */
         @Override public Object getMessage() {
