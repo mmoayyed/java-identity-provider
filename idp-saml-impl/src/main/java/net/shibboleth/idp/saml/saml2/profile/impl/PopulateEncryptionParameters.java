@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.xml.namespace.QName;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -29,6 +30,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
+import org.opensaml.saml.criterion.EntityRoleCriterion;
+import org.opensaml.saml.criterion.ProtocolCriterion;
 import org.opensaml.saml.criterion.RoleDescriptorCriterion;
 import org.opensaml.saml.saml2.profile.context.EncryptionContext;
 import org.opensaml.xmlsec.EncryptionConfiguration;
@@ -46,6 +49,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
@@ -88,6 +92,12 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
 
     /** Strategy used to look up a SAML peer context. */
     @Nullable private Function<ProfileRequestContext,SAMLPeerEntityContext> peerContextLookupStrategy;
+    
+    /** Metadata protocolSupportEnumeration value to provide to resolver. */
+    @Nullable private String samlProtocol;
+
+    /** Metadata role type to provide to resolver. */
+    @Nullable private QName peerRole;
     
     /** Strategy used to look up a per-request {@link EncryptionConfiguration} list. */
     @NonnullAfterInit private Function<ProfileRequestContext,List<EncryptionConfiguration>> configurationLookupStrategy;
@@ -156,7 +166,24 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
         encryptionContextLookupStrategy = Constraint.isNotNull(strategy,
                 "EncryptionContext lookup strategy cannot be null");
     }
-    
+
+    /**
+     * Set the protocol constant to use during resolution.
+     * 
+     * @param protocol the protocol constant to set
+     */
+    public void setProtocol(@Nullable final String protocol) {
+        samlProtocol = StringSupport.trimOrNull(protocol);
+    }
+
+    /**
+     * Set the operational role to use during resolution.
+     * 
+     * @param role the operational role to set
+     */
+    public void setRole(@Nullable final QName role) {
+        peerRole = role;
+    }
     
     /**
      * Set the strategy used to look up a per-request {@link EncryptionConfiguration} list.
@@ -312,13 +339,19 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
     @Nonnull private CriteriaSet buildCriteriaSet(@Nonnull final ProfileRequestContext profileRequestContext) {
         
         final CriteriaSet criteria = new CriteriaSet(new EncryptionConfigurationCriterion(encryptionConfigurations));
-        
+
         if (peerContextLookupStrategy != null) {
             final SAMLPeerEntityContext peerCtx = peerContextLookupStrategy.apply(profileRequestContext);
             if (peerCtx != null) {
                 if (peerCtx.getEntityId() != null) {
                     log.debug("{} Adding entityID to resolution criteria", getLogPrefix());
                     criteria.add(new EntityIdCriterion(peerCtx.getEntityId()));
+                    if (samlProtocol != null) {
+                        criteria.add(new ProtocolCriterion(samlProtocol));
+                    }
+                    if (peerRole != null) {
+                        criteria.add(new EntityRoleCriterion(peerRole));
+                    }
                 }
                 final SAMLMetadataContext metadataCtx = peerCtx.getSubcontext(SAMLMetadataContext.class);
                 if (metadataCtx != null && metadataCtx.getRoleDescriptor() != null) {
