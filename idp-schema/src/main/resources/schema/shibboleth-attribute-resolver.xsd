@@ -141,7 +141,7 @@
 			</documentation>
 		</annotation>
 		<attribute name="name" type="string" />
-		<attribute name="activationCriterionRef" type="string">
+		<attribute name="activationConditionRef" type="string">
 			<annotation>
 				<documentation>
 					The reference to a Predicate which controls whether this encoder will
@@ -238,7 +238,7 @@
 				</documentation>
 			</annotation>
 		</attribute>
-		<attribute name="activationCriterionRef" type="string">
+		<attribute name="activationConditionRef" type="string">
 			<annotation>
 				<documentation>A reference to a predicate to decide whether this
 					plugin is applicable</documentation>

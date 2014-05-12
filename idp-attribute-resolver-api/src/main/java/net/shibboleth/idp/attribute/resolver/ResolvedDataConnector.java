@@ -82,7 +82,7 @@ public final class ResolvedDataConnector extends AbstractDataConnector {
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable public Predicate<ProfileRequestContext> getActivationCriteria() {
+    @Override @Nullable public Predicate<ProfileRequestContext> getActivationCondition() {
         return null;
     }
 

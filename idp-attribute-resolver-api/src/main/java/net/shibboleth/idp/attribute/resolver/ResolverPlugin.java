@@ -54,11 +54,11 @@ public interface ResolverPlugin<ResolvedType> extends UnmodifiableComponent,
     boolean isPropagateResolutionExceptions();
 
     /**
-     * Get the criteria that must be met for this plugin to be active for a given request.
+     * Gets the predicate which defines whether this plugin is active for a given request.
      * 
-     * @return criteria that must be met for this plugin to be active for a given request
+     * @return the predictate.
      */
-    @Nullable Predicate<ProfileRequestContext> getActivationCriteria();
+    @Nullable Predicate<ProfileRequestContext> getActivationCondition();
 
     /**
      * Get the unmodifiable list of dependencies for this plugin.

@@ -62,8 +62,8 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
             throw new BeanCreationException("Attribute encoder must contain a name property");
         }
         
-        if (config.hasAttributeNS(null, "activationCriterionRef")) {
-            builder.addPropertyReference("activationCondition", config.getAttributeNS(null, "activationCriterionRef"));
+        if (config.hasAttributeNS(null, "activationConditionRef")) {
+            builder.addPropertyReference("activationCondition", config.getAttributeNS(null, "activationConditionRef"));
         }
         
         builder.setInitMethodName("initialize");

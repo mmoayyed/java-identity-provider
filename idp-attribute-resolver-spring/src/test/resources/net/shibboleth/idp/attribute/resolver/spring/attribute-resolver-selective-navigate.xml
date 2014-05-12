@@ -22,14 +22,14 @@
 
 	<resolver:AttributeDefinition xsi:type="Simple"
 		xmlns="urn:mace:shibboleth:2.0:resolver:ad" id="EPA1"
-		sourceAttributeID="staticEpA" activationCriterionRef="peter"
+		sourceAttributeID="staticEpA" activationConditionRef="peter"
 		profileContextStrategyRef="findProfileCtx">
 		<resolver:Dependency ref="staticAttributes" />
 	</resolver:AttributeDefinition>
 
 	<resolver:AttributeDefinition xsi:type="Simple"
 		xmlns="urn:mace:shibboleth:2.0:resolver:ad" id="EPE"
-		sourceAttributeID="eduPersonEntitlement" activationCriterionRef="principal"
+		sourceAttributeID="eduPersonEntitlement" activationConditionRef="principal"
 		profileContextStrategyRef="findProfileCtx">
 		<resolver:Dependency ref="staticAttributes" />
 	</resolver:AttributeDefinition>

@@ -43,7 +43,7 @@ public class AbstractResolverPluginTest {
 
         Assert.assertEquals(plugin.getId(), "foo");
         Assert.assertTrue(plugin.isPropagateResolutionExceptions());
-        Assert.assertNull(plugin.getActivationCriteria());
+        Assert.assertNull(plugin.getActivationCondition());
         Assert.assertNotNull(plugin.getDependencies());
         Assert.assertTrue(plugin.getDependencies().isEmpty());
     }
@@ -52,10 +52,10 @@ public class AbstractResolverPluginTest {
     @Test public void activationCriteria() {
         MockBaseResolverPlugin plugin = new MockBaseResolverPlugin(" foo ", "bar");
 
-        plugin.setActivationCriteria(Predicates.<ProfileRequestContext> alwaysFalse());
-        Assert.assertEquals(plugin.getActivationCriteria(), Predicates.alwaysFalse());
+        plugin.setActivationCondition(Predicates.<ProfileRequestContext> alwaysFalse());
+        Assert.assertEquals(plugin.getActivationCondition(), Predicates.alwaysFalse());
         try {
-            plugin.setActivationCriteria(null);
+            plugin.setActivationCondition(null);
             Assert.fail("Able to set a null activiation criteria");
         } catch (ConstraintViolationException e) {
             // expected this
@@ -133,7 +133,7 @@ public class AbstractResolverPluginTest {
 
         context = new AttributeResolutionContext();
         plugin = new MockBaseResolverPlugin(" foo ", "bar");
-        plugin.setActivationCriteria(Predicates.<ProfileRequestContext> alwaysFalse());
+        plugin.setActivationCondition(Predicates.<ProfileRequestContext> alwaysFalse());
 
         plugin.initialize();
         Assert.assertNull(plugin.resolve(context));

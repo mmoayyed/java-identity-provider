@@ -99,7 +99,7 @@ public final class ResolvedAttributeDefinition extends AbstractAttributeDefiniti
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable public Predicate<ProfileRequestContext> getActivationCriteria() {
+    @Override @Nullable public Predicate<ProfileRequestContext> getActivationCondition() {
         return null;
     }
 

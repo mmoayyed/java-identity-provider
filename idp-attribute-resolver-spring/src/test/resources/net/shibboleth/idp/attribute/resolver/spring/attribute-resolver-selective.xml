@@ -20,11 +20,11 @@
     <!--      Attribute Definitions                 -->
     <!-- ========================================== -->
 
-    <resolver:AttributeDefinition xsi:type="Simple" xmlns="urn:mace:shibboleth:2.0:resolver:ad" id="EPA1" sourceAttributeID="staticEpA" activationCriterionRef="peter">
+    <resolver:AttributeDefinition xsi:type="Simple" xmlns="urn:mace:shibboleth:2.0:resolver:ad" id="EPA1" sourceAttributeID="staticEpA" activationConditionRef="peter">
         <resolver:Dependency ref="staticAttributes" />
     </resolver:AttributeDefinition>
     
-    <resolver:AttributeDefinition xsi:type="Simple" xmlns="urn:mace:shibboleth:2.0:resolver:ad" id="EPE" sourceAttributeID="eduPersonEntitlement" activationCriterionRef="principal">
+    <resolver:AttributeDefinition xsi:type="Simple" xmlns="urn:mace:shibboleth:2.0:resolver:ad" id="EPE" sourceAttributeID="eduPersonEntitlement" activationConditionRef="principal">
         <resolver:Dependency ref="staticAttributes" />
     </resolver:AttributeDefinition>
 

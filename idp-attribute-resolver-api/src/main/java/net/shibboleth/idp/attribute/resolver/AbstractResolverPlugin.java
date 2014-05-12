@@ -68,7 +68,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
             new ParentContextLookup<>();
 
     /** Criterion that must be met for this plugin to be active for the given request. */
-    @Nullable private Predicate<ProfileRequestContext> activationCriteria;
+    @Nullable private Predicate<ProfileRequestContext> activationCondition;
 
     /** IDs of the {@link ResolutionPlugIn}s this plug-in depends on. */
     @Nonnull @NonnullElements private Set<ResolverPluginDependency> dependencies = Collections.emptySet();
@@ -115,24 +115,20 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
         propagateResolutionExceptions = propagate;
     }
 
-    /**
-     * Gets the criteria that must be met for this plugin to be active for a given request.
-     * 
-     * @return criteria that must be met for this plugin to be active for a given request, never null
-     */
-    @Override @Nullable public Predicate<ProfileRequestContext> getActivationCriteria() {
-        return activationCriteria;
+    /** {@inheritDoc} */
+    @Override @Nullable public Predicate<ProfileRequestContext> getActivationCondition() {
+        return activationCondition;
     }
 
     /**
-     * Sets the criteria that must be met for this plugin to be active for a given request.
+     * Sets the predicate which defines whether this plugin is active for a given request.
      * 
-     * @param criteria criteria that must be met for this plugin to be active for a given request
+     * @param pred what to set
      */
-    public void setActivationCriteria(@Nonnull final Predicate<ProfileRequestContext> criteria) {
+    public void setActivationCondition(@Nonnull final Predicate<ProfileRequestContext> pred) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        activationCriteria = Constraint.isNotNull(criteria, "Activiation criteria cannot be null");
+        activationCondition = Constraint.isNotNull(pred, "Activiation condition cannot be null");
     }
 
     /**
@@ -182,9 +178,9 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
 
         Constraint.isNotNull(resolutionContext, "AttributeResolutionContext cannot be null");
 
-        if (null != activationCriteria) {
+        if (null != activationCondition) {
             ProfileRequestContext profileRequestContext = profileContextStrategy.apply(resolutionContext);
-            if (!activationCriteria.apply(profileRequestContext)) {
+            if (!activationCondition.apply(profileRequestContext)) {
                 log.debug("Resolver plugin '{}': activation criteria not met, nothing to do", getId());
                 return null;
             }
@@ -213,7 +209,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
 
     /** {@inheritDoc} */
     @Override protected void doDestroy() {
-        activationCriteria = Predicates.alwaysFalse();
+        activationCondition = Predicates.alwaysFalse();
         dependencies = Collections.emptySet();
 
         super.doDestroy();

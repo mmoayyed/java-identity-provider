@@ -101,10 +101,10 @@ public class ResolvedAttributeDefinitionTest {
 
         ResolvedAttributeDefinition resolvedAttributeDefinition =
                 new ResolvedAttributeDefinition(attrDef, new IdPAttribute("foo"));
-        resolvedAttributeDefinition.getActivationCriteria();
+        resolvedAttributeDefinition.getActivationCondition();
 
         Assert.assertEquals(resolvedAttributeDefinition.getDependencies(), attrDef.getDependencies());
-        Assert.assertNull(resolvedAttributeDefinition.getActivationCriteria());
+        Assert.assertNull(resolvedAttributeDefinition.getActivationCondition());
         Assert.assertFalse(resolvedAttributeDefinition.isPropagateResolutionExceptions());
 
         //
