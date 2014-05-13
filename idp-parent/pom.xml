@@ -56,6 +56,8 @@
         <module>../idp-war</module>
         <module>../idp-conf</module>
         <module>../idp-distribution</module>
+
+        <module>../idp-ui</module>
     </modules>
 
     <properties>
