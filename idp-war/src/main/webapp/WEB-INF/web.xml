@@ -41,17 +41,17 @@
     </filter>
     <filter-mapping>
         <filter-name>CookieBufferingFilter</filter-name>
-        <url-pattern>/idp/Shibboleth/SSO</url-pattern>
-        <url-pattern>/idp/SAML2/Unsolicited/SSO</url-pattern>
-        <url-pattern>/idp/SAML2/Redirect/SSO</url-pattern>
-        <url-pattern>/idp/SAML2/POST/SSO</url-pattern>
+        <url-pattern>/profile/Shibboleth/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/Unsolicited/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/Redirect/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/POST/SSO</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>DelegatingFilterProxy</filter-name>
-        <url-pattern>/idp/Shibboleth/SSO</url-pattern>
-        <url-pattern>/idp/SAML2/Unsolicited/SSO</url-pattern>
-        <url-pattern>/idp/SAML2/Redirect/SSO</url-pattern>
-        <url-pattern>/idp/SAML2/POST/SSO</url-pattern>
+        <url-pattern>/profile/Shibboleth/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/Unsolicited/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/Redirect/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/POST/SSO</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>RequestResponseContextFilter</filter-name>
@@ -85,7 +85,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>idp</servlet-name>
-        <url-pattern>/profile/*</url-pattern>
+        <url-pattern>/</url-pattern>
     </servlet-mapping>
  
     <!-- Servlet for displaying IdP status. -->
