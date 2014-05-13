@@ -1,5 +1,13 @@
-<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" entityID="https://sp.example.org">
+<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" entityID="https://sp.example.org">
     <SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol urn:oasis:names:tc:SAML:1.1:protocol" AuthnRequestsSigned="false">
+        <Extensions>
+            <mdui:UIInfo>
+                <mdui:DisplayName xml:lang="en">TEST SP (display Name)</mdui:DisplayName>
+                <mdui:Description xml:lang="en">TEST SP (description)Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit.
+                </mdui:Description>
+                <mdui:Logo height="65" width="150">https://shibboleth.net/images/shibboleth.png</mdui:Logo>
+            </mdui:UIInfo>
+        </Extensions>
         
         <KeyDescriptor>
             <KeyInfo xmlns="http://www.w3.org/2000/09/xmldsig#">
