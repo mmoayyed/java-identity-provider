@@ -65,10 +65,6 @@
     <!-- <filter> <filter-name>SL4JCleanupFilter</filter-name> <filter-class>edu.internet2.middleware.shibboleth.common.log.SLF4JMDCCleanupFilter</filter-class> 
         </filter> <filter-mapping> <filter-name>SL4JCleanupFilter</filter-name> <url-pattern>/*</url-pattern> </filter-mapping> -->
 
-    <!-- Add IdP Session object to incoming profile requests -->
-    <!-- <filter> <filter-name>IdPSessionFilter</filter-name> <filter-class>edu.internet2.middleware.shibboleth.idp.session.IdPSessionFilter</filter-class> 
-        </filter> <filter-mapping> <filter-name>IdPSessionFilter</filter-name> <url-pattern>/*</url-pattern> </filter-mapping> -->
-
     <!-- HTTP headers to every response in order to prevent response caching -->
     <!-- <filter> <filter-name>IdPNoCacheFilter</filter-name> <filter-class>edu.internet2.middleware.shibboleth.idp.util.NoCacheFilter</filter-class> 
         </filter> <filter-mapping> <filter-name>IdPNoCacheFilter</filter-name> <url-pattern>/*</url-pattern> </filter-mapping> -->
