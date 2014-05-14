@@ -3,12 +3,14 @@
 
 # TODO These paths will obviously change.
 
-JAVA_OPTIONS="-Didp.home=/opt/shibboleth-idpv3"
-
-JETTY_ARGS=/opt/shibboleth-idpv3/conf/idp.properties
-
-JETTY_BASE=/opt/shibboleth-idpv3/jetty-base
+IDP_HOME=/opt/shibboleth-idpv3/idp-distribution-3.0-SNAPSHOT
 
 JETTY_HOME=/opt/jetty/jetty-distribution-9.2.0-SNAPSHOT
+
+JAVA_OPTIONS="-Didp.home=$IDP_HOME"
+
+JETTY_ARGS=$IDP_HOME/conf/idp.properties
+
+JETTY_BASE=$IDP_HOME/jetty-base
 
 TMPDIR=/opt/jetty/temp
