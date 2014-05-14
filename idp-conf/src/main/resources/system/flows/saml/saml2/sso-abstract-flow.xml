@@ -40,9 +40,13 @@
         <evaluate expression="AddNotBeforeConditionToAssertions" />
         <evaluate expression="AddNotOnOrAfterConditionToAssertions" />
         <evaluate expression="AddAudienceRestrictionToAssertions" />
-        <evaluate expression="SignAssertions" />
 
+        <!-- Needs access to unencrypted NameID and Assertion. -->
         <evaluate expression="UpdateSessionWithSPSession" />
+
+        <evaluate expression="SignAssertions" />
+        <evaluate expression="EncryptAssertions" />
+
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="ReturnToParentFlow" />

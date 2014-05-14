@@ -67,6 +67,16 @@
                 c:lifetime="${idp.session.defaultSPlifetime}"/>
         </property>
     </bean>
+    
+    <bean id="EncryptAssertions"
+            class="org.opensaml.saml.saml2.profile.impl.EncryptAssertions" scope="prototype"
+            p:recipientLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple">
+        <property name="encryptionContextLookupStrategy">
+            <bean class="com.google.common.base.Functions" factory-method="compose"
+                c:g-ref="shibboleth.ChildLookup.EncryptionParameters"
+                c:f-ref="shibboleth.ChildLookup.RelyingParty" />
+        </property>
+    </bean>
 
     <bean id="outboundMessageHandlerChain"
             class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">

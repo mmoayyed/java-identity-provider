@@ -27,6 +27,9 @@
     <bean id="shibboleth.ChildLookup.SecurityParameters"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(org.opensaml.xmlsec.context.SecurityParametersContext) }" />
+    <bean id="shibboleth.ChildLookup.EncryptionParameters"
+        class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+        c:type="#{ T(org.opensaml.saml.saml2.profile.context.EncryptionContext) }" />
     <bean id="shibboleth.ChildLookupOrCreate.SecurityParameters"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(org.opensaml.xmlsec.context.SecurityParametersContext) }"
