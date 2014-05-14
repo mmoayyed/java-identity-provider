@@ -155,16 +155,19 @@
 
     <!-- TODO: all this is probably wrong, but need it to get something working -->
     
-    <bean id="shibboleth.MetadataCredentialResolver" class="org.opensaml.saml.security.impl.MetadataCredentialResolver">
-        <constructor-arg>
-            <bean class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
-                c:mdResolver-ref="shibboleth.MetadataResolver" />
-        </constructor-arg>
+    <bean id="shibboleth.RoleDescriptorResolver" class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
+        c:mdResolver-ref="shibboleth.MetadataResolver" />
+    
+    <bean id="shibboleth.MetadataCredentialResolver" class="org.opensaml.saml.security.impl.MetadataCredentialResolver"
+         p:roleDescriptorResolver-ref="shibboleth.RoleDescriptorResolver"            
+         p:keyInfoCredentialResolver-ref="shibboleth.KeyInfoCredentialResolver">
     </bean>
 
+    <!--  TODO: this will need to go away, b/c the SecurityConfiguration is going away. -->
     <bean id="shibboleth.GlobalSecurityConfiguration" class="org.opensaml.xmlsec.SecurityConfigurationSupport"
         factory-method="getGlobalXMLSecurityConfiguration" />
     
+    <!--  TODO: this should probably transition to a helper class, or else just build it from a factory bean, etc. -->
     <bean id="shibboleth.KeyInfoCredentialResolver" factory-bean="shibboleth.GlobalSecurityConfiguration"
         factory-method="getDefaultKeyInfoCredentialResolver" />
 
