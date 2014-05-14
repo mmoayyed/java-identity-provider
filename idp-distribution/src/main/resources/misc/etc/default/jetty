@@ -1,0 +1,14 @@
+# See http://www.eclipse.org/jetty/documentation/current/startup-unix-service.html
+# See https://github.com/eclipse/jetty.project/blob/master/jetty-distribution/src/main/resources/bin/jetty.sh
+
+# TODO These paths will obviously change.
+
+JAVA_OPTIONS="-Didp.home=/opt/shibboleth-idpv3"
+
+JETTY_ARGS=/opt/shibboleth-idpv3/conf/idp.properties
+
+JETTY_BASE=/opt/shibboleth-idpv3/jetty-base
+
+JETTY_HOME=/opt/jetty/jetty-distribution-9.2.0-SNAPSHOT
+
+TMPDIR=/opt/jetty/temp

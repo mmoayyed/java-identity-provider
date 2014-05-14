@@ -17,6 +17,7 @@
 
     <properties>
         <assembly-directory>${project.build.directory}/${project.build.finalName}</assembly-directory>
+        <jetty9-dta-ssl.version>1.0-SNAPSHOT</jetty9-dta-ssl.version>
     </properties>
 
     <dependencies>
@@ -33,14 +34,37 @@
 
     <build>
         <plugins>
-
+            <!-- Copy src/main/resources to assembly directory. -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <includeEmptyDirs>true</includeEmptyDirs>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/src/main/resources</directory>
+                                </resource>
+                            </resources>
+                            <outputDirectory>${assembly-directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <!-- Copy war to assembly directory. -->
                     <execution>
-                        <id>copy</id>
-                        <phase>package</phase>
+                        <id>copy-idp-war</id>
+                        <phase>
+                            package
+                        </phase>
                         <goals>
                             <goal>copy</goal>
                         </goals>
@@ -60,7 +84,7 @@
                     </execution>
                     <!-- Unpack idp-conf to assembly directory. -->
                     <execution>
-                        <id>unpack-dependencies</id>
+                        <id>unpack-idp-conf</id>
                         <phase>package</phase>
                         <goals>
                             <goal>unpack</goal>
@@ -78,26 +102,24 @@
                             </artifactItems>
                         </configuration>
                     </execution>
-                </executions>
-            </plugin>
-            <!-- Copy src/main/resources to assembly directory. -->
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
+                    <!-- Copy Jetty DTA plugin to jetty-base/lib/ext directory. -->
                     <execution>
-                        <id>copy-base-resources</id>
-                        <phase>generate-resources</phase>
+                        <id>copy-jetty-dta-ssl</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>copy-resources</goal>
+                            <goal>copy</goal>
                         </goals>
                         <configuration>
-                            <includeEmptyDirs>true</includeEmptyDirs>
-                            <resources>
-                                <resource>
-                                    <directory>${basedir}/src/main/resources</directory>
-                                </resource>
-                            </resources>
-                            <outputDirectory>${assembly-directory}</outputDirectory>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>net.shibboleth.utilities.jetty9</groupId>
+                                    <artifactId>jetty9-dta-ssl</artifactId>
+                                    <version>${jetty9-dta-ssl.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${assembly-directory}/jetty-base/lib/ext</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
                         </configuration>
                     </execution>
                 </executions>
