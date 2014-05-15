@@ -28,6 +28,7 @@
         <evaluate expression="AddNotOnOrAfterConditionToAssertions" />
         <evaluate expression="AddAudienceRestrictionToAssertions" />
         
+        <evaluate expression="EncryptNameIDs" />
         <evaluate expression="EncryptAttributes" />
         <evaluate expression="SignAssertions" />
         <evaluate expression="EncryptAssertions" />
