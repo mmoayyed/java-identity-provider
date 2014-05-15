@@ -11,7 +11,7 @@
         <relativePath>../idp-parent</relativePath>
     </parent>
 
-    <name>idp-ui</name>
+    <name>Shibboleth IdP :: UI Support</name>
     <artifactId>idp-ui</artifactId>
     <packaging>jar</packaging>
 
