@@ -34,8 +34,6 @@ import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.criterion.ProtocolCriterion;
 import org.opensaml.saml.criterion.RoleDescriptorCriterion;
 import org.opensaml.saml.saml2.profile.context.EncryptionContext;
-import org.opensaml.security.credential.UsageType;
-import org.opensaml.security.criteria.UsageCriterion;
 import org.opensaml.xmlsec.EncryptionConfiguration;
 import org.opensaml.xmlsec.EncryptionParameters;
 import org.opensaml.xmlsec.EncryptionParametersResolver;
@@ -362,8 +360,6 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
                 }
             }
         }
-        
-        criteria.add(new UsageCriterion(UsageType.ENCRYPTION));
         
         return criteria;
     }
