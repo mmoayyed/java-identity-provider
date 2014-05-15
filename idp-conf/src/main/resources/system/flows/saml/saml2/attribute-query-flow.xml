@@ -27,7 +27,11 @@
         <evaluate expression="AddNotBeforeConditionToAssertions" />
         <evaluate expression="AddNotOnOrAfterConditionToAssertions" />
         <evaluate expression="AddAudienceRestrictionToAssertions" />
+        
+        <evaluate expression="EncryptAttributes" />
         <evaluate expression="SignAssertions" />
+        <evaluate expression="EncryptAssertions" />
+        
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="ReturnToParentFlow" />

@@ -44,6 +44,7 @@
         <!-- Needs access to unencrypted NameID and Assertion. -->
         <evaluate expression="UpdateSessionWithSPSession" />
 
+        <evaluate expression="EncryptAttributes" />
         <evaluate expression="SignAssertions" />
         <evaluate expression="EncryptAssertions" />
 
