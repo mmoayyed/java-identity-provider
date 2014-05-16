@@ -58,6 +58,16 @@
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:method="urn:oasis:names:tc:SAML:2.0:cm:bearer" />
 
+    <bean id="AddProxyRestrictionToAssertions"
+            class="org.opensaml.saml.saml2.profile.impl.AddProxyRestrictionToAssertions" scope="prototype">
+        <property name="proxyAudiencesLookupStrategy">
+            <bean class="net.shibboleth.idp.saml.profile.config.navigate.ProxyAudienceRestrictionsLookupFunction" />
+        </property>
+        <property name="proxyCountLookupStrategy">
+            <bean class="net.shibboleth.idp.saml.profile.config.navigate.ProxyCountLookupFunction" />
+        </property>
+    </bean>
+
     <bean id="UpdateSessionWithSPSession"
             class="net.shibboleth.idp.session.impl.UpdateSessionWithSPSession" scope="prototype"
             p:enabled="${idp.session.enabled}"
