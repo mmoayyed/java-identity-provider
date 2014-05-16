@@ -15,51 +15,41 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.config.navigate;
+package net.shibboleth.idp.saml.profile.config.navigate;
 
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.idp.profile.config.navigate.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
+import net.shibboleth.idp.saml.saml2.profile.config.SAML2ProfileConfiguration;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
- * A function that returns an {@link IdentifierGenerationStrategy} by way of a {@link RelyingPartyContext}
- * obtained via a lookup function, by default a child of the {@link ProfileRequestContext}.
+ * A function that returns the allowable proxy count to include in assertions,
+ * based on the result of {@link SAML2ProfileConfiguration#getProxyCount()},
+ * if such a profile is available from a {@link RelyingPartyContext} obtained via a lookup function,
+ * by default a child of the {@link ProfileRequestContext}.
  * 
- * <p>If a specific setting is unavailable, a default generator can be returned.</p>
+ * <p>If a specific setting is unavailable, a null is returned.</p>
  */
-public class IdentifierGenerationStrategyLookupFunction
-        extends AbstractRelyingPartyLookupFunction<IdentifierGenerationStrategy> {
-    
-    /** Default strategy to return. */
-    @Nullable private IdentifierGenerationStrategy defaultGenerator;
-    
-    /**
-     * Set the default {@link IdentifierGenerationStrategy} to return.
-     * 
-     * @param strategy  default generation strategy;
-     */
-    public void setDefaultIdentifierGenerationStrategy(@Nullable final IdentifierGenerationStrategy strategy) {
-        defaultGenerator = strategy;
-    }
+public class ProxyCountLookupFunction extends AbstractRelyingPartyLookupFunction<Long> {
 
     /** {@inheritDoc} */
     @Override
-    @Nullable public IdentifierGenerationStrategy apply(@Nullable final ProfileRequestContext input) {
+    @Nullable public Long apply(@Nullable final ProfileRequestContext input) {
         if (input != null) {
             final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
             if (rpc != null) {
                 final ProfileConfiguration pc = rpc.getProfileConfig();
-                if (pc != null && pc.getSecurityConfiguration() != null) {
-                    return pc.getSecurityConfiguration().getIdGenerator();
+                if (pc != null && pc instanceof SAML2ProfileConfiguration) {
+                    return ((SAML2ProfileConfiguration) pc).getProxyCount();
                 }
             }
         }
         
-        return defaultGenerator;
+        return null;
     }
 
 }

@@ -60,8 +60,7 @@ public class EncryptionConfigurationLookupFunction
      * 
      * @param resolver the resolver to use
      */
-    public synchronized void setRelyingPartyConfigurationResolver(
-            @Nullable final RelyingPartyConfigurationResolver resolver) {
+    public void setRelyingPartyConfigurationResolver(@Nullable final RelyingPartyConfigurationResolver resolver) {
         rpResolver = resolver;
     }
     
@@ -71,7 +70,7 @@ public class EncryptionConfigurationLookupFunction
      * 
      * @param strategy lookup strategy
      */
-    public synchronized void setRelyingPartyContextLookupStrategy(
+    public void setRelyingPartyContextLookupStrategy(
             @Nullable final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
         relyingPartyContextLookupStrategy = strategy;
     }

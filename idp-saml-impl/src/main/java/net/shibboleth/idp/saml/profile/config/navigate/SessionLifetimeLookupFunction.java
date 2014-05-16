@@ -17,18 +17,14 @@
 
 package net.shibboleth.idp.saml.profile.config.navigate;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.idp.profile.config.navigate.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Function;
 
 /**
  * A function that returns {@link BrowserSSOProfileConfiguration#getMaximumSPSessionLifetime()}
@@ -37,37 +33,13 @@ import com.google.common.base.Function;
  * 
  * <p>If a specific setting is unavailable, zero is returned.</p>
  */
-public class SessionLifetimeLookupFunction implements Function<ProfileRequestContext, Long> {
-
-    /**
-     * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
-     */
-    @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
-    
-    /** Constructor. */
-    public SessionLifetimeLookupFunction() {
-        relyingPartyContextLookupStrategy =
-                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class, false);
-    }
-
-    /**
-     * Sets the strategy used to locate the {@link RelyingPartyContext} associated with a given
-     * {@link ProfileRequestContext}.
-     * 
-     * @param strategy strategy used to locate the {@link RelyingPartyContext} associated with a given
-     *            {@link ProfileRequestContext}
-     */
-    public synchronized void setRelyingPartyContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
-        relyingPartyContextLookupStrategy =
-                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
-    }
+public class SessionLifetimeLookupFunction extends AbstractRelyingPartyLookupFunction<Long> {
 
     /** {@inheritDoc} */
     @Override
     @Nullable public Long apply(@Nullable final ProfileRequestContext input) {
         if (input != null) {
-            final RelyingPartyContext rpc = relyingPartyContextLookupStrategy.apply(input);
+            final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
             if (rpc != null) {
                 final ProfileConfiguration pc = rpc.getProfileConfig();
                 if (pc != null && pc instanceof BrowserSSOProfileConfiguration) {
