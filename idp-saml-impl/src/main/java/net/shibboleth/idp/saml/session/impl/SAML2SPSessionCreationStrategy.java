@@ -159,7 +159,7 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
             @Nonnull final ProfileRequestContext profileRequestContext) {
         
         final Response response = responseLookupStrategy.apply(profileRequestContext);
-        if (response != null) {
+        if (response == null) {
             log.debug("No Response message or Assertions found");
             return null;
         }
