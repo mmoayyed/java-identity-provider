@@ -162,14 +162,9 @@
          p:roleDescriptorResolver-ref="shibboleth.RoleDescriptorResolver"            
          p:keyInfoCredentialResolver-ref="shibboleth.KeyInfoCredentialResolver">
     </bean>
-
-    <!--  TODO: this will need to go away, b/c the SecurityConfiguration is going away. -->
-    <bean id="shibboleth.GlobalSecurityConfiguration" class="org.opensaml.xmlsec.SecurityConfigurationSupport"
-        factory-method="getGlobalXMLSecurityConfiguration" />
     
-    <!--  TODO: this should probably transition to a helper class, or else just build it from a factory bean, etc. -->
-    <bean id="shibboleth.KeyInfoCredentialResolver" factory-bean="shibboleth.GlobalSecurityConfiguration"
-        factory-method="getDefaultKeyInfoCredentialResolver" />
+    <bean id="shibboleth.KeyInfoCredentialResolver" class="org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap"
+        factory-method="buildBasicInlineKeyInfoCredentialResolver" />
 
     <bean id="shibboleth.SignatureTrustEngine" class="org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine">
         <constructor-arg ref="shibboleth.MetadataCredentialResolver" />
