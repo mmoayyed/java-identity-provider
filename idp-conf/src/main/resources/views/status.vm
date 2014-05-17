@@ -9,8 +9,8 @@
 ## startupTime - Spring context startup as DateTime
 ## now - current DateTime
 ## dateTimeFormatter - formatter for DateTime toString method
-
-### Operating Environment Information
+#set ($header = "#")
+$header$header$header Operating Environment Information
 operating_system: $System.getProperty("os.name")
 operating_system_version: $System.getProperty("os.version")
 operating_system_architecture: $System.getProperty("os.arch")
@@ -19,7 +19,7 @@ available_cores: $runtime.availableProcessors()
 used_memory: $runtime.totalMemory() / 1048576 MB
 maximum_memory: $runtime.maxMemory() / 1048576 MB
 
-### Identity Provider Information
+$header$header$header Identity Provider Information
 idp_version: $Version.getVersion()
 
 start_time: $startupTime.toString($dateTimeFormatter)
