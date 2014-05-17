@@ -206,21 +206,19 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
         DefaultRelyingPartyConfigurationResolver resolver =
                 context.getBean(DefaultRelyingPartyConfigurationResolver.class);
 
-        Assert.assertNotNull(resolver
-                .getDefaultSecurityConfiguration(ArtifactResolutionProfileConfiguration.PROFILE_ID));
-        Assert.assertNotNull(resolver.getDefaultSecurityConfiguration(AttributeQueryProfileConfiguration.PROFILE_ID));
-        Assert.assertNotNull(resolver.getDefaultSecurityConfiguration(BrowserSSOProfileConfiguration.PROFILE_ID));
+        Assert.assertNull(resolver.getDefaultSecurityConfiguration(ArtifactResolutionProfileConfiguration.PROFILE_ID));
+        Assert.assertNull(resolver.getDefaultSecurityConfiguration(AttributeQueryProfileConfiguration.PROFILE_ID));
+        Assert.assertNull(resolver.getDefaultSecurityConfiguration(BrowserSSOProfileConfiguration.PROFILE_ID));
 
-        Assert.assertNotNull(resolver
+        Assert.assertNull(resolver
                 .getDefaultSecurityConfiguration(net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration.PROFILE_ID));
-        Assert.assertNotNull(resolver
+        Assert.assertNull(resolver
                 .getDefaultSecurityConfiguration(net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration.PROFILE_ID));
-        Assert.assertNotNull(resolver
+        Assert.assertNull(resolver
                 .getDefaultSecurityConfiguration(net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration.PROFILE_ID));
-        Assert.assertNotNull(resolver.getDefaultSecurityConfiguration(ECPProfileConfiguration.PROFILE_ID));
+        Assert.assertNull(resolver.getDefaultSecurityConfiguration(ECPProfileConfiguration.PROFILE_ID));
+        Assert.assertNull(resolver.getDefaultSecurityConfiguration(SSOSProfileConfiguration.PROFILE_ID));
 
-        Assert.assertNotNull(resolver.getDefaultSecurityConfiguration(SSOSProfileConfiguration.PROFILE_ID));
-
-        Assert.assertNotNull(resolver.getDefaultSecurityConfiguration("foobar"));
+        Assert.assertNull(resolver.getDefaultSecurityConfiguration("foobar"));
     }
 }
