@@ -1,0 +1,27 @@
+##
+## Velocity Template for Status Reporting flow
+##
+## Velocity context will contain the following properties
+## flowRequestContext - the Spring Web Flow RequestContext
+## runtime - java.lang.Runtime.getRuntime()
+## System - java.lang.System class
+## Version - net.shibboleth.idp.Version class
+## startupTime - Spring context startup as DateTime
+## now - current DateTime
+## dateTimeFormatter - formatter for DateTime toString method
+
+### Operating Environment Information
+operating_system: $System.getProperty("os.name")
+operating_system_version: $System.getProperty("os.version")
+operating_system_architecture: $System.getProperty("os.arch")
+jdk_version: $System.getProperty("java.version")
+available_cores: $runtime.availableProcessors()
+used_memory: $runtime.totalMemory() / 1048576 MB
+maximum_memory: $runtime.maxMemory() / 1048576 MB
+
+### Identity Provider Information
+idp_version: $Version.getVersion()
+
+start_time: $startupTime.toString($dateTimeFormatter)
+current_time: $now.toString($dateTimeFormatter)
+uptime: $now.getMillis() - $startupTime.getMillis() ms

@@ -1,0 +1,42 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+
+    <action-state id="CheckAccess">
+        <evaluate expression="InitializeProfileRequestContext" />
+        <evaluate expression="CheckAccess" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="Status" />
+    </action-state>
+    
+    <!-- Terminus -->
+
+    <end-state id="Status" view="status">
+        <on-entry>
+            <evaluate expression="T(java.lang.Runtime).getRuntime()" result="requestScope.runtime" />
+            <evaluate expression="T(java.lang.System)" result="requestScope.System" />
+            <evaluate expression="T(net.shibboleth.idp.Version)" result="requestScope.Version" />
+            <evaluate expression="T(org.joda.time.format.ISODateTimeFormat).dateTimeNoMillis()" result="requestScope.dateTimeFormatter" />
+            <evaluate expression="new org.joda.time.DateTime(flowExecutionContext.getActiveSession().getDefinition().getApplicationContext().getStartupDate())"
+                result="requestScope.startupTime" />
+            <evaluate expression="T(org.joda.time.DateTime).now()" result="requestScope.now" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse().setContentType('text/plain')" />
+        </on-entry>
+    </end-state>
+
+    <end-state id="error" view="error">
+        <on-entry>
+            <evaluate expression="flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext')" result="requestScope.profileRequestContext" />
+        </on-entry>
+    </end-state>
+
+    <!-- Default is to turn non-proceed events into an error. -->
+    <global-transitions>
+        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="error" />
+    </global-transitions>
+
+    <!-- The import references the parent folder because the abstract flow is used only from one level down. -->
+    <bean-import resource="status-beans.xml" />
+
+</flow>

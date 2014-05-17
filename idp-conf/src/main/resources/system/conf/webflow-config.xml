@@ -22,6 +22,9 @@
     <!-- System-supplied flows, do not modify. -->
     <webflow:flow-registry id="flowRegistry" parent="userFlowRegistry" base-path="file:///${idp.home}/system/flows" flow-builder-services="flowBuilderServices">
 
+        <!-- Status flow. -->
+        <webflow:flow-location id="status" path="/status/status-flow.xml" />
+
         <!-- Abstract flows underpinning SAML profiles. -->
         <webflow:flow-location id="saml.abstract" path="/saml/saml-abstract-flow.xml" />
         <webflow:flow-location id="saml1.sso.abstract" path="/saml/saml1/sso-abstract-flow.xml" />
@@ -53,6 +56,7 @@
         <webflow:flow-location id="authn/RemoteUser" path="/authn/remoteuser-authn-flow.xml" />
         <webflow:flow-location id="authn/JAAS" path="/authn/jaas-authn-flow.xml" />
         <webflow:flow-location id="authn/LDAP" path="/authn/ldap-authn-flow.xml" />
+        <webflow:flow-location id="authn/External" path="/authn/external-authn-flow.xml" />
 
         <!-- Master flows for post-authn and SAML subject c14n. -->
         <webflow:flow-location id="c14n.abstract" path="/c14n/subject-c14n-abstract-flow.xml" />

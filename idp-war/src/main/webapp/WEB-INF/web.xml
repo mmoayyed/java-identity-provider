@@ -45,6 +45,7 @@
         <url-pattern>/profile/SAML2/Unsolicited/SSO</url-pattern>
         <url-pattern>/profile/SAML2/Redirect/SSO</url-pattern>
         <url-pattern>/profile/SAML2/POST/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/POST-SimpleSign/SSO</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>DelegatingFilterProxy</filter-name>
@@ -52,6 +53,7 @@
         <url-pattern>/profile/SAML2/Unsolicited/SSO</url-pattern>
         <url-pattern>/profile/SAML2/Redirect/SSO</url-pattern>
         <url-pattern>/profile/SAML2/POST/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/POST-SimpleSign/SSO</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>RequestResponseContextFilter</filter-name>
@@ -80,22 +82,6 @@
         <servlet-name>idp</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
- 
-    <!-- Servlet for displaying IdP status. -->
-    <servlet>
-        <servlet-name>Status</servlet-name>
-        <servlet-class>net.shibboleth.idp.StatusServlet</servlet-class>
-        <!-- Space separated list of CIDR blocks allowed to access the status page -->
-        <init-param>
-            <param-name>AllowedIPs</param-name>
-            <param-value>127.0.0.1/32 ::1/128</param-value>
-        </init-param>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Status</servlet-name>
-        <url-pattern>/status</url-pattern>
-    </servlet-mapping>
 
     <!-- Send request to the EntityID to the SAML metadata handler. -->
     <!-- 
@@ -107,12 +93,12 @@
         <servlet-name>shibboleth_jsp</servlet-name>
         <url-pattern>/shibboleth</url-pattern>
     </servlet-mapping>
-    -->
 
     <error-page>
         <error-code>500</error-code>
         <location>/error-500.jsp</location>
     </error-page>
+    -->
 
     <error-page>
         <error-code>404</error-code>

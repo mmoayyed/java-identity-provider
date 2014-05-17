@@ -86,8 +86,10 @@ public final class Version {
     }
 
     static {
-        VERSION = Version.class.getPackage().getImplementationVersion();
-        String[] versionParts = VERSION.split(".");
+        // TODO: this doesn't work at the moment.
+        //VERSION = Version.class.getPackage().getImplementationVersion();
+        VERSION = "3.0.0";
+        String[] versionParts = VERSION.split("\\.");
         MAJOR_VERSION = Integer.parseInt(versionParts[0]);
         MINOR_VERSION = Integer.parseInt(versionParts[1]);
         MICRO_VERSION = Integer.parseInt(versionParts[2]);
