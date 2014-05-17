@@ -1,1 +1,1 @@
-<jsp:forward page="/profile/Metadata/SAML" />
+Metadata profile is still tbd
