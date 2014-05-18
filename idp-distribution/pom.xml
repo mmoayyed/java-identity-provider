@@ -46,12 +46,12 @@
                         </goals>
                         <configuration>
                             <includeEmptyDirs>true</includeEmptyDirs>
+                             <outputDirectory>${assembly-directory}</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${basedir}/src/main/resources</directory>
                                 </resource>
                             </resources>
-                            <outputDirectory>${assembly-directory}</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -62,9 +62,7 @@
                     <!-- Copy war to assembly directory. -->
                     <execution>
                         <id>copy-idp-war</id>
-                        <phase>
-                            package
-                        </phase>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>copy</goal>
                         </goals>
@@ -85,7 +83,7 @@
                     <!-- Unpack idp-conf to assembly directory. -->
                     <execution>
                         <id>unpack-idp-conf</id>
-                        <phase>package</phase>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>unpack</goal>
                         </goals>
@@ -105,7 +103,7 @@
                     <!-- Copy Jetty DTA plugin to jetty-base/lib/ext directory. -->
                     <execution>
                         <id>copy-jetty-dta-ssl</id>
-                        <phase>package</phase>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>copy</goal>
                         </goals>
@@ -131,7 +129,7 @@
                 <version>1.7</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <phase>process-resources</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
