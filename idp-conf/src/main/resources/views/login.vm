@@ -1,0 +1,36 @@
+##
+## Velocity Template for DisplayUsernamePasswordPage view-state
+##
+## Velocity context will contain the following properties
+## flowExecutionUrl - the form action location
+## flowRequestContext - the Spring Web Flow RequestContext
+## flowExecutionKey - the SWF execution key (this is built into the flowExecutionUrl)
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <body>
+    
+    <h2>Testbed Login</h2>
+
+#if ( $authenticationErrorContext && $authenticationErrorContext.getExceptions().size() > 0 )
+		<p>ERROR: $authenticationErrorContext.getExceptions().get(0).getMessage()</p>
+#end
+
+#if ( $authenticationErrorContext && $authenticationErrorContext.getClassifiedErrors().size() > 0 )
+        <p>Classified errors: $authenticationErrorContext.getClassifiedErrors().toString()</p>
+#end
+        
+#if ( $authenticationWarningContext && $authenticationWarningContext.getClassifiedWarnings().size() > 0 )
+        <p>Classified warnings: $authenticationWarningContext.getClassifiedWarnings().toString()</p>
+#end
+        
+        <form action="$flowExecutionUrl" method="post">
+            Username: <input type="text" name="username" value=""/> <br/>
+            Password: <input type="password" name="password" value=""/> <br/>
+            
+            <input type="submit" name="_eventId_proceed" value="Login"/> <br/>
+            <input type="checkbox" name="donotcache" value="1" /> Don't Remember Login
+        </form>
+        
+    </body>
+</html>

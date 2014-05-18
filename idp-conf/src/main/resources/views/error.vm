@@ -1,0 +1,20 @@
+##
+## Velocity Template for error end-state
+##
+## Velocity context will contain the following properties
+## flowRequestContext - the Spring Web Flow RequestContext
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <body>
+    
+    <h2>ERROR</h2>
+## TODO
+    #set ($encoder = $flowRequestContext.getRequestScope().get('encoder'))
+
+    #if ( $flowRequestContext.getCurrentEvent() )
+            <p>ERROR: $flowRequestContext.getCurrentEvent().getId()</p>
+    #end
+        
+    </body>
+</html>
