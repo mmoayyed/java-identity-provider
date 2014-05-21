@@ -35,6 +35,9 @@
 
     <logger name="org.opensaml.xmlsec" level="DEBUG" />
 
+    <!-- Do not log failed runtime support check exceptions. -->
+    <logger name="org.opensaml.xmlsec.algorithm.AlgorithmRegistry" level="INFO" />
+
     <!-- Do not log exception when bean definition class is a property and root level is DEBUG. -->
     <logger name="org.springframework.beans.factory.support.DefaultListableBeanFactory" level="INFO" />
 
