@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.profile.context.navigate;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -31,15 +30,17 @@ import com.google.common.base.Function;
  * {@link ProfileRequestContext#BINDING_KEY}.
  */
 public class WebflowRequestContextProfileRequestContextLookup implements
-        Function<RequestContext, ProfileRequestContext> {
+        Function<RequestContext,ProfileRequestContext> {
 
     /** {@inheritDoc} */
-    @Nullable public ProfileRequestContext apply(@Nonnull RequestContext requestContext) {
-        Object ctx = requestContext.getConversationScope().get(ProfileRequestContext.BINDING_KEY);
+    @Override
+    @Nullable public ProfileRequestContext apply(@Nullable final RequestContext requestContext) {
+        final Object ctx = requestContext.getConversationScope().get(ProfileRequestContext.BINDING_KEY);
         if (ctx instanceof ProfileRequestContext) {
             return (ProfileRequestContext) ctx;
         }
         
         return null;
     }
+    
 }

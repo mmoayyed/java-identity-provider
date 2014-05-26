@@ -227,7 +227,12 @@
 
     <bean id="RecordResponseComplete" class="net.shibboleth.idp.profile.impl.RecordResponseComplete" scope="prototype" />
 
-    <bean id="LocalErrorPredicate" class="org.opensaml.saml.common.profile.logic.DefaultLocalErrorPredicate"
-        p:localEvents-ref="shibboleth.LocalEvents" />
+    <bean id="LocalErrorPredicate"
+            class="org.opensaml.saml.common.profile.logic.DefaultLocalErrorPredicate"
+            p:localEvents-ref="shibboleth.LocalEvents">
+        <property name="eventContextLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.context.navigate.WebFlowCurrentEventLookupFunction" />
+        </property>
+    </bean>
     
 </beans>

@@ -60,10 +60,11 @@ import com.google.common.collect.Lists;
  *  
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
+ * @event {@link AuthnEventIds#AUTHN_EXCEPTION}
  * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
- * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false).getAttemptedFlow() != null</pre>
- * @post If AuthenticationContext.getSubcontext(UsernamePasswordContext.class, false) != null, then
+ * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class).getAttemptedFlow() != null</pre>
+ * @post If AuthenticationContext.getSubcontext(UsernamePasswordContext.class) != null, then
  * an {@link net.shibboleth.idp.authn.AuthenticationResult} is saved to the {@link AuthenticationContext} on a
  * successful login. On a failed login, the
  * {@link AbstractValidationAction#handleError(ProfileRequestContext, AuthenticationContext, Exception, String)}
@@ -137,16 +138,12 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractValidationActio
      * 
      * @param names list of JAAS application names to use
      */
-    public void setLoginConfigNames(@Nonnull @NonnullElements List<String> names) {
+    public void setLoginConfigNames(@Nonnull @NonnullElements @NotEmpty List<String> names) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        Constraint.isNotNull(names, "Configuration name list cannot be null");
         
-        loginConfigNames = Lists.newArrayList();
-        for (String name : Constraint.isNotNull(names, "Configuration name list cannot be null")) {
-            String trimmed = StringSupport.trimOrNull(name);
-            if (trimmed != null) {
-                loginConfigNames.add(trimmed);
-            }
-        }
+        loginConfigNames = Lists.newArrayList(StringSupport.normalizeStringCollection(names));
+        
         if (loginConfigNames.isEmpty()) {
             throw new ConstraintViolationException("Configuration name list cannot be empty");
         }
@@ -157,20 +154,20 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractValidationActio
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         if (authenticationContext.getAttemptedFlow() == null) {
-            log.debug("{} no attempted flow within authentication context", getLogPrefix());
+            log.debug("{} No attempted flow within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
         
-        upContext = authenticationContext.getSubcontext(UsernamePasswordContext.class, false);
+        upContext = authenticationContext.getSubcontext(UsernamePasswordContext.class);
         if (upContext == null) {
-            log.debug("{} no UsernameContext available within authentication context", getLogPrefix());
+            log.debug("{} No UsernamePasswordContext available within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return false;
         }
 
         if (upContext.getUsername() == null || upContext.getPassword() == null) {
-            log.debug("{} no username or password available within UsernamePasswordContext", getLogPrefix());
+            log.debug("{} No username or password available within UsernamePasswordContext", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return false;
         }
@@ -185,17 +182,17 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractValidationActio
 
         for (String loginConfigName : loginConfigNames) {
             try {
-                log.debug("{} attempting to authenticate user '{}'", getLogPrefix(), upContext.getUsername());
+                log.debug("{} Attempting to authenticate user '{}'", getLogPrefix(), upContext.getUsername());
                 authenticate(loginConfigName);
-                log.debug("{} login by '{}' succeeded", getLogPrefix(), upContext.getUsername());
+                log.info("{} Login by '{}' succeeded", getLogPrefix(), upContext.getUsername());
                 buildAuthenticationResult(profileRequestContext, authenticationContext);
                 ActionSupport.buildProceedEvent(profileRequestContext);
                 return;
             } catch (LoginException e){ 
-                log.debug(getLogPrefix() + " login by '" + upContext.getUsername() + "' failed", e);
+                log.info(getLogPrefix() + " Login by '" + upContext.getUsername() + "' failed", e);
                 handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.INVALID_CREDENTIALS);
             } catch (Exception e) {
-                log.warn(getLogPrefix() + " login by '" + upContext.getUsername() + "' produced exception", e);
+                log.warn(getLogPrefix() + " Login by '" + upContext.getUsername() + "' produced exception", e);
                 handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
             }
         }
@@ -222,13 +219,13 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractValidationActio
         javax.security.auth.login.LoginContext jaasLoginCtx;
         
         if (getLoginConfigType() != null) {
-            log.debug("{} using custom JAAS configuration type {} with parameters of type {}", getLogPrefix(),
+            log.debug("{} Using custom JAAS configuration type {} with parameters of type {}", getLogPrefix(),
                     getLoginConfigType(), getLoginConfigParameters().getClass().getName());
             Configuration loginConfig = Configuration.getInstance(getLoginConfigType(), getLoginConfigParameters());
             jaasLoginCtx = new javax.security.auth.login.LoginContext(loginConfigName, getSubject(),
                     new SimpleCallbackHandler(), loginConfig);
         } else {
-            log.debug("{} using system JAAS configuration", getLogPrefix());
+            log.debug("{} Using system JAAS configuration", getLogPrefix());
             jaasLoginCtx = new javax.security.auth.login.LoginContext(loginConfigName, getSubject(),
                     new SimpleCallbackHandler());
         }

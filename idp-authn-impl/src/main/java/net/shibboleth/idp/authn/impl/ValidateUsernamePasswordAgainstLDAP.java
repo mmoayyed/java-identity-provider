@@ -52,12 +52,15 @@ import org.slf4j.LoggerFactory;
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
+ * @event {@link AuthnEventIds#AUTHN_EXCEPTION}
+ * @event {@link AuthnEventIds#ACCOUNT_WARNING}
+ * @event {@link AuthnEventIds#ACCOUNT_ERROR}
  * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
  * @pre <pre>
- * ProfileRequestContext.getSubcontext(AuthenticationContext.class, false).getAttemptedFlow() != null
+ * ProfileRequestContext.getSubcontext(AuthenticationContext.class).getAttemptedFlow() != null
  * </pre>
- * @post If AuthenticationContext.getSubcontext(UsernamePasswordContext.class, false) != null, then an
+ * @post If AuthenticationContext.getSubcontext(UsernamePasswordContext.class) != null, then an
  *       {@link net.shibboleth.idp.authn.AuthenticationResult} is saved to the {@link AuthenticationContext} on a
  *       successful login. On a failed login, the
  *       {@link AbstractValidationAction#handleError(ProfileRequestContext, AuthenticationContext, String, String)}
@@ -135,20 +138,20 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         if (authenticationContext.getAttemptedFlow() == null) {
-            log.debug("{} no attempted flow within authentication context", getLogPrefix());
+            log.debug("{} No attempted flow within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
 
-        upContext = authenticationContext.getSubcontext(UsernamePasswordContext.class, false);
+        upContext = authenticationContext.getSubcontext(UsernamePasswordContext.class);
         if (upContext == null) {
-            log.debug("{} no UsernameContext available within authentication context", getLogPrefix());
+            log.debug("{} No UsernamePasswordContext available within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return false;
         }
 
         if (upContext.getUsername() == null || upContext.getPassword() == null) {
-            log.debug("{} no username or password available within UsernamePasswordContext", getLogPrefix());
+            log.debug("{} No username or password available within UsernamePasswordContext", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return false;
         }
@@ -161,14 +164,14 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         try {
-            log.debug("{} attempting to authenticate user {}", getLogPrefix(), upContext.getUsername());
+            log.debug("{} Attempting to authenticate user {}", getLogPrefix(), upContext.getUsername());
             final AuthenticationRequest request =
                     new AuthenticationRequest(upContext.getUsername(), new Credential(upContext.getPassword()),
                             returnAttributes);
             response = authenticator.authenticate(request);
-            log.trace("{} authentication response {}", getLogPrefix(), response);
+            log.trace("{} Authentication response {}", getLogPrefix(), response);
             if (response.getResult()) {
-                log.debug("{} login by '{}' succeeded", getLogPrefix(), upContext.getUsername());
+                log.info("{} Login by '{}' succeeded", getLogPrefix(), upContext.getUsername());
                 authenticationContext.getSubcontext(LDAPResponseContext.class, true)
                         .setAuthenticationResponse(response);
                 if (response.getAccountState() != null) {
@@ -180,7 +183,7 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
                 }
                 buildAuthenticationResult(profileRequestContext, authenticationContext);
             } else {
-                log.debug("{} login by '{}' failed", getLogPrefix(), upContext.getUsername());
+                log.info("{} Login by '{}' failed", getLogPrefix(), upContext.getUsername());
                 authenticationContext.getSubcontext(LDAPResponseContext.class, true)
                         .setAuthenticationResponse(response);
                 if (AuthenticationResultCode.DN_RESOLUTION_FAILURE == response.getAuthenticationResultCode()
@@ -199,7 +202,7 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
                 }
             }
         } catch (LdapException e) {
-            log.warn(getLogPrefix() + " login by '" + upContext.getUsername() + "' produced exception", e);
+            log.warn(getLogPrefix() + " Login by '" + upContext.getUsername() + "' produced exception", e);
             handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
         }
     }

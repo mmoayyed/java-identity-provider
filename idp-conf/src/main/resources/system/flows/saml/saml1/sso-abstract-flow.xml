@@ -58,7 +58,10 @@
     <!-- Error Response Generation -->
 
     <decision-state id="HandleError">
-        <if test="LocalErrorPredicate.apply(flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext'))"
+        <on-entry>
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext), true).setRequestContext(flowRequestContext)" />
+        </on-entry>
+        <if test="LocalErrorPredicate.apply(opensamlProfileRequestContext)"
             then="error" else="HandleErrorWithResponse" />
     </decision-state>
 

@@ -57,6 +57,8 @@
         
         <bean id="authn/RemoteUser" parent="shibboleth.AbstractAuthenticationFlowBean" />
 
+        <bean id="authn/External" parent="shibboleth.AbstractAuthenticationFlowBean" />
+
         <bean id="authn/JAAS" parent="shibboleth.AbstractAuthenticationFlowBean"
                 p:passiveAuthenticationSupported="true"
                 p:forcedAuthenticationSupported="true" />

@@ -12,7 +12,7 @@
         <transition on="proceed" to="ValidateUsernamePasswordAgainstLDAP" />
         
         <!-- Fall through to a different flow if basic-auth extract fails on a passive request. -->
-        <transition on="#{ flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext').getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext), false).isPassive() }" to="ReselectFlow" />
+        <transition on="#{ opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).isPassive() }" to="ReselectFlow" />
         
         <transition on="NoCredentials" to="DisplayUsernamePasswordPage" />
         <transition on="InvalidCredentials" to="DisplayUsernamePasswordPage" />
@@ -20,8 +20,8 @@
     
     <view-state id="DisplayUsernamePasswordPage" view="login">
         <on-render>
-            <evaluate expression="flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext')" result="viewScope.profileRequestContext" />
-            <evaluate expression="profileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext))" result="viewScope.authenticationContext" />
+            <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext))" result="viewScope.authenticationContext" />
             <evaluate expression="authenticationContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationErrorContext))" result="viewScope.authenticationErrorContext" />
             <evaluate expression="authenticationContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationWarningContext))" result="viewScope.authenticationWarningContext" />
             <evaluate expression="authenticationContext.getSubcontext(T(net.shibboleth.idp.authn.context.LDAPResponseContext))" result="viewScope.ldapResponseContext" />
@@ -43,7 +43,7 @@
         <transition on="proceed" to="proceed" />
         
         <!-- Fall through to a different flow if login fails on a passive request. -->
-        <transition on="#{ flowRequestContext.getConversationScope().get('org.opensaml.profile.context.ProfileRequestContext').getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext), false).isPassive() }" to="ReselectFlow" />
+        <transition on="#{ opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).isPassive() }" to="ReselectFlow" />
 
         <!-- Error or warning transitions are determined by deployer in /flows/authn/conditions/conditions-flow.xml -->
     </action-state>
