@@ -25,9 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
-/**
- * Constants supporting external authentication outside the webflow engine.
- */
+/** Public interface supporting external authentication outside the webflow engine. */
 public class ExternalAuthentication {
 
     /** Parameter supplied to identify the per-conversation structure in the session. */
@@ -41,9 +39,6 @@ public class ExternalAuthentication {
 
     /** Request attribute to which user's subject should be bound. */
     @Nonnull @NotEmpty public static final String SUBJECT_KEY = "subject";
-
-    /** Request attribute to which an authentication method URI may be bound. */
-    @Nonnull @NotEmpty public static final String AUTHENTICATION_METHOD_KEY = "authnMethod";
 
     /** Request attribute to which an authentication timestamp may be bound. */
     @Nonnull @NotEmpty public static final String AUTHENTICATION_INSTANT_KEY = "authnInstant";

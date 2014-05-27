@@ -43,9 +43,6 @@ public final class ExternalAuthenticationContext extends BaseContext {
     /** Name of a {@link Subject} that was authenticated. */
     @Nullable private Subject subject;
 
-    /** Method used to authenticate. */
-    @Nullable private String authnMethod;
-
     /** Time of authentication. */
     @Nullable private DateTime authnInstant;
     
@@ -126,24 +123,6 @@ public final class ExternalAuthenticationContext extends BaseContext {
      */
     public void setSubject(@Nullable final Subject sub) {
         subject = sub;
-    }
-
-    /**
-     * Get the authentication method used.
-     * 
-     * @return the authentication method
-     */
-    @Nullable public String getAuthnMethod() {
-        return authnMethod;
-    }
-
-    /**
-     * Set the authentication method used.
-     * 
-     * @param method authentication method used
-     */
-    public void setAuthnMethod(@Nullable final String method) {
-        authnMethod = method;
     }
 
     /**
