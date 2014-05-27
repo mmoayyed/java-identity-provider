@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.joda.time.DateTime;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 
@@ -44,6 +46,9 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  */
 public class ExternalAuthenticationImpl extends ExternalAuthentication {
 
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ExternalAuthenticationImpl.class);
+    
     /** Lookup function for relying party context. */
     @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
     
@@ -147,11 +152,6 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
         attr = request.getAttribute(AUTHENTICATION_INSTANT_KEY);
         if (attr != null && attr instanceof DateTime) {
             extContext.setAuthnInstant((DateTime) attr);
-        }
-        
-        attr = request.getAttribute(AUTHENTICATION_METHOD_KEY);
-        if (attr != null && attr instanceof String) {
-            extContext.setAuthnMethod((String) attr);
         }
         
         attr = request.getAttribute(AUTHENTICATION_ERROR_KEY);
