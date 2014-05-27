@@ -114,6 +114,8 @@ public class ExternalAuthentication {
             throw new ExternalAuthenticationException("No conversation state found in session");
         }
         
+        request.getSession().removeAttribute(CONVERSATION_KEY + key);
+        
         ((ExternalAuthentication) obj).doFinish(request, response);
     }
 
