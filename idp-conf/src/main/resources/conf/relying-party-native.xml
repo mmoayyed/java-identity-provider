@@ -27,32 +27,14 @@
         
     <!-- Your IdP's default name, set via property file. -->
     <bean id="entityID" class="java.lang.String" c:_0="${idp.entity.id}" />
-    
-    <!-- Your IdP's default signing key, set via property file. -->
-    <bean id="signingCredential" class="org.opensaml.security.x509.BasicX509Credential"
-            p:entityId-ref="entityID">
-        <constructor-arg name="privateKey">
-            <bean class="net.shibboleth.ext.spring.factory.PrivateKeyFactoryBean">
-                <property name="privateKeyFile">
-                    <bean class="java.io.File" c:_0="${idp.home}/creds/idp.key" />
-                </property>
-            </bean>
-        </constructor-arg>
-        <constructor-arg name="entityCertificate">
-            <bean class="net.shibboleth.ext.spring.factory.X509CertificateFactoryBean">
-                <property name="certificateFile">
-                    <bean class="java.io.File" c:_0="${idp.home}/creds/idp.crt" />
-                </property>
-            </bean>
-        </constructor-arg>
-    </bean>
 
     <!-- Security Configuration Defaults -->
 
     <bean id="DefaultSecurityConfiguration" class="net.shibboleth.idp.profile.config.SecurityConfiguration">
+    
         <property name="signatureSigningConfiguration">
             <bean class="org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration"
-                    p:signingCredentials-ref="signingCredential">
+                    p:signingCredentials-ref="defaultSigningCredential">
                 <property name="signatureAlgorithms">
                     <util:list>
                         <util:constant static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256" />
@@ -66,6 +48,12 @@
                 </property>
             </bean>
         </property>
+        
+        <property name="decryptionConfiguration">
+            <bean class="org.opensaml.xmlsec.impl.BasicDecryptionConfiguration"
+                p:KEKKeyInfoCredentialResolver-ref="defaultEncryptionCredentials" />
+        </property>
+        
         <property name="encryptionConfiguration">
             <bean class="org.opensaml.xmlsec.impl.BasicEncryptionConfiguration">
                 <property name="dataEncryptionAlgorithms">
@@ -80,6 +68,7 @@
                 </property>
             </bean>
         </property>
+        
     </bean>
 
     <!-- Profile Configuration Defaults -->

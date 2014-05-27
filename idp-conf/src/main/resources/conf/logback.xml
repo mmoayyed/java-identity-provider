@@ -18,6 +18,8 @@
     <logger name="org.ldaptive" level="INFO" />
     
     <logger name="org.opensaml" level="WARN" />
+    
+    <logger name="org.opensaml.profile.action.impl" level="DEBUG" />
    
     <logger name="org.opensaml.saml.common.binding" level="DEBUG" />
 
