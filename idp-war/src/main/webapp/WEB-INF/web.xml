@@ -115,7 +115,8 @@
     <!--
     Uncomment to use container managed authentication. The new servlet spec (3.1)
     supports "**" as a wildcard syntax to avoid role usage, which is normally desirable.
-    Older containers usually support "*" when proprietary options are used.
+    Older containers usually support "*" when proprietary options are used (e.g., Jetty
+    requires setting the Strict property on the SecurityManager.)
     -->
     <!--
     <security-constraint>
@@ -127,7 +128,7 @@
             <http-method>POST</http-method> 
         </web-resource-collection>
         <auth-constraint>
-            <role-name>**</role-name>
+            <role-name>*</role-name>
         </auth-constraint>
         <user-data-constraint>
             <transport-guarantee>CONFIDENTIAL</transport-guarantee> 
@@ -139,20 +140,25 @@
     <!--
     <login-config>
         <auth-method>BASIC</auth-method>
-        <realm-name>Password Authentication</realm-name>
-    </login-config> 
-    -->
+        <realm-name>Web Login Service</realm-name>
+    </login-config>
+    --> 
 
-    <!-- Uncomment if you want form-based auth managed by the container. -->
+    <!--
+    Uncomment if you want form-based auth managed by the container.
+    NOTE that the default form-login UI in the IdP is not compatible
+    with this option, and you will need to supply your own JSP form
+    and error page. This is not a recommended approach and is severely
+    limited in functionality as compared to using the IdP's own UI.
+    -->
     <!--
     <login-config>
         <auth-method>FORM</auth-method>
-        <realm-name>Password Authentication</realm-name>
+        <realm-name>Web Login Service</realm-name>
         <form-login-config> 
             <form-login-page>/login.jsp</form-login-page>
             <form-error-page>/login-error.jsp</form-error-page>
         </form-login-config>
     </login-config>
     -->
-
 </web-app>
