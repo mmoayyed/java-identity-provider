@@ -74,10 +74,8 @@
     <!--  TODO -->
     
     <security:Credential id="IdPCredential" xsi:type="security:X509Filesystem">
-        <security:PrivateKey>${idp.home}/creds/idp.key</security:PrivateKey>
-        <security:Certificate>${idp.home}/creds/idp.crt</security:Certificate>
+        <security:PrivateKey>${idp.signing.key}</security:PrivateKey>
+        <security:Certificate>${idp.signing.cert}</security:Certificate>
     </security:Credential>
-    
-   
     
 </rp:RelyingPartyGroup>
