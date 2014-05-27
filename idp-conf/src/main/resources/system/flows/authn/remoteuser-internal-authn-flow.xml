@@ -13,6 +13,6 @@
         <transition on="proceed" to="proceed" />
     </action-state>
 
-    <bean-import resource="remoteuser-authn-beans.xml" />
+    <bean-import resource="remoteuser-internal-authn-beans.xml" />
 
 </flow>

@@ -55,6 +55,8 @@
             </property>
         </bean>
         
+        <bean id="authn/RemoteUserInternal" parent="shibboleth.AbstractAuthenticationFlowBean" />
+
         <bean id="authn/RemoteUser" parent="shibboleth.AbstractAuthenticationFlowBean" />
 
         <bean id="authn/External" parent="shibboleth.AbstractAuthenticationFlowBean" />
