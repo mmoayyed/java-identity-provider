@@ -5,7 +5,7 @@
 
     <!-- This is a login flow for external authentication handled outside the webflow engine. -->
     
-    <view-state id="ExternalTransfer" view="externalRedirect:contextRelative:Authn/RemoteUser?conversation=#{flowExecutionContext.getKey().toString()}">
+    <view-state id="ExternalTransfer" view="externalRedirect:#{flowExecutionContext.getActiveSession().getDefinition().getApplicationContext().getBean('shibboleth.authn.External.externalAuthnPath')}?conversation=#{flowExecutionContext.getKey().toString()}">
         <on-render>
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).getSubcontext(T(net.shibboleth.idp.authn.context.ExternalAuthenticationContext), true).setFlowExecutionUrl(flowExecutionUrl + '&amp;_eventId_proceed=1')" />
             <evaluate expression="externalContext.getNativeRequest().getSession().setAttribute('conversation' + flowExecutionContext.getKey().toString(), new net.shibboleth.idp.authn.impl.ExternalAuthenticationImpl(opensamlProfileRequestContext))" />

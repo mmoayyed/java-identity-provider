@@ -14,7 +14,7 @@
 
     <!-- Servlet context-relative path to wherever your implementation lives. -->
     <bean id="shibboleth.authn.External.externalAuthnPath" class="java.lang.String"
-        c:_0="/resources/external-authn/container.jsp" />
+        c:_0="contextRelative:Authn/RemoteUser" />
 
     <!--
     Define entries here to map error messages returned by external modules and classify them as particular
