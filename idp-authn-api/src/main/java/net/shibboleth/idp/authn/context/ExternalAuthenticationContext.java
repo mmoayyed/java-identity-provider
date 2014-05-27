@@ -52,6 +52,9 @@ public final class ExternalAuthenticationContext extends BaseContext {
     /** Exception. */
     @Nullable private Exception authnException;
     
+    /** Flag preventing caching of result for SSO. */
+    private boolean doNotCache;
+    
     /**
      * Get the flow execution URL to return control to.
      * 
@@ -177,6 +180,24 @@ public final class ExternalAuthenticationContext extends BaseContext {
      */
     public void setAuthnException(Exception exception) {
         authnException = exception;
+    }
+    
+    /**
+     * Get the "do not cache" flag.
+     * 
+     * @return true iff the result of the authentication should not be cached
+     */
+    public boolean doNotCache() {
+        return doNotCache;
+    }
+    
+    /**
+     * Set the "do not cache" flag.
+     * 
+     * @param flag flag to set 
+     */
+    public void setDoNotCache(final boolean flag) {
+        doNotCache = flag;
     }
     
 }

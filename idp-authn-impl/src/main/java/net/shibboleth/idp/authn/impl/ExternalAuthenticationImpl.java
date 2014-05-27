@@ -164,6 +164,11 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
             extContext.setAuthnException((Exception) attr);
         }
         
+        attr = request.getAttribute(DONOTCACHE_KEY);
+        if (attr != null && attr instanceof Boolean) {
+            extContext.setDoNotCache((Boolean) attr);
+        }
+        
         response.sendRedirect(extContext.getFlowExecutionUrl());
     }
 // Checkstyle: CyclomaticComplexity OFF

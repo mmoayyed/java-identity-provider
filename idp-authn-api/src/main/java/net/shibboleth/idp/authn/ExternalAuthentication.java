@@ -48,6 +48,9 @@ public class ExternalAuthentication {
 
     /** Request attribute to which an {@link AuthenticationException} may be bound. */
     @Nonnull @NotEmpty public static final String AUTHENTICATION_EXCEPTION_KEY = "authnException";
+
+    /** Request attribute to which a signal not to cache the result may be bound. */
+    @Nonnull @NotEmpty public static final String DONOTCACHE_KEY = "doNotCache";
     
     /** Request attribute that indicates whether the authentication request requires forced authentication. */
     @Nonnull @NotEmpty public static final String FORCE_AUTHN_PARAM = "forceAuthn";

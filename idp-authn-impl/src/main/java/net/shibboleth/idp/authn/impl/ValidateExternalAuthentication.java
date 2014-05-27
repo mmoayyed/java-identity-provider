@@ -121,6 +121,10 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
             return;
         }
         
+        if (extContext.doNotCache()) {
+            log.debug("{} Disabling caching of authentication result", getLogPrefix());
+            authenticationContext.setResultCacheable(false);
+        }
         buildAuthenticationResult(profileRequestContext, authenticationContext);
     }
 
