@@ -15,9 +15,9 @@
     <!-- ========================= Java Subject -> Principal Mapping ========================= -->
 
     <!--
-    These are lists of Subject Canonicalization flows that turn arbitrary Subject data into a string-based
+    These are lists of Subject Canonicalization flows that turn complex Subject data into a string-based
     principal name that the rest of the IdP can operate on. They're used both after authentication and
-    during operations like SAML attribute queries, to map the SAML Subject name into a principal name. 
+    during operations like SAML attribute queries, to map the SAML Subject into a principal name. 
     Flows are identified with an ID that corresponds to a Spring Web Flow subflow name.
     -->
 
@@ -36,8 +36,8 @@
     </util:list>
     
     <!--
-    Flows used during SAML queries to reverse map NameIdentifier/NameIDs. The actual beans defining these
-    flows are in a system file. Below the list are some settings that might be necessary to adjust.
+    Flows used during SAML requests to reverse-map NameIdentifiers/NameIDs. The actual beans defining these
+    flows are in a system file. Below the list are some settings that might be useful to adjust.
     -->
     <util:list id="shibboleth.SAMLSubjectCanonicalizationFlows">
 
@@ -55,7 +55,7 @@
         <ref bean="c14n/SAML1CryptoTransient" /> 
         
         <!-- Handle a SAML 2 persistent ID, provided a stored strategy is in use. -->
-        <!-- <ref bean="c14n/SAML2/Persistent" /> -->
+        <!-- <ref bean="c14n/SAML2Persistent" /> -->
         
         <!--
         Finally we have beans for decoding arbitrary SAML formats directly. By default, these are turned off,
@@ -65,7 +65,7 @@
         <ref bean="c14n/SAML1Direct" />
     </util:list>
     
-    <!-- What SAML formats do you want to support direct mapping for? -->
+    <!-- What SAML NameID formats do you want to support direct mapping for? -->
     <util:list id="shibboleth.DirectNameFormats">
         <value>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</value>
         <value>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</value>
@@ -75,7 +75,7 @@
     </util:list>
 
     <!--
-    Under what conditions should direct mapping be allowed? By default, never.
+    Under what conditions should direct NameID mapping be allowed? By default, never.
     Any predicate can be used here; the example is suitable for enumerating a number of SPs to allow.
     -->
     <bean id="shibboleth.DirectNamePredicate" class="net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate">
