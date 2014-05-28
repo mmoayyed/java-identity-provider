@@ -23,53 +23,7 @@
         p:defaultSecurityConfiguration-ref="DefaultSecurityConfiguration" />
 
     <bean id="RelyingParty" class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration" abstract="true"
-        p:responderId-ref="entityID" p:detailedErrors="${idp.errors.detailed}" />
-        
-    <!-- Your IdP's default name, set via property file. -->
-    <bean id="entityID" class="java.lang.String" c:_0="${idp.entity.id}" />
-
-    <!-- Security Configuration Defaults -->
-
-    <bean id="DefaultSecurityConfiguration" class="net.shibboleth.idp.profile.config.SecurityConfiguration">
-    
-        <property name="signatureSigningConfiguration">
-            <bean class="org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration"
-                    p:signingCredentials-ref="defaultSigningCredential">
-                <property name="signatureAlgorithms">
-                    <util:list>
-                        <util:constant static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256" />
-                        <util:constant static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_SIGNATURE_ECDSA_SHA256" />
-                    </util:list>
-                </property>
-                <property name="signatureReferenceDigestMethods">
-                    <util:list>
-                        <util:constant static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_DIGEST_SHA256" />
-                    </util:list>
-                </property>
-            </bean>
-        </property>
-        
-        <property name="decryptionConfiguration">
-            <bean class="org.opensaml.xmlsec.impl.BasicDecryptionConfiguration"
-                p:KEKKeyInfoCredentialResolver-ref="defaultEncryptionCredentials" />
-        </property>
-        
-        <property name="encryptionConfiguration">
-            <bean class="org.opensaml.xmlsec.impl.BasicEncryptionConfiguration">
-                <property name="dataEncryptionAlgorithms">
-                    <util:list>
-                        <util:constant static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128" />
-                    </util:list>
-                </property>
-                <property name="keyTransportEncryptionAlgorithms">
-                    <util:list>
-                        <util:constant static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSAOAEP" />
-                    </util:list>
-                </property>
-            </bean>
-        </property>
-        
-    </bean>
+        p:responderId="${idp.entity.id}" p:detailedErrors="${idp.errors.detailed}" />
 
     <!-- Profile Configuration Defaults -->
     
@@ -121,5 +75,50 @@
 
     <util:list id="RelyingPartyOverrides">
     </util:list>
+
+
+    <!-- Security Configuration Defaults -->
+
+    <bean id="DefaultSecurityConfiguration" class="net.shibboleth.idp.profile.config.SecurityConfiguration">
+    
+        <property name="signatureSigningConfiguration">
+            <bean class="org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration"
+                    p:signingCredentials-ref="defaultSigningCredential">
+                <property name="signatureAlgorithms">
+                    <util:list>
+                        <util:constant static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256" />
+                        <util:constant static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_SIGNATURE_ECDSA_SHA256" />
+                    </util:list>
+                </property>
+                <property name="signatureReferenceDigestMethods">
+                    <util:list>
+                        <util:constant static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_DIGEST_SHA256" />
+                    </util:list>
+                </property>
+            </bean>
+        </property>
+        
+        <property name="decryptionConfiguration">
+            <bean class="org.opensaml.xmlsec.impl.BasicDecryptionConfiguration"
+                p:KEKKeyInfoCredentialResolver-ref="defaultKeyEncryptionCredentialResolver" />
+            <!-- TODO: add p:encryptedKeyResolver-ref="defaultEncryptedKeyResolver" -->
+        </property>
+        
+        <property name="encryptionConfiguration">
+            <bean class="org.opensaml.xmlsec.impl.BasicEncryptionConfiguration">
+                <property name="dataEncryptionAlgorithms">
+                    <util:list>
+                        <util:constant static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128" />
+                    </util:list>
+                </property>
+                <property name="keyTransportEncryptionAlgorithms">
+                    <util:list>
+                        <util:constant static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSAOAEP" />
+                    </util:list>
+                </property>
+            </bean>
+        </property>
+        
+    </bean>
 
 </beans>
