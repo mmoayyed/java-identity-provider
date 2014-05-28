@@ -22,27 +22,19 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
-import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.idp.saml.nameid.NameIDDecoder;
 
-import org.opensaml.saml.saml1.core.NameIdentifier;
+import org.opensaml.saml.saml2.core.NameID;
 
-/** Direct transform from a {@link NameIdentifier}. The decode operation returns the input. */
-public class DirectNameIdentifierDecoder extends AbstractIdentifiableInitializableComponent implements
-        NameIdentifierDecoder {
+/** Transform from a {@link NameID}. */
+public class TransformingNameIDDecoder extends BaseTransformingDecoder implements NameIDDecoder {
 
     /** {@inheritDoc} */
     @Override
     @Nullable public String decode(@Nonnull final SubjectCanonicalizationContext c14nContext,
-            @Nonnull final NameIdentifier nameIdentifier) throws NameDecoderException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-
-        if (nameIdentifier.getNameIdentifier() == null) {
-            throw new NameDecoderException("NameIdentifier value was null");
-        }
+            @Nonnull final NameID nameIdentifier) throws NameDecoderException {
         
-        return nameIdentifier.getNameIdentifier();
+        return decode(nameIdentifier.getValue());
     }
-    
+
 }

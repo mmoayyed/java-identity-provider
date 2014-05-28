@@ -21,8 +21,8 @@ import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParse
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.attribute.principalconnector.impl.PrincipalConnector;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
-import net.shibboleth.idp.saml.nameid.impl.DirectNameIDDecoder;
-import net.shibboleth.idp.saml.nameid.impl.DirectNameIdentifierDecoder;
+import net.shibboleth.idp.saml.nameid.impl.TransformingNameIDDecoder;
+import net.shibboleth.idp.saml.nameid.impl.TransformingNameIdentifierDecoder;
 
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
@@ -37,8 +37,8 @@ public class DirectTest extends BaseAttributeDefinitionParserTest {
     @Test public void simple() throws NameDecoderException {
         final PrincipalConnector connector = getPrincipalConnector("direct.xml");
         
-        Assert.assertTrue(connector.getNameIDDecoder() instanceof DirectNameIDDecoder);
-        Assert.assertTrue(connector.getNameIdentifierDecoder() instanceof DirectNameIdentifierDecoder);
+        Assert.assertTrue(connector.getNameIDDecoder() instanceof TransformingNameIDDecoder);
+        Assert.assertTrue(connector.getNameIdentifierDecoder() instanceof TransformingNameIdentifierDecoder);
         Assert.assertEquals(connector.getFormat(), "https://example.org/direct");
         Assert.assertTrue(connector.getRelyingParties().isEmpty());
         
@@ -52,8 +52,8 @@ public class DirectTest extends BaseAttributeDefinitionParserTest {
     @Test public void relyingParties() {
         final PrincipalConnector connector = getPrincipalConnector("directRPs.xml");
         
-        Assert.assertTrue(connector.getNameIDDecoder() instanceof DirectNameIDDecoder);
-        Assert.assertTrue(connector.getNameIdentifierDecoder() instanceof DirectNameIdentifierDecoder);
+        Assert.assertTrue(connector.getNameIDDecoder() instanceof TransformingNameIDDecoder);
+        Assert.assertTrue(connector.getNameIdentifierDecoder() instanceof TransformingNameIdentifierDecoder);
         Assert.assertEquals(connector.getFormat(), "http://example.org/schema");
         Assert.assertEquals(connector.getRelyingParties().size(), 2);
         Assert.assertTrue(connector.getRelyingParties().contains("SP1"));

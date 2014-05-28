@@ -22,8 +22,8 @@ import java.util.Collections;
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
-import net.shibboleth.idp.saml.nameid.impl.DirectNameIDDecoder;
-import net.shibboleth.idp.saml.nameid.impl.DirectNameIdentifierDecoder;
+import net.shibboleth.idp.saml.nameid.impl.TransformingNameIDDecoder;
+import net.shibboleth.idp.saml.nameid.impl.TransformingNameIdentifierDecoder;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
@@ -50,9 +50,9 @@ public class PrincipalConnectorTest extends OpenSAMLInitBaseTestCase {
 
     private static final String RP2 = "https://shibboleth.net/rp2";
     
-    private final DirectNameIDDecoder nameIDDecoder = new DirectNameIDDecoder();
+    private final TransformingNameIDDecoder nameIDDecoder = new TransformingNameIDDecoder();
     
-    private final DirectNameIdentifierDecoder nameIdentifierDecoder = new DirectNameIdentifierDecoder();
+    private final TransformingNameIdentifierDecoder nameIdentifierDecoder = new TransformingNameIdentifierDecoder();
     
     @BeforeClass public void setup() throws ComponentInitializationException {
         nameIDDecoder.setId("nameIDDecoder");

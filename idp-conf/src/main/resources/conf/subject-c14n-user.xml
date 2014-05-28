@@ -59,7 +59,7 @@
         
         <!--
         Finally we have beans for decoding arbitrary SAML formats directly. By default, these are turned off,
-        having *no* relying parties for which they apply (see shibboleth.DirectNamePredicate below).
+        having *no* circumstances for which they apply (see shibboleth.DirectNamePredicate below).
         -->
         <ref bean="c14n/SAML2Direct" />
         <ref bean="c14n/SAML1Direct" />
@@ -74,12 +74,14 @@
         <value>urn:oasis:names:tc:SAML:2.0:nameid-format:kerberos</value>
     </util:list>
 
-    <!-- Under what conditions should direct mapping be allowed? By default, never. -->
-    <!-- TODO: can we override this from the tests so we can remove it here? -->
+    <!--
+    Under what conditions should direct mapping be allowed? By default, never.
+    Any predicate can be used here; the example is suitable for enumerating a number of SPs to allow.
+    -->
     <bean id="shibboleth.DirectNamePredicate" class="net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate">
         <constructor-arg>
             <util:list>
-                <value>https://sp.example.org</value>
+                <!-- <value>https://sp.example.org</value> -->
             </util:list>
         </constructor-arg>
     </bean>

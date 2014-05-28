@@ -20,8 +20,8 @@ package net.shibboleth.idp.attribute.resolver.spring.pc;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.saml.nameid.impl.DirectNameIDDecoder;
-import net.shibboleth.idp.saml.nameid.impl.DirectNameIdentifierDecoder;
+import net.shibboleth.idp.saml.nameid.impl.TransformingNameIDDecoder;
+import net.shibboleth.idp.saml.nameid.impl.TransformingNameIdentifierDecoder;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -40,7 +40,7 @@ public class DirectConnectorParser extends AbstractPrincipalConnectorParser {
     @Override protected void addSAMLDecoders(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
 
-        BeanDefinitionBuilder subBuilder = BeanDefinitionBuilder.genericBeanDefinition(DirectNameIDDecoder.class);
+        BeanDefinitionBuilder subBuilder = BeanDefinitionBuilder.genericBeanDefinition(TransformingNameIDDecoder.class);
         subBuilder.setInitMethodName("initialize");
         subBuilder.setDestroyMethodName("destroy");
         
@@ -49,7 +49,7 @@ public class DirectConnectorParser extends AbstractPrincipalConnectorParser {
         builder.addConstructorArgValue(subBuilder.getBeanDefinition());
         
 
-        subBuilder = BeanDefinitionBuilder.genericBeanDefinition(DirectNameIdentifierDecoder.class);
+        subBuilder = BeanDefinitionBuilder.genericBeanDefinition(TransformingNameIdentifierDecoder.class);
         subBuilder.setInitMethodName("initialize");
         subBuilder.setDestroyMethodName("destroy");
         
