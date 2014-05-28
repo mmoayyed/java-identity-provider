@@ -17,13 +17,15 @@
     <!-- This BeanPostProcessor auto-sets identifiable beans with the bean name (if not already set). -->
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
+    <bean id="entityID" class="java.lang.String" c:_0="${idp.entity.id}" />
+
     <bean class="net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver"
         p:anonymousConfiguration-ref="AnonymousRelyingParty" p:defaultConfiguration-ref="DefaultRelyingParty"
         p:relyingPartyConfigurations-ref="RelyingPartyOverrides"
         p:defaultSecurityConfiguration-ref="DefaultSecurityConfiguration" />
 
     <bean id="RelyingParty" class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration" abstract="true"
-        p:responderId="${idp.entity.id}" p:detailedErrors="${idp.errors.detailed}" />
+        p:responderId-ref="entityID" p:detailedErrors="${idp.errors.detailed}" />
 
     <!-- Profile Configuration Defaults -->
     
@@ -100,8 +102,8 @@
         
         <property name="decryptionConfiguration">
             <bean class="org.opensaml.xmlsec.impl.BasicDecryptionConfiguration"
-                p:KEKKeyInfoCredentialResolver-ref="defaultKeyEncryptionCredentialResolver" />
-            <!-- TODO: add p:encryptedKeyResolver-ref="defaultEncryptedKeyResolver" -->
+                p:KEKKeyInfoCredentialResolver-ref="defaultKeyEncryptionCredentialResolver"
+                p:encryptedKeyResolver-ref="defaultEncryptedKeyResolver" />
         </property>
         
         <property name="encryptionConfiguration">
