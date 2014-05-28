@@ -77,7 +77,7 @@ public abstract class AbstractExtractionAction<InboundMessageType, OutboundMessa
      * 
      * @param newTransforms collection of replacement transforms
      */
-    public void setTransforms(@Nonnull @NonnullElements Collection<Pair<String, String>> newTransforms) {
+    public void setTransforms(@Nonnull @NonnullElements final Collection<Pair<String, String>> newTransforms) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(newTransforms, "Transforms collection cannot be null");
         
@@ -94,7 +94,7 @@ public abstract class AbstractExtractionAction<InboundMessageType, OutboundMessa
      * 
      * @param flag  uppercase flag
      */
-    public void setUppercase(boolean flag) {
+    public void setUppercase(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         uppercase = flag;
@@ -105,7 +105,7 @@ public abstract class AbstractExtractionAction<InboundMessageType, OutboundMessa
      * 
      * @param flag lowercase flag
      */
-    public void setLowercase(boolean flag) {
+    public void setLowercase(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         lowercase = flag;
@@ -116,7 +116,7 @@ public abstract class AbstractExtractionAction<InboundMessageType, OutboundMessa
      * 
      * @param flag trim flag
      */
-    public void setTrim(boolean flag) {
+    public void setTrim(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         trim = flag;
@@ -134,15 +134,15 @@ public abstract class AbstractExtractionAction<InboundMessageType, OutboundMessa
         String s = input;
         
         if (trim) {
-            log.debug("{} trimming whitespace of input string '{}'", getLogPrefix(), s);
+            log.debug("{} Trimming whitespace of input string '{}'", getLogPrefix(), s);
             s = input.trim();
         }
         
         if (lowercase) {
-            log.debug("{} converting input string '{}' to lowercase", getLogPrefix(), s);
+            log.debug("{} Converting input string '{}' to lowercase", getLogPrefix(), s);
             s = input.toLowerCase();
         } else if (uppercase) {
-            log.debug("{} converting input string '{}' to uppercase", getLogPrefix(), s);
+            log.debug("{} Converting input string '{}' to uppercase", getLogPrefix(), s);
             s = input.toUpperCase();
         }
         
@@ -152,10 +152,10 @@ public abstract class AbstractExtractionAction<InboundMessageType, OutboundMessa
         
         for (Pair<Pattern,String> p : transforms) {            
             final Matcher m = p.getFirst().matcher(s);
-            log.debug("{} applying replacement expression '{}' against input '{}'", getLogPrefix(),
+            log.debug("{} Applying replacement expression '{}' against input '{}'", getLogPrefix(),
                     p.getFirst().pattern(), s);
             s = m.replaceAll(p.getSecond());
-            log.debug("{} result of replacement is '{}'", getLogPrefix(), s);
+            log.debug("{} Result of replacement is '{}'", getLogPrefix(), s);
         }
         
         return s;
