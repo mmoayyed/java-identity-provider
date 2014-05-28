@@ -109,7 +109,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         // Detect a previous attempted flow, and move it to the intermediate collection.
         // This will prevent re-selecting the same (probably failed) flow again.
         if (authenticationContext.getAttemptedFlow() != null) {
-            log.info("{} moving incomplete flow {} to intermediate set, reselecting a different one", getLogPrefix(),
+            log.info("{} Moving incomplete flow {} to intermediate set, reselecting a different one", getLogPrefix(),
                     authenticationContext.getAttemptedFlow().getId());
             authenticationContext.getIntermediateFlows().put(
                     authenticationContext.getAttemptedFlow().getId(), authenticationContext.getAttemptedFlow());
@@ -140,14 +140,14 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
     private void doSelectNoRequestedPrincipals(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
-        log.debug("{} no specific Principals requested", getLogPrefix());
+        log.debug("{} No specific Principals requested", getLogPrefix());
         
         if (authenticationContext.isForceAuthn()) {
             log.debug("{} forced authentication requested, selecting an inactive flow", getLogPrefix());
             final AuthenticationFlowDescriptor flow =
                     getUnattemptedInactiveFlow(profileRequestContext, authenticationContext);
             if (flow == null) {
-                log.error("{} no potential flows left to choose from, authentication will fail", getLogPrefix());
+                log.error("{} No potential flows left to choose from, authentication will fail", getLogPrefix());
                 ActionSupport.buildEvent(profileRequestContext,
                         authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE : AuthnEventIds.NO_POTENTIAL_FLOW);
                 return;
@@ -166,11 +166,11 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             }
         }
         
-        log.debug("{} no usable active results available, selecting an inactive flow", getLogPrefix());
+        log.debug("{} No usable active results available, selecting an inactive flow", getLogPrefix());
         final AuthenticationFlowDescriptor flow =
                 getUnattemptedInactiveFlow(profileRequestContext, authenticationContext);
         if (flow == null) {
-            log.error("{} no potential flows left to choose from, authentication will fail", getLogPrefix());
+            log.error("{} No potential flows left to choose from, authentication will fail", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext,
                     authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE : AuthnEventIds.NO_POTENTIAL_FLOW);
             return;
@@ -213,7 +213,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             @Nonnull final AuthenticationContext authenticationContext,
             @Nonnull final AuthenticationFlowDescriptor descriptor) {
 
-        log.debug("{} selecting inactive authentication flow {}", getLogPrefix(), descriptor.getId());
+        log.debug("{} Selecting inactive authentication flow {}", getLogPrefix(), descriptor.getId());
         authenticationContext.setAttemptedFlow(descriptor);
         ActionSupport.buildEvent(profileRequestContext, descriptor.getId());
     }    
@@ -229,7 +229,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             @Nonnull final AuthenticationContext authenticationContext,
             @Nonnull final AuthenticationResult result) {
 
-        log.debug("{} reusing active result {}", getLogPrefix(), result.getAuthenticationFlowId());
+        log.debug("{} Reusing active result {}", getLogPrefix(), result.getAuthenticationFlowId());
         result.setLastActivityInstantToNow();
         authenticationContext.setAuthenticationResult(result);
         ActionSupport.buildProceedEvent(profileRequestContext);
@@ -245,14 +245,14 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
     private void doSelectRequestedPrincipals(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
-        log.debug("{} specific principals requested with '{}' operator: {}", getLogPrefix(),
+        log.debug("{} Specific principals requested with '{}' operator: {}", getLogPrefix(),
                 requestedPrincipalCtx.getOperator(), requestedPrincipalCtx.getRequestedPrincipals());
         
         if (authenticationContext.isForceAuthn()) {
-            log.debug("{} forced authentication requested, selecting an inactive flow", getLogPrefix());
+            log.debug("{} Forced authentication requested, selecting an inactive flow", getLogPrefix());
             selectRequestedInactiveFlow(profileRequestContext, authenticationContext);
         } else if (authenticationContext.getActiveResults().isEmpty()) {
-            log.debug("{} no active results available, selecting an inactive flow", getLogPrefix());
+            log.debug("{} No active results available, selecting an inactive flow", getLogPrefix());
             selectRequestedInactiveFlow(profileRequestContext, authenticationContext);
         } else {
             selectRequestedFlow(profileRequestContext, authenticationContext);
@@ -296,7 +296,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         }
         
         
-        log.info("{} none of the potential authentication flows can satisfy the request", getLogPrefix());
+        log.info("{} None of the potential authentication flows can satisfy the request", getLogPrefix());
         ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
     }
     
@@ -313,7 +313,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         final Map<String,AuthenticationResult> activeResults = authenticationContext.getActiveResults();
 
         if (favorSSO) {
-            log.debug("{} giving priority to active results that meet request requirements");
+            log.debug("{} Giving priority to active results that meet request requirements");
             
             // Check each active result for compatibility with request.
             for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
@@ -383,7 +383,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                 }
             }
             
-            log.info("{} none of the potential authentication flows can satisfy the request", getLogPrefix());
+            log.info("{} None of the potential authentication flows can satisfy the request", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
         }
     }

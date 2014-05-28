@@ -66,7 +66,7 @@ public class ExtractUsernamePasswordFromBasicAuth extends AbstractExtractionActi
 
         final HttpServletRequest request = getHttpServletRequest();
         if (request == null) {
-            log.debug("{} profile action does not contain an HttpServletRequest", getLogPrefix());
+            log.debug("{} Profile action does not contain an HttpServletRequest", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return;
         }
@@ -109,7 +109,7 @@ public class ExtractUsernamePasswordFromBasicAuth extends AbstractExtractionActi
             }
         }
         
-        log.debug("{} no appropriate Authorization header found", getLogPrefix());
+        log.debug("{} No appropriate Authorization header found", getLogPrefix());
         return null;
     }
 
@@ -134,7 +134,7 @@ public class ExtractUsernamePasswordFromBasicAuth extends AbstractExtractionActi
             }
         }
 
-        log.debug("{} request did not contain a well-formed Basic authorization header value", getLogPrefix());
+        log.debug("{} Request did not contain a well-formed Basic authorization header value", getLogPrefix());
         return null;
     }
 }

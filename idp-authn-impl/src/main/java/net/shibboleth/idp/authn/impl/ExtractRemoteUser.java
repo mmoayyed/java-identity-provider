@@ -76,7 +76,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
      * 
      * @param flag value to set  
      */
-    public void setCheckRemoteUser(boolean flag) {
+    public void setCheckRemoteUser(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         checkRemoteUser = flag;
@@ -110,13 +110,12 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
         super.doInitialize();
         
         if (!checkRemoteUser && checkAttributes.isEmpty() && checkHeaders.isEmpty()) {
-            log.debug("{} configuration contains no headers or attributes to check", getLogPrefix());
+            log.debug("{} Configuration contains no headers or attributes to check", getLogPrefix());
             throw new ComponentInitializationException("ExtractRemoteUser action configuration is invalid");
         }
     }
     
-    // Checkstyle: CyclomaticComplexity OFF
-    
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
@@ -124,7 +123,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
 
         final HttpServletRequest request = getHttpServletRequest();
         if (request == null) {
-            log.debug("{} profile action does not contain an HttpServletRequest", getLogPrefix());
+            log.debug("{} Profile action does not contain an HttpServletRequest", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return;
         }
@@ -133,7 +132,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
         if (checkRemoteUser) {
             username = request.getRemoteUser();
             if (username != null && !username.isEmpty()) {
-                log.debug("{} user identity extracted from REMOTE_USER: {}", getLogPrefix(), username);
+                log.debug("{} User identity extracted from REMOTE_USER: {}", getLogPrefix(), username);
                 authenticationContext.getSubcontext(UsernameContext.class, true).setUsername(
                         applyTransforms(username));
                 return;
@@ -143,7 +142,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
         for (String s : checkAttributes) {
             Object attr = request.getAttribute(s);
             if (attr != null && !attr.toString().isEmpty()) {
-                log.debug("{} user identity extracted from attribute {}: {}", getLogPrefix(), s, attr);
+                log.debug("{} User identity extracted from attribute {}: {}", getLogPrefix(), s, attr);
                 authenticationContext.getSubcontext(UsernameContext.class, true).setUsername(
                         applyTransforms(attr.toString()));
                 return;
@@ -153,17 +152,16 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
         for (String s : checkHeaders) {
             username = request.getHeader(s);
             if (username != null && !username.isEmpty()) {
-                log.debug("{} user identity extracted from header {}: {}", getLogPrefix(), s, username);
+                log.debug("{} User identity extracted from header {}: {}", getLogPrefix(), s, username);
                 authenticationContext.getSubcontext(UsernameContext.class, true).setUsername(
                         applyTransforms(username));
                 return;
             }
         }
         
-        log.debug("{} no user identity found in request", getLogPrefix());
+        log.debug("{} No user identity found in request", getLogPrefix());
         ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
     }
-
-    // Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity ON
     
 }

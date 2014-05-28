@@ -122,20 +122,20 @@ public class ValidateRemoteUser extends AbstractValidationAction {
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         if (authenticationContext.getAttemptedFlow() == null) {
-            log.debug("{} no attempted flow within authentication context", getLogPrefix());
+            log.debug("{} No attempted flow within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
         
         usernameContext = authenticationContext.getSubcontext(UsernameContext.class, false);
         if (usernameContext == null) {
-            log.debug("{} no UsernameContext available within authentication context", getLogPrefix());
+            log.debug("{} No UsernameContext available within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return false;
         }
 
         if (usernameContext.getUsername() == null) {
-            log.debug("{} no username available within UsernameContext", getLogPrefix());
+            log.debug("{} No username available within UsernameContext", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return false;
         }
@@ -149,12 +149,12 @@ public class ValidateRemoteUser extends AbstractValidationAction {
             @Nonnull final AuthenticationContext authenticationContext) {
                 
         if (!isAuthenticated(usernameContext.getUsername())) {
-            log.debug("{} user '{}' was not valid", getLogPrefix(), usernameContext.getUsername());
+            log.debug("{} User '{}' was not valid", getLogPrefix(), usernameContext.getUsername());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_CREDENTIALS);
             return;
         }
 
-        log.debug("{} validated user '{}'", getLogPrefix(), usernameContext.getUsername());
+        log.debug("{} Validated user '{}'", getLogPrefix(), usernameContext.getUsername());
         
         buildAuthenticationResult(profileRequestContext, authenticationContext);
     }

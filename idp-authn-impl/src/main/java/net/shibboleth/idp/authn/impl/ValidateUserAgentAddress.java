@@ -102,20 +102,20 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         if (authenticationContext.getAttemptedFlow() == null) {
-            log.debug("{} no attempted flow within authentication context", getLogPrefix());
+            log.debug("{} No attempted flow within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
         
         uaContext = authenticationContext.getSubcontext(UserAgentContext.class, false);
         if (uaContext == null) {
-            log.debug("{} no UserAgentContext available within authentication context", getLogPrefix());
+            log.debug("{} No UserAgentContext available within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return false;
         }
 
         if (uaContext.getAddress() == null) {
-            log.debug("{} no address available within UserAgentContext", getLogPrefix());
+            log.debug("{} No address available within UserAgentContext", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return false;
         }
@@ -131,14 +131,14 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
         for (Map.Entry<String,Collection<IPRange>> e : mappings.entrySet()) {
             if (isAuthenticated(uaContext.getAddress(), e.getValue())) {
                 principalName = e.getKey();
-                log.debug("{} authenticated user agent with address {} as {}",
+                log.debug("{} Authenticated user agent with address {} as {}",
                         getLogPrefix(), uaContext.getAddress(), principalName);
                 buildAuthenticationResult(profileRequestContext, authenticationContext);
                 return;
             }
         }
             
-        log.debug("{} user agent with address {} was not authenticated", getLogPrefix(), uaContext.getAddress());
+        log.debug("{} User agent with address {} was not authenticated", getLogPrefix(), uaContext.getAddress());
         ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_CREDENTIALS);
     }
 

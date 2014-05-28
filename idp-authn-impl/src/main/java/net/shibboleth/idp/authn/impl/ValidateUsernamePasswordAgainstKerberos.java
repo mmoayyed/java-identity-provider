@@ -61,20 +61,20 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractValidationA
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         if (authenticationContext.getAttemptedFlow() == null) {
-            log.debug("{} no attempted flow within authentication context", getLogPrefix());
+            log.debug("{} No attempted flow within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
         
         upContext = authenticationContext.getSubcontext(UsernamePasswordContext.class, false);
         if (upContext == null) {
-            log.debug("{} no UsernameContext available within authentication context", getLogPrefix());
+            log.debug("{} No UsernameContext available within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return false;
         }
 
         if (upContext.getUsername() == null || upContext.getPassword() == null) {
-            log.debug("{} no username or password available within UsernamePasswordContext", getLogPrefix());
+            log.debug("{} No username or password available within UsernamePasswordContext", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return false;
         }

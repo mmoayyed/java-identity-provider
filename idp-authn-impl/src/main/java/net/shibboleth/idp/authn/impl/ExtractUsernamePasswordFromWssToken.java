@@ -65,7 +65,7 @@ public class ExtractUsernamePasswordFromWssToken extends AbstractExtractionActio
         
         final MessageContext inCtx = profileRequestContext.getInboundMessageContext();
         if (inCtx == null || !(inCtx.getMessage() instanceof Envelope)) {
-            log.debug("{} inbound message context missing or doesn't contain a SOAP Envelope", getLogPrefix());
+            log.debug("{} Inbound message context missing or doesn't contain a SOAP Envelope", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return false;
         }
@@ -120,7 +120,7 @@ public class ExtractUsernamePasswordFromWssToken extends AbstractExtractionActio
         while (passwordsItr.hasNext()) {
             password = (Password) passwordsItr.next();
             if (password.getType() != null && !password.getType().equals(Password.TYPE_PASSWORD_TEXT)) {
-                log.debug("{} skipping password with unsupported type {}", getLogPrefix(), password.getType());
+                log.debug("{} Skipping password with unsupported type {}", getLogPrefix(), password.getType());
                 password = null;
             }
         }
@@ -144,14 +144,14 @@ public class ExtractUsernamePasswordFromWssToken extends AbstractExtractionActio
 
         final List<XMLObject> securityHeaders = header.getUnknownXMLObjects(Security.ELEMENT_NAME);
         if (securityHeaders == null || securityHeaders.size() == 0) {
-            log.debug("{} inbound message does not contain <Security>", getLogPrefix());
+            log.debug("{} Inbound message does not contain <Security>", getLogPrefix());
             return null;
         }
 
         final List<XMLObject> usernameTokens =
                 ((Security) securityHeaders.get(0)).getUnknownXMLObjects(UsernameToken.ELEMENT_NAME);
         if (usernameTokens == null || usernameTokens.size() == 0) {
-            log.debug("{} inbound message security header does not contain <UsernameToken>", getLogPrefix());
+            log.debug("{} Inbound message security header does not contain <UsernameToken>", getLogPrefix());
             return null;
         }
 

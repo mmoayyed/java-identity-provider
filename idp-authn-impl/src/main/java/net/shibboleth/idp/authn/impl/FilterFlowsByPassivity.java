@@ -50,7 +50,7 @@ public class FilterFlowsByPassivity extends AbstractAuthenticationAction {
             @Nonnull final AuthenticationContext authenticationContext) {
         
         if (!authenticationContext.isPassive()) {
-            log.debug("{} authentication request does not have passive requirement, nothing to do", getLogPrefix());
+            log.debug("{} Request does not have passive requirement, nothing to do", getLogPrefix());
             return false;
         }
         
@@ -69,19 +69,19 @@ public class FilterFlowsByPassivity extends AbstractAuthenticationAction {
         while (descriptorItr.hasNext()) {
             AuthenticationFlowDescriptor descriptor = descriptorItr.next().getValue();
             if (descriptor.isPassiveAuthenticationSupported()) {
-                log.debug("{} retaining flow {}, it supports passive authentication", getLogPrefix(),
+                log.debug("{} Retaining flow {}, it supports passive authentication", getLogPrefix(),
                         descriptor.getId());
             } else {
-                log.debug("{} removing workflow {}, it does not support passive authentication", getLogPrefix(),
+                log.debug("{} Removing workflow {}, it does not support passive authentication", getLogPrefix(),
                         descriptor.getId());
                 descriptorItr.remove();
             }
         }
 
         if (potentialFlows.size() == 0) {
-            log.info("No potential authentication flows remain after filtering.");
+            log.info("{} No potential authentication flows remain after filtering", getLogPrefix());
         } else {
-            log.debug("{} potential authentication flows left after filtering: {}", getLogPrefix(), potentialFlows);
+            log.debug("{} Potential authentication flows left after filtering: {}", getLogPrefix(), potentialFlows);
         }
     }
 }

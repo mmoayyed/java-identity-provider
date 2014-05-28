@@ -54,7 +54,7 @@ public class ExtractUserAgentAddress extends AbstractExtractionAction {
 
         final HttpServletRequest request = getHttpServletRequest();
         if (request == null) {
-            log.debug("{} profile action does not contain an HttpServletRequest", getLogPrefix());
+            log.debug("{} Profile action does not contain an HttpServletRequest", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return;
         }
