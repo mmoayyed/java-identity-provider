@@ -34,6 +34,7 @@ import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -41,8 +42,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 
 /**
@@ -63,9 +62,6 @@ public class ValidateRemoteUser extends AbstractValidationAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateRemoteUser.class);
-
-    /** Username context identifying identity to validate. */
-    @Nullable private UsernameContext usernameContext;
     
     /** A whitelist of usernames to accept. */
     @Nonnull @NonnullElements private Set<String> whitelistedUsernames;
@@ -75,11 +71,12 @@ public class ValidateRemoteUser extends AbstractValidationAction {
 
     /** A regular expression to apply for acceptance testing. */
     @Nullable private Pattern matchExpression;
+
+    /** Username context identifying identity to validate. */
+    @Nullable private UsernameContext usernameContext;
     
     /** Constructor. */
     public ValidateRemoteUser() {
-        super();
-        
         whitelistedUsernames = Collections.emptySet();
         blacklistedUsernames = Collections.emptySet();
     }
@@ -92,7 +89,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
     public void setWhitelistedUsernames(@Nonnull @NonnullElements final Collection<String> whitelist) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        whitelistedUsernames = Sets.newHashSet(Collections2.filter(whitelist, Predicates.notNull()));
+        whitelistedUsernames = Sets.newHashSet(StringSupport.normalizeStringCollection(whitelist));
     }
 
     /**
@@ -103,7 +100,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
     public void setBlacklistedUsernames(@Nonnull @NonnullElements final Collection<String> blacklist) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        blacklistedUsernames = Sets.newHashSet(Collections2.filter(blacklist, Predicates.notNull()));
+        blacklistedUsernames = Sets.newHashSet(StringSupport.normalizeStringCollection(blacklist));
     }
 
     /**
@@ -127,7 +124,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
             return false;
         }
         
-        usernameContext = authenticationContext.getSubcontext(UsernameContext.class, false);
+        usernameContext = authenticationContext.getSubcontext(UsernameContext.class);
         if (usernameContext == null) {
             log.debug("{} No UsernameContext available within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);

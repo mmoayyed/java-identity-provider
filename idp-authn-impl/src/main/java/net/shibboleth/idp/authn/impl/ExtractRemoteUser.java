@@ -30,14 +30,13 @@ import net.shibboleth.idp.authn.context.UsernameContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
 /**
@@ -90,7 +89,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
     public void setCheckAttributes(@Nonnull @NonnullElements final Collection<String> attributes) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        checkAttributes = Lists.newArrayList(Collections2.filter(attributes, Predicates.notNull()));
+        checkAttributes = Lists.newArrayList(StringSupport.normalizeStringCollection(attributes));
     }
 
     /**
@@ -101,7 +100,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
     public void setCheckHeaders(@Nonnull @NonnullElements final Collection<String> headers) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        checkHeaders = Lists.newArrayList(Collections2.filter(headers, Predicates.notNull()));
+        checkHeaders = Lists.newArrayList(StringSupport.normalizeStringCollection(headers));
     }
     
     /** {@inheritDoc} */
