@@ -42,10 +42,11 @@
         </property>
     </bean>
 
-    <bean id="Shibboleth.C14N.SAML2Direct"
+    <bean id="Shibboleth.C14N.SAML2Transform"
             class="net.shibboleth.idp.saml.nameid.impl.NameIDCanonicalization" scope="prototype">
         <property name="decoder">
-            <bean class="net.shibboleth.idp.saml.nameid.impl.TransformingNameIDDecoder" />
+            <bean class="net.shibboleth.idp.saml.nameid.impl.TransformingNameIDDecoder"
+                p:transforms-ref="shibboleth.NameTransforms" />
         </property>
     </bean>
 
@@ -64,11 +65,12 @@
                 p:dataSealer-ref="shibboleth.DataSealer" />
         </property>
     </bean>
-    
-	<bean id="Shibboleth.C14N.SAML1Direct"
+
+    <bean id="Shibboleth.C14N.SAML1Transform"
             class="net.shibboleth.idp.saml.nameid.impl.NameIdentifierCanonicalization" scope="prototype">
         <property name="decoder">
-            <bean class="net.shibboleth.idp.saml.nameid.impl.TransformingNameIdentifierDecoder" />
+            <bean class="net.shibboleth.idp.saml.nameid.impl.TransformingNameIdentifierDecoder"
+                p:transforms-ref="shibboleth.NameTransforms" />
         </property>
     </bean>
 

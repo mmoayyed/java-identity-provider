@@ -50,28 +50,28 @@
     <bean id="c14n/SAML1CryptoTransient" parent="shibboleth.AbstractSAML1C14NFlowBean" 
         p:formats="urn:mace:shibboleth:1.0:nameIdentifier" /> 
 
-    <bean id="c14n/SAML2Direct" parent="shibboleth.AbstractSAML2C14NFlowBean"
-            p:formats-ref="shibboleth.DirectNameFormats">
+    <bean id="c14n/SAML2Transform" parent="shibboleth.AbstractSAML2C14NFlowBean"
+            p:formats-ref="shibboleth.NameTransformFormats">
         <property name="activationCondition">
             <bean class="com.google.common.base.Predicates" factory-method="and">
                 <constructor-arg>
                     <util:list>
                         <bean class="net.shibboleth.idp.saml.nameid.impl.NameIDCanonicalization.ActivationCondition" />
-                        <ref bean="shibboleth.DirectNamePredicate" />
+                        <ref bean="shibboleth.NameTransformPredicate" />
                     </util:list>
                 </constructor-arg>
             </bean>
         </property>
     </bean>
                
-    <bean id="c14n/SAML1Direct" parent="shibboleth.AbstractSAML1C14NFlowBean"
-            p:formats-ref="shibboleth.DirectNameFormats"> 
+    <bean id="c14n/SAML1Transform" parent="shibboleth.AbstractSAML1C14NFlowBean"
+            p:formats-ref="shibboleth.NameTransformFormats"> 
         <property name="activationCondition">
             <bean class="com.google.common.base.Predicates" factory-method="and">
                 <constructor-arg>
                     <util:list>
                         <bean class="net.shibboleth.idp.saml.nameid.impl.NameIdentifierCanonicalization.ActivationCondition" />
-                        <ref bean="shibboleth.DirectNamePredicate" />
+                        <ref bean="shibboleth.NameTransformPredicate" />
                     </util:list>
                 </constructor-arg>
             </bean>

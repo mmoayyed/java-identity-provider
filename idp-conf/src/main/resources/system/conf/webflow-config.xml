@@ -75,10 +75,10 @@
         <webflow:flow-location id="c14n/SAML2Transient" path="/c14n/subject-c14n-saml-default-flow.xml" />
         <webflow:flow-location id="c14n/SAML2CryptoTransient" path="/c14n/subject-c14n-saml-default-flow.xml" />
         <webflow:flow-location id="c14n/SAML2Persistent" path="/c14n/subject-c14n-saml-default-flow.xml" />
-        <webflow:flow-location id="c14n/SAML2Direct" path="/c14n/subject-c14n-saml-default-flow.xml" />
+        <webflow:flow-location id="c14n/SAML2Transform" path="/c14n/subject-c14n-saml-default-flow.xml" />
         <webflow:flow-location id="c14n/SAML1Transient" path="/c14n/subject-c14n-saml-default-flow.xml" />
         <webflow:flow-location id="c14n/SAML1CryptoTransient" path="/c14n/subject-c14n-saml-default-flow.xml" />
-        <webflow:flow-location id="c14n/SAML1Direct" path="/c14n/subject-c14n-saml-default-flow.xml" />
+        <webflow:flow-location id="c14n/SAML1Transform" path="/c14n/subject-c14n-saml-default-flow.xml" />
         <webflow:flow-location id="c14n/LegacyPrincipalConnector" path="/c14n/subject-c14n-saml-default-flow.xml" />
 
     </webflow:flow-registry>

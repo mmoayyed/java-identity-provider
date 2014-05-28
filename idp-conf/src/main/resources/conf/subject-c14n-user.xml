@@ -59,14 +59,14 @@
         
         <!--
         Finally we have beans for decoding arbitrary SAML formats directly. By default, these are turned off,
-        having *no* circumstances for which they apply (see shibboleth.DirectNamePredicate below).
+        having *no* circumstances for which they apply (see shibboleth.TransformNamePredicate below).
         -->
-        <ref bean="c14n/SAML2Direct" />
-        <ref bean="c14n/SAML1Direct" />
+        <ref bean="c14n/SAML2Transform" />
+        <ref bean="c14n/SAML1Transform" />
     </util:list>
     
-    <!-- What SAML NameID formats do you want to support direct mapping for? -->
-    <util:list id="shibboleth.DirectNameFormats">
+    <!-- What SAML NameID formats do you want to support direct transformations for? -->
+    <util:list id="shibboleth.NameTransformFormats">
         <value>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</value>
         <value>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</value>
         <value>urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName</value>
@@ -78,12 +78,22 @@
     Under what conditions should direct NameID mapping be allowed? By default, never.
     Any predicate can be used here; the example is suitable for enumerating a number of SPs to allow.
     -->
-    <bean id="shibboleth.DirectNamePredicate" class="net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate">
+    <bean id="shibboleth.NameTransformPredicate" class="net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate">
         <constructor-arg>
             <util:list>
                 <!-- <value>https://sp.example.org</value> -->
             </util:list>
         </constructor-arg>
     </bean>
-            
+    
+    <!--
+    Regular expression transforms to apply to incoming subject names. The default empty list just
+    echoes the name through unmodified.
+    -->
+    <util:list id="shibboleth.NameTransforms">
+        <!--
+        <bean class="net.shibboleth.utilities.java.support.collection.Pair" p:first="^(.+)@example\.edu$" p:second="$1" />
+        -->
+    </util:list>
+    
 </beans>
