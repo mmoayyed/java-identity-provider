@@ -163,10 +163,14 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
 
         final Subject subject;
         if (nameIdentifier instanceof NameIdentifier) {
+            log.debug("{} Creating Subject for canonicalization around NameIdentifier {}", getLogPrefix(),
+                    ((NameIdentifier) nameIdentifier).getNameIdentifier());
             subject = new Subject(false,
                     Collections.singleton(new NameIdentifierPrincipal((NameIdentifier) nameIdentifier)),
                     Collections.emptySet(), Collections.emptySet());
         } else if (nameIdentifier instanceof NameID) {
+            log.debug("{} Creating Subject for canonicalization around NameID {}", getLogPrefix(),
+                    ((NameID) nameIdentifier).getValue());
             subject = new Subject(false,
                     Collections.singleton(new NameIDPrincipal((NameID) nameIdentifier)),
                     Collections.emptySet(), Collections.emptySet());
@@ -179,6 +183,8 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, NO_SUBJECT);
             return;
         }
+        
+        
         
         final SubjectCanonicalizationContext c14n = new SubjectCanonicalizationContext();
         c14n.setSubject(subject);
