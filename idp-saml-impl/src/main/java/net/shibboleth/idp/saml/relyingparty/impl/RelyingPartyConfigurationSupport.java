@@ -66,7 +66,7 @@ public final class RelyingPartyConfigurationSupport {
     @Nonnull public static RelyingPartyConfiguration byGroup(@Nonnull @NotEmpty final String name) {
         final RelyingPartyConfiguration config = new RelyingPartyConfiguration();
         config.setId(name);
-        config.setActivationCondition(new EntitiesDescriptorPredicate());
+        config.setActivationCondition(new EntitiesDescriptorPredicate(name));
         return config;
     }
 
