@@ -26,8 +26,18 @@
         p:relyingPartyConfigurations-ref="RelyingPartyOverrides"
         p:defaultSecurityConfiguration-ref="DefaultSecurityConfiguration" />
 
-    <!-- Parent bean for RelyingParty overrides that establishes defaults. -->
-    <bean id="RelyingParty" class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration" abstract="true"
+    <!-- Parent bean for generic RelyingParty overrides that establishes defaults. -->
+    <bean id="RelyingParty" abstract="true" class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"
+        p:responderId-ref="entityID" p:detailedErrors="${idp.errors.detailed}" />
+
+    <!-- Parent bean for RelyingParty overrides based on activation by name(s). -->
+    <bean id="RelyingPartyByName" abstract="true"
+        class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byName"
+        p:responderId-ref="entityID" p:detailedErrors="${idp.errors.detailed}" />
+
+    <!-- Parent bean for RelyingParty overrides based on activation by name(s). -->
+    <bean id="RelyingPartyByGroup" abstract="true"
+        class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byGroup"
         p:responderId-ref="entityID" p:detailedErrors="${idp.errors.detailed}" />
 
     <!-- Default Profile Configurations, also usable as parent beans in overrides. -->

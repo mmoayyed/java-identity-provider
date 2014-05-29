@@ -17,49 +17,34 @@
 
 package net.shibboleth.idp.saml.profile.logic;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableSet;
 
 /**
- * Predicate to determine whether the supplied ids are in the EntitiesDescriptor or any of its parents.
+ * Predicate to determine whether the supplied name matches any of an entity's containing
+ * {@link EntitiesDescriptor} groups. 
  */
 public class EntitiesDescriptorPredicate implements Predicate<ProfileRequestContext> {
 
-    /** Relying parties to match against. */
-    @Nonnull @NonnullElements private Set<String> entitiesDescriptorIds;
+    /** Group to match. */
+    @Nonnull @NotEmpty private final String groupName;
     
     /**
-     * Set the relying parties to match against.
+     * Constructor.
      * 
-     * @param ids relying party IDs to match against
+     * @param name group name to match
      */
-    public synchronized void setEntitiesDescriptorIds(@Nonnull @NonnullElements final Collection<String> ids) {
-        Constraint.isNotNull(ids, "Relying party ID collection cannot be null");
-        
-        Set<String> newIds = new HashSet<>(ids.size());
-        for (final String id : ids) {
-            final String trimmed = StringSupport.trimOrNull(id);
-            if (trimmed != null) {
-                newIds.add(trimmed);
-            }
-        }
-        entitiesDescriptorIds = ImmutableSet.copyOf(newIds);
+    public EntitiesDescriptorPredicate(@Nonnull @NotEmpty final String name) {
+        groupName = Constraint.isNotNull(StringSupport.trimOrNull(name), "Group name cannot be null or empty");
     }
-
-
 
     /** {@inheritDoc} */
     @Override public boolean apply(@Nullable ProfileRequestContext arg0) {

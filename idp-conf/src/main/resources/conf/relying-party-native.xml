@@ -49,11 +49,8 @@
 
     <util:list id="RelyingPartyOverrides">
     
-        <!--
-        <bean id="" parent="RelyingParty" p:detailedErrors="true">
-            <property name="activationCondition">
-                <bean parent="shibboleth.Conditions.RelyingPartyId" c:candidates="https://sp.example.org" />
-            </property>
+        <bean parent="RelyingPartyByName" c:relyingPartyIds="https://sp.example.org"
+                p:detailedErrors="true">
             <property name="profileConfigurations">
                 <util:list>
                     <ref bean="Shibboleth.SSO" />
@@ -67,7 +64,6 @@
                 </util:list>
             </property>
         </bean>
-        -->
         
     </util:list>
 

@@ -57,7 +57,7 @@ public class RelyingPartyParser extends AbstractRelyingPartyParser {
 
         final BeanDefinitionBuilder egPredicate =
                 BeanDefinitionBuilder.genericBeanDefinition(EntitiesDescriptorPredicate.class);
-        egPredicate.addPropertyValue("entitiesDescriptorIds", id);
+        egPredicate.addConstructorArgValue(id);
 
         BeanDefinitionBuilder orPredicate = BeanDefinitionBuilder.genericBeanDefinition(Predicates.class);
         orPredicate.setFactoryMethod("or");

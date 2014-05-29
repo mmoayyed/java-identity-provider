@@ -20,7 +20,6 @@ package net.shibboleth.idp.relyingparty;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -64,7 +63,6 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
 
     /** Constructor. */
     public RelyingPartyConfiguration() {
-        super.setId(UUID.randomUUID().toString());
         activationCondition = Predicates.alwaysTrue();
         profileConfigurations = Collections.emptyMap();
     }
@@ -185,5 +183,5 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
 
         return activationCondition.apply(input);
     }
-
+    
 }
