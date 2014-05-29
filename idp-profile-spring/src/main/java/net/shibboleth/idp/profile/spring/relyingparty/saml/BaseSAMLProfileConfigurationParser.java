@@ -27,10 +27,13 @@ import net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.profile.config.logic.LegacyEncryptionRequirementPredicate;
 import net.shibboleth.idp.saml.profile.config.logic.LegacySigningRequirementPredicate;
 import net.shibboleth.idp.spring.SpringSupport;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
+import org.opensaml.xmlsec.impl.BasicDecryptionConfiguration;
 import org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration;
+import org.opensaml.xmlsec.keyinfo.impl.StaticKeyInfoCredentialResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -50,6 +53,9 @@ import com.google.common.base.Predicate;
  */
 public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleBeanDefinitionParser {
 
+    /** Bean name of legacy EKR to load. */
+    @Nonnull @NotEmpty private static final String DEFAULT_EKR = "shibboleth.LegacyRelyingParty.EncryptedKeyResolver";
+    
     /** Class logger. */
     @Nonnull private Logger log = LoggerFactory.getLogger(BaseSAMLProfileConfigurationParser.class);
 
@@ -173,10 +179,11 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
      * Setup the {@link SecurityConfiguration} for this profile. We look first at the embedded beans for a bean of the
      * correct type. Failing that we look for a defaultSigningCredential.
      * 
-     * @param element the element with the profile in it.
-     * @param builder the builder for the profile.
+     * @param element the element with the profile in it
+     * @param builder the builder for the profile
+     * @param parserContext the parser context
      */
-    private void setSecurityConfiguration(Element element, BeanDefinitionBuilder builder) {
+    private void setSecurityConfiguration(Element element, BeanDefinitionBuilder builder, ParserContext parserContext) {
 
         if (null != getEmbeddedBeans()) {
             // Ask the embedded beans first
@@ -221,13 +228,25 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
         final BeanDefinitionBuilder signingConfiguration =
                 BeanDefinitionBuilder.genericBeanDefinition(BasicSignatureSigningConfiguration.class);
         signingConfiguration.addPropertyReference("signingCredentials", credentialRef);
-
+        
+        final BeanDefinitionBuilder decryptionConfiguration =
+                BeanDefinitionBuilder.genericBeanDefinition(BasicDecryptionConfiguration.class);
+        
+        decryptionConfiguration.addPropertyReference("encryptedKeyResolver", DEFAULT_EKR);
+        
+        final BeanDefinitionBuilder staticKeyInfoCredentialResolver =
+                BeanDefinitionBuilder.genericBeanDefinition(StaticKeyInfoCredentialResolver.class);
+        staticKeyInfoCredentialResolver.addConstructorArgReference(credentialRef);
+        
+        decryptionConfiguration.addPropertyValue("KEKKeyInfoCredentialResolver",
+                staticKeyInfoCredentialResolver.getBeanDefinition());
+        
         final BeanDefinitionBuilder configuration =
                 BeanDefinitionBuilder.genericBeanDefinition(SecurityConfiguration.class);
         configuration.addPropertyValue("signatureSigningConfiguration", signingConfiguration.getBeanDefinition());
+        configuration.addPropertyValue("decryptionConfiguration", decryptionConfiguration.getBeanDefinition());
 
         builder.addPropertyValue("securityConfiguration", configuration.getBeanDefinition());
-
     }
 
     /** {@inheritDoc} */
@@ -242,7 +261,7 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
             embeddedBeans = SpringSupport.createBeanFactory(springBeans.get(0));
         }
 
-        setSecurityConfiguration(element, builder);
+        setSecurityConfiguration(element, builder, parserContext);
 
         if (element.hasAttributeNS(null, "assertionLifetime")) {
             // Set as a string and let the converter to the work

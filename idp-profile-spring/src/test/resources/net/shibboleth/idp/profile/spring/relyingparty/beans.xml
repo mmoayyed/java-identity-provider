@@ -80,41 +80,19 @@
         c:_0="security-policy/shibboleth-sso" />
 		
 
-	<!-- And the default security Policy -->
+	<!-- And the default decryption material. -->
 
-    <bean id="shibboleth.DefaultSecurityConfiguration" class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
-
-	<util:map id="shibboleth.DefaultSecurityConfigurationMap">
-		<!-- SAML1 -->
-		<entry key="http://shibboleth.net/ns/profiles/saml1/query/artifact">
-			<bean class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
-		</entry>
-		<entry key="http://shibboleth.net/ns/profiles/saml1/query/attribute">
-			<bean class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
-		</entry>
-		<entry key="http://shibboleth.net/ns/profiles/saml1/sso/browser">
-			<bean class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
-		</entry>
-
-        <!-- SAML2 -->
-        <entry key="http://shibboleth.net/ns/profiles/saml2/query/artifact">
-            <bean class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
-        </entry>
-        <entry key="http://shibboleth.net/ns/profiles/saml2/query/attribute">
-            <bean class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
-        </entry>
-        <entry key="http://shibboleth.net/ns/profiles/saml2/sso/browser">
-            <bean class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
-        </entry>
-        <entry key="http://shibboleth.net/ns/profiles/saml2/sso/ecp">
-            <bean class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
-        </entry>
-        
-        <entry key="http://shibboleth.net/ns/profiles/liberty/ssos">
-            <bean class="net.shibboleth.idp.profile.config.SecurityConfiguration" />
-        </entry>
-
-	</util:map>
+    <bean id="shibboleth.LegacyRelyingParty.EncryptedKeyResolver"
+            class="org.opensaml.xmlsec.encryption.support.ChainingEncryptedKeyResolver">
+        <constructor-arg name="encKeyResolvers">
+            <util:list>
+                <bean class="org.opensaml.xmlsec.encryption.support.InlineEncryptedKeyResolver" />
+                <bean class="org.opensaml.saml.saml2.encryption.EncryptedElementTypeEncryptedKeyResolver" />
+                <bean class="org.opensaml.xmlsec.encryption.support.SimpleRetrievalMethodEncryptedKeyResolver" />
+                <bean class="org.opensaml.xmlsec.encryption.support.SimpleKeyInfoReferenceEncryptedKeyResolver" />
+            </util:list>
+        </constructor-arg>
+    </bean>
 
 	<bean id="shibboleth.ParserPool"
 		class="net.shibboleth.utilities.java.support.xml.BasicParserPool"

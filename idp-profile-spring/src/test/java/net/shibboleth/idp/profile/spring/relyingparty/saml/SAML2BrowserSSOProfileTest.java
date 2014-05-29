@@ -109,6 +109,7 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertTrue(nameIDPrefs.contains("two"));
         
         Assert.assertNotNull(profile.getSecurityConfiguration());
-
+        Assert.assertNotNull(profile.getSecurityConfiguration().getSignatureSigningConfiguration());
+        Assert.assertNotNull(profile.getSecurityConfiguration().getDecryptionConfiguration());
     }
 }
