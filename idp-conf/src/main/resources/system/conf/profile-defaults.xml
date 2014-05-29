@@ -66,5 +66,17 @@
         c:_0="1111" />
     <bean id="shibboleth.SAML1.BrowserSSO.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/shibboleth-sso" />
+
+    <bean id="shibboleth.LegacyRelyingParty.EncryptedKeyResolver"
+            class="org.opensaml.xmlsec.encryption.support.ChainingEncryptedKeyResolver">
+        <constructor-arg name="encKeyResolvers">
+            <util:list>
+                <bean class="org.opensaml.xmlsec.encryption.support.InlineEncryptedKeyResolver" />
+                <bean class="org.opensaml.saml.saml2.encryption.EncryptedElementTypeEncryptedKeyResolver" />
+                <bean class="org.opensaml.xmlsec.encryption.support.SimpleRetrievalMethodEncryptedKeyResolver" />
+                <bean class="org.opensaml.xmlsec.encryption.support.SimpleKeyInfoReferenceEncryptedKeyResolver" />
+            </util:list>
+        </constructor-arg>
+    </bean>
             
 </beans>
