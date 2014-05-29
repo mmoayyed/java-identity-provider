@@ -74,10 +74,16 @@
         <value>file:///${idp.home}/conf/property-placeholder.xml</value>
     </util:list>
 
+    <!--
     <util:list id="shibboleth.RelyingPartyResolverResources">
         <value>file:///${idp.home}/conf/relying-party.xml</value>
         <value>file:///${idp.home}/system/conf/profile-defaults.xml</value>
         <value>file:///${idp.home}/conf/property-placeholder.xml</value>
+    </util:list>
+    -->
+    <util:list id="shibboleth.RelyingPartyResolverResources">
+        <value>file:///${idp.home}/conf/relying-party-native.xml</value>
+        <value>file:///${idp.home}/conf/credentials.xml</value>
     </util:list>
 
     <util:list id ="shibboleth.NameIdentifierGenerationResources">
