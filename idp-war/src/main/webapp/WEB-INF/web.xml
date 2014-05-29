@@ -10,7 +10,7 @@
         same named beans in previous files. -->
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>file:///${idp.home}/system/conf/global-system.xml file:///${idp.home}/conf/global-user.xml</param-value>
+        <param-value>file:///${idp.home}/system/conf/global-system.xml file:///${idp.home}/conf/global.xml</param-value>
     </context-param>
 
     <!-- Spring listener used to load up the configuration -->

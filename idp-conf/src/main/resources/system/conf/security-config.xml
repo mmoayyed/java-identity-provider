@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <context:property-placeholder location="file:///${idp.home}/conf/idp.properties" />
+
+    <!-- This BeanPostProcessor auto-sets identifiable beans with the bean name (if not already set). -->
+    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+
+    <!--
+    Security Configuration Defaults
+    
+    These settings establish the default security configurations for signatures and encryption.
+    This is loaded as part of the RelyingPartyConfigurationResolver service.
+    -->
+
+    <bean id="shibboleth.DefaultSecurityConfiguration" class="net.shibboleth.idp.profile.config.SecurityConfiguration">
+    
+        <property name="signatureSigningConfiguration">
+            <bean class="org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration"
+                    p:signingCredentials-ref="defaultSigningCredential">
+                <property name="signatureAlgorithms">
+                    <util:list>
+                        <util:constant
+                            static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256" />
+                        <util:constant
+                            static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_SIGNATURE_ECDSA_SHA256" />
+                    </util:list>
+                </property>
+                <property name="signatureReferenceDigestMethods">
+                    <util:list>
+                        <util:constant
+                            static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_DIGEST_SHA256" />
+                    </util:list>
+                </property>
+            </bean>
+        </property>
+        
+        <property name="decryptionConfiguration">
+            <bean class="org.opensaml.xmlsec.impl.BasicDecryptionConfiguration"
+                p:KEKKeyInfoCredentialResolver-ref="defaultKeyEncryptionCredentialResolver"
+                p:encryptedKeyResolver-ref="defaultEncryptedKeyResolver" />
+        </property>
+        
+        <property name="encryptionConfiguration">
+            <bean class="org.opensaml.xmlsec.impl.BasicEncryptionConfiguration">
+                <property name="dataEncryptionAlgorithms">
+                    <util:list>
+                        <util:constant
+                            static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128" />
+                    </util:list>
+                </property>
+                <property name="keyTransportEncryptionAlgorithms">
+                    <util:list>
+                        <util:constant
+                            static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSAOAEP" />
+                    </util:list>
+                </property>
+            </bean>
+        </property>
+        
+    </bean>
+
+</beans>

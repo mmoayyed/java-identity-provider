@@ -56,7 +56,7 @@
     <!--
     Otherwise by default we look at files whose names are derived from ${idp.home}. Services not configured
     using native Spring syntax also need to load the property-placeholder file in order to pull settings from
-    the idp.properties file.
+    property sources.
     -->
 
     <util:list id ="shibboleth.AttributeResolverResources">
@@ -74,17 +74,18 @@
         <value>file:///${idp.home}/conf/property-placeholder.xml</value>
     </util:list>
 
+    <!--
     <util:list id="shibboleth.RelyingPartyResolverResources">
         <value>file:///${idp.home}/conf/relying-party.xml</value>
-        <value>file:///${idp.home}/system/conf/profile-defaults.xml</value>
         <value>file:///${idp.home}/conf/property-placeholder.xml</value>
+        <value>file:///${idp.home}/system/conf/profile-defaults.xml</value>
     </util:list>
-    <!--
+    -->
     <util:list id="shibboleth.RelyingPartyResolverResources">
         <value>file:///${idp.home}/conf/relying-party-native.xml</value>
         <value>file:///${idp.home}/conf/credentials.xml</value>
+        <value>file:///${idp.home}/system/conf/relying-party-system.xml</value>
     </util:list>
-    -->
 
     <util:list id ="shibboleth.NameIdentifierGenerationResources">
         <value>file:///${idp.home}/conf/saml-nameid-gen.xml</value>
