@@ -88,7 +88,8 @@
     </util:list>
 
     <util:list id ="shibboleth.NameIdentifierGenerationResources">
-        <value>file:///${idp.home}/conf/saml-nameid-gen.xml</value>
+        <value>file:///${idp.home}/conf/saml-nameid.xml</value>
+        <value>file:///${idp.home}/system/conf/saml-nameid-system.xml</value>
     </util:list>
 
 </beans>
