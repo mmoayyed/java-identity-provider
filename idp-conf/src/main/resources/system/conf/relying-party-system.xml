@@ -21,10 +21,10 @@
 
     <!-- Pulls together the various components that feed the resolver. -->
     <bean class="net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver"
-        p:anonymousConfiguration-ref="AnonymousRelyingParty"
-        p:defaultConfiguration-ref="DefaultRelyingParty"
-        p:relyingPartyConfigurations-ref="RelyingPartyOverrides"
-        p:defaultSecurityConfiguration-ref="DefaultSecurityConfiguration" />
+        p:anonymousConfiguration-ref="shibboleth.AnonymousRelyingParty"
+        p:defaultConfiguration-ref="shibboleth.DefaultRelyingParty"
+        p:relyingPartyConfigurations-ref="shibboleth.RelyingPartyOverrides"
+        p:defaultSecurityConfiguration-ref="shibboleth.DefaultSecurityConfiguration" />
 
     <!-- Parent bean for generic RelyingParty overrides that establishes defaults. -->
     <bean id="RelyingParty" abstract="true" class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"
@@ -65,7 +65,7 @@
     and loads the default credentials used.
     -->
 
-    <bean id="DefaultSecurityConfiguration" class="net.shibboleth.idp.profile.config.SecurityConfiguration">
+    <bean id="shibboleth.DefaultSecurityConfiguration" class="net.shibboleth.idp.profile.config.SecurityConfiguration">
     
         <property name="signatureSigningConfiguration">
             <bean class="org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration"

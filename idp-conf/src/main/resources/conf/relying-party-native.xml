@@ -22,7 +22,7 @@
     to enable specific default profile settings (as below), or create new beans inline to override defaults. 
     -->
     
-    <bean id="AnonymousRelyingParty" parent="RelyingParty">
+    <bean id="shibboleth.AnonymousRelyingParty" parent="RelyingParty">
         <property name="profileConfigurations">
             <util:list>
             <!-- <ref bean="SAML2.SSO" /> -->
@@ -32,7 +32,7 @@
 
     <!-- Default configuration, with default settings applied for all profiles. -->
 
-    <bean id="DefaultRelyingParty" parent="RelyingParty">
+    <bean id="shibboleth.DefaultRelyingParty" parent="RelyingParty">
         <property name="profileConfigurations">
             <util:list>
                 <ref bean="Shibboleth.SSO" />
@@ -47,7 +47,7 @@
         </property>
     </bean>
 
-    <util:list id="RelyingPartyOverrides">
+    <util:list id="shibboleth.RelyingPartyOverrides">
     
         <bean parent="RelyingPartyByName" c:relyingPartyIds="https://sp.example.org"
                 p:detailedErrors="true">
