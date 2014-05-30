@@ -28,7 +28,9 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
+import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 import net.shibboleth.utilities.java.support.xml.XmlConstants;
 
@@ -58,11 +60,11 @@ import com.google.common.collect.Sets;
 public final class SpringSupport {
 
     /** Spring beans element name. */
-    public static final QName SPRING_BEANS_ELEMENT_NAME = new QName("http://www.springframework.org/schema/beans",
-            "beans");
+    @Nonnull public static final QName SPRING_BEANS_ELEMENT_NAME =
+            new QName("http://www.springframework.org/schema/beans", "beans");
 
-    /** Log. */
-    static final Logger LOG = LoggerFactory.getLogger(SpringSupport.class);
+    /** Logger. */
+    @Nonnull static final Logger LOG = LoggerFactory.getLogger(SpringSupport.class);
 
     /** Constructor. */
     private SpringSupport() {
@@ -77,11 +79,12 @@ public final class SpringSupport {
      * 
      * @return the created context
      */
-    public static GenericApplicationContext newContext(String name, List<Resource> configurationResources,
-            ApplicationContext parentContext) {
-        GenericApplicationContext context = new GenericApplicationContext(parentContext);
+    @Nonnull public static GenericApplicationContext newContext(@Nonnull @NotEmpty final String name,
+            @Nonnull @NonnullElements final List<Resource> configurationResources,
+            @Nullable final ApplicationContext parentContext) {
+        GenericApplicationContext context = new FilesystemGenericApplicationContext(parentContext);
         context.setDisplayName("ApplicationContext:" + name);
-
+        
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         service.setConverters(Sets.newHashSet(new DurationToLongConverter(), new StringToIPRangeConverter()));
         service.afterPropertiesSet();
@@ -165,7 +168,7 @@ public final class SpringSupport {
             }
         }
 
-        final GenericApplicationContext ctx = new GenericApplicationContext();
+        final GenericApplicationContext ctx = new FilesystemGenericApplicationContext();
         parseNativeElement(springBeans, ctx);
         ctx.refresh();
         return ctx.getBeanFactory();
@@ -191,4 +194,5 @@ public final class SpringSupport {
         }
         return bean;
     }
+    
 }
