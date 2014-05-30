@@ -82,7 +82,7 @@ public class DefaultRelyingPartyConfigurationResolver extends
     /** The predicate which decides if this context is "Anonymous". */
     @NonnullAfterInit private Predicate<ProfileRequestContext> isAnonymousPredicate;
 
-    /** The map from profile ID to {@link SecurtyConfiguration}. */
+    /** The map from profile ID to {@link SecurityConfiguration}. */
     @Nonnull @NonnullElements private Map<String,SecurityConfiguration> securityConfigurationMap;
     
     /** A global default security configuration. */
