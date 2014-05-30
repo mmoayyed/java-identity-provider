@@ -26,6 +26,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
@@ -103,7 +104,7 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
             return Tristate.FAIL;
         }
 
-        EntitiesDescriptor currentGroup = (EntitiesDescriptor) entity.getParent();
+        XMLObject currentGroup = entity.getParent();
         if (currentGroup == null) {
             log.warn("{} Entity descriptor does not have a parent object, unable to check if entity is in group {}",
                     getLogPrefix(), entityGroup);
@@ -111,10 +112,11 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
         }
 
         do {
-            if (entityGroup.equals(currentGroup.getName())) {
+            if (currentGroup instanceof EntitiesDescriptor && ((EntitiesDescriptor) currentGroup).getName() != null
+                    && entityGroup.equals(((EntitiesDescriptor) currentGroup).getName())) {
                 return Tristate.TRUE;
             }
-            currentGroup = (EntitiesDescriptor) currentGroup.getParent();
+            currentGroup = currentGroup.getParent();
         } while (currentGroup != null);
 
         return Tristate.FALSE;
