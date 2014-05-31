@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.cli;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -28,6 +29,7 @@ import net.shibboleth.ext.spring.util.SpringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -128,7 +130,8 @@ public final class Main {
             configs.add(r);
         }
                 
-        return SpringSupport.newContext(Main.class.getName(), configs, null);
+        return SpringSupport.newContext(Main.class.getName(), configs, Collections.<BeanPostProcessor>emptyList(),
+                null);
     }
     
     /**
