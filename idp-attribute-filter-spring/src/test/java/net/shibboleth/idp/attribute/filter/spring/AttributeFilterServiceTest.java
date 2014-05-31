@@ -29,6 +29,7 @@ import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.service.ServiceException;
 
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -58,7 +59,8 @@ public class AttributeFilterServiceTest {
      */
     public static AttributeFilter getFilter(String name) throws ServiceException {
         final Resource resource = new ClassPathResource(SERVICE_CONFIG_DIR + name);
-        GenericApplicationContext context = SpringSupport.newContext(name, Collections.singletonList(resource), null);
+        final GenericApplicationContext context = SpringSupport.newContext(name, Collections.singletonList(resource),
+                Collections.<BeanPostProcessor>emptyList(), null);
         return context.getBean(AttributeFilter.class);
     }
 
