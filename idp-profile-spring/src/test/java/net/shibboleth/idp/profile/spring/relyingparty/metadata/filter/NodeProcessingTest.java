@@ -26,7 +26,7 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.opensaml.core.criterion.EntityIdCriterion;
-import org.opensaml.saml.metadata.EntitiesDescriptorGroupName;
+import org.opensaml.saml.metadata.EntityGroupName;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.impl.EntitiesDescriptorNameProcessor;
 import org.opensaml.saml.metadata.resolver.filter.impl.NodeProcessingMetadataFilter;
@@ -45,7 +45,7 @@ public class NodeProcessingTest extends AbstractMetadataParserTest {
         final NodeProcessingMetadataFilter filter = (NodeProcessingMetadataFilter) resolver.getMetadataFilter();
         Assert.assertEquals(filter.getNodeProcessors().size(), 0);
     }
-    
+
     @Test public void both() throws IOException, ResolverException {
         final MetadataResolver resolver = getBean(MetadataResolver.class, true, "nodeproc/both.xml");
 
@@ -53,14 +53,13 @@ public class NodeProcessingTest extends AbstractMetadataParserTest {
         Assert.assertEquals(filter.getNodeProcessors().size(), 2);
         Assert.assertEquals(filter.getNodeProcessors().get(0).getClass(), EntitiesDescriptorNameProcessor.class);
         Assert.assertEquals(filter.getNodeProcessors().get(1).getClass(), KeyAuthorityNodeProcessor.class);
-        
-        final EntityDescriptor entity  =
+
+        final EntityDescriptor entity =
                 resolver.resolveSingle(new CriteriaSet(new EntityIdCriterion("https://sp.example.org/sp/shibboleth")));
         Assert.assertNotNull(entity);
-        final List<EntitiesDescriptorGroupName> groups =
-                entity.getObjectMetadata().get(EntitiesDescriptorGroupName.class);
+        final List<EntityGroupName> groups = entity.getObjectMetadata().get(EntityGroupName.class);
         Assert.assertEquals(groups.size(), 1);
         Assert.assertEquals(groups.get(0).getName(), "Example");
     }
-    
+
 }
