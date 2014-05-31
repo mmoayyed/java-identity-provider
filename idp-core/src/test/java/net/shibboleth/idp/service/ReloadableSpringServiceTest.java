@@ -26,6 +26,7 @@ import java.util.Collections;
 import net.shibboleth.ext.spring.util.SpringSupport;
 
 import org.springframework.beans.factory.BeanInitializationException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
@@ -230,8 +231,8 @@ public class ReloadableSpringServiceTest {
 
         Resource parentResource = new ClassPathResource("net/shibboleth/idp/service/ReloadableSpringService.xml");
 
-        GenericApplicationContext appCtx =
-                SpringSupport.newContext("appCtx", Collections.singletonList(parentResource), null);
+        GenericApplicationContext appCtx = SpringSupport.newContext("appCtx", Collections.singletonList(parentResource),
+                Collections.<BeanPostProcessor>emptyList(), null);
                 
         ReloadableSpringService service = appCtx.getBean("testReloadableSpringService", ReloadableSpringService.class);
 
@@ -242,8 +243,8 @@ public class ReloadableSpringServiceTest {
 
         Resource parentResource = new ClassPathResource("net/shibboleth/idp/service/ReloadableSpringService.xml");
 
-        GenericApplicationContext appCtx =
-                SpringSupport.newContext("appCtx", Collections.singletonList(parentResource), null);
+        GenericApplicationContext appCtx = SpringSupport.newContext("appCtx", Collections.singletonList(parentResource),
+                Collections.<BeanPostProcessor>emptyList(), null);
                 
         ReloadableSpringService service1 = appCtx.getBean("testReloadableSpringService", ReloadableSpringService.class);
         Assert.assertEquals(service1.getId(), "testReloadableSpringService");
