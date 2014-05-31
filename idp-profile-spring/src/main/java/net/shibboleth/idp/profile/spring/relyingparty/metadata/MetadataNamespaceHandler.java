@@ -21,7 +21,10 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.ChainingParser;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.EntitiesDescriptorNameParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.EntityRoleFilterParser;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.KeyAuthorityParser;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.NodeProcessingParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.RequiredValidUntilParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.SchemaValidationParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.SignatureValidationParser;
@@ -40,6 +43,9 @@ public class MetadataNamespaceHandler extends BaseSpringNamespaceHandler {
     /** Metadata filter Element name. */
     public static final QName METADATA_FILTER_ELEMENT_NAME = new QName(NAMESPACE, "MetadataFilter");
 
+    /** Metadata node processor Element name. */
+    public static final QName METADATA_NODE_PROC_ELEMENT_NAME = new QName(NAMESPACE, "MetadataNodeProcessor");
+    
     /** {@inheritDoc} */
     @Override public void init() {
         // Profile Configuration
@@ -63,5 +69,11 @@ public class MetadataNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(EntityRoleFilterParser.TYPE_NAME, new EntityRoleFilterParser());
         registerBeanDefinitionParser(SchemaValidationParser.TYPE_NAME, new SchemaValidationParser());
         registerBeanDefinitionParser(SignatureValidationParser.TYPE_NAME, new SignatureValidationParser());
+        registerBeanDefinitionParser(NodeProcessingParser.TYPE_NAME, new NodeProcessingParser());
+        
+        // Node Processors
+        registerBeanDefinitionParser(EntitiesDescriptorNameParser.TYPE_NAME, new EntitiesDescriptorNameParser());
+        registerBeanDefinitionParser(KeyAuthorityParser.TYPE_NAME, new KeyAuthorityParser());
     }
+    
 }

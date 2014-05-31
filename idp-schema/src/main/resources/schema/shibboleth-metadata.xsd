@@ -287,8 +287,7 @@
         <annotation>
             <documentation>
                 Defines a filter that is applied to SAML2 metadata after it has been parsed and validated.
-                Filters may
-                be used to remove unnecessary information or perform other transformative logic.
+                Filters may be used to remove unnecessary information or perform other transformative logic.
             </documentation>
         </annotation>
     </element>
@@ -453,5 +452,60 @@
         </complexContent>
     </complexType>
 
+    <complexType name="NodeProcessing">
+        <annotation>
+            <documentation>
+                A metadata filter that applies a sequence of node processor plugins to the tree.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataFilterType">
+                <sequence>
+                    <element ref="shibmd:MetadataNodeProcessor" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                A node processor to be applied.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <complexType name="MetadataFilterType" abstract="true"/>
+    
+    <element name="MetadataNodeProcessor" type="shibmd:MetadataNodeProcessorType">
+        <annotation>
+            <documentation>
+                Defines a plugin that walks the tree of objects in an unmarshalled metadata instance.
+            </documentation>
+        </annotation>
+    </element>
+    
+    <complexType name="EntitiesDescriptorName">
+        <annotation>
+            <documentation>
+                A node processor that attaches Name information from enclosing EntitiesDescriptors to
+                an entity via an extension object, to maintain group information while flattening the tree.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataNodeProcessorType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="KeyAuthority">
+        <annotation>
+            <documentation>
+                A node processor that processes KeyAuthority extensions and attaches the parsed PKIX
+                information via an extension object.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataNodeProcessorType"/>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="MetadataNodeProcessorType" abstract="true"/>
 </schema>
