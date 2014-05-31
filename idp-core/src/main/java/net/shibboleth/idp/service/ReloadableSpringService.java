@@ -19,6 +19,7 @@ package net.shibboleth.idp.service;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -26,6 +27,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
@@ -33,14 +35,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.Resource;
 
 import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 /**
  * This class provides a reloading interface to a ServiceableComponent.
@@ -56,6 +61,9 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
 
     /** List of configuration resources for this service. */
     private List<Resource> serviceConfigurations;
+    
+    /** List of bean post processors for this service's content. */
+    private List<BeanPostProcessor> postProcessors;
 
     /** The class we are looking for. */
     private final Class<T> theClaz;
@@ -90,8 +98,8 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
      * @param claz The interface being implemented.
      */
     public ReloadableSpringService(Class<T> claz) {
-        theClaz = claz;
-        theServiceClaz = ServiceableComponent.class;
+        this(claz, ServiceableComponent.class);
+        
     }
 
     /**
@@ -103,6 +111,7 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
     public ReloadableSpringService(Class<T> claz, Class<? extends ServiceableComponent> servicableClaz) {
         theClaz = claz;
         theServiceClaz = servicableClaz;
+        postProcessors = Collections.emptyList();
     }
 
     /**
@@ -143,7 +152,7 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
      * 
      * @param configs list of configurations for this service, may be null or empty
      */
-    public void setServiceConfigurations(@Nonnull final Collection<Resource> configs) {
+    public void setServiceConfigurations(@Nonnull @NonnullElements final List<Resource> configs) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -171,6 +180,18 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
         } else {
             resourceLastModifiedTimes = null;
         }
+    }
+    
+    /**
+     * Set the list of bean post processors for this service.
+     * 
+     * @param processors bean post processors to apply
+     */
+    public void setBeanPostProcessors(@Nonnull @NonnullElements final List<BeanPostProcessor> processors) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        
+        postProcessors = Lists.newArrayList(Collections2.filter(processors, Predicates.notNull()));
     }
 
     /** {@inheritDoc} */
@@ -242,7 +263,8 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
         log.debug("Creating new ApplicationContext for service '{}'", getId());
         GenericApplicationContext appContext = null;
         try {
-            appContext = SpringSupport.newContext(getId(), getServiceConfigurations(), getParentContext());
+            appContext = SpringSupport.newContext(getId(), getServiceConfigurations(), postProcessors,
+                    getParentContext());
         } catch (FatalBeanException e) {
             throw new ServiceException(e);
         }
