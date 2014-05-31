@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
 
-import net.shibboleth.idp.spring.SpringSupport;
+import net.shibboleth.ext.spring.util.SpringSupport;
 
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.context.support.GenericApplicationContext;

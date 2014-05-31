@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.resolver.spring;
 
 import java.util.Collection;
 
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -31,7 +32,6 @@ import net.shibboleth.idp.saml.attribute.mapping.impl.XmlObjectAttributeValueMap
 import net.shibboleth.idp.service.ReloadableService;
 import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.idp.service.ServiceableComponent;
-import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;

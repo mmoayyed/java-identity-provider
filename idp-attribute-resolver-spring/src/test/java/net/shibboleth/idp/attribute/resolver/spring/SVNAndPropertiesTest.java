@@ -27,13 +27,13 @@ import java.util.Set;
 
 import net.shibboleth.ext.spring.resource.SVNBasicAuthenticationManager;
 import net.shibboleth.ext.spring.resource.SVNResource;
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.springframework.context.support.GenericApplicationContext;

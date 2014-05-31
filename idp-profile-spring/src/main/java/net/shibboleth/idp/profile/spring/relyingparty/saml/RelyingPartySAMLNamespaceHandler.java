@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.saml;
 
-import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
+import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 
 /**
  * Namespace handler for the Relying Party SAML configuration. Perfoms no function since we do not parse these children

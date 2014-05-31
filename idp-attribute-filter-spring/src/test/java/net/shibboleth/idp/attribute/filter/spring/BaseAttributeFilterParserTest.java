@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filter.AttributeRule;
@@ -32,7 +33,6 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.attribute.resolver.dc.impl.SAMLAttributeDataConnector;
-import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.xml.XMLObjectBaseTestCase;

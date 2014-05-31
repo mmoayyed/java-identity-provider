@@ -19,13 +19,13 @@ package net.shibboleth.idp.profile.spring.relyingparty.security;
 
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicFilesystemCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicInlineCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.ResourceCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509FilesystemCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509InlineCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.StaticExplicitKeySignatureParser;
-import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 /** Namespace handler <em>{@value NAMESPACE}</em>. */
 public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {

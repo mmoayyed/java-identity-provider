@@ -19,7 +19,7 @@ package net.shibboleth.idp.ui.saml;
 
 import java.util.Arrays;
 
-import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.idp.ui.context.SAMLRelyingPartyUIInformation;
 import net.shibboleth.utilities.java.support.codec.HTMLEncoder;

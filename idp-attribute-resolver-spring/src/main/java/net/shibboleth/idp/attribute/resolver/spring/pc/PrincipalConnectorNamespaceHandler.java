@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.pc;
 
-import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
+import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 
 /**
  * Namespace handler for the principal connector. This is a noop and is here purely to allow us to have a handler

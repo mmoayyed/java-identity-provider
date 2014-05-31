@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
-import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
+import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 
 // TODO incomplete
 /** Namespace handler for the attribute resolver. */

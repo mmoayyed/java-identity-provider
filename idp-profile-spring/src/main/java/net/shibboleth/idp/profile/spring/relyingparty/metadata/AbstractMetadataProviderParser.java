@@ -21,8 +21,8 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
-import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.xml.DomTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 

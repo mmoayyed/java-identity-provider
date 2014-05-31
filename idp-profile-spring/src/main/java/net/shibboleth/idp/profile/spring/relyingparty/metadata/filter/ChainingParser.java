@@ -21,8 +21,8 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.MetadataNamespaceHandler;
-import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.saml.metadata.resolver.filter.impl.MetadataFilterChain;

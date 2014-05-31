@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.spring.basic;
 
+import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 import net.shibboleth.idp.attribute.filter.spring.matcher.AttributeScopeMatcherParser;
 import net.shibboleth.idp.attribute.filter.spring.matcher.AttributeScopeRegexMatcherParser;
 import net.shibboleth.idp.attribute.filter.spring.matcher.AttributeValueRegexMatcherParser;
@@ -31,7 +32,6 @@ import net.shibboleth.idp.attribute.filter.spring.policyrule.NumOfAttributeValue
 import net.shibboleth.idp.attribute.filter.spring.policyrule.PredicateRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.PrincipalNameRegexRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.PrincipalNameRuleParser;
-import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 /** Namespace handler for the attribute filter engine basic match functions. */
 public class AttributeFilterBasicNamespaceHandler extends BaseSpringNamespaceHandler {

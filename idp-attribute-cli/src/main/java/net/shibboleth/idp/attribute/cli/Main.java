@@ -24,7 +24,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.spring.SpringSupport;
+import net.shibboleth.ext.spring.util.SpringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

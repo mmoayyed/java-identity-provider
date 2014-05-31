@@ -17,10 +17,10 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
+import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.MappedAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.SourceValueParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.ValueMapParser;
-import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 /**
  * Namespace handler for {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition.BaseAttributeDefinition}s.

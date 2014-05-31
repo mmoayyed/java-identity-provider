@@ -22,11 +22,11 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.MetadataNamespaceHandler;
 import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
 import net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver;
 import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
-import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;

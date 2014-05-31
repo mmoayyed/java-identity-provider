@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 import javax.sql.DataSource;
 
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -37,7 +38,6 @@ import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.service.ReloadableService;
 import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.idp.service.ServiceableComponent;
-import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;

@@ -17,8 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring;
 
+import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.pc.DirectConnectorParser;
-import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 

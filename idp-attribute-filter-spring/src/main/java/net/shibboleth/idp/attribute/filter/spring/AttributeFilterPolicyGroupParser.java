@@ -23,8 +23,8 @@ import java.util.Map;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.filter.AttributeFilterImpl;
-import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 

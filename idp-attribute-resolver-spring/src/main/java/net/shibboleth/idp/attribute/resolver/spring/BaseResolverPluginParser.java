@@ -21,7 +21,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.spring.SpringSupport;
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 

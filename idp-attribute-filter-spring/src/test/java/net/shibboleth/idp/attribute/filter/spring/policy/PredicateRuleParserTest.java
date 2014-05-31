@@ -19,11 +19,11 @@ package net.shibboleth.idp.attribute.filter.spring.policy;
 
 import javax.annotation.Nullable;
 
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.PredicatePolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.profile.context.ProfileRequestContext;

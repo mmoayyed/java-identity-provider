@@ -19,7 +19,7 @@ package net.shibboleth.idp.saml.attribute.mapping.impl;
 
 import java.util.Collection;
 
-import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;

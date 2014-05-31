@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty;
 
+import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 import net.shibboleth.idp.profile.spring.relyingparty.saml.SAML1ArtifactResolutionProfileParser;
 import net.shibboleth.idp.profile.spring.relyingparty.saml.SAML1AttributeQueryProfileParser;
 import net.shibboleth.idp.profile.spring.relyingparty.saml.SAML2ArtifactResolutionProfileParser;
@@ -26,7 +27,6 @@ import net.shibboleth.idp.profile.spring.relyingparty.saml.SAML2ECPProfileParser
 import net.shibboleth.idp.profile.spring.relyingparty.saml.SAML2LogoutRequestProfileParser;
 import net.shibboleth.idp.profile.spring.relyingparty.saml.SAML2SSOSProfileParser;
 import net.shibboleth.idp.profile.spring.relyingparty.saml.ShibbolethSSOProfileParser;
-import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 // TODO incomplete
 /** Namespace handler for the relying party files. */

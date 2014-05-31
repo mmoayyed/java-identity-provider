@@ -21,13 +21,13 @@ import java.util.Collection;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.SimpleAttributeDefinitionParser;
 import net.shibboleth.idp.saml.attribute.principalconnector.impl.PrincipalConnector;
-import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;

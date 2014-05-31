@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder;
@@ -30,7 +31,6 @@ import net.shibboleth.idp.attribute.resolver.dc.impl.Validator;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.ExecutableStatement;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.RdbmsDataConnector;
 import net.shibboleth.idp.service.ServiceException;
-import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 

@@ -21,7 +21,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
+import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;

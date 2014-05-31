@@ -21,13 +21,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.service.ServiceException;
-import net.shibboleth.idp.spring.SpringSupport;
 
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;

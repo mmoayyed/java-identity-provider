@@ -21,7 +21,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.spring.SpringSupport;
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.saml.metadata.resolver.impl.ChainingMetadataResolver;

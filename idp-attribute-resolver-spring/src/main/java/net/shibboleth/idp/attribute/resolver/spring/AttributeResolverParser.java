@@ -23,11 +23,11 @@ import java.util.Map;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.saml.attribute.principalconnector.impl.PrinicpalConnectorCanonicalizer;
-import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 

@@ -22,10 +22,10 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.filter.matcher.logic.impl.NotMatcher;
 import net.shibboleth.idp.attribute.filter.policyrule.logic.impl.NotPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
-import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;

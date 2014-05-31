@@ -21,6 +21,7 @@ import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
@@ -30,7 +31,6 @@ import net.shibboleth.idp.attribute.resolver.dc.impl.Validator;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.LdapDataConnector;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.service.ServiceException;
-import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.ldaptive.BindConnectionInitializer;

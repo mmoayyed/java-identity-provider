@@ -19,8 +19,8 @@ package net.shibboleth.idp.profile.spring.relyingparty.saml;
 
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration;
-import net.shibboleth.idp.spring.SpringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;

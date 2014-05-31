@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.spring;
 
-import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
+import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 

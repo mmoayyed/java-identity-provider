@@ -24,9 +24,9 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.spring.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginParser;
-import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;

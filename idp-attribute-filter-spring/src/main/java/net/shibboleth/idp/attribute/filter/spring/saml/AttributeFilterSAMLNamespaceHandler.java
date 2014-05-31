@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
-import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
+import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 
 /** Namespace handler for the attribute filter engine SAML match functions. */
 public class AttributeFilterSAMLNamespaceHandler extends BaseSpringNamespaceHandler {

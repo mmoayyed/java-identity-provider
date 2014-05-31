@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.ChainingParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.EntityRoleFilterParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.RequiredValidUntilParser;
@@ -26,7 +27,6 @@ import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.SchemaVali
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.SignatureValidationParser;
 import net.shibboleth.idp.profile.spring.resource.ClasspathResourceParser;
 import net.shibboleth.idp.profile.spring.resource.SVNResourceParser;
-import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 /** Namespace handler for <code>urn:mace:shibboleth:2.0:metadata</code>. */
 public class MetadataNamespaceHandler extends BaseSpringNamespaceHandler {
