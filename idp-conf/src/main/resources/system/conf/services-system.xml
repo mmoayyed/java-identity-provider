@@ -59,7 +59,11 @@
         p:serviceConfigurations-ref="shibboleth.MetadataResolverResources"
         p:failFast="${idp.service.metadata.failFast}"
         p:reloadCheckDelay="${idp.service.metadata.checkInterval}"
-        p:reloadTaskTimer="shibboleth.TaskTimer" />
+        p:reloadTaskTimer="shibboleth.TaskTimer">
+        <property name="beanPostProcessors">
+            <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.NodeProcessingAttachingBeanPostProcessor" />
+        </property>
+    </bean>
     
     <!--
     These are proxies/facades that expose a service-unaware interface to client components.

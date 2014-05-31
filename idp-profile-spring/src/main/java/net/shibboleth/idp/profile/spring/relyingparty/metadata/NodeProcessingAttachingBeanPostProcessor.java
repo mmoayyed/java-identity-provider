@@ -1,0 +1,106 @@
+/*
+ * Licensed to the University Corporation for Advanced Internet Development, 
+ * Inc. (UCAID) under one or more contributor license agreements.  See the 
+ * NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The UCAID licenses this file to You under the Apache 
+ * License, Version 2.0 (the "License"); you may not use this file except in 
+ * compliance with the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package net.shibboleth.idp.profile.spring.relyingparty.metadata;
+
+import java.util.Arrays;
+import java.util.List;
+
+import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
+import net.shibboleth.idp.saml.security.impl.KeyAuthorityNodeProcessor;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
+import org.opensaml.saml.metadata.resolver.filter.MetadataNodeProcessor;
+import org.opensaml.saml.metadata.resolver.filter.impl.EntitiesDescriptorNameProcessor;
+import org.opensaml.saml.metadata.resolver.filter.impl.MetadataFilterChain;
+import org.opensaml.saml.metadata.resolver.filter.impl.NodeProcessingMetadataFilter;
+import org.opensaml.saml.metadata.resolver.impl.ChainingMetadataResolver;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+
+import com.google.common.collect.Lists;
+
+/**
+ * A {@link BeanPostProcessor} for {@link MetadataResolver} beans that ensures a {@link NodeProcessingMetadataFilter}
+ * containing a pair of default {@link MetadataNodeProcessor} plugins is attached.
+ * 
+ * <p>This is done to ensure that other components function correctly, such as the PKIX trust engine
+ * and predicates that depend on group information.</p>
+ */
+public class NodeProcessingAttachingBeanPostProcessor implements BeanPostProcessor {
+
+// Checkstyle: CyclomaticComplexity OFF
+    /** {@inheritDoc} */
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String beanName) {
+        if (!(bean instanceof MetadataResolver) || bean instanceof ChainingMetadataResolver
+                || bean instanceof RelyingPartyMetadataProvider) {
+            return bean;
+        }
+        
+        final MetadataResolver resolver = (MetadataResolver) bean;
+        
+        boolean filterAttached = false;
+        
+        final MetadataFilter filter = resolver.getMetadataFilter();
+        if (filter != null) {
+            if (filter instanceof NodeProcessingMetadataFilter) {
+                filterAttached = true;
+            } else if (filter instanceof MetadataFilterChain) {
+                for (final MetadataFilter f : ((MetadataFilterChain) filter).getFilters()) {
+                    if (f instanceof NodeProcessingMetadataFilter) {
+                        filterAttached = true;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        if (!filterAttached) {
+            final NodeProcessingMetadataFilter filterToAttach = new NodeProcessingMetadataFilter();
+            final List<MetadataNodeProcessor> processors = Lists.newArrayList(
+                    new EntitiesDescriptorNameProcessor(), new KeyAuthorityNodeProcessor());
+            filterToAttach.setNodeProcessors(processors);
+            try {
+                filterToAttach.initialize();
+            } catch (final ComponentInitializationException e) {
+                throw new BeanCreationException("Error initializing NodeProcessingMetadataFilter", e);
+            }
+            
+            if (filter == null) {
+                resolver.setMetadataFilter(filterToAttach);
+            } else if (filter instanceof MetadataFilterChain) {
+                ((MetadataFilterChain) filter).getFilters().add(filterToAttach);
+            } else {
+                final MetadataFilterChain chain = new MetadataFilterChain();
+                chain.setFilters(Arrays.asList(filter, filterToAttach));
+            }
+        }
+        
+        return resolver;
+    }
+// Checkstyle: CyclomaticComplexity ON
+
+    /** {@inheritDoc} */
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) {
+        return bean;
+    }
+
+}
