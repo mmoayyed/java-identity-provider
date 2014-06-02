@@ -57,6 +57,9 @@ public final class AuthenticationContext extends BaseContext {
 
     /** Whether authentication must not involve subject interaction. */
     private boolean isPassive;
+
+    /** Whether the surrounding profile is browser-based. */
+    private boolean isBrowserProfile;
     
     /** A non-normative hint some protocols support to indicate who the subject might be. */
     @Nullable private String hintedName;
@@ -88,6 +91,8 @@ public final class AuthenticationContext extends BaseContext {
     /** Constructor. */
     public AuthenticationContext() {
         initiationInstant = System.currentTimeMillis();
+        
+        isBrowserProfile = true;
         
         potentialFlows = new LinkedHashMap<>();
         activeResults = new HashMap<>();
@@ -188,11 +193,32 @@ public final class AuthenticationContext extends BaseContext {
      * 
      * @return this authentication context
      */
-    @Nonnull public AuthenticationContext setIsPassive(boolean passive) {
+    @Nonnull public AuthenticationContext setIsPassive(final boolean passive) {
         isPassive = passive;
         return this;
     }
 
+    /**
+     * Get whether the surrounding profile is browser-based.
+     * 
+     * @return whether surrounding profile is browser-based
+     */
+    public boolean isBrowserProfile() {
+        return isBrowserProfile;
+    }
+    
+    /**
+     * Set whether the surrounding profile is browser-based.
+     * 
+     * @param browser whether surrounding profile is browser-based
+     * 
+     * @return this authentication context
+     */
+    @Nonnull public AuthenticationContext setIsBrowserProfile(final boolean browser) {
+        isBrowserProfile = browser;
+        return this;
+    }
+    
     /**
      * Get whether to require fresh subject interaction to succeed.
      * 
@@ -209,7 +235,7 @@ public final class AuthenticationContext extends BaseContext {
      * 
      * @return this authentication context
      */
-    @Nonnull public AuthenticationContext setForceAuthn(boolean force) {
+    @Nonnull public AuthenticationContext setForceAuthn(final boolean force) {
         forceAuthn = force;
         return this;
     }
@@ -323,6 +349,7 @@ public final class AuthenticationContext extends BaseContext {
     @Override
     public String toString() {
         return Objects.toStringHelper(this).add("initiationInstant", new DateTime(initiationInstant))
+                .add("isBrowserProfile", isBrowserProfile)
                 .add("isPassive", isPassive).add("forceAuthn", forceAuthn).add("hintedName", hintedName)
                 .add("potentialFlows", potentialFlows.keySet())
                 .add("activeResults", activeResults.keySet())

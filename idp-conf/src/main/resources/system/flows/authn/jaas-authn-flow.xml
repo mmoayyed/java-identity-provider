@@ -9,11 +9,10 @@
         <evaluate expression="ExtractUsernamePasswordFromBasicAuth" />
         <evaluate expression="'proceed'" />
         
-        
         <transition on="proceed" to="ValidateUsernamePasswordAgainstJAAS" />
         
-        <!-- Fall through to a different flow if basic-auth extract fails on a passive request. -->
-        <transition on="#{ opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).isPassive() }" to="ReselectFlow" />
+        <!-- Fall through to a different flow if basic-auth extract fails on a passive or non-browser request. -->
+        <transition on="#{ opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).isPassive() || !opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).isBrowserProfile() }" to="ReselectFlow" />
         
         <transition on="NoCredentials" to="DisplayUsernamePasswordPage" />
         <transition on="InvalidCredentials" to="DisplayUsernamePasswordPage" />
@@ -42,7 +41,7 @@
         <transition on="proceed" to="proceed" />
         
         <!-- Fall through to a different flow if login fails on a passive request. -->
-        <transition on="#{ opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).isPassive() }" to="ReselectFlow" />
+        <transition on="#{ opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).isPassive() || !opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).isBrowserProfile() }" to="ReselectFlow" />
 
         <!-- Error or warning transitions are determined by deployer in /flows/authn/conditions/conditions-flow.xml -->
     </action-state>

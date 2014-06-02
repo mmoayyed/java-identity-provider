@@ -61,6 +61,9 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     /** Additional allowance for storage of result records to avoid race conditions during use. */
     public static final long STORAGE_EXPIRATION_OFFSET;
 
+    /** Whether this flow supports non-browser clients. */
+    private boolean supportsNonBrowser;
+    
     /** Whether this flow supports passive authentication. */
     private boolean supportsPassive;
 
@@ -87,13 +90,32 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
 
     /** Constructor. */
     public AuthenticationFlowDescriptor() {
+        supportsNonBrowser = true;
         supportedPrincipals = new Subject();
         activationCondition = Predicates.alwaysTrue();
         inactivityTimeout = 30 * 60 * 1000;
     }
+    
+    /**
+     * Get whether this flow supports non-browser clients.
+     * 
+     * @return whether this flow supports non-browser clients
+     */
+    public boolean isNonBrowserSupported() {
+        return supportsNonBrowser;
+    }
+    
+    /**
+     * Set whether this flow supports non-browser clients.
+     * 
+     * @param isSupported whether this flow supports non-browser clients
+     */
+    public void setNonBrowserSupported(final boolean isSupported) {
+        supportsNonBrowser = isSupported;
+    }
 
     /**
-     * Gets whether this flow supports passive authentication.
+     * Get whether this flow supports passive authentication.
      * 
      * @return whether this flow supports passive authentication
      */
@@ -102,18 +124,18 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     }
 
     /**
-     * Sets whether this flow supports passive authentication.
+     * Set whether this flow supports passive authentication.
      * 
      * @param isSupported whether this flow supports passive authentication
      */
-    public void setPassiveAuthenticationSupported(boolean isSupported) {
+    public void setPassiveAuthenticationSupported(final boolean isSupported) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         supportsPassive = isSupported;
     }
 
     /**
-     * Gets whether this flow supports forced authentication.
+     * Get whether this flow supports forced authentication.
      * 
      * @return whether this flow supports forced authentication
      */
@@ -122,18 +144,18 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     }
 
     /**
-     * Sets whether this flow supports forced authentication.
+     * Set whether this flow supports forced authentication.
      * 
      * @param isSupported whether this flow supports forced authentication.
      */
-    public void setForcedAuthenticationSupported(boolean isSupported) {
+    public void setForcedAuthenticationSupported(final boolean isSupported) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         supportsForced = isSupported;
     }
 
     /**
-     * Gets the maximum amount of time in milliseconds, since first usage, a flow should be considered active. A value
+     * Get the maximum amount of time in milliseconds, since first usage, a flow should be considered active. A value
      * of 0 indicates that there is no upper limit on the lifetime on an active flow.
      * 
      * @return maximum amount of time in milliseconds a flow should be considered active, never less than 0
@@ -143,7 +165,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     }
 
     /**
-     * Sets the maximum amount of time in milliseconds, since first usage, a flow should be considered active. A value
+     * Set the maximum amount of time in milliseconds, since first usage, a flow should be considered active. A value
      * of 0 indicates that there is no upper limit on the lifetime on an active flow.
      * 
      * @param flowLifetime the lifetime for the flow, must be 0 or greater
@@ -155,7 +177,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     }
 
     /**
-     * Gets the maximum amount of time in milliseconds, since the last usage, a flow should be considered active.
+     * Get the maximum amount of time in milliseconds, since the last usage, a flow should be considered active.
      * 
      * <p>
      * Defaults to 30 minutes.
@@ -168,7 +190,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     }
 
     /**
-     * Sets the maximum amount of time in milliseconds, since the last usage, a flow should be considered active.
+     * Set the maximum amount of time in milliseconds, since the last usage, a flow should be considered active.
      * 
      * @param timeout the flow inactivity timeout, must be greater than zero
      */

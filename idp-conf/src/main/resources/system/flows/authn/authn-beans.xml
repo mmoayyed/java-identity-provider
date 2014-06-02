@@ -26,21 +26,31 @@
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:sessionResolver-ref="shibboleth.SessionManager" />
     
-    <bean id="ExtractActiveAuthenticationResults" class="${idp.session.activeResultExtraction}" scope="prototype" />
+    <bean id="ExtractActiveAuthenticationResults"
+        class="${idp.session.activeResultExtraction}" scope="prototype" />
 
-    <bean id="FilterFlowsByForcedAuthn" class="net.shibboleth.idp.authn.impl.FilterFlowsByForcedAuthn" scope="prototype" />
+    <bean id="FilterFlowsByForcedAuthn"
+        class="net.shibboleth.idp.authn.impl.FilterFlowsByForcedAuthn" scope="prototype" />
 
-    <bean id="FilterFlowsByPassivity" class="net.shibboleth.idp.authn.impl.FilterFlowsByPassivity" scope="prototype" />
+    <bean id="FilterFlowsByPassivity"
+        class="net.shibboleth.idp.authn.impl.FilterFlowsByPassivity" scope="prototype" />
+    
+    <bean id="FilterFlowsByNonBrowserSupport"
+        class="net.shibboleth.idp.authn.impl.FilterFlowsByNonBrowserSupport" scope="prototype" />
 
-    <bean id="SelectAuthenticationFlow" class="net.shibboleth.idp.authn.impl.SelectAuthenticationFlow" scope="prototype"
+    <bean id="SelectAuthenticationFlow"
+        class="net.shibboleth.idp.authn.impl.SelectAuthenticationFlow" scope="prototype"
         p:favorSSO="${idp.authn.favorSSO}" />
     
-    <bean id="InvalidateSessionOnIdentitySwitch" class="net.shibboleth.idp.session.impl.InvalidateSessionOnIdentitySwitch" scope="prototype"
+    <bean id="InvalidateSessionOnIdentitySwitch"
+        class="net.shibboleth.idp.session.impl.InvalidateSessionOnIdentitySwitch" scope="prototype"
         p:sessionManager-ref="shibboleth.SessionManager" />
     
-    <bean id="FinalizeAuthentication" class="net.shibboleth.idp.authn.impl.FinalizeAuthentication" scope="prototype" />
+    <bean id="FinalizeAuthentication"
+        class="net.shibboleth.idp.authn.impl.FinalizeAuthentication" scope="prototype" />
     
-    <bean id="UpdateSessionWithAuthenticationResult" class="net.shibboleth.idp.session.impl.UpdateSessionWithAuthenticationResult" scope="prototype"
+    <bean id="UpdateSessionWithAuthenticationResult"
+        class="net.shibboleth.idp.session.impl.UpdateSessionWithAuthenticationResult" scope="prototype"
         p:enabled="${idp.session.enabled}"
         p:sessionManager-ref="shibboleth.SessionManager" />
     

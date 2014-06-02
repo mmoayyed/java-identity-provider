@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * forced authentication behavior and the flows don't support forced authentication.
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
+ * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class) != null</pre>
  * @post AuthenticationContext.getPotentialFlows() is modified as above.
  */
 public class FilterFlowsByForcedAuthn extends AbstractAuthenticationAction {
@@ -67,12 +67,12 @@ public class FilterFlowsByForcedAuthn extends AbstractAuthenticationAction {
         final Iterator<Entry<String, AuthenticationFlowDescriptor>> descriptorItr =
                 potentialFlows.entrySet().iterator();
         while (descriptorItr.hasNext()) {
-            AuthenticationFlowDescriptor descriptor = descriptorItr.next().getValue();
+            final AuthenticationFlowDescriptor descriptor = descriptorItr.next().getValue();
             if (descriptor.isForcedAuthenticationSupported()) {
                 log.debug("{} Retaining flow {}, it supports forced authentication", getLogPrefix(),
                         descriptor.getId());
             } else {
-                log.debug("{} Removing workflow {}, it does not support forced authentication", getLogPrefix(),
+                log.debug("{} Removing flow {}, it does not support forced authentication", getLogPrefix(),
                         descriptor.getId());
                 descriptorItr.remove();
             }

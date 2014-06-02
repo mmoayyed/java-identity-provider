@@ -16,6 +16,7 @@
         <evaluate expression="ExtractActiveAuthenticationResults" />
         <evaluate expression="FilterFlowsByForcedAuthn" />
         <evaluate expression="FilterFlowsByPassivity" />
+        <evaluate expression="FilterFlowsByNonBrowserSupport" />
         <evaluate expression="'proceed'" />
 
         <transition on="proceed" to="SelectAuthenticationFlow" />

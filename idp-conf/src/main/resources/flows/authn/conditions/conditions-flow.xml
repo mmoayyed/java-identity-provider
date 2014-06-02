@@ -14,9 +14,6 @@
         <transition on="ExpiredPassword" to="CallExpiredPassword" />
         <transition on="AccountLocked" to="CallAccountLocked" />
         
-        <!-- TODO: remove after testing -->
-        <transition on="InvalidPassword" to="CallExpiredPassword" />
-        
         <transition to="DisplayUsernamePasswordPage" />
     </action-state>
 

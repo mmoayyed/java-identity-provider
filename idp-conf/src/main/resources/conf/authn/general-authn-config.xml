@@ -27,6 +27,7 @@
             p:resultSerializer-ref="shibboleth.DefaultAuthenticationResultSerializer"
             p:passiveAuthenticationSupported="false"
             p:forcedAuthenticationSupported="false"
+            p:nonBrowserSupported="true"
             p:lifetime="${idp.authn.defaultLifetime}" p:inactivityTimeout="${idp.authn.defaultTimeout}">
         <property name="supportedPrincipals">
             <list>
@@ -57,9 +58,11 @@
         
         <bean id="authn/RemoteUserInternal" parent="shibboleth.AbstractAuthenticationFlowBean" />
 
-        <bean id="authn/RemoteUser" parent="shibboleth.AbstractAuthenticationFlowBean" />
+        <bean id="authn/RemoteUser" parent="shibboleth.AbstractAuthenticationFlowBean"
+            p:nonBrowserSupported="false" />
 
-        <bean id="authn/External" parent="shibboleth.AbstractAuthenticationFlowBean" />
+        <bean id="authn/External" parent="shibboleth.AbstractAuthenticationFlowBean"
+            p:nonBrowserSupported="false" />
 
         <bean id="authn/JAAS" parent="shibboleth.AbstractAuthenticationFlowBean"
                 p:passiveAuthenticationSupported="true"

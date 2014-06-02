@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.authn.impl;
 
-import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 
@@ -26,21 +25,20 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-/** {@link FilterFlowsByPassivity} unit test. */
-public class FilterFlowsByPassivityTest extends PopulateAuthenticationContextTest {
+/** {@link FilterFlowsByNonBrowserSupport} unit test. */
+public class FilterFlowsByNonBrowserSupportTest extends PopulateAuthenticationContextTest {
     
-    private FilterFlowsByPassivity action; 
+    private FilterFlowsByNonBrowserSupport action; 
     
     @BeforeMethod public void setUp() throws Exception {
         super.setUp();
         
-        action = new FilterFlowsByPassivity();
+        action = new FilterFlowsByNonBrowserSupport();
         action.initialize();
     }
     
-    @Test public void testNonPassive() {
+    @Test public void testBrowserProfile() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
-        authCtx.setIsPassive(false);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -49,10 +47,7 @@ public class FilterFlowsByPassivityTest extends PopulateAuthenticationContextTes
 
     @Test public void testNoFiltering() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
-        authCtx.setIsPassive(true);
-        for (final AuthenticationFlowDescriptor fd : authCtx.getPotentialFlows().values()) {
-            fd.setPassiveAuthenticationSupported(true);
-        }
+        authCtx.setIsBrowserProfile(false);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -61,13 +56,14 @@ public class FilterFlowsByPassivityTest extends PopulateAuthenticationContextTes
 
     @Test public void testPartialFiltering() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
-        authCtx.setIsPassive(true);
-        authCtx.getPotentialFlows().get("test2").setPassiveAuthenticationSupported(true);
+        authCtx.setIsBrowserProfile(false);
+        authCtx.getPotentialFlows().get("test1").setNonBrowserSupported(false);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertEquals(authCtx.getPotentialFlows().size(), 1);
+        Assert.assertEquals(authCtx.getPotentialFlows().size(), 2);
         Assert.assertNull(authCtx.getPotentialFlows().get("test1"));
         Assert.assertNotNull(authCtx.getPotentialFlows().get("test2"));
     }
+    
 }

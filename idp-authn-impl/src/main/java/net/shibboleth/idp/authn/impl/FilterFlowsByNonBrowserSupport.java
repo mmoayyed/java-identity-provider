@@ -33,24 +33,24 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An authentication action that filters out potential authentication flows if the request requires
- * passive behavior and the flows don't support passive authentication.
+ * non-browser support and the flows require a browser.
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class) != null</pre>
  * @post AuthenticationContext.getPotentialFlows() is modified as above.
  */
-public class FilterFlowsByPassivity extends AbstractAuthenticationAction {
+public class FilterFlowsByNonBrowserSupport extends AbstractAuthenticationAction {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(FilterFlowsByPassivity.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(FilterFlowsByNonBrowserSupport.class);
 
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
-        if (!authenticationContext.isPassive()) {
-            log.debug("{} Request does not have passive requirement, nothing to do", getLogPrefix());
+        if (authenticationContext.isBrowserProfile()) {
+            log.debug("{} Request does not have non-browser requirement, nothing to do", getLogPrefix());
             return false;
         }
         
@@ -68,11 +68,11 @@ public class FilterFlowsByPassivity extends AbstractAuthenticationAction {
                 potentialFlows.entrySet().iterator();
         while (descriptorItr.hasNext()) {
             final AuthenticationFlowDescriptor descriptor = descriptorItr.next().getValue();
-            if (descriptor.isPassiveAuthenticationSupported()) {
-                log.debug("{} Retaining flow {}, it supports passive authentication", getLogPrefix(),
+            if (descriptor.isNonBrowserSupported()) {
+                log.debug("{} Retaining flow {}, it supports non-browser authentication", getLogPrefix(),
                         descriptor.getId());
             } else {
-                log.debug("{} Removing flow {}, it does not support passive authentication", getLogPrefix(),
+                log.debug("{} Removing flow {}, it does not support non-browser authentication", getLogPrefix(),
                         descriptor.getId());
                 descriptorItr.remove();
             }
@@ -84,4 +84,5 @@ public class FilterFlowsByPassivity extends AbstractAuthenticationAction {
             log.debug("{} Potential authentication flows left after filtering: {}", getLogPrefix(), potentialFlows);
         }
     }
+    
 }
