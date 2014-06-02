@@ -38,12 +38,16 @@
     
     <subflow-state id="CallInboundSubflow" subflow="#{currentEvent.id}">
         <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="OutboundContexts" />
+        <transition on="proceed" to="OutboundContextsAndSecurityParameters" />
     </subflow-state>
 
-    <action-state id="OutboundContexts">
+    <action-state id="OutboundContextsAndSecurityParameters">
         <evaluate expression="InitializeOutboundMessageContext" />
         <evaluate expression="PopulateBindingAndEndpointContexts" />
+        <evaluate expression="PopulateResponseSignatureSigningParameters" />
+        <evaluate expression="PopulateAssertionSignatureSigningParameters" />
+        <evaluate expression="PopulateEncryptionParameters" />
+        <evaluate expression="PopulateDecryptionParameters" />
         <evaluate expression="'proceed'" />
 
         <transition on="proceed" to="ExtractSubject" />
@@ -52,13 +56,12 @@
     <!-- Pull SAML Subject if present and turn it into a principal name. -->
 
     <action-state id="ExtractSubject">
-        <evaluate expression="PopulateDecryptionParameters" />
         <evaluate expression="DecryptNameIDs" />
         <evaluate expression="ExtractSubjectFromRequest" />
         <evaluate expression="'proceed'" />
         
-        <!-- No subject to operate on, so just skip back to the profile. -->
-        <transition on="NoSubject" to="PopulateSecurityParameters" />
+        <!-- No subject to operate on, so just skip to the profile. -->
+        <transition on="NoSubject" to="DoProfileWork" />
         
         <transition on="proceed" to="CallSubjectCanonicalization" />
     </action-state>
@@ -70,15 +73,6 @@
     
     <action-state id="FinalizeSAMLSubjectCanonicalization">
         <evaluate expression="FinalizeSAMLSubjectCanonicalization" />
-        <evaluate expression="'proceed'" />
-        
-        <transition on="proceed" to="PopulateSecurityParameters" />
-    </action-state>
-
-    <action-state id="PopulateSecurityParameters">
-        <evaluate expression="PopulateResponseSignatureSigningParameters" />
-        <evaluate expression="PopulateAssertionSignatureSigningParameters" />
-        <evaluate expression="PopulateEncryptionParameters" />
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="DoProfileWork" />
