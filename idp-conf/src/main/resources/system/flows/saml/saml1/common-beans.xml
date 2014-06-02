@@ -68,11 +68,7 @@
         </property>
         <property name="statusCodesLookupStrategy">
             <bean class="org.opensaml.saml.saml1.profile.impl.AddStatusToResponse.StatusCodeMappingFunction"
-                     c:mappings-ref="shibboleth.SAML1StatusMappings">
-                <property name="eventContextLookupStrategy">
-                    <bean class="net.shibboleth.idp.profile.context.navigate.WebFlowCurrentEventLookupFunction" />
-                </property>
-            </bean>
+                     c:mappings-ref="shibboleth.SAML1StatusMappings" />
         </property>
         <property name="statusMessageLookupStrategy">
             <bean class="net.shibboleth.idp.profile.context.navigate.SpringStatusMessageLookupFunction" />
