@@ -41,7 +41,7 @@
         class="org.opensaml.saml.saml1.profile.impl.AddSubjectConfirmationToSubjects" scope="prototype"
         p:methods="#{ {'urn:oasis:names:tc:SAML:1.0:cm:sender-vouches'} }" />
 
-    <bean id="outboundMessageHandlerChain"
+    <bean id="shibboleth.PreEncodeMessageHandler"
             class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
         <property name="handlers">
             <util:list>

@@ -39,7 +39,7 @@
         p:artifactMap-ref="shibboleth.SAMLArtifactMap"
         p:issuerLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple" />
 
-    <bean id="outboundMessageHandlerChain"
+    <bean id="shibboleth.PreEncodeMessageHandler"
             class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
         <property name="handlers">
             <util:list>

@@ -212,7 +212,7 @@
 
     <bean id="HandleOutboundMessage"
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
-            c:messageHandler-ref="outboundMessageHandlerChain"
+            c:messageHandler-ref="shibboleth.PreEncodeMessageHandler"
             c:executionDirection="OUTBOUND">
         <property name="errorEvent">
             <util:constant static-field="org.opensaml.profile.action.EventIds.MESSAGE_PROC_ERROR" />
@@ -223,7 +223,8 @@
         p:bindings-ref="shibboleth.OutgoingBindings" />
 
     <bean id="EncodeMessage" class="org.opensaml.profile.action.impl.EncodeMessage" scope="prototype"
-        p:messageEncoderFactory-ref="messageEncoderFactory" />
+        p:messageEncoderFactory-ref="messageEncoderFactory"
+        p:messageHandler="#{getObject('${shibboleth.BindingSpecificMessageHandler:null}')}" />
 
     <bean id="RecordResponseComplete" class="net.shibboleth.idp.profile.impl.RecordResponseComplete" scope="prototype" />
 

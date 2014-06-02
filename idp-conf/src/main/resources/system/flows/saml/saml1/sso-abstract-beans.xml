@@ -46,7 +46,7 @@
         p:sessionManager-ref="shibboleth.SessionManager"
         p:sessionLifetime="${idp.session.defaultSPlifetime}" />
 
-    <bean id="outboundMessageHandlerChain"
+    <bean id="shibboleth.PreEncodeMessageHandler"
             class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
         <property name="handlers">
             <util:list>
