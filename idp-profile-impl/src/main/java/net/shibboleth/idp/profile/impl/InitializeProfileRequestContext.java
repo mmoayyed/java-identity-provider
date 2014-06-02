@@ -47,6 +47,9 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
     /** The profile ID to initialize the context to. */
     @Nullable private String profileId;
     
+    /** Whether this is a browser-based profile request. */
+    private boolean browserProfile;
+    
     /**
      * Set the profile ID to populate into the context.
      * 
@@ -58,6 +61,17 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
         profileId = StringSupport.trimOrNull(id);
     }
     
+    /**
+     * Set whether the request is browser-based, defaults to false.
+     * 
+     * @param browser   true iff the request is browser based
+     */
+    public void setBrowserProfile(final boolean browser) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        browserProfile = browser;
+    }
+    
     /** {@inheritDoc} */
     @Override
     @Nonnull public Event execute(@Nonnull final RequestContext springRequestContext) {
@@ -66,10 +80,12 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
         
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
-        ProfileRequestContext prc = new ProfileRequestContext();
+        final ProfileRequestContext prc = new ProfileRequestContext();
         if (profileId != null) {
             prc.setProfileId(profileId);
         }
+        
+        prc.setBrowserProfile(browserProfile);
 
         springRequestContext.getConversationScope().put(ProfileRequestContext.BINDING_KEY, prc);
 

@@ -21,7 +21,8 @@
 
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
-        p:profileId="#{T(net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration).PROFILE_ID}" />
+        p:profileId="#{T(net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration).PROFILE_ID}"
+        p:browserProfile="true" />
 
     <alias name="shibboleth.OutgoingSAML1SSOBindings" alias="shibboleth.OutgoingBindings"/>
 

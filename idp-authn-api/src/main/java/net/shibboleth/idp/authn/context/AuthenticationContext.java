@@ -92,8 +92,6 @@ public final class AuthenticationContext extends BaseContext {
     public AuthenticationContext() {
         initiationInstant = System.currentTimeMillis();
         
-        isBrowserProfile = true;
-        
         potentialFlows = new LinkedHashMap<>();
         activeResults = new HashMap<>();
         intermediateFlows = new HashMap<>();
@@ -214,7 +212,7 @@ public final class AuthenticationContext extends BaseContext {
      * 
      * @return this authentication context
      */
-    @Nonnull public AuthenticationContext setIsBrowserProfile(final boolean browser) {
+    @Nonnull public AuthenticationContext setBrowserProfile(final boolean browser) {
         isBrowserProfile = browser;
         return this;
     }

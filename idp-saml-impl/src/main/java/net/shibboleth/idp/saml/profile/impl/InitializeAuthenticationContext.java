@@ -22,12 +22,18 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
 
 /**
  * An action that creates an {@link AuthenticationContext} and attaches it to the current {@link ProfileRequestContext}.
@@ -44,30 +50,37 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(InitializeAuthenticationContext.class);
 
+    /** Strategy used to locate the {@link AuthnRequest} to operate on, if any. */
+    @Nonnull private Function<ProfileRequestContext,AuthnRequest> requestLookupStrategy;
+    
     /** Incoming SAML 2.0 request, if present. */
     @Nullable private AuthnRequest authnRequest;
 
+    /** Constructor. */
+    public InitializeAuthenticationContext() {
+        requestLookupStrategy =
+                Functions.compose(new MessageLookup<>(AuthnRequest.class), new InboundMessageContextLookup());
+    }
+    
+    /**
+     * Set the strategy used to locate the {@link AuthnRequest} to examine, if any.
+     * 
+     * @param strategy strategy used to locate the {@link AuthnRequest}
+     */
+    public void setRequestLookupStrategy(@Nonnull final Function<ProfileRequestContext,AuthnRequest> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        requestLookupStrategy = Constraint.isNotNull(strategy, "AuthnRequest lookup strategy cannot be null");
+    }
+    
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        final MessageContext<?> msgCtx = profileRequestContext.getInboundMessageContext();
-        if (msgCtx == null) {
-            log.debug("{} No inbound message context", getLogPrefix());
-            return super.doPreExecute(profileRequestContext);
-        }
 
-        final Object message = msgCtx.getMessage();
-        if (message == null) {
-            log.debug("{} No inbound message", getLogPrefix());
-            return super.doPreExecute(profileRequestContext);
+        authnRequest = this.requestLookupStrategy.apply(profileRequestContext);
+        if (authnRequest == null) {
+            log.debug("{} No inbound AuthnRequest, passive and forced flags will be off", getLogPrefix());
         }
-
-        if (!(message instanceof AuthnRequest)) {
-            log.debug("{} Inbound message was not a SAML 2 AuthnRequest", getLogPrefix());
-            return super.doPreExecute(profileRequestContext);
-        }
-
-        authnRequest = (AuthnRequest) message;
         
         return super.doPreExecute(profileRequestContext);
     }
@@ -76,7 +89,8 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        AuthenticationContext authnCtx = new AuthenticationContext();
+        final AuthenticationContext authnCtx = new AuthenticationContext();
+        authnCtx.setBrowserProfile(profileRequestContext.isBrowserProfile());
         
         if (authnRequest != null) {
             authnCtx.setForceAuthn(authnRequest.isForceAuthn());
