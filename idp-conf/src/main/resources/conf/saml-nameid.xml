@@ -26,6 +26,10 @@
     control their use via release of the underlying source attribute in the filter policy rather
     than here, but you can set a property on any generator called "activationCondition" to limit
     use in the most generic way.
+    
+    Most of the relevant configuration settings are controlled using properties; an exception is
+    the generation of arbitrary/custom formats based on attribute information, examples of which
+    are shown below.
     -->
     
     <!-- SAML 2 NameID Generation -->
