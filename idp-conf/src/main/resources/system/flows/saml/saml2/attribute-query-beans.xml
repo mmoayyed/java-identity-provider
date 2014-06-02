@@ -25,7 +25,8 @@
 
     <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
         <constructor-arg>
-            <bean id="messageDecoder" class="org.opensaml.saml.saml2.binding.decoding.impl.HTTPSOAP11Decoder" scope="prototype">
+            <bean class="org.opensaml.saml.saml2.binding.decoding.impl.HTTPSOAP11Decoder" scope="prototype">
+                <property name="parserPool" ref="shibboleth.ParserPool" />
                 <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
             </bean>
         </constructor-arg>
