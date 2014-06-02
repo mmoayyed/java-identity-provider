@@ -17,12 +17,19 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
 
+import java.util.Collections;
+
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterEntityAttributeExactPolicyRule;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
+import org.opensaml.saml.metadata.resolver.filter.FilterException;
+import org.opensaml.saml.metadata.resolver.filter.MetadataNodeProcessor;
+import org.opensaml.saml.metadata.resolver.filter.impl.EntitiesDescriptorNameProcessor;
+import org.opensaml.saml.metadata.resolver.filter.impl.NodeProcessingMetadataFilter;
 import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.testng.annotations.BeforeClass;
@@ -50,8 +57,14 @@ public class BaseMetadataTests extends XMLObjectBaseTestCase {
 
     protected EntityDescriptor noneEntity;
 
-    @BeforeClass(dependsOnMethods = "initXMLObjectSupport") public void setUp() {
+    @BeforeClass(dependsOnMethods = "initXMLObjectSupport") public void setUp()
+            throws FilterException, ComponentInitializationException {
         metadata = unmarshallElement("/data/net/shibboleth/idp/filter/impl/saml/shibboleth.net-metadata.xml");
+        
+        final NodeProcessingMetadataFilter filter = new NodeProcessingMetadataFilter();
+        filter.setNodeProcessors(Collections.<MetadataNodeProcessor>singletonList(new EntitiesDescriptorNameProcessor()));
+        filter.initialize();
+        filter.filter(metadata);
 
         for (EntityDescriptor entity : metadata.getEntityDescriptors()) {
             if (IDP_ENTITY_ID.equals(entity.getEntityID())) {

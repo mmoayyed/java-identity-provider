@@ -25,14 +25,13 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
-import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
+import org.opensaml.saml.metadata.EntityGroupName;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
@@ -40,7 +39,7 @@ import com.google.common.base.Predicate;
 
 /**
  * Predicate to determine whether the supplied name matches any of an entity's containing
- * {@link EntitiesDescriptor} groups. 
+ * {@link org.opensaml.saml.saml2.metadata.EntitiesDescriptor} groups. 
  */
 public class EntitiesDescriptorPredicate implements Predicate<ProfileRequestContext> {
     
@@ -81,13 +80,11 @@ public class EntitiesDescriptorPredicate implements Predicate<ProfileRequestCont
     public boolean apply(@Nullable final ProfileRequestContext input) {
         final SAMLMetadataContext metadataCtx = metadataContextLookupStrategy.apply(input);
         if (metadataCtx != null && metadataCtx.getEntityDescriptor() != null) {
-            XMLObject group = metadataCtx.getEntityDescriptor().getParent();
-            while (group != null && group instanceof EntitiesDescriptor) {
-                if (((EntitiesDescriptor) group).getName() != null
-                        && groupName.equals(((EntitiesDescriptor) group).getName())) {
+            for (final EntityGroupName group :
+                    metadataCtx.getEntityDescriptor().getObjectMetadata().get(EntityGroupName.class)) {
+                if (group.getName().equals(groupName)) {
                     return true;
                 }
-                group = group.getParent();
             }
         }
         

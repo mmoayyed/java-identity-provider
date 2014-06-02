@@ -26,9 +26,8 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
-import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
+import org.opensaml.saml.metadata.EntityGroupName;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,10 +38,10 @@ import org.slf4j.LoggerFactory;
 public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRule {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AttributeRequesterInEntityGroupPolicyRule.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeRequesterInEntityGroupPolicyRule.class);
 
     /** The entity group to match against. */
-    private String entityGroup;
+    @Nullable private String entityGroup;
 
     /**
      * Gets the entity group to match against.
@@ -58,7 +57,7 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
      * 
      * @param group entity group to match against
      */
-    public void setEntityGroup(@Nullable String group) {
+    public void setEntityGroup(@Nullable final String group) {
         entityGroup = StringSupport.trimOrNull(group);
     }
 
@@ -69,7 +68,7 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
      * 
      * @return entity descriptor for the entity to check
      */
-    @Nullable protected EntityDescriptor getEntityMetadata(final AttributeFilterContext filterContext) {
+    @Nullable protected EntityDescriptor getEntityMetadata(@Nonnull final AttributeFilterContext filterContext) {
         final SAMLMetadataContext metadataContext = filterContext.getRequesterMetadataContext();
 
         if (null == metadataContext) {
@@ -88,7 +87,7 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
      *         {@inheritDoc}
      */
     @Override
-    public Tristate matches(@Nonnull AttributeFilterContext input) {
+    @Nonnull public Tristate matches(@Nonnull final AttributeFilterContext input) {
 
         Constraint.isNotNull(input, "Context must be supplied");
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -104,20 +103,11 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
             return Tristate.FAIL;
         }
 
-        XMLObject currentGroup = entity.getParent();
-        if (currentGroup == null) {
-            log.warn("{} Entity descriptor does not have a parent object, unable to check if entity is in group {}",
-                    getLogPrefix(), entityGroup);
-            return Tristate.FAIL;
-        }
-
-        do {
-            if (currentGroup instanceof EntitiesDescriptor && ((EntitiesDescriptor) currentGroup).getName() != null
-                    && entityGroup.equals(((EntitiesDescriptor) currentGroup).getName())) {
+        for (final EntityGroupName group : entity.getObjectMetadata().get(EntityGroupName.class)) {
+            if (group.getName().equals(entityGroup)) {
                 return Tristate.TRUE;
             }
-            currentGroup = currentGroup.getParent();
-        } while (currentGroup != null);
+        }
 
         return Tristate.FALSE;
     }
