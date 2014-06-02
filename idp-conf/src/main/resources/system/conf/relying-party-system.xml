@@ -42,21 +42,35 @@
 
     <!-- Default Profile Configurations, also usable as parent beans in overrides. -->
     
-    <bean id="Shibboleth.SSO" class="net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration" />
+    <bean id="Shibboleth.SSO"
+        class="net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration"
+        p:inboundSubflowId="security-policy/shibboleth-sso" />
 
-    <bean id="SAML1.AttributeQuery" class="net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration" />
+    <bean id="SAML1.AttributeQuery"
+        class="net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration"
+        p:inboundSubflowId="security-policy/soap" />
 
-    <bean id="SAML1.ArtifactResolution" class="net.shibboleth.idp.saml.saml1.profile.config.ArtifactResolutionProfileConfiguration" />
+    <bean id="SAML1.ArtifactResolution"
+        class="net.shibboleth.idp.saml.saml1.profile.config.ArtifactResolutionProfileConfiguration"
+        p:inboundSubflowId="security-policy/soap" />
 
-    <bean id="SAML2.SSO" class="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration" />
+    <bean id="SAML2.SSO"
+        class="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration"
+        p:inboundSubflowId="security-policy/saml2-sso" />
 
-    <bean id="SAML2.ECP" class="net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration" />
+    <bean id="SAML2.ECP"
+        class="net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration" />
 
-    <bean id="SAML2.AttributeQuery" class="net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration" />
+    <bean id="SAML2.AttributeQuery"
+        class="net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration"
+        p:inboundSubflowId="security-policy/soap" />
 
-    <bean id="SAML2.ArtifactResolution" class="net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration" />
+    <bean id="SAML2.ArtifactResolution"
+        class="net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration"
+        p:inboundSubflowId="security-policy/soap" />
     
-    <bean id="Liberty.SSOS" class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration" />    
+    <bean id="Liberty.SSOS"
+        class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration" />    
     
     <!--
     Security Configuration Defaults
