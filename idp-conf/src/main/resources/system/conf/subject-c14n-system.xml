@@ -14,6 +14,12 @@
        
     <context:property-placeholder location="file:///${idp.home}/conf/idp.properties" />
 
+    <bean id="c14n/simple" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
+        <property name="activationCondition">
+            <bean class="net.shibboleth.idp.authn.impl.SimpleSubjectCanonicalization.ActivationCondition" />
+        </property>
+    </bean>
+
     <bean id="c14n/LegacyPrincipalConnector" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
         <property name="activationCondition">
             <bean class="net.shibboleth.idp.saml.nameid.impl.LegacyCanonicalization.ActivationCondition" 

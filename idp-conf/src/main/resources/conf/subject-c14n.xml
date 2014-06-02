@@ -28,11 +28,7 @@
         have more complex needs such as mapping a certificate DN into a principal name, an alternative may
         be required.
         -->
-        <bean id="c14n/simple" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
-            <property name="activationCondition">
-                <bean class="net.shibboleth.idp.authn.impl.SimpleSubjectCanonicalization.ActivationCondition" />
-            </property>
-        </bean>
+        <ref bean="c14n/simple" />
     </util:list>
     
     <!--
