@@ -27,12 +27,15 @@ import javax.xml.namespace.QName;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
 import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.criterion.ProtocolCriterion;
 import org.opensaml.saml.criterion.RoleDescriptorCriterion;
+import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.profile.context.EncryptionContext;
 import org.opensaml.xmlsec.EncryptionConfiguration;
 import org.opensaml.xmlsec.EncryptionParameters;
@@ -55,6 +58,7 @@ import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,6 +87,9 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateEncryptionParameters.class);
+
+    /** Strategy used to locate the {@link AuthnRequest} to operate on, if any. */
+    @Nonnull private Function<ProfileRequestContext,AuthnRequest> requestLookupStrategy;
     
     /** Strategy used to look up a {@link RelyingPartyContext} for configuration options. */
     @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
@@ -127,6 +134,9 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
      */
     public PopulateEncryptionParameters() {
         
+        requestLookupStrategy =
+                Functions.compose(new MessageLookup<>(AuthnRequest.class), new InboundMessageContextLookup());
+        
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         
         // Create context by default.
@@ -138,6 +148,17 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
         peerContextLookupStrategy =
                 Functions.compose(new ChildContextLookup<>(SAMLPeerEntityContext.class),
                         new OutboundMessageContextLookup());
+    }
+    
+    /**
+     * Set the strategy used to locate the {@link AuthnRequest} to examine, if any.
+     * 
+     * @param strategy strategy used to locate the {@link AuthnRequest}
+     */
+    public void setRequestLookupStrategy(@Nonnull final Function<ProfileRequestContext,AuthnRequest> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        requestLookupStrategy = Constraint.isNotNull(strategy, "AuthnRequest lookup strategy cannot be null");
     }
     
     /**
@@ -238,6 +259,7 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
         }
     }
     
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -258,16 +280,28 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
         
         final SAML2ProfileConfiguration profileConfiguration = (SAML2ProfileConfiguration) rpContext.getProfileConfig();
         
+        final AuthnRequest request = requestLookupStrategy.apply(profileRequestContext);
+        if (request != null && request.getNameIDPolicy() != null) {
+            final String requestedFormat = request.getNameIDPolicy().getFormat();
+            if (requestedFormat != null && NameID.ENCRYPTED.equals(requestedFormat)) {
+                log.debug("{} Request asked for encrypted identifier, disregarding installed predicate");
+                encryptIdentifiers = true;
+            }
+        }
+
+        if (!encryptIdentifiers) {
+            encryptIdentifiers = profileConfiguration.getEncryptNameIDsPredicate().apply(profileRequestContext);
+            // Encryption can only be optional if the request didn't specify it above.
+            encryptionOptional = profileConfiguration.isEncryptionOptional();
+        }
+        
         encryptAssertions = profileConfiguration.getEncryptAssertionsPredicate().apply(profileRequestContext);
-        encryptIdentifiers = profileConfiguration.getEncryptNameIDsPredicate().apply(profileRequestContext);
         encryptAttributes = profileConfiguration.getEncryptAttributesPredicate().apply(profileRequestContext);
         
         if (!encryptAssertions && !encryptIdentifiers && !encryptAttributes) {
             log.debug("{} No encryption requested, nothing to do", getLogPrefix());
             return false;
         }
-        
-        encryptionOptional = profileConfiguration.isEncryptionOptional();
 
         encryptionConfigurations = configurationLookupStrategy.apply(profileRequestContext);
         
@@ -277,7 +311,6 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
         return super.doPreExecute(profileRequestContext);
     }
     
-// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
