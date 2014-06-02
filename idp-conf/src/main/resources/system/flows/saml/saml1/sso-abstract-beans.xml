@@ -24,8 +24,6 @@
         p:profileId="#{T(net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration).PROFILE_ID}"
         p:browserProfile="true" />
 
-    <alias name="shibboleth.OutgoingSAML1SSOBindings" alias="shibboleth.OutgoingBindings"/>
-
     <bean id="AddNameIdentifierToSubjects"
             class="org.opensaml.saml.saml1.profile.impl.AddNameIdentifierToSubjects" scope="prototype">
         <property name="formatLookupStrategy">
