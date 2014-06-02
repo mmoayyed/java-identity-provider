@@ -38,6 +38,7 @@
         <webflow:flow-location id="profile/SAML2/POST-SimpleSign/SSO" path="/saml/saml2/sso-post-flow.xml" />
         <webflow:flow-location id="profile/SAML2/Redirect/SSO" path="/saml/saml2/sso-redirect-flow.xml" />
         <webflow:flow-location id="profile/SAML2/Unsolicited/SSO" path="/saml/saml2/sso-unsolicited-flow.xml" />
+        <webflow:flow-location id="profile/SAML2/SOAP/ECP" path="/saml/saml2/sso-ecp-flow.xml" />
         <webflow:flow-location id="profile/SAML2/SOAP/AttributeQuery" path="/saml/saml2/attribute-query-flow.xml" />
         <webflow:flow-location id="profile/SAML2/SOAP/ArtifactResolution" path="/saml/saml2/artifact-resolution-flow.xml" />
 
