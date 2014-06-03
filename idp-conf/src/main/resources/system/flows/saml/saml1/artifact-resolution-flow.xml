@@ -20,6 +20,8 @@
         
         <evaluate expression="ResolveArtifacts" />
         
+        <evaluate expression="SignAssertions" />
+        
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="ReturnToParentFlow" />
