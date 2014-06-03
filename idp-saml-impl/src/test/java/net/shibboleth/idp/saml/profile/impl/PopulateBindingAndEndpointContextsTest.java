@@ -209,7 +209,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
     
     /** Test SOAP case. */
     @Test
-    public void testSynchrnonous() throws ComponentInitializationException {
+    public void testSynchronous() throws ComponentInitializationException {
         prc.getInboundMessageContext().getSubcontext(SAMLBindingContext.class).setBindingUri(
                 SAMLConstants.SAML2_SOAP11_BINDING_URI);
         

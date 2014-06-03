@@ -88,7 +88,8 @@
     <bean id="PopulateBindingAndEndpointContexts"
         class="net.shibboleth.idp.saml.profile.impl.PopulateBindingAndEndpointContexts" scope="prototype"
         p:endpointResolver-ref="shibboleth.EndpointResolver"
-        p:bindings-ref="shibboleth.OutgoingBindings" />
+        p:bindings-ref="shibboleth.OutgoingBindings"
+        p:artifactImpliesSecureChannel="${idp.artifact.secureChannel}" />
 
     <bean id="PopulateDecryptionParameters"
         class="org.opensaml.profile.action.impl.PopulateDecryptionParameters" scope="prototype"

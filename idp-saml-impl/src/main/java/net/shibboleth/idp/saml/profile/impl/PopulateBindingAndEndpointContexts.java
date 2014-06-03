@@ -40,6 +40,7 @@ import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.util.XMLObjectSupport;
+import org.opensaml.messaging.context.MessageChannelSecurityContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -129,6 +130,9 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     /** Strategy function for access to {@link SAMLArtifactContext} to populate. */
     @Nonnull private Function<ProfileRequestContext,SAMLArtifactContext> artifactContextLookupStrategy;
     
+    /** Whether an artifact-based binding implies the use of a secure channel. */
+    private boolean artifactImpliesSecureChannel;
+    
     /** Builder for template endpoints. */
     @NonnullAfterInit private XMLObjectBuilder<?> endpointBuilder;
     
@@ -170,6 +174,8 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
                 new ChildContextLookup<>(SAMLEndpointContext.class, true),
                 Functions.compose(new ChildContextLookup<>(SAMLPeerEntityContext.class, true),
                         new OutboundMessageContextLookup()));
+        
+        artifactImpliesSecureChannel = true;
     }
     
     /**
@@ -269,6 +275,23 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         
         artifactContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SAMLArtifactContext lookup strategy cannot be null");
+    }
+    
+    /**
+     * Set whether an artifact-based binding implies that the eventual channel for SAML message exchange
+     * will be secured, overriding the integrity and confidentiality properties of the current channel.
+     * 
+     * <p>This has the effect of suppressing signing and encryption when an artifact binding is used,
+     * which is normally desirable.</p>
+     * 
+     * <p>Defaults to true.</p>
+     * 
+     * @param flag flag to set
+     */
+    public void setArtifactImpliesSecureChannel(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        artifactImpliesSecureChannel = flag;
     }
     
     /** {@inheritDoc} */
@@ -405,13 +428,24 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         }
         
         // Handle artifact details.
-        if (artifactConfiguration != null && bindingDescriptor.isPresent() && bindingDescriptor.get().isArtifact()) {
-            final SAMLArtifactContext artifactCtx = artifactContextLookupStrategy.apply(profileRequestContext);
-            artifactCtx.setArtifactType(artifactConfiguration.getArtifactType());
-            artifactCtx.setSourceArtifactResolutionServiceEndpointURL(
-                    artifactConfiguration.getArtifactResolutionServiceURL());
-            artifactCtx.setSourceArtifactResolutionServiceEndpointIndex(
-                    artifactConfiguration.getArtifactResolutionServiceIndex());
+        if (bindingDescriptor.isPresent() && bindingDescriptor.get().isArtifact()) {
+            if (artifactConfiguration != null) {
+                final SAMLArtifactContext artifactCtx = artifactContextLookupStrategy.apply(profileRequestContext);
+                artifactCtx.setArtifactType(artifactConfiguration.getArtifactType());
+                artifactCtx.setSourceArtifactResolutionServiceEndpointURL(
+                        artifactConfiguration.getArtifactResolutionServiceURL());
+                artifactCtx.setSourceArtifactResolutionServiceEndpointIndex(
+                        artifactConfiguration.getArtifactResolutionServiceIndex());
+            }
+            
+            if (artifactImpliesSecureChannel) {
+                log.debug("{} Use of artifact binding implies the channel will be secure, "
+                        + "overriding MessageChannelSecurityContext flags", getLogPrefix());
+                final MessageChannelSecurityContext channelCtx =
+                        profileRequestContext.getSubcontext(MessageChannelSecurityContext.class, true);
+                channelCtx.setIntegrityActive(true);
+                channelCtx.setConfidentialityActive(true);
+            }            
         }
     }
 // Checkstyle: CyclomaticComplexity|MethodLength ON
