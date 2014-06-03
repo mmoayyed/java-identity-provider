@@ -20,6 +20,10 @@
     
     <import resource="common-beans.xml" />
     
+    <bean id="InitializeMessageChannelSecurityContext"
+        class="org.opensaml.profile.action.impl.StaticMessageChannelSecurity" scope="prototype"
+        p:confidentialityActive="false" p:integrityActive="false" />
+    
     <bean id="ProcessRequestedAuthnContext"
         class="net.shibboleth.idp.saml.saml2.profile.impl.ProcessRequestedAuthnContext" scope="prototype" />
         

@@ -25,12 +25,15 @@
 
     <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
         <constructor-arg>
-            <bean class="org.opensaml.saml.saml1.binding.decoding.impl.HTTPSOAP11Decoder" scope="prototype">
-                <property name="parserPool" ref="shibboleth.ParserPool" />
-                <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
-            </bean>
+            <bean class="org.opensaml.saml.saml1.binding.decoding.impl.HTTPSOAP11Decoder" scope="prototype"
+                p:parserPool-ref="shibboleth.ParserPool"
+                p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
         </constructor-arg>
     </bean>
+
+    <bean id="InitializeMessageChannelSecurityContext"
+        class="org.opensaml.profile.action.impl.HttpServletRequestMessageChannelSecurity" scope="prototype"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
     <alias name="shibboleth.OutgoingSOAPBindings" alias="shibboleth.OutgoingBindings"/>
 

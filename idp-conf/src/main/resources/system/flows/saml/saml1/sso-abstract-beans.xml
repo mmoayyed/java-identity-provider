@@ -24,6 +24,10 @@
         p:profileId="#{T(net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration).PROFILE_ID}"
         p:browserProfile="true" />
 
+    <bean id="InitializeMessageChannelSecurityContext"
+        class="org.opensaml.profile.action.impl.StaticMessageChannelSecurity" scope="prototype"
+        p:confidentialityActive="false" p:integrityActive="false" />
+
     <bean id="AddNameIdentifierToSubjects"
             class="org.opensaml.saml.saml1.profile.impl.AddNameIdentifierToSubjects" scope="prototype">
         <property name="formatLookupStrategy">
