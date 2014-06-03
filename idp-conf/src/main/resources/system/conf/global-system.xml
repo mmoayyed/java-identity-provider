@@ -18,8 +18,9 @@
     <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
         <property name="converters">
             <list>
-                <bean class="net.shibboleth.ext.spring.config.DurationToLongConverter"/>
-                <bean class="net.shibboleth.ext.spring.config.StringToIPRangeConverter"/>
+                <bean class="net.shibboleth.ext.spring.config.DurationToLongConverter" />
+                <bean class="net.shibboleth.ext.spring.config.StringToIPRangeConverter" />
+                <bean class="net.shibboleth.ext.spring.config.BooleanToPredicateConverter" />
             </list>
         </property>
     </bean>
