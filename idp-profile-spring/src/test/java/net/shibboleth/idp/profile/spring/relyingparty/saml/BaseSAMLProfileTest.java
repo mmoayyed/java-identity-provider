@@ -76,8 +76,7 @@ public class BaseSAMLProfileTest extends OpenSAMLInitBaseTestCase {
     protected static void assertConditionalPredicate(Predicate<ProfileRequestContext> predicate) {
         try {
             final ProfileRequestContext prc = new RequestContextBuilder().buildProfileRequestContext();
-            final MessageChannelSecurityContext mc =
-                    prc.getOutboundMessageContext().getSubcontext(MessageChannelSecurityContext.class, true);
+            final MessageChannelSecurityContext mc = prc.getSubcontext(MessageChannelSecurityContext.class, true);
             
             mc.setConfidentialityActive(true);
             mc.setIntegrityActive(true);
