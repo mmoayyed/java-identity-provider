@@ -18,7 +18,7 @@
      <bean id="test.sp.Credential" class="org.opensaml.security.x509.BasicX509Credential"
         c:entityCertificate-ref="test.sp.X509Certificate"
         c:privateKey-ref="test.sp.PrivateKey"
-        p:entityId="#{T(net.shibboleth.idp.test.flows.AbstractFlowTest).SP_ENTITY_ID}" />
+        p:entityId="https://sp.example.org" />
 
     <bean id="test.idp.X509Certificate" class="net.shibboleth.ext.spring.factory.X509CertificateFactoryBean"
         p:resource="classpath:/creds/idp-encryption.crt" />
