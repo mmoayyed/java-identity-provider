@@ -4,6 +4,15 @@
 ## Velocity context will contain the following properties
 ## flowRequestContext - the Spring Web Flow RequestContext
 
+#if (!$profileRequestContext.isBrowserProfile())
+	$flowRequestContext.getExternalContext().getNativeResponse().setStatus(500)
+	$flowRequestContext.getExternalContext().getNativeResponse().setContentType('text/xml')
+<S:Fault xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+	<faultcode>S:Server</faultcode>
+	<faultstring>SOAP fault</faultstring>
+<S:Fault>
+
+#else
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <body>
@@ -18,3 +27,5 @@
         
     </body>
 </html>
+
+#end
