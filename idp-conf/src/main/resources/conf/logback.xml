@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <logger name="idp" level="DEBUG" />
-
     <logger name="net.shibboleth.idp" level="INFO" />
 
     <logger name="net.shibboleth.idp.authn" level="DEBUG" />
