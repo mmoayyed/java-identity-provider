@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.test.flows;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
 import net.shibboleth.idp.saml.nameid.impl.NameIDCanonicalization;
 import net.shibboleth.idp.saml.nameid.impl.NameIdentifierCanonicalization;
+import net.shibboleth.idp.test.InMemoryDirectory;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 import net.shibboleth.utilities.java.support.net.IPRange;
@@ -59,6 +61,7 @@ import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.support.FluentParserContext;
 import org.springframework.binding.mapping.impl.DefaultMapper;
 import org.springframework.binding.mapping.impl.DefaultMapping;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -84,9 +87,6 @@ import org.testng.annotations.BeforeTest;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.unboundid.ldap.listener.InMemoryDirectoryServer;
-import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
-import com.unboundid.ldap.listener.InMemoryListenerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
 
 /**
@@ -101,7 +101,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
     @Nonnull private final static Logger log = LoggerFactory.getLogger(AbstractFlowTest.class);
 
     /** Path to LDIF file to be imported into directory server. */
-    @Nonnull public final static String LDIF_FILE = "src/test/resources/test/test-ldap.ldif";
+    @Nonnull public final static String LDIF_FILE = "/test/test-ldap.ldif";
 
     /** The IDP entity ID. */
     @Nonnull public final static String IDP_ENTITY_ID = "https://idp.example.org";
@@ -138,7 +138,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
     @Nonnull public final static String SAML2_TRANSFORM_C14N_BEAN_NAME = "c14n/SAML2Transform";
 
     /** In-memory directory server. */
-    @NonnullAfterInit protected InMemoryDirectoryServer directoryServer;
+    @NonnullAfterInit protected InMemoryDirectory directoryServer;
 
     /** Mock external context. */
     @Nonnull protected MockExternalContext externalContext;
@@ -172,7 +172,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
 
     /** SP credential wired via test/test-beans.xml. */
     @Qualifier("test.sp.Credential") @Autowired protected Credential spCredential;
-    
+
     /** SP certificate wired via test/test-beans.xml. */
     @Autowired @Qualifier("test.sp.X509Certificate") protected X509CertificateFactoryBean certFactoryBean;
 
@@ -236,15 +236,11 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      * Creates an UnboundID in-memory directory server. Leverages LDIF found at {@value #LDIF_FILE}.
      * 
      * @throws LDAPException if the in-memory directory server cannot be created
+     * @throws IOException if the LDIF resource cannot be imported
      */
-    @BeforeTest public void setupDirectoryServer() throws LDAPException {
-
-        InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig("dc=example,dc=org", "ou=system");
-        config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", 10389));
-        config.addAdditionalBindCredentials("cn=Directory Manager", "password");
-        directoryServer = new InMemoryDirectoryServer(config);
-        directoryServer.importFromLDIF(true, LDIF_FILE);
-        directoryServer.startListening();
+    @BeforeTest public void setupDirectoryServer() throws LDAPException, IOException {
+        directoryServer = new InMemoryDirectory(new ClassPathResource(LDIF_FILE));
+        directoryServer.start();
     }
 
     /**
@@ -254,7 +250,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      */
     @AfterTest(alwaysRun = true) public void teardownDirectoryServer() {
         if (directoryServer != null) {
-            directoryServer.shutDown(true);
+            directoryServer.stop();
         }
     }
 
