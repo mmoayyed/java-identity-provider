@@ -76,7 +76,13 @@
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext), true).setRequestContext(flowRequestContext)" />
         </on-entry>
         <if test="LocalErrorPredicate.apply(opensamlProfileRequestContext)"
-            then="error" else="HandleErrorWithResponse" />
+            then="HandleErrorLocally" else="HandleErrorWithResponse" />
+    </decision-state>
+
+    <!-- For ECP, local errors mean SOAP faults. -->
+    
+    <decision-state id="HandleErrorLocally">
+        <if test="opensamlProfileRequestContext.isBrowserProfile()" then="HandleErrorWithView" else="SOAPFault" />
     </decision-state>
 
     <!-- We need to trap non-proceed transitions in these actions to avoid an infinite loop. -->
@@ -88,14 +94,25 @@
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="CallErrorSubflow" />
-        <transition to="error" />
+        <transition to="HandleErrorWithView" />
     </action-state>
 
     <subflow-state id="CallErrorSubflow" subflow="error/saml-frontchannel">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="ReturnToParentFlow" />
-        <transition to="error" />
+        <transition to="HandleErrorWithView" />
     </subflow-state>
+
+    <action-state id="SOAPFault">
+        <evaluate expression="InitializeOutboundMessageContextForSOAPFault" />
+        <evaluate expression="AddSOAPFault" />
+        <evaluate expression="EncodeMessage" />
+        <evaluate expression="RecordResponseComplete" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="end" />
+        <transition to="HandleErrorWithView" />
+    </action-state>
 
     <bean-import resource="sso-abstract-beans.xml" />
 

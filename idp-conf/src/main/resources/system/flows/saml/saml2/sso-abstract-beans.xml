@@ -87,4 +87,30 @@
         </property>
     </bean>
     
+    <!-- These are used for ECP error handling. -->
+    
+    <bean id="AddSOAPFault"
+            class="org.opensaml.soap.soap11.profile.impl.AddSOAPFault" scope="prototype"
+            p:faultString="An error occurred.">
+        <property name="detailedErrorsCondition">
+            <bean class="net.shibboleth.idp.profile.config.logic.DetailedErrorsPredicate" />
+        </property>
+        <property name="faultCode">
+            <util:list>
+                <util:constant static-field="org.opensaml.soap.soap11.FaultCode.SERVER" />
+            </util:list>
+        </property>
+        <property name="faultCodeLookupStrategy">
+            <bean class="org.opensaml.soap.soap11.profile.impl.AddSOAPFault.FaultCodeMappingFunction"
+                    c:mappings-ref="shibboleth.SOAPFaultCodeMappings" />
+        </property>
+        <property name="faultStringLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.context.navigate.SpringStatusMessageLookupFunction" />
+        </property>
+    </bean>
+
+    <bean id="InitializeOutboundMessageContextForSOAPFault"
+        class="net.shibboleth.idp.saml.profile.impl.InitializeOutboundMessageContextForError" scope="prototype"
+        p:outboundBinding="urn:oasis:names:tc:SAML:2.0:bindings:PAOS" />
+        
 </beans>

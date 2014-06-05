@@ -72,7 +72,7 @@
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext), true).setRequestContext(flowRequestContext)" />
         </on-entry>
         <if test="LocalErrorPredicate.apply(opensamlProfileRequestContext)"
-            then="error" else="HandleErrorWithResponse" />
+            then="HandleErrorWithView" else="HandleErrorWithResponse" />
     </decision-state>
 
     <!-- We need to trap non-proceed transitions in these actions to avoid an infinite loop. -->
@@ -84,13 +84,13 @@
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="CallErrorSubflow" />
-        <transition to="error" />
+        <transition to="HandleErrorWithView" />
     </action-state>
 
     <subflow-state id="CallErrorSubflow" subflow="error/saml-frontchannel">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="ReturnToParentFlow" />
-        <transition to="error" />
+        <transition to="HandleErrorWithView" />
     </subflow-state>
 
     <bean-import resource="sso-abstract-beans.xml" />

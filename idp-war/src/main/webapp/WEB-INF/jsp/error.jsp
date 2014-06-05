@@ -4,20 +4,6 @@
 <%@ page import="org.opensaml.profile.context.ProfileRequestContext" %>
 <%@ page import="org.springframework.webflow.execution.RequestContext" %>
 
-<%
-final ProfileRequestContext prc = (ProfileRequestContext) request.getAttribute("opensamlProfileRequestContext");
-if (!prc.isBrowserProfile()) {
-	response.setContentType("text/xml");
-	response.setStatus(500);
-%>
-
-<S:Fault xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
-	<faultcode>S:Server</faultcode>
-	<faultstring>SOAP fault</faultstring>
-<S:Fault>
-
-<% } else { %>
-
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <body>
     
@@ -30,5 +16,3 @@ if (!prc.isBrowserProfile()) {
         
     </body>
 </html>
-
-<% } %>

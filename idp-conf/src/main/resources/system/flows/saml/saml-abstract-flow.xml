@@ -30,7 +30,7 @@
         <evaluate expression="'proceed'" />
         
         <!-- No inbound flow to call. -->
-        <transition on="proceed" to="OutboundContexts" />
+        <transition on="proceed" to="OutboundContextsAndSecurityParameters" />
         
         <!-- Anything else is a subflow to call. -->
         <transition to="CallInboundSubflow" />
@@ -119,19 +119,20 @@
         <transition to="error" />
     </action-state>
 
-    <!-- Terminus -->
-
-    <end-state id="end" />
-
-    <!-- Handle errors by transitioning to an action defined below us.  -->
-
-    <end-state id="error" view="error">
+    <end-state id="HandleErrorWithView" view="error">
         <on-entry>
             <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
         </on-entry>
     </end-state>
 
-    <!-- Default is to turn non-proceed events into an error, preserve it, and initiate error handling sequence. -->
+    <!-- Successful terminal state. -->
+
+    <end-state id="end" />
+
+    <!--
+    Default is to turn non-proceed events into an error, and initiate error handling sequence
+    defined by action in child flows.
+    -->
     <global-transitions>
         <transition on="#{!'proceed'.equals(currentEvent.id)}" to="HandleError" />
     </global-transitions>

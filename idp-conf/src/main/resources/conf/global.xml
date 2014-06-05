@@ -15,66 +15,6 @@
     <import resource="subject-c14n.xml" />
 	<import resource="authn/authn-comparison.xml" />
 	<import resource="authn/general-authn-config.xml" />
-
-    <!-- List of event/error codes during SSO to trap and handle without returning to SPs. -->
-
-    <util:list id="shibboleth.LocalEvents">
-        <!--
-        <value>NoPotentialFlow</value>
-        -->
-    </util:list>
-
-    <!-- Mappings of error events during requests to SAML status codes. -->
-
-    <util:map id="shibboleth.SAML1StatusMappings">
-        <entry key="InvalidMessageVersion" value-ref="Shibboleth.SAML1Status.VersionMismatch" />
-        
-        <entry key="UnableToDecode" value-ref="Shibboleth.SAML1Status.Requester" />
-        
-        <entry key="UnableToEncode" value-ref="Shibboleth.SAML1Status.Requester" />
-
-        <entry key="MessageReplay" value-ref="Shibboleth.SAML1Status.Requester" />
-        <entry key="MessageExpired" value-ref="Shibboleth.SAML1Status.Requester" />
-        <entry key="MessageAuthenticationError" value-ref="Shibboleth.SAML1Status.Requester" />
-
-        <entry key="RequestUnsupported" value-ref="Shibboleth.SAML1Status.Requester" />
-        
-        <entry key="NoPassive" value-ref="Shibboleth.SAML1Status.Requester" />
-        <entry key="NoPotentialFlow" value-ref="Shibboleth.SAML1Status.Requester" />
-        <entry key="NoCredentials" value-ref="Shibboleth.SAML1Status.Requester" />
-        <entry key="InvalidCredentials" value-ref="Shibboleth.SAML1Status.Requester" />
-        <entry key="AccountError" value-ref="Shibboleth.SAML1Status.Requester" />
-        <entry key="AuthenticationException" value-ref="Shibboleth.SAML1Status.Requester" />
-        
-        <entry key="InvalidSubject" value-ref="Shibboleth.SAML1Status.Requester" />
-        <entry key="SubjectCanonicalizationError" value-ref="Shibboleth.SAML1Status.Requester" />
-    </util:map>
-    
-    <util:map id="shibboleth.SAML2StatusMappings">
-        <entry key="InvalidMessageVersion" value-ref="Shibboleth.SAML2Status.VersionMismatch" />
-        
-        <entry key="UnableToDecode" value-ref="Shibboleth.SAML2Status.RequestUnsupported" />
-        
-        <entry key="UnableToEncode" value-ref="Shibboleth.SAML2Status.UnsupportedBinding" />
-
-        <entry key="MessageReplay" value-ref="Shibboleth.SAML2Status.RequestDenied" />
-        <entry key="MessageExpired" value-ref="Shibboleth.SAML2Status.RequestDenied" />
-        <entry key="MessageAuthenticationError" value-ref="Shibboleth.SAML2Status.RequestDenied" />
-        
-        <entry key="RequestUnsupported" value-ref="Shibboleth.SAML2Status.NoAuthnContext" />
-        
-        <entry key="NoPassive" value-ref="Shibboleth.SAML2Status.NoPassive" />
-        
-        <entry key="NoPotentialFlow" value-ref="Shibboleth.SAML2Status.AuthnFailed" />
-        <entry key="NoCredentials" value-ref="Shibboleth.SAML2Status.AuthnFailed" />
-        <entry key="InvalidCredentials" value-ref="Shibboleth.SAML2Status.AuthnFailed" />
-        <entry key="AccountError" value-ref="Shibboleth.SAML2Status.AuthnFailed" />
-        <entry key="AuthenticationException" value-ref="Shibboleth.SAML2Status.AuthnFailed" />
-        
-        <entry key="InvalidSubject" value-ref="Shibboleth.SAML2Status.UnknownPrincipal" />
-        <entry key="SubjectCanonicalizationError" value-ref="Shibboleth.SAML2Status.UnknownPrincipal" />
-        
-        <entry key="InvalidNameIDPolicy" value-ref="Shibboleth.SAML2Status.InvalidNameIDPolicy" />
-    </util:map>
+    <import resource="error-mappings.xml" />
 
 </beans>
