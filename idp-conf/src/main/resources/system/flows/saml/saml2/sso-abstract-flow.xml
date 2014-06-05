@@ -23,13 +23,23 @@
     
     <subflow-state id="DoAuthenticationSubflow" subflow="authn">
         <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="DoProfileWorkAfterLogin" />
+        <transition on="proceed" to="AttributeResolution" />
     </subflow-state>
-
-    <action-state id="DoProfileWorkAfterLogin">
+    
+    <action-state id="AttributeResolution">
         <evaluate expression="ResolveAttributes" />
         <evaluate expression="FilterAttributes" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="DoAttrCheck" />
+    </action-state>
 
+    <subflow-state id="DoAttrCheck" subflow="access/attr-check">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="BuildResponse" />
+    </subflow-state>
+
+    <action-state id="BuildResponse">
         <evaluate expression="AddResponseShell" />
         <evaluate expression="AddInResponseToToResponse" />
 
