@@ -71,7 +71,7 @@ public class RdbmsDataConnectorParser extends AbstractDataConnectorParser {
             log.debug("parsing v2 configuration");
             doParseV2(config, parserContext, builder);
         } else {
-            doParseInternal(config, createBeanFactory(springResources.split("\\s+")), builder);
+            doParseInternal(config, createBeanFactory(springResources.split(";")), builder);
         }
     }
 
