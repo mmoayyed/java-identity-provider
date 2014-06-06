@@ -27,7 +27,7 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
-import net.shibboleth.utilities.java.support.xml.DomTypeSupport;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -93,7 +93,7 @@ public class CacheConfigParser {
         }
         if (timeToLive != null && maximumSize != null) {
             return CacheBuilder.newBuilder().maximumSize(Long.parseLong(maximumSize))
-                    .expireAfterAccess(DomTypeSupport.durationToLong(timeToLive), TimeUnit.MILLISECONDS).build();
+                    .expireAfterAccess(DOMTypeSupport.durationToLong(timeToLive), TimeUnit.MILLISECONDS).build();
         }
         return null;
     }

@@ -32,7 +32,7 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.DataConnectorNamespaceHan
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
-import net.shibboleth.utilities.java.support.xml.DomTypeSupport;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.ldaptive.BindConnectionInitializer;
@@ -540,7 +540,7 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
          * @return result of the division
          */
         public static long buildDuration(final String duration, final long divisor) {
-            return DomTypeSupport.durationToLong(duration) / divisor;
+            return DOMTypeSupport.durationToLong(duration) / divisor;
         }
 
         /**

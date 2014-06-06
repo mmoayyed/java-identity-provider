@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
-import net.shibboleth.utilities.java.support.xml.DomTypeSupport;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -67,7 +67,7 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
             return false;
         }
 
-        if (ChainingMetadataProviderParser.ELEMENT_NAME.equals(DomTypeSupport.getXSIType(element))) {
+        if (ChainingMetadataProviderParser.ELEMENT_NAME.equals(DOMTypeSupport.getXSIType(element))) {
             log.warn("{} is not valid for {}", attribute, ChainingMetadataProviderParser.ELEMENT_NAME.getLocalPart());
             return false;
         }

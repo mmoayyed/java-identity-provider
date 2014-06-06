@@ -25,7 +25,7 @@ import net.shibboleth.ext.spring.resource.ResourceHelper;
 import net.shibboleth.idp.profile.spring.resource.ClasspathResourceParser;
 import net.shibboleth.idp.profile.spring.resource.ResourceNamespaceHandler;
 import net.shibboleth.idp.profile.spring.resource.SVNResourceParser;
-import net.shibboleth.utilities.java.support.xml.DomTypeSupport;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.saml.metadata.resolver.impl.AbstractBatchMetadataResolver;
@@ -67,7 +67,7 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
         if (null == resources || resources.isEmpty()) {
             throw new BeanCreationException("No <Resource> specified for ResourceBackedMetadataProvider");
         }
-        final QName qName = DomTypeSupport.getXSIType(resources.get(0));
+        final QName qName = DOMTypeSupport.getXSIType(resources.get(0));
         if (null == qName) {
             log.error("No type specified for a <Resource> within a ResourceBackedMetadataProvider");
             throw new BeanCreationException(
@@ -108,7 +108,7 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
 
         ResourceNamespaceHandler.noFilters(resources.get(0), parserContext.getReaderContext());
 
-        final QName qName = DomTypeSupport.getXSIType(resources.get(0));
+        final QName qName = DOMTypeSupport.getXSIType(resources.get(0));
         log.debug("Dispatching based on type '{}'", qName.getLocalPart());
 
         if (ClasspathResourceParser.ELEMENT_NAME.equals(qName)) {
