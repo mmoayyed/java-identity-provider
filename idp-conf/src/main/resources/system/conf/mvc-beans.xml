@@ -49,7 +49,7 @@
     <bean id="shibboleth.VelocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
         <property name="velocityProperties">
             <props>
-                <prop key="runtime.log.logsystem.class">net.shibboleth.utilities.java.support.velocity.Slf4JLogChute</prop>
+                <prop key="runtime.log.logsystem.class">net.shibboleth.utilities.java.support.velocity.SLF4JLogChute</prop>
                 <prop key="input.encoding">UTF-8</prop>
                 <prop key="output.encoding">UTF-8</prop>
                 <prop key="resource.loader">file</prop>

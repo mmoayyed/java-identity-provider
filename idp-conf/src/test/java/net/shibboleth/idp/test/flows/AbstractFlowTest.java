@@ -40,7 +40,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 import net.shibboleth.utilities.java.support.net.IPRange;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.security.Type4UuidIdentifierGenerationStrategy;
+import net.shibboleth.utilities.java.support.security.Type4UUIDIdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 
 import org.opensaml.core.xml.XMLObject;
@@ -165,7 +165,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
     @NonnullAfterInit protected static UnmarshallerFactory unmarshallerFactory;
 
     /** UUID identifier generation strategy. */
-    @Nonnull protected IdentifierGenerationStrategy idGenerator = new Type4UuidIdentifierGenerationStrategy();
+    @Nonnull protected IdentifierGenerationStrategy idGenerator = new Type4UUIDIdentifierGenerationStrategy();
 
     /** IdP credential wired via test/test-beans.xml. */
     @Qualifier("test.idp.Credential") @Autowired protected Credential idpCredential;
