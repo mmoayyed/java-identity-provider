@@ -33,7 +33,7 @@ import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.ActionTestingSupport;
-import net.shibboleth.utilities.java.support.net.UriSupport;
+import net.shibboleth.utilities.java.support.net.URISupport;
 
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -144,7 +144,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
         ac.setAttemptedFlow(authenticationFlows.get(0));
         action.setLoginConfigType("JavaLoginConfig");
         System.out.println(getCurrentDir());
-        action.setLoginConfigParameters(new URIParameter(UriSupport.fileURIFromAbsolutePath(getCurrentDir()
+        action.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
                 + '/' + DATA_PATH + "jaas.config")));
         action.initialize();
 
@@ -166,7 +166,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
         ac.setAttemptedFlow(authenticationFlows.get(0));
         action.setLoginConfigType("JavaLoginConfig");
         System.out.println(getCurrentDir());
-        action.setLoginConfigParameters(new URIParameter(UriSupport.fileURIFromAbsolutePath(getCurrentDir()
+        action.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
                 + '/' + DATA_PATH + "jaas.config")));
         action.initialize();
 
@@ -189,7 +189,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
 
         action.setLoginConfigType("JavaLoginConfig");
         System.out.println(getCurrentDir());
-        action.setLoginConfigParameters(new URIParameter(UriSupport.fileURIFromAbsolutePath(getCurrentDir()
+        action.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
                 + '/' + DATA_PATH + "jaas.config")));
         action.initialize();
 

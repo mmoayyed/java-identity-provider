@@ -23,8 +23,8 @@ import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
-import net.shibboleth.utilities.java.support.net.SimpleUrlCanonicalizer;
-import net.shibboleth.utilities.java.support.net.UrlBuilder;
+import net.shibboleth.utilities.java.support.net.SimpleURLCanonicalizer;
+import net.shibboleth.utilities.java.support.net.URLBuilder;
 
 import org.joda.time.DateTime;
 import org.opensaml.messaging.context.MessageContext;
@@ -62,8 +62,8 @@ public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
         // TODO servlet context
         String destinationPath = "/idp/profile/SAML2/Redirect/SSO";
         try {
-            String baseUrl = SimpleUrlCanonicalizer.canonicalize(getBaseUrl(servletRequest));
-            UrlBuilder urlBuilder = new UrlBuilder(baseUrl);
+            String baseUrl = SimpleURLCanonicalizer.canonicalize(getBaseUrl(servletRequest));
+            URLBuilder urlBuilder = new URLBuilder(baseUrl);
             urlBuilder.setPath(destinationPath);
             return urlBuilder.buildURL();
         } catch (MalformedURLException e) {
@@ -77,7 +77,7 @@ public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
         String destinationPath = "/idp/profile/SAML2/POST/SSO";
         String baseUrl = getBaseUrl(servletRequest);
         try {
-            UrlBuilder urlBuilder = new UrlBuilder(baseUrl);
+            URLBuilder urlBuilder = new URLBuilder(baseUrl);
             urlBuilder.setPath(destinationPath);
             return urlBuilder.buildURL();
         } catch (MalformedURLException e) {
@@ -91,7 +91,7 @@ public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
         String destinationPath = "/idp/profile/SAML2/POST-SimpleSign/SSO";
         String baseUrl = getBaseUrl(servletRequest);
         try {
-            UrlBuilder urlBuilder = new UrlBuilder(baseUrl);
+            URLBuilder urlBuilder = new URLBuilder(baseUrl);
             urlBuilder.setPath(destinationPath);
             return urlBuilder.buildURL();
         } catch (MalformedURLException e) {
@@ -155,7 +155,7 @@ public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
         String acsPath = "/sp/SAML2/POST/ACS";
         String baseUrl = getBaseUrl(servletRequest);
         try {
-            UrlBuilder urlBuilder = new UrlBuilder(SimpleUrlCanonicalizer.canonicalize(baseUrl));
+            URLBuilder urlBuilder = new URLBuilder(SimpleURLCanonicalizer.canonicalize(baseUrl));
             urlBuilder.setPath(acsPath);
             return urlBuilder.buildURL();
         } catch (MalformedURLException e) {
@@ -177,7 +177,7 @@ public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
         // TODO servlet context
         String requestUrl = servletRequest.getRequestURL().toString();
         try {
-            UrlBuilder urlBuilder = new UrlBuilder(requestUrl);
+            URLBuilder urlBuilder = new URLBuilder(requestUrl);
             urlBuilder.setUsername(null);
             urlBuilder.setPassword(null);
             urlBuilder.setPath(null);
