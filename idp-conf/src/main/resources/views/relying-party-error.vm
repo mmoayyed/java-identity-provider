@@ -1,0 +1,17 @@
+##
+## Velocity Template for error end-state
+##
+## Velocity context will contain the following properties
+## flowRequestContext - the Spring Web Flow RequestContext
+
+#set ($encoder = $flowRequestContext.getRequestScope().get('encoder'))
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <body>
+    
+    <h2>Web Login Service - Unsupported Request</h2>
+        
+        <p>The application or service you have accessed is not registered for use with this service.</p>
+        
+    </body>
+</html>

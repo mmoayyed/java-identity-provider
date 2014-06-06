@@ -36,11 +36,11 @@
     <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
        <property name="exceptionMappings">
           <props>
-             <prop key="FlowExecutionRestorationFailureException">backbutton</prop>
+             <prop key="FlowExecutionRestorationFailureException">backbutton-error</prop>
           </props>
        </property>
        <!--
-       <property name="defaultErrorView" value="error"/>
+       <property name="defaultErrorView" value="general-error"/>
        -->
     </bean>
     

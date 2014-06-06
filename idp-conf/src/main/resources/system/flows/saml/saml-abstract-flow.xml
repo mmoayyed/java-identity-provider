@@ -106,7 +106,7 @@
     <subflow-state id="CallOutboundSubflow" subflow="#{currentEvent.id}">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="HandleOutboundMessage" />
-        <transition to="error" />
+        <transition to="HandleErrorWithView" />
     </subflow-state>
 
     <action-state id="HandleOutboundMessage">
@@ -116,14 +116,26 @@
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="end" />
-        <transition to="error" />
+        <transition to="HandleErrorWithView" />
     </action-state>
 
-    <end-state id="HandleErrorWithView" view="error">
+    <!-- Populates inputs to error views and dispatches based on the error event. -->
+    <action-state id="HandleErrorWithView">
         <on-entry>
             <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
         </on-entry>
-    </end-state>
+        
+        <evaluate expression="currentEvent" />
+        
+        <transition on="InvalidRelyingPartyConfiguration" to="RelyingPartyError" />
+        <transition on="InvalidProfileConfiguration" to="RelyingPartyError" />
+        
+        <transition to="GeneralError" />
+    </action-state>
+
+    <end-state id="RelyingPartyError" view="relying-party-error" />
+    <end-state id="GeneralError" view="general-error" />
 
     <!-- Successful terminal state. -->
 
