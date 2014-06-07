@@ -128,14 +128,10 @@
         
         <evaluate expression="currentEvent" />
         
-        <transition on="InvalidRelyingPartyConfiguration" to="RelyingPartyError" />
-        <transition on="InvalidProfileConfiguration" to="RelyingPartyError" />
-        
-        <transition to="GeneralError" />
+        <transition to="error" />
     </action-state>
 
-    <end-state id="RelyingPartyError" view="relying-party-error" />
-    <end-state id="GeneralError" view="general-error" />
+    <end-state id="error" view="#{MapEventToView.apply(currentEvent)}" />
 
     <!-- Successful terminal state. -->
 

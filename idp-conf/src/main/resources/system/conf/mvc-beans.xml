@@ -40,7 +40,7 @@
           </props>
        </property>
        <!--
-       <property name="defaultErrorView" value="general-error"/>
+       <property name="defaultErrorView" value="error"/>
        -->
     </bean>
     

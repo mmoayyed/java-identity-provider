@@ -237,4 +237,9 @@
         </property>
     </bean>
     
+    <bean id="MapEventToView"
+        class="net.shibboleth.idp.profile.context.navigate.SpringEventToViewLookupFunction"
+        p:defaultView-ref="shibboleth.DefaultErrorView"
+        p:eventMap-ref="shibboleth.EventViewMap" />
+    
 </beans>
