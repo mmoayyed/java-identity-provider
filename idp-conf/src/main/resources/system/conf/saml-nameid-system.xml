@@ -65,7 +65,7 @@
     <bean id="shibboleth.StoredPersistentIdGenerator" lazy-init="true"
         class="net.shibboleth.idp.saml.nameid.impl.StoredPersistentIdGenerationStrategy"
         p:computedIdStrategy-ref="shibboleth.ComputedPersistentIdGenerator"
-        p:IDStore-ref="${idp.persistentId.store}" />
+        p:IDStore="#{getObject('${idp.persistentId.store:null}')}" />
     
     <!-- These two beans handle legacy support for NameID generation in the Attribute Resolver. -->
     <bean id="shibboleth.LegacySAML1NameIdentifierGenerator"
