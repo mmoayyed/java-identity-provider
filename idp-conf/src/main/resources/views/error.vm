@@ -4,17 +4,37 @@
 ## Velocity context will contain the following properties
 ## flowRequestContext - the Spring Web Flow RequestContext
 ## encoder - HTMLEncoder class
-
-#set ($encoder = $flowRequestContext.getRequestScope().get('encoder'))
+## request - HttpServletRequest
+## response - HttpServletResponse
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-    <body>
-    
-    <h2>ERROR</h2>
+  	<head>
+    	<meta charset="utf-8" />
+    	<title>Web Login Service - Error</title>
+    	<link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css"/>
+  	</head>
+  	
+  	<body>
+    <div class="wrapper">
+    	<div class="container">
+        	<header>
+				<img src="$request.getContextPath()/images/dummylogo.png" alt="Replace or remove this logo"/>
+				<h3>Web Login Service - Error</h3>
+			</header>
+		
+        	<div class="content">
+    		#if ( $flowRequestContext.getCurrentEvent() )
+            	<p>ERROR: $encoder.encodeForHTML($flowRequestContext.getCurrentEvent().getId())</p>
+    		#end
+    		</div>
+    	</div>
 
-    #if ( $flowRequestContext.getCurrentEvent() )
-            <p>ERROR: $encoder.encodeForHTML($flowRequestContext.getCurrentEvent().getId())</p>
-    #end
-        
+      	<footer>
+        	<div class="container container-footer">
+          		<p class="footer-text">Insert your footer text here.</p>
+        	</div>
+      	</footer>
+      	
+    </div>
     </body>
 </html>

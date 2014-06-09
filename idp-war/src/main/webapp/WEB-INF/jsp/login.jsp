@@ -14,16 +14,14 @@
   <head>
     <meta charset="utf-8" />
     <title>Example Login Page</title>
-    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath()%>/resources/login.css"/>
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath()%>/css/main.css"/>
   </head>
-<% 
-%>
 
   <body>
     <div class="wrapper">
       <div class="container">
         <header>
-          <a class="logo" href="../images/dummylogo.png"><img src="<%= request.getContextPath()%>/resources/dummylogo.png" alt="Replace or remove this logo"/></a>
+          <a class="logo" href="../images/dummylogo.png"><img src="<%= request.getContextPath()%>/images/dummylogo.png" alt="Replace or remove this logo"/></a>
         </header>
     
         <div class="content">
