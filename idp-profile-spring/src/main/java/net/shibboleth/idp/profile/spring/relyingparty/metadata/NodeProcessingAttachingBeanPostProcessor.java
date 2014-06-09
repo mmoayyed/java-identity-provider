@@ -90,6 +90,7 @@ public class NodeProcessingAttachingBeanPostProcessor implements BeanPostProcess
             } else {
                 final MetadataFilterChain chain = new MetadataFilterChain();
                 chain.setFilters(Arrays.asList(filter, filterToAttach));
+                resolver.setMetadataFilter(chain);
             }
         }
         
