@@ -121,12 +121,11 @@
         <error-code>500</error-code>
         <location>/WEB-INF/jsp/error-500.jsp</location>
     </error-page>
-    -->
-
     <error-page>
         <error-code>404</error-code>
         <location>/WEB-INF/jsp/error-404.jsp</location>
     </error-page>
+    -->
 
     <!--
     Uncomment to use container managed authentication. The new servlet spec (3.1)
