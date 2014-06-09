@@ -19,7 +19,7 @@
 
     <!--
     These are beans that define reloadable services. The actual Spring resources that configure the
-    services are generally defined in the services-user.xml file edited by deployers.
+    services are generally defined in the services.xml file edited by deployers.
     -->
 
     <bean id="shibboleth.AttributeFilterService" class="net.shibboleth.idp.service.ReloadableSpringService"
