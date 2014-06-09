@@ -23,8 +23,10 @@
 			</header>
 		
         	<div class="content">
-    		#if ( $flowRequestContext.getCurrentEvent() )
+    		#if ( $flowRequestContext and $flowRequestContext.getCurrentEvent() )
             	<p>ERROR: $encoder.encodeForHTML($flowRequestContext.getCurrentEvent().getId())</p>
+          	#else
+          		<p>ERROR: No specific error available.</p>
     		#end
     		</div>
     	</div>

@@ -23,9 +23,38 @@
 
     <util:map id="shibboleth.EventViewMap">
         <entry key="InvalidProfileConfiguration" value="relying-party-error" />
+        
         <entry key="MessageReplay" value="stale-error" />
         <entry key="MessageExpired" value="stale-error" />
+        <entry key="UnableToDecode" value="stale-error" />
+        
         <entry key="AccessDenied" value="access-error" />
+
+        <entry key="InvalidSecurityConfiguration" value="security-cfg-error" />
+        
+        <entry key="EndpointResolutionFailed" value="endpoint-error" />
+        
+        <entry key="AccountError" value="authn-error" />
+        <entry key="AuthenticationException" value="authn-error" />
+        <entry key="InvalidCredentials" value="authn-error" />
+        <entry key="NoCredentials" value="authn-error" />
+        <entry key="NoPotentialFlow" value="authn-error" />
+        <entry key="RequestUnsupported" value="authn-error" />
+        <entry key="SubjectCanonicalizationError" value="authn-error" />
+        
+        <entry key="InvalidAttributeContext" value="black-swan-error" />
+        <entry key="InvalidAuthenticationContext" value="black-swan-error" />
+        <entry key="InvalidSubjectContext" value="black-swan-error" />
+        <entry key="InvalidSubjectCanonicalizationContext" value="black-swan-error" />
+        <entry key="InvalidMessageContext" value="black-swan-error" />
+        <entry key="InvalidMessageVersion" value="black-swan-error" />
+        <entry key="InvalidProfileContext" value="black-swan-error" />
+        <entry key="InvalidRelyingPartyContext" value="black-swan-error" />
+        <entry key="InvalidRelyingPartyConfiguration" value="black-swan-error" />
+        <entry key="MessageProcessingError" value="black-swan-error" />
+        <entry key="UnableToEncode" value="black-swan-error" />
+        <entry key="UnableToSign" value="black-swan-error" />
+        <entry key="UnableToEncrypt" value="black-swan-error" />
     </util:map>
 
     <!-- Mappings of error events during requests to SAML status codes and SOAP fault codes. -->
@@ -85,8 +114,6 @@
         <entry key="InvalidMessageVersion" value-ref="shibboleth.SOAP.VersionMismatch" />
         
         <entry key="UnableToDecode" value-ref="shibboleth.SOAP.Client" />
-        
-        <entry key="UnableToEncode" value-ref="shibboleth.SOAP.Server" />
 
         <entry key="MessageReplay" value-ref="shibboleth.SOAP.Client" />
         <entry key="MessageExpired" value-ref="shibboleth.SOAP.Client" />
