@@ -34,15 +34,15 @@
     
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
     
-    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
-       <property name="exceptionMappings">
-          <props>
-             <prop key="FlowExecutionRestorationFailureException">backbutton-error</prop>
-          </props>
-       </property>
-       <!--
-       <property name="defaultErrorView" value="error"/>
-       -->
+    <bean class="net.shibboleth.ext.spring.error.ExtendedMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="FlowExecutionRestorationFailureException">stale-error</prop>
+            </props>
+        </property>
+        <!--
+        <property name="defaultErrorView" value="error"/>
+        -->
     </bean>
     
     <!-- ViewResolvers -->
