@@ -3,6 +3,8 @@
 ##
 ## Velocity context will contain the following properties
 ## flowRequestContext - the Spring Web Flow RequestContext
+## request - HttpServletRequest
+## response - HttpServletResponse
 ## runtime - java.lang.Runtime.getRuntime()
 ## System - java.lang.System class
 ## Version - net.shibboleth.idp.Version class
@@ -27,3 +29,5 @@ start_time: $startupTime.toString($dateTimeFormatter)
 current_time: $now.toString($dateTimeFormatter)
 #set ($uptime = $now.getMillis() - $startupTime.getMillis()) 
 uptime: $uptime ms
+
+$response.setContentType("text/plain")

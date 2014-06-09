@@ -25,6 +25,7 @@
         <entry key="InvalidProfileConfiguration" value="relying-party-error" />
         <entry key="MessageReplay" value="stale-error" />
         <entry key="MessageExpired" value="stale-error" />
+        <entry key="AccessDenied" value="access-error" />
     </util:map>
 
     <!-- Mappings of error events during requests to SAML status codes and SOAP fault codes. -->

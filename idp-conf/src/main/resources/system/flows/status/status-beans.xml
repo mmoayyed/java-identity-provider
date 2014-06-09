@@ -24,6 +24,11 @@
     <bean id="CheckAccess"
         class="org.opensaml.profile.action.impl.CheckClientAddress" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:allowedRanges="#{ { ${idp.status.allowedAddresses} } }" />
+        p:allowedRanges="#{ { ${idp.status.allowedAddresses:null} } }" />
+
+    <bean id="MapEventToView"
+        class="net.shibboleth.idp.profile.context.navigate.SpringEventToViewLookupFunction"
+        p:defaultView-ref="shibboleth.DefaultErrorView"
+        p:eventMap-ref="shibboleth.EventViewMap" />
 
 </beans>

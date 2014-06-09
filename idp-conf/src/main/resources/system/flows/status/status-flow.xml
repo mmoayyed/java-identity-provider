@@ -21,19 +21,30 @@
             <evaluate expression="new org.joda.time.DateTime(flowExecutionContext.getActiveSession().getDefinition().getApplicationContext().getStartupDate())"
                 result="requestScope.startupTime" />
             <evaluate expression="T(org.joda.time.DateTime).now()" result="requestScope.now" />
-            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse().setContentType('text/plain')" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
         </on-entry>
     </end-state>
 
-    <end-state id="error" view="error">
+    <!-- Populates inputs to error views and dispatches based on the error event. -->
+    <action-state id="HandleErrorWithView">
         <on-entry>
             <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
         </on-entry>
-    </end-state>
+        
+        <evaluate expression="currentEvent" />
+        
+        <transition to="error" />
+    </action-state>
+
+    <end-state id="error" view="#{MapEventToView.apply(currentEvent)}" />
 
     <!-- Default is to turn non-proceed events into an error. -->
     <global-transitions>
-        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="error" />
+        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="HandleErrorWithView" />
     </global-transitions>
 
     <!-- The import references the parent folder because the abstract flow is used only from one level down. -->
