@@ -7,10 +7,30 @@
 ## request - HttpServletRequest
 ## response - HttpServletResponse
 
+#if ($flowRequestContext)
+    #set ($eventId = $flowRequestContext.getCurrentEvent().getId())
+    #set ($appContext = $flowRequestContext.getFlowExecutionContext().getActiveSession().getDefinition().getApplicationContext())
+    #set ($locale = $flowRequestContext.getExternalContext().getLocale())
+    #set ($eventKey = $appContext.getMessage($eventId, null, "error", $locale))
+    #set ($titleSuffix = $appContext.getMessage("${eventKey}.title", null, "Error", $locale))
+    #set ($message = $appContext.getMessage("${eventKey}.message", null, "ERROR: $eventId", $locale))
+    
+    #if ($eventId == "AccessDenied")
+        $response.setStatus(403)
+    #end
+#else
+    #set ($titleSuffix = "Error")
+    #if ($exception)
+        #set ($message = "ERROR: $exception.getClass().getName()")
+    #else
+        #set ($message = "No specific error available")
+    #end
+#end
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
   	<head>
     	<meta charset="utf-8" />
-    	<title>Web Login Service - Error</title>
+    	<title>Web Login Service - $titleSuffix</title>
     	<link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css"/>
   	</head>
   	
@@ -19,15 +39,11 @@
     	<div class="container">
         	<header>
 				<img src="$request.getContextPath()/images/dummylogo.png" alt="Replace or remove this logo"/>
-				<h3>Web Login Service - Error</h3>
+				<h3>Web Login Service - $titleSuffix</h3>
 			</header>
 		
         	<div class="content">
-    		#if ( $flowRequestContext and $flowRequestContext.getCurrentEvent() )
-            	<p>ERROR: $encoder.encodeForHTML($flowRequestContext.getCurrentEvent().getId())</p>
-          	#else
-          		<p>ERROR: No specific error available.</p>
-    		#end
+            #evaluate($message)
     		</div>
     	</div>
 

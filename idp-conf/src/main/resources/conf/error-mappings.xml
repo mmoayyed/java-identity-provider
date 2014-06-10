@@ -11,52 +11,24 @@
 
 	<context:property-placeholder location="file:///${idp.home}/conf/idp.properties" />
 
-    <!-- List of events to trap and handle with local views, without returning to SPs. -->
-
-    <util:list id="shibboleth.LocalEvents">
-        <!--
-        <value>NoPotentialFlow</value>
-        -->
-    </util:list>
-    
     <bean id="shibboleth.DefaultErrorView" class="java.lang.String" c:_0="error" />
 
+    <!-- If desired, map events to alternate error view templates. -->
+    <!--
     <util:map id="shibboleth.EventViewMap">
-        <entry key="InvalidProfileConfiguration" value="relying-party-error" />
-        
         <entry key="MessageReplay" value="stale-error" />
         <entry key="MessageExpired" value="stale-error" />
         <entry key="UnableToDecode" value="stale-error" />
-        
-        <entry key="AccessDenied" value="access-error" />
-
-        <entry key="InvalidSecurityConfiguration" value="security-cfg-error" />
-        
-        <entry key="EndpointResolutionFailed" value="endpoint-error" />
-        
-        <entry key="AccountError" value="authn-error" />
-        <entry key="AuthenticationException" value="authn-error" />
-        <entry key="InvalidCredentials" value="authn-error" />
-        <entry key="NoCredentials" value="authn-error" />
-        <entry key="NoPotentialFlow" value="authn-error" />
-        <entry key="RequestUnsupported" value="authn-error" />
-        <entry key="SubjectCanonicalizationError" value="authn-error" />
-        
-        <entry key="InvalidAttributeContext" value="black-swan-error" />
-        <entry key="InvalidAuthenticationContext" value="black-swan-error" />
-        <entry key="InvalidSubjectContext" value="black-swan-error" />
-        <entry key="InvalidSubjectCanonicalizationContext" value="black-swan-error" />
-        <entry key="InvalidMessageContext" value="black-swan-error" />
-        <entry key="InvalidMessageVersion" value="black-swan-error" />
-        <entry key="InvalidProfileContext" value="black-swan-error" />
-        <entry key="InvalidRelyingPartyContext" value="black-swan-error" />
-        <entry key="InvalidRelyingPartyConfiguration" value="black-swan-error" />
-        <entry key="MessageProcessingError" value="black-swan-error" />
-        <entry key="UnableToEncode" value="black-swan-error" />
-        <entry key="UnableToSign" value="black-swan-error" />
-        <entry key="UnableToEncrypt" value="black-swan-error" />
     </util:map>
+    -->
 
+    <!-- List of events to trap and handle with local views, without returning to SPs. -->
+    <!--
+    <util:list id="shibboleth.LocalEvents">
+        <value>NoPotentialFlow</value>
+    </util:list>
+    -->
+    
     <!-- Mappings of error events during requests to SAML status codes and SOAP fault codes. -->
 
     <util:map id="shibboleth.SAML1StatusMappings">

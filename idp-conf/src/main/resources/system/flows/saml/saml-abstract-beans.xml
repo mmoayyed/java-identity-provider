@@ -231,7 +231,7 @@
 
     <bean id="LocalErrorPredicate"
             class="org.opensaml.saml.common.profile.logic.DefaultLocalErrorPredicate"
-            p:localEvents-ref="shibboleth.LocalEvents">
+            p:localEvents="#{getObject('shibboleth.LocalEvents')}">
         <property name="eventContextLookupStrategy">
             <bean class="net.shibboleth.idp.profile.context.navigate.WebFlowCurrentEventLookupFunction" />
         </property>
@@ -240,6 +240,6 @@
     <bean id="MapEventToView"
         class="net.shibboleth.idp.profile.context.navigate.SpringEventToViewLookupFunction"
         p:defaultView-ref="shibboleth.DefaultErrorView"
-        p:eventMap-ref="shibboleth.EventViewMap" />
+        p:eventMap="#{getObject('shibboleth.EventViewMap')}" />
     
 </beans>
