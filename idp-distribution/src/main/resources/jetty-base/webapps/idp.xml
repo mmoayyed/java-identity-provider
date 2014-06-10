@@ -32,7 +32,9 @@
          <Set name="loginModuleName">ShibUserPassAuth</Set>
        </New>
      </Set>
+     <!-- Not applicable to Jetty 9.1+ ?
      <Set name="Strict">false</Set>
+      -->
     </New>
   </Set>
   
