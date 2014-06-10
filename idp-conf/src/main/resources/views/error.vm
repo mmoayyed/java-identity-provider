@@ -9,22 +9,23 @@
 
 #if ($flowRequestContext)
     #set ($eventId = $flowRequestContext.getCurrentEvent().getId())
-    #set ($appContext = $flowRequestContext.getFlowExecutionContext().getActiveSession().getDefinition().getApplicationContext())
+    #set ($springContext = $flowRequestContext.getFlowExecutionContext().getActiveSession().getDefinition().getApplicationContext())
     #set ($locale = $flowRequestContext.getExternalContext().getLocale())
-    #set ($eventKey = $appContext.getMessage($eventId, null, "error", $locale))
-    #set ($titleSuffix = $appContext.getMessage("${eventKey}.title", null, "Error", $locale))
-    #set ($message = $appContext.getMessage("${eventKey}.message", null, "ERROR: $eventId", $locale))
+    #set ($eventKey = $springContext.getMessage($eventId, null, "error", $locale))
+    #set ($titleSuffix = $springContext.getMessage("${eventKey}.title", null, "Error", $locale))
+    #set ($message = $springContext.getMessage("${eventKey}.message", null, "ERROR: $eventId", $locale))
     
     #if ($eventId == "AccessDenied")
         $response.setStatus(403)
     #end
+#elseif ($exception)
+    #set ($eventId = $exception.getClass().getSimpleName())
+    #set ($eventKey = $springContext.getMessage($eventId, null, "error", $request.getLocale()))
+    #set ($titleSuffix = $springContext.getMessage("${eventKey}.title", null, "Error", $request.getLocale()))
+    #set ($message = $springContext.getMessage("${eventKey}.message", null, "ERROR: $eventId", $request.getLocale()))
 #else
     #set ($titleSuffix = "Error")
-    #if ($exception)
-        #set ($message = "ERROR: $exception.getClass().getName()")
-    #else
-        #set ($message = "No specific error available")
-    #end
+    #set ($message = "No specific error available")
 #end
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
@@ -44,7 +45,7 @@
 		
         	<div class="content">
             #evaluate($message)
-    		</div>
+            </div>
     	</div>
 
       	<footer>

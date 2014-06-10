@@ -37,7 +37,7 @@
     <bean class="net.shibboleth.ext.spring.error.ExtendedMappingExceptionResolver">
         <property name="exceptionMappings">
             <props>
-                <prop key="FlowExecutionRestorationFailureException">stale-error</prop>
+                <prop key="FlowExecutionRestorationFailureException">error</prop>
             </props>
         </property>
         <!--
