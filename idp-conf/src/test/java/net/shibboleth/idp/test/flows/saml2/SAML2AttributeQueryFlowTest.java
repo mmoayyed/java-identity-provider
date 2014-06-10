@@ -25,19 +25,18 @@ import javax.annotation.Nullable;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 import org.joda.time.DateTime;
-import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.SubjectConfirmation;
-import org.opensaml.saml.saml2.core.SubjectConfirmationData;
+import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
 import org.opensaml.saml.saml2.profile.SAML2ActionTestingSupport;
 import org.opensaml.security.messaging.ServletRequestX509CredentialAdapter;
 import org.opensaml.soap.soap11.Envelope;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.executor.FlowExecutionResult;
-import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -47,6 +46,26 @@ public class SAML2AttributeQueryFlowTest extends AbstractSAML2FlowTest {
 
     /** Flow id. */
     @Nonnull public final static String FLOW_ID = "profile/SAML2/SOAP/AttributeQuery";
+
+    /** SAML 2 Response validator. */
+    @Nullable private SAML2TestResponseValidator validator;
+
+    /** Initialize the SAML 2 Response validator. */
+    @BeforeClass void setupValidator() {
+
+        final NameID nameID = new NameIDBuilder().buildObject();
+        nameID.setValue("jdoe");
+        nameID.setNameQualifier(null);
+        nameID.setSPNameQualifier(null);
+        nameID.setFormat(null);
+
+        validator = new SAML2TestResponseValidator();
+        validator.nameID = nameID;
+        validator.spCredential = spCredential;
+        validator.subjectConfirmationMethod = SubjectConfirmation.METHOD_SENDER_VOUCHES;
+        validator.validateAuthnStatements = false;
+        validator.validateSubjectConfirmationData = false;
+    }
 
     /**
      * Test the SAML 2 Attribute Query flow.
@@ -64,7 +83,7 @@ public class SAML2AttributeQueryFlowTest extends AbstractSAML2FlowTest {
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
-        validateResult(result, FLOW_ID);
+        validateResult(result, FLOW_ID, validator);
     }
 
     /**
@@ -73,21 +92,16 @@ public class SAML2AttributeQueryFlowTest extends AbstractSAML2FlowTest {
      * @throws Exception if an error occurs
      */
     @Test public void testSAML2AttributeQueryFlowNoCredential() throws Exception {
-        try {
-            // expect an error
-            statusCode = StatusCode.REQUESTER_URI;
 
-            buildRequest();
+        buildRequest();
 
-            overrideEndStateOutput(FLOW_ID);
+        overrideEndStateOutput(FLOW_ID);
 
-            final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
-            validateResult(result, FLOW_ID);
-        } finally {
-            // reset expectation of success
-            statusCode = StatusCode.SUCCESS_URI;
-        }
+        validator.statusCode = StatusCode.REQUESTER_URI;
+
+        validateResult(result, FLOW_ID, validator);
     }
 
     /**
@@ -112,48 +126,5 @@ public class SAML2AttributeQueryFlowTest extends AbstractSAML2FlowTest {
         request.setMethod("POST");
 
         request.setContent(requestContent.getBytes("UTF-8"));
-    }
-
-    /**
-     * Assert that the nameID value is "jdoe" and that the name qualifier, SP name qualifier, and name format are null.
-     * 
-     * @param nameID the name ID
-     */
-    @Override public void assertNameID(@Nullable final NameID nameID) {
-        Assert.assertNotNull(nameID);
-        Assert.assertEquals(nameID.getValue(), "jdoe");
-        Assert.assertNull(nameID.getNameQualifier());
-        Assert.assertNull(nameID.getSPNameQualifier());
-        Assert.assertNull(nameID.getFormat());
-    }
-
-    /**
-     * Assert that the subject confirmation method is {@link SubjectConfirmation#METHOD_SENDER_VOUCHES}.
-     * 
-     * @param subjectConfirmation the subject confirmation
-     */
-    @Override public void assertSubjectConfirmationMethod(@Nullable final SubjectConfirmation subjectConfirmation) {
-        Assert.assertEquals(subjectConfirmation.getMethod(), SubjectConfirmation.METHOD_SENDER_VOUCHES);
-    }
-
-    /**
-     * Assert that the subject confirmation data is null.
-     * 
-     * @param subjectConfirmationData the subject confirmation data
-     */
-    @Override public void
-            assertSubjectConfirmationData(@Nullable final SubjectConfirmationData subjectConfirmationData) {
-        Assert.assertNull(subjectConfirmationData);
-    }
-
-    /**
-     * Assert that authn statements are not present.
-     * 
-     * @param assertion the assertion
-     */
-    public void validateAuthnStatements(@Nullable final Assertion assertion) {
-        Assert.assertNotNull(assertion);
-        Assert.assertNotNull(assertion.getAuthnStatements());
-        Assert.assertTrue(assertion.getAuthnStatements().isEmpty());
     }
 }

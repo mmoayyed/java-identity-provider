@@ -49,7 +49,7 @@ public class SAML2POSTSSOFlowTest extends AbstractSAML2SSOFlowTest {
     @Test public void testSAML2POSTSSOFlow() throws Exception {
 
         buildRequest();
-        
+
         overrideEndStateOutput(FLOW_ID);
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);

@@ -18,12 +18,9 @@
 package net.shibboleth.idp.test.flows.saml1;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.shibboleth.idp.saml.profile.impl.BaseIdPInitiatedSSORequestMessageDecoder;
 
-import org.opensaml.saml.saml1.core.ConfirmationMethod;
-import org.opensaml.saml.saml1.core.Response;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.executor.FlowExecutionResult;
 import org.testng.Assert;
@@ -45,12 +42,14 @@ public class SAML1UnsolicitedSSOFlowTest extends AbstractSAML1FlowTest {
     @Test public void testSAML1UnsolicitedSSOFlow() throws Exception {
 
         buildRequest();
-        
+
         overrideEndStateOutput(FLOW_ID);
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
         validateResult(result, FLOW_ID);
+
+        Assert.assertEquals(getResponse(result).getRecipient(), SP_ACS_URL);
     }
 
     /**
@@ -61,25 +60,5 @@ public class SAML1UnsolicitedSSOFlowTest extends AbstractSAML1FlowTest {
         request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.PROVIDER_ID_PARAM, SP_ENTITY_ID);
         request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.SHIRE_PARAM, SP_ACS_URL);
         request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.TARGET_PARAM, SP_RELAY_STATE);
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * Assert that the response recipient equals the ACS URL.
-     */
-    @Override public void assertResponse(@Nullable final Response response) {
-        super.assertResponse(response);
-        Assert.assertEquals(response.getRecipient(), SP_ACS_URL);
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * Assert that the confirmation method equals {@link org.opensaml.saml.saml1.core.ConfirmationMethod#METHOD_BEARER}.
-     */
-    @Override public void assertConfirmationMethod(@Nullable final ConfirmationMethod confirmationMethod) {
-        Assert.assertNotNull(confirmationMethod);
-        Assert.assertEquals(confirmationMethod.getConfirmationMethod(), ConfirmationMethod.METHOD_BEARER);
     }
 }

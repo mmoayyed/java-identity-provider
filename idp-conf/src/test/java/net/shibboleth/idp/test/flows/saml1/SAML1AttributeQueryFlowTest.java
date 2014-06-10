@@ -25,19 +25,18 @@ import javax.annotation.Nullable;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 import org.joda.time.DateTime;
-import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.ConfirmationMethod;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml1.core.Request;
-import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.saml.saml1.core.StatusCode;
 import org.opensaml.saml.saml1.core.Subject;
+import org.opensaml.saml.saml1.core.impl.NameIdentifierBuilder;
 import org.opensaml.saml.saml1.profile.SAML1ActionTestingSupport;
 import org.opensaml.security.messaging.ServletRequestX509CredentialAdapter;
 import org.opensaml.soap.soap11.Envelope;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.executor.FlowExecutionResult;
-import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -47,6 +46,23 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
 
     /** Flow id. */
     @Nonnull public final static String FLOW_ID = "profile/SAML1/SOAP/AttributeQuery";
+
+    /** SAML 1 Response validator. */
+    @Nullable private SAML1TestResponseValidator validator;
+
+    /** Initialize the SAML 1 Response validator. */
+    @BeforeClass void setupValidator() {
+
+        final NameIdentifier nameIdentifier = new NameIdentifierBuilder().buildObject();
+        nameIdentifier.setNameIdentifier("jdoe");
+        nameIdentifier.setFormat(null);
+        nameIdentifier.setNameQualifier(null);
+
+        validator = new SAML1TestResponseValidator();
+        validator.validateAuthenticationStatements = false;
+        validator.nameIdentifier = nameIdentifier;
+        validator.confirmationMethod = ConfirmationMethod.METHOD_SENDER_VOUCHES;
+    }
 
     /**
      * Test the SAML1 Attribute Query flow.
@@ -64,7 +80,7 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
-        validateResult(result, FLOW_ID);
+        validateResult(result, FLOW_ID, validator);
     }
 
     /**
@@ -73,21 +89,16 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
      * @throws Exception if an error occurs
      */
     @Test public void testSAML1AttributeQueryFlowNoCredential() throws Exception {
-        try {
-            // expect an error
-            statusCode = StatusCode.REQUESTER;
 
-            buildRequest();
+        buildRequest();
 
-            overrideEndStateOutput(FLOW_ID);
+        overrideEndStateOutput(FLOW_ID);
 
-            final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
-            validateResult(result, FLOW_ID);
-        } finally {
-            // reset expectation of success
-            statusCode = StatusCode.SUCCESS;
-        }
+        validator.statusCode = StatusCode.REQUESTER;
+
+        validateResult(result, FLOW_ID, validator);
     }
 
     /**
@@ -111,46 +122,6 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
 
         request.setMethod("POST");
         request.setContent(requestContent.getBytes("UTF-8"));
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * Assert that InResponseTo is correct.
-     */
-    @Override public void assertResponse(@Nullable final Response response) {
-        super.assertResponse(response);
-        Assert.assertEquals(response.getInResponseTo(), "TESTID");
-    }
-
-    /**
-     * Assert that the name identifier is correct and the format and name qualifiers are null.
-     */
-    @Override public void assertNameIdentifier(@Nullable final NameIdentifier nameIdentifier) {
-        Assert.assertNotNull(nameIdentifier);
-        Assert.assertEquals(nameIdentifier.getNameIdentifier(), "jdoe");
-        Assert.assertEquals(nameIdentifier.getFormat(), null);
-        Assert.assertEquals(nameIdentifier.getNameQualifier(), null);
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * Assert that the confirmation method equals
-     * {@link org.opensaml.saml.saml1.core.ConfirmationMethod#METHOD_SENDER_VOUCHES}.
-     */
-    @Override public void assertConfirmationMethod(@Nullable final ConfirmationMethod confirmationMethod) {
-        Assert.assertNotNull(confirmationMethod);
-        Assert.assertEquals(confirmationMethod.getConfirmationMethod(), ConfirmationMethod.METHOD_SENDER_VOUCHES);
-    }
-
-    /**
-     * Assert that authentication statements are not present in the response.
-     */
-    @Override public void validateAuthenticationStatements(@Nullable final Assertion assertion) {
-        Assert.assertNotNull(assertion);
-        Assert.assertNotNull(assertion.getAuthenticationStatements());
-        Assert.assertTrue(assertion.getAuthenticationStatements().isEmpty());
     }
 
 }

@@ -36,7 +36,7 @@ public class SAML2UnsolicitedSSOFlowTest extends AbstractSAML2FlowTest {
     /**
      * Test the SAML 2 unsolicited SSO flow
      */
-    @Test public void testSAML2UnsolicitedSSOFlow() {
+    @Test public void testSAML2UnsolicitedSSOFlow() throws Exception {
 
         buildRequest();
 

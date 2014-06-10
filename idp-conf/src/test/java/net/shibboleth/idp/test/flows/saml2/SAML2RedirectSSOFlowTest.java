@@ -54,7 +54,7 @@ public class SAML2RedirectSSOFlowTest extends AbstractSAML2SSOFlowTest {
     @Test public void testSAML2RedirectFlow() throws Exception {
 
         buildRequest();
-        
+
         overrideEndStateOutput(FLOW_ID);
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
