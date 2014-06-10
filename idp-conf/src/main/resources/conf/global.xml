@@ -11,10 +11,10 @@
 
 	<context:property-placeholder location="file:///${idp.home}/conf/idp.properties" />
 
+    <import resource="error-mappings.xml" />
     <import resource="services.xml" />
     <import resource="subject-c14n.xml" />
 	<import resource="authn/authn-comparison.xml" />
-	<import resource="authn/general-authn-config.xml" />
-    <import resource="error-mappings.xml" />
+	<import resource="authn/general-authn.xml" />
 
 </beans>
