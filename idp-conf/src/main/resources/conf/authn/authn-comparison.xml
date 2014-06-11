@@ -7,91 +7,60 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <!--
-    These beans can be used in the AuthnComparisonRegistry bean below instead of the defaults to
+    These beans can be used in the AuthnComparisonRules map below instead of the defaults to
     support more advanced matching rules. The top example shows how to configure a matching rule,
     in this case a rule that the two listed classes are "better" than the password class.
     
-    A map can contain any number of <entry> elements.
-    
-    To use these beans, configure the matchingRules property as desired, and then reference the bean id in the
-    desired value-ref slot in the AuthnComparisonRegistry.
+    To use these beans, configure the matchingRules map as desired, and then reference the bean id in the
+    desired value-ref slot in the AuthnComparisonRules map.
     -->
     
-    <bean id="shibboleth.BetterClassRefMatchFactory" class="net.shibboleth.idp.authn.principal.impl.InexactPrincipalEvalPredicateFactory">
+    <bean id="shibboleth.BetterClassRefMatchFactory" parent="shibboleth.InexactMatchFactory">
         <!--
         <property name="matchingRules">
-            <map>
+            <util:map>
                 <entry key="urn:oasis:names:tc:SAML:2.0:ac:classes:Password">
                     <list>
                         <value>urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport</value>
                         <value>urn:oasis:names:tc:SAML:2.0:ac:classes:TimeSyncToken</value>
                     </list>
                 </entry>
-            </map>
+            </util:map>
         </property>
         -->
     </bean>
 
-    <bean id="shibboleth.BetterDeclRefMatchFactory" class="net.shibboleth.idp.authn.principal.impl.InexactPrincipalEvalPredicateFactory"/>
+    <bean id="shibboleth.BetterDeclRefMatchFactory" parent="shibboleth.InexactMatchFactory" />
 
-    <bean id="shibboleth.MinimumClassRefMatchFactory" class="net.shibboleth.idp.authn.principal.impl.InexactPrincipalEvalPredicateFactory"/>
+    <bean id="shibboleth.MinimumClassRefMatchFactory" parent="shibboleth.InexactMatchFactory" />
 
-    <bean id="shibboleth.MinimumDeclRefMatchFactory" class="net.shibboleth.idp.authn.principal.impl.InexactPrincipalEvalPredicateFactory"/>
+    <bean id="shibboleth.MinimumDeclRefMatchFactory" parent="shibboleth.InexactMatchFactory" />
 
-    <bean id="shibboleth.MaximumClassRefMatchFactory" class="net.shibboleth.idp.authn.principal.impl.InexactPrincipalEvalPredicateFactory"/>
+    <bean id="shibboleth.MaximumClassRefMatchFactory" parent="shibboleth.InexactMatchFactory" />
 
-    <bean id="shibboleth.MaximumDeclRefMatchFactory" class="net.shibboleth.idp.authn.principal.impl.InexactPrincipalEvalPredicateFactory"/>
+    <bean id="shibboleth.MaximumDeclRefMatchFactory" parent="shibboleth.InexactMatchFactory" />
     
     
-    <!-- Registry of objects implementing matching rules. -->
-    <bean id="shibboleth.AuthnComparisonRegistry" class="net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry">
-        <constructor-arg>
-            <map>
-                <!-- Exact matching, this can be left as-is. -->
-                <entry key-ref="shibboleth.SAMLACClassRefExact" value-ref="shibboleth.ExactMatchFactory"/>
-                <entry key-ref="shibboleth.SAMLACDeclRefExact" value-ref="shibboleth.ExactMatchFactory"/>
+    <!-- Registry of matching rules. -->
+    
+    <util:map id="shibboleth.AuthnComparisonRules">
+    
+        <!-- Exact matching, this can be left as-is. -->
+        <entry key-ref="shibboleth.SAMLACClassRefExact" value-ref="shibboleth.ExactMatchFactory"/>
+        <entry key-ref="shibboleth.SAMLACDeclRefExact" value-ref="shibboleth.ExactMatchFactory"/>
 
-                <!-- Minimum matching, leave to allow degeneration into exact, or replace with custom rules. -->
-                <entry key-ref="shibboleth.SAMLACClassRefMinimum" value-ref="shibboleth.ExactMatchFactory"/>
-                <entry key-ref="shibboleth.SAMLACDeclRefMinimum" value-ref="shibboleth.ExactMatchFactory"/>
+        <!-- Minimum matching, leave to allow degeneration into exact, or replace with custom rules. -->
+        <entry key-ref="shibboleth.SAMLACClassRefMinimum" value-ref="shibboleth.ExactMatchFactory"/>
+        <entry key-ref="shibboleth.SAMLACDeclRefMinimum" value-ref="shibboleth.ExactMatchFactory"/>
 
-                <!-- Maximum matching, leave to allow degeneration into exact, or replace with custom rules. -->
-                <entry key-ref="shibboleth.SAMLACClassRefMaximum" value-ref="shibboleth.ExactMatchFactory"/>
-                <entry key-ref="shibboleth.SAMLACDeclRefMaximum" value-ref="shibboleth.ExactMatchFactory"/>
+        <!-- Maximum matching, leave to allow degeneration into exact, or replace with custom rules. -->
+        <entry key-ref="shibboleth.SAMLACClassRefMaximum" value-ref="shibboleth.ExactMatchFactory"/>
+        <entry key-ref="shibboleth.SAMLACDeclRefMaximum" value-ref="shibboleth.ExactMatchFactory"/>
 
-                <!-- Better matching, refers to empty ruleset that has to be populated to work. -->
-                <entry key-ref="shibboleth.SAMLACClassRefBetter" value-ref="shibboleth.BetterClassRefMatchFactory"/>
-                <entry key-ref="shibboleth.SAMLACDeclRefBetter" value-ref="shibboleth.BetterDeclRefMatchFactory"/>
-            </map>
-        </constructor-arg>
-    </bean>    
-
-    <!-- Boilerplate objects needed to key the installation of matching rules in the registry. -->
-    <bean id="shibboleth.SAMLACClassRefExact" class="net.shibboleth.utilities.java.support.collection.Pair"
-        p:first="#{ T(net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal) }" p:second="exact"/>
-
-    <bean id="shibboleth.SAMLACDeclRefExact" class="net.shibboleth.utilities.java.support.collection.Pair"
-        p:first="#{ T(net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal) }" p:second="exact"/>
-
-    <bean id="shibboleth.SAMLACClassRefMinimum" class="net.shibboleth.utilities.java.support.collection.Pair"
-        p:first="#{ T(net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal) }" p:second="minimum"/>
-
-    <bean id="shibboleth.SAMLACDeclRefMinimum" class="net.shibboleth.utilities.java.support.collection.Pair"
-        p:first="#{ T(net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal) }" p:second="minimum"/>
-
-    <bean id="shibboleth.SAMLACClassRefMaximum" class="net.shibboleth.utilities.java.support.collection.Pair"
-        p:first="#{ T(net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal) }" p:second="maximum"/>
-
-    <bean id="shibboleth.SAMLACDeclRefMaximum" class="net.shibboleth.utilities.java.support.collection.Pair"
-        p:first="#{ T(net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal) }" p:second="maximum"/>
-
-    <bean id="shibboleth.SAMLACClassRefBetter" class="net.shibboleth.utilities.java.support.collection.Pair"
-        p:first="#{ T(net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal) }" p:second="better"/>
-
-    <bean id="shibboleth.SAMLACDeclRefBetter" class="net.shibboleth.utilities.java.support.collection.Pair"
-        p:first="#{ T(net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal) }" p:second="better"/>
-
-    <!-- Exact matching for SAML AC Classes and Declarations (or anything else really). -->
-    <bean id="shibboleth.ExactMatchFactory" class="net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactory"/>
+        <!-- Better matching, refers to empty ruleset that has to be populated to work. -->
+        <entry key-ref="shibboleth.SAMLACClassRefBetter" value-ref="shibboleth.BetterClassRefMatchFactory"/>
+        <entry key-ref="shibboleth.SAMLACDeclRefBetter" value-ref="shibboleth.BetterDeclRefMatchFactory"/>
+        
+    </util:map>
     
 </beans>
