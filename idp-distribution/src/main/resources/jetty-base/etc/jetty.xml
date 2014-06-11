@@ -121,7 +121,7 @@
     <!-- Configure a TLS (SSL) Context Factory                         -->
     <!-- ============================================================= -->
     <New id="sslContextFactory" class="org.eclipse.jetty.util.ssl.SslContextFactory">
-      <Set name="KeyStorePath"><SystemProperty name="idp.home" />/<Property name="jetty.keystore.path" /></Set>
+      <Set name="KeyStorePath"><Property name="jetty.keystore.path" /></Set>
       <Set name="KeyStoreType"><Property name="jetty.keystore.type" /></Set>
       <Set name="KeyStorePassword"><Property name="jetty.keystore.password" /></Set>
       <Set name="EndpointIdentificationAlgorithm"></Set>
@@ -144,7 +144,7 @@
     <!-- Configure a No-Validation TLS (SSL) Context Factory           -->
     <!-- ============================================================= -->
     <New id="shibContextFactory" class="net.shibboleth.utilities.jetty9.DelegateToApplicationSslContextFactory">
-      <Set name="KeyStorePath"><SystemProperty name="idp.home" />/<Property name="jetty.keystore.path" /></Set>
+      <Set name="KeyStorePath"><Property name="jetty.keystore.path" /></Set>
       <Set name="KeyStoreType"><Property name="jetty.keystore.type" /></Set>
       <Set name="KeyStorePassword"><Property name="jetty.keystore.password" /></Set>
       <Set name="EndpointIdentificationAlgorithm"></Set>

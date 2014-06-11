@@ -46,7 +46,7 @@
               <Set name="configurationManager">
                 <New class="org.eclipse.jetty.deploy.PropertiesConfigurationManager">
                   <!-- file of context configuration properties -->
-                  <Set name="file"><SystemProperty name="idp.home"/>/conf/idp.properties</Set>
+                  <Set name="file"><Property name="jetty.base"/>/start.d/idp.ini</Set>
                   <!-- set a context configuration property
                   <Call name="put"><Arg>name</Arg><Arg>value</Arg></Call>
                   -->

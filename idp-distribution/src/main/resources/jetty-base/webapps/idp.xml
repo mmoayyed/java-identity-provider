@@ -5,8 +5,8 @@
 <!-- Configure the Shibboleth IdP webapp                             -->
 <!-- =============================================================== -->
 <Configure class="org.eclipse.jetty.webapp.WebAppContext">
-  <Set name="war"><SystemProperty name="idp.home" />/<Property name="jetty.war.path" default="war/idp.war" /></Set>
-  <Set name="contextPath"><Property name="jetty.context.path" default="/idp" /></Set>
+  <Set name="war"><Property name="jetty.war.path" /></Set>
+  <Set name="contextPath"><Property name="jetty.context.path" /></Set>
   <Set name="extractWAR">false</Set>
   <Set name="copyWebDir">false</Set>
   <!-- https://bugs.eclipse.org/bugs/show_bug.cgi?id=375504 -->
@@ -22,7 +22,7 @@
 
   <Call class="java.lang.System" name="setProperty">
     <Arg>java.security.auth.login.config</Arg>
-    <Arg><SystemProperty name="idp.home" />/<Property name="jetty.jaas.path" /></Arg>
+    <Arg><Property name="jetty.jaas.path" /></Arg>
   </Call>
   <Set name="securityHandler">
     <New class="org.eclipse.jetty.security.ConstraintSecurityHandler">
