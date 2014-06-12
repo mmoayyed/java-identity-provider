@@ -20,15 +20,15 @@ package net.shibboleth.idp.saml.attribute.encoding.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML2AttributeEncoder;
 import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperFactory;
 import net.shibboleth.idp.saml.attribute.encoding.SAMLEncoderSupport;
-import net.shibboleth.idp.saml.attribute.mapping.impl.RequestedAttributeMapper;
+import net.shibboleth.idp.saml.attribute.mapping.AbstractSAMLAttributeMapper;
 import net.shibboleth.idp.saml.attribute.mapping.impl.XmlObjectAttributeValueMapper;
 
 import org.opensaml.core.xml.XMLObject;
@@ -36,37 +36,34 @@ import org.opensaml.saml.saml2.core.AttributeValue;
 import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 
 /**
- * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces a SAML 2 Attribute from an
- * {@link IdPAttribute} that contains {@link XMLObject} values.
+ * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces a SAML 2 Attribute from an {@link IdPAttribute}
+ * that contains {@link XMLObject} values.
  */
 public class SAML2XMLObjectAttributeEncoder extends AbstractSAML2AttributeEncoder<XMLObjectAttributeValue> implements
         AttributeMapperFactory<RequestedAttribute, IdPRequestedAttribute> {
 
     /** {@inheritDoc} */
-    @Override
-    protected boolean canEncodeValue(@Nonnull final IdPAttribute attribute, @Nonnull final IdPAttributeValue value) {
+    @Override protected boolean canEncodeValue(@Nonnull final IdPAttribute attribute,
+            @Nonnull final IdPAttributeValue value) {
         return value instanceof XMLObjectAttributeValue;
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable protected XMLObject encodeValue(@Nonnull final IdPAttribute attribute,
+    @Override @Nullable protected XMLObject encodeValue(@Nonnull final IdPAttribute attribute,
             @Nonnull final XMLObjectAttributeValue value) throws AttributeEncodingException {
-        return SAMLEncoderSupport.encodeXMLObjectValue(attribute,
-                AttributeValue.DEFAULT_ELEMENT_NAME, value.getValue());
+        return SAMLEncoderSupport
+                .encodeXMLObjectValue(attribute, AttributeValue.DEFAULT_ELEMENT_NAME, value.getValue());
     }
 
     /** {@inheritDoc} */
-    @Nonnull public RequestedAttributeMapper getRequestedMapper() {
-        final RequestedAttributeMapper val;
+    @Override @Nonnull public void populateAttributeMapper(
+            final AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute> mapper) {
 
-        val = new RequestedAttributeMapper();
-        val.setAttributeFormat(getNameFormat());
-        val.setId(getFriendlyName());
-        val.setSAMLName(getName());
-        val.setValueMapper(new XmlObjectAttributeValueMapper());
+        mapper.setAttributeFormat(getNameFormat());
+        mapper.setId(getFriendlyName());
+        mapper.setSAMLName(getName());
+        mapper.setValueMapper(new XmlObjectAttributeValueMapper());
 
-        return val;
     }
 
 }

@@ -22,16 +22,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.opensaml.saml.saml2.metadata.RequestedAttribute;
-
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
-import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperFactory;
 import net.shibboleth.idp.saml.attribute.mapping.AbstractSAMLAttributeMapper;
 import net.shibboleth.idp.saml.attribute.mapping.AbstractSAMLAttributesMapper;
 import net.shibboleth.idp.saml.attribute.mapping.AttributeMapper;
+
+import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -72,7 +72,8 @@ public class RequestedAttributesMapper extends
                     // There is an appropriate reverse mappers
                     AttributeMapperFactory factory = (AttributeMapperFactory) encode;
                     AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute> mapper =
-                            factory.getRequestedMapper();
+                            new RequestedAttributeMapper();
+                    factory.populateAttributeMapper(mapper);
 
                     theMappers.put(mapper, attributeDef.getId());
                 }
@@ -82,8 +83,8 @@ public class RequestedAttributesMapper extends
         final List<AttributeMapper<RequestedAttribute, IdPRequestedAttribute>> mappers =
                 new ArrayList<AttributeMapper<RequestedAttribute, IdPRequestedAttribute>>(theMappers.values().size());
 
-        for (Entry<AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute>, Collection<String>> entry : 
-                 theMappers.asMap().entrySet()) {
+        for (Entry<AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute>, 
+                  Collection<String>> entry : theMappers.asMap().entrySet()) {
 
             AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute> mapper = entry.getKey();
             mapper.setAttributeIds(new ArrayList<String>(entry.getValue()));

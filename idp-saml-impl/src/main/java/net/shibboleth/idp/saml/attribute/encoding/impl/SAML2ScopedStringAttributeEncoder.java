@@ -20,15 +20,15 @@ package net.shibboleth.idp.saml.attribute.encoding.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML2AttributeEncoder;
 import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperFactory;
 import net.shibboleth.idp.saml.attribute.encoding.SAMLEncoderSupport;
-import net.shibboleth.idp.saml.attribute.mapping.impl.RequestedAttributeMapper;
+import net.shibboleth.idp.saml.attribute.mapping.AbstractSAMLAttributeMapper;
 import net.shibboleth.idp.saml.attribute.mapping.impl.ScopedStringAttributeValueMapper;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -93,7 +93,7 @@ public class SAML2ScopedStringAttributeEncoder extends AbstractSAML2AttributeEnc
      */
     public void setScopeAttributeName(@Nullable final String newScopeAttribute) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         scopeAttributeName = StringSupport.trimOrNull(newScopeAttribute);
     }
 
@@ -104,7 +104,7 @@ public class SAML2ScopedStringAttributeEncoder extends AbstractSAML2AttributeEnc
      */
     public void setScopeDelimiter(@Nullable final String newScopeDelimiter) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         scopeDelimiter = StringSupport.trimOrNull(newScopeDelimiter);
     }
 
@@ -115,7 +115,7 @@ public class SAML2ScopedStringAttributeEncoder extends AbstractSAML2AttributeEnc
      */
     public void setScopeType(@Nullable final String newScopeType) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         scopeType = StringSupport.trimOrNull(newScopeType);
     }
 
@@ -124,8 +124,7 @@ public class SAML2ScopedStringAttributeEncoder extends AbstractSAML2AttributeEnc
      * 
      * {@inheritDoc}
      */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         if (null == getScopeType()) {
@@ -154,41 +153,36 @@ public class SAML2ScopedStringAttributeEncoder extends AbstractSAML2AttributeEnc
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected boolean canEncodeValue(@Nonnull final IdPAttribute attribute, @Nonnull final IdPAttributeValue value) {
+    @Override protected boolean canEncodeValue(@Nonnull final IdPAttribute attribute,
+            @Nonnull final IdPAttributeValue value) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
+
         return value instanceof ScopedStringAttributeValue;
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable protected XMLObject encodeValue(@Nonnull final IdPAttribute attribute,
+    @Override @Nullable protected XMLObject encodeValue(@Nonnull final IdPAttribute attribute,
             @Nonnull final ScopedStringAttributeValue value) throws AttributeEncodingException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
+
         if ("attribute".equals(getScopeType())) {
-            return SAMLEncoderSupport.encodeScopedStringValueAttribute(attribute,
-                    AttributeValue.DEFAULT_ELEMENT_NAME, value, getScopeAttributeName());
+            return SAMLEncoderSupport.encodeScopedStringValueAttribute(attribute, AttributeValue.DEFAULT_ELEMENT_NAME,
+                    value, getScopeAttributeName());
         } else {
-            return SAMLEncoderSupport.encodeScopedStringValueInline(attribute,
-                    AttributeValue.DEFAULT_ELEMENT_NAME, value, getScopeDelimiter());
+            return SAMLEncoderSupport.encodeScopedStringValueInline(attribute, AttributeValue.DEFAULT_ELEMENT_NAME,
+                    value, getScopeDelimiter());
         }
     }
 
     /** {@inheritDoc} */
-    @Nonnull public RequestedAttributeMapper getRequestedMapper() {
-        final RequestedAttributeMapper val;
-
-        val = new RequestedAttributeMapper();
-        val.setAttributeFormat(getNameFormat());
-        val.setId(getFriendlyName());
-        val.setSAMLName(getName());
+    @Override @Nonnull public void populateAttributeMapper(
+            final AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute> mapper) {
+        mapper.setAttributeFormat(getNameFormat());
+        mapper.setId(getFriendlyName());
+        mapper.setSAMLName(getName());
         final ScopedStringAttributeValueMapper foo = new ScopedStringAttributeValueMapper();
         foo.setDelimiter(getScopeDelimiter());
-        val.setValueMapper(foo);
-
-        return val;
+        mapper.setValueMapper(foo);
     }
 
 }
