@@ -19,10 +19,10 @@ package net.shibboleth.idp.saml.attribute.encoding;
 
 import javax.annotation.Nonnull;
 
-import org.opensaml.saml.saml2.core.Attribute;
-
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.saml.attribute.mapping.AbstractSAMLAttributeMapper;
+
+import org.opensaml.saml.saml2.core.Attribute;
 
 /**
  * An interface which is implemented by encoders which encode attributes which can be reverse mapped.
@@ -33,15 +33,15 @@ import net.shibboleth.idp.saml.attribute.mapping.AbstractSAMLAttributeMapper;
 public interface AttributeMapperFactory<S extends Attribute, I extends IdPAttribute> {
 
     /**
-     * This method creates an attribute mapper to go from a SAML Attribute (or derivative) to an IdP Attribute (or
+     * This populated the attribute mapper to go from a SAML Attribute (or derivative) to an IdP Attribute (or
      * derivative) such that applying the output of the mapper to the encoder will produce the name attribute
      * (and vice versa).
      * 
-     * <p>The created mapper <em>must not</em> have any associated (IdP) Attribute names and <em>must</em> implement
+     * <p>The populated mapper <em>must not</em> have any associated (IdP) Attribute names and <em>must</em> implement
      * {@link Object#equals(Object)} and {@link Object#hashCode()}.</p>
      * 
-     * @return the mapper.
+     * @param mapper the mapper.
      */
-    @Nonnull public AbstractSAMLAttributeMapper<S, I> getRequestedMapper();
+    @Nonnull public void populateAttributeMapper(AbstractSAMLAttributeMapper<S, I> mapper);
 
 }
