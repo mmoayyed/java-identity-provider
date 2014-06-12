@@ -25,15 +25,15 @@ import net.shibboleth.idp.saml.attribute.mapping.AbstractSAMLAttributeMapper;
 import org.opensaml.saml.saml2.core.Attribute;
 
 /**
- * An interface which is implemented by encoders which encode attributes which can be reverse mapped.
+ * An interface which is implemented by encoders which encode attributes and which can be reverse mapped.
  * 
  * @param <S> The SAML Type
  * @param <I> The IdP Type
  */
-public interface AttributeMapperFactory<S extends Attribute, I extends IdPAttribute> {
+public interface AttributeMapperProcessor<S extends Attribute, I extends IdPAttribute> {
 
     /**
-     * This populated the attribute mapper to go from a SAML Attribute (or derivative) to an IdP Attribute (or
+     * This populates the attribute mapper to go from a SAML Attribute (or derivative) to an IdP Attribute (or
      * derivative) such that applying the output of the mapper to the encoder will produce the name attribute
      * (and vice versa).
      * 

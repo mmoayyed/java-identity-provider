@@ -26,7 +26,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML2AttributeEncoder;
-import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperFactory;
+import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperProcessor;
 import net.shibboleth.idp.saml.attribute.encoding.SAMLEncoderSupport;
 import net.shibboleth.idp.saml.attribute.mapping.AbstractSAMLAttributeMapper;
 import net.shibboleth.idp.saml.attribute.mapping.impl.StringAttributeValueMapper;
@@ -40,7 +40,7 @@ import org.opensaml.saml.saml2.metadata.RequestedAttribute;
  * that contains <code>String</code> values.
  */
 public class SAML2StringAttributeEncoder extends AbstractSAML2AttributeEncoder<StringAttributeValue> implements
-        AttributeMapperFactory<RequestedAttribute, IdPRequestedAttribute> {
+        AttributeMapperProcessor<RequestedAttribute, IdPRequestedAttribute> {
 
     /** {@inheritDoc} */
     @Override protected boolean canEncodeValue(@Nonnull final IdPAttribute attribute,

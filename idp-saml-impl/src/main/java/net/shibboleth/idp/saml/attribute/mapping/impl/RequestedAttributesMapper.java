@@ -26,7 +26,7 @@ import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperFactory;
+import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperProcessor;
 import net.shibboleth.idp.saml.attribute.mapping.AbstractSAMLAttributeMapper;
 import net.shibboleth.idp.saml.attribute.mapping.AbstractSAMLAttributesMapper;
 import net.shibboleth.idp.saml.attribute.mapping.AttributeMapper;
@@ -68,9 +68,9 @@ public class RequestedAttributesMapper extends
 
         for (AttributeDefinition attributeDef : resolver.getAttributeDefinitions().values()) {
             for (AttributeEncoder encode : attributeDef.getAttributeEncoders()) {
-                if (encode instanceof AttributeMapperFactory) {
+                if (encode instanceof AttributeMapperProcessor) {
                     // There is an appropriate reverse mappers
-                    AttributeMapperFactory factory = (AttributeMapperFactory) encode;
+                    AttributeMapperProcessor factory = (AttributeMapperProcessor) encode;
                     AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute> mapper =
                             new RequestedAttributeMapper();
                     factory.populateAttributeMapper(mapper);

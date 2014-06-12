@@ -26,7 +26,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML2AttributeEncoder;
-import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperFactory;
+import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperProcessor;
 import net.shibboleth.idp.saml.attribute.encoding.SAMLEncoderSupport;
 import net.shibboleth.idp.saml.attribute.mapping.AbstractSAMLAttributeMapper;
 import net.shibboleth.idp.saml.attribute.mapping.impl.ScopedStringAttributeValueMapper;
@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * {@link net.shibboleth.idp.attribute.IdPAttribute} that contains scoped string values.
  */
 public class SAML2ScopedStringAttributeEncoder extends AbstractSAML2AttributeEncoder<ScopedStringAttributeValue>
-        implements AttributeMapperFactory<RequestedAttribute, IdPRequestedAttribute> {
+        implements AttributeMapperProcessor<RequestedAttribute, IdPRequestedAttribute> {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(SAML2ScopedStringAttributeEncoder.class);
