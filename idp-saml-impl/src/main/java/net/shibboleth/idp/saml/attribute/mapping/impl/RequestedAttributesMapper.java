@@ -17,88 +17,44 @@
 
 package net.shibboleth.idp.saml.attribute.mapping.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map.Entry;
-
-import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
-import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperProcessor;
 import net.shibboleth.idp.saml.attribute.mapping.AbstractSAMLAttributeMapper;
 import net.shibboleth.idp.saml.attribute.mapping.AbstractSAMLAttributesMapper;
-import net.shibboleth.idp.saml.attribute.mapping.AttributeMapper;
 
 import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.base.Supplier;
 
 /**
  * This class conceptually represents the content of a attribute-map file, hence it describes (and then does) the
- * mappings from a {@link java.util.List} of SAML2 {@link RequestedAttribute} into a {@link Multimap} going from (SAML2)
- * attributeId to idp {@link IdPRequestedAttribute}s (or null if the mapping failed for type reasons).
+ * mappings from a {@link java.util.List} of SAML2 {@link RequestedAttribute} into a
+ * {@link com.google.common.collect.Multimap} going from (SAML2) attributeId to {@link IdPRequestedAttribute}s (or null
+ * if the mapping failed for type reasons).
  * 
  */
-public class RequestedAttributesMapper extends
-        AbstractSAMLAttributesMapper<org.opensaml.saml.saml2.metadata.RequestedAttribute, IdPRequestedAttribute> {
+public class RequestedAttributesMapper extends AbstractSAMLAttributesMapper<RequestedAttribute, IdPRequestedAttribute> {
 
     /**
-     * Constructor to create the mapping from an existing resolver. <br/>
-     * This code inverts the {@link AttributeEncoder} (internal attribute -> SAML Attributes) into
-     * {@link AttributeMapper} (SAML [RequestedAttributes] -> internal [Requested] Attributes). <br/>
-     * to generate the {@link AbstractSAMLAttributeMapper} (with no
-     * {@link AbstractSAMLAttributeMapper#getAttributeIds(). These are accumulated into a {@link Multimap}, where the
-     * key is the {@link AbstractSAMLAttributeMapper} and the values are the (IdP) attribute names. The collection of
-     * {@link AttributeMapper}s can then be extracted from the map, and the appropriate internal names added (these
-     * being the value of the {@link Multimap})
-     * 
-     * @param resolver The resolver
-     */
-    public RequestedAttributesMapper(AttributeResolver resolver) {
-
-        super();
-        setId(resolver.getId());
-
-        final Multimap<AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute>, String> theMappers;
-
-        theMappers = HashMultimap.create();
-
-        for (AttributeDefinition attributeDef : resolver.getAttributeDefinitions().values()) {
-            for (AttributeEncoder encode : attributeDef.getAttributeEncoders()) {
-                if (encode instanceof AttributeMapperProcessor) {
-                    // There is an appropriate reverse mappers
-                    AttributeMapperProcessor factory = (AttributeMapperProcessor) encode;
-                    AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute> mapper =
-                            new RequestedAttributeMapper();
-                    factory.populateAttributeMapper(mapper);
-
-                    theMappers.put(mapper, attributeDef.getId());
-                }
-            }
-        }
-
-        final List<AttributeMapper<RequestedAttribute, IdPRequestedAttribute>> mappers =
-                new ArrayList<AttributeMapper<RequestedAttribute, IdPRequestedAttribute>>(theMappers.values().size());
-
-        for (Entry<AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute>, 
-                  Collection<String>> entry : theMappers.asMap().entrySet()) {
-
-            AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute> mapper = entry.getKey();
-            mapper.setAttributeIds(new ArrayList<String>(entry.getValue()));
-            mappers.add(mapper);
-        }
-
-        setMappers(mappers);
-    }
-
-    /**
-     * Constructor.
+     * Default Constructor.
      * 
      */
     public RequestedAttributesMapper() {
-        super();
     }
+
+    /**
+     * Generate a specific mapper to go from {@link RequestedAttribute} to {@link IdPRequestedAttribute} by inverting
+     * the function of the mappers in the profiled {@link AttributeResolver}.
+     * 
+     * @param resolver The resolver to invert.
+     */
+    public RequestedAttributesMapper(AttributeResolver resolver) {
+        super(resolver, new Supplier<AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute>>() {
+
+            @Override public RequestedAttributeMapper get() {
+                return new RequestedAttributeMapper();
+            }
+        });
+    }
+
 }

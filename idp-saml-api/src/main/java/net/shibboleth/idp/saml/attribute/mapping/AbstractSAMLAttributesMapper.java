@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.attribute.mapping;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -25,7 +26,11 @@ import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeResolver;
+import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperProcessor;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -36,7 +41,9 @@ import org.opensaml.saml.saml2.core.Attribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 /**
@@ -59,6 +66,60 @@ public abstract class AbstractSAMLAttributesMapper<InType extends Attribute, Out
 
     /** The String used to prefix log message. */
     private String logPrefix;
+
+    /**
+     * Default Constructor.
+     *
+     */
+    public AbstractSAMLAttributesMapper() {
+    }
+    
+    /**
+     * Constructor to create the mapping from an existing resolver. <br/>
+     * This code inverts the {@link AttributeEncoder} (internal attribute -> SAML Attributes) into
+     * {@link AttributeMapper} (SAML [RequestedAttributes] -> internal [Requested] Attributes). <br/>
+     * to generate the {@link AbstractSAMLAttributeMapper} (with no
+     * {@link AbstractSAMLAttributeMapper#getAttributeIds(). These are accumulated into a {@link Multimap}, where the
+     * key is the {@link AbstractSAMLAttributeMapper} and the values are the (IdP) attribute names. The collection of
+     * {@link AttributeMapper}s can then be extracted from the map, and the appropriate internal names added (these
+     * being the value of the {@link Multimap})
+     * 
+     * @param resolver The resolver
+     * @param mapperFactory A factory to generate new mappers of the correct type.
+     */
+    public AbstractSAMLAttributesMapper(AttributeResolver resolver,
+            Supplier<AbstractSAMLAttributeMapper<InType, OutType>> mapperFactory) {
+
+        super();
+        setId(resolver.getId());
+
+        final Multimap<AbstractSAMLAttributeMapper<InType, OutType>, String> theMappers;
+
+        theMappers = HashMultimap.create();
+
+        for (AttributeDefinition attributeDef : resolver.getAttributeDefinitions().values()) {
+            for (AttributeEncoder encode : attributeDef.getAttributeEncoders()) {
+                if (encode instanceof AttributeMapperProcessor) {
+                    // There is an appropriate reverse mappers
+                    AttributeMapperProcessor factory = (AttributeMapperProcessor) encode;
+                    AbstractSAMLAttributeMapper<InType, OutType> mapper = mapperFactory.get();
+                    factory.populateAttributeMapper(mapper);
+
+                    theMappers.put(mapper, attributeDef.getId());
+                }
+            }
+        }
+
+        mappers = new ArrayList<AttributeMapper<InType, OutType>>(theMappers.values().size());
+
+        for (Entry<AbstractSAMLAttributeMapper<InType, OutType>, Collection<String>> entry : theMappers.asMap()
+                .entrySet()) {
+
+            AbstractSAMLAttributeMapper<InType, OutType> mapper = entry.getKey();
+            mapper.setAttributeIds(new ArrayList<String>(entry.getValue()));
+            mappers.add(mapper);
+        }
+    }
 
     /**
      * Get the mappers.
@@ -84,8 +145,7 @@ public abstract class AbstractSAMLAttributesMapper<InType extends Attribute, Out
      * @param prototypes the SAML attributes
      * @return a map from IdP AttributeId to RequestedAttributes (or NULL).
      */
-    @Override
-    public Multimap<String, OutType> mapAttributes(@Nonnull @NonnullElements List<InType> prototypes) {
+    @Override public Multimap<String, OutType> mapAttributes(@Nonnull @NonnullElements List<InType> prototypes) {
 
         Multimap<String, OutType> result = ArrayListMultimap.create();
 
@@ -106,7 +166,7 @@ public abstract class AbstractSAMLAttributesMapper<InType extends Attribute, Out
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         logPrefix = null;
         for (AttributeMapper mapper : mappers) {
