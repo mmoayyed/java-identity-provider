@@ -147,12 +147,12 @@ public abstract class AbstractSAMLAttributesMapper<InType extends Attribute, Out
      */
     @Override public Multimap<String, OutType> mapAttributes(@Nonnull @NonnullElements List<InType> prototypes) {
 
-        Multimap<String, OutType> result = ArrayListMultimap.create();
+        final Multimap<String, OutType> result = ArrayListMultimap.create();
 
         for (InType prototype : prototypes) {
             for (AttributeMapper<InType, OutType> mapper : mappers) {
 
-                Map<String, OutType> mappedAttributes = mapper.mapAttribute(prototype);
+                final Map<String, OutType> mappedAttributes = mapper.mapAttribute(prototype);
 
                 log.debug("{} SAML attribute '{}' mapped to {} attributes by mapper '{}'", getLogPrefix(),
                         prototype.getName(), mappedAttributes.size(), mapper.getId());
