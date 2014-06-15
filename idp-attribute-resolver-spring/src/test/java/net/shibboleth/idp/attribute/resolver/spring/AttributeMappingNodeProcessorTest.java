@@ -127,5 +127,5 @@ public class AttributeMappingNodeProcessorTest extends XMLObjectBaseTestCase {
         attr = attribute.iterator().next();
         Assert.assertTrue(attr.getValues().isEmpty());
         Assert.assertFalse(attr.getIsRequired());
-}
+    }
 }

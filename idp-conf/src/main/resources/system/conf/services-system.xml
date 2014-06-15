@@ -54,6 +54,7 @@
         p:reloadTaskTimer="shibboleth.TaskTimer" />
     
     <bean id="shibboleth.MetadataResolverService" class="net.shibboleth.idp.service.ReloadableSpringService"
+        depends-on="shibboleth.AttributeResolverService"
         c:claz="org.opensaml.saml.metadata.resolver.MetadataResolver"
         c:servicableClaz="net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider"
         p:serviceConfigurations-ref="shibboleth.MetadataResolverResources"
@@ -61,7 +62,8 @@
         p:reloadCheckDelay="${idp.service.metadata.checkInterval}"
         p:reloadTaskTimer="shibboleth.TaskTimer">
         <property name="beanPostProcessors">
-            <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.NodeProcessingAttachingBeanPostProcessor" />
+            <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.NodeProcessingAttachingBeanPostProcessor" 
+                c:service-ref="shibboleth.AttributeResolverService"/>
         </property>
     </bean>
     

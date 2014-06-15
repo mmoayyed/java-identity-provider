@@ -20,8 +20,13 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
+import net.shibboleth.idp.attribute.resolver.AttributeResolver;
+import net.shibboleth.idp.saml.metadata.impl.AttributeMappingNodeProcessor;
 import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
 import net.shibboleth.idp.saml.security.impl.KeyAuthorityNodeProcessor;
+import net.shibboleth.idp.service.ReloadableService;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -40,24 +45,37 @@ import com.google.common.collect.Lists;
  * A {@link BeanPostProcessor} for {@link MetadataResolver} beans that ensures a {@link NodeProcessingMetadataFilter}
  * containing a pair of default {@link MetadataNodeProcessor} plugins is attached.
  * 
- * <p>This is done to ensure that other components function correctly, such as the PKIX trust engine
- * and predicates that depend on group information.</p>
+ * <p>
+ * This is done to ensure that other components function correctly, such as the PKIX trust engine and predicates that
+ * depend on group information.
+ * </p>
  */
 public class NodeProcessingAttachingBeanPostProcessor implements BeanPostProcessor {
 
-// Checkstyle: CyclomaticComplexity OFF
+    /** The attribute resolver we use to map attributes. */
+    @Nullable private final ReloadableService<AttributeResolver> atributeResolverService;
+
+    /**
+     * Constructor.
+     *
+     * @param service the attribute resolver we use to map attributes
+     */
+    public NodeProcessingAttachingBeanPostProcessor(@Nullable ReloadableService<AttributeResolver> service) {
+        atributeResolverService = service;
+    }
+
+    // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
-    @Override
-    public Object postProcessBeforeInitialization(Object bean, String beanName) {
+    @Override public Object postProcessBeforeInitialization(Object bean, String beanName) {
         if (!(bean instanceof MetadataResolver) || bean instanceof ChainingMetadataResolver
                 || bean instanceof RelyingPartyMetadataProvider) {
             return bean;
         }
-        
+
         final MetadataResolver resolver = (MetadataResolver) bean;
-        
+
         boolean filterAttached = false;
-        
+
         final MetadataFilter filter = resolver.getMetadataFilter();
         if (filter != null) {
             if (filter instanceof NodeProcessingMetadataFilter) {
@@ -71,18 +89,21 @@ public class NodeProcessingAttachingBeanPostProcessor implements BeanPostProcess
                 }
             }
         }
-        
+
         if (!filterAttached) {
             final NodeProcessingMetadataFilter filterToAttach = new NodeProcessingMetadataFilter();
-            final List<MetadataNodeProcessor> processors = Lists.newArrayList(
-                    new EntitiesDescriptorNameProcessor(), new KeyAuthorityNodeProcessor());
+            final List<MetadataNodeProcessor> processors =
+                    Lists.newArrayList(new EntitiesDescriptorNameProcessor(), new KeyAuthorityNodeProcessor());
+            if (null != atributeResolverService) {
+                processors.add(new AttributeMappingNodeProcessor(atributeResolverService));
+            }
             filterToAttach.setNodeProcessors(processors);
             try {
                 filterToAttach.initialize();
             } catch (final ComponentInitializationException e) {
                 throw new BeanCreationException("Error initializing NodeProcessingMetadataFilter", e);
             }
-            
+
             if (filter == null) {
                 resolver.setMetadataFilter(filterToAttach);
             } else if (filter instanceof MetadataFilterChain) {
@@ -93,14 +114,14 @@ public class NodeProcessingAttachingBeanPostProcessor implements BeanPostProcess
                 resolver.setMetadataFilter(chain);
             }
         }
-        
+
         return resolver;
     }
-// Checkstyle: CyclomaticComplexity ON
+
+    // Checkstyle: CyclomaticComplexity ON
 
     /** {@inheritDoc} */
-    @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName) {
+    @Override public Object postProcessAfterInitialization(Object bean, String beanName) {
         return bean;
     }
 

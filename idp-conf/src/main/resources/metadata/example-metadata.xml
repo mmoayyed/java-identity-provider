@@ -1,4 +1,17 @@
-<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" entityID="https://sp.example.org">
+<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" 
+                  xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui"
+                  xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                  xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute"
+                  entityID="https://sp.example.org">
+    <Extensions>
+	    <mdattr:EntityAttributes xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">
+	        <saml:Attribute Name="http://macedir.org/entity-category"
+	            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+	            <saml:AttributeValue>http://id.incommon.org/category/research-and-scholarship
+	            </saml:AttributeValue>
+	        </saml:Attribute>
+	    </mdattr:EntityAttributes>
+    </Extensions>
     <SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol urn:oasis:names:tc:SAML:1.1:protocol" AuthnRequestsSigned="false">
         <Extensions>
             <mdui:UIInfo>
@@ -76,6 +89,14 @@ h+XNZ5oAql/cjrwDWw==
         
         <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:1.0:profiles:browser-post" Location="https://localhost:8443/sp/SAML1/POST/ACS" index="10"/>
         <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:1.0:profiles:artifact-01" Location="https://localhost:8443/sp/SAML1/Artifact/ACS" index="11"/>
+        <AttributeConsumingService isDefault="true" index="1">
+            <RequestedAttribute FriendlyName="displayName"
+                Name="urn:mace:dir:attribute-def:displayName" NameFormat="urn:mace:shibboleth:1.0:attributeNamespace:uri" />
+            <RequestedAttribute FriendlyName="displayName" isRequired="true"
+                Name="urn:oid:2.16.840.1.113730.3.1.241" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <RequestedAttribute FriendlyName="eduPersonPrincipalName"
+                Name="urn:mace:dir:attribute-def:eduPersonPrincipalName" NameFormat="urn:mace:shibboleth:1.0:attributeNamespace:uri" />
+        </AttributeConsumingService>
         
     </SPSSODescriptor>
     <Organization>
