@@ -66,20 +66,6 @@ public class FilterAttributesTest {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
     }
     
-    /** Test that the action errors out properly if there is no relying party context. */
-    @Test public void testNoRelyingPartyContext() throws Exception {
-        prc.removeSubcontext(RelyingPartyContext.class);
-
-        final AttributeFilterImpl engine = new AttributeFilterImpl("test", null);
-        engine.initialize();
-
-        final FilterAttributes action = new FilterAttributes(new FilterService(engine));
-        action.initialize();
-
-        final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_RELYING_PARTY_CTX);
-    }
-
     /** Test that the action proceeds properly if there is no attribute context. */
     @Test public void testNoAttributeContext() throws Exception {
         prc.getSubcontext(SubjectContext.class, true);
