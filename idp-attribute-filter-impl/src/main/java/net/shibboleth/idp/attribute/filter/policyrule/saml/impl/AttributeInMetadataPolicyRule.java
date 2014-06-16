@@ -168,7 +168,7 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
             @Nonnull final AttributeFilterContext filterContext) {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        final Multimap<String, IdPRequestedAttribute> requestedAttributes = filterContext.getRequestedIdPAttributes();
+        final Multimap<String, ? extends IdPAttribute> requestedAttributes = getRequestedAttributes(filterContext);
 
         if (null == requestedAttributes || requestedAttributes.isEmpty()) {
             if (matchIfMetadataSilent) {

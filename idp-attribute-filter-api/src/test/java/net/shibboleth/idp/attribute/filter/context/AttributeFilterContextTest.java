@@ -24,9 +24,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
 
 /** Unit test for {@link AttributeFilterContext}. */
 public class AttributeFilterContextTest {
@@ -168,13 +166,5 @@ public class AttributeFilterContextTest {
         context.setFilteredIdPAttributes(null);
         Assert.assertNotNull(context.getFilteredIdPAttributes());
         Assert.assertTrue(context.getFilteredIdPAttributes().isEmpty());
-    }
-
-   
-    @Test public void testRequestedAttributes() {
-        AttributeFilterContext context = new AttributeFilterContext();
-        Multimap map = ArrayListMultimap.create(); 
-        context.setRequestedAttributes(map);
-        Assert.assertEquals(context.getRequestedIdPAttributes(), map);
     }
 }

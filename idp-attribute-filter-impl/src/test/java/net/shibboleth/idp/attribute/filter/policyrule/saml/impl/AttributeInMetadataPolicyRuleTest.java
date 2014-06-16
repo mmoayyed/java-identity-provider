@@ -26,12 +26,15 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.matcher.impl.DataSources;
+import net.shibboleth.idp.saml.attribute.mapping.AttributesMapContainer;
 import net.shibboleth.idp.saml.context.AttributeConsumingServiceContext;
 import net.shibboleth.idp.saml.profile.config.navigate.AttributeConsumerServiceLookupFunction;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
+import org.opensaml.saml.saml2.metadata.impl.AttributeConsumingServiceBuilder;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -43,7 +46,7 @@ import com.google.common.collect.Multimap;
 /**
  * Tests for {@link AttributeInMetadataPolicyRule}
  */
-public class AttributeInMetadataPolicyRuleTest {
+public class AttributeInMetadataPolicyRuleTest extends OpenSAMLInitBaseTestCase {
 
     private IdPAttribute makeAttribute(String id, List<? extends IdPAttributeValue<?>> values) {
         IdPAttribute attr = new IdPAttribute(id);
@@ -64,16 +67,26 @@ public class AttributeInMetadataPolicyRuleTest {
         return matcher;
     }
 
+    private void setRequestedAttributesInContext(final AttributeFilterContext context,
+            final Multimap<String, IdPRequestedAttribute> multimap) {
+        final AttributesMapContainer<IdPRequestedAttribute> container = new AttributesMapContainer<>(multimap);
+        final SAMLMetadataContext samlMetadataContext = context.getSubcontext(SAMLMetadataContext.class, true);
+        final AttributeConsumingServiceContext acsCtx =
+                samlMetadataContext.getSubcontext(AttributeConsumingServiceContext.class, true);
+        acsCtx.setAttributeConsumingService(new AttributeConsumingServiceBuilder().buildObject());
+        acsCtx.getAttributeConsumingService().getObjectMetadata().put(container);
+        context.setRequesterMetadataContextLookupStrategy(new ChildContextLookup<AttributeFilterContext, SAMLMetadataContext>(
+                SAMLMetadataContext.class));
+    }
+
     private AttributeFilterContext makeContext(String attributeId, IdPRequestedAttribute attribute) {
 
         final AttributeFilterContext context = new AttributeFilterContext();
 
-        if (null == attributeId) {
-            context.setRequestedAttributes(null);
-        } else {
+        if (null != attributeId) {
             final Multimap<String, IdPRequestedAttribute> multimap = ArrayListMultimap.create();
             multimap.put(attributeId, attribute);
-            context.setRequestedAttributes(multimap);
+            setRequestedAttributesInContext(context, multimap);
         }
         return context;
     }
@@ -151,8 +164,7 @@ public class AttributeInMetadataPolicyRuleTest {
     @Test public void values() throws ComponentInitializationException {
 
         final IdPAttribute attr =
-                makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE,
-                        DataSources.NON_MATCH_STRING_VALUE));
+                makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
         IdPRequestedAttribute required = new IdPRequestedAttribute("attr");
         required.setRequired(true);
@@ -168,8 +180,7 @@ public class AttributeInMetadataPolicyRuleTest {
     @Test public void valuesButNoConvert() throws ComponentInitializationException {
 
         final IdPAttribute attr =
-                makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE,
-                        DataSources.NON_MATCH_STRING_VALUE));
+                makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
         AttributeFilterContext context = makeContext("attr", null);
 
@@ -180,8 +191,7 @@ public class AttributeInMetadataPolicyRuleTest {
     @Test public void multiValues() throws ComponentInitializationException {
 
         final IdPAttribute attr =
-                makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE,
-                        DataSources.NON_MATCH_STRING_VALUE));
+                makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
         IdPRequestedAttribute req1 = new IdPRequestedAttribute("attr");
         req1.setRequired(true);
@@ -196,7 +206,7 @@ public class AttributeInMetadataPolicyRuleTest {
         final Multimap<String, IdPRequestedAttribute> multimap = ArrayListMultimap.create();
         multimap.put(req1.getId(), req1);
         multimap.put(req2.getId(), req2);
-        context.setRequestedAttributes(multimap);
+        setRequestedAttributesInContext(context, multimap);
 
         Set<IdPAttributeValue<?>> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
         Assert.assertEquals(result.size(), 2);

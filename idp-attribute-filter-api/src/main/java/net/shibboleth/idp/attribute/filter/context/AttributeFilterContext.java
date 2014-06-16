@@ -27,7 +27,6 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
@@ -40,7 +39,6 @@ import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.MapConstraints;
-import com.google.common.collect.Multimap;
 
 /** A context supplying input to the {@link net.shibboleth.idp.attribute.filter.AttributeFilter} interface. */
 @NotThreadSafe
@@ -48,9 +46,6 @@ public final class AttributeFilterContext extends BaseContext {
 
     /** Attributes which are to be filtered. */
     private Map<String, IdPAttribute> prefilteredAttributes;
-
-    /** The requested Attributes (from the metadata for this request). */
-    private Multimap<String, IdPRequestedAttribute> requestedAttributes;
 
     /** Attributes which have been filtered. */
     private Map<String, IdPAttribute> filteredAttributes;
@@ -134,29 +129,6 @@ public final class AttributeFilterContext extends BaseContext {
         for (final IdPAttribute attribute : checkedAttributes) {
             filteredAttributes.put(attribute.getId(), attribute);
         }
-    }
-
-    /**
-     * Get the attributes requested in the ACS.<br/>
-     * Note that a null requested attribute means that the attribute existed, but that no values could be converted.
-     * This is distinct from the attribute existing and having no values (an non null requested attribute, but an empty
-     * {@link IdPAttribute#getValues()})
-     * 
-     * @return Returns the requestedAttributes.
-     */
-    @NullableElements @Nonnull public Multimap<String, IdPRequestedAttribute> getRequestedIdPAttributes() {
-        return requestedAttributes;
-    }
-
-    /**
-     * Set the attributes requested by the ACS.
-     * 
-     * @param attributes The requestedAttributes to set.
-     */
-    public void setRequestedAttributes(
-            @Nullable @NullableElements final Multimap<String, IdPRequestedAttribute> attributes) {
-
-        requestedAttributes = attributes;
     }
 
     /**
