@@ -32,21 +32,17 @@ import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.saml.attribute.mapping.AttributesMapContainer;
-import net.shibboleth.idp.saml.context.AttributeConsumingServiceContext;
-import net.shibboleth.idp.saml.profile.config.navigate.AttributeConsumerServiceLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.core.xml.XMLObject;
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.collect.Multimap;
 
 /**
@@ -69,17 +65,6 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
 
     /** The strategy to get the appropriate XMLObject from the context. */
     @Nonnull private Function<SAMLMetadataContext, ? extends XMLObject> objectStrategy;
-
-    /**
-     * Constructor.
-     * 
-     */
-    public AttributeInMetadataPolicyRule() {
-        objectStrategy =
-                Functions.compose(new AttributeConsumerServiceLookupFunction(),
-                        new ChildContextLookup<SAMLMetadataContext, AttributeConsumingServiceContext>(
-                                AttributeConsumingServiceContext.class));
-    }
 
     /**
      * Gets whether optionally requested attributes should be matched.
