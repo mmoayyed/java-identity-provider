@@ -32,8 +32,10 @@ import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.saml.attribute.mapping.AttributesMapContainer;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -64,7 +66,7 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
     private String logPrefix;
 
     /** The strategy to get the appropriate XMLObject from the context. */
-    @Nonnull private Function<SAMLMetadataContext, ? extends XMLObject> objectStrategy;
+    @NonnullAfterInit private Function<SAMLMetadataContext, ? extends XMLObject> objectStrategy;
 
     /**
      * Gets whether optionally requested attributes should be matched.
@@ -118,6 +120,15 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
      */
     public void setMatchIfMetadataSilent(final boolean flag) {
         matchIfMetadataSilent = flag;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        if (null == objectStrategy) {
+            throw new ComponentInitializationException(getLogPrefix() + " Object strategy was non null");
+        }
     }
 
     /**

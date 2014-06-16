@@ -23,12 +23,18 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeInMetadataPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
+import net.shibboleth.idp.saml.context.AttributeConsumingServiceContext;
+import net.shibboleth.idp.saml.profile.config.navigate.AttributeConsumerServiceLookupFunction;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import com.google.common.base.Functions;
 
 /**
  * Bean definition parser for {@link AttributeInMetadataPolicyRule}.
@@ -40,11 +46,13 @@ public class AttributeInMetadataRuleParser extends BasePolicyRuleParser {
             "AttributeInMetadata");
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull protected Class<AttributeInMetadataPolicyRule> getNativeBeanClass() {
         return AttributeInMetadataPolicyRule.class;
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doNativeParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, builder);
@@ -71,5 +79,9 @@ public class AttributeInMetadataRuleParser extends BasePolicyRuleParser {
             matchIfMetadataSilent = value;
         }
         builder.addPropertyValue("matchIfMetadataSilent ", matchIfMetadataSilent);
+        
+        builder.addPropertyValue("objectStrategy", Functions.compose(new AttributeConsumerServiceLookupFunction(),
+                new ChildContextLookup<SAMLMetadataContext, AttributeConsumingServiceContext>(
+                        AttributeConsumingServiceContext.class)));
     }
 }

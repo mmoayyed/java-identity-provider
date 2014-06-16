@@ -26,12 +26,16 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.matcher.impl.DataSources;
-import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeInMetadataPolicyRule;
+import net.shibboleth.idp.saml.context.AttributeConsumingServiceContext;
+import net.shibboleth.idp.saml.profile.config.navigate.AttributeConsumerServiceLookupFunction;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Functions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -53,6 +57,9 @@ public class AttributeInMetadataPolicyRuleTest {
         matcher.setMatchIfMetadataSilent(matchIfMetadataSilent);
         matcher.setOnlyIfRequired(onlyIfRequired);
         matcher.setId(id);
+        matcher.setObjectStrategy(Functions.compose(new AttributeConsumerServiceLookupFunction(),
+                new ChildContextLookup<SAMLMetadataContext, AttributeConsumingServiceContext>(
+                        AttributeConsumingServiceContext.class)));
         matcher.initialize();
         return matcher;
     }
