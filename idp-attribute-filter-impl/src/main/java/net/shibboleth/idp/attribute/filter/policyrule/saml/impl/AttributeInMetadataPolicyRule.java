@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -30,13 +31,22 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.idp.saml.attribute.mapping.AttributesMapContainer;
+import net.shibboleth.idp.saml.context.AttributeConsumingServiceContext;
+import net.shibboleth.idp.saml.profile.config.navigate.AttributeConsumerServiceLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.core.xml.XMLObject;
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.collect.Multimap;
 
 /**
@@ -57,6 +67,20 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
     /** The String used to prefix log message. */
     private String logPrefix;
 
+    /** The strategy to get the appropriate XMLObject from the context. */
+    @Nonnull private Function<SAMLMetadataContext, ? extends XMLObject> objectStrategy;
+
+    /**
+     * Constructor.
+     * 
+     */
+    public AttributeInMetadataPolicyRule() {
+        objectStrategy =
+                Functions.compose(new AttributeConsumerServiceLookupFunction(),
+                        new ChildContextLookup<SAMLMetadataContext, AttributeConsumingServiceContext>(
+                                AttributeConsumingServiceContext.class));
+    }
+
     /**
      * Gets whether optionally requested attributes should be matched.
      * 
@@ -76,6 +100,24 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
     }
 
     /**
+     * Get the strategy to get the appropriate XMLObject from the context.
+     * 
+     * @return Returns the strategy.
+     */
+    public Function<SAMLMetadataContext, ? extends XMLObject> getXMLObjectStrategy() {
+        return objectStrategy;
+    }
+
+    /**
+     * Set the strategy to get the appropriate XMLObject from the context.
+     * 
+     * @param strategy what to set.
+     */
+    public void setObjectStrategy(@Nonnull Function<SAMLMetadataContext, ? extends XMLObject> strategy) {
+        objectStrategy = Constraint.isNotNull(strategy, "ObjectStrategy must be non null");
+    }
+
+    /**
      * Gets whether to matched if the metadata contains no AttributeConsumingService.
      * 
      * @return whether to match if the metadata contains no AttributeConsumingService
@@ -91,6 +133,38 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
      */
     public void setMatchIfMetadataSilent(final boolean flag) {
         matchIfMetadataSilent = flag;
+    }
+
+    /**
+     * Get the appropriate map of mapped attributes.
+     * 
+     * @param filterContext the context for the operation
+     * @return the map, or null.
+     */
+    @Nullable protected Multimap<String, ? extends IdPAttribute> getRequestedAttributes(
+            @Nonnull final AttributeFilterContext filterContext) {
+        final SAMLMetadataContext metadataContext = filterContext.getRequesterMetadataContext();
+        if (null == metadataContext) {
+            log.warn("{} : No metadata context when filtering.", getLogPrefix());
+            return null;
+        }
+
+        final XMLObject xmlObject = getXMLObjectStrategy().apply(metadataContext);
+        if (null == xmlObject) {
+            log.warn("{} : No RP XML Object found when filtering.", getLogPrefix());
+            return null;
+        }
+        final List<AttributesMapContainer> containerList =
+                xmlObject.getObjectMetadata().get(AttributesMapContainer.class);
+        if (null == containerList || containerList.isEmpty()) {
+            log.debug("{} : No mapped attributes found when filtering.", getLogPrefix());
+            return null;
+        }
+        if (containerList.size() > 1) {
+            log.warn("{} : More than one set of mapped attributes found when filtering, please report an error.",
+                    getLogPrefix());
+        }
+        return containerList.get(0).get();
     }
 
     /** {@inheritDoc} */
@@ -112,7 +186,7 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
             }
         }
 
-        final Collection<IdPRequestedAttribute> requestedAttributeList = requestedAttributes.get(attribute.getId());
+        final Collection<? extends IdPAttribute> requestedAttributeList = requestedAttributes.get(attribute.getId());
 
         if (null == requestedAttributeList) {
             log.debug("{} Attribute {} not found in metadata", getLogPrefix(), attribute.getId());
@@ -121,7 +195,7 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
 
         final Set<IdPAttributeValue<?>> values = new HashSet<>();
 
-        for (final IdPRequestedAttribute requestedAttribute : requestedAttributeList) {
+        for (final IdPAttribute requestedAttribute : requestedAttributeList) {
 
             if (null == requestedAttribute) {
                 log.info("{} Attribute {} found in metadata but with no values that"
@@ -129,7 +203,8 @@ public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializ
                 continue;
             }
 
-            if (!requestedAttribute.getIsRequired() && onlyIfRequired) {
+            if (requestedAttribute instanceof IdPRequestedAttribute
+                    && !((IdPRequestedAttribute) requestedAttribute).getIsRequired() && onlyIfRequired) {
                 log.debug("{} Attribute {} found in metadata, but was not required" + ", values not matched",
                         getLogPrefix(), attribute.getId());
                 continue;
