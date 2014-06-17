@@ -11,7 +11,7 @@
 	</Extensions>
 	<SPSSODescriptor
 		protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
-		<AttributeConsumingService xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" isDefault="true"
+		<AttributeConsumingService xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
 			index="1">
 			<RequestedAttribute FriendlyName="displayName"
 				Name="urn:mace:dir:attribute-def:displayName" NameFormat="urn:mace:shibboleth:1.0:attributeNamespace:uri" />
