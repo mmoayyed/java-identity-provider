@@ -14,7 +14,7 @@
     </bean>
     
     <!-- Spring configuration file that bootstraps OpenSAML -->
-    <bean id="shibboleth.OpensamlConfig" class="net.shibboleth.idp.attribute.cli.OpensamlConfigBean" depends-on="shibboleth.LogbackLogging" init-method="initialize">
+    <bean id="shibboleth.OpenSAMLConfig" class="net.shibboleth.idp.attribute.cli.OpenSAMLConfigBean" depends-on="shibboleth.LogbackLogging" init-method="initialize">
         <property name="parserPool" ref="shibboleth.ParserPool"/>
     </bean>
 

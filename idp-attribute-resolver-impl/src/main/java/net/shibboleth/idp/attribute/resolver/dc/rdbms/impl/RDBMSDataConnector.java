@@ -41,10 +41,10 @@ import org.slf4j.LoggerFactory;
  * A {@link net.shibboleth.idp.attribute.resolver.DataConnector} that queries a relation database in order to retrieve
  * attribute data.
  */
-public class RdbmsDataConnector extends AbstractSearchDataConnector<ExecutableStatement> {
+public class RDBMSDataConnector extends AbstractSearchDataConnector<ExecutableStatement> {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(RdbmsDataConnector.class);
+    private final Logger log = LoggerFactory.getLogger(RDBMSDataConnector.class);
 
     /** JDBC data source for retrieving {@link Connection}s. */
     private DataSource dataSource;
@@ -57,7 +57,7 @@ public class RdbmsDataConnector extends AbstractSearchDataConnector<ExecutableSt
     /**
      * Constructor.
      */
-    public RdbmsDataConnector() {
+    public RDBMSDataConnector() {
         setValidator(new DefaultValidator());
         setMappingStrategy(new StringResultMappingStrategy());
     }

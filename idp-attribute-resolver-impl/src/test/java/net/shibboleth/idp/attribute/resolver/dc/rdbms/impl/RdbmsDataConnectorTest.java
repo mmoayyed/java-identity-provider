@@ -49,7 +49,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Maps;
 
 /**
- * Tests for {@link RdbmsDataConnector}
+ * Tests for {@link RDBMSDataConnector}
  */
 public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
@@ -84,9 +84,9 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
      * @param strategy to map results
      * @return rdbms data connector
      */
-    protected RdbmsDataConnector createRdbmsDataConnector(ExecutableSearchBuilder builder,
+    protected RDBMSDataConnector createRdbmsDataConnector(ExecutableSearchBuilder builder,
             ResultMappingStrategy strategy) {
-        RdbmsDataConnector connector = new RdbmsDataConnector();
+        RDBMSDataConnector connector = new RDBMSDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setDataSource(datasource);
         connector.setExecutableSearchBuilder(builder == null ? new FormatExecutableStatementBuilder(SQL_QUERY) : builder);
@@ -96,7 +96,7 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void initializeAndGetters() throws ComponentInitializationException, ResolutionException {
 
-        RdbmsDataConnector connector = new RdbmsDataConnector();
+        RDBMSDataConnector connector = new RDBMSDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
 
         try {
@@ -193,7 +193,7 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void resolve() throws ComponentInitializationException, ResolutionException {
-        RdbmsDataConnector connector = createRdbmsDataConnector(null, null);
+        RDBMSDataConnector connector = createRdbmsDataConnector(null, null);
         connector.initialize();
 
         AttributeResolutionContext context =
@@ -223,7 +223,7 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     @Test(expectedExceptions = ResolutionException.class) public void resolveNoStatement()
             throws ComponentInitializationException, ResolutionException {
-        RdbmsDataConnector connector = createRdbmsDataConnector(new ExecutableSearchBuilder<ExecutableStatement>() {
+        RDBMSDataConnector connector = createRdbmsDataConnector(new ExecutableSearchBuilder<ExecutableStatement>() {
 
             @Override @Nonnull public ExecutableStatement build(@Nonnull AttributeResolutionContext resolutionContext, @Nonnull Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes)
                     throws ResolutionException {
@@ -240,7 +240,7 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     @Test(expectedExceptions = ResolutionException.class) public void resolveNoResultIsError()
             throws ComponentInitializationException, ResolutionException {
-        RdbmsDataConnector connector = createRdbmsDataConnector(null, null);
+        RDBMSDataConnector connector = createRdbmsDataConnector(null, null);
         connector.setNoResultAnError(true);
         connector.initialize();
 
@@ -260,7 +260,7 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void resolveWithCache() throws ComponentInitializationException, ResolutionException {
-        RdbmsDataConnector connector = createRdbmsDataConnector(null, null);
+        RDBMSDataConnector connector = createRdbmsDataConnector(null, null);
         final TestCache cache = new TestCache();
         connector.setResultsCache(cache);
         connector.initialize();

@@ -50,10 +50,10 @@ import org.slf4j.LoggerFactory;
  * An authentication stage that extracts a username/password from the WSS Username/Password attached to a SOAP message.
  * As should be obvious, this assumes that the inbound message is a SOAP {@link Envelope}.
  */
-public class ExtractUsernamePasswordFromWssToken extends AbstractExtractionAction {
+public class ExtractUsernamePasswordFromWSSToken extends AbstractExtractionAction {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractUsernamePasswordFromWssToken.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractUsernamePasswordFromWSSToken.class);
 
     /** Inbound message to operate on. */
     @Nullable private Envelope inboundMessage;

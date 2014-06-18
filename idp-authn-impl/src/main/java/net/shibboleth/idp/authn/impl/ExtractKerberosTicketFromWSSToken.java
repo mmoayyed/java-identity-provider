@@ -27,7 +27,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 /**
  * TODO.
  */
-public class ExtractKerberosTicketFromWssToken extends AbstractExtractionAction {
+public class ExtractKerberosTicketFromWSSToken extends AbstractExtractionAction {
 
     /** {@inheritDoc} */
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,

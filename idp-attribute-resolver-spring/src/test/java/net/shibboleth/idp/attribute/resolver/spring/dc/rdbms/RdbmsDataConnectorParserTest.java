@@ -29,7 +29,7 @@ import net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder;
 import net.shibboleth.idp.attribute.resolver.dc.impl.MappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.impl.Validator;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.ExecutableStatement;
-import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.RdbmsDataConnector;
+import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.RDBMSDataConnector;
 import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -44,7 +44,7 @@ import org.testng.annotations.Test;
 import com.google.common.cache.Cache;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
-/** Test for {@link RdbmsDataConnectorParser}. */
+/** Test for {@link RDBMSDataConnectorParser}. */
 public class RdbmsDataConnectorParserTest {
 
     private static final String INIT_FILE = "/net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/RdbmsStore.sql";
@@ -66,14 +66,14 @@ public class RdbmsDataConnectorParserTest {
     }
     
     @Test public void v2Config() throws ComponentInitializationException, ServiceException, ResolutionException {
-        RdbmsDataConnector dataConnector =
+        RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector(false, "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-v2.xml");
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
     }
 
     @Test public void v2PropsConfig() throws ComponentInitializationException, ServiceException, ResolutionException {
-        RdbmsDataConnector dataConnector =
+        RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector(
                         true,
                         "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-v2-props.xml",
@@ -83,20 +83,20 @@ public class RdbmsDataConnectorParserTest {
     }
 
     @Test public void springConfig() throws ComponentInitializationException, ServiceException, ResolutionException {
-        RdbmsDataConnector dataConnector =
+        RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector(true, "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-spring.xml");
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
     }
 
     @Test public void springPropsConfig() throws ComponentInitializationException, ServiceException, ResolutionException {
-        RdbmsDataConnector dataConnector =
+        RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector(true, "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-spring-props.xml");
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
     }
 
-    protected RdbmsDataConnector getRdbmsDataConnector(boolean supressValidation, final String... beanDefinitions) {
+    protected RDBMSDataConnector getRdbmsDataConnector(boolean supressValidation, final String... beanDefinitions) {
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + RdbmsDataConnectorParserTest.class);
 
@@ -113,10 +113,10 @@ public class RdbmsDataConnectorParserTest {
         beanDefinitionReader.loadBeanDefinitions(beanDefinitions);
         context.refresh();
 
-        return (RdbmsDataConnector) context.getBean("myDatabase");
+        return (RDBMSDataConnector) context.getBean("myDatabase");
     }
 
-    protected void doTest(final RdbmsDataConnector dataConnector) throws ResolutionException {
+    protected void doTest(final RDBMSDataConnector dataConnector) throws ResolutionException {
 
         String id = dataConnector.getId();
         AssertJUnit.assertEquals("myDatabase", id);

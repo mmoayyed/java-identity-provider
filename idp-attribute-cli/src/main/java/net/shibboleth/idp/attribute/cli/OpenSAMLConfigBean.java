@@ -38,10 +38,10 @@ import net.shibboleth.utilities.java.support.xml.ParserPool;
 /**
  * A simple bean that may be used with Spring to initialize the OpenSAML library.
  */
-public class OpensamlConfigBean extends AbstractInitializableComponent {
+public class OpenSAMLConfigBean extends AbstractInitializableComponent {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(OpensamlConfigBean.class);
+    private final Logger log = LoggerFactory.getLogger(OpenSAMLConfigBean.class);
     
     /** Optional ParserPool to configure. */
     private ParserPool parserPool;

@@ -18,8 +18,8 @@
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
 import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
-import net.shibboleth.idp.attribute.resolver.spring.dc.ldap.LdapDataConnectorParser;
-import net.shibboleth.idp.attribute.resolver.spring.dc.rdbms.RdbmsDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.ldap.LDAPDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.rdbms.RDBMSDataConnectorParser;
 
 /** Namespace handler for the Shibboleth static data connector namespace. */
 public class DataConnectorNamespaceHandler extends BaseSpringNamespaceHandler {
@@ -34,7 +34,7 @@ public class DataConnectorNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(ComputedIDDataConnectorParser.TYPE_NAME, new ComputedIDDataConnectorParser());
         // registerBeanDefinitionParser(StoredIDDataConnectorBeanDefinitionParser.TYPE_NAME,
         // new StoredIDDataConnectorBeanDefinitionParser());
-        registerBeanDefinitionParser(RdbmsDataConnectorParser.TYPE_NAME, new RdbmsDataConnectorParser());
-        registerBeanDefinitionParser(LdapDataConnectorParser.TYPE_NAME, new LdapDataConnectorParser());
+        registerBeanDefinitionParser(RDBMSDataConnectorParser.TYPE_NAME, new RDBMSDataConnectorParser());
+        registerBeanDefinitionParser(LDAPDataConnectorParser.TYPE_NAME, new LDAPDataConnectorParser());
     }
 }

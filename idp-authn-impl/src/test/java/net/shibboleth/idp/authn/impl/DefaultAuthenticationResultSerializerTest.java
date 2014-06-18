@@ -29,7 +29,7 @@ import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.PrincipalSerializer;
 import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
-import net.shibboleth.idp.authn.principal.impl.LdapPrincipalSerializer;
+import net.shibboleth.idp.authn.principal.impl.LDAPPrincipalSerializer;
 
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -143,7 +143,7 @@ public class DefaultAuthenticationResultSerializerTest {
     
 
     @Test public void testLdap() throws Exception {
-        LdapPrincipalSerializer lpSerializer = new LdapPrincipalSerializer();
+        LDAPPrincipalSerializer lpSerializer = new LDAPPrincipalSerializer();
         serializer.setPrincipalSerializers(Collections.<PrincipalSerializer<String>>singletonList(lpSerializer));
         serializer.initialize();
         

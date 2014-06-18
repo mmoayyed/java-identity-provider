@@ -27,7 +27,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 /**
  * TODO.
  */
-public class ExtractX509CertificateFromWssToken extends AbstractExtractionAction {
+public class ExtractX509CertificateFromWSSToken extends AbstractExtractionAction {
 
     /** {@inheritDoc} */
     @Override

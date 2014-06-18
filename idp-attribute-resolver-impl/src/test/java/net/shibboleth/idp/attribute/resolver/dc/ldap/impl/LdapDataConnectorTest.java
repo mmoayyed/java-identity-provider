@@ -54,7 +54,7 @@ import com.unboundid.ldap.listener.InMemoryListenerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
 
 /**
- * Tests for {@link LdapDataConnector}
+ * Tests for {@link LDAPDataConnector}
  */
 public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
@@ -102,9 +102,9 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
      * @param strategy to map search results
      * @return ldap data connector
      */
-    protected LdapDataConnector createLdapDataConnector(ExecutableSearchBuilder builder,
+    protected LDAPDataConnector createLdapDataConnector(ExecutableSearchBuilder builder,
             SearchResultMappingStrategy strategy) {
-        LdapDataConnector connector = new LdapDataConnector();
+        LDAPDataConnector connector = new LDAPDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
         ConnectionFactory connectionFactory = new DefaultConnectionFactory("ldap://localhost:10389");
         connector.setConnectionFactory(connectionFactory);
@@ -121,7 +121,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void initializeAndGetters() throws ComponentInitializationException, ResolutionException {
 
-        LdapDataConnector connector = new LdapDataConnector();
+        LDAPDataConnector connector = new LDAPDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
 
         try {
@@ -295,7 +295,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     protected void resolve(ExecutableSearchBuilder builder) throws ComponentInitializationException,
             ResolutionException {
-        LdapDataConnector connector = createLdapDataConnector(builder, new StringAttributeValueMappingStrategy());
+        LDAPDataConnector connector = createLdapDataConnector(builder, new StringAttributeValueMappingStrategy());
         connector.initialize();
 
         AttributeResolutionContext context =
@@ -329,7 +329,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     @Test(expectedExceptions = ResolutionException.class) public void resolveNoFilter()
             throws ComponentInitializationException, ResolutionException {
-        LdapDataConnector connector = createLdapDataConnector(new ExecutableSearchBuilder<ExecutableSearchFilter>() {
+        LDAPDataConnector connector = createLdapDataConnector(new ExecutableSearchBuilder<ExecutableSearchFilter>() {
 
             @Override
             @Nonnull public ExecutableSearchFilter build(@Nonnull AttributeResolutionContext resolutionContext, @Nonnull Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes)
@@ -347,7 +347,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     @Test(expectedExceptions = ResolutionException.class) public void resolveNoResultIsError()
             throws ComponentInitializationException, ResolutionException {
-        LdapDataConnector connector = createLdapDataConnector(null, null);
+        LDAPDataConnector connector = createLdapDataConnector(null, null);
         connector.setNoResultAnError(true);
         connector.initialize();
 
@@ -368,7 +368,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void resolveWithCache() throws ComponentInitializationException, ResolutionException {
-        LdapDataConnector connector = createLdapDataConnector(null, null);
+        LDAPDataConnector connector = createLdapDataConnector(null, null);
         final TestCache cache = new TestCache();
         connector.setResultsCache(cache);
         connector.initialize();

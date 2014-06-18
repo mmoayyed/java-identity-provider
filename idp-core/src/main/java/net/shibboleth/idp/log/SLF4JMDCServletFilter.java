@@ -35,7 +35,7 @@ import org.slf4j.MDC;
  * Servlet filter that sets some interesting MDC attributes as the request comes in and clears the MDC as the response
  * is returned.
  */
-public class Slf4JMdcServletFilter implements Filter {
+public class SLF4JMDCServletFilter implements Filter {
 
     /** {@inheritDoc} */
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,

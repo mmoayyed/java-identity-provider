@@ -54,7 +54,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
  * Principal serializer for {@link LdapPrincipal}.
  */
 @ThreadSafe
-public class LdapPrincipalSerializer extends AbstractPrincipalSerializer<String> {
+public class LDAPPrincipalSerializer extends AbstractPrincipalSerializer<String> {
 
     /** Field name of principal name. */
     @Nonnull @NotEmpty private static final String PRINCIPAL_NAME_FIELD = "LDAPN";
@@ -66,13 +66,13 @@ public class LdapPrincipalSerializer extends AbstractPrincipalSerializer<String>
     private static final Pattern JSON_PATTERN = Pattern.compile("^\\{\"LDAPN\":.*,\"LDAPE\":.*\\}$");
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(LdapPrincipalSerializer.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(LDAPPrincipalSerializer.class);
     
     /** JSON object bulder factory. */
     @Nonnull private final JsonBuilderFactory objectBuilderFactory;
 
     /** Constructor. */
-    public LdapPrincipalSerializer() {
+    public LDAPPrincipalSerializer() {
         objectBuilderFactory = Json.createBuilderFactory(null);
     }
     

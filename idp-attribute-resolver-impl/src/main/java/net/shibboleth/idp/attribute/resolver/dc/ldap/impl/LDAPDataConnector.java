@@ -44,10 +44,10 @@ import org.slf4j.LoggerFactory;
  * A {@link net.shibboleth.idp.attribute.resolver.DataConnector} that queries an LDAP in order to retrieve attribute
  * data.
  */
-public class LdapDataConnector extends AbstractSearchDataConnector<ExecutableSearchFilter> {
+public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSearchFilter> {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(LdapDataConnector.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(LDAPDataConnector.class);
 
     /** Factory for retrieving LDAP connections. */
     private ConnectionFactory connectionFactory;
@@ -58,7 +58,7 @@ public class LdapDataConnector extends AbstractSearchDataConnector<ExecutableSea
     /**
      * Constructor.
      */
-    public LdapDataConnector() {
+    public LDAPDataConnector() {
         setValidator(new DefaultValidator());
         setMappingStrategy(new StringAttributeValueMappingStrategy());
 

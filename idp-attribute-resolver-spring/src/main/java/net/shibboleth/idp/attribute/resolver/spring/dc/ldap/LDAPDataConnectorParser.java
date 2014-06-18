@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.LdapDataConnector;
+import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.LDAPDataConnector;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.TemplatedExecutableSearchFilterBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.CacheConfigParser;
@@ -67,8 +67,8 @@ import org.w3c.dom.Element;
 
 import com.google.common.collect.Lists;
 
-/** Bean definition Parser for a {@link LdapDataConnector}. */
-public class LdapDataConnectorParser extends AbstractDataConnectorParser {
+/** Bean definition Parser for a {@link LDAPDataConnector}. */
+public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "LDAPDirectory");
@@ -77,11 +77,11 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
     public static final QName ATTRIBUTE_ELEMENT_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "Attribute");
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(LdapDataConnectorParser.class);
+    private final Logger log = LoggerFactory.getLogger(LDAPDataConnectorParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<LdapDataConnector> getBeanClass(@Nullable final Element element) {
-        return LdapDataConnector.class;
+    @Override protected Class<LDAPDataConnector> getBeanClass(@Nullable final Element element) {
+        return LDAPDataConnector.class;
     }
 
     /** {@inheritDoc} */
@@ -110,7 +110,7 @@ public class LdapDataConnectorParser extends AbstractDataConnectorParser {
     protected void doParseInternal(@Nonnull final Element config, @Nonnull final BeanFactory beanFactory,
             @Nonnull final BeanDefinitionBuilder builder) {
 
-        addPropertyDescriptorValues(builder, beanFactory, LdapDataConnector.class);
+        addPropertyDescriptorValues(builder, beanFactory, LDAPDataConnector.class);
 
         final String noResultAnError = AttributeSupport.getAttributeValue(config, new QName("noResultIsError"));
         log.debug("parsed noResultAnError {}", noResultAnError);

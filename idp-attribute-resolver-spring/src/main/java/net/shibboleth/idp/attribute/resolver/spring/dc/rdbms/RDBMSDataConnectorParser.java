@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.RdbmsDataConnector;
+import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.RDBMSDataConnector;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.TemplatedExecutableStatementBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.CacheConfigParser;
@@ -41,8 +41,8 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/** Bean definition Parser for a {@link RdbmsDataConnector}. */
-public class RdbmsDataConnectorParser extends AbstractDataConnectorParser {
+/** Bean definition Parser for a {@link RDBMSDataConnector}. */
+public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "RelationalDatabase");
@@ -51,12 +51,12 @@ public class RdbmsDataConnectorParser extends AbstractDataConnectorParser {
     public static final QName ATTRIBUTE_ELEMENT_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "Attribute");
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(RdbmsDataConnectorParser.class);
+    private final Logger log = LoggerFactory.getLogger(RDBMSDataConnectorParser.class);
 
     /** {@inheritDoc} */
     @Override
-    protected Class<RdbmsDataConnector> getBeanClass(@Nullable final Element element) {
-        return RdbmsDataConnector.class;
+    protected Class<RDBMSDataConnector> getBeanClass(@Nullable final Element element) {
+        return RDBMSDataConnector.class;
     }
 
     /** {@inheritDoc} */
@@ -85,7 +85,7 @@ public class RdbmsDataConnectorParser extends AbstractDataConnectorParser {
     protected void doParseInternal(@Nonnull final Element config, @Nonnull final BeanFactory beanFactory,
             @Nonnull final BeanDefinitionBuilder builder) {
 
-        addPropertyDescriptorValues(builder, beanFactory, RdbmsDataConnector.class);
+        addPropertyDescriptorValues(builder, beanFactory, RDBMSDataConnector.class);
 
         final Boolean noResultAnError =
                 AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(config, new QName(
