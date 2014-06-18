@@ -26,32 +26,32 @@
         depends-on="shibboleth.VelocityEngine"
         c:claz="net.shibboleth.idp.attribute.filter.AttributeFilter"
         p:serviceConfigurations-ref="shibboleth.AttributeFilterResources"
-        p:failFast="${idp.service.attribute.filter.failFast}"
-        p:reloadCheckDelay="${idp.service.attribute.filter.checkInterval}"
+        p:failFast="${idp.service.attribute.filter.failFast:false}"
+        p:reloadCheckDelay="${idp.service.attribute.filter.checkInterval:0}"
         p:reloadTaskTimer="shibboleth.TaskTimer" />
 
     <bean id="shibboleth.AttributeResolverService" class="net.shibboleth.idp.service.ReloadableSpringService" 
           init-method="start" destroy-method="stop" depends-on="shibboleth.VelocityEngine"
         c:claz="net.shibboleth.idp.attribute.resolver.AttributeResolver"
         p:serviceConfigurations-ref="shibboleth.AttributeResolverResources"
-        p:failFast="${idp.service.attribute.resolver.failFast}"
-        p:reloadCheckDelay="${idp.service.attribute.resolver.checkInterval}"
+        p:failFast="${idp.service.attribute.resolver.failFast:false}"
+        p:reloadCheckDelay="${idp.service.attribute.resolver.checkInterval:0}"
         p:reloadTaskTimer="shibboleth.TaskTimer" />
 
     <bean id="shibboleth.NameIdentifierGenerationService" class="net.shibboleth.idp.service.ReloadableSpringService" 
           init-method="start" destroy-method="stop"
         c:claz="net.shibboleth.idp.saml.nameid.NameIdentifierGenerationService"
         p:serviceConfigurations-ref="shibboleth.NameIdentifierGenerationResources"
-        p:failFast="${idp.service.nameidGeneration.failFast}"
-        p:reloadCheckDelay="${idp.service.nameidGeneration.checkInterval}"
+        p:failFast="${idp.service.nameidGeneration.failFast:false}"
+        p:reloadCheckDelay="${idp.service.nameidGeneration.checkInterval:0}"
         p:reloadTaskTimer="shibboleth.TaskTimer" />
 
     <bean id="shibboleth.RelyingPartyResolverService" class="net.shibboleth.idp.service.ReloadableSpringService"
         c:claz="net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver"
         c:servicableClaz="net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver"
         p:serviceConfigurations-ref="shibboleth.RelyingPartyResolverResources"
-        p:failFast="${idp.service.relyingparty.failFast}"
-        p:reloadCheckDelay="${idp.service.relyingparty.checkInterval}"
+        p:failFast="${idp.service.relyingparty.failFast:false}"
+        p:reloadCheckDelay="${idp.service.relyingparty.checkInterval:0}"
         p:reloadTaskTimer="shibboleth.TaskTimer" />
     
     <bean id="shibboleth.MetadataResolverService" class="net.shibboleth.idp.service.ReloadableSpringService"
@@ -59,8 +59,8 @@
         c:claz="org.opensaml.saml.metadata.resolver.MetadataResolver"
         c:servicableClaz="net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider"
         p:serviceConfigurations-ref="shibboleth.MetadataResolverResources"
-        p:failFast="${idp.service.metadata.failFast}"
-        p:reloadCheckDelay="${idp.service.metadata.checkInterval}"
+        p:failFast="${idp.service.metadata.failFast:false}"
+        p:reloadCheckDelay="${idp.service.metadata.checkInterval:0}"
         p:reloadTaskTimer="shibboleth.TaskTimer">
         <property name="beanPostProcessors">
             <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.NodeProcessingAttachingBeanPostProcessor" 
