@@ -29,8 +29,8 @@
             p:passiveAuthenticationSupported="false"
             p:forcedAuthenticationSupported="false"
             p:nonBrowserSupported="true"
-            p:lifetime="${idp.authn.defaultLifetime}"
-            p:inactivityTimeout="${idp.authn.defaultTimeout}">
+            p:lifetime="${idp.authn.defaultLifetime:PT60M}"
+            p:inactivityTimeout="${idp.authn.defaultTimeout:PT30M}">
         <property name="supportedPrincipals">
             <util:list>
                 <bean parent="shibboleth.SAML2AuthnContextClassRef"
