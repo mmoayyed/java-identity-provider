@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.logic;
+package net.shibboleth.idp.attribute.resolver.logic.impl;
 
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.resolver.context.navigate.AttributeIssuerIdLookupFunction;
+import net.shibboleth.idp.attribute.resolver.context.navigate.impl.AttributeRecipientIdLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -31,20 +31,20 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import com.google.common.base.Predicate;
 
 /**
- * Predicate that evaluates a {@link ProfileRequestContext} by looking for an attribute issuer
- * that matches one of a designated set or a generic predicate. The ID is obtained from a lookup
- * function, by default from a {@link net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext}
- * child of the profile request context.
+ * Predicate that evaluates a {@link ProfileRequestContext} by looking for an attribute recipient
+ * that matches one of a designated set. The ID is obtained from a lookup function, by default from
+ * a {@link net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext} child of the
+ * profile request context.
  */
-public class AttributeIssuerIdPredicate extends StrategyIndirectedPredicate<ProfileRequestContext,String> {
+public class AttributeRecipientIdPredicate extends StrategyIndirectedPredicate<ProfileRequestContext,String> {
 
     /**
      * Constructor.
      * 
      * @param candidates hardwired set of values to check against
      */
-    public AttributeIssuerIdPredicate(@Nonnull @NonnullElements final Collection<String> candidates) {
-        super(new AttributeIssuerIdLookupFunction(), StringSupport.normalizeStringCollection(candidates));
+    public AttributeRecipientIdPredicate(@Nonnull @NonnullElements final Collection<String> candidates) {
+        super(new AttributeRecipientIdLookupFunction(), StringSupport.normalizeStringCollection(candidates));
     }
 
     /**
@@ -52,8 +52,8 @@ public class AttributeIssuerIdPredicate extends StrategyIndirectedPredicate<Prof
      * 
      * @param pred generalized predicate
      */
-    public AttributeIssuerIdPredicate(@Nonnull final Predicate<String> pred) {
-        super(new AttributeIssuerIdLookupFunction(), pred);
+    public AttributeRecipientIdPredicate(@Nonnull final Predicate<String> pred) {
+        super(new AttributeRecipientIdLookupFunction(), pred);
     }
 
 }

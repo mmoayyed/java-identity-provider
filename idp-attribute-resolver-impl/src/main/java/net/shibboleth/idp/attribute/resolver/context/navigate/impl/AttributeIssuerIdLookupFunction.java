@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.context.navigate;
+package net.shibboleth.idp.attribute.resolver.context.navigate.impl;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.navigate.AbstractAttributeResolutionLookupFunction;
 
 /**
  * A function that returns {@link AttributeResolutionContext#getAttributeIssuerID()} if available from a

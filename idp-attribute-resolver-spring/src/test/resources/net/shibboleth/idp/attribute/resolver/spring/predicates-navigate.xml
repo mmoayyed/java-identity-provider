@@ -14,11 +14,11 @@
 		class="org.opensaml.messaging.context.navigate.ParentContextLookup" />
 
 	<bean id="principalFn"
-		class="net.shibboleth.idp.attribute.resolver.context.navigate.AttributePrincipalLookupFunction"
+		class="net.shibboleth.idp.attribute.resolver.context.navigate.impl.AttributePrincipalLookupFunction"
 		p:attributeResolutionContextLookupStrategy-ref="findAttributeCtx" />
 
 	<bean id="issuerFn"
-		class="net.shibboleth.idp.attribute.resolver.context.navigate.AttributeIssuerIdLookupFunction"
+		class="net.shibboleth.idp.attribute.resolver.context.navigate.impl.AttributeIssuerIdLookupFunction"
 		p:attributeResolutionContextLookupStrategy-ref="findAttributeCtx" />
 
 	<bean id="peter"
