@@ -20,9 +20,9 @@
     <!-- ========================================== -->
     <!--      Relying Party Configurations          -->
     <!-- ========================================== -->
-    <rp:AnonymousRelyingParty provider="${idp.entity.id}" defaultSigningCredentialRef="IdPCredential"/>
+    <rp:AnonymousRelyingParty provider="${idp.entityID}" defaultSigningCredentialRef="IdPCredential"/>
     
-    <rp:DefaultRelyingParty provider="${idp.entity.id}" defaultSigningCredentialRef="IdPCredential">
+    <rp:DefaultRelyingParty provider="${idp.entityID}" defaultSigningCredentialRef="IdPCredential">
         <!-- 
             Each attribute in these profiles configuration is set to its default value,
             that is, the values that would be in effect if those attributes were not present.

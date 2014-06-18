@@ -42,7 +42,6 @@
                 <ref bean="SAML2.ECP" />
                 <ref bean="SAML2.AttributeQuery" />
                 <ref bean="SAML2.ArtifactResolution" />
-                <ref bean="Liberty.SSOS" />
             </util:list>
         </property>
     </bean>
@@ -59,7 +58,6 @@
                     <ref bean="SAML2.ECP" />
                     <ref bean="SAML2.AttributeQuery" />
                     <ref bean="SAML2.ArtifactResolution" />
-                    <ref bean="Liberty.SSOS" />
                 </util:list>
             </property>
         </bean>

@@ -17,7 +17,7 @@
     <!-- This BeanPostProcessor auto-sets identifiable beans with the bean name (if not already set). -->
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
-    <bean id="entityID" class="java.lang.String" c:_0="${idp.entity.id}" />
+    <bean id="entityID" class="java.lang.String" c:_0="${idp.entityID}" />
 
     <!-- Pulls together the various components that feed the resolver. -->
     <bean class="net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver"
@@ -28,17 +28,17 @@
 
     <!-- Parent bean for generic RelyingParty overrides that establishes defaults. -->
     <bean id="RelyingParty" abstract="true" class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"
-        p:responderId-ref="entityID" p:detailedErrors="${idp.errors.detailed}" />
+        p:responderId-ref="entityID" p:detailedErrors="${idp.errors.detailed:false}" />
 
     <!-- Parent bean for RelyingParty overrides based on activation by name(s). -->
     <bean id="RelyingPartyByName" abstract="true"
         class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byName"
-        p:responderId-ref="entityID" p:detailedErrors="${idp.errors.detailed}" />
+        p:responderId-ref="entityID" p:detailedErrors="${idp.errors.detailed:false}" />
 
     <!-- Parent bean for RelyingParty overrides based on activation by group. -->
     <bean id="RelyingPartyByGroup" abstract="true"
         class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byGroup"
-        p:responderId-ref="entityID" p:detailedErrors="${idp.errors.detailed}" />
+        p:responderId-ref="entityID" p:detailedErrors="${idp.errors.detailed:false}" />
 
     <!-- Default Profile Configurations, also usable as parent beans in overrides. -->
     
