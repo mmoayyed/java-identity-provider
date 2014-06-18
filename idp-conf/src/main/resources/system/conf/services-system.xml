@@ -42,6 +42,7 @@
           init-method="start" destroy-method="stop"
         c:claz="net.shibboleth.idp.saml.nameid.NameIdentifierGenerationService"
         p:serviceConfigurations-ref="shibboleth.NameIdentifierGenerationResources"
+        p:failFast="${idp.service.nameidGeneration.failFast}"
         p:reloadCheckDelay="${idp.service.nameidGeneration.checkInterval}"
         p:reloadTaskTimer="shibboleth.TaskTimer" />
 
