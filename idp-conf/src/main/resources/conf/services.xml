@@ -76,13 +76,13 @@
 
     <!--
     <util:list id="shibboleth.RelyingPartyResolverResources">
-        <value>file:///${idp.home}/conf/relying-party.xml</value>
+        <value>file:///${idp.home}/conf/relying-party-legacy.xml</value>
         <value>file:///${idp.home}/conf/property-placeholder.xml</value>
         <value>file:///${idp.home}/system/conf/profile-defaults.xml</value>
     </util:list>
     -->
     <util:list id="shibboleth.RelyingPartyResolverResources">
-        <value>file:///${idp.home}/conf/relying-party-native.xml</value>
+        <value>file:///${idp.home}/conf/relying-party.xml</value>
         <value>file:///${idp.home}/conf/credentials.xml</value>
         <value>file:///${idp.home}/system/conf/relying-party-system.xml</value>
     </util:list>
