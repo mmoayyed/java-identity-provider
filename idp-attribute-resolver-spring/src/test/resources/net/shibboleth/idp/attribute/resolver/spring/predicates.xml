@@ -6,16 +6,23 @@
                         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <bean id="principalFn" class="net.shibboleth.idp.attribute.resolver.context.navigate.impl.AttributePrincipalLookupFunction"/>
-    <bean id="issuerFn" class="net.shibboleth.idp.attribute.resolver.context.navigate.impl.AttributeIssuerIdLookupFunction"/>
+	<util:list id="principals">
+		<value>PETER</value>
+	</util:list>
 
-	<bean id="peter" class="net.shibboleth.idp.attribute.resolver.spring.AttributeResolverTest.TestPredicate"
-	    c:profileFinder-ref="principalFn"
-		c:compare="PETER" />
-		
-	<bean id="principal"
-		class="net.shibboleth.idp.attribute.resolver.spring.AttributeResolverTest.TestPredicate"
-        c:profileFinder-ref="issuerFn"
-		c:compare="ISSUER" />
-		
+	<bean id="peter"
+		class="net.shibboleth.idp.attribute.resolver.logic.impl.AttributePrincipalPredicate"
+		c:candidates-ref="principals" />
+
+	<util:list id="issuers">
+		<value>ISSUER</value>
+	</util:list>
+
+    <bean id="principal"
+        class="net.shibboleth.idp.attribute.resolver.logic.impl.AttributeIssuerIdPredicate"
+        c:candidates-ref="issuers" />
+
+    <util:list id="recipients">
+    <value>https://example.org/sp</value>
+    </util:list>
 </beans>
