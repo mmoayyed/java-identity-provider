@@ -13,7 +13,7 @@
        default-destroy-method="destroy">
 
     <bean id="shibboleth.SessionIDGenerator" class="net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy"
-        c:identifierSize="${idp.session.idSize}" />
+        c:identifierSize="${idp.session.idSize:32}" />
 
     <bean id="shibboleth.SPSessionSerializerRegistry" class="net.shibboleth.idp.session.SPSessionSerializerRegistry"
             depends-on="shibboleth.OpenSAMLConfig">
@@ -31,16 +31,17 @@
     </bean>
 
     <bean id="shibboleth.SessionManager" class="net.shibboleth.idp.session.impl.StorageBackedSessionManager"
-            p:httpServletRequest-ref="shibboleth.HttpServletRequest" p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+            p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+            p:httpServletResponse-ref="shibboleth.HttpServletResponse"
             p:authenticationFlowDescriptors="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'authn/(${idp.authn.flows})']}"
             p:cookieManager-ref="shibboleth.CookieManager"
             p:storageService-ref="${idp.session.StorageService}"
-            p:consistentAddress="${idp.session.consistentAddress}"
-            p:sessionTimeout="${idp.session.timeout}"
-            p:sessionSlop="${idp.session.slop}"
-            p:maskStorageFailure="${idp.session.maskStorageFailure}"
-            p:trackSPSessions="${idp.session.trackSPSessions}"
-            p:secondaryServiceIndex="${idp.session.secondaryServiceIndex}"
+            p:consistentAddress="${idp.session.consistentAddress:true}"
+            p:sessionTimeout="${idp.session.timeout:PT60M}"
+            p:sessionSlop="${idp.session.slop:0}"
+            p:maskStorageFailure="${idp.session.maskStorageFailure:false}"
+            p:trackSPSessions="${idp.session.trackSPSessions:false}"
+            p:secondaryServiceIndex="${idp.session.secondaryServiceIndex:false}"
             p:IDGenerator-ref="shibboleth.SessionIDGenerator"
             p:SPSessionSerializerRegistry-ref="shibboleth.SPSessionSerializerRegistry" />
 

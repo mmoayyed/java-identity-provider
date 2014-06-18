@@ -86,7 +86,8 @@
                     <key>
                         <value>http://apache.org/xml/properties/security-manager</value>
                     </key>
-                    <bean id="shibboleth.XercesSecurityManager" class="${idp.xml.securityManager}" />
+                    <bean id="shibboleth.XercesSecurityManager"
+                        class="${idp.xml.securityManager:com.sun.org.apache.xerces.internal.util.SecurityManager}" />
                 </entry>
             </map>
         </property>
@@ -118,7 +119,8 @@
     <bean id="shibboleth.EndpointResolver" class="org.opensaml.saml.common.binding.impl.DefaultEndpointResolver" />
 
     <bean id="shibboleth.CookieManager" class="net.shibboleth.utilities.java.support.net.CookieManager"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest" p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletResponse-ref="shibboleth.HttpServletResponse"
         p:secure="false" />
     
     <bean id="shibboleth.DataSealer" class="net.shibboleth.utilities.java.support.security.DataSealer"
@@ -128,10 +130,14 @@
         p:cipherKeyAlias="${idp.sealer.alias}"
         p:cipherKeyPassword="${idp.sealer.keyPassword}" />
     
-    <bean id="shibboleth.StorageService" class="${idp.storage.StorageService}" p:cleanupInterval="${idp.storage.cleanupInterval}" />
+    <bean id="shibboleth.StorageService"
+        class="${idp.storage.StorageService:org.opensaml.storage.impl.MemoryStorageService}"
+        p:cleanupInterval="${idp.storage.cleanupInterval:PT10M}" />
 
-    <bean id="shibboleth.ClientStorageService" class="${idp.storage.ClientStorageService}"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest" p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+    <bean id="shibboleth.ClientStorageService"
+        class="${idp.storage.ClientStorageService:org.opensaml.storage.impl.ServletRequestScopedStorageService}"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletResponse-ref="shibboleth.HttpServletResponse"
         p:cookieManager-ref="shibboleth.CookieManager"
         p:dataSealer-ref="shibboleth.DataSealer" />
     
