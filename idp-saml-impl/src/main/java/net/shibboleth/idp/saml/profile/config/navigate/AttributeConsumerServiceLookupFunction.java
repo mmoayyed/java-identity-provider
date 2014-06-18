@@ -19,8 +19,8 @@ package net.shibboleth.idp.saml.profile.config.navigate;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.saml.context.AttributeConsumingServiceContext;
 
+import org.opensaml.saml.common.messaging.context.AttributeConsumingServiceContext;
 import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
 
 import com.google.common.base.Function;
