@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -33,8 +36,10 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.service.ReloadableService;
 import net.shibboleth.idp.service.ServiceableComponent;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -66,18 +71,21 @@ public final class ResolveAttributes extends AbstractProfileAction {
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
      */
-    @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
 
     /**
      * Strategy used to locate the {@link SubjectContext} associated with a given {@link ProfileRequestContext}.
      */
-    @Nonnull private Function<ProfileRequestContext, SubjectContext> subjectContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,SubjectContext> subjectContextLookupStrategy;
 
     /**
      * Strategy used to locate the {@link AuthenticationContext} associated with a given {@link ProfileRequestContext}.
      */
-    @Nonnull private Function<ProfileRequestContext, AuthenticationContext> authnContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,AuthenticationContext> authnContextLookupStrategy;
 
+    /** Attribute IDs to pass into resolver. */
+    @Nonnull @NonnullElements private Collection<String> attributesToResolve;
+    
     /** RelyingPartyContext to operate on. */
     @Nullable private RelyingPartyContext rpContext;
 
@@ -98,6 +106,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
         subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class, false);
         authnContextLookupStrategy = new ChildContextLookup<>(AuthenticationContext.class, false);
+        attributesToResolve = Collections.emptyList();
     }
 
     /**
@@ -108,7 +117,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      *            {@link ProfileRequestContext}
      */
     public void setRelyingPartyContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
+            @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         relyingPartyContextLookupStrategy =
@@ -122,7 +131,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      *            {@link ProfileRequestContext}
      */
     public void setSubjectContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
+            @Nonnull final Function<ProfileRequestContext,SubjectContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         subjectContextLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
@@ -136,11 +145,23 @@ public final class ResolveAttributes extends AbstractProfileAction {
      *            {@link ProfileRequestContext}
      */
     public void setAuthenticationContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, AuthenticationContext> strategy) {
+            @Nonnull final Function<ProfileRequestContext,AuthenticationContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         authnContextLookupStrategy =
                 Constraint.isNotNull(strategy, "AuthenticationContext lookup strategy cannot be null");
+    }
+    
+    /**
+     * Set the attribute IDs to pass into the resolver.
+     * 
+     * @param attributeIds  attribute ID collection
+     */
+    public void setAttributesToResolve(@Nonnull @NonnullElements final Collection<String> attributeIds) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        Constraint.isNotNull(attributeIds, "Attribute ID collection cannot be null");
+        attributesToResolve = StringSupport.normalizeStringCollection(attributeIds);
     }
 
     /** {@inheritDoc} */
@@ -177,6 +198,12 @@ public final class ResolveAttributes extends AbstractProfileAction {
         // this may already exist but if not, auto-create it
         final AttributeResolutionContext resolutionContext =
                 profileRequestContext.getSubcontext(AttributeResolutionContext.class, true);
+        
+        // Populate requested attributes, if not already set.
+        if (resolutionContext.getRequestedIdPAttributeNames() == null
+                || resolutionContext.getRequestedIdPAttributeNames().isEmpty()) {
+            resolutionContext.setRequestedIdPAttributeNames(attributesToResolve);
+        }
         
         resolutionContext.setPrincipal(subjectContext.getPrincipalName());
         
