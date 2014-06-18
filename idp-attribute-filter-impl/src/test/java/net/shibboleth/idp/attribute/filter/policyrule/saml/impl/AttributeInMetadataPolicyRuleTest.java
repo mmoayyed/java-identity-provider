@@ -27,12 +27,12 @@ import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.matcher.impl.DataSources;
 import net.shibboleth.idp.saml.attribute.mapping.AttributesMapContainer;
-import net.shibboleth.idp.saml.context.AttributeConsumingServiceContext;
 import net.shibboleth.idp.saml.profile.config.navigate.AttributeConsumerServiceLookupFunction;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.saml.common.messaging.context.AttributeConsumingServiceContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.saml2.metadata.impl.AttributeConsumingServiceBuilder;
 import org.testng.Assert;

@@ -23,11 +23,11 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeInMetadataPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
-import net.shibboleth.idp.saml.context.AttributeConsumingServiceContext;
 import net.shibboleth.idp.saml.profile.config.navigate.AttributeConsumerServiceLookupFunction;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.saml.common.messaging.context.AttributeConsumingServiceContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
