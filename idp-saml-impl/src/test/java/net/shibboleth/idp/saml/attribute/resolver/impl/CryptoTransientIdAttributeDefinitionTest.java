@@ -136,7 +136,7 @@ public class CryptoTransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTe
 
         Assert.assertEquals(decode, TestSources.SP_ENTITY_ID + "!" + TestSources.PRINCIPAL_ID);
 
-        Thread.sleep(TIMEOUT);
+        Thread.sleep(2*TIMEOUT);
         try {
             dataSealer.unwrap(code);
             Assert.fail("Timeout not set correctly");
