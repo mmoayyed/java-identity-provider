@@ -44,6 +44,7 @@
     
     <bean id="Shibboleth.SSO"
         class="net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration"
+        p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
         p:inboundSubflowId="security-policy/shibboleth-sso" />
 
     <bean id="SAML1.AttributeQuery"
@@ -56,6 +57,7 @@
 
     <bean id="SAML2.SSO"
         class="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration"
+        p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
         p:inboundSubflowId="security-policy/saml2-sso" />
 
     <bean id="SAML2.ECP"
@@ -71,6 +73,12 @@
     
     <bean id="Liberty.SSOS"
         class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration" />    
+    
+    <!-- Artifact Configuration Defaults -->
+    
+    <bean id="shibboleth.DefaultArtifactConfiguration"
+        class="net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration"
+        p:artifactResolutionServiceIndex="${idp.artifact.endpointIndex:1}" />
     
     <!--
     Security Configuration Defaults
