@@ -32,6 +32,7 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.messaging.context.AttributeConsumingServiceContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.messaging.context.SAMLSelfEntityContext;
@@ -41,13 +42,15 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Function;
 
 /**
- * Action that adds an outbound {@link MessageContext} and related SAML contexts to the
- * {@link ProfileRequestContext} based on the identity of a relying party accessed via
- * a lookup strategy, by default an immediate child of the profile request context.
+ * Action that adds an outbound {@link MessageContext} and related SAML contexts to the {@link ProfileRequestContext}
+ * based on the identity of a relying party accessed via a lookup strategy, by default an immediate child of the profile
+ * request context.
  * 
- * <p>A {@link SAMLSelfEntityContext} is created based on the identity of the IdP, as
- * derived by a lookup strategy. A {@link SAMLPeerEntityContext} and {@link SAMLMetadataContext}
- * are created based on the {@link SAMLPeerEntityContext} that underlies the {@link RelyingPartyContext}.</p>
+ * <p>
+ * A {@link SAMLSelfEntityContext} is created based on the identity of the IdP, as derived by a lookup strategy. A
+ * {@link SAMLPeerEntityContext} and {@link SAMLMetadataContext} are created based on the {@link SAMLPeerEntityContext}
+ * that underlies the {@link RelyingPartyContext}.
+ * </p>
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
@@ -58,47 +61,46 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
     @Nonnull private final Logger log = LoggerFactory.getLogger(InitializeOutboundMessageContext.class);
 
     /** Relying party context lookup strategy. */
-    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
 
     /** Strategy used to obtain the self identity value. */
-    @Nullable private Function<ProfileRequestContext,String> selfIdentityLookupStrategy;
-    
+    @Nullable private Function<ProfileRequestContext, String> selfIdentityLookupStrategy;
+
     /** The {@link SAMLPeerEntityContext} to base the outbound context on. */
     @Nullable private SAMLPeerEntityContext peerEntityCtx;
-    
+
     /** Constructor. */
     public InitializeOutboundMessageContext() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         selfIdentityLookupStrategy = new ResponderIdLookupFunction();
     }
-    
+
     /**
      * Set the relying party context lookup strategy.
      * 
      * @param strategy lookup strategy
      */
     public void setRelyingPartyContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
+            @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
-    
+
     /**
      * Set the strategy used to locate the self identity value to use.
      * 
      * @param strategy lookup strategy
      */
-    public void setSelfIdentityLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
+    public void setSelfIdentityLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         selfIdentityLookupStrategy = Constraint.isNotNull(strategy, "Self identity lookup strategy cannot be null");
     }
-    
+
     /** {@inheritDoc} */
-    @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+    @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyCtx == null) {
@@ -106,40 +108,44 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
             return false;
         }
-        
+
         final BaseContext identifyingCtx = relyingPartyCtx.getRelyingPartyIdContextTree();
         if (identifyingCtx == null || !(identifyingCtx instanceof SAMLPeerEntityContext)) {
             log.debug("{} No SAML peer entity context found via relying party context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
             return false;
         }
-        
+
         peerEntityCtx = (SAMLPeerEntityContext) identifyingCtx;
-        
+
         return super.doPreExecute(profileRequestContext);
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         final MessageContext msgCtx = new MessageContext();
         profileRequestContext.setOutboundMessageContext(msgCtx);
 
         final SAMLSelfEntityContext selfContext = msgCtx.getSubcontext(SAMLSelfEntityContext.class, true);
         selfContext.setEntityId(selfIdentityLookupStrategy.apply(profileRequestContext));
-        
+
         final SAMLPeerEntityContext peerContext = msgCtx.getSubcontext(SAMLPeerEntityContext.class, true);
         peerContext.setEntityId(peerEntityCtx.getEntityId());
-        
+
         final SAMLMetadataContext inboundMetadataCtx = peerEntityCtx.getSubcontext(SAMLMetadataContext.class);
         if (inboundMetadataCtx != null) {
             final SAMLMetadataContext outboundMetadataCtx = peerContext.getSubcontext(SAMLMetadataContext.class, true);
             outboundMetadataCtx.setEntityDescriptor(inboundMetadataCtx.getEntityDescriptor());
             outboundMetadataCtx.setRoleDescriptor(inboundMetadataCtx.getRoleDescriptor());
+            final AttributeConsumingServiceContext acsCtx =
+                    inboundMetadataCtx.getSubcontext(AttributeConsumingServiceContext.class);
+            if (null != acsCtx) {
+                outboundMetadataCtx.getSubcontext(AttributeConsumingServiceContext.class, true)
+                        .setAttributeConsumingService(acsCtx.getAttributeConsumingService());
+            }
         }
 
         log.debug("{} Initialized outbound message context", getLogPrefix());
     }
-
 }
