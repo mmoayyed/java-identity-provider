@@ -25,6 +25,6 @@
 
     <bean id="test.idp.Credential" class="org.opensaml.security.x509.BasicX509Credential"
         c:entityCertificate-ref="test.idp.X509Certificate"
-        p:entityId="${idp.entity.id}" />
+        p:entityId="${idp.entityID}" />
 
 </beans>
