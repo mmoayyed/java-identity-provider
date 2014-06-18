@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.tou.storage;
 
-import net.shibboleth.idp.tou.ToUAcceptance;
+import net.shibboleth.idp.tou.TOUAcceptance;
 
 /** Storage interface for terms of use. */
 public interface Storage {
@@ -28,7 +28,7 @@ public interface Storage {
      * @param userId The user id.
      * @param touAcceptance terms of use acceptance.
      */
-    public void createToUAcceptance(final String userId, final ToUAcceptance touAcceptance);
+    public void createToUAcceptance(final String userId, final TOUAcceptance touAcceptance);
 
     /**
      * Updates a terms of use acceptance.
@@ -36,7 +36,7 @@ public interface Storage {
      * @param userId The user id.
      * @param touAcceptance terms of use acceptance.
      */
-    public void updateToUAcceptance(final String userId, final ToUAcceptance touAcceptance);
+    public void updateToUAcceptance(final String userId, final TOUAcceptance touAcceptance);
 
     /**
      * Reads a terms of use acceptance.
@@ -45,7 +45,7 @@ public interface Storage {
      * @param version Terms of use version.
      * @return Returns a terms of use acceptance, might be empty but never null.
      */
-    public ToUAcceptance readToUAcceptance(final String userId, final String version);
+    public TOUAcceptance readToUAcceptance(final String userId, final String version);
 
     /**
      * Checks if the storage contains a terms of use acceptance for a specific user.

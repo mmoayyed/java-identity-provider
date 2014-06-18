@@ -52,8 +52,8 @@ public class TestData {
         return dates[random.nextInt(dates.length)];
     }
 
-    private static ToUAcceptance getRandomToUAcceptance() {
-        return new ToUAcceptance(getRandomVersion(), getRandomFingerprint(), getRandomDate());
+    private static TOUAcceptance getRandomToUAcceptance() {
+        return new TOUAcceptance(getRandomVersion(), getRandomFingerprint(), getRandomDate());
     }
 
     @DataProvider(name = "date")

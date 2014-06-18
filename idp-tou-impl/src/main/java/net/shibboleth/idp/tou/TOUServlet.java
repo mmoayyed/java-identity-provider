@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Terms of use servlet controls UI interactions.
  */
-public class ToUServlet extends HttpServlet {
+public class TOUServlet extends HttpServlet {
 
     /** Key used for the user id. */
     public static final String USERID_KEY = "tou.key.userid";
@@ -47,11 +47,11 @@ public class ToUServlet extends HttpServlet {
     private static final long serialVersionUID = 5697887762728622595L;
 
     /** Class logger. */
-    private final Logger logger = LoggerFactory.getLogger(ToUServlet.class);
+    private final Logger logger = LoggerFactory.getLogger(TOUServlet.class);
 
     /** Configured terms of use. */
     @Resource(name = "tou")
-    private ToU tou;
+    private TOU tou;
 
     /** Configured storage. */
     @Resource(name = "tou.storage")
@@ -85,7 +85,7 @@ public class ToUServlet extends HttpServlet {
         // Probably we need to go via session or other storage
         final String userId = (String) request.getAttribute(USERID_KEY);
 
-        final TermsOfUseContext touContext = ToUHelper.getTermsOfUseContext(request);
+        final TermsOfUseContext touContext = TOUHelper.getTermsOfUseContext(request);
 
         final boolean accepted =
                 request.getParameter("tou.accept") != null && request.getParameter("tou.accept").equals("yes");
@@ -93,9 +93,9 @@ public class ToUServlet extends HttpServlet {
             final DateTime acceptanceDate = new DateTime();
             logger.info("User {} has accepted ToU version {}", userId, tou.getVersion());
             if (storage.containsToUAcceptance(userId, tou.getVersion())) {
-                storage.updateToUAcceptance(userId, ToUAcceptance.createToUAcceptance(tou, acceptanceDate));
+                storage.updateToUAcceptance(userId, TOUAcceptance.createToUAcceptance(tou, acceptanceDate));
             } else {
-                storage.createToUAcceptance(userId, ToUAcceptance.createToUAcceptance(tou, acceptanceDate));
+                storage.createToUAcceptance(userId, TOUAcceptance.createToUAcceptance(tou, acceptanceDate));
             }
             touContext.setTermsOfUseDecision(Decision.ACCEPTED);
         } else {

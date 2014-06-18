@@ -22,7 +22,7 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import net.shibboleth.idp.tou.ToUAcceptance;
+import net.shibboleth.idp.tou.TOUAcceptance;
 
 import org.joda.time.DateTime;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -38,12 +38,12 @@ public class JDBCStorage implements Storage {
     /** The name of the terms of use acceptance table. */
     private final String acceptanceTable = "ToUAcceptance";
 
-    /** {@link ToUAcceptance} row mapper. */
-    private static final class ToUAcceptanceMapper implements RowMapper<ToUAcceptance> {
+    /** {@link TOUAcceptance} row mapper. */
+    private static final class ToUAcceptanceMapper implements RowMapper<TOUAcceptance> {
         @Override
-        public ToUAcceptance mapRow(final ResultSet rs, final int rowNum) throws SQLException {
-            final ToUAcceptance touAcceptance =
-                    new ToUAcceptance(rs.getString("version"), rs.getString("fingerprint"), new DateTime(
+        public TOUAcceptance mapRow(final ResultSet rs, final int rowNum) throws SQLException {
+            final TOUAcceptance touAcceptance =
+                    new TOUAcceptance(rs.getString("version"), rs.getString("fingerprint"), new DateTime(
                             rs.getTimestamp("acceptanceDate")));
             return touAcceptance;
         }
@@ -63,7 +63,7 @@ public class JDBCStorage implements Storage {
 
     /** {@inheritDoc} */
     @Override
-    public void createToUAcceptance(final String userId, final ToUAcceptance touAcceptance) {
+    public void createToUAcceptance(final String userId, final TOUAcceptance touAcceptance) {
         final String sql =
                 "INSERT INTO " + acceptanceTable + " (userId, version, fingerprint, acceptanceDate)"
                         + " VALUES (?, ?, ?, ?)";
@@ -73,7 +73,7 @@ public class JDBCStorage implements Storage {
 
     /** {@inheritDoc} */
     @Override
-    public void updateToUAcceptance(final String userId, final ToUAcceptance touAcceptance) {
+    public void updateToUAcceptance(final String userId, final TOUAcceptance touAcceptance) {
         final String sql =
                 "UPDATE " + acceptanceTable + " SET fingerprint = ?, acceptanceDate = ?"
                         + " WHERE userId = ? AND version = ?";
@@ -83,7 +83,7 @@ public class JDBCStorage implements Storage {
 
     /** {@inheritDoc} */
     @Override
-    public ToUAcceptance readToUAcceptance(final String userId, final String version) {
+    public TOUAcceptance readToUAcceptance(final String userId, final String version) {
         final String sql =
                 "SELECT version, fingerprint, acceptanceDate" + " FROM " + acceptanceTable
                         + " WHERE userId = ? AND version = ?";

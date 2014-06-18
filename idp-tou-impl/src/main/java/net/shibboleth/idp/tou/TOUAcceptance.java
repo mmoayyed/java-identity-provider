@@ -23,7 +23,7 @@ import org.joda.time.DateTime;
 
 /** Represents a terms of use acceptance. */
 @ThreadSafe
-public class ToUAcceptance {
+public class TOUAcceptance {
 
     /** The terms of use version. */
     private final String version;
@@ -41,7 +41,7 @@ public class ToUAcceptance {
      * @param fingerprint The fingerprint.
      * @param acceptanceDate The acceptance date.
      */
-    public ToUAcceptance(final String version, final String fingerprint, final DateTime acceptanceDate) {
+    public TOUAcceptance(final String version, final String fingerprint, final DateTime acceptanceDate) {
         this.version = version;
         this.fingerprint = fingerprint;
         this.acceptanceDate = acceptanceDate;
@@ -50,12 +50,12 @@ public class ToUAcceptance {
     /**
      * Constructs a terms of use acceptance using a terms of use and an acceptance date.
      * 
-     * @param tou The {@link ToU}.
+     * @param tou The {@link TOU}.
      * @param acceptanceDate The acceptance date.
      */
-    private ToUAcceptance(final ToU tou, final DateTime acceptanceDate) {
+    private TOUAcceptance(final TOU tou, final DateTime acceptanceDate) {
         this.version = tou.getVersion();
-        this.fingerprint = ToUHelper.getToUFingerprint(tou);
+        this.fingerprint = TOUHelper.getToUFingerprint(tou);
         this.acceptanceDate = acceptanceDate;
     }
 
@@ -89,12 +89,12 @@ public class ToUAcceptance {
     /**
      * Creates a terms of use acceptance.
      * 
-     * @param tou The {@link ToU}.
+     * @param tou The {@link TOU}.
      * @param acceptanceDate The acceptance date.
      * @return Returns a terms of use acceptance.
      */
-    public static ToUAcceptance createToUAcceptance(final ToU tou, final DateTime acceptanceDate) {
-        return new ToUAcceptance(tou, acceptanceDate);
+    public static TOUAcceptance createToUAcceptance(final TOU tou, final DateTime acceptanceDate) {
+        return new TOUAcceptance(tou, acceptanceDate);
     }
 
     /**
@@ -102,17 +102,17 @@ public class ToUAcceptance {
      * 
      * @return Returns an empty terms of use acceptance.
      */
-    public static ToUAcceptance emptyToUAcceptance() {
-        return new ToUAcceptance("", "", null);
+    public static TOUAcceptance emptyToUAcceptance() {
+        return new TOUAcceptance("", "", null);
     }
 
     /**
      * Checks if this terms of acceptance contains a specific terms of use.
      * 
-     * @param tou The {@link ToU}.
+     * @param tou The {@link TOU}.
      * @return Returns true if version and fingerprint equals, false otherwise.
      */
-    public boolean contains(final ToU tou) {
-        return version.equals(tou.getVersion()) && fingerprint.equals(ToUHelper.getToUFingerprint(tou));
+    public boolean contains(final TOU tou) {
+        return version.equals(tou.getVersion()) && fingerprint.equals(TOUHelper.getToUFingerprint(tou));
     }
 }

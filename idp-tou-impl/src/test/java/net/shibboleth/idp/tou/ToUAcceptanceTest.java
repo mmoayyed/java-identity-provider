@@ -36,29 +36,29 @@ import org.testng.annotations.Test;
 public class ToUAcceptanceTest extends AbstractTestNGSpringContextTests {
 
     @javax.annotation.Resource(name = "tou")
-    private ToU tou;
+    private TOU tou;
 
     @Test(dataProvider = "date", enabled=false)
     public void createToUAcceptance(final DateTime date) {
-        final ToUAcceptance touAcceptance = ToUAcceptance.createToUAcceptance(tou, date);
+        final TOUAcceptance touAcceptance = TOUAcceptance.createToUAcceptance(tou, date);
         assertEquals(tou.getVersion(), touAcceptance.getVersion());
-        final String fingerprint = ToUHelper.getToUFingerprint(tou);
+        final String fingerprint = TOUHelper.getToUFingerprint(tou);
         assertEquals(fingerprint, touAcceptance.getFingerprint());
         assertEquals(date, touAcceptance.getAcceptanceDate());
     }
 
     @Test(enabled=false)
     public void emptyToUAcceptance() {
-        final ToUAcceptance touAcceptance = ToUAcceptance.emptyToUAcceptance();
+        final TOUAcceptance touAcceptance = TOUAcceptance.emptyToUAcceptance();
         assertEquals("", touAcceptance.getVersion());
         assertEquals("", touAcceptance.getFingerprint());
         assertNull(touAcceptance.getAcceptanceDate());
     }
 
     @Test(dataProvider = "touAcceptance", enabled=false)
-    public void contains(final ToUAcceptance otherToUAcceptance) {
-        final ToUAcceptance touAcceptance = ToUAcceptance.createToUAcceptance(tou, new DateTime());
-        final ToUAcceptance emptyToUAcceptance = ToUAcceptance.emptyToUAcceptance();
+    public void contains(final TOUAcceptance otherToUAcceptance) {
+        final TOUAcceptance touAcceptance = TOUAcceptance.createToUAcceptance(tou, new DateTime());
+        final TOUAcceptance emptyToUAcceptance = TOUAcceptance.emptyToUAcceptance();
 
         assertTrue(touAcceptance.contains(tou));
         assertFalse(otherToUAcceptance.contains(tou));

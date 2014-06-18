@@ -25,7 +25,7 @@ import javax.annotation.Resource;
 import net.shibboleth.idp.storage.Cache;
 import net.shibboleth.idp.storage.CacheManager;
 import net.shibboleth.idp.storage.Configuration;
-import net.shibboleth.idp.tou.ToUAcceptance;
+import net.shibboleth.idp.tou.TOUAcceptance;
 
 import org.springframework.util.Assert;
 
@@ -39,9 +39,9 @@ public class CacheStorage implements Storage {
     /**
      * The terms of use acceptance partition.
      * 
-     * Key: userId. Value: Map Key: version. Value: {@link ToUAcceptance}.
+     * Key: userId. Value: Map Key: version. Value: {@link TOUAcceptance}.
      */
-    private ConcurrentMap<String, ConcurrentMap<String, ToUAcceptance>> touAcceptancePartition;
+    private ConcurrentMap<String, ConcurrentMap<String, TOUAcceptance>> touAcceptancePartition;
 
     /** Initializes the cache storage. */
     public void initialize() {
@@ -53,27 +53,27 @@ public class CacheStorage implements Storage {
         }
 
         cache.putIfAbsent("touAcceptancePartition",
-                new ConcurrentHashMap<String, ConcurrentMap<String, ToUAcceptance>>());
+                new ConcurrentHashMap<String, ConcurrentMap<String, TOUAcceptance>>());
         touAcceptancePartition = cache.get("touAcceptancePartition");
     }
 
     /** {@inheritDoc} */
     @Override
-    public void createToUAcceptance(final String userId, final ToUAcceptance touAcceptance) {
-        touAcceptancePartition.putIfAbsent(userId, new ConcurrentHashMap<String, ToUAcceptance>());
+    public void createToUAcceptance(final String userId, final TOUAcceptance touAcceptance) {
+        touAcceptancePartition.putIfAbsent(userId, new ConcurrentHashMap<String, TOUAcceptance>());
         touAcceptancePartition.get(userId).put(touAcceptance.getVersion(), touAcceptance);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void updateToUAcceptance(final String userId, final ToUAcceptance touAcceptance) {
+    public void updateToUAcceptance(final String userId, final TOUAcceptance touAcceptance) {
         Assert.state(touAcceptancePartition.containsKey(userId));
         touAcceptancePartition.get(userId).replace(touAcceptance.getVersion(), touAcceptance);
     }
 
     /** {@inheritDoc} */
     @Override
-    public ToUAcceptance readToUAcceptance(final String userId, final String version) {
+    public TOUAcceptance readToUAcceptance(final String userId, final String version) {
         if (!touAcceptancePartition.containsKey(userId)) {
             return null;
         }

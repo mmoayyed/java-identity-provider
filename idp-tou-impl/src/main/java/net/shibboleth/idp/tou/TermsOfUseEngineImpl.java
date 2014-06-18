@@ -44,7 +44,7 @@ public class TermsOfUseEngineImpl implements TermsOfUseEngine {
 
     /** A map of all configured ToUs. */
     @Resource(name = "tou.config.touMap")
-    private Map<String, ToU> touMap;
+    private Map<String, TOU> touMap;
 
     /** The id of the {@link net.shibboleth.idp.attribute.IdPAttribute} which should be used for user identification. */
     @Resource(name = "tou.config.userIdAttribute")
@@ -54,8 +54,8 @@ public class TermsOfUseEngineImpl implements TermsOfUseEngine {
     @Override
     public void determineAcceptance(final TermsOfUseContext touContext) throws TermsOfUseException {
 
-        final String relyingPartyId = ToUHelper.getRelyingParty(touContext);
-        final ToU tou = ToUHelper.getToUForRelyingParty(touMap, relyingPartyId);
+        final String relyingPartyId = TOUHelper.getRelyingParty(touContext);
+        final TOU tou = TOUHelper.getToUForRelyingParty(touMap, relyingPartyId);
 
         if (tou == null) {
             touContext.setTermsOfUseDecision(Decision.INAPPLICABLE);
@@ -65,15 +65,15 @@ public class TermsOfUseEngineImpl implements TermsOfUseEngine {
 
         logger.debug("Using ToU {} for relying party {}", tou, relyingPartyId);
 
-        final String userId = ToUHelper.findUserId(userIdAttribute, ToUHelper.getUserAttributes(touContext));
+        final String userId = TOUHelper.findUserId(userIdAttribute, TOUHelper.getUserAttributes(touContext));
         Assert.notNull(userId, "No userId found");
         logger.debug("Using {}({}) as userId attribute", userIdAttribute, userId);
 
-        final ToUAcceptance touAcceptance;
+        final TOUAcceptance touAcceptance;
         if (storage.containsToUAcceptance(userId, tou.getVersion())) {
             touAcceptance = storage.readToUAcceptance(userId, tou.getVersion());
         } else {
-            touAcceptance = ToUAcceptance.emptyToUAcceptance();
+            touAcceptance = TOUAcceptance.emptyToUAcceptance();
         }
 
         if (touAcceptance.contains(tou)) {
@@ -82,10 +82,10 @@ public class TermsOfUseEngineImpl implements TermsOfUseEngine {
             return;
         }
 
-        final HttpServletRequest request = ToUHelper.getRequest(touContext);
-        final HttpServletResponse response = ToUHelper.getResponse(touContext);
+        final HttpServletRequest request = TOUHelper.getRequest(touContext);
+        final HttpServletResponse response = TOUHelper.getResponse(touContext);
 
-        request.setAttribute(ToUServlet.USERID_KEY, userId);
+        request.setAttribute(TOUServlet.USERID_KEY, userId);
 
         logger.debug("Dispatch to terms of use view");
         try {

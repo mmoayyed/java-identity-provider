@@ -29,12 +29,12 @@ import org.springframework.core.io.Resource;
 
 /** Represents the terms of use. */
 @ThreadSafe
-public class ToU {
+public class TOU {
 
     // TODO: Needs probably an ID too (persisted, compared). For disjunction between different ToUs of relying parties.
 
     /** Class logger. */
-    private final Logger logger = LoggerFactory.getLogger(ToU.class);
+    private final Logger logger = LoggerFactory.getLogger(TOU.class);
 
     /** The version of the terms of use. */
     private final String version;
@@ -49,7 +49,7 @@ public class ToU {
      * @param resource The resource from where the terms of use text is loaded.
      * @throws TermsOfUseException In case of an initialization error.
      */
-    public ToU(final String touVersion, final Resource resource) throws TermsOfUseException {
+    public TOU(final String touVersion, final Resource resource) throws TermsOfUseException {
         version = touVersion;
 
         final StringBuilder stringBuilder = new StringBuilder();

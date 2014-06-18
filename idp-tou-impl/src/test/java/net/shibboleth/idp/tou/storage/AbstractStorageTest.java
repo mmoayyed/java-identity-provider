@@ -22,7 +22,7 @@ import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
 import net.shibboleth.idp.tou.TestData;
-import net.shibboleth.idp.tou.ToUAcceptance;
+import net.shibboleth.idp.tou.TOUAcceptance;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -52,7 +52,7 @@ public abstract class AbstractStorageTest /* extends AbstractTransactionalTestNG
         assertFalse(storage.containsToUAcceptance(userId, version));
         assertNull(storage.readToUAcceptance(userId, version));
 
-        ToUAcceptance touAcceptance = new ToUAcceptance(version, fingerprint, date);
+        TOUAcceptance touAcceptance = new TOUAcceptance(version, fingerprint, date);
         storage.createToUAcceptance(userId, touAcceptance);
         assertTrue(storage.containsToUAcceptance(userId, version));
 
@@ -62,7 +62,7 @@ public abstract class AbstractStorageTest /* extends AbstractTransactionalTestNG
         assertEquals(fingerprint, touAcceptance.getFingerprint());
         assertEquals(date, touAcceptance.getAcceptanceDate());
 
-        touAcceptance = new ToUAcceptance(version, fingerprint.substring(1), date.plusMonths(1));
+        touAcceptance = new TOUAcceptance(version, fingerprint.substring(1), date.plusMonths(1));
         storage.updateToUAcceptance(userId, touAcceptance);
 
         touAcceptance = storage.readToUAcceptance(userId, version);

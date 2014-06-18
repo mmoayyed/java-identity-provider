@@ -37,13 +37,13 @@ import org.slf4j.LoggerFactory;
  * 
  * Provides static utility methods.
  */
-public final class ToUHelper {
+public final class TOUHelper {
 
     /** Class logger. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ToUHelper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TOUHelper.class);
 
     /** Default constructor. */
-    private ToUHelper() {
+    private TOUHelper() {
 
     }
 
@@ -102,16 +102,16 @@ public final class ToUHelper {
     }
 
     /**
-     * Retrieves the mapped {@link ToU} for a specific relying party.
+     * Retrieves the mapped {@link TOU} for a specific relying party.
      * 
      * @param touMap The relying party / terms of use map.
      * @param entityId The relying party id.
-     * @return Returns the mapped {@link ToU} for this relying party id or <code>null</code>.
+     * @return Returns the mapped {@link TOU} for this relying party id or <code>null</code>.
      */
-    public static ToU getToUForRelyingParty(final Map<String, ToU> touMap, final String entityId) {
+    public static TOU getToUForRelyingParty(final Map<String, TOU> touMap, final String entityId) {
         Pattern pattern;
         LOGGER.trace("touMap {}", touMap);
-        for (final Entry<String, ToU> entry : touMap.entrySet()) {
+        for (final Entry<String, TOU> entry : touMap.entrySet()) {
             pattern = Pattern.compile(entry.getKey());
             LOGGER.trace("checking pattern {}", pattern);
             if (pattern.matcher(entityId).find()) {
@@ -125,10 +125,10 @@ public final class ToUHelper {
     /**
      * Gets the terms of use fingerprint.
      * 
-     * @param tou The {@link ToU}.
+     * @param tou The {@link TOU}.
      * @return Returns the terms of use fingerprint.
      */
-    public static String getToUFingerprint(final ToU tou) {
+    public static String getToUFingerprint(final TOU tou) {
         return CodecUtil.hex(HashUtil.sha256(tou.getText().getBytes()), true);
     }
 

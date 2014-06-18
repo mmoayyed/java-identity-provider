@@ -36,7 +36,7 @@ import org.testng.annotations.Test;
 public class ToUTest extends AbstractTestNGSpringContextTests {
 
     @javax.annotation.Resource(name = "tou")
-    private ToU tou;
+    private TOU tou;
 
     public void instantiation() {
         assertEquals("1.0", tou.getVersion());
@@ -46,7 +46,7 @@ public class ToUTest extends AbstractTestNGSpringContextTests {
     public void loadWrongFile() {
         final Resource resource = new FileSystemResource("not-existent.txt");
         try {
-            @SuppressWarnings("unused") final ToU invalidTermsOfUse = new ToU("1.0", resource);
+            @SuppressWarnings("unused") final TOU invalidTermsOfUse = new TOU("1.0", resource);
             fail("Exception expected");
         } catch (final TermsOfUseException e) {
         }

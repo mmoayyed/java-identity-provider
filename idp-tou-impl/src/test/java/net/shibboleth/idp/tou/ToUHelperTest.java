@@ -39,22 +39,22 @@ import org.testng.annotations.Test;
 public class ToUHelperTest extends AbstractTestNGSpringContextTests {
 
     @Resource(name = "tou.config.touMap")
-    private Map<String, ToU> touMap;
+    private Map<String, TOU> touMap;
 
     @javax.annotation.Resource(name = "tou")
-    private ToU defaultToU;
+    private TOU defaultToU;
 
     public void getToUForRelyingParty() {
-        final ToU specificToU = ToUHelper.getToUForRelyingParty(touMap, "https://sp.example.org/shibboleth");
+        final TOU specificToU = TOUHelper.getToUForRelyingParty(touMap, "https://sp.example.org/shibboleth");
         assertNotNull(specificToU);
         assertFalse(specificToU.getVersion().equals(defaultToU.getVersion()));
 
-        ToU nonSpecificToU = ToUHelper.getToUForRelyingParty(touMap, "https://sp.other-example.org/shibboleth");
+        TOU nonSpecificToU = TOUHelper.getToUForRelyingParty(touMap, "https://sp.other-example.org/shibboleth");
         assertNotNull(nonSpecificToU);
         assertEquals(defaultToU.getVersion(), nonSpecificToU.getVersion());
 
         touMap.remove(".*");
-        nonSpecificToU = ToUHelper.getToUForRelyingParty(touMap, "https://sp.other-example.org/shibboleth");
+        nonSpecificToU = TOUHelper.getToUForRelyingParty(touMap, "https://sp.other-example.org/shibboleth");
         assertNull(nonSpecificToU);
     }
 
