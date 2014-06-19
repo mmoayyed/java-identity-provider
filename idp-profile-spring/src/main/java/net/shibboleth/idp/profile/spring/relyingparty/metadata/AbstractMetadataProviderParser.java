@@ -22,6 +22,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
 import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -171,5 +172,11 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
         if (null != filters && !filters.isEmpty()) {
             builder.addPropertyValue("metadataFilter", SpringSupport.parseCustomElements(filters, parserContext));
         }
+        
+        final List<Element>trustEngines =
+                ElementSupport.getChildElements(element, SecurityNamespaceHandler.TRUST_ENGINE_ELEMENT_NAME);
+        SpringSupport.parseCustomElements(trustEngines, parserContext);
+        
+
     }
 }

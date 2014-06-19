@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:shibmd="urn:mace:shibboleth:2.0:metadata" xmlns:res="urn:mace:shibboleth:2.0:resource" xmlns:saml2md="urn:oasis:names:tc:SAML:2.0:metadata" targetNamespace="urn:mace:shibboleth:2.0:metadata" elementFormDefault="qualified">
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:shibmd="urn:mace:shibboleth:2.0:metadata" xmlns:security="urn:mace:shibboleth:2.0:security" xmlns:res="urn:mace:shibboleth:2.0:resource" xmlns:saml2md="urn:oasis:names:tc:SAML:2.0:metadata" targetNamespace="urn:mace:shibboleth:2.0:metadata" elementFormDefault="qualified">
 
     <annotation>
         <documentation>Schema describing metadata providers and filters.</documentation>
@@ -7,6 +7,7 @@
 
     <import namespace="urn:oasis:names:tc:SAML:2.0:metadata" schemaLocation="http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"/>
     <import namespace="urn:mace:shibboleth:2.0:resource" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-resource.xsd"/>
+    <import namespace="urn:mace:shibboleth:2.0:security" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-security.xsd"/>
 
     <element name="MetadataProvider" type="shibmd:MetadataProviderType">
         <annotation>
@@ -253,6 +254,13 @@
                 <annotation>
                     <documentation>
                         A filter to be applied to metadata after it has been parsed and validated.
+                    </documentation>
+                </annotation>
+            </element>
+            <element ref="security:TrustEngine" minOccurs="0" maxOccurs="unbounded">
+                <annotation>
+                    <documentation>
+                       Trust engines used by a filter
                     </documentation>
                 </annotation>
             </element>
