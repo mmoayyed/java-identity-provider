@@ -110,6 +110,5 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         
         Assert.assertNotNull(profile.getSecurityConfiguration());
         Assert.assertNotNull(profile.getSecurityConfiguration().getSignatureSigningConfiguration());
-        Assert.assertNotNull(profile.getSecurityConfiguration().getDecryptionConfiguration());
     }
 }
