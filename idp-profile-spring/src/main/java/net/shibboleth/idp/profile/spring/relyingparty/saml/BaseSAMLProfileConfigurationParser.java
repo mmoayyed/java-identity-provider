@@ -31,9 +31,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
-import org.opensaml.xmlsec.impl.BasicDecryptionConfiguration;
 import org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration;
-import org.opensaml.xmlsec.keyinfo.impl.StaticKeyInfoCredentialResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -229,22 +227,9 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
                 BeanDefinitionBuilder.genericBeanDefinition(BasicSignatureSigningConfiguration.class);
         signingConfiguration.addPropertyReference("signingCredentials", credentialRef);
         
-        final BeanDefinitionBuilder decryptionConfiguration =
-                BeanDefinitionBuilder.genericBeanDefinition(BasicDecryptionConfiguration.class);
-        
-        decryptionConfiguration.addPropertyReference("encryptedKeyResolver", DEFAULT_EKR);
-        
-        final BeanDefinitionBuilder staticKeyInfoCredentialResolver =
-                BeanDefinitionBuilder.genericBeanDefinition(StaticKeyInfoCredentialResolver.class);
-        staticKeyInfoCredentialResolver.addConstructorArgReference(credentialRef);
-        
-        decryptionConfiguration.addPropertyValue("KEKKeyInfoCredentialResolver",
-                staticKeyInfoCredentialResolver.getBeanDefinition());
-        
         final BeanDefinitionBuilder configuration =
                 BeanDefinitionBuilder.genericBeanDefinition(SecurityConfiguration.class);
         configuration.addPropertyValue("signatureSigningConfiguration", signingConfiguration.getBeanDefinition());
-        configuration.addPropertyValue("decryptionConfiguration", decryptionConfiguration.getBeanDefinition());
 
         builder.addPropertyValue("securityConfiguration", configuration.getBeanDefinition());
     }
