@@ -61,7 +61,8 @@
         p:inboundSubflowId="security-policy/saml2-sso" />
 
     <bean id="SAML2.ECP"
-        class="net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration" />
+        class="net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration"
+        p:inboundSubflowId="security-policy/saml2-sso" />
 
     <bean id="SAML2.AttributeQuery"
         class="net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration"

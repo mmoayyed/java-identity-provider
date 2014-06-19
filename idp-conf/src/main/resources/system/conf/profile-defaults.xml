@@ -10,40 +10,33 @@
 	
 	<context:property-placeholder location="file:///${idp.home}/conf/idp.properties" />
 	
-	<!-- The profile defaults. Firstly the artifact and InbouldFlowId parameters 
+	<!-- The profile defaults. Firstly the artifact and InboundFlowId parameters 
 
-            TODO establish correct values for all values of ArtifactServiceURL and ArtifactServiceIndex
-            TODO establish correct values for ECP, Logout InboundFlowId 
+            TODO establish correct values for Logout InboundFlowId 
     
      -->
 
     <!--  SAML2 -->
     <bean id="shibboleth.SAML2.Artifact.InboundFlowId" class="java.lang.String"
-        c:_0="security-policy/soap" /><!-- TODO -->
+        c:_0="security-policy/soap" />
         
-    <bean id="shibboleth.SAML2.Logout.ArtifactServiceURL" class="java.lang.String"
-        c:_0="https://idp.example.org/Logout" />
     <bean id="shibboleth.SAML2.Logout.ArtifactServiceIndex" class="java.lang.String"
-        c:_0="3214" />
+        c:_0="${idp.artifact.endpointIndex:1}" />
     <bean id="shibboleth.SAML2.Logout.InboundFlowId" class="java.lang.String"
-        c:_0="SecurityPolicy.SAML2Logout" /><!-- TODO -->
+        c:_0="security-policy/saml2-logout" /><!-- TODO -->
 
-    <bean id="shibboleth.SAML2.AttributeQuery.ArtifactServiceURL" class="java.lang.String"
-        c:_0="https://idp.example.org/AttributeQuery" />
     <bean id="shibboleth.SAML2.AttributeQuery.ArtifactServiceIndex" class="java.lang.String"
-        c:_0="2143" />
+        c:_0="${idp.artifact.endpointIndex:1}" />
     <bean id="shibboleth.SAML2.AttributeQuery.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/soap" />
 
-    <bean id="shibboleth.SAML2.BrowserSSO.ArtifactServiceURL" class="java.lang.String"
-        c:_0="https://idp.example.org/SSO" />
     <bean id="shibboleth.SAML2.BrowserSSO.ArtifactServiceIndex" class="java.lang.String"
-        c:_0="1111" />
+        c:_0="${idp.artifact.endpointIndex:1}" />
     <bean id="shibboleth.SAML2.BrowserSSO.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/saml2-sso" />
         
     <bean id="shibboleth.SAML2.ECP.InboundFlowId" class="java.lang.String"
-        c:_0="SecurityPolicy.SAML2ECP" /><!-- TODO -->
+        c:_0="security-policy/saml2-sso" />
 
     <!--  SAML2 - Liberty -->
     <bean id="shibboleth.SAML2.SSOS.InboundFlowId" class="java.lang.String"
@@ -53,30 +46,12 @@
     <bean id="shibboleth.SAML1.Artifact.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/soap" />
         
-    <bean id="shibboleth.SAML1.AttributeQuery.ArtifactServiceURL" class="java.lang.String"
-        c:_0="https://idp.example.org/AttributeQuery/SAML1" />
     <bean id="shibboleth.SAML1.AttributeQuery.ArtifactServiceIndex" class="java.lang.String"
-        c:_0="432100" />
+        c:_0="${idp.artifact.endpointIndex:1}" />
     <bean id="shibboleth.SAML1.AttributeQuery.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/soap" />
         
-    <bean id="shibboleth.SAML1.BrowserSSO.ArtifactServiceURL" class="java.lang.String"
-        c:_0="https://idp.example.org/SSO/SAML1" />
-    <bean id="shibboleth.SAML1.BrowserSSO.ArtifactServiceIndex" class="java.lang.String"
-        c:_0="1111" />
     <bean id="shibboleth.SAML1.BrowserSSO.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/shibboleth-sso" />
-
-    <bean id="shibboleth.LegacyRelyingParty.EncryptedKeyResolver"
-            class="org.opensaml.xmlsec.encryption.support.ChainingEncryptedKeyResolver">
-        <constructor-arg name="encKeyResolvers">
-            <util:list>
-                <bean class="org.opensaml.xmlsec.encryption.support.InlineEncryptedKeyResolver" />
-                <bean class="org.opensaml.saml.saml2.encryption.EncryptedElementTypeEncryptedKeyResolver" />
-                <bean class="org.opensaml.xmlsec.encryption.support.SimpleRetrievalMethodEncryptedKeyResolver" />
-                <bean class="org.opensaml.xmlsec.encryption.support.SimpleKeyInfoReferenceEncryptedKeyResolver" />
-            </util:list>
-        </constructor-arg>
-    </bean>
             
 </beans>
