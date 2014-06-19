@@ -102,7 +102,7 @@ public class InvalidateSessionOnIdentitySwitch extends AbstractAuthenticationAct
             return false;
         }
         
-        SubjectCanonicalizationContext c14n =
+        final SubjectCanonicalizationContext c14n =
                 profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, false);
         if (c14n == null || c14n.getPrincipalName() == null) {
             log.debug("{} Reusing identity from session, nothing to do", getLogPrefix());

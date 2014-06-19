@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.authn.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
@@ -35,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 
 /**
  * An action that populates a {@link SubjectCanonicalizationContext} with the
@@ -54,7 +54,7 @@ public class PopulateSubjectCanonicalizationContext extends AbstractSubjectCanon
 
     /** Constructor. */
     PopulateSubjectCanonicalizationContext() {
-        availableFlows = new ArrayList<>();
+        availableFlows = Lists.newArrayList();
     }
     
     /**

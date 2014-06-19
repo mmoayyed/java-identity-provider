@@ -24,7 +24,7 @@
 
     <bean id="PopulateSessionContext"
         class="net.shibboleth.idp.session.impl.PopulateSessionContext" scope="prototype"
-        p:enabled="${idp.session.enabled:true}"
+        p:activationCondition-ref="${idp.session.enabled:shibboleth.Conditions.True}"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:sessionResolver-ref="shibboleth.SessionManager" />
     
@@ -54,7 +54,7 @@
     
     <bean id="UpdateSessionWithAuthenticationResult"
         class="net.shibboleth.idp.session.impl.UpdateSessionWithAuthenticationResult" scope="prototype"
-        p:enabled="${idp.session.enabled:true}"
+        p:activationCondition-ref="${idp.session.enabled:shibboleth.Conditions.True}"
         p:sessionManager-ref="shibboleth.SessionManager" />
     
 </beans>

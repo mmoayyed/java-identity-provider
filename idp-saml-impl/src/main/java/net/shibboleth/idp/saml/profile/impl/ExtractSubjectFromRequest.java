@@ -101,8 +101,7 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
      * 
      * @param strategy lookup strategy
      */
-    public synchronized void setRequesterLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,String> strategy) {
+    public void setRequesterLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         requesterLookupStrategy = strategy;
@@ -113,8 +112,7 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
      * 
      * @param strategy lookup strategy
      */
-    public synchronized void setResponderLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,String> strategy) {
+    public void setResponderLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         responderLookupStrategy = strategy;
@@ -125,7 +123,7 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
      * 
      * @param predicate predicate to use
      */
-    public synchronized void setNameIDPolicyPredicate(@Nullable final Predicate<ProfileRequestContext> predicate) {
+    public void setNameIDPolicyPredicate(@Nullable final Predicate<ProfileRequestContext> predicate) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         nameIDPolicyPredicate = predicate;

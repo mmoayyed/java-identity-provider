@@ -24,7 +24,7 @@
         p:anonymousConfiguration-ref="shibboleth.AnonymousRelyingParty"
         p:defaultConfiguration-ref="shibboleth.DefaultRelyingParty"
         p:relyingPartyConfigurations-ref="shibboleth.RelyingPartyOverrides"
-        p:defaultSecurityConfiguration-ref="shibboleth.DefaultSecurityConfiguration" />
+        p:defaultSecurityConfiguration-ref="${idp.security.config:shibboleth.DefaultSecurityConfiguration}" />
 
     <!-- Parent bean for generic RelyingParty overrides that establishes defaults. -->
     <bean id="RelyingParty" abstract="true" class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"

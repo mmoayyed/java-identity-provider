@@ -38,6 +38,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Predicates;
+
 /**
  * An authentication action that establishes a record of the {@link net.shibboleth.idp.authn.AuthenticationResult}
  * in an {@link IdPSession} for the client, either by updating an existing session or creating a new one.
@@ -76,14 +78,6 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
     /** Existing SubjectContext. */
     @Nullable private SubjectContext subjectCtx;
     
-    /** Flag to turn action on or off. */
-    private boolean enabled;
-    
-    /** Constructor. */
-    public UpdateSessionWithAuthenticationResult() {
-        enabled = true;
-    }
-    
     /**
      * Set the {@link SessionManager} to use.
      * 
@@ -95,23 +89,12 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
         sessionManager = Constraint.isNotNull(manager, "SessionManager cannot be null");
     }
     
-    /**
-     * Set whether the action should run or not.
-     * 
-     * @param flag flag to set
-     */
-    public void setEnabled(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        enabled = flag;
-    }
-    
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         
-        if (enabled && sessionManager == null) {
+        if (!getActivationCondition().equals(Predicates.alwaysFalse()) && sessionManager == null) {
             throw new ComponentInitializationException("SessionManager cannot be null");
         }
     }
@@ -121,12 +104,16 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
-        if (enabled && authenticationContext.getAuthenticationResult() != null) {
+        if (authenticationContext.getAuthenticationResult() != null) {
             subjectCtx = profileRequestContext.getSubcontext(SubjectContext.class, false);
             sessionCtx = profileRequestContext.getSubcontext(SessionContext.class, true);
             
             // We can only do work if a session exists or a non-empty SubjectContext exists.
-            return sessionCtx.getIdPSession() != null || (subjectCtx != null && subjectCtx.getPrincipalName() != null);
+            if (sessionCtx.getIdPSession() != null || (subjectCtx != null && subjectCtx.getPrincipalName() != null)) {
+                return super.doPreExecute(profileRequestContext, authenticationContext);
+            } else {
+                return false;
+            }
         }
         
         return false;

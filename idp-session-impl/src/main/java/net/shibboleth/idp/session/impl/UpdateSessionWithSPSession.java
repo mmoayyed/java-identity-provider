@@ -40,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicates;
 
 /**
  * An action that establishes a record of an {@link SPSession} in an existing {@link IdPSession} for the client.
@@ -73,16 +74,8 @@ public class UpdateSessionWithSPSession extends AbstractProfileAction {
     /** SessionManager. */
     @NonnullAfterInit private SessionManager sessionManager;
     
-    /** Flag to turn action on or off. */
-    private boolean enabled;
-    
     /** Existing or newly created SessionContext. */
     @Nullable private SessionContext sessionCtx;
-    
-    /** Constructor. */
-    public UpdateSessionWithSPSession() {
-        enabled = true;
-    }
 
     /**
      * Set the default session lifetime to apply if using the default creation
@@ -119,23 +112,12 @@ public class UpdateSessionWithSPSession extends AbstractProfileAction {
         sessionManager = Constraint.isNotNull(manager, "SessionManager cannot be null");
     }
     
-    /**
-     * Set whether the action should run or not.
-     * 
-     * @param flag flag to set
-     */
-    public void setEnabled(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        enabled = flag;
-    }
-    
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         
-        if (enabled) {
+        if (!getActivationCondition().equals(Predicates.alwaysFalse())) {
             if (sessionManager == null) {
                 throw new ComponentInitializationException("SessionManager cannot be null");
             }
@@ -150,12 +132,11 @@ public class UpdateSessionWithSPSession extends AbstractProfileAction {
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        if (enabled) {
-            sessionCtx = profileRequestContext.getSubcontext(SessionContext.class, false);
+        if (super.doPreExecute(profileRequestContext)) {
+            sessionCtx = profileRequestContext.getSubcontext(SessionContext.class);
             
             // We can only do work if a session exists.
-            return sessionCtx != null && sessionCtx.getIdPSession() != null
-                    && super.doPreExecute(profileRequestContext);
+            return sessionCtx != null && sessionCtx.getIdPSession() != null;
         }
         
         return false;
@@ -179,7 +160,7 @@ public class UpdateSessionWithSPSession extends AbstractProfileAction {
             if (old != null) {
                 log.info("{} Older SPSession for relying party {} was replaced", getLogPrefix(), old.getId());
             }
-        } catch (SessionException e) {
+        } catch (final SessionException e) {
             log.error(getLogPrefix() + " Error updating session " + idpSession.getId(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
         }

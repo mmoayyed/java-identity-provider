@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.authn.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
@@ -37,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 
 /**
  * An action that populates an {@link AuthenticationContext} with the {@link AuthenticationFlowDescriptor}
@@ -59,7 +59,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
 
     /** Constructor. */
     PopulateAuthenticationContext() {
-        availableFlows = new ArrayList<>();
+        availableFlows = Lists.newArrayList();
     }
     
     /**

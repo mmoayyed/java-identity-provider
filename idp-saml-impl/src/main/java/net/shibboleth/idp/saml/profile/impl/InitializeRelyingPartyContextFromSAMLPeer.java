@@ -97,7 +97,7 @@ public class InitializeRelyingPartyContextFromSAMLPeer extends AbstractProfileAc
      * @param strategy strategy used to look up the {@link SAMLPeerEntityContext}
      */
     public void setPeerEntityContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, SAMLPeerEntityContext> strategy) {
+            @Nonnull final Function<ProfileRequestContext,SAMLPeerEntityContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         peerEntityContextLookupStrategy =

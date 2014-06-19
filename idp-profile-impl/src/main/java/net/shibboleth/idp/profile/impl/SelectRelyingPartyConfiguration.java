@@ -69,7 +69,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
     
     /** Constructor. */
     public SelectRelyingPartyConfiguration() {
-        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
+        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
     }
 
     /**

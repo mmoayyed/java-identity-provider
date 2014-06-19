@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.impl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.SpringRequestContext;
@@ -27,6 +28,7 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -50,24 +52,28 @@ public class RecordResponseComplete extends AbstractProfileAction {
     /** Class logger. */
     @Nonnull private Logger log = LoggerFactory.getLogger(RecordResponseComplete.class);
 
+    /** ExternalContext to operate on. */
+    @Nullable private ExternalContext externalContext;
+    
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        SpringRequestContext springRequestContext =
-                profileRequestContext.getSubcontext(SpringRequestContext.class, false);
+        final SpringRequestContext springRequestContext =
+                profileRequestContext.getSubcontext(SpringRequestContext.class);
         if (springRequestContext == null) {
             log.debug("{} Spring request context not found in profile request context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
 
-        RequestContext requestContext = springRequestContext.getRequestContext();
+        final RequestContext requestContext = springRequestContext.getRequestContext();
         if (requestContext == null) {
             log.debug("{} Web Flow request context not found in Spring request context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
-
-        if (requestContext.getExternalContext() == null) {
+        
+        externalContext = requestContext.getExternalContext();
+        if (externalContext == null) {
             log.debug("{} External context not found in Web Flow request context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
@@ -77,12 +83,12 @@ public class RecordResponseComplete extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        SpringRequestContext springRequestContext =
-                profileRequestContext.getSubcontext(SpringRequestContext.class, false);
-        if (!springRequestContext.getRequestContext().getExternalContext().isResponseComplete()) {
+    @Override
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+        if (!externalContext.isResponseComplete()) {
             log.debug("{} Record response complete", getLogPrefix());
-            springRequestContext.getRequestContext().getExternalContext().recordResponseComplete();
+            externalContext.recordResponseComplete();
         }
     }
+    
 }

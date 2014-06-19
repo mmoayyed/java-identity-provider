@@ -100,10 +100,10 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
     /**
      * Strategy used to locate the {@link AttributeContext} associated with a given {@link ProfileRequestContext}.
      */
-    @Nonnull private Function<ProfileRequestContext, AttributeContext> attributeContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,AttributeContext> attributeContextLookupStrategy;
     
     /** Strategy used to locate the {@link Response} to operate on. */
-    @Nonnull private Function<ProfileRequestContext, Response> responseLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,Response> responseLookupStrategy;
 
     /** AttributeContext to use. */
     @Nullable private AttributeContext attributeCtx;
@@ -137,7 +137,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
      * @param flag whether the generated attribute statement should be placed in its own assertion or added to
      *            one if it exists
      */
-    public synchronized void setStatementInOwnAssertion(boolean flag) {
+    public void setStatementInOwnAssertion(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         statementInOwnAssertion = flag;
@@ -149,7 +149,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
      * 
      * @param flag flag to set
      */
-    public synchronized void setIgnoringUnencodableAttributes(boolean flag) {
+    public void setIgnoringUnencodableAttributes(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         ignoringUnencodableAttributes = flag;
@@ -162,7 +162,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
      * @param strategy strategy used to locate the {@link AttributeContext} associated with a given
      *            {@link ProfileRequestContext}
      */
-    public synchronized void setAttributeContextLookupStrategy(
+    public void setAttributeContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, AttributeContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
@@ -175,8 +175,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
      * 
      * @param strategy strategy used to locate the {@link Response} to operate on
      */
-    public synchronized void setResponseLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, Response> strategy) {
+    public void setResponseLookupStrategy(@Nonnull final Function<ProfileRequestContext,Response> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         responseLookupStrategy = Constraint.isNotNull(strategy, "Response lookup strategy cannot be null");
@@ -187,8 +186,8 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
      * 
      * @param strategy lookup strategy
      */
-    public synchronized void setIdentifierGeneratorLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, IdentifierGenerationStrategy> strategy) {
+    public void setIdentifierGeneratorLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,IdentifierGenerationStrategy> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         idGeneratorLookupStrategy =
@@ -200,7 +199,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
      * 
      * @param strategy lookup strategy
      */
-    public synchronized void setIssuerLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
+    public void setIssuerLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         issuerLookupStrategy = Constraint.isNotNull(strategy, "Issuer lookup strategy cannot be null");

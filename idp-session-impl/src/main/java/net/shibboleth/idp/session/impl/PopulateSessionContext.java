@@ -37,6 +37,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Predicates;
+
 /**
  * A profile action that populates a {@link SessionContext} with an active, valid
  * {@link IdPSession} as a direct child of the {@link ProfileRequestContext}.
@@ -52,14 +54,6 @@ public class PopulateSessionContext extends AbstractProfileAction {
     
     /** Session resolver. */
     @NonnullAfterInit private SessionResolver sessionResolver;
-
-    /** Flag to turn action on or off. */
-    private boolean enabled;
-    
-    /** Constructor. */
-    public PopulateSessionContext() {
-        enabled = true;
-    }
     
     /**
      * Set the {@link SessionResolver} to use.
@@ -72,29 +66,14 @@ public class PopulateSessionContext extends AbstractProfileAction {
         sessionResolver = Constraint.isNotNull(resolver, "SessionResolver cannot be null");
     }
     
-    /**
-     * Set whether the action should run or not.
-     * 
-     * @param flag flag to set
-     */
-    public void setEnabled(final boolean flag) {
-        enabled = flag;
-    }
-    
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         
-        if (enabled && sessionResolver == null) {
+        if (!getActivationCondition().equals(Predicates.alwaysFalse()) && sessionResolver == null) {
             throw new ComponentInitializationException("SessionResolver cannot be null");
         }
-    }
-    
-    /** {@inheritDoc} */
-    @Override
-    protected boolean doPreExecute(ProfileRequestContext profileRequestContext) {
-        return enabled;
     }
 
     /** {@inheritDoc} */
@@ -123,9 +102,9 @@ public class PopulateSessionContext extends AbstractProfileAction {
             
             profileRequestContext.getSubcontext(SessionContext.class, true).setIdPSession(session);
             
-        } catch (ResolverException e) {
+        } catch (final ResolverException e) {
             log.error(getLogPrefix() + " Error resolving a session for the active client", e);
-        } catch (SessionException e) {
+        } catch (final SessionException e) {
             log.error(getLogPrefix() + " Error during timeout or address checking for session " + session.getId(), e);
         }
     }

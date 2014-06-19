@@ -66,7 +66,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
     @Nonnull private final Logger log = LoggerFactory.getLogger(ProcessRequestedAuthnContext.class);
     
     /** Lookup strategy function for obtaining {@link AuthnRequest}. */
-    @Nonnull private Function<ProfileRequestContext, AuthnRequest> authnRequestLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,AuthnRequest> authnRequestLookupStrategy;
 
     /** The request message to read from. */
     @Nullable private AuthnRequest authnRequest;
@@ -82,8 +82,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
      * 
      * @param strategy lookup strategy
      */
-    public synchronized void setAuthnRequestLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, AuthnRequest> strategy) {
+    public void setAuthnRequestLookupStrategy(@Nonnull final Function<ProfileRequestContext,AuthnRequest> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         authnRequestLookupStrategy = Constraint.isNotNull(strategy, "AuthnRequest lookup strategy cannot be null");

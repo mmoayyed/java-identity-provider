@@ -28,6 +28,7 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.profile.action.AbstractConditionalProfileAction;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.action.ProfileAction;
 import org.opensaml.profile.context.EventContext;
@@ -65,7 +66,7 @@ import com.google.common.base.Function;
  */
 @ThreadSafe
 public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageType>
-        extends org.opensaml.profile.action.AbstractProfileAction<InboundMessageType, OutboundMessageType>
+        extends AbstractConditionalProfileAction<InboundMessageType, OutboundMessageType>
         implements Action, MessageSource, MessageSourceAware {
 
     /** Class logger. */
@@ -88,22 +89,21 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
     }
 
     /**
-     * Gets the strategy used to lookup the {@link ProfileRequestContext} from a given WebFlow {@link RequestContext}.
+     * Get the strategy used to lookup the {@link ProfileRequestContext} from a given WebFlow {@link RequestContext}.
      * 
-     * @return strategy used to lookup the {@link ProfileRequestContext} from a given WebFlow {@link RequestContext}
+     * @return lookup strategy
      */
     @Nonnull public Function<RequestContext, ProfileRequestContext> getProfileContextLookupStrategy() {
         return profileContextLookupStrategy;
     }
 
     /**
-     * Sets the strategy used to lookup the {@link ProfileRequestContext} from a given WebFlow {@link RequestContext}.
+     * Set the strategy used to lookup the {@link ProfileRequestContext} from a given WebFlow {@link RequestContext}.
      * 
-     * @param strategy strategy used to lookup the {@link ProfileRequestContext} from a given WebFlow
-     *            {@link RequestContext}
+     * @param strategy lookup strategy
      */
-    public synchronized void setProfileContextLookupStrategy(
-            @Nonnull final Function<RequestContext, ProfileRequestContext> strategy) {
+    public void setProfileContextLookupStrategy(
+            @Nonnull final Function<RequestContext,ProfileRequestContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         profileContextLookupStrategy =

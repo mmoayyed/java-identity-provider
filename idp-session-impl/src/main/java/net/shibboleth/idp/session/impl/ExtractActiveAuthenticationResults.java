@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.session.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -33,6 +32,8 @@ import net.shibboleth.idp.session.context.SessionContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 
 /**
@@ -73,7 +74,7 @@ public class ExtractActiveAuthenticationResults extends AbstractAuthenticationAc
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
-        List<AuthenticationResult> actives = new ArrayList<>();
+        final List<AuthenticationResult> actives = Lists.newArrayList();
         for (AuthenticationResult result : session.getAuthenticationResults()) {
             AuthenticationFlowDescriptor descriptor =
                     authenticationContext.getPotentialFlows().get(result.getAuthenticationFlowId());

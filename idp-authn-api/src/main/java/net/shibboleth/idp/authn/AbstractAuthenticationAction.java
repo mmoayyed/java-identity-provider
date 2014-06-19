@@ -78,14 +78,14 @@ public abstract class AbstractAuthenticationAction<InboundMessageType, OutboundM
     protected final boolean doPreExecute(
             @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext) {
 
-        authnContext = authnCtxLookupStrategy.apply(profileRequestContext);
-        if (authnContext == null) {
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
-            return false;
-        }
-
-        if (doPreExecute(profileRequestContext, authnContext)) {
-            return super.doPreExecute(profileRequestContext);
+        if (super.doPreExecute(profileRequestContext)) {
+            authnContext = authnCtxLookupStrategy.apply(profileRequestContext);
+            if (authnContext == null) {
+                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
+                return false;
+            }
+    
+            return doPreExecute(profileRequestContext, authnContext);
         } else {
             return false;
         }
