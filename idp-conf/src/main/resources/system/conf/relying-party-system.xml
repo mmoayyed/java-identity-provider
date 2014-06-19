@@ -90,23 +90,7 @@
     <bean id="shibboleth.DefaultSecurityConfiguration" class="net.shibboleth.idp.profile.config.SecurityConfiguration">
     
         <property name="signatureSigningConfiguration">
-            <bean class="org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration"
-                    p:signingCredentials-ref="shibboleth.DefaultSigningCredential">
-                <property name="signatureAlgorithms">
-                    <util:list>
-                        <util:constant
-                            static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256" />
-                        <util:constant
-                            static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_SIGNATURE_ECDSA_SHA256" />
-                    </util:list>
-                </property>
-                <property name="signatureReferenceDigestMethods">
-                    <util:list>
-                        <util:constant
-                            static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_DIGEST_SHA256" />
-                    </util:list>
-                </property>
-            </bean>
+            <ref bean="${idp.signing.config:shibboleth.SigningConfiguration.SHA256}" />
         </property>
         
         <property name="encryptionConfiguration">
@@ -132,6 +116,42 @@
                 p:encryptedKeyResolver-ref="defaultEncryptedKeyResolver" />
         </property>
 
+    </bean>
+
+    <bean id="shibboleth.SigningConfiguration.SHA256" class="org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration"
+            p:signingCredentials-ref="shibboleth.DefaultSigningCredential">
+        <property name="signatureAlgorithms">
+            <util:list>
+                <util:constant
+                    static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256" />
+                <util:constant
+                    static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_SIGNATURE_ECDSA_SHA256" />
+            </util:list>
+        </property>
+        <property name="signatureReferenceDigestMethods">
+            <util:list>
+                <util:constant
+                    static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_DIGEST_SHA256" />
+            </util:list>
+        </property>
+    </bean>
+
+    <bean id="shibboleth.SigningConfiguration.SHA1" class="org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration"
+            p:signingCredentials-ref="shibboleth.DefaultSigningCredential">
+        <property name="signatureAlgorithms">
+            <util:list>
+                <util:constant
+                    static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA1" />
+                <util:constant
+                    static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_SIGNATURE_ECDSA_SHA1" />
+            </util:list>
+        </property>
+        <property name="signatureReferenceDigestMethods">
+            <util:list>
+                <util:constant
+                    static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_DIGEST_SHA1" />
+            </util:list>
+        </property>
     </bean>
 
     <!-- Defines decryption keys, along with support for optimizing lookup based on KeyInfo hints. -->
