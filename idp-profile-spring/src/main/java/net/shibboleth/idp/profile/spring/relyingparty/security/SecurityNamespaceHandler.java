@@ -26,6 +26,7 @@ import net.shibboleth.idp.profile.spring.relyingparty.security.credential.Resour
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509FilesystemCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509InlineCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.StaticExplicitKeySignatureParser;
+import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.UnsupportedTrustEngineParser;
 
 /** Namespace handler <em>{@value NAMESPACE}</em>. */
 public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
@@ -54,6 +55,15 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
 
         registerBeanDefinitionParser(StaticExplicitKeySignatureParser.SCHEMA_TYPE,
                 new StaticExplicitKeySignatureParser());
+
+        registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_EXPLICIT_KEY,
+                new UnsupportedTrustEngineParser());
+        registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_EXPLICIT_KEY_SIGNATURE,
+                new UnsupportedTrustEngineParser());
+        registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_PKIX_CREDENTIAL,
+                new UnsupportedTrustEngineParser());
+        registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_PKIX_SIGNATURE,
+                new UnsupportedTrustEngineParser());
 
     }
 }

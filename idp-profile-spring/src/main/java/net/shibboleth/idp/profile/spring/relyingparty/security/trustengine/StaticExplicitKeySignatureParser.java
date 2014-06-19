@@ -39,7 +39,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * parser for trust engines of type StaticExplicitKeySignature.
+ * Parser for trust engines of type StaticExplicitKeySignature.
  */
 public class StaticExplicitKeySignatureParser extends AbstractTrustEngineParser {
 
