@@ -60,7 +60,6 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
         Assert.assertNull(artifact.getArtifactType());
-        Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/SSO");
         Assert.assertEquals(artifact.getArtifactResolutionServiceIndex().intValue(), 1111);
     }
 
@@ -92,7 +91,6 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertEquals(profile.getOutboundSubflowId(), "sso2obfid");
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
-        Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/SSO");
         Assert.assertEquals(artifact.getArtifactType(), BigInteger.valueOf(7654).toByteArray());
         Assert.assertEquals(artifact.getArtifactResolutionServiceIndex().intValue(), 1111);
 

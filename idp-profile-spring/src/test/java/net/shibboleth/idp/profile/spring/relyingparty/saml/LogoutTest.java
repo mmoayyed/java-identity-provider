@@ -50,7 +50,6 @@ public class LogoutTest extends BaseSAMLProfileTest {
         
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
         Assert.assertNull(artifact.getArtifactType());
-        Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/Logout");
         Assert.assertEquals(artifact.getArtifactResolutionServiceIndex().intValue(), 3214);
         Assert.assertNull(profile.getSecurityConfiguration());
     }
@@ -83,7 +82,6 @@ public class LogoutTest extends BaseSAMLProfileTest {
         
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
-        Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/Logout");
         Assert.assertEquals(artifact.getArtifactType(), new byte[] { 0x0, 0x7, });
         Assert.assertEquals(artifact.getArtifactResolutionServiceIndex().intValue(), 3214);
 

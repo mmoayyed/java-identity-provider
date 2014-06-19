@@ -46,7 +46,6 @@ public class ShibbolethSSOProfileTest extends BaseSAMLProfileTest {
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
         Assert.assertNull(artifact.getArtifactType());
-        Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/SSO/SAML1");
         Assert.assertEquals(artifact.getArtifactResolutionServiceIndex().intValue(), 1111);
     }
 
@@ -66,7 +65,6 @@ public class ShibbolethSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertEquals(profile.getOutboundSubflowId(), "shibssoobfid");
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
-        Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/SSO/SAML1");
         Assert.assertEquals(artifact.getArtifactType(), BigInteger.valueOf(32767).toByteArray());
         Assert.assertEquals(artifact.getArtifactResolutionServiceIndex().intValue(), 1111);
 

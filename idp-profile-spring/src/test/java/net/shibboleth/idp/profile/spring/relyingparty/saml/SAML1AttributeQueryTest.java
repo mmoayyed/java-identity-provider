@@ -46,7 +46,6 @@ public class SAML1AttributeQueryTest extends BaseSAMLProfileTest {
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
         Assert.assertNull(artifact.getArtifactType());
-        Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/AttributeQuery/SAML1");
         Assert.assertEquals(artifact.getArtifactResolutionServiceIndex().intValue(), 432100);
     }
 
@@ -71,7 +70,6 @@ public class SAML1AttributeQueryTest extends BaseSAMLProfileTest {
         Assert.assertNull(profile.getSecurityConfiguration());
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
-        Assert.assertEquals(artifact.getArtifactResolutionServiceURL(), "https://idp.example.org/AttributeQuery/SAML1");
         Assert.assertEquals(artifact.getArtifactType(), BigInteger.valueOf(12341).toByteArray());
         Assert.assertEquals(artifact.getArtifactResolutionServiceIndex().intValue(), 432100);
 

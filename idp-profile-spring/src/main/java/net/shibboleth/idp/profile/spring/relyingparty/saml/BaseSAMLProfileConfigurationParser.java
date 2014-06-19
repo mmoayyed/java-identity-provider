@@ -27,7 +27,6 @@ import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.profile.config.logic.LegacyEncryptionRequirementPredicate;
 import net.shibboleth.idp.saml.profile.config.logic.LegacySigningRequirementPredicate;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -50,9 +49,6 @@ import com.google.common.base.Predicate;
  * and for elements which inherit from <code>saml:SAMLProfileConfigutationType</code>.
  */
 public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleBeanDefinitionParser {
-
-    /** Bean name of legacy EKR to load. */
-    @Nonnull @NotEmpty private static final String DEFAULT_EKR = "shibboleth.LegacyRelyingParty.EncryptedKeyResolver";
     
     /** Class logger. */
     @Nonnull private Logger log = LoggerFactory.getLogger(BaseSAMLProfileConfigurationParser.class);
@@ -100,9 +96,6 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
         if (element.hasAttributeNS(null, "artifactResolutionServiceURL")) {
             definition.addPropertyValue("artifactResolutionServiceURL",
                     element.getAttributeNS(null, "artifactResolutionServiceURL"));
-        } else {
-            definition.addPropertyReference("artifactResolutionServiceURL", getProfileBeanNamePrefix()
-                    + "ArtifactServiceURL");
         }
 
         if (element.hasAttributeNS(null, "artifactResolutionServiceIndex")) {
