@@ -161,8 +161,6 @@
         class="org.opensaml.saml.security.impl.SAMLMetadataEncryptionParametersResolver"
         c:resolver-ref="shibboleth.MetadataCredentialResolver" />
 
-    <!-- TODO: all this is probably wrong, but need it to get something working -->
-    
     <bean id="shibboleth.RoleDescriptorResolver" class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
         c:mdResolver-ref="shibboleth.MetadataResolver" />
     
@@ -174,13 +172,23 @@
     <bean id="shibboleth.KeyInfoCredentialResolver" class="org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap"
         factory-method="buildBasicInlineKeyInfoCredentialResolver" />
 
-    <bean id="shibboleth.SignatureTrustEngine" class="org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine">
-        <constructor-arg ref="shibboleth.MetadataCredentialResolver" />
-        <constructor-arg ref="shibboleth.KeyInfoCredentialResolver" />
+    <bean id="shibboleth.SignatureTrustEngine" class="org.opensaml.xmlsec.signature.support.impl.ChainingSignatureTrustEngine">
+        <constructor-arg>
+            <util:list>
+                <bean class="org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine"
+                    c:resolver-ref="shibboleth.MetadataCredentialResolver"
+                    c:keyInfoResolver-ref="shibboleth.KeyInfoCredentialResolver" />
+            </util:list>
+        </constructor-arg>
     </bean>
 
-    <bean id="shibboleth.X509TrustEngine" class="org.opensaml.security.trust.impl.ExplicitX509CertificateTrustEngine">
-        <constructor-arg ref="shibboleth.MetadataCredentialResolver" />
+    <bean id="shibboleth.X509TrustEngine" class="org.opensaml.security.trust.impl.ChainingTrustEngine">
+        <constructor-arg>
+            <util:list>
+                <bean class="org.opensaml.security.trust.impl.ExplicitX509CertificateTrustEngine"
+                    c:resolver-ref="shibboleth.MetadataCredentialResolver" />
+            </util:list>
+        </constructor-arg>
     </bean>
-
+    
  </beans>
