@@ -11,7 +11,7 @@
 
 	<context:property-placeholder location="file:///${idp.home}/conf/idp.properties" />
 
-    <bean id="shibboleth.DefaultErrorView" class="java.lang.String" c:_0="error" />
+    <bean id="shibboleth.DefaultErrorView" class="java.lang.String" c:_0="${idp.errors.defaultView:error}" />
 
     <!-- If desired, map events to alternate error view templates. -->
     <!--

@@ -43,7 +43,7 @@
             </props>
         </property>
         -->
-        <property name="defaultErrorView" value="error"/>
+        <property name="defaultErrorView" value="${idp.errors.defaultView:error}"/>
     </bean>
     
     <!-- ViewResolvers -->
