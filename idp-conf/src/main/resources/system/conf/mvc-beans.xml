@@ -35,14 +35,15 @@
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
     
     <bean class="net.shibboleth.ext.spring.error.ExtendedMappingExceptionResolver">
+        <!-- We can map specific exceptions to views here if needed. -->
+        <!--
         <property name="exceptionMappings">
             <props>
                 <prop key="FlowExecutionRestorationFailureException">error</prop>
             </props>
         </property>
-        <!--
-        <property name="defaultErrorView" value="error"/>
         -->
+        <property name="defaultErrorView" value="error"/>
     </bean>
     
     <!-- ViewResolvers -->

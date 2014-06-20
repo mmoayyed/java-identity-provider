@@ -50,6 +50,9 @@
     
     <logger name="PROTOCOL_MESSAGE" level="DEBUG" />
 
+    <!-- Exception logging to suppress. -->
+    <logger name="org.springframework.webflow.execution.repository.FlowExecutionRestorationFailureException" level="OFF" />
+
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <charset>UTF-8</charset>
