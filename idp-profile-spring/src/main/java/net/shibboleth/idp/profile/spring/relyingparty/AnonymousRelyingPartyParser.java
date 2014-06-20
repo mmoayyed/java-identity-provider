@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.logic.AnonymousProfilePredicate;
+import net.shibboleth.idp.profile.logic.impl.AnonymousProfilePredicate;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;

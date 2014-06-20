@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
-import net.shibboleth.idp.profile.logic.AnonymousProfilePredicate;
+import net.shibboleth.idp.profile.logic.impl.AnonymousProfilePredicate;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.idp.service.AbstractServiceableComponent;

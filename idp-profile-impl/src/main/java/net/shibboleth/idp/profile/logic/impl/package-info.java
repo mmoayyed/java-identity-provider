@@ -19,4 +19,4 @@
  * Functions and predicates supporting other profile components.
  */
 
-package net.shibboleth.idp.profile.logic;
+package net.shibboleth.idp.profile.logic.impl;

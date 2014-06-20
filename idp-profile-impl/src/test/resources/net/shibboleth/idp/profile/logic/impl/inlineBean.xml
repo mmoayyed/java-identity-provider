@@ -9,7 +9,7 @@
 
 	default-init-method="initialize" default-destroy-method="destroy">
 
-	<bean id="testBean" class="net.shibboleth.idp.profile.logic.ScriptedPredicate"
+	<bean id="testBean" class="net.shibboleth.idp.profile.logic.impl.ScriptedPredicate"
 		factory-method="inlineScript">
 		<constructor-arg>
 			<value>

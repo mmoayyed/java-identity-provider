@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.logic;
+package net.shibboleth.idp.profile.logic.impl;
 
 import javax.annotation.Nullable;
 

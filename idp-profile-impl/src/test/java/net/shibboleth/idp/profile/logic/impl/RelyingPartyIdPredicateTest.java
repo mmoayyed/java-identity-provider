@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.logic;
+package net.shibboleth.idp.profile.logic.impl;
 
 import java.util.Collections;
 
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.profile.context.ProfileRequestContext;
