@@ -169,6 +169,9 @@
          p:keyInfoCredentialResolver-ref="shibboleth.KeyInfoCredentialResolver">
     </bean>
     
+    <bean id="shibboleth.MetadataPKIXValidationInformationResolver" class="net.shibboleth.idp.saml.security.impl.MetadataPKIXValidationInformationResolver"
+         c:resolver-ref="shibboleth.RoleDescriptorResolver" />
+    
     <bean id="shibboleth.KeyInfoCredentialResolver" class="org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap"
         factory-method="buildBasicInlineKeyInfoCredentialResolver" />
 
@@ -177,6 +180,9 @@
             <util:list>
                 <bean class="org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine"
                     c:resolver-ref="shibboleth.MetadataCredentialResolver"
+                    c:keyInfoResolver-ref="shibboleth.KeyInfoCredentialResolver" />
+                <bean class="org.opensaml.xmlsec.signature.support.impl.PKIXSignatureTrustEngine" 
+                    c:resolver-ref="shibboleth.MetadataPKIXValidationInformationResolver"
                     c:keyInfoResolver-ref="shibboleth.KeyInfoCredentialResolver" />
             </util:list>
         </constructor-arg>
@@ -187,6 +193,8 @@
             <util:list>
                 <bean class="org.opensaml.security.trust.impl.ExplicitX509CertificateTrustEngine"
                     c:resolver-ref="shibboleth.MetadataCredentialResolver" />
+                <bean class="org.opensaml.security.x509.impl.PKIXX509CredentialTrustEngine"
+                    c:resolver-ref="shibboleth.MetadataPKIXValidationInformationResolver" />
             </util:list>
         </constructor-arg>
     </bean>
