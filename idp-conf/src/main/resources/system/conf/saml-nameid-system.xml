@@ -28,16 +28,16 @@
 
     <bean id="shibboleth.SAML2TransientGenerator"
         class="net.shibboleth.idp.saml.nameid.impl.TransientSAML2NameIDGenerator"
-        p:transientIdGenerator-ref="${idp.transientId.generator}" />
+        p:transientIdGenerator-ref="${idp.transientId.generator:shibboleth.CryptoTransientIdGenerator}" />
 
     <bean id="shibboleth.SAML2PersistentGenerator"
         class="net.shibboleth.idp.saml.nameid.impl.PersistentSAML2NameIDGenerator"
         p:attributeSourceIds="#{ {'${idp.persistentId.sourceAttribute}'} }"
-        p:persistentIdGenerator-ref="${idp.persistentId.generator}" />
+        p:persistentIdGenerator-ref="${idp.persistentId.generator:shibboleth.ComputedPersistentIdGenerator}" />
 
     <bean id="shibboleth.SAML1TransientGenerator"
         class="net.shibboleth.idp.saml.nameid.impl.TransientSAML1NameIdentifierGenerator"
-        p:transientIdGenerator-ref="${idp.transientId.generator}" />
+        p:transientIdGenerator-ref="${idp.transientId.generator:shibboleth.CryptoTransientIdGenerator}" />
 
     <!--
     These are strategy implementations for generating transient and persistent identifiers.
@@ -60,11 +60,11 @@
 
     <bean id="shibboleth.ComputedPersistentIdGenerator"
         class="net.shibboleth.idp.saml.nameid.impl.ComputedPersistentIdGenerationStrategy"
-        p:salt="${idp.persistentId.salt}" p:algorithm="${idp.persistentId.algorithm}" />
+        p:salt="${idp.persistentId.salt}" p:algorithm="${idp.persistentId.algorithm:SHA}" />
 
     <bean id="shibboleth.StoredPersistentIdGenerator" lazy-init="true"
         class="net.shibboleth.idp.saml.nameid.impl.StoredPersistentIdGenerationStrategy"
-        p:computedIdStrategy-ref="shibboleth.ComputedPersistentIdGenerator"
+        p:computedIdStrategy="#{getObject('${idp.persistentId.computed:shibboleth.ComputedPersistentIdGenerator}')}"
         p:IDStore="#{getObject('${idp.persistentId.store:null}')}" />
     
     <!-- These two beans handle legacy support for NameID generation in the Attribute Resolver. -->
