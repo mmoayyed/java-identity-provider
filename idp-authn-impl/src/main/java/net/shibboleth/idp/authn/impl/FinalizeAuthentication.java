@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.security.Principal;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -24,7 +25,9 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.IdPEventIds;
@@ -41,6 +44,12 @@ import org.slf4j.LoggerFactory;
  * of an active result) and transfers information from other contexts into a {@link SubjectContext}
  * child of the {@link ProfileRequestContext}.
  * 
+ * <p>The action also cross-checks {@link RequestedPrincipalContext#getMatchingPrincipal()}, if set,
+ * against the {@link AuthenticationResult} to ensure that the result produced actually satisfies the
+ * request. This is redundant when reusing active results, but is necessary to prevent a flow from running
+ * that can return different results and having it produce a result that doesn't actually satisfy the
+ * request. Such a flow would be buggy, but this guards against a mistake from leaving the subsystem.</p>
+ * 
  * <p>The context is populated based on the presence of a canonical principal name in either
  * a {@link SubjectCanonicalizationContext} or {@link SessionContext}, and also includes
  * the completed {@link AuthenticationResult} and any other active results found in the
@@ -55,6 +64,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link IdPEventIds#INVALID_SUBJECT_CTX}
+ * @event {@link AuthnEventIds#REQUEST_UNSUPPORTED}
  * 
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class) != null</pre>
  * 
@@ -88,6 +98,22 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
             final SessionContext sessionCtx = profileRequestContext.getSubcontext(SessionContext.class);
             if (sessionCtx != null && sessionCtx.getIdPSession() != null) {
                 canonicalPrincipalName = sessionCtx.getIdPSession().getPrincipalName();
+            }
+        }
+        
+        // Check for a requested Principal and make sure it's in the result.
+        final RequestedPrincipalContext requestedPrincipalCtx =
+                authenticationContext.getSubcontext(RequestedPrincipalContext.class);
+        if (requestedPrincipalCtx != null) {
+            final Principal match = requestedPrincipalCtx.getMatchingPrincipal();
+            if (match != null) {
+                final AuthenticationResult latest = authenticationContext.getAuthenticationResult();
+                if (latest == null || !latest.getSupportedPrincipals(match.getClass()).contains(match)) {
+                    log.warn("{} Authentication result for flow {} did not satisfy the requested Principal {}",
+                            getLogPrefix(), latest != null ? latest.getAuthenticationFlowId() : "(none)", match);
+                    ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
+                    return false;
+                }
             }
         }
         

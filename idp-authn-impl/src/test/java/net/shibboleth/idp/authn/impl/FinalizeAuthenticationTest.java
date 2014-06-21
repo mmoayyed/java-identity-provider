@@ -22,9 +22,12 @@ import java.util.Arrays;
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.IdPEventIds;
 
@@ -60,6 +63,24 @@ public class FinalizeAuthenticationTest extends PopulateAuthenticationContextTes
         
         ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_SUBJECT_CTX);
     }
+
+    @Test public void testRequestUnsupported() {
+        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("foo");
+        
+        final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
+        active.getSubject().getPrincipals().add(new TestPrincipal("bar2"));
+        
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        authCtx.setAuthenticationResult(active);
+        
+        final RequestedPrincipalContext rpCtx = new RequestedPrincipalContext();
+        rpCtx.setMatchingPrincipal(new TestPrincipal("bar1"));
+        authCtx.addSubcontext(rpCtx);
+        
+        final Event event = action.execute(src);
+        
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
+    }
     
     @Test public void testNothingActive() {
         prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("foo");
@@ -73,8 +94,8 @@ public class FinalizeAuthenticationTest extends PopulateAuthenticationContextTes
     }
 
     @Test public void testOneActive() {
-        AuthenticationResult active = new AuthenticationResult("test2", new Subject());
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         authCtx.setActiveResults(Arrays.asList(active));
         authCtx.setAuthenticationResult(active);
         prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("foo");
@@ -89,9 +110,9 @@ public class FinalizeAuthenticationTest extends PopulateAuthenticationContextTes
     }
 
     @Test public void testMultipleActive() {
-        AuthenticationResult active1 = new AuthenticationResult("test1", new Subject());
-        AuthenticationResult active2 = new AuthenticationResult("test2", new Subject());
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        final AuthenticationResult active1 = new AuthenticationResult("test1", new Subject());
+        final AuthenticationResult active2 = new AuthenticationResult("test2", new Subject());
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         authCtx.setActiveResults(Arrays.asList(active1));
         authCtx.setAuthenticationResult(active2);
         prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("foo");
@@ -99,7 +120,7 @@ public class FinalizeAuthenticationTest extends PopulateAuthenticationContextTes
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
-        SubjectContext sc = prc.getSubcontext(SubjectContext.class);
+        final SubjectContext sc = prc.getSubcontext(SubjectContext.class);
         Assert.assertNotNull(sc);
         Assert.assertEquals(sc.getPrincipalName(), "foo");
         Assert.assertEquals(sc.getAuthenticationResults().size(), 2);

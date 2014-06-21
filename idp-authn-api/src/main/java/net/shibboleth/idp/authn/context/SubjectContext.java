@@ -51,8 +51,6 @@ public class SubjectContext extends BaseContext {
     
     /** Constructor. */
     public SubjectContext() {
-        super();
-        
         authenticationResults = new HashMap(5);
     }
 
@@ -91,7 +89,7 @@ public class SubjectContext extends BaseContext {
      */
     @Nonnull @Unmodifiable @NonnullElements public List<Subject> getSubjects() {
         List<Subject> composite = new ArrayList<>();
-        for (AuthenticationResult e : getAuthenticationResults().values()) {
+        for (final AuthenticationResult e : getAuthenticationResults().values()) {
             composite.add(e.getSubject());
         }
         return ImmutableList.copyOf(composite);
