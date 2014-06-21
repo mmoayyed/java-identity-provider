@@ -24,7 +24,9 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeInMetadataPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
 import net.shibboleth.idp.saml.profile.config.navigate.AttributeConsumerServiceLookupFunction;
+import net.shibboleth.idp.saml.profile.config.navigate.EntityDescriptorLookupFunction;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.saml.common.messaging.context.AttributeConsumingServiceContext;
@@ -42,8 +44,12 @@ import com.google.common.base.Functions;
 public class AttributeInMetadataRuleParser extends BasePolicyRuleParser {
 
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
+    public static final QName ATTRIBUTE_IN_METADATA = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
             "AttributeInMetadata");
+
+    /** Schema type. */
+    public static final QName ENTITY_ATTRIBUTE_IN_METADATA = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
+            "EntityAttributeInMetadata");
 
     /** {@inheritDoc} */
     @Override
@@ -80,8 +86,12 @@ public class AttributeInMetadataRuleParser extends BasePolicyRuleParser {
         }
         builder.addPropertyValue("matchIfMetadataSilent ", matchIfMetadataSilent);
         
-        builder.addPropertyValue("objectStrategy", Functions.compose(new AttributeConsumerServiceLookupFunction(),
-                new ChildContextLookup<SAMLMetadataContext, AttributeConsumingServiceContext>(
-                        AttributeConsumingServiceContext.class)));
+        if (ElementSupport.isElementNamed(config, ENTITY_ATTRIBUTE_IN_METADATA)) {
+            builder.addPropertyValue("objectStrategy", new EntityDescriptorLookupFunction());
+        } else {
+            builder.addPropertyValue("objectStrategy", Functions.compose(new AttributeConsumerServiceLookupFunction(),
+                    new ChildContextLookup<SAMLMetadataContext, AttributeConsumingServiceContext>(
+                            AttributeConsumingServiceContext.class)));
+        }
     }
 }

@@ -208,8 +208,8 @@
                 <attribute name="matchIfMetadataSilent" type="string">
                     <annotation>
                         <documentation>
-                            A boolean flag indicating whether a match should occur if the metadata does
-                            not contain an AttributeConsumingService descriptor.
+                            A boolean flag indicating whether a match should occur if (after mapping)
+                            the metadata does not contain and Attributes.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -217,6 +217,27 @@
         </complexContent>
     </complexType>
     
+    <complexType name="EntityAttributeInMetadata">
+        <annotation>
+            <documentation>
+                A match function that evaluates to true if an attribute (or specific values) is specified by
+                the EntityAttributes on the requesting entity's SP metadata.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:MatchFunctorType">
+                <attribute name="matchIfMetadataSilent" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether a match should occur if (after mapping)
+                            the metadata does not contain and Attributes.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <complexType name="AttributeRequesterRegistrationAuthority">
         <annotation>
             <documentation>
