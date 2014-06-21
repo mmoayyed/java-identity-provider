@@ -90,7 +90,7 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @param definitionScript the script to be evaluated
      */
-    public synchronized void setScript(@Nonnull final EvaluableScript definitionScript) {
+    public void setScript(@Nonnull final EvaluableScript definitionScript) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
