@@ -268,7 +268,8 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
         final AuthenticationStatement statement = statementBuilder.buildObject();
         statement.setAuthenticationInstant(new DateTime(authenticationResult.getAuthenticationInstant()));
         
-        if (requestedPrincipalContext != null && requestedPrincipalContext.getMatchingPrincipal() != null) {
+        if (requestedPrincipalContext != null && requestedPrincipalContext.getMatchingPrincipal() != null
+                && requestedPrincipalContext.getMatchingPrincipal() instanceof AuthenticationMethodPrincipal) {
             statement.setAuthenticationMethod(requestedPrincipalContext.getMatchingPrincipal().getName());
         } else {
             statement.setAuthenticationMethod(methodLookupStrategy.apply(profileRequestContext).getName());

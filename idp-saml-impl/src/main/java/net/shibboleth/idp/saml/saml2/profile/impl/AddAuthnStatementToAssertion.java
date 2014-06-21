@@ -305,8 +305,8 @@ public class AddAuthnStatementToAssertion extends AbstractAuthenticationAction {
                 authnContext.setAuthnContextDeclRef(
                         ((AuthnContextDeclRefPrincipal) matchingPrincipal).getAuthnContextDeclRef());
             } else {
-                authnContext.setAuthnContextClassRef(new AuthnContextClassRefPrincipal(
-                        AuthnContext.UNSPECIFIED_AUTHN_CTX).getAuthnContextClassRef());
+                authnContext.setAuthnContextClassRef(
+                        classRefLookupStrategy.apply(profileRequestContext).getAuthnContextClassRef());
             }
         } else {
             authnContext.setAuthnContextClassRef(
