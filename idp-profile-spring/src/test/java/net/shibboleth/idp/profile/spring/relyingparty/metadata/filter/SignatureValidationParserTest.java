@@ -55,8 +55,7 @@ public class SignatureValidationParserTest extends AbstractMetadataParserTest {
         Assert.assertEquals(Sets.newHashSet(result).size(), 0);
     }
     
-    // OSJ-71
-    @Test(enabled=false) public void noSigCheck() throws IOException, ResolverException {
+    @Test public void noSigCheck() throws IOException, ResolverException {
         MetadataResolver resolver =
                 getBean(MetadataResolver.class, true, "filter/signingCertCheck.xml", "filter/switch.xml", "beans.xml");
 
