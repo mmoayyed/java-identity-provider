@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.config;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -35,6 +36,13 @@ public interface AuthenticationProfileConfiguration extends ProfileConfiguration
      * @return  default authentication methods to use
      */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods();
+    
+    /**
+     * Get the allowable authentication flows for this profile.
+     * 
+     * @return  a set of authentication flow IDs to allow 
+     */
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<String> getAuthenticationFlows();
 
     /**
      * Get the name identifier formats to use with this relying party, in order of preference.

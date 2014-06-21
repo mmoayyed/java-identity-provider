@@ -18,8 +18,10 @@
 package net.shibboleth.idp.relyingparty;
 
 import java.security.Principal;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -27,6 +29,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
 import net.shibboleth.idp.profile.config.AuthenticationProfileConfiguration;
@@ -44,6 +47,9 @@ public class MockAuthenticationProfileConfiguration extends AbstractProfileConfi
     /** Selects, and limits, the authentication methods to use for requests. */
     @Nonnull @NonnullElements private List<Principal> defaultAuthenticationMethods;
 
+    /** Filters the usable authentication flows. */
+    @Nonnull @NonnullElements private Set<String> authenticationFlows;
+    
     /** Precedence of name identifier formats to use for requests. */
     @Nonnull @NonnullElements private List<String> nameIDFormatPrecedence;
     
@@ -55,7 +61,7 @@ public class MockAuthenticationProfileConfiguration extends AbstractProfileConfi
      */
     public MockAuthenticationProfileConfiguration(@Nonnull @NotEmpty final String id,
             @Nonnull @NonnullElements final List<Principal> methods) {
-        this(id, methods, Collections.<String>emptyList());
+        this(id, methods, Collections.<String>emptySet(), Collections.<String>emptyList());
     }
 
     /**
@@ -67,10 +73,12 @@ public class MockAuthenticationProfileConfiguration extends AbstractProfileConfi
      */
     public MockAuthenticationProfileConfiguration(@Nonnull @NotEmpty final String id,
             @Nonnull @NonnullElements final List<Principal> methods,
+            @Nonnull @NonnullElements final Collection<String> flows,
             @Nonnull @NonnullElements final List<String> formats) {
         super(id);
         setSecurityConfiguration(new SecurityConfiguration());
         setDefaultAuthenticationMethods(methods);
+        setAuthenticationFlows(flows);
         setNameIDFormatPrecedence(formats);
     }
     
@@ -108,4 +116,20 @@ public class MockAuthenticationProfileConfiguration extends AbstractProfileConfi
         nameIDFormatPrecedence = Lists.newArrayList(Collections2.filter(formats, Predicates.notNull()));
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<String> getAuthenticationFlows() {
+        return authenticationFlows;
+    }
+
+    /**
+     * Set the authentication flows to use.
+     * 
+     * @param flows   flow identifiers to use
+     */
+    public void setAuthenticationFlows(@Nonnull @NonnullElements final Collection<String> flows) {
+        Constraint.isNotNull(flows, "Collection of flows cannot be null");
+        
+        authenticationFlows = Sets.newHashSet(Collections2.filter(flows, Predicates.notNull()));
+    }
 }

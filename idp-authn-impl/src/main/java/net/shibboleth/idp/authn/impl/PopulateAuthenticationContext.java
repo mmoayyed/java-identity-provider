@@ -26,14 +26,19 @@ import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry;
+import net.shibboleth.idp.profile.config.AuthenticationProfileConfiguration;
+import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -41,6 +46,10 @@ import com.google.common.collect.Lists;
 /**
  * An action that populates an {@link AuthenticationContext} with the {@link AuthenticationFlowDescriptor}
  * objects configured into the IdP, and optionally a customized {@link PrincipalEvalPredicateFactoryRegistry}.
+ * 
+ * <p>The set of flows will be filtered by {@link AuthenticationProfileConfiguration#getAuthenticationFlows()}
+ * if such a configuration is available from a {@link RelyingPartyContext} obtained via a lookup strategy,
+ * by default the child of the {@link ProfileRequestContext}.</p>
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
@@ -57,9 +66,18 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
     /** The registry of predicate factories for custom principal evaluation. */
     @Nullable private PrincipalEvalPredicateFactoryRegistry evalRegistry;
 
+    /**
+     * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
+     */
+    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
+    
+    /** Profile configuration source for requested principals. */
+    @Nullable private AuthenticationProfileConfiguration authenticationProfileConfig;
+    
     /** Constructor. */
     PopulateAuthenticationContext() {
         availableFlows = Lists.newArrayList();
+        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
     }
     
     /**
@@ -95,7 +113,39 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
         
         evalRegistry = Constraint.isNotNull(registry, "PrincipalEvalPredicateFactoryRegistry cannot be null");
     }
+    
+    /**
+     * Set the strategy used to locate the {@link RelyingPartyContext} associated with a given
+     * {@link ProfileRequestContext}.
+     * 
+     * @param strategy strategy used to locate the {@link RelyingPartyContext} associated with a given
+     *            {@link ProfileRequestContext}
+     */
+    public void setRelyingPartyContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        relyingPartyContextLookupStrategy =
+                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext) {
+        final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
+        if (rpCtx != null) {
+            final ProfileConfiguration config = rpCtx.getProfileConfig();
+            if (config != null) {
+                if (config instanceof AuthenticationProfileConfiguration) {
+                    authenticationProfileConfig = (AuthenticationProfileConfiguration) config;
+                }
+            }
+        }
         
+        return super.doPreExecute(profileRequestContext, authenticationContext);
+    }
+    
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
@@ -106,12 +156,25 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
                     getLogPrefix());
             authenticationContext.setPrincipalEvalPredicateFactoryRegistry(evalRegistry);
         }
-        
-        log.debug("{} Installing {} authentication flows into AuthenticationContext", getLogPrefix(),
-                availableFlows.size());
-        for (AuthenticationFlowDescriptor desc : availableFlows) {
-            authenticationContext.getPotentialFlows().put(desc.getId(), desc);
+
+        if (authenticationProfileConfig != null
+                && !authenticationProfileConfig.getAuthenticationFlows().isEmpty()) {
+            for (final AuthenticationFlowDescriptor desc : availableFlows) {
+                if (authenticationProfileConfig.getAuthenticationFlows().contains(desc.getId())) {
+                    authenticationContext.getPotentialFlows().put(desc.getId(), desc);
+                } else {
+                    log.debug("{} Filtered out authentication flow {} due to profile configuration", getLogPrefix(),
+                            desc.getId());
+                }
+            }
+        } else {
+            for (final AuthenticationFlowDescriptor desc : availableFlows) {
+                authenticationContext.getPotentialFlows().put(desc.getId(), desc);
+            }
         }
+
+        log.debug("{} Installed {} authentication flows into AuthenticationContext", getLogPrefix(),
+                authenticationContext.getPotentialFlows().size());
     }
     
 }
