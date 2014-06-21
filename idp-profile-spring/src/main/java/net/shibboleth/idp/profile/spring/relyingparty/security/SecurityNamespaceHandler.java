@@ -25,7 +25,9 @@ import net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicI
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.ResourceCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509FilesystemCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509InlineCredentialParser;
+import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.SignatureChainingParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.StaticExplicitKeySignatureParser;
+import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.StaticPKIXSignatureParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.UnsupportedTrustEngineParser;
 
 /** Namespace handler <em>{@value NAMESPACE}</em>. */
@@ -55,7 +57,10 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
 
         registerBeanDefinitionParser(StaticExplicitKeySignatureParser.SCHEMA_TYPE,
                 new StaticExplicitKeySignatureParser());
+        registerBeanDefinitionParser(StaticPKIXSignatureParser.SCHEMA_TYPE, new StaticPKIXSignatureParser());
+        registerBeanDefinitionParser(SignatureChainingParser.SCHEMA_TYPE, new SignatureChainingParser());
 
+        // Metadata based unsupported
         registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_EXPLICIT_KEY,
                 new UnsupportedTrustEngineParser());
         registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_EXPLICIT_KEY_SIGNATURE,
@@ -65,5 +70,8 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_PKIX_SIGNATURE,
                 new UnsupportedTrustEngineParser());
 
+        // Credential unsupported
+        registerBeanDefinitionParser(UnsupportedTrustEngineParser.CHAINING, new UnsupportedTrustEngineParser());
+        registerBeanDefinitionParser(UnsupportedTrustEngineParser.PKIX_CREDENTIAL, new UnsupportedTrustEngineParser());
     }
 }

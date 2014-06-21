@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
@@ -49,6 +50,17 @@ public class UnsupportedTrustEngineParser extends AbstractTrustEngineParser {
     public static final QName METADATA_EXPLICIT_KEY = new QName(SecurityNamespaceHandler.NAMESPACE,
             "MetadataExplicitKey");
 
+    /** Schema type for Chaining. */
+    public static final QName CHAINING = new QName(SecurityNamespaceHandler.NAMESPACE, "Chaining");
+
+    /** Schema type for StaticPKIXX509Credential. */
+    public static final QName PKIX_CREDENTIAL = new QName(SecurityNamespaceHandler.NAMESPACE,
+            "StaticPKIXX509Credential");
+
+    /** The list of all unsupported trust engine types. */
+    private static final QName[] UNSUPPORTED = {PKIX_CREDENTIAL, CHAINING, METADATA_EXPLICIT_KEY,
+            METADATA_PKIX_CREDENTIAL, METADATA_EXPLICIT_KEY_SIGNATURE, METADATA_PKIX_SIGNATURE,};
+
     /** log. */
     private Logger log = LoggerFactory.getLogger(UnsupportedTrustEngineParser.class);
 
@@ -59,7 +71,22 @@ public class UnsupportedTrustEngineParser extends AbstractTrustEngineParser {
 
     /** {@inheritDoc} */
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        log.warn("Configuration {} contained unsupported, metadata-based, Trust Engine type {}", parserContext
+        log.warn("Configuration {} contained unsupported, Trust Engine type {}.  This has been ignored.", parserContext
                 .getReaderContext().getResource().getDescription(), DOMTypeSupport.getXSIType(element).toString());
+    }
+
+    /**
+     * Is this type unsupported?
+     * 
+     * @param engine the engine to test.
+     * @return whether it is in the list.
+     */
+    static boolean unsupportedEngineType(@Nonnull QName engine) {
+        for (QName qName : UNSUPPORTED) {
+            if (qName.equals(engine)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
