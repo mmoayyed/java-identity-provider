@@ -9,7 +9,7 @@
 
 	default-init-method="initialize" default-destroy-method="destroy">
 
-	<context:property-placeholder location="file:///${idp.home}/conf/idp.properties" />
+	<context:property-placeholder />
 
     <bean id="shibboleth.DefaultErrorView" class="java.lang.String" c:_0="${idp.errors.defaultView:error}" />
 

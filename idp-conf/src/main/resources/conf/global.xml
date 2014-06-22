@@ -9,7 +9,7 @@
 
 	default-init-method="initialize" default-destroy-method="destroy">
 
-	<context:property-placeholder location="file:///${idp.home}/conf/idp.properties" />
+	<context:property-placeholder />
 
     <import resource="error-mappings.xml" />
     <import resource="services.xml" />

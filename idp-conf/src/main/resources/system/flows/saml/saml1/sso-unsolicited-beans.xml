@@ -11,7 +11,7 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <context:property-placeholder location="file:///${idp.home}/conf/idp.properties" />
+    <context:property-placeholder />
 
     <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
         <constructor-arg>

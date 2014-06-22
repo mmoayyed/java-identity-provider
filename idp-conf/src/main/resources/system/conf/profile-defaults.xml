@@ -8,7 +8,7 @@
                             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
 	default-init-method="initialize" default-destroy-method="destroy">
 	
-	<context:property-placeholder location="file:///${idp.home}/conf/idp.properties" />
+	<context:property-placeholder />
 	
 	<!-- The profile defaults. Firstly the artifact and InboundFlowId parameters 
 
