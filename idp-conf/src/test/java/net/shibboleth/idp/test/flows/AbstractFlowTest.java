@@ -30,6 +30,7 @@ import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.ext.spring.context.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.ext.spring.factory.X509CertificateFactoryBean;
 import net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
@@ -94,7 +95,8 @@ import com.unboundid.ldap.sdk.LDAPException;
  * Abstract flow test.
  */
 @ContextConfiguration(locations = {"/system/conf/global-system.xml", "/conf/global.xml", "/system/conf/mvc-beans.xml",
-        "/system/conf/webflow-config.xml", "/test/test-beans.xml"}, loader = PreferFileSystemContextLoader.class)
+        "/system/conf/webflow-config.xml", "/test/test-beans.xml"},
+        initializers = IdPPropertiesApplicationContextInitializer.class, loader = PreferFileSystemContextLoader.class)
 @WebAppConfiguration
 public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests {
 
