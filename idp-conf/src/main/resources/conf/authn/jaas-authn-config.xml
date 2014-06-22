@@ -25,8 +25,8 @@
     </util:list>
 
     <!-- Names of form fields to pull username and password from. -->
-    <bean id="shibboleth.authn.JAAS.UsernameFieldName" class="java.lang.String" c:_0="username" />
-    <bean id="shibboleth.authn.JAAS.PasswordFieldName" class="java.lang.String" c:_0="password" />
+    <bean id="shibboleth.authn.JAAS.UsernameFieldName" class="java.lang.String" c:_0="j_username" />
+    <bean id="shibboleth.authn.JAAS.PasswordFieldName" class="java.lang.String" c:_0="j_password" />
     <bean id="shibboleth.authn.JAAS.SSOBypassFieldName" class="java.lang.String" c:_0="donotcache" />
 
     <!-- Simple transforms to apply to username before validation. -->
@@ -43,7 +43,7 @@
     <!-- Apply any regular expression replacement pairs before validation. -->
     <util:list id="shibboleth.authn.JAAS.Transforms">
         <!--
-        <bean class="net.shibboleth.utilities.java.support.collection.Pair" p:first="^(.+)@example\.edu$" p:second="$1" />
+        <bean parent="shibboleth.Pair" p:first="^(.+)@example\.edu$" p:second="$1" />
         -->
     </util:list>
 

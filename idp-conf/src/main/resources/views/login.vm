@@ -45,12 +45,12 @@
 
               <section>
                 <Label for="username">Username</label>
-                <input class="form-element form-field" name="username" type="text" value="">
+                <input class="form-element form-field" name="j_username" type="text" value="">
               </section>
 
               <section>
                 <label for="password">Password</label>
-                <input class="form-element form-field" name="password" type="password" value="">
+                <input class="form-element form-field" name="j_password" type="password" value="">
               </section>
 
               <section>

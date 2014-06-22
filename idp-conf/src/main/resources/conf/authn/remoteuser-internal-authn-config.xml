@@ -20,7 +20,6 @@
     <!-- Populate one or both of the lists below to define HTTP headers or Servlet Attributes to check. -->
     
     <util:list id="shibboleth.authn.RemoteUser.checkHeaders">
-        <value>Foo</value>
         <!--
         <value>User-Identity</value>
         -->
@@ -46,7 +45,7 @@
     <!-- Apply any regular expression replacement pairs before validation. -->
     <util:list id="shibboleth.authn.RemoteUser.Transforms">
         <!--
-        <bean class="net.shibboleth.utilities.java.support.collection.Pair" p:first="^(.+)@example\.edu$" p:second="$1" />
+        <bean parent="shibboleth.Pair" p:first="^(.+)@example\.edu$" p:second="$1" />
         -->
     </util:list>
     

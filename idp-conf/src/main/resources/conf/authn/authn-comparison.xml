@@ -30,14 +30,13 @@
         -->
     </bean>
 
-    <bean id="shibboleth.BetterDeclRefMatchFactory" parent="shibboleth.InexactMatchFactory" />
-
     <bean id="shibboleth.MinimumClassRefMatchFactory" parent="shibboleth.InexactMatchFactory" />
-
-    <bean id="shibboleth.MinimumDeclRefMatchFactory" parent="shibboleth.InexactMatchFactory" />
 
     <bean id="shibboleth.MaximumClassRefMatchFactory" parent="shibboleth.InexactMatchFactory" />
 
+    <!-- DeclRefs are rarely used in SAML, so you likely won't bother with these. -->
+    <bean id="shibboleth.BetterDeclRefMatchFactory" parent="shibboleth.InexactMatchFactory" />
+    <bean id="shibboleth.MinimumDeclRefMatchFactory" parent="shibboleth.InexactMatchFactory" />
     <bean id="shibboleth.MaximumDeclRefMatchFactory" parent="shibboleth.InexactMatchFactory" />
     
     

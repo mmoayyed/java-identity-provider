@@ -88,7 +88,7 @@
     -->
     <util:list id="shibboleth.NameTransforms">
         <!--
-        <bean class="net.shibboleth.utilities.java.support.collection.Pair" p:first="^(.+)@example\.edu$" p:second="$1" />
+        <bean parent="shibboleth.Pair" p:first="^(.+)@example\.edu$" p:second="$1" />
         -->
     </util:list>
     

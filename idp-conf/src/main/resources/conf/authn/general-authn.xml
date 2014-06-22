@@ -39,13 +39,13 @@
             </property>
         </bean>
         
-        <bean id="authn/RemoteUserInternal" parent="shibboleth.AuthenticationFlow" />
-
         <bean id="authn/RemoteUser" parent="shibboleth.AuthenticationFlow"
             p:nonBrowserSupported="false" />
 
         <bean id="authn/External" parent="shibboleth.AuthenticationFlow"
             p:nonBrowserSupported="false" />
+
+        <bean id="authn/RemoteUserInternal" parent="shibboleth.AuthenticationFlow" />
 
         <bean id="authn/JAAS" parent="shibboleth.AuthenticationFlow"
                 p:passiveAuthenticationSupported="true"

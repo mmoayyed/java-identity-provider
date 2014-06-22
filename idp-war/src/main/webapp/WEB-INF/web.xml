@@ -153,11 +153,12 @@
         <web-resource-collection>
             <web-resource-name>user authentication</web-resource-name>
             <url-pattern>/Authn/RemoteUser</url-pattern>
+            <url-pattern>/profile/SAML2/SOAP/ECP</url-pattern>
             <http-method>GET</http-method>
             <http-method>POST</http-method> 
         </web-resource-collection>
         <auth-constraint>
-            <role-name>*</role-name>
+            <role-name>**</role-name>
         </auth-constraint>
         <user-data-constraint>
             <transport-guarantee>CONFIDENTIAL</transport-guarantee> 
@@ -171,8 +172,8 @@
         <auth-method>BASIC</auth-method>
         <realm-name>Web Login Service</realm-name>
     </login-config>
-    --> 
-
+    -->
+     
     <!--
     Uncomment if you want form-based auth managed by the container.
     NOTE that the default form-login UI in the IdP is not compatible
