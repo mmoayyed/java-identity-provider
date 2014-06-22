@@ -77,6 +77,15 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
     }
     
     /**
+     * Get the profile request context for the request.
+     * 
+     * @return  current profile request context
+     */
+    @Nonnull public ProfileRequestContext getProfileRequestContext() {
+        return profileRequestContext;
+    }
+    
+    /**
      * Initialize a request for external authentication by seeking out the information stored in
      * the servlet session and exposing it as request attributes.
      * 
