@@ -23,6 +23,8 @@ import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /** Public interface supporting external authentication outside the webflow engine. */
@@ -143,6 +145,15 @@ public class ExternalAuthentication {
     protected void doFinish(@Nonnull final HttpServletRequest request, @Nonnull final HttpServletResponse response)
             throws ExternalAuthenticationException, IOException {
         throw new ExternalAuthenticationException("Not implemented");
+    }
+    
+    /**
+     * Get the profile request context for the request.
+     * 
+     * @return  current profile request context
+     */
+    @Nonnull public ProfileRequestContext getProfileRequestContext() {
+        throw new UnsupportedOperationException("Not implemented");
     }
     
 }

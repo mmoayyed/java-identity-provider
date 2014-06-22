@@ -76,11 +76,8 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
     
-    /**
-     * Get the profile request context for the request.
-     * 
-     * @return  current profile request context
-     */
+    /** {@inheritDoc} */
+    @Override
     @Nonnull public ProfileRequestContext getProfileRequestContext() {
         return profileRequestContext;
     }
