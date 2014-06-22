@@ -60,38 +60,38 @@
     -->
 
     <util:list id="shibboleth.RelyingPartyResolverResources">
-        <value>file:///${idp.home}/conf/relying-party.xml</value>
-        <value>file:///${idp.home}/conf/credentials.xml</value>
-        <value>file:///${idp.home}/system/conf/relying-party-system.xml</value>
+        <value>${idp.home}/conf/relying-party.xml</value>
+        <value>${idp.home}/conf/credentials.xml</value>
+        <value>${idp.home}/system/conf/relying-party-system.xml</value>
     </util:list>
 
     <!-- Use this set of resources (the first one suitably modified) to load a legacy 2.x file. -->
     <!--
     <util:list id="shibboleth.RelyingPartyResolverResources">
-        <value>file:///${idp.home}/conf/relying-party-legacy.xml</value>
-        <value>file:///${idp.home}/conf/property-placeholder.xml</value>
-        <value>file:///${idp.home}/system/conf/profile-defaults.xml</value>
+        <value>${idp.home}/conf/relying-party-legacy.xml</value>
+        <value>${idp.home}/conf/property-placeholder.xml</value>
+        <value>${idp.home}/system/conf/profile-defaults.xml</value>
     </util:list>
     -->
 
     <util:list id="shibboleth.MetadataResolverResources">
-        <value>file:///${idp.home}/conf/metadata-providers.xml</value>
-        <value>file:///${idp.home}/conf/property-placeholder.xml</value>
+        <value>${idp.home}/conf/metadata-providers.xml</value>
+        <value>${idp.home}/conf/property-placeholder.xml</value>
     </util:list>
 
     <util:list id ="shibboleth.AttributeResolverResources">
-        <value>file:///${idp.home}/conf/attribute-resolver.xml</value>
-        <value>file:///${idp.home}/conf/property-placeholder.xml</value>
+        <value>${idp.home}/conf/attribute-resolver.xml</value>
+        <value>${idp.home}/conf/property-placeholder.xml</value>
     </util:list>
 
     <util:list id ="shibboleth.AttributeFilterResources">
-        <value>file:///${idp.home}/conf/attribute-filter.xml</value>
-        <value>file:///${idp.home}/conf/property-placeholder.xml</value>
+        <value>${idp.home}/conf/attribute-filter.xml</value>
+        <value>${idp.home}/conf/property-placeholder.xml</value>
     </util:list>
 
     <util:list id ="shibboleth.NameIdentifierGenerationResources">
-        <value>file:///${idp.home}/conf/saml-nameid.xml</value>
-        <value>file:///${idp.home}/system/conf/saml-nameid-system.xml</value>
+        <value>${idp.home}/conf/saml-nameid.xml</value>
+        <value>${idp.home}/system/conf/saml-nameid-system.xml</value>
     </util:list>
 
 </beans>

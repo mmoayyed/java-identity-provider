@@ -15,12 +15,12 @@
     NOTE: you cannot override named flows in the system registry below. If absolutely
     necessary, you can comment out system flows to override them.
     -->
-    <webflow:flow-registry id="userFlowRegistry" base-path="file:${idp.home}/flows" flow-builder-services="flowBuilderServices">
+    <webflow:flow-registry id="userFlowRegistry" base-path="${idp.home}/flows" flow-builder-services="flowBuilderServices">
         <webflow:flow-location-pattern value="/**/*-flow.xml" />
     </webflow:flow-registry>
 
     <!-- System-supplied flows, do not modify. -->
-    <webflow:flow-registry id="flowRegistry" parent="userFlowRegistry" base-path="file:///${idp.home}/system/flows" flow-builder-services="flowBuilderServices">
+    <webflow:flow-registry id="flowRegistry" parent="userFlowRegistry" base-path="${idp.home}/system/flows" flow-builder-services="flowBuilderServices">
 
         <!-- Status flow. -->
         <webflow:flow-location id="status" path="/status/status-flow.xml" />
