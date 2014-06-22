@@ -6,7 +6,7 @@
 
 <bean  id="shibboleth.TransientIDDataSealer" class="net.shibboleth.utilities.java.support.security.DataSealer"
         init-method="initialize">
-    <property name="keystorePath" value="src/test/resources/net/shibboleth/idp/attribute/resolver/spring/ad/SealerKeyStore.jks" />
+    <property name="keystoreResource" value="/net/shibboleth/idp/attribute/resolver/spring/ad/SealerKeyStore.jks" />
     <property name="keystorePassword" value="password" />
     <property name="cipherKeyAlias" value="secret" />
     <property name="cipherKeyPassword" value="kpassword" />

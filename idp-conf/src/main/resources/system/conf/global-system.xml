@@ -21,6 +21,7 @@
                 <bean class="net.shibboleth.ext.spring.config.DurationToLongConverter" />
                 <bean class="net.shibboleth.ext.spring.config.StringToIPRangeConverter" />
                 <bean class="net.shibboleth.ext.spring.config.BooleanToPredicateConverter" />
+                <bean class="net.shibboleth.ext.spring.config.StringToResourceConverter" />
             </list>
         </property>
     </bean>
@@ -125,7 +126,7 @@
     
     <bean id="shibboleth.DataSealer" class="net.shibboleth.utilities.java.support.security.DataSealer"
         p:keystoreType="${idp.sealer.storeType}"
-        p:keystorePath="${idp.home}/${idp.sealer.storePath}"
+        p:keystoreResource="${idp.sealer.storeResource}"
         p:keystorePassword="${idp.sealer.storePassword}"
         p:cipherKeyAlias="${idp.sealer.alias}"
         p:cipherKeyPassword="${idp.sealer.keyPassword}" />

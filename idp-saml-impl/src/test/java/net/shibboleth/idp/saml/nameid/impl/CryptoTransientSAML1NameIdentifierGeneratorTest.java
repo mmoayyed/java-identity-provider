@@ -19,6 +19,7 @@ package net.shibboleth.idp.saml.nameid.impl;
 
 import java.io.IOException;
 
+import net.shibboleth.ext.spring.resource.ResourceHelper;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
@@ -48,14 +49,13 @@ public class CryptoTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLIni
     
     @BeforeMethod public void setUp() throws ComponentInitializationException, IOException {
         final Resource keyStore  = new ClassPathResource("/net/shibboleth/idp/saml/impl/attribute/resolver/SealerKeyStore.jks");
-        final String keyStorePath = keyStore.getFile().getAbsolutePath();
 
         sealer = new DataSealer();
         sealer.setCipherKeyAlias("secret");
         sealer.setCipherKeyPassword("kpassword");
 
         sealer.setKeystorePassword("password");
-        sealer.setKeystorePath(keyStorePath);
+        sealer.setKeystoreResource(ResourceHelper.of(keyStore));
 
         sealer.initialize();
         

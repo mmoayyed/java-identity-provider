@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.security.auth.Subject;
 
+import net.shibboleth.ext.spring.resource.ResourceHelper;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -71,14 +72,12 @@ public class CryptoTransientNameIdentifierDecoderTest extends OpenSAMLInitBaseTe
                 new ClassPathResource("/net/shibboleth/idp/saml/impl/attribute/resolver/SealerKeyStore.jks");
         Assert.assertTrue(keyStore.exists());
 
-        final String keyStorePath = keyStore.getFile().getAbsolutePath();
-
         dataSealer = new DataSealer();
         dataSealer.setCipherKeyAlias("secret");
         dataSealer.setCipherKeyPassword("kpassword");
 
         dataSealer.setKeystorePassword("password");
-        dataSealer.setKeystorePath(keyStorePath);
+        dataSealer.setKeystoreResource(ResourceHelper.of(keyStore));
 
         dataSealer.initialize();
 

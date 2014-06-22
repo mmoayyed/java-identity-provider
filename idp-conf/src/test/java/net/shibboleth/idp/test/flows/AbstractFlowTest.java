@@ -36,6 +36,7 @@ import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
 import net.shibboleth.idp.saml.nameid.impl.NameIDCanonicalization;
 import net.shibboleth.idp.saml.nameid.impl.NameIdentifierCanonicalization;
 import net.shibboleth.idp.test.InMemoryDirectory;
+import net.shibboleth.idp.test.PreferFileSystemContextLoader;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 import net.shibboleth.utilities.java.support.net.IPRange;
@@ -92,8 +93,8 @@ import com.unboundid.ldap.sdk.LDAPException;
 /**
  * Abstract flow test.
  */
-@ContextConfiguration({"/system/conf/global-system.xml", "/conf/global.xml", "/system/conf/mvc-beans.xml",
-        "/system/conf/webflow-config.xml", "/test/test-beans.xml"})
+@ContextConfiguration(locations = {"/system/conf/global-system.xml", "/conf/global.xml", "/system/conf/mvc-beans.xml",
+        "/system/conf/webflow-config.xml", "/test/test-beans.xml"}, loader = PreferFileSystemContextLoader.class)
 @WebAppConfiguration
 public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests {
 
