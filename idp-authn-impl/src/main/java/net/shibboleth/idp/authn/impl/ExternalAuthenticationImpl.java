@@ -76,12 +76,6 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
     
-    /** {@inheritDoc} */
-    @Override
-    @Nonnull public ProfileRequestContext getProfileRequestContext() {
-        return profileRequestContext;
-    }
-    
     /**
      * Initialize a request for external authentication by seeking out the information stored in
      * the servlet session and exposing it as request attributes.
@@ -98,6 +92,8 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
         } else if (authnContext.getAttemptedFlow() == null) {
             throw new ExternalAuthenticationException("No attempted authentication flow set");
         }
+        
+        request.setAttribute(ProfileRequestContext.BINDING_KEY, profileRequestContext);
         
         request.setAttribute(PASSIVE_AUTHN_PARAM, authnContext.isPassive());
         request.setAttribute(FORCE_AUTHN_PARAM, authnContext.isForceAuthn());
