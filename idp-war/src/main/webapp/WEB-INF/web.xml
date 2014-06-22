@@ -12,6 +12,11 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>file:///${idp.home}/system/conf/global-system.xml file:///${idp.home}/conf/global.xml</param-value>
     </context-param>
+    
+    <context-param>
+        <param-name>contextClass</param-name>
+        <param-value>net.shibboleth.ext.spring.context.DeferPlaceholderFileSystemXmlWebApplicationContext</param-value>
+    </context-param>
 
     <!-- Spring listener used to load up the configuration -->
     <listener>
@@ -87,6 +92,10 @@
         <init-param>
             <param-name>contextConfigLocation</param-name>
             <param-value>file:///${idp.home}/system/conf/mvc-beans.xml file:///${idp.home}/system/conf/webflow-config.xml</param-value>
+        </init-param>
+        <init-param>
+            <param-name>contextClass</param-name>
+            <param-value>net.shibboleth.ext.spring.context.DeferPlaceholderFileSystemXmlWebApplicationContext</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
