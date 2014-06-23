@@ -58,19 +58,23 @@
     <bean id="SAML2.SSO"
         class="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration"
         p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
-        p:inboundSubflowId="security-policy/saml2-sso" />
+        p:inboundSubflowId="security-policy/saml2-sso"
+        p:encryptionOptional="${idp.encryption.optional:false}" />
 
     <bean id="SAML2.ECP"
         class="net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration"
-        p:inboundSubflowId="security-policy/saml2-sso" />
+        p:inboundSubflowId="security-policy/saml2-sso"
+        p:encryptionOptional="${idp.encryption.optional:false}" />
 
     <bean id="SAML2.AttributeQuery"
         class="net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration"
-        p:inboundSubflowId="security-policy/soap" />
+        p:inboundSubflowId="security-policy/soap"
+        p:encryptionOptional="${idp.encryption.optional:false}" />
 
     <bean id="SAML2.ArtifactResolution"
         class="net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration"
-        p:inboundSubflowId="security-policy/soap" />
+        p:inboundSubflowId="security-policy/soap"
+        p:encryptionOptional="${idp.encryption.optional:false}" />
     
     <bean id="Liberty.SSOS"
         class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration" />    
