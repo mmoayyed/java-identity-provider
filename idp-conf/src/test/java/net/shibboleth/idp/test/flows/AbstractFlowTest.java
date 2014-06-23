@@ -30,12 +30,12 @@ import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.ext.spring.context.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.ext.spring.factory.X509CertificateFactoryBean;
 import net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
 import net.shibboleth.idp.saml.nameid.impl.NameIDCanonicalization;
 import net.shibboleth.idp.saml.nameid.impl.NameIdentifierCanonicalization;
+import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.idp.test.InMemoryDirectory;
 import net.shibboleth.idp.test.PreferFileSystemContextLoader;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
