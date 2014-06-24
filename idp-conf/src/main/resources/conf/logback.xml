@@ -1,67 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <logger name="net.shibboleth.idp" level="INFO" />
+    <!-- Logs IdP, but not OpenSAML, messages -->
+    <logger name="net.shibboleth.idp" level="INFO"/>
 
-    <logger name="net.shibboleth.idp.authn" level="DEBUG" />
-
-    <logger name="net.shibboleth.idp.profile" level="DEBUG" />
+    <!-- Logs OpenSAML, but not IdP, messages -->
+    <logger name="org.opensaml" level="WARN"/>
     
-    <logger name="net.shibboleth.idp.saml" level="DEBUG" />
-
-    <logger name="net.shibboleth.idp.session" level="DEBUG" />
-
-    <logger name="org.eclipse.jetty" level="INFO" />
-
-    <logger name="org.ldaptive" level="INFO" />
+    <!-- Logs LDAP related messages -->
+    <logger name="org.ldaptive" level="WARN"/>
     
-    <logger name="org.opensaml" level="WARN" />
-    
-    <logger name="org.opensaml.profile.action.impl" level="DEBUG" />
-   
-    <logger name="org.opensaml.saml.common.binding" level="DEBUG" />
-
-    <logger name="org.opensaml.saml.saml1.binding" level="DEBUG" />
-
-    <logger name="org.opensaml.saml.common.profile" level="DEBUG" />
-
-    <logger name="org.opensaml.saml.saml1.profile" level="DEBUG" />
-
-    <logger name="org.opensaml.saml.saml2.binding" level="DEBUG" />
-
-    <logger name="org.opensaml.saml.saml2.profile" level="DEBUG" />
-
-    <logger name="org.opensaml.storage" level="TRACE" />
-
-    <logger name="org.opensaml.xmlsec" level="DEBUG" />
-
-    <!-- Do not log failed runtime support check exceptions. -->
-    <logger name="org.opensaml.xmlsec.algorithm.AlgorithmRegistry" level="INFO" />
-
-    <!-- Do not log exception when bean definition class is a property and root level is DEBUG. -->
-    <logger name="org.springframework.beans.factory.support.DefaultListableBeanFactory" level="INFO" />
-
-    <!-- Do not log exception when bean definition class is a property and root level is DEBUG. -->
-    <logger name="org.springframework.context.annotation.ConfigurationClassUtils" level="INFO" />
-
-    <logger name="org.springframework.web" level="WARN" />
-
-    <logger name="org.springframework.webflow" level="WARN" />
-    
+    <!-- Logs inbound and outbound protocols messages at DEBUG level -->
+    <!--
     <logger name="PROTOCOL_MESSAGE" level="DEBUG" />
+    -->
+    
+    <!-- Normally you should not edit below this point. -->
+    
+    <!-- Access log. -->
+    <appender name="IDP_ACCESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${idp.logDir}/idp-access.log</File>
 
-    <!-- Exception logging to suppress. -->
-    <logger name="org.springframework.webflow.execution.repository.FlowExecutionRestorationFailureException" level="OFF" />
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${idp.logDir}/idp-access-%d{yyyy-MM-dd}.log</FileNamePattern>
+        </rollingPolicy>
 
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <charset>UTF-8</charset>
-            <Pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} [%5level] : %logger: %msg%n</Pattern>
+            <Pattern>%msg%n</Pattern>
         </encoder>
     </appender>
 
-    <root level="warn">
-        <appender-ref ref="STDOUT" />
+    <!-- Audit log. -->
+    <appender name="IDP_AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${idp.logDir}/idp-audit.log</File>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${idp.logDir}/idp-audit-%d{yyyy-MM-dd}.log</FileNamePattern>
+        </rollingPolicy>
+
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <Pattern>%msg%n</Pattern>
+        </encoder>
+    </appender>
+    
+    <!-- Process log. -->
+    <appender name="IDP_PROCESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${idp.logDir}/idp-process.log</File>
+        
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${idp.logDir}/idp-process-%d{yyyy-MM-dd}.log</FileNamePattern>
+        </rollingPolicy>
+
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <Pattern>%date{HH:mm:ss.SSS} - %level [%logger:%line] - %msg%n</Pattern>
+        </encoder>
+    </appender>
+  
+    <logger name="Shibboleth-Access" level="ALL">
+        <appender-ref ref="IDP_ACCESS"/>
+    </logger>
+    
+    <logger name="Shibboleth-Audit" level="ALL">
+        <appender-ref ref="IDP_AUDIT"/>
+    </logger>
+        
+    <logger name="org.springframework" level="OFF"/>
+    
+    <logger name="org.apache.catalina" level="ERROR"/>
+    
+    <logger name="org.eclipse.jetty" level="ERROR"/>
+
+    <root level="ERROR">
+        <appender-ref ref="IDP_PROCESS"/>
     </root>
 
 </configuration>
