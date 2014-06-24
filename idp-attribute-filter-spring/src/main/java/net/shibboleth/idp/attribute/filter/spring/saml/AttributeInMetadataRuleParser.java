@@ -22,16 +22,14 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeInMetadataPolicyRule;
-import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.matcher.BaseAttributeValueMatcherParser;
 import net.shibboleth.idp.saml.profile.config.navigate.AttributeConsumerServiceLookupFunction;
 import net.shibboleth.idp.saml.profile.config.navigate.EntityDescriptorLookupFunction;
-import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.saml.common.messaging.context.AttributeConsumingServiceContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -41,7 +39,7 @@ import com.google.common.base.Functions;
 /**
  * Bean definition parser for {@link AttributeInMetadataPolicyRule}.
  */
-public class AttributeInMetadataRuleParser extends BasePolicyRuleParser {
+public class AttributeInMetadataRuleParser extends BaseAttributeValueMatcherParser {
 
     /** Schema type. */
     public static final QName ATTRIBUTE_IN_METADATA = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
@@ -52,40 +50,24 @@ public class AttributeInMetadataRuleParser extends BasePolicyRuleParser {
             "EntityAttributeInMetadata");
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull protected Class<AttributeInMetadataPolicyRule> getNativeBeanClass() {
+    @Override @Nonnull protected Class<AttributeInMetadataPolicyRule> getNativeBeanClass() {
         return AttributeInMetadataPolicyRule.class;
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doNativeParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doNativeParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, builder);
 
-        boolean onlyIfRequired = true;
         if (config.hasAttributeNS(null, "onlyIfRequired")) {
-            final Boolean value =
-                    AttributeSupport.getAttributeValueAsBoolean(config.getAttributeNodeNS(null, "onlyIfRequired"));
-            if (null == value) {
-                throw new BeanCreationException("Invalid value of 'onlyIfRequired' in AttributeInMetadatRule");
-            }
-            onlyIfRequired = value;
+            builder.addPropertyValue("onlyIfRequired", config.getAttributeNodeNS(null, "onlyIfRequired"));
         }
-        builder.addPropertyValue("onlyIfRequired", onlyIfRequired);
 
-        boolean matchIfMetadataSilent = false;
         if (config.hasAttributeNS(null, "matchIfMetadataSilent")) {
-            final Boolean value =
-                    AttributeSupport.getAttributeValueAsBoolean(
-                            config.getAttributeNodeNS(null, "matchIfMetadataSilent"));
-            if (null == value) {
-                throw new BeanCreationException("Invalid value of 'matchIfMetadataSilent' in AttributeInMetadatRule");
-            }
-            matchIfMetadataSilent = value;
+            builder.addPropertyValue("matchIfMetadataSilent ", 
+                    config.getAttributeNodeNS(null, "matchIfMetadataSilent"));
         }
-        builder.addPropertyValue("matchIfMetadataSilent ", matchIfMetadataSilent);
-        
+
         if (ElementSupport.isElementNamed(config, ENTITY_ATTRIBUTE_IN_METADATA)) {
             builder.addPropertyValue("objectStrategy", new EntityDescriptorLookupFunction());
         } else {
