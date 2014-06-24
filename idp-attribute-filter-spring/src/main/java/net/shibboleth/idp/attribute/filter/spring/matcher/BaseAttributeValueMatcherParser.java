@@ -53,16 +53,19 @@ import org.w3c.dom.Element;
  * </table>
  */
 public abstract class BaseAttributeValueMatcherParser extends BaseFilterParser {
+    
+    /** ATTRIBUTE ID string. */
+    public static final String ATTRIBUTE_ID = "attributeID";
 
     /**
      * Helper function to determine if the Attribute Matcher has the attribute Id Specified. This influences decisions
-     * bioth in parsing and in which bean to summon.
+     * both in parsing and in which bean to summon.
      * 
      * @param configElement the config element to inspect
      * @return whether here is a an attribute Id
      */
     protected boolean hasAttributeId(@Nonnull final Element configElement) {
-        return configElement.hasAttributeNS(null, "attributeId");
+        return configElement.hasAttributeNS(null, ATTRIBUTE_ID);
     }
 
     /** {@inheritDoc} The table at the top describes the precise work. */
@@ -104,7 +107,7 @@ public abstract class BaseAttributeValueMatcherParser extends BaseFilterParser {
 
             builder.addConstructorArgValue(childBuilder.getBeanDefinition());
             if (hasAttributeId(element)) {
-                builder.addConstructorArgValue(element.getAttributeNS(null, "attributeId"));
+                builder.addConstructorArgValue(element.getAttributeNS(null, ATTRIBUTE_ID));
             }
         } else if (hasAttributeId(element)) {
             // Bean inside PolicyFromMatcherId inside MatcherFromPolicy
@@ -121,7 +124,7 @@ public abstract class BaseAttributeValueMatcherParser extends BaseFilterParser {
 
             childBuilder.addPropertyValue("id", "MfP:" + myId);
             childBuilder.addConstructorArgValue(grandChildBuilder.getBeanDefinition());
-            childBuilder.addConstructorArgValue(element.getAttributeNS(null, "attributeId"));
+            childBuilder.addConstructorArgValue(element.getAttributeNS(null, ATTRIBUTE_ID));
 
             builder.addConstructorArgValue(childBuilder.getBeanDefinition());
 

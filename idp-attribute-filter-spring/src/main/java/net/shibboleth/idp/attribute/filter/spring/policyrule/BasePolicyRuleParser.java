@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.filter.MatcherFromPolicy;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
+import net.shibboleth.idp.attribute.filter.spring.matcher.BaseAttributeValueMatcherParser;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -50,7 +51,7 @@ public abstract class BasePolicyRuleParser extends BaseFilterParser {
      * @return whether here is a an attribute Id
      */
     protected boolean hasAttributeId(@Nonnull final Element configElement) {
-        return configElement.hasAttributeNS(null, "attributeId");
+        return configElement.hasAttributeNS(null, BaseAttributeValueMatcherParser.ATTRIBUTE_ID);
     }
 
     /** {@inheritDoc} */
