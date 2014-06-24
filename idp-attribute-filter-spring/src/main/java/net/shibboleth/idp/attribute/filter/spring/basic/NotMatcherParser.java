@@ -28,6 +28,7 @@ import net.shibboleth.idp.attribute.filter.policyrule.logic.impl.NotPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -41,7 +42,7 @@ public class NotMatcherParser extends BaseFilterParser {
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "NOT");
 
     /** {@inheritDoc} */
-    @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {
+    @Override @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {
         if (isPolicyRule(element)) {
             return NotPolicyRule.class;
         }
@@ -49,7 +50,7 @@ public class NotMatcherParser extends BaseFilterParser {
     }
 
     /** {@inheritDoc} */
-    protected void doParse(@Nonnull final Element configElement, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element configElement, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(configElement, parserContext, builder);
 
@@ -60,10 +61,17 @@ public class NotMatcherParser extends BaseFilterParser {
         final List<Element> ruleElements =
                 ElementSupport.getChildElementsByTagNameNS(configElement,
                         AttributeFilterBasicNamespaceHandler.NAMESPACE, "Rule");
+        final List<Element> ruleReference =
+                ElementSupport.getChildElementsByTagNameNS(configElement,
+                        AttributeFilterBasicNamespaceHandler.NAMESPACE, "RuleReference");
 
         if (ruleElements != null && !ruleElements.isEmpty()) {
 
             builder.addConstructorArgValue(SpringSupport.parseCustomElements(ruleElements, parserContext).get(0));
+            
+        } else if (ruleReference != null && !ruleReference.isEmpty()) {
+            throw new BeanCreationException(parserContext.getReaderContext().getResource().getDescription(), myId,
+                    "RuleReference is not supported");
         }
     }
 }
