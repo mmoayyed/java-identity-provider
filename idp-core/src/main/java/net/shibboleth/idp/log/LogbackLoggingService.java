@@ -19,15 +19,14 @@ package net.shibboleth.idp.log;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Properties;
 
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.service.AbstractReloadableService;
 import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.idp.service.ServiceableComponent;
+import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
@@ -35,7 +34,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
@@ -63,9 +61,6 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
     /** Logging configuration resource. */
     private Resource configurationResource;
     
-    /** Properties resource. */
-    @Nullable private Resource propertiesResource;
-
     /** Spring application context. */
     @Nullable private ApplicationContext applicationContext;
 
@@ -89,25 +84,6 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
         }
 
         configurationResource = configuration;
-    }
-
-    /**
-     * Get the properties resource.
-     * 
-     * @return the properties resource
-     */
-    public Resource getProperties() {
-        return propertiesResource;
-    }
-
-    /**
-     * Set the properties resource.
-     * 
-     * @param properties the properties resource
-     */
-    public void setProperties(@Nullable final Resource properties) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        propertiesResource = properties;
     }
 
     /** {@inheritDoc} */
@@ -196,7 +172,7 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
     protected void loadLoggingConfiguration(InputStream loggingConfig) throws ServiceException {
         try {
             loggerContext.reset();
-            loadProperties();
+            loadIdPHomeProperty();
             JoranConfigurator configurator = new JoranConfigurator();
             configurator.setContext(loggerContext);
             configurator.doConfigure(loggingConfig);
@@ -207,27 +183,21 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
     }
 
     /**
-     * Load properties from the properties resource to the active logger context. Include the 'idp.home' property if it
-     * is present in the application context environment.
+     * Add the {@link IdPPropertiesApplicationContextInitializer#IDP_HOME_PROPERTY} property from the Spring application
+     * context to the logger context.
      */
-    protected void loadProperties() {
-        if (propertiesResource == null) {
-            return;
-        }
-        
-        statusManager.add(new InfoStatus("Setting supplied properties on LoggerContext", this));
- 
-        if (applicationContext != null && applicationContext.getEnvironment().containsProperty("idp.home")) {
-            loggerContext.putProperty("idp.home", applicationContext.getEnvironment().getProperty("idp.home"));
-        }
-        
-        try {
-            final Properties properties = PropertiesLoaderUtils.loadProperties(propertiesResource);
-            for (final String name : properties.stringPropertyNames()) {
-                loggerContext.putProperty(name, properties.getProperty(name));
+    protected void loadIdPHomeProperty() {
+        if (applicationContext != null) {
+            final String idpHome =
+                    applicationContext.getEnvironment().getProperty(
+                            IdPPropertiesApplicationContextInitializer.IDP_HOME_PROPERTY);
+            if (idpHome != null) {
+                statusManager
+                        .add(new InfoStatus("Setting logger property '"
+                                + IdPPropertiesApplicationContextInitializer.IDP_HOME_PROPERTY + "' to '" + idpHome
+                                + "'", this));
+                loggerContext.putProperty(IdPPropertiesApplicationContextInitializer.IDP_HOME_PROPERTY, idpHome);
             }
-        } catch (IOException e) {
-            statusManager.add(new ErrorStatus("Error loading properties resource", this, e));
         }
     }
 
