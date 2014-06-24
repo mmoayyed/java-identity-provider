@@ -12,8 +12,8 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <context:property-placeholder />
-
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
     
     <bean id="MessageReplaySecurityHandler"
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
@@ -21,7 +21,7 @@
         <constructor-arg name="messageHandler">
             <bean class="org.opensaml.saml.common.binding.security.impl.MessageReplaySecurityHandler" scope="prototype"
                 p:replayCache-ref="shibboleth.ReplayCache"
-                p:expires="${idp.policy.messageLifetime:PT3M}" />
+                p:expires="%{idp.policy.messageLifetime:PT3M}" />
         </constructor-arg>
         <property name="errorEvent">
             <util:constant static-field="org.opensaml.profile.action.EventIds.MESSAGE_REPLAY" />
@@ -35,7 +35,7 @@
             <bean class="org.opensaml.saml.common.binding.security.impl.MessageReplaySecurityHandler" scope="prototype"
                 p:requiredRule="false"
                 p:replayCache-ref="shibboleth.ReplayCache"
-                p:expires="${idp.policy.messageLifetime:PT3M}" />
+                p:expires="%{idp.policy.messageLifetime:PT3M}" />
         </constructor-arg>
         <property name="errorEvent">
             <util:constant static-field="org.opensaml.profile.action.EventIds.MESSAGE_REPLAY" />
@@ -47,8 +47,8 @@
             c:executionDirection="INBOUND">
         <constructor-arg name="messageHandler">
             <bean class="org.opensaml.saml.common.binding.security.impl.MessageLifetimeSecurityHandler" scope="prototype"
-                p:messageLifetime="${idp.policy.messageLifetime:PT3M}"
-                p:clockSkew="${idp.policy.clockSkew:PT3M}" />
+                p:messageLifetime="%{idp.policy.messageLifetime:PT3M}"
+                p:clockSkew="%{idp.policy.clockSkew:PT3M}" />
         </constructor-arg>
         <property name="errorEvent">
             <util:constant static-field="org.opensaml.profile.action.EventIds.MESSAGE_EXPIRED" />
@@ -61,8 +61,8 @@
         <constructor-arg name="messageHandler">
             <bean class="org.opensaml.saml.common.binding.security.impl.MessageLifetimeSecurityHandler" scope="prototype"
                 p:requiredRule="false"
-                p:messageLifetime="${idp.policy.messageLifetime:PT3M}"
-                p:clockSkew="${idp.policy.clockSkew:PT3M}" />
+                p:messageLifetime="%{idp.policy.messageLifetime:PT3M}"
+                p:clockSkew="%{idp.policy.clockSkew:PT3M}" />
         </constructor-arg>
         <property name="errorEvent">
             <util:constant static-field="org.opensaml.profile.action.EventIds.MESSAGE_EXPIRED" />

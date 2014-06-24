@@ -12,8 +12,6 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <context:property-placeholder />
-
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     

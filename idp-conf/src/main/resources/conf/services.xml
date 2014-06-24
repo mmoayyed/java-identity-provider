@@ -54,44 +54,44 @@
     -->
     
     <!--
-    Otherwise by default we look at files whose names are derived from ${idp.home}. Services not configured
+    Otherwise by default we look at files whose names are derived from %{idp.home}. Services not configured
     using native Spring syntax also need to load the property-placeholder file in order to pull settings from
     property sources.
     -->
 
     <util:list id="shibboleth.RelyingPartyResolverResources">
-        <value>${idp.home}/conf/relying-party.xml</value>
-        <value>${idp.home}/conf/credentials.xml</value>
-        <value>${idp.home}/system/conf/relying-party-system.xml</value>
+        <value>%{idp.home}/conf/relying-party.xml</value>
+        <value>%{idp.home}/conf/credentials.xml</value>
+        <value>%{idp.home}/system/conf/relying-party-system.xml</value>
     </util:list>
 
     <!-- Use this set of resources (the first one suitably modified) to load a legacy 2.x file. -->
     <!--
     <util:list id="shibboleth.RelyingPartyResolverResources">
-        <value>${idp.home}/conf/relying-party-legacy.xml</value>
-        <value>${idp.home}/conf/property-placeholder.xml</value>
-        <value>${idp.home}/system/conf/profile-defaults.xml</value>
+        <value>%{idp.home}/conf/relying-party-legacy.xml</value>
+        <value>%{idp.home}/conf/property-placeholder.xml</value>
+        <value>%{idp.home}/system/conf/profile-defaults.xml</value>
     </util:list>
     -->
 
     <util:list id="shibboleth.MetadataResolverResources">
-        <value>${idp.home}/conf/metadata-providers.xml</value>
-        <value>${idp.home}/conf/property-placeholder.xml</value>
+        <value>%{idp.home}/conf/metadata-providers.xml</value>
+        <value>%{idp.home}/conf/property-placeholder.xml</value>
     </util:list>
 
     <util:list id ="shibboleth.AttributeResolverResources">
-        <value>${idp.home}/conf/attribute-resolver.xml</value>
-        <value>${idp.home}/conf/property-placeholder.xml</value>
+        <value>%{idp.home}/conf/attribute-resolver.xml</value>
+        <value>%{idp.home}/conf/property-placeholder.xml</value>
     </util:list>
 
     <util:list id ="shibboleth.AttributeFilterResources">
-        <value>${idp.home}/conf/attribute-filter.xml</value>
-        <value>${idp.home}/conf/property-placeholder.xml</value>
+        <value>%{idp.home}/conf/attribute-filter.xml</value>
+        <value>%{idp.home}/conf/property-placeholder.xml</value>
     </util:list>
 
     <util:list id ="shibboleth.NameIdentifierGenerationResources">
-        <value>${idp.home}/conf/saml-nameid.xml</value>
-        <value>${idp.home}/system/conf/saml-nameid-system.xml</value>
+        <value>%{idp.home}/conf/saml-nameid.xml</value>
+        <value>%{idp.home}/system/conf/saml-nameid-system.xml</value>
     </util:list>
 
 </beans>

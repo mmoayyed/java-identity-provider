@@ -12,7 +12,8 @@
     default-init-method="initialize"
     default-destroy-method="destroy">
 
-    <context:property-placeholder />
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
@@ -98,7 +99,7 @@
         class="net.shibboleth.idp.saml.profile.impl.PopulateBindingAndEndpointContexts" scope="prototype"
         p:endpointResolver-ref="shibboleth.EndpointResolver"
         p:bindings-ref="shibboleth.OutgoingBindings"
-        p:artifactImpliesSecureChannel="${idp.artifact.secureChannel:true}" />
+        p:artifactImpliesSecureChannel="%{idp.artifact.secureChannel:true}" />
 
     <bean id="PopulateDecryptionParameters"
         class="org.opensaml.profile.action.impl.PopulateDecryptionParameters" scope="prototype"

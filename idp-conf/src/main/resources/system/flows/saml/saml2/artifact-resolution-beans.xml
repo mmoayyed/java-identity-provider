@@ -12,7 +12,8 @@
     default-init-method="initialize"
     default-destroy-method="destroy">
 
-    <context:property-placeholder />
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
@@ -57,7 +58,7 @@
             <util:list>
                 <!-- TODO outbound handlers -->
                 <bean class="org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler"
-                    scope="prototype" p:signErrorResponses="${idp.errors.signed:true}" />
+                    scope="prototype" p:signErrorResponses="%{idp.errors.signed:true}" />
             </util:list>
         </property>
     </bean>

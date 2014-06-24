@@ -11,8 +11,6 @@
                            
        default-init-method="initialize"
        default-destroy-method="destroy">
-       
-    <context:property-placeholder />
 
     <bean id="c14n/simple" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
         <property name="activationCondition">

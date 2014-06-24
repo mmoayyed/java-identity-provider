@@ -12,7 +12,8 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <context:property-placeholder />
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
     <!-- This bean MUST be called "conversionService" to work properly. -->
     <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
@@ -30,7 +31,7 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
-            p:cacheSeconds="300" p:basename="${idp.home}/conf/messages" />
+            p:cacheSeconds="300" p:basename="%{idp.home}/conf/messages" />
 
     <import resource="general-authn-system.xml" />
     <import resource="session-manager.xml" />
@@ -42,11 +43,11 @@
     <bean id="shibboleth.TaskTimer" class="java.util.Timer" destroy-method="cancel"/> <!--  only needed if you do reloading -->
     
     <bean id="shibboleth.LogbackLogging" class="net.shibboleth.idp.log.LogbackLoggingService" init-method="start" destroy-method="stop"
-          p:loggingConfiguration="${idp.home}/conf/logback.xml"
-          p:properties="${idp.home}/conf/idp.properties"
-          p:reloadCheckDelay="${idp.service.logging.checkInterval}"
+          p:loggingConfiguration="%{idp.home}/conf/logback.xml"
+          p:properties="%{idp.home}/conf/idp.properties"
+          p:reloadCheckDelay="%{idp.service.logging.checkInterval:PT5M}"
           p:reloadTaskTimer-ref="shibboleth.TaskTimer"
-          p:failFast="${idp.service.logging.failFast}"/>
+          p:failFast="%{idp.service.logging.failFast:true}" />
     
     <bean id="shibboleth.OpenSAMLConfig" class="net.shibboleth.idp.spring.OpenSAMLConfigBean"
         depends-on="shibboleth.LogbackLogging" p:parserPool-ref="shibboleth.ParserPool" />
@@ -70,7 +71,7 @@
                 <prop key="file.resource.loader.class">
                     org.apache.velocity.runtime.resource.loader.FileResourceLoader
                 </prop>
-                <prop key="file.resource.loader.path">${idp.home}</prop>
+                <prop key="file.resource.loader.path">%{idp.home}</prop>
                 <prop key="file.resource.loader.cache">false</prop>
             </props>
         </property>
@@ -89,7 +90,7 @@
                         <value>http://apache.org/xml/properties/security-manager</value>
                     </key>
                     <bean id="shibboleth.XercesSecurityManager"
-                        class="${idp.xml.securityManager:com.sun.org.apache.xerces.internal.util.SecurityManager}" />
+                        class="%{idp.xml.securityManager:com.sun.org.apache.xerces.internal.util.SecurityManager}" />
                 </entry>
             </map>
         </property>
@@ -126,18 +127,18 @@
         p:secure="false" />
     
     <bean id="shibboleth.DataSealer" class="net.shibboleth.utilities.java.support.security.DataSealer"
-        p:keystoreType="${idp.sealer.storeType}"
-        p:keystoreResource="${idp.sealer.storeResource}"
-        p:keystorePassword="${idp.sealer.storePassword}"
-        p:cipherKeyAlias="${idp.sealer.alias}"
-        p:cipherKeyPassword="${idp.sealer.keyPassword}" />
+        p:keystoreType="%{idp.sealer.storeType}"
+        p:keystoreResource="%{idp.sealer.storeResource}"
+        p:keystorePassword="%{idp.sealer.storePassword}"
+        p:cipherKeyAlias="%{idp.sealer.alias}"
+        p:cipherKeyPassword="%{idp.sealer.keyPassword}" />
     
     <bean id="shibboleth.StorageService"
-        class="${idp.storage.StorageService:org.opensaml.storage.impl.MemoryStorageService}"
-        p:cleanupInterval="${idp.storage.cleanupInterval:PT10M}" />
+        class="%{idp.storage.StorageService:org.opensaml.storage.impl.MemoryStorageService}"
+        p:cleanupInterval="%{idp.storage.cleanupInterval:PT10M}" />
 
     <bean id="shibboleth.ClientStorageService"
-        class="${idp.storage.ClientStorageService:org.opensaml.storage.impl.ServletRequestScopedStorageService}"
+        class="%{idp.storage.ClientStorageService:org.opensaml.storage.impl.ServletRequestScopedStorageService}"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:httpServletResponse-ref="shibboleth.HttpServletResponse"
         p:cookieManager-ref="shibboleth.CookieManager"

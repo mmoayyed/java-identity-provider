@@ -8,7 +8,8 @@
                             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
 	default-init-method="initialize" default-destroy-method="destroy">
 	
-	<context:property-placeholder />
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 	
 	<!-- The profile defaults. Firstly the artifact and InboundFlowId parameters 
 
@@ -21,17 +22,17 @@
         c:_0="security-policy/soap" />
         
     <bean id="shibboleth.SAML2.Logout.ArtifactServiceIndex" class="java.lang.String"
-        c:_0="${idp.artifact.endpointIndex:1}" />
+        c:_0="%{idp.artifact.endpointIndex:1}" />
     <bean id="shibboleth.SAML2.Logout.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/saml2-logout" /><!-- TODO -->
 
     <bean id="shibboleth.SAML2.AttributeQuery.ArtifactServiceIndex" class="java.lang.String"
-        c:_0="${idp.artifact.endpointIndex:1}" />
+        c:_0="%{idp.artifact.endpointIndex:1}" />
     <bean id="shibboleth.SAML2.AttributeQuery.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/soap" />
 
     <bean id="shibboleth.SAML2.BrowserSSO.ArtifactServiceIndex" class="java.lang.String"
-        c:_0="${idp.artifact.endpointIndex:1}" />
+        c:_0="%{idp.artifact.endpointIndex:1}" />
     <bean id="shibboleth.SAML2.BrowserSSO.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/saml2-sso" />
         
@@ -47,7 +48,7 @@
         c:_0="security-policy/soap" />
         
     <bean id="shibboleth.SAML1.AttributeQuery.ArtifactServiceIndex" class="java.lang.String"
-        c:_0="${idp.artifact.endpointIndex:1}" />
+        c:_0="%{idp.artifact.endpointIndex:1}" />
     <bean id="shibboleth.SAML1.AttributeQuery.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/soap" />
         

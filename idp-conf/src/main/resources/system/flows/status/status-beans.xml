@@ -12,7 +12,8 @@
     default-init-method="initialize"
     default-destroy-method="destroy">
 
-    <context:property-placeholder />
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
@@ -24,7 +25,7 @@
     <bean id="CheckAccess"
         class="org.opensaml.profile.action.impl.CheckClientAddress" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:allowedRanges="#{ { ${idp.status.allowedAddresses:null} } }" />
+        p:allowedRanges="#{ { %{idp.status.allowedAddresses:null} } }" />
     
     <bean id="MapEventToView"
         class="net.shibboleth.idp.profile.context.navigate.SpringEventToViewLookupFunction"

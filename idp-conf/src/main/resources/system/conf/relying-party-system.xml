@@ -12,33 +12,34 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <context:property-placeholder />
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
     <!-- This BeanPostProcessor auto-sets identifiable beans with the bean name (if not already set). -->
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
-    <bean id="entityID" class="java.lang.String" c:_0="${idp.entityID}" />
+    <bean id="entityID" class="java.lang.String" c:_0="%{idp.entityID}" />
 
     <!-- Pulls together the various components that feed the resolver. -->
     <bean class="net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver"
         p:anonymousConfiguration-ref="shibboleth.AnonymousRelyingParty"
         p:defaultConfiguration-ref="shibboleth.DefaultRelyingParty"
         p:relyingPartyConfigurations-ref="shibboleth.RelyingPartyOverrides"
-        p:defaultSecurityConfiguration-ref="${idp.security.config:shibboleth.DefaultSecurityConfiguration}" />
+        p:defaultSecurityConfiguration-ref="%{idp.security.config:shibboleth.DefaultSecurityConfiguration}" />
 
     <!-- Parent bean for generic RelyingParty overrides that establishes defaults. -->
     <bean id="RelyingParty" abstract="true" class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"
-        p:responderId-ref="entityID" p:detailedErrors="${idp.errors.detailed:false}" />
+        p:responderId-ref="entityID" p:detailedErrors="%{idp.errors.detailed:false}" />
 
     <!-- Parent bean for RelyingParty overrides based on activation by name(s). -->
     <bean id="RelyingPartyByName" abstract="true"
         class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byName"
-        p:responderId-ref="entityID" p:detailedErrors="${idp.errors.detailed:false}" />
+        p:responderId-ref="entityID" p:detailedErrors="%{idp.errors.detailed:false}" />
 
     <!-- Parent bean for RelyingParty overrides based on activation by group. -->
     <bean id="RelyingPartyByGroup" abstract="true"
         class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byGroup"
-        p:responderId-ref="entityID" p:detailedErrors="${idp.errors.detailed:false}" />
+        p:responderId-ref="entityID" p:detailedErrors="%{idp.errors.detailed:false}" />
 
     <!-- Default Profile Configurations, also usable as parent beans in overrides. -->
     
@@ -59,22 +60,22 @@
         class="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration"
         p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
         p:inboundSubflowId="security-policy/saml2-sso"
-        p:encryptionOptional="${idp.encryption.optional:false}" />
+        p:encryptionOptional="%{idp.encryption.optional:false}" />
 
     <bean id="SAML2.ECP"
         class="net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration"
         p:inboundSubflowId="security-policy/saml2-sso"
-        p:encryptionOptional="${idp.encryption.optional:false}" />
+        p:encryptionOptional="%{idp.encryption.optional:false}" />
 
     <bean id="SAML2.AttributeQuery"
         class="net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration"
         p:inboundSubflowId="security-policy/soap"
-        p:encryptionOptional="${idp.encryption.optional:false}" />
+        p:encryptionOptional="%{idp.encryption.optional:false}" />
 
     <bean id="SAML2.ArtifactResolution"
         class="net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration"
         p:inboundSubflowId="security-policy/soap"
-        p:encryptionOptional="${idp.encryption.optional:false}" />
+        p:encryptionOptional="%{idp.encryption.optional:false}" />
     
     <bean id="Liberty.SSOS"
         class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration" />    
@@ -83,7 +84,7 @@
     
     <bean id="shibboleth.DefaultArtifactConfiguration"
         class="net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration"
-        p:artifactResolutionServiceIndex="${idp.artifact.endpointIndex:1}" />
+        p:artifactResolutionServiceIndex="%{idp.artifact.endpointIndex:1}" />
     
     <!--
     Security Configuration Defaults
@@ -95,7 +96,7 @@
     <bean id="shibboleth.DefaultSecurityConfiguration" class="net.shibboleth.idp.profile.config.SecurityConfiguration">
     
         <property name="signatureSigningConfiguration">
-            <ref bean="${idp.signing.config:shibboleth.SigningConfiguration.SHA256}" />
+            <ref bean="%{idp.signing.config:shibboleth.SigningConfiguration.SHA256}" />
         </property>
         
         <property name="encryptionConfiguration">

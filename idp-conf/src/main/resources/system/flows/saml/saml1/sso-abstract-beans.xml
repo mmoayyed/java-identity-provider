@@ -12,7 +12,8 @@
     default-init-method="initialize"
     default-destroy-method="destroy">
 
-    <context:property-placeholder />
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
@@ -32,7 +33,7 @@
             class="org.opensaml.saml.saml1.profile.impl.AddNameIdentifierToSubjects" scope="prototype">
         <property name="formatLookupStrategy">
             <bean class="net.shibboleth.idp.saml.profile.logic.DefaultNameIdentifierFormatStrategy"
-                p:defaultFormat="${idp.nameid.saml1.default:urn:mace:shibboleth:1.0:nameIdentifier}" />
+                p:defaultFormat="%{idp.nameid.saml1.default:urn:mace:shibboleth:1.0:nameIdentifier}" />
         </property>
         <property name="nameIdentifierGenerator">
             <bean class="net.shibboleth.idp.saml.nameid.impl.ProxySAML1NameIdentifierGenerator"
@@ -46,9 +47,9 @@
 
     <bean id="UpdateSessionWithSPSession"
         class="net.shibboleth.idp.session.impl.UpdateSessionWithSPSession" scope="prototype"
-        p:activationCondition-ref="${idp.session.enabled:shibboleth.Conditions.True}"
+        p:activationCondition-ref="%{idp.session.enabled:shibboleth.Conditions.True}"
         p:sessionManager-ref="shibboleth.SessionManager"
-        p:sessionLifetime="${idp.session.defaultSPlifetime:PT2H}" />
+        p:sessionLifetime="%{idp.session.defaultSPlifetime:PT2H}" />
 
     <bean id="shibboleth.PreEncodeMessageHandler"
             class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
@@ -58,7 +59,7 @@
                 <bean class="org.opensaml.saml.common.binding.impl.SAMLOutboundDestinationHandler" scope="prototype"/>
                 <bean class="org.opensaml.saml.common.binding.security.impl.EndpointURLSchemeSecurityHandler" scope="prototype"/>
                 <bean class="org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler"
-                    scope="prototype" p:signErrorResponses="${idp.errors.signed:true}" />
+                    scope="prototype" p:signErrorResponses="%{idp.errors.signed:true}" />
             </util:list>
         </property>
     </bean>

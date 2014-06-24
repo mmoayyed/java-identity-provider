@@ -1,12 +1,15 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:webflow="http://www.springframework.org/schema/webflow-config"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                            http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd">
 
-    <context:property-placeholder />
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
     <!--
     Define custom flows by using the filesystem directly. Flows will be named based
@@ -15,12 +18,12 @@
     NOTE: you cannot override named flows in the system registry below. If absolutely
     necessary, you can comment out system flows to override them.
     -->
-    <webflow:flow-registry id="userFlowRegistry" base-path="${idp.home}/flows" flow-builder-services="flowBuilderServices">
+    <webflow:flow-registry id="userFlowRegistry" base-path="%{idp.home}/flows" flow-builder-services="flowBuilderServices">
         <webflow:flow-location-pattern value="/**/*-flow.xml" />
     </webflow:flow-registry>
 
     <!-- System-supplied flows, do not modify. -->
-    <webflow:flow-registry id="flowRegistry" parent="userFlowRegistry" base-path="${idp.home}/system/flows" flow-builder-services="flowBuilderServices">
+    <webflow:flow-registry id="flowRegistry" parent="userFlowRegistry" base-path="%{idp.home}/system/flows" flow-builder-services="flowBuilderServices">
 
         <!-- Status flow. -->
         <webflow:flow-location id="status" path="/status/status-flow.xml" />

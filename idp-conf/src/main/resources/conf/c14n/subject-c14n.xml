@@ -26,7 +26,7 @@
         <!--
         This is the standard post-login step that returns a username derived from the login process. If you
         have more complex needs such as mapping a certificate DN into a principal name, an alternative may
-        be required.
+        be required, but you can configure some simple transforms in simple-subject-c14n-config.xml
         -->
         <ref bean="c14n/simple" />
     </util:list>

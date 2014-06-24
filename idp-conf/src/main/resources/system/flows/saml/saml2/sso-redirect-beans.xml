@@ -10,8 +10,6 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
        default-init-method="initialize"
        default-destroy-method="destroy">
-
-    <context:property-placeholder />
     
     <bean id="InitializeProfileRequestContext" class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext"
         p:profileId="#{T(net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration).PROFILE_ID}"

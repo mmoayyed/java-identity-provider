@@ -19,7 +19,7 @@
 	<!-- Validates the signature of the metadata and filters out all by SP entities 
 		in order to save memory -->
 	<MetadataProvider id="URLMD" xsi:type="FilesystemMetadataProvider"
-		metadataFile="${idp.home}/metadata/example-metadata.xml">
+		metadataFile="%{idp.home}/metadata/example-metadata.xml">
 		<MetadataFilter xsi:type="ChainingFilter">
 			<MetadataFilter xsi:type="SignatureValidation"
 				requireSignedMetadata="false"> <!-- TODO -->

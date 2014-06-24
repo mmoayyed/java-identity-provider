@@ -11,8 +11,6 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <context:property-placeholder />
-
     <bean id="InitializeProfileRequestContext" class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext"
         p:profileId="#{T(net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration).PROFILE_ID}"
         p:browserProfile="false" />

@@ -9,7 +9,8 @@
 
 	default-init-method="initialize" default-destroy-method="destroy">
 
-    <context:property-placeholder />
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
@@ -38,7 +39,7 @@
             class="net.shibboleth.idp.saml.nameid.impl.NameIDCanonicalization" scope="prototype">
         <property name="decoder">
             <bean class="net.shibboleth.idp.saml.nameid.impl.StoredPersistentIdDecoder"
-                p:persistentIdStore="#{getObject('${idp.persistentId.store:null}')}" />
+                p:persistentIdStore="#{getObject('%{idp.persistentId.store:null}')}" />
         </property>
     </bean>
 
