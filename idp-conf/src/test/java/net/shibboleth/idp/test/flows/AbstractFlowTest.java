@@ -70,6 +70,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.util.StringUtils;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.engine.EndState;
@@ -188,8 +189,9 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      */
     public static void setIdPHomeProperty() {
         Path idpHome = Paths.get(Paths.get("").toAbsolutePath().toString(), "src", "main", "resources");
-        System.setProperty("idp.home", idpHome.toString());
-        log.debug("Setting idp.home to '{}'", idpHome);
+        String normalized = StringUtils.cleanPath(idpHome.toString());
+        System.setProperty("idp.home", normalized);
+        log.debug("Setting idp.home to '{}'", normalized);
     }
 
     /**
