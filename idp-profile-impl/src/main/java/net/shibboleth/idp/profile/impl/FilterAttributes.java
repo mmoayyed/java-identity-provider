@@ -133,6 +133,7 @@ public class FilterAttributes extends AbstractProfileAction {
         // This is always set to navigate to the root context and then apply the previous function.
         metadataFromFilterLookupStrategy = Functions.compose(
                 new Function<ProfileRequestContext,SAMLMetadataContext>() {
+                    @Override
                     public SAMLMetadataContext apply(ProfileRequestContext input) {
                         return metadataContextLookupStrategy.apply(input);
                     }
@@ -262,8 +263,6 @@ public class FilterAttributes extends AbstractProfileAction {
         final AttributeFilterContext filterContext = rpContext.getSubcontext(AttributeFilterContext.class, true);
 
         filterContext.setPrincipal(subjectContext.getPrincipalName());
-
-        // TODO(rdw) This navigation is subject to change
 
         filterContext.setPrincipalAuthenticationMethod(null);
         if (null != authenticationContext) {
