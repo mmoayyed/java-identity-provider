@@ -25,7 +25,7 @@ import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeInMetad
 import net.shibboleth.idp.attribute.filter.spring.matcher.BaseAttributeValueMatcherParser;
 import net.shibboleth.idp.saml.profile.config.navigate.AttributeConsumerServiceLookupFunction;
 import net.shibboleth.idp.saml.profile.config.navigate.EntityDescriptorLookupFunction;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.saml.common.messaging.context.AttributeConsumingServiceContext;
@@ -68,7 +68,7 @@ public class AttributeInMetadataRuleParser extends BaseAttributeValueMatcherPars
                     config.getAttributeNodeNS(null, "matchIfMetadataSilent"));
         }
 
-        if (ElementSupport.isElementNamed(config, ENTITY_ATTRIBUTE_IN_METADATA)) {
+        if (ENTITY_ATTRIBUTE_IN_METADATA.equals(DOMTypeSupport.getXSIType(config))) {
             builder.addPropertyValue("objectStrategy", new EntityDescriptorLookupFunction());
         } else {
             builder.addPropertyValue("objectStrategy", Functions.compose(new AttributeConsumerServiceLookupFunction(),
