@@ -95,6 +95,7 @@
     <!-- o.e.j.server.HttpConnectionFactory for all configuration    -->
     <!-- that may be set here.                                       -->
     <!-- =========================================================== -->
+    <!-- 
     <Call name="addConnector">
       <Arg>
         <New class="org.eclipse.jetty.server.ServerConnector">
@@ -115,6 +116,7 @@
         </New>
       </Arg>
     </Call>
+    -->
 
 
     <!-- ============================================================= -->
