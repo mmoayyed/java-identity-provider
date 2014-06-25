@@ -3,8 +3,7 @@
     This file is an EXAMPLE policy file.  While the policy presented in this 
     example file is functional, it isn't very interesting.
     
-    Deployers should refer to the Shibboleth 2 documentation for a complete list of components 
-    and their options.
+    Deployers should refer to the documentation for a complete list of components and their options.
 -->
 <afp:AttributeFilterPolicyGroup id="ShibbolethFilterPolicy"
         xmlns:afp="urn:mace:shibboleth:2.0:afp"
@@ -25,9 +24,9 @@
 
     </afp:AttributeFilterPolicy>
     
-    <!-- TODO Remove and replace releasing anything to anyone -->
+    <!-- TODO: Example policy for testbed and unit tests, remove before final -->
     <afp:AttributeFilterPolicy id="releaseSomeAttributeToAnyone">
-        <afp:PolicyRequirementRule xsi:type="basic:ANY" />
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://sp.example.org" />
 
         <afp:AttributeRule attributeID="eduPersonAffiliation">
             <afp:PermitValueRule xsi:type="basic:ANY" />
