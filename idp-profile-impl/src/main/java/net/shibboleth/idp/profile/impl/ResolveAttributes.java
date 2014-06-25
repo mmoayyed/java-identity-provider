@@ -207,8 +207,6 @@ public final class ResolveAttributes extends AbstractProfileAction {
         
         resolutionContext.setPrincipal(subjectContext.getPrincipalName());
         
-        // TODO(rdw) This navigation is subject to change
-
         resolutionContext.setPrincipalAuthenticationMethod(null);
         if (null != authenticationContext) {
             final AuthenticationResult result = authenticationContext.getAuthenticationResult();
@@ -219,7 +217,6 @@ public final class ResolveAttributes extends AbstractProfileAction {
 
         resolutionContext.setAttributeRecipientID(rpContext.getRelyingPartyId());
 
-        // TODO(rdw) This navigation is subject to change
         final RelyingPartyConfiguration config = rpContext.getConfiguration();
         if (null != config) {
             resolutionContext.setAttributeIssuerID(config.getResponderId());

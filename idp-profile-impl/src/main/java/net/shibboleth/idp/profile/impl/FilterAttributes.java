@@ -274,7 +274,6 @@ public class FilterAttributes extends AbstractProfileAction {
 
         filterContext.setAttributeRecipientID(rpContext.getRelyingPartyId());
 
-        // TODO(rdw) This navigation is subject to change
         final RelyingPartyConfiguration config = rpContext.getConfiguration();
         if (null != config) {
             filterContext.setAttributeIssuerID(config.getResponderId());
