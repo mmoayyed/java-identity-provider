@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.test.flows.c14n.actions;
+package net.shibboleth.idp.test.flows;
 
 import javax.annotation.Nonnull;
 
@@ -23,13 +23,9 @@ import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
-import net.shibboleth.idp.test.flows.AbstractFlowTest;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-/**
- *
- */
 public class SetupForResolver extends AbstractProfileAction {
     
     @Override
