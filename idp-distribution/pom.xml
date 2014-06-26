@@ -40,7 +40,7 @@
                 <executions>
                     <execution>
                         <id>copy-resources</id>
-                        <phase>package</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
@@ -62,7 +62,7 @@
                     <!-- Copy war to assembly directory. -->
                     <execution>
                         <id>copy-idp-war</id>
-                        <phase>package</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>copy</goal>
                         </goals>
@@ -83,7 +83,7 @@
                     <!-- Unpack idp-conf to assembly directory. -->
                     <execution>
                         <id>unpack-idp-conf</id>
-                        <phase>package</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>unpack</goal>
                         </goals>
@@ -103,7 +103,7 @@
                     <!-- Copy Jetty DTA plugin to jetty-base/lib/ext directory. -->
                     <execution>
                         <id>copy-jetty-dta-ssl</id>
-                        <phase>package</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>copy</goal>
                         </goals>
