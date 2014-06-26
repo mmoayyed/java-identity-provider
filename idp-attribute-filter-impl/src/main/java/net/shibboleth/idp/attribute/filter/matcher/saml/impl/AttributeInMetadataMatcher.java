@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
+package net.shibboleth.idp.attribute.filter.matcher.saml.impl;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,10 +51,10 @@ import com.google.common.collect.Multimap;
  * Matcher that checks whether an attribute is enumerated in an SP's metadata as a required or optional attribute. Also
  * supports simple value filtering.
  */
-public class AttributeInMetadataPolicyRule extends AbstractIdentifiableInitializableComponent implements Matcher {
+public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializableComponent implements Matcher {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AttributeInMetadataPolicyRule.class);
+    private final Logger log = LoggerFactory.getLogger(AttributeInMetadataMatcher.class);
 
     /** Whether optionally requested attributes should be matched. */
     private boolean onlyIfRequired;

@@ -21,7 +21,7 @@ package net.shibboleth.idp.attribute.filter.spring.saml;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeInMetadataPolicyRule;
+import net.shibboleth.idp.attribute.filter.matcher.saml.impl.AttributeInMetadataMatcher;
 import net.shibboleth.idp.attribute.filter.spring.matcher.BaseAttributeValueMatcherParser;
 import net.shibboleth.idp.saml.profile.config.navigate.AttributeConsumerServiceLookupFunction;
 import net.shibboleth.idp.saml.profile.config.navigate.EntityDescriptorLookupFunction;
@@ -37,7 +37,7 @@ import org.w3c.dom.Element;
 import com.google.common.base.Functions;
 
 /**
- * Bean definition parser for {@link AttributeInMetadataPolicyRule}.
+ * Bean definition parser for {@link AttributeInMetadataMatcher}.
  */
 public class AttributeInMetadataRuleParser extends BaseAttributeValueMatcherParser {
 
@@ -50,8 +50,8 @@ public class AttributeInMetadataRuleParser extends BaseAttributeValueMatcherPars
             "EntityAttributeInMetadata");
 
     /** {@inheritDoc} */
-    @Override @Nonnull protected Class<AttributeInMetadataPolicyRule> getNativeBeanClass() {
-        return AttributeInMetadataPolicyRule.class;
+    @Override @Nonnull protected Class<AttributeInMetadataMatcher> getNativeBeanClass() {
+        return AttributeInMetadataMatcher.class;
     }
 
     /** {@inheritDoc} */

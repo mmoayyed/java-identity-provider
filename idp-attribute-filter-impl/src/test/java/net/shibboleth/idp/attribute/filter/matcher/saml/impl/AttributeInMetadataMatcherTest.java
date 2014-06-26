@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
+package net.shibboleth.idp.attribute.filter.matcher.saml.impl;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +26,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.matcher.impl.DataSources;
+import net.shibboleth.idp.attribute.filter.matcher.saml.impl.AttributeInMetadataMatcher;
 import net.shibboleth.idp.saml.attribute.mapping.AttributesMapContainer;
 import net.shibboleth.idp.saml.profile.config.navigate.AttributeConsumerServiceLookupFunction;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -44,9 +45,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
 /**
- * Tests for {@link AttributeInMetadataPolicyRule}
+ * Tests for {@link AttributeInMetadataMatcher}
  */
-public class AttributeInMetadataPolicyRuleTest extends OpenSAMLInitBaseTestCase {
+public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
 
     private IdPAttribute makeAttribute(String id, List<? extends IdPAttributeValue<?>> values) {
         IdPAttribute attr = new IdPAttribute(id);
@@ -54,9 +55,9 @@ public class AttributeInMetadataPolicyRuleTest extends OpenSAMLInitBaseTestCase 
         return attr;
     }
 
-    private AttributeInMetadataPolicyRule makeMatcher(String id, boolean matchIfMetadataSilent, boolean onlyIfRequired)
+    private AttributeInMetadataMatcher makeMatcher(String id, boolean matchIfMetadataSilent, boolean onlyIfRequired)
             throws ComponentInitializationException {
-        AttributeInMetadataPolicyRule matcher = new AttributeInMetadataPolicyRule();
+        AttributeInMetadataMatcher matcher = new AttributeInMetadataMatcher();
         matcher.setMatchIfMetadataSilent(matchIfMetadataSilent);
         matcher.setOnlyIfRequired(onlyIfRequired);
         matcher.setId(id);
@@ -100,7 +101,7 @@ public class AttributeInMetadataPolicyRuleTest extends OpenSAMLInitBaseTestCase 
     }
 
     @Test public void getters() throws ComponentInitializationException {
-        AttributeInMetadataPolicyRule matcher = makeMatcher("test", true, true);
+        AttributeInMetadataMatcher matcher = makeMatcher("test", true, true);
         Assert.assertTrue(matcher.getMatchIfMetadataSilent());
         Assert.assertTrue(matcher.getOnlyIfRequired());
 
@@ -130,7 +131,7 @@ public class AttributeInMetadataPolicyRuleTest extends OpenSAMLInitBaseTestCase 
         final IdPAttribute attr =
                 makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
-        final AttributeInMetadataPolicyRule matcher = makeMatcher("test", true, true);
+        final AttributeInMetadataMatcher matcher = makeMatcher("test", true, true);
         Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attr, makeContext(null));
 
         Assert.assertEquals(result.size(), 2);

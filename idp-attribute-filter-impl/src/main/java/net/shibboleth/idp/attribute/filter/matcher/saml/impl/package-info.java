@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 /**
- * This is where the attribute policy rules that understand SAML live. 
+ * This is where the attribute matchers that understand SAML live. 
  */
 
-package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
+
+package net.shibboleth.idp.attribute.filter.matcher.saml.impl;
