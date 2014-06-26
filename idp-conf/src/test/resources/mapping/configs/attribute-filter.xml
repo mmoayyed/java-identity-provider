@@ -10,19 +10,9 @@
                                                     urn:mace:shibboleth:2.0:afp:mf:basic http://shibboleth.net/schema/idp/shibboleth-afp-mf-basic.xsd
                                                     urn:mace:shibboleth:2.0:afp:mf:saml http://shibboleth.net/schema/idp/shibboleth-afp-mf-saml.xsd">
 
-	<!-- Release the transient ID to anyone -->
-	<afp:AttributeFilterPolicy id="releaseTransientIdToAnyone">
-		<afp:PolicyRequirementRule xsi:type="basic:ANY" />
-
-		<afp:AttributeRule attributeID="transientId" id="transient">
-			<afp:PermitValueRule xsi:type="basic:ANY" />
-		</afp:AttributeRule>
-
-	</afp:AttributeFilterPolicy>
-
 	<!-- Release OK if RA map -->
 	<afp:AttributeFilterPolicy id="RAOKFILTER">
-		<afp:PolicyRequirementRule id="RATEST"
+		<afp:PolicyRequirementRule id="prrRA1"
 			xsi:type="basic:ANY" />
 
 		<afp:AttributeRule attributeID="IdPRA1" id="ra1release">
@@ -32,28 +22,35 @@
 	</afp:AttributeFilterPolicy>
 	
 	
-	<afp:AttributeFilterPolicy id="EANOTFILTER">
-        <afp:PolicyRequirementRule id="EATEST"
+    <!-- Release OK if RA map, but it doesn't -->
+	<afp:AttributeFilterPolicy id="RANOTFILTER">
+        <afp:PolicyRequirementRule id="prrRA2"
             xsi:type="basic:ANY" />
 
-        <afp:AttributeRule attributeID="IdPEA1" id="ea1release">
+        <afp:AttributeRule attributeID="IdPEA1" id="ra2release">
             <afp:PermitValueRule xsi:type="saml:AttributeInMetadata" />
         </afp:AttributeRule>
 
     </afp:AttributeFilterPolicy>
 	
 
-	<!-- Release NOTOK if RA map 
-	<afp:AttributeFilterPolicy id="RAOKFILTER">
-		<afp:PolicyRequirementRule xsi:type="basic:ANY"/>
+    <!--  Release is EA map -->
+	<afp:AttributeFilterPolicy id="EAOKFILTER">
+		<afp:PolicyRequirementRule xsi:type="saml:EntityAttributeInMetadata" attributeID="IdPEA1" id="prrEA1"/>
 
-		<afp:AttributeRule attributeID="IdPNotOK">
-			<afp:PermitValueRule xsi:type="basic:NOT">
-			<basic:Rule xsi:type="saml:AttributeInMetadata"/>
-			</afp:PermitValueRule>
+		<afp:AttributeRule attributeID="IdPOK">
+			<afp:PermitValueRule xsi:type="basic:ANY"/>
 		</afp:AttributeRule>
 
-	</afp:AttributeFilterPolicy> -->
+	</afp:AttributeFilterPolicy> 
 
+    <afp:AttributeFilterPolicy id="EANOTKFILTER">
+        <afp:PolicyRequirementRule xsi:type="saml:EntityAttributeInMetadata" attributeID="IdPEA2" id="prrEA2"/>
+
+        <afp:AttributeRule attributeID="IdPNotOK">
+            <afp:PermitValueRule xsi:type="basic:ANY"/>
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy> 
 
 </afp:AttributeFilterPolicyGroup>
