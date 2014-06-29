@@ -35,5 +35,7 @@ public class PrincipalConnectorNamespaceHandler extends BaseSpringNamespaceHandl
         registerBeanDefinitionParser(TransientConnectorParser.ELEMENT_NAME, new TransientConnectorParser());
 
         registerBeanDefinitionParser(CryptoTransientConnectorParser.ELEMENT_NAME, new CryptoTransientConnectorParser());
+
+        registerBeanDefinitionParser(StoredIdConnectorParser.ELEMENT_NAME, new StoredIdConnectorParser());
     }
 }
