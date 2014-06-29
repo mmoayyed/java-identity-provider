@@ -19,7 +19,6 @@ package net.shibboleth.idp.attribute.filter.spring.matcher;
 
 import net.shibboleth.idp.attribute.filter.matcher.impl.AttributeScopeStringMatcher;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
-import net.shibboleth.idp.attribute.filter.spring.matcher.AttributeScopeMatcherParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
@@ -34,7 +33,7 @@ public class AttributeScopeMatcherParserTest extends BaseAttributeFilterParserTe
         AttributeScopeStringMatcher what = (AttributeScopeStringMatcher) getMatcher("attributeScope.xml");
         
         Assert.assertEquals(what.getMatchString(), "jSmItH");
-        Assert.assertTrue(what.getCaseSensitive());
+        Assert.assertFalse(what.isIgnoreCase());
     }
 
 }

@@ -20,7 +20,6 @@ package net.shibboleth.idp.attribute.filter.spring.matcher;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -32,16 +31,14 @@ import org.w3c.dom.Element;
 public abstract class AbstractStringMatcherParser extends BaseAttributeValueMatcherParser {
 
     /** {@inheritDoc} */
-    protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
+    @Override protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(element, builder);
 
         builder.addPropertyValue("matchString", StringSupport.trimOrNull(element.getAttributeNS(null, "value")));
 
-        boolean ignoreCase = false;
         if (element.hasAttributeNS(null, "ignoreCase")) {
-            ignoreCase = AttributeSupport.getAttributeValueAsBoolean(element.getAttributeNodeNS(null, "ignoreCase"));
+            builder.addPropertyValue("ignoreCase", element.getAttributeNS(null, "ignoreCase"));
         }
-        builder.addPropertyValue("caseSensitive", !ignoreCase);
     }
 }

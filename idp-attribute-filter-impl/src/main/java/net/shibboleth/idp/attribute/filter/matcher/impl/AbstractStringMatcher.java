@@ -30,7 +30,7 @@ public abstract class AbstractStringMatcher extends AbstractMatcher implements M
     private String matchString;
 
     /** Whether the match evaluation is case sensitive. */
-    private boolean caseSensitive;
+    private boolean ignoreCase = true;
 
     /**
      * Gets the string to match for a positive evaluation.
@@ -51,23 +51,23 @@ public abstract class AbstractStringMatcher extends AbstractMatcher implements M
     }
 
     /**
-     * Gets whether the match evaluation is case sensitive.
+     * Gets whether the match evaluation is case insensitive.
      * 
-     * @return whether the match evaluation is case sensitive
+     * @return whether the match evaluation is case insensitive
      */
-    public boolean getCaseSensitive() {
-        return caseSensitive;
+    public boolean isIgnoreCase() {
+        return ignoreCase;
     }
 
     /**
-     * Sets whether the match evaluation is case sensitive.
+     * Sets whether the match evaluation is case insensitive.
      * 
-     * @param isCaseSensitive whether the match evaluation is case sensitive
+     * @param isCaseInsensitive whether the match evaluation is case sensitive
      */
-    public void setCaseSensitive(boolean isCaseSensitive) {
-        caseSensitive = isCaseSensitive;
+    public void setIgnoreCase(boolean isCaseInsensitive) {
+        ignoreCase = isCaseInsensitive;
     }
-
+    
     /**
      * Matches the given value against the provided match string. 
      * 
@@ -80,10 +80,10 @@ public abstract class AbstractStringMatcher extends AbstractMatcher implements M
             return matchString == null;
         }
 
-        if (caseSensitive) {
-            return value.equals(matchString);
-        } else {
+        if (ignoreCase) {
             return value.equalsIgnoreCase(matchString);
+        } else {
+            return value.equals(matchString);
         }
     }
 }

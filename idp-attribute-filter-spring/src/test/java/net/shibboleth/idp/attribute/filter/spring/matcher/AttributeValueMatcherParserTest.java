@@ -20,10 +20,6 @@ package net.shibboleth.idp.attribute.filter.spring.matcher;
 import java.util.Map;
 import java.util.Set;
 
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.Matcher;
@@ -34,6 +30,10 @@ import net.shibboleth.idp.attribute.filter.matcher.impl.AttributeValueStringMatc
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+
+import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 /**
  * This tests not just the parsing of the rule, but also the construction of the complex tests.<br/>
@@ -122,7 +122,7 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
         Assert.assertTrue(result.isEmpty());
         
         AttributeValueStringMatcher avm = (AttributeValueStringMatcher) matcher;
-        Assert.assertFalse(avm.getCaseSensitive());
+        Assert.assertTrue(avm.isIgnoreCase());
         Assert.assertEquals(avm.getMatchString(), "jsmith");
     }
 

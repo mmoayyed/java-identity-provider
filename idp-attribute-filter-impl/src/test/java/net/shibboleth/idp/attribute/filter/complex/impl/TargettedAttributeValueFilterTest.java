@@ -50,7 +50,7 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
     private Matcher valueMatcher() {
         AttributeValueStringMatcher retVal = new AttributeValueStringMatcher();
 
-        retVal.setCaseSensitive(true);
+        retVal.setIgnoreCase(false);
         retVal.setMatchString("jsmith");
         retVal.setId("Test");
         try {

@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.filter.matcher.impl;
 
-import net.shibboleth.idp.attribute.filter.matcher.impl.AttributeScopeStringMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
@@ -30,7 +29,7 @@ public class AttributeScopeStringMatcherTest {
     
     @Test public void testApply() throws ComponentInitializationException {
         AttributeScopeStringMatcher matcher = new AttributeScopeStringMatcher();
-        matcher.setCaseSensitive(false);
+        matcher.setIgnoreCase(true);
         matcher.setMatchString(DataSources.TEST_STRING);
         matcher.setId("Test");
         matcher.initialize();
