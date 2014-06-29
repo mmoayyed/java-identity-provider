@@ -17,18 +17,17 @@
 
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
-import java.util.List;
-
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.RegistrationAuthorityPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
-import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -66,7 +65,7 @@ public class RegistrationAuthorityRuleParser extends BasePolicyRuleParser {
 
         final Attr attr = element.getAttributeNodeNS(null, REGISTRARS_ATTR_NAME);
         if (attr != null) {
-            final List<String> issuers = AttributeSupport.getAttributeValueAsList(attr);
+            final ManagedList<String> issuers = SpringSupport.getAttributeValueAsManagedList(attr);
             log.debug("Registration Authority Filter: Issuers = {}", issuers);
             builder.addPropertyValue("issuers", issuers);
         }

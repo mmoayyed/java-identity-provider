@@ -22,10 +22,10 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +54,7 @@ public class SAML2BrowserSSOProfileParser extends BaseSAML2ProfileConfigurationP
     public SAML2BrowserSSOProfileParser() {
         setArtifactAware(true);
     }
-    
+
     /** {@inheritDoc} */
     @Override protected Class<? extends BrowserSSOProfileConfiguration> getBeanClass(Element element) {
         return BrowserSSOProfileConfiguration.class;
@@ -104,11 +104,8 @@ public class SAML2BrowserSSOProfileParser extends BaseSAML2ProfileConfigurationP
         }
 
         if (parent.hasAttributeNS(null, "nameIDFormatPrecedence")) {
-            final List<String> nameIDs =
-                    AttributeSupport.getAttributeValueAsList(parent.getAttributeNodeNS(null, "nameIDFormatPrecedence"));
-            final List<String> managedNameIds = new ManagedList<>(nameIDs.size());
-            managedNameIds.addAll(nameIDs);
-            builder.addPropertyValue("nameIDFormatPrecedence", managedNameIds);
+            builder.addPropertyValue("nameIDFormatPrecedence", SpringSupport.getAttributeValueAsManagedList(parent
+                    .getAttributeNodeNS(null, "nameIDFormatPrecedence")));
         }
     }
 
