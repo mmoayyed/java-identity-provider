@@ -57,10 +57,18 @@ public class SourceValue {
      * @param theIgnoreCase whether case should be ignored when matching
      * @param thePartialMatch whether partial matches should be allowed
      */
-    public SourceValue(@Nullable String theValue, boolean theIgnoreCase, boolean thePartialMatch) {
+    public SourceValue(@Nullable String theValue, @Nullable Boolean theIgnoreCase, @Nullable Boolean thePartialMatch) {
         value = StringSupport.trimOrNull(theValue);
-        ignoreCase = theIgnoreCase;
-        partialMatch = thePartialMatch;
+        if (null != theIgnoreCase) {
+            ignoreCase = theIgnoreCase;
+        } else {
+            ignoreCase = false;
+        }
+        if (null != thePartialMatch) {
+            partialMatch = thePartialMatch;
+        } else {
+            partialMatch = false;
+        }
         if (!partialMatch && value != null) {
             int flags = 0;
             if (ignoreCase) {

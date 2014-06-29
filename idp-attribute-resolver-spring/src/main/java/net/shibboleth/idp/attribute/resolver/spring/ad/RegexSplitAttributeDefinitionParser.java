@@ -17,15 +17,12 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
-import java.util.regex.Pattern;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.RegexSplitAttributeDefinition;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,20 +59,12 @@ public class RegexSplitAttributeDefinitionParser extends BaseAttributeDefinition
             throw new BeanCreationException(getLogPrefix() + " No regexp text provided.");
         }
 
-        boolean caseSensitive = true;
+        BeanDefinitionBuilder pattern = BeanDefinitionBuilder.genericBeanDefinition(PatternFactoryBean.class);
+        
+        pattern.addPropertyValue("regexp", regexp);
+
         if (config.hasAttributeNS(null, "caseSensitive")) {
-            caseSensitive =
-                    AttributeSupport.getAttributeValueAsBoolean(config.getAttributeNodeNS(null, "caseSensitive"));
-        }
-
-        BeanDefinitionBuilder pattern = BeanDefinitionBuilder.genericBeanDefinition(Pattern.class);
-
-        if (caseSensitive) {
-            pattern.addConstructorArgValue(regexp);
-            pattern.addConstructorArgValue(0);
-        } else {
-            pattern.addConstructorArgValue(regexp);
-            pattern.addConstructorArgValue(Pattern.CASE_INSENSITIVE);
+            pattern.addPropertyValue("caseSensitive", config.getAttributeNS(null, "caseSensitive"));
         }
 
         builder.addPropertyValue("regularExpression", pattern.getBeanDefinition());

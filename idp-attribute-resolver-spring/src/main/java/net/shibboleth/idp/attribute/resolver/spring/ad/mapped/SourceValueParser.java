@@ -23,7 +23,6 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.SourceValue;
 import net.shibboleth.idp.attribute.resolver.spring.ad.AttributeDefinitionNamespaceHandler;
-import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,25 +50,28 @@ public class SourceValueParser extends AbstractSingleBeanDefinitionParser {
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        boolean ignoreCase = false;
-
-        if (config.hasAttributeNS(null, "ignoreCase")) {
-            ignoreCase = AttributeSupport.getAttributeValueAsBoolean(config.getAttributeNodeNS(null, "ignoreCase"));
-        }
-
-        boolean partialMatch = false;
-        if (config.hasAttributeNS(null, "partialMatch")) {
-            partialMatch = AttributeSupport.getAttributeValueAsBoolean(config.getAttributeNodeNS(null, "partialMatch"));
-        }
-
         final String value = config.getTextContent();
-
-        log.debug("SourceValue value: {}, ignoreCase: {}, partialMatch: {}", new Object[] {value, ignoreCase,
-                partialMatch,});
-
         builder.addConstructorArgValue(value);
-        builder.addConstructorArgValue(ignoreCase);
-        builder.addConstructorArgValue(partialMatch);
+
+        String ignoreCase = null;
+        if (config.hasAttributeNS(null, "ignoreCase")) {
+            ignoreCase = config.getAttributeNS(null, "ignoreCase");
+            builder.addConstructorArgValue(ignoreCase);
+        } else {
+            builder.addConstructorArgValue(null);
+        }
+
+        String partialMatch = null;
+        if (config.hasAttributeNS(null, "partialMatch")) {
+            partialMatch = config.getAttributeNS(null, "partialMatch");
+            builder.addConstructorArgValue(partialMatch);
+        } else {
+            builder.addConstructorArgValue(null);
+        }
+
+
+        log.debug("SourceValue value: {}, ignoreCase: {}, partialMatch: {}", value, ignoreCase, partialMatch);
+
     }
 
     /** {@inheritDoc} */

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
 import java.util.List;
@@ -57,14 +58,11 @@ public class RegistrationAuthorityRuleParser extends BasePolicyRuleParser {
     @Override protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
             @Nonnull BeanDefinitionBuilder builder) {
 
-        boolean matchIfSilent = false;
         if (element.hasAttributeNS(null, MATCH_IF_METADATA_SILENT_ATTR_NAME)) {
-            matchIfSilent =
-                    AttributeSupport.getAttributeValueAsBoolean(element.getAttributeNodeNS(null,
-                            MATCH_IF_METADATA_SILENT_ATTR_NAME));
+            String matchIfSilent = element.getAttributeNS(null, MATCH_IF_METADATA_SILENT_ATTR_NAME);
+            log.debug("Registration Authority Filter: Match if Metadata silent = {}", matchIfSilent);
+            builder.addPropertyValue("matchIfMetadataSilent", matchIfSilent);
         }
-        log.debug("Registration Authority Filter: Match if Metadata silent = {}", matchIfSilent);
-        builder.addPropertyValue("matchIfMetadataSilent", matchIfSilent);
 
         final Attr attr = element.getAttributeNodeNS(null, REGISTRARS_ATTR_NAME);
         if (attr != null) {
@@ -73,5 +71,4 @@ public class RegistrationAuthorityRuleParser extends BasePolicyRuleParser {
             builder.addPropertyValue("issuers", issuers);
         }
     }
-
 }

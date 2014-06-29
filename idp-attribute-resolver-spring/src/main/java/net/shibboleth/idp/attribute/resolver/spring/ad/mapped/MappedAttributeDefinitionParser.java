@@ -28,7 +28,6 @@ import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.MappedAttributeDefin
 import net.shibboleth.idp.attribute.resolver.spring.ad.AttributeDefinitionNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
@@ -54,18 +53,18 @@ public class MappedAttributeDefinitionParser extends BaseAttributeDefinitionPars
     private Logger log = LoggerFactory.getLogger(MappedAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
-    protected Class<MappedAttributeDefinition> getBeanClass(@Nullable final Element element) {
+    @Override protected Class<MappedAttributeDefinition> getBeanClass(@Nullable final Element element) {
         return MappedAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
-         super.doParse(config, parserContext, builder);
+        super.doParse(config, parserContext, builder);
 
         final List<Element> defaultValueElements = ElementSupport.getChildElements(config, DEFAULT_VALUE_ELEMENT_NAME);
         String defaultValue = null;
-        boolean passThru = false;
+        String passThru = null;
 
         if (null != defaultValueElements && defaultValueElements.size() > 0) {
             Element defaultValueElement = defaultValueElements.get(0);
@@ -75,14 +74,12 @@ public class MappedAttributeDefinitionParser extends BaseAttributeDefinitionPars
                 if (null != defaultValue) {
                     log.info("Attribute Definition: '{}' default value and passThru both specified", getDefinitionId());
                 }
-                passThru =
-                        AttributeSupport.getAttributeValueAsBoolean(defaultValueElement.getAttributeNodeNS(null,
-                                "passThru"));
+                passThru = defaultValueElement.getAttributeNS(null, "passThru");
+                builder.addPropertyValue("passThru", passThru);
             }
         }
 
-        final List<Element> valueMapElements =
-                ElementSupport.getChildElements(config, ValueMapParser.TYPE_NAME);
+        final List<Element> valueMapElements = ElementSupport.getChildElements(config, ValueMapParser.TYPE_NAME);
 
         if (null == valueMapElements || valueMapElements.size() == 0) {
             throw new BeanCreationException("Attribute Definition '" + getDefinitionId()
@@ -91,13 +88,11 @@ public class MappedAttributeDefinitionParser extends BaseAttributeDefinitionPars
 
         ManagedList<BeanDefinition> valueMaps = SpringSupport.parseCustomElements(valueMapElements, parserContext);
 
-        log.debug("{} passThru = {}, defaultValue = {}, {} value maps.", new Object[] {
-                getLogPrefix(), passThru, defaultValue, valueMaps.size(),});
+        log.debug("{} passThru = {}, defaultValue = {}, {} value maps.", new Object[] {getLogPrefix(), passThru,
+                defaultValue, valueMaps.size(),});
         log.trace("{} value maps {}", getLogPrefix(), valueMaps);
 
         builder.addPropertyValue("defaultValue", defaultValue);
-        builder.addPropertyValue("passThru", passThru);
         builder.addPropertyValue("valueMaps", valueMaps);
     }
-
 }

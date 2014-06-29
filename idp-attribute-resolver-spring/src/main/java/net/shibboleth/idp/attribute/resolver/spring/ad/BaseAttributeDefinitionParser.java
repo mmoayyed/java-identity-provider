@@ -83,17 +83,11 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
             builder.addPropertyValue("displayDescriptions", names);
         }
 
-        Boolean dependencyOnly = new Boolean(false);
         if (config.hasAttributeNS(null, "dependencyOnly")) {
-            dependencyOnly =
-                    AttributeSupport.getAttributeValueAsBoolean(config.getAttributeNodeNS(null, "dependencyOnly"));
-            if (null == dependencyOnly) {
-                log.error("{} value for 'dependencyOnly' should be 'true','1','false', or '0'.", getLogPrefix());
-                dependencyOnly = new Boolean(false);
-            }
+            String dependencyOnly = config.getAttributeNS(null, "dependencyOnly");
+            log.debug("{} setting dependencyOnly {}.", getLogPrefix(), dependencyOnly);
+            builder.addPropertyValue("dependencyOnly", dependencyOnly);
         }
-        log.debug("{} setting displayDescriptions {}.", getLogPrefix(), dependencyOnly);
-        builder.addPropertyValue("dependencyOnly", dependencyOnly);
 
         final String sourceAttributeId;
         if (config.hasAttributeNS(null, "sourceAttributeID")) {

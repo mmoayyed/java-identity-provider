@@ -87,12 +87,10 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
 
         addPropertyDescriptorValues(builder, beanFactory, RDBMSDataConnector.class);
 
-        final Boolean noResultAnError =
-                AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(config, new QName(
-                        "noResultIsError")));
-        log.debug("parsed noResultAnError {}", noResultAnError);
-        if (noResultAnError != null && noResultAnError.booleanValue()) {
-            builder.addPropertyValue("noResultAnError", true);
+        if (config.hasAttributeNS(null, "noResultIsError")) {
+            final String noResultAnError = config.getAttributeNS(null, "noResultIsError");
+            log.debug("parsed noResultAnError {}", noResultAnError);
+            builder.addPropertyValue("noResultAnError", noResultAnError);
         }
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
