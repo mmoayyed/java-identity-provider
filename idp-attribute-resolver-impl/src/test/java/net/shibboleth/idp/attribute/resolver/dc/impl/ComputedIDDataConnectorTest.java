@@ -101,12 +101,14 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolver.initialize();
         connector.initialize();
 
-        final AttributeResolutionContext context = TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
-                TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
+        final AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected - two scoped attributes
-        Set<IdPAttributeValue<?>> resultValues = context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME).getValues();
+        Set<IdPAttributeValue<?>> resultValues =
+                context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(resultValues.size(), 1);
         Assert.assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(), RESULT);
     }
@@ -198,12 +200,14 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         connectorFromResolver(resolver).initialize();
         ComponentSupport.initialize(resolver);
 
-        AttributeResolutionContext context = TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
-                TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
+        AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected
-        Set<IdPAttributeValue<?>> resultValues = context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME).getValues();
+        Set<IdPAttributeValue<?>> resultValues =
+                context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(resultValues.size(), 1);
         Assert.assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(), RESULT);
 
@@ -214,8 +218,9 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         connectorFromResolver(resolver).initialize();
         ComponentSupport.initialize(resolver);
 
-        context = TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
-                TestSources.SP_ENTITY_ID);
+        context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected
@@ -256,7 +261,6 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         connectorFromResolver(resolver).initialize();
         ComponentSupport.initialize(resolver);
 
-
         context = TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);
         Assert.assertNull(context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME));
@@ -276,6 +280,42 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         context = TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);
         Assert.assertNull(context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME));
+    }
+
+    @Test public void case425() throws ComponentInitializationException, ResolutionException {
+
+        final ComputedIDDataConnector connector = new ComputedIDDataConnector();
+        connector.setId(TEST_CONNECTOR_NAME);
+        connector.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency(
+                TestSources.STATIC_CONNECTOR_NAME, null)));
+        connector.setSourceAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
+        connector.setSalt(salt);
+        connector.setGeneratedAttributeId("wibble");
+        connector.initialize();
+
+        final Set<DataConnector> set = new HashSet<>(2);
+        set.add(TestSources.populatedStaticConnector());
+        set.add(connector);
+
+        final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
+        simple.setId(OUTPUT_ATTRIBUTE_NAME);
+        simple.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency(TEST_CONNECTOR_NAME,
+                "wibble")));
+        simple.initialize();
+
+        final AttributeResolver resolver =
+                new AttributeResolverImpl("atresolver", Collections.singleton((AttributeDefinition) simple), set, null);
+        ComponentSupport.initialize(resolver);
+
+        AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        resolver.resolveAttributes(context);
+
+        final Set<IdPAttributeValue<?>> resultValues =
+                context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME).getValues();
+        Assert.assertEquals(resultValues.size(), 1);
 
     }
+
 }

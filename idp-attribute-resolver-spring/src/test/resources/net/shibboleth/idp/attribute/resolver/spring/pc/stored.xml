@@ -16,8 +16,8 @@
 
 	<resolver:DataConnector id="dc" xsi:type="dc:StoredId"
 		generatedAttributeID="output" salt="123456789abcdefgh"
-		sourceAttributeID="interim">
-		<resolver:Dependency ref="interim" />
+		sourceAttributeID="foobar">
+		<resolver:Dependency ref="staticAttributes" />
 		<dc:ApplicationManagedConnection
 			jdbcURL="jdbc:hsqldb:hsql:storedId" jdbcDriver="org.hsqldb.jdbc.JDBCDriver" />
 	</resolver:DataConnector>
@@ -28,12 +28,6 @@
 			<dc:Value>barfoo</dc:Value>
 		</dc:Attribute>
 	</resolver:DataConnector>
-
-    <resolver:AttributeDefinition id="interim"
-        xsi:type="ad:Simple" sourceAttributeID="foobar">
-        <resolver:Dependency ref="staticAttributes" />
-    </resolver:AttributeDefinition>
-
 
 	<resolver:AttributeDefinition id="result"
 		xsi:type="ad:Simple" sourceAttributeID="output">

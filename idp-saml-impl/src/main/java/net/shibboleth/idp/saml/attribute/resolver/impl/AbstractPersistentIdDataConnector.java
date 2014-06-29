@@ -28,7 +28,8 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
-import net.shibboleth.idp.attribute.resolver.ResolvedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
+import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -39,8 +40,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The basis of a {@link net.shibboleth.idp.attribute.resolver.DataConnector} that handles persistent IDs
- * that depend on a source {@link IdPAttribute}.
+ * The basis of a {@link net.shibboleth.idp.attribute.resolver.DataConnector} that handles persistent IDs that depend on
+ * a source {@link IdPAttribute}.
  */
 public abstract class AbstractPersistentIdDataConnector extends AbstractDataConnector {
 
@@ -90,17 +91,22 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         generatedAttribute = newAttributeId;
     }
-    
 
     /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
+    @Override protected void doInitialize() throws ComponentInitializationException {
 
         if (null == getSourceAttributeId()) {
             throw new ComponentInitializationException(getLogPrefix() + " No source attribute present.");
         }
-        
+
+        // We have an input id, so that gets added to the dependencies.
+        if (null != getSourceAttributeId()) {
+            for (ResolverPluginDependency depends : getDependencies()) {
+                depends.setDependencyAttributeId(getSourceAttributeId());
+            }
+        }
+        super.doInitialize();
+
         if (null == generatedAttribute) {
             generatedAttribute = getId();
             log.info("{} No generated attribute ID supplied, using ID of connector: {}", getLogPrefix(),
@@ -118,17 +124,9 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        
-        final ResolvedAttributeDefinition attributeDefinition =
-                workContext.getResolvedIdPAttributeDefinitions().get(getSourceAttributeId());
 
-        if (null == attributeDefinition || null == attributeDefinition.getResolvedAttribute()) {
-            log.warn("{} Source attribute {} for connector {} was not present in dependencies", getLogPrefix(),
-                    getSourceAttributeId(), getId());
-            return null;
-        }
-
-        final Set<IdPAttributeValue<?>> attributeValues = attributeDefinition.getResolvedAttribute().getValues();
+        final Set<IdPAttributeValue<?>> attributeValues =
+                PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies());
         if (attributeValues == null || attributeValues.isEmpty()) {
             log.debug("{} Source attribute {} for connector {} provide no values", getLogPrefix(),
                     getSourceAttributeId(), getId());
@@ -147,8 +145,8 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
         if (attributeValue instanceof StringAttributeValue) {
             val = StringSupport.trimOrNull(((StringAttributeValue) attributeValue).getValue());
         } else {
-            log.warn("{} Source attribute {} for connector {} was not a string type.  Not used",
-                    getLogPrefix(), getSourceAttributeId(), getId());
+            log.warn("{} Source attribute {} for connector {} was not a string type.  Not used", getLogPrefix(),
+                    getSourceAttributeId(), getId());
             return null;
         }
 
@@ -175,5 +173,5 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
         attribute.setValues(Collections.singleton(new StringAttributeValue(value)));
         return Collections.singletonMap(getGeneratedAttributeId(), attribute);
     }
-    
+
 }
