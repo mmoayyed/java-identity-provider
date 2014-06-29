@@ -19,7 +19,6 @@ package net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.matcher.impl.DataSources;
-import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.AttributeIssuerPolicyRule;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 
@@ -38,7 +37,7 @@ public class AttributeIssuerPolicyRuleTest {
     private AttributeIssuerPolicyRule getMatcher(boolean caseSensitive) throws ComponentInitializationException {
         final AttributeIssuerPolicyRule matcher = new AttributeIssuerPolicyRule();
         matcher.setMatchString("issuer");
-        matcher.setCaseSensitive(caseSensitive);
+        matcher.setIgnoreCase(!caseSensitive);
         matcher.setId("Test");
         matcher.initialize();
         return matcher;

@@ -66,7 +66,7 @@ public class AttributeRequesterRuleParserTest extends BaseAttributeFilterParserT
 
         final AttributeRequesterPolicyRule arRule = (AttributeRequesterPolicyRule) rule;
         Assert.assertEquals(arRule.getMatchString(), "https://service.example.edu/shibboleth-sp");
-        Assert.assertTrue(arRule.getCaseSensitive());
+        Assert.assertFalse(arRule.isIgnoreCase());
     }
  
     @Test public void matcher() throws ComponentInitializationException {

@@ -31,7 +31,7 @@ public abstract class AbstractStringPolicyRule extends AbstractPolicyRule implem
     private String matchString;
 
     /** Whether the match evaluation is case sensitive. */
-    private boolean caseSensitive;
+    private boolean ignoreCase;
 
     /**
      * Gets the string to match for a positive evaluation.
@@ -52,21 +52,21 @@ public abstract class AbstractStringPolicyRule extends AbstractPolicyRule implem
     }
 
     /**
-     * Gets whether the match evaluation is case sensitive.
+     * Gets whether the match evaluation is case insensitive.
      * 
-     * @return whether the match evaluation is case sensitive
+     * @return whether the match evaluation is case insensitive
      */
-    public boolean getCaseSensitive() {
-        return caseSensitive;
+    public boolean isIgnoreCase() {
+        return ignoreCase;
     }
 
     /**
      * Sets whether the match evaluation is case sensitive.
      * 
-     * @param isCaseSensitive whether the match evaluation is case sensitive
+     * @param isIgnoreCase whether the match evaluation is case sensitive
      */
-    public void setCaseSensitive(boolean isCaseSensitive) {
-        caseSensitive = isCaseSensitive;
+    public void setIgnoreCase(boolean isIgnoreCase) {
+        ignoreCase = isIgnoreCase;
     }
 
     /**
@@ -82,10 +82,10 @@ public abstract class AbstractStringPolicyRule extends AbstractPolicyRule implem
         boolean result;
         if (value == null) {
             result = matchString == null;
-        } else if (caseSensitive) {
-            result = value.equals(matchString);
-        } else {
+        } else if (ignoreCase) {
             result = value.equalsIgnoreCase(matchString);
+        } else {
+            result = value.equals(matchString);
         }
         if (result) {
             return Tristate.TRUE;

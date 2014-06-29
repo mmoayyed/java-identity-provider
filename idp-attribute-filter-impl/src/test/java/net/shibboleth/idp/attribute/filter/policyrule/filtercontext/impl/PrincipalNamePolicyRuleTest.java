@@ -19,7 +19,6 @@ package net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.matcher.impl.DataSources;
-import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.PrincipalNamePolicyRule;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 
@@ -34,7 +33,7 @@ public class PrincipalNamePolicyRuleTest {
     private PrincipalNamePolicyRule getMatcher(boolean b) throws ComponentInitializationException {
         PrincipalNamePolicyRule matcher = new PrincipalNamePolicyRule();
         matcher.setMatchString("principal");
-        matcher.setCaseSensitive(b);
+        matcher.setIgnoreCase(!b);
         matcher.setId("Test");
         matcher.initialize();
         return matcher;

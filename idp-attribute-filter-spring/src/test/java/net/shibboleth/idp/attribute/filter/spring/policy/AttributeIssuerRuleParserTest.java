@@ -30,7 +30,7 @@ public class AttributeIssuerRuleParserTest extends BaseAttributeFilterParserTest
 
         final AttributeIssuerPolicyRule arRule = (AttributeIssuerPolicyRule) getPolicyRule("attributeIssuer.xml");;
         Assert.assertEquals(arRule.getMatchString(), "urn:example:org:idp:foo");
-        Assert.assertFalse(arRule.getCaseSensitive());
+        Assert.assertTrue(arRule.isIgnoreCase());
     }
  
 }
