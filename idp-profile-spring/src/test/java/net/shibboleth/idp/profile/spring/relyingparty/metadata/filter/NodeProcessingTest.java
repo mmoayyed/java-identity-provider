@@ -40,14 +40,14 @@ import org.testng.annotations.Test;
 public class NodeProcessingTest extends AbstractMetadataParserTest {
 
     @Test public void empty() throws IOException {
-        final MetadataResolver resolver = getBean(MetadataResolver.class, true, "nodeproc/empty.xml");
+        final MetadataResolver resolver = getBean(MetadataResolver.class, "nodeproc/empty.xml");
 
         final NodeProcessingMetadataFilter filter = (NodeProcessingMetadataFilter) resolver.getMetadataFilter();
         Assert.assertEquals(filter.getNodeProcessors().size(), 0);
     }
 
     @Test public void both() throws IOException, ResolverException {
-        final MetadataResolver resolver = getBean(MetadataResolver.class, true, "nodeproc/both.xml");
+        final MetadataResolver resolver = getBean(MetadataResolver.class, "nodeproc/both.xml");
 
         final NodeProcessingMetadataFilter filter = (NodeProcessingMetadataFilter) resolver.getMetadataFilter();
         Assert.assertEquals(filter.getNodeProcessors().size(), 2);

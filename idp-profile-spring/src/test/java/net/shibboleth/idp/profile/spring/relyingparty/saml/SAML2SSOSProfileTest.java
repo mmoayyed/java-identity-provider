@@ -26,7 +26,7 @@ public class SAML2SSOSProfileTest extends BaseSAMLProfileTest {
 
     @Test public void defaults() {
 
-        SSOSProfileConfiguration profile = getBean(SSOSProfileConfiguration.class, true, "saml/ssos.xml", "beans.xml");
+        SSOSProfileConfiguration profile = getBean(SSOSProfileConfiguration.class, "saml/ssos.xml", "beans.xml");
 
         Assert.assertEquals(profile.getMaximumTokenDelegationChainLength(), 0);
         Assert.assertFalse(profile.getDelegationPredicate().apply(null));
@@ -34,7 +34,7 @@ public class SAML2SSOSProfileTest extends BaseSAMLProfileTest {
 
     @Test public void values() {
         SSOSProfileConfiguration profile =
-                getBean(SSOSProfileConfiguration.class, true, "saml/ssosValues.xml", "beans.xml");
+                getBean(SSOSProfileConfiguration.class, "saml/ssosValues.xml", "beans.xml");
 
         Assert.assertEquals(profile.getMaximumTokenDelegationChainLength(), 99);
         Assert.assertTrue(profile.getDelegationPredicate().apply(null));

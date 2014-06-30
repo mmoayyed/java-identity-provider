@@ -38,7 +38,7 @@ import org.testng.annotations.Test;
 public class EntityRoleFilterParserTest extends AbstractMetadataParserTest {
 
     @Test public void validUntil() throws IOException {
-        MetadataResolver resolver = getBean(MetadataResolver.class, true, "filter/entityRole.xml");
+        MetadataResolver resolver = getBean(MetadataResolver.class, "filter/entityRole.xml");
 
         final EntityRoleFilter filter = (EntityRoleFilter) resolver.getMetadataFilter();
         Assert.assertEquals(filter.getRemoveEmptyEntitiesDescriptors(), true);
@@ -47,7 +47,7 @@ public class EntityRoleFilterParserTest extends AbstractMetadataParserTest {
     }
 
     @Test public void param() throws IOException {
-        MetadataResolver resolver = getBean(MetadataResolver.class, true, "filter/entityRoleParams.xml");
+        MetadataResolver resolver = getBean(MetadataResolver.class, "filter/entityRoleParams.xml");
 
         final EntityRoleFilter filter = (EntityRoleFilter) resolver.getMetadataFilter();
         Assert.assertEquals(filter.getRemoveEmptyEntitiesDescriptors(), false);

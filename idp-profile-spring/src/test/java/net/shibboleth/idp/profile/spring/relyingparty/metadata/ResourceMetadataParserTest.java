@@ -33,7 +33,7 @@ public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
     
     @Test public void fileEntity() throws Exception {
 
-        FilesystemMetadataResolver resolver = getBean(FilesystemMetadataResolver.class, true, "resourceFileEntity.xml", "beans.xml");
+        FilesystemMetadataResolver resolver = getBean(FilesystemMetadataResolver.class, "resourceFileEntity.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "resourceFileEntity");
    
@@ -52,7 +52,7 @@ public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
 
     @Test public void fileEntities() throws Exception {
 
-        FilesystemMetadataResolver resolver = getBean(FilesystemMetadataResolver.class, true, "resourceFileEntities.xml", "beans.xml");
+        FilesystemMetadataResolver resolver = getBean(FilesystemMetadataResolver.class, "resourceFileEntities.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "resourceFileEntities");
         Assert.assertEquals(resolver.getMaxRefreshDelay(), 1000*60*55);
@@ -72,7 +72,7 @@ public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
     
     @Test public void classpathEntity() throws Exception {
 
-        MetadataResolver resolver = getBean(ResourceBackedMetadataResolver.class, true, "resourceClasspathEntity.xml", "beans.xml");
+        MetadataResolver resolver = getBean(ResourceBackedMetadataResolver.class, "resourceClasspathEntity.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "resourceClasspathEntity");
    
@@ -82,7 +82,7 @@ public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
 
     @Test public void classpathEntities() throws Exception {
 
-        MetadataResolver resolver = getBean(ResourceBackedMetadataResolver.class, true, "resourceClasspathEntities.xml", "beans.xml");
+        MetadataResolver resolver = getBean(ResourceBackedMetadataResolver.class, "resourceClasspathEntities.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "resourceClasspathEntities");
 
@@ -92,7 +92,7 @@ public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
 
     @Test public void httpEntity() throws Exception {
 
-        MetadataResolver resolver = getBean(HTTPMetadataResolver.class, true, "resourceHTTPEntity.xml", "beans.xml");
+        MetadataResolver resolver = getBean(HTTPMetadataResolver.class, "resourceHTTPEntity.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "resourceHTTPEntity");
    
@@ -102,7 +102,7 @@ public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
 
     @Test public void httpEntities() throws Exception {
 
-        MetadataResolver resolver = getBean(HTTPMetadataResolver.class, true, "resourceHTTPEntities.xml", "beans.xml");
+        MetadataResolver resolver = getBean(HTTPMetadataResolver.class, "resourceHTTPEntities.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "resourceHTTPEntities");
 
@@ -112,7 +112,7 @@ public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
     
     @Test public void fileHttpEntity() throws Exception {
 
-        MetadataResolver resolver = getBean(FileBackedHTTPMetadataResolver.class, true, "resourceFileBackedHTTPEntity.xml", "beans.xml");
+        MetadataResolver resolver = getBean(FileBackedHTTPMetadataResolver.class, "resourceFileBackedHTTPEntity.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "resourceFileBackedHTTPEntity");
    
@@ -122,7 +122,7 @@ public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
 
     @Test public void fileHttpEntities() throws Exception {
 
-        MetadataResolver resolver = getBean(FileBackedHTTPMetadataResolver.class, true, "resourceFileBackedHTTPEntities.xml", "beans.xml");
+        MetadataResolver resolver = getBean(FileBackedHTTPMetadataResolver.class, "resourceFileBackedHTTPEntities.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "resourceFileBackedHTTPEntities");
 
@@ -132,7 +132,7 @@ public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
 
     @Test public void svnEntity() throws Exception {
 
-        MetadataResolver resolver = getBean(ResourceBackedMetadataResolver.class, true, "svnEntity.xml", "beans.xml");
+        MetadataResolver resolver = getBean(ResourceBackedMetadataResolver.class, "svnEntity.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "SVNEntity");
    
@@ -141,6 +141,6 @@ public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
     }
 
     @Test(expectedExceptions={BeanCreationException.class,}, enabled=false) public void svnParams() throws Exception {
-        getBean(MetadataResolver.class, true, "svnParams.xml", "beans.xml");
+        getBean(MetadataResolver.class, "svnParams.xml", "beans.xml");
     }
 }

@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
 public class ChainingTest extends AbstractMetadataParserTest {
 
     @Test public void chain() throws IOException {
-        MetadataResolver resolver = getBean(MetadataResolver.class, true, "filter/chain.xml");
+        MetadataResolver resolver = getBean(MetadataResolver.class, "filter/chain.xml");
 
         final MetadataFilterChain filterChain = (MetadataFilterChain) resolver.getMetadataFilter();
         Assert.assertEquals(filterChain.getFilters().size(), 2);

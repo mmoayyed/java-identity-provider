@@ -32,14 +32,14 @@ import org.testng.annotations.Test;
 public class RequiredValidUntilParserTest extends AbstractMetadataParserTest {
 
     @Test public void validUntil() throws IOException {
-        MetadataResolver resolver = getBean(MetadataResolver.class, true, "filter/requiredValidUntil.xml");
+        MetadataResolver resolver = getBean(MetadataResolver.class, "filter/requiredValidUntil.xml");
 
         final RequiredValidUntilFilter filter = (RequiredValidUntilFilter) resolver.getMetadataFilter();
         Assert.assertEquals(filter.getMaxValidityInterval(), 0);
     }
     
     @Test public void param() throws IOException {
-        MetadataResolver resolver = getBean(MetadataResolver.class, true, "filter/requiredValidUntilParam.xml");
+        MetadataResolver resolver = getBean(MetadataResolver.class, "filter/requiredValidUntilParam.xml");
 
         final RequiredValidUntilFilter filter = (RequiredValidUntilFilter) resolver.getMetadataFilter();
         Assert.assertEquals(filter.getMaxValidityInterval(), 2*3600*24*1000);

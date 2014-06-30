@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
 public class ChainingMetadataParserTest extends AbstractMetadataParserTest {
     
     @Test public void chain() throws ResolverException, IOException {
-        ChainingMetadataResolver resolver = getBean(ChainingMetadataResolver.class, true, "chain.xml");
+        ChainingMetadataResolver resolver = getBean(ChainingMetadataResolver.class, "chain.xml");
         
         Assert.assertEquals(resolver.getId(), "chain");
    
@@ -44,7 +44,7 @@ public class ChainingMetadataParserTest extends AbstractMetadataParserTest {
     }
 
     @Test public void chain2() throws ResolverException, IOException {
-        ChainingMetadataResolver resolver = getBean(ChainingMetadataResolver.class, true, "chain2.xml");
+        ChainingMetadataResolver resolver = getBean(ChainingMetadataResolver.class, "chain2.xml");
         
         Assert.assertEquals(resolver.getId(), "chain2");
    

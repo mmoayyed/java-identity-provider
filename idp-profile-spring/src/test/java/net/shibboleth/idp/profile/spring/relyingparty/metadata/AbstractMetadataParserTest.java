@@ -49,28 +49,31 @@ import com.google.common.collect.Sets;
  * Base class for testing metadata providers.
  */
 public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
-    
+
     private static final String PATH = "/net/shibboleth/idp/profile/spring/relyingparty/metadata/";
-    
-    protected static final String SP_ID = "https://sp.example.org/sp/shibboleth"; 
+
+    protected static final String SP_ID = "https://sp.example.org/sp/shibboleth";
+
     protected static final String IDP_ID = "https://idp.example.org/idp/shibboleth";
-    
+
     static private String workspaceDirName;
-    
+
     static private File tempDir;
+
     static private String tempDirName;
-    
+
     protected Object parserPool;
-    
+
     @BeforeSuite public void setupDirs() throws IOException {
         final Path p = Files.createTempDirectory("MetadataProviderTest");
         tempDir = p.toFile();
         tempDirName = tempDir.getAbsolutePath();
-        
-        final ClassPathResource resource = new ClassPathResource("/net/shibboleth/idp/profile/spring/relyingparty/metadata");
+
+        final ClassPathResource resource =
+                new ClassPathResource("/net/shibboleth/idp/profile/spring/relyingparty/metadata");
         workspaceDirName = resource.getFile().getAbsolutePath();
     }
-    
+
     private void emptyDir(File dir) {
         for (File f : dir.listFiles()) {
             if (f.isDirectory()) {
@@ -79,46 +82,46 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
             f.delete();
         }
     }
-    
+
     @AfterSuite public void deleteTmpDir() {
         emptyDir(tempDir);
         tempDir.delete();
         tempDir = null;
     }
-    
+
     /**
-     * Set up a property placeholder called DIR which points to the test directory
-     * this makes the test location insensitive but able to look at the local
-     * filesystem.
+     * Set up a property placeholder called DIR which points to the test directory this makes the test location
+     * insensitive but able to look at the local filesystem.
+     * 
      * @param context the context
-     * @throws IOException 
+     * @throws IOException
      */
     protected void setDirectoryPlaceholder(GenericApplicationContext context) throws IOException {
         PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
-        
+
         MutablePropertySources propertySources = context.getEnvironment().getPropertySources();
         MockPropertySource mockEnvVars = new MockPropertySource();
         mockEnvVars.setProperty("DIR", workspaceDirName);
         mockEnvVars.setProperty("TMPDIR", tempDirName);
-        
+
         propertySources.replace(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, mockEnvVars);
         placeholderConfig.setPropertySources(propertySources);
-        
+
         context.addBeanFactoryPostProcessor(placeholderConfig);
-        
+
     }
-    
-    protected <T extends MetadataResolver> T getBean(Class<T> claz,  boolean validating, String... files) throws IOException{
+
+    protected <T extends MetadataResolver> T getBean(Class<T> claz, String... files) throws IOException {
         final Resource[] resources = new Resource[files.length];
-       
+
         for (int i = 0; i < files.length; i++) {
             resources[i] = new ClassPathResource(PATH + files[i]);
         }
-        
+
         final GenericApplicationContext context = new GenericApplicationContext();
 
         setDirectoryPlaceholder(context);
-        
+
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         context.setDisplayName("ApplicationContext: " + claz);
         service.setConverters(Sets.newHashSet(new DurationToLongConverter(), new StringToIPRangeConverter()));
@@ -128,31 +131,30 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
 
         final XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
 
+        configReader.setValidating(true);
 
-        configReader.setValidating(validating);
-        
         configReader.loadBeanDefinitions(resources);
         context.refresh();
-        
+
         if (context.containsBean("shibboleth.ParserPool")) {
             parserPool = context.getBean("shibboleth.ParserPool");
         } else {
             parserPool = null;
         }
-        
+
         T result = SpringSupport.getBean(context, claz);
         if (result != null) {
             return result;
         }
-        
+
         RelyingPartyMetadataProvider rpProvider = context.getBean(RelyingPartyMetadataProvider.class);
 
         return claz.cast(rpProvider.getEmbeddedResolver());
     }
-    
+
     static public CriteriaSet criteriaFor(String entityId) {
         EntityIdCriterion criterion = new EntityIdCriterion(entityId);
-        return  new CriteriaSet(criterion);
+        return new CriteriaSet(criterion);
     }
-    
- }
+
+}

@@ -38,7 +38,7 @@ public class SignatureValidationParserTest extends AbstractMetadataParserTest {
 
     @Test public void correctSig() throws IOException, ResolverException {
         MetadataResolver resolver =
-                getBean(MetadataResolver.class, true, "filter/switch-metadata.xml", "filter/switch.xml", "beans.xml");
+                getBean(MetadataResolver.class, "filter/switch-metadata.xml", "filter/switch.xml", "beans.xml");
 
         final Iterable<EntityDescriptor> result = resolver.resolve(criteriaFor("urn:mace:switch.ch:SWITCHaai:ethz.ch"));
         Assert.assertTrue(result.iterator().hasNext());
@@ -47,7 +47,7 @@ public class SignatureValidationParserTest extends AbstractMetadataParserTest {
 
     @Test public void wrongSig() throws IOException, ResolverException {
         MetadataResolver resolver =
-                getBean(MetadataResolver.class, true, "filter/switch-metadata.xml", "filter/other.xml", "beans.xml");
+                getBean(MetadataResolver.class,  "filter/switch-metadata.xml", "filter/other.xml", "beans.xml");
 
         final Iterable<EntityDescriptor> result = resolver.resolve(criteriaFor("urn:mace:switch.ch:SWITCHaai:ethz.ch"));
         Assert.assertFalse(result.iterator().hasNext());
@@ -56,7 +56,7 @@ public class SignatureValidationParserTest extends AbstractMetadataParserTest {
     
     @Test public void noSigCheck() throws IOException, ResolverException {
         MetadataResolver resolver =
-                getBean(MetadataResolver.class, true, "filter/signingCertCheck.xml", "filter/switch.xml", "beans.xml");
+                getBean(MetadataResolver.class, "filter/signingCertCheck.xml", "filter/switch.xml", "beans.xml");
 
         final Iterable<EntityDescriptor> result = resolver.resolve(criteriaFor("https://sp.example.org/sp/shibboleth"));
         Assert.assertFalse(result.iterator().hasNext());
@@ -65,7 +65,7 @@ public class SignatureValidationParserTest extends AbstractMetadataParserTest {
 
     @Test public void noSigNoCheck() throws IOException, ResolverException {
         MetadataResolver resolver =
-                getBean(MetadataResolver.class, true, "filter/signingNoCertCheck.xml", "filter/switch.xml", "beans.xml");
+                getBean(MetadataResolver.class, "filter/signingNoCertCheck.xml", "filter/switch.xml", "beans.xml");
 
         final Iterable<EntityDescriptor> result = resolver.resolve(criteriaFor("https://sp.example.org/sp/shibboleth"));
         Assert.assertTrue(result.iterator().hasNext());
@@ -74,7 +74,7 @@ public class SignatureValidationParserTest extends AbstractMetadataParserTest {
 
     @Test public void cert() throws IOException, ResolverException {
         MetadataResolver resolver =
-                getBean(MetadataResolver.class, true, "filter/switch-metadata-file.xml", "beans.xml");
+                getBean(MetadataResolver.class, "filter/switch-metadata-file.xml", "beans.xml");
 
         final Iterable<EntityDescriptor> result = resolver.resolve(criteriaFor("urn:mace:switch.ch:SWITCHaai:ethz.ch"));
         Assert.assertTrue(result.iterator().hasNext());
@@ -83,7 +83,7 @@ public class SignatureValidationParserTest extends AbstractMetadataParserTest {
     
     @Test public void pubkey() throws IOException, ResolverException {
         MetadataResolver resolver =
-                getBean(MetadataResolver.class, true, "filter/switch-metadata-inline.xml", "beans.xml");
+                getBean(MetadataResolver.class, "filter/switch-metadata-inline.xml", "beans.xml");
 
         final Iterable<EntityDescriptor> result = resolver.resolve(criteriaFor("urn:mace:switch.ch:SWITCHaai:ethz.ch"));
         Assert.assertTrue(result.iterator().hasNext());
@@ -92,7 +92,7 @@ public class SignatureValidationParserTest extends AbstractMetadataParserTest {
     
     @Test public void inlineTrustEngine() throws IOException, ResolverException {
         MetadataResolver resolver =
-                getBean(MetadataResolver.class, true, "filter/switch-metadata-trustengine-inline.xml", "beans.xml");
+                getBean(MetadataResolver.class, "filter/switch-metadata-trustengine-inline.xml", "beans.xml");
 
         final Iterable<EntityDescriptor> result = resolver.resolve(criteriaFor("urn:mace:switch.ch:SWITCHaai:ethz.ch"));
         Assert.assertTrue(result.iterator().hasNext());
@@ -101,6 +101,6 @@ public class SignatureValidationParserTest extends AbstractMetadataParserTest {
 
 
     @Test(expectedExceptions={BeanDefinitionStoreException.class,}) public void none() throws IOException, ResolverException {
-                getBean(MetadataResolver.class, true, "filter/signingNone.xml", "beans.xml");
+                getBean(MetadataResolver.class, "filter/signingNone.xml", "beans.xml");
     }
 }

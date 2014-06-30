@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
 public class InlineMetadataParserTest extends AbstractMetadataParserTest {
     
     @Test public void entity() throws ResolverException, IOException {
-        DOMMetadataResolver resolver = getBean(DOMMetadataResolver.class, true, "inLineEntity.xml");
+        DOMMetadataResolver resolver = getBean(DOMMetadataResolver.class, "inLineEntity.xml");
         
         Assert.assertEquals(resolver.getId(), "inLineEntity");
    
@@ -44,7 +44,7 @@ public class InlineMetadataParserTest extends AbstractMetadataParserTest {
     }
     
     @Test public void entities() throws ResolverException, IOException {
-        DOMMetadataResolver resolver = getBean(DOMMetadataResolver.class, true, "inLineEntities.xml");
+        DOMMetadataResolver resolver = getBean(DOMMetadataResolver.class, "inLineEntities.xml");
         
         Assert.assertEquals(resolver.getId(), "inLineEntities");
         

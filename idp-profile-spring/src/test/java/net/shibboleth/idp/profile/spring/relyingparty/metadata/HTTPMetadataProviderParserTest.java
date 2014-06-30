@@ -30,7 +30,7 @@ public class HTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
     
     @Test public void entity() throws Exception {
 
-        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, true, "HTTPEntity.xml", "beans.xml");
+        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, "HTTPEntity.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "HTTPEntity");
         
@@ -56,12 +56,12 @@ public class HTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
      */
     @Test(expectedExceptions={BeanCreationException.class,}, enabled=false) public void proxy() throws Exception {
 
-        getBean(HTTPMetadataResolver.class, true, "HTTPProxy.xml", "beans.xml");
+        getBean(HTTPMetadataResolver.class, "HTTPProxy.xml", "beans.xml");
     }
 
     @Test public void entities() throws Exception {
 
-        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, true, "HTTPEntities.xml", "beans.xml");
+        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, "HTTPEntities.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "HTTPEntities");
         Assert.assertNotNull(resolver.resolveSingle(criteriaFor(SP_ID)));

@@ -16,8 +16,8 @@
         inboundFlowId="artifact2ibfid" outboundFlowId="artifact2obfid"
     
 >
+    <saml:Audience>${prop.String1}</saml:Audience>
     <saml:ProxyAudience>ProxyAudience1</saml:ProxyAudience>
     <saml:ProxyAudience>ProxyAudience2</saml:ProxyAudience>
-    <saml:Audience>${prop.String1}</saml:Audience>
 </rp:ProfileConfiguration>
 

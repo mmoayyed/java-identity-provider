@@ -94,7 +94,7 @@ public class AbstractSecurityParserTest {
         final XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
 
 
-        configReader.setValidating(validating);
+        configReader.setValidating(true);
         
         configReader.loadBeanDefinitions(resources);
         context.refresh();

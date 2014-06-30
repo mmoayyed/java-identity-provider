@@ -28,7 +28,7 @@ public class FilesystemMetadataParserTest extends AbstractMetadataParserTest {
     
     @Test public void entity() throws Exception {
 
-        FilesystemMetadataResolver resolver = getBean(FilesystemMetadataResolver.class, true, "fileEntity.xml", "beans.xml");
+        FilesystemMetadataResolver resolver = getBean(FilesystemMetadataResolver.class, "fileEntity.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "fileEntity");
    
@@ -47,7 +47,7 @@ public class FilesystemMetadataParserTest extends AbstractMetadataParserTest {
 
     @Test public void entities() throws Exception {
 
-        FilesystemMetadataResolver resolver = getBean(FilesystemMetadataResolver.class, true, "fileEntities.xml", "beans.xml");
+        FilesystemMetadataResolver resolver = getBean(FilesystemMetadataResolver.class, "fileEntities.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "fileEntities");
         Assert.assertEquals(resolver.getMaxRefreshDelay(), 1000*60*55);

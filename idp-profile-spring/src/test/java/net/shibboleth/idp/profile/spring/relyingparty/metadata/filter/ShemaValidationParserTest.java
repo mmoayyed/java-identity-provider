@@ -32,13 +32,13 @@ import org.testng.annotations.Test;
 public class ShemaValidationParserTest extends AbstractMetadataParserTest {
 
     @Test public void validUntil() throws IOException {
-        MetadataResolver resolver = getBean(MetadataResolver.class, true, "filter/schemaValidation.xml", "beans.xml");
+        MetadataResolver resolver = getBean(MetadataResolver.class, "filter/schemaValidation.xml", "beans.xml");
 
         Assert.assertEquals(resolver.getMetadataFilter().getClass(), SchemaValidationFilter.class); 
     }
     
     @Test public void param() throws IOException {
-        MetadataResolver resolver = getBean(MetadataResolver.class, true, "filter/schemaValidationParam.xml", "beans.xml");
+        MetadataResolver resolver = getBean(MetadataResolver.class, "filter/schemaValidationParam.xml", "beans.xml");
 
         Assert.assertEquals(resolver.getMetadataFilter().getClass(), SchemaValidationFilter.class); 
     }

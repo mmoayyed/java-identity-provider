@@ -31,7 +31,7 @@ public class SAML2ECPProfileTest extends BaseSAMLProfileTest {
 
     @Test public void defaults() {
 
-        ECPProfileConfiguration profile = getBean(ECPProfileConfiguration.class, true, "saml/ecp.xml", "beans.xml");
+        ECPProfileConfiguration profile = getBean(ECPProfileConfiguration.class, "saml/ecp.xml", "beans.xml");
 
         Assert.assertTrue(profile.includeAttributeStatement());
         Assert.assertFalse(profile.skipEndpointValidationWhenSigned());
@@ -60,7 +60,7 @@ public class SAML2ECPProfileTest extends BaseSAMLProfileTest {
 
     @Test public void values() {
         BrowserSSOProfileConfiguration profile =
-                getBean(BrowserSSOProfileConfiguration.class, true, "beans.xml", "saml/ecpValues.xml");
+                getBean(BrowserSSOProfileConfiguration.class, "beans.xml", "saml/ecpValues.xml");
 
         Assert.assertFalse(profile.includeAttributeStatement());
         Assert.assertTrue(profile.skipEndpointValidationWhenSigned());
@@ -98,10 +98,10 @@ public class SAML2ECPProfileTest extends BaseSAMLProfileTest {
     }
 
     @Test(expectedExceptions = {BeanDefinitionParsingException.class,}) public void localityAddress() {
-        getBean(BrowserSSOProfileConfiguration.class, true, "beans.xml", "saml/ecpLocalityAddress.xml");
+        getBean(BrowserSSOProfileConfiguration.class, "beans.xml", "saml/ecpLocalityAddress.xml");
     }
 
     @Test(expectedExceptions = {BeanDefinitionParsingException.class,}) public void localityDnsname() {
-        getBean(BrowserSSOProfileConfiguration.class, true, "beans.xml", "saml/ecpLocalityDNSName.xml");
+        getBean(BrowserSSOProfileConfiguration.class, "beans.xml", "saml/ecpLocalityDNSName.xml");
     }
 }

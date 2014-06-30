@@ -37,16 +37,16 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 
 public class BaseSAMLProfileTest extends OpenSAMLInitBaseTestCase {
-    
+
     private static final String PATH = "/net/shibboleth/idp/profile/spring/relyingparty/";
-    
-    protected <T extends AbstractSAMLProfileConfiguration> T getBean(Class<T> claz,  boolean validating, String... files){
+
+    protected <T extends AbstractSAMLProfileConfiguration> T getBean(Class<T> claz, String... files) {
         final Resource[] resources = new Resource[files.length];
-       
+
         for (int i = 0; i < files.length; i++) {
             resources[i] = new ClassPathResource(PATH + files[i]);
         }
-        
+
         final GenericApplicationContext context = new GenericApplicationContext();
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         context.setDisplayName("ApplicationContext: " + claz);
@@ -57,31 +57,31 @@ public class BaseSAMLProfileTest extends OpenSAMLInitBaseTestCase {
 
         final XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
 
-        configReader.setValidating(validating);
-        
+        configReader.setValidating(true);
+
         configReader.loadBeanDefinitions(resources);
         context.refresh();
 
         return context.getBean(claz);
     }
-    
+
     protected static void assertTruePredicate(Predicate<ProfileRequestContext> predicate) {
         Assert.assertTrue(predicate.apply(null));
     }
-    
+
     protected static void assertFalsePredicate(Predicate<ProfileRequestContext> predicate) {
         Assert.assertFalse(predicate.apply(null));
     }
-    
+
     protected static void assertConditionalPredicate(Predicate<ProfileRequestContext> predicate) {
         try {
             final ProfileRequestContext prc = new RequestContextBuilder().buildProfileRequestContext();
             final MessageChannelSecurityContext mc = prc.getSubcontext(MessageChannelSecurityContext.class, true);
-            
+
             mc.setConfidentialityActive(true);
             mc.setIntegrityActive(true);
             Assert.assertFalse(predicate.apply(prc));
-            
+
             mc.setConfidentialityActive(false);
             mc.setIntegrityActive(false);
             Assert.assertTrue(predicate.apply(prc));
