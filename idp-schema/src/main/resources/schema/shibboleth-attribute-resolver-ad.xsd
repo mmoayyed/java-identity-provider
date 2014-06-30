@@ -41,7 +41,7 @@
                         <documentation>Storage service used to store created identifiers</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="lifetime" type="duration">
+                <attribute name="lifetime" type="string">
                     <annotation>
                         <documentation>Lifetime of issued identifiers</documentation>
                     </annotation>
@@ -61,7 +61,7 @@
                         <documentation>Object used to protect and encrypt identifiers</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="lifetime" type="duration">
+                <attribute name="lifetime" type="string">
                     <annotation>
                         <documentation>Lifetime of issued identifiers</documentation>
                     </annotation>
@@ -114,7 +114,7 @@
                         <documentation>The regular expression used to split a value.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="caseSensitive" type="boolean">
+                <attribute name="caseSensitive" type="string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating the case sensitivity of the regular expression.
@@ -230,7 +230,7 @@
                         <complexType>
                             <simpleContent>
                                 <extension base="string">
-                                    <attribute name="passThru" type="boolean">
+                                    <attribute name="passThru" type="string">
                                         <annotation>
                                             <documentation>
                                                 If true, the source value is passed thru unmodified. If passThru is
@@ -269,12 +269,12 @@
                 <complexType>
                     <simpleContent>
                         <extension base="string">
-                            <attribute name="ignoreCase" type="boolean">
+                            <attribute name="ignoreCase" type="string">
                                 <annotation>
                                     <documentation>If true, value matching will be case-insensitive.</documentation>
                                 </annotation>
                             </attribute>
-                            <attribute name="partialMatch" type="boolean">
+                            <attribute name="partialMatch" type="string">
                                 <annotation>
                                     <documentation>
                                         If true, the SourceValue may match only a substring of the incoming value. By
