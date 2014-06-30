@@ -61,7 +61,6 @@ public class StoredIdTest extends BaseAttributeDefinitionParserTest {
     @BeforeTest public void setupSource() throws SQLException, IOException {
 
         testSource = DatabaseTestingSupport.GetMockDataSource(INIT_FILE, "storedId");
-        setupConnectors("stored.xml");
     }
 
     @AfterClass public void teardown() {
@@ -92,7 +91,8 @@ public class StoredIdTest extends BaseAttributeDefinitionParserTest {
         Assert.assertTrue(principalConnector.getRelyingParties().isEmpty());
     }
     
-    @Test(enabled=false) public void reverseMap() throws ResolutionException {
+    @Test(enabled=false) public void case426() throws ResolutionException {
+        setupConnectors("stored.xml");
         
         final AttributeResolutionContext context = new AttributeResolutionContext();
         context.setPrincipal("PRINCIPAL");
@@ -106,4 +106,22 @@ public class StoredIdTest extends BaseAttributeDefinitionParserTest {
 
         Assert.assertNotNull(result.get("result"));
     }
+
+    
+    @Test(enabled=true) public void directStore() throws ResolutionException {
+        setupConnectors("stored-direct.xml");
+        
+        final AttributeResolutionContext context = new AttributeResolutionContext();
+        context.setPrincipal("PRINCIPAL");
+        context.setAttributeIssuerID("ISSUER");
+        context.setAttributeRecipientID("Recipient");
+        context.getSubcontext(AttributeResolverWorkContext.class, true);
+       
+        ar.resolveAttributes(context);
+        
+        final Map<String, IdPAttribute> result = context.getResolvedIdPAttributes();
+
+        Assert.assertNotNull(result.get("result"));
+    }
+    
 }
