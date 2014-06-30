@@ -84,18 +84,10 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
     }
 
     protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context) {
-        return getBean(fileName, claz, context, false);
-    }
-
-    protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context,
-            boolean supressValidation) {
 
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
-        if (supressValidation) {
-            beanDefinitionReader.setValidating(false);
-        }
         beanDefinitionReader.loadBeanDefinitions(fileName);
 
         context.refresh();
@@ -107,31 +99,22 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
     }
 
     protected PolicyRequirementRule getPolicyRule(String fileName) throws ComponentInitializationException {
-        return getPolicyRule(fileName, false);
-    }
-
-    protected PolicyRequirementRule getPolicyRule(String fileName, boolean supressValidation)
-            throws ComponentInitializationException {
 
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: Policy Rule");
 
         final AttributeFilterPolicy policy =
-                getBean(POLICY_RULE_PATH + fileName, AttributeFilterPolicy.class, context, supressValidation);
+                getBean(POLICY_RULE_PATH + fileName, AttributeFilterPolicy.class, context);
         policy.initialize();
         return policy.getPolicyRequirementRule();
     }
 
     protected Matcher getMatcher(String fileName) throws ComponentInitializationException {
-        return getMatcher(fileName, false);
-    }
-
-    protected Matcher getMatcher(String fileName, boolean supressValidation) throws ComponentInitializationException {
 
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: Matcher");
 
-        final AttributeRule rule = getBean(MATCHER_PATH + fileName, AttributeRule.class, context, supressValidation);
+        final AttributeRule rule = getBean(MATCHER_PATH + fileName, AttributeRule.class, context);
         rule.initialize();
         return rule.getMatcher();
 
