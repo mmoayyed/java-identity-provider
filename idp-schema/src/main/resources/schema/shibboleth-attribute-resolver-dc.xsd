@@ -85,7 +85,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseDataConnectorType">
-                <choice>
+                <choice minOccurs="0">
                     <element ref="dc:ContainerManagedConnection">
                         <annotation>
                             <documentation>
