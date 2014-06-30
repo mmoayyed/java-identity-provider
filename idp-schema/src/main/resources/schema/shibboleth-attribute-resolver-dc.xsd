@@ -409,7 +409,7 @@
         <complexContent>
             <extension base="resolver:BaseDataConnectorType">
                 <sequence>
-                    <element name="FilterTemplate" type="string">
+                    <element name="FilterTemplate" type="string" minOccurs="0">
                         <annotation>
                             <documentation>
                                 A template used to construct the LDAP filter used to query the directory.
