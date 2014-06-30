@@ -102,7 +102,7 @@ public class LdapDataConnectorParserTest {
     @Test public void v2Config() throws ComponentInitializationException, ServiceException, ResolutionException {
         LDAPDataConnector dataConnector =
                 getLdapDataConnector(
-                        new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-v2.xml"}, false);
+                        new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-v2.xml"});
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
 
@@ -119,7 +119,7 @@ public class LdapDataConnectorParserTest {
                 getLdapDataConnector(
                         new String[] {
                         "net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-v2-props.xml",
-                        "net/shibboleth/idp/attribute/resolver/spring/dc/ldap/PropertyPlaceholder.xml"}, true);
+                        "net/shibboleth/idp/attribute/resolver/spring/dc/ldap/PropertyPlaceholder.xml"});
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
 
@@ -133,7 +133,7 @@ public class LdapDataConnectorParserTest {
 
     @Test public void springConfig() throws ComponentInitializationException, ServiceException, ResolutionException {
         LDAPDataConnector dataConnector =
-                getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-spring.xml"}, true);
+                getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-spring.xml"});
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
 
@@ -149,7 +149,7 @@ public class LdapDataConnectorParserTest {
         LDAPDataConnector dataConnector =
                 getLdapDataConnector(
                         new String[] {
-                        "net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-spring-props.xml"}, true);
+                        "net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-spring-props.xml"});
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
 
@@ -191,7 +191,7 @@ public class LdapDataConnectorParserTest {
 
     }
 
-    protected LDAPDataConnector getLdapDataConnector(final String[] beanDefinitions, boolean suppressValidation) {
+    protected LDAPDataConnector getLdapDataConnector(final String[] beanDefinitions) {
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + LdapDataConnectorParserTest.class);
 
@@ -201,9 +201,8 @@ public class LdapDataConnectorParserTest {
 
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
-        if (suppressValidation) {
-            beanDefinitionReader.setValidating(false);
-        }
+
+        beanDefinitionReader.setValidating(true);
 
         beanDefinitionReader.loadBeanDefinitions(beanDefinitions);
         context.refresh();
