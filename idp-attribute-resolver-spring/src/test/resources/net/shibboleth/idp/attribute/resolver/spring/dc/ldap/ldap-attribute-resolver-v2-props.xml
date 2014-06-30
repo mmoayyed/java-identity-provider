@@ -18,6 +18,8 @@
                 (uid=${resolutionContext.principal})
             ]]>
         </dc:FilterTemplate>
+        <dc:LDAPProperty name="name1" value="${jndi.property1}"/>
+        <dc:LDAPProperty name="name2" value="${jndi.property2}"/>
         <dc:StartTLSTrustCredential xsi:type="security:X509Inline" xmlns:security="urn:mace:shibboleth:2.0:security" id="LDAPtoIdPCredential">
             <security:Certificate>
               MIICATCCAWoCCQCZy4ovDlQTvDANBgkqhkiG9w0BAQUFADBFMRMwEQYKCZImiZPy
@@ -45,13 +47,10 @@
             validatePeriodically="${connectionPool.validatePeriodically}"
             validateTimerPeriod="${connectionPool.validatePeriod}"
             validateDN="${connectionPool.validator.baseDn}"
-            validateFilter="${connectionPool.validator.filter}">
-        </dc:ConnectionPool>
+            validateFilter="${connectionPool.validator.filter}"/>
         <dc:ResultCache
             elementTimeToLive="${cache.TTL}"
             maximumCachedElements="${cache.maxSize}"/>
-        <dc:LDAPProperty name="name1" value="${jndi.property1}"/>
-        <dc:LDAPProperty name="name2" value="${jndi.property2}"/>
     </resolver:DataConnector>
     
 </resolver:AttributeResolver>
