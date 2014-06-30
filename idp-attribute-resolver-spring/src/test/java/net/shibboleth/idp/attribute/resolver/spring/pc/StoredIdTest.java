@@ -23,6 +23,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import net.shibboleth.idp.attribute.AttributeEncoder;
+import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -31,10 +33,13 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContex
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.pc.StoredIdConnectorParser.NotImplementedNameIdentifierDecoder;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.attribute.principalconnector.impl.PrincipalConnector;
+import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.impl.StoredPersistentIdDecoder;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 
+import org.opensaml.saml.saml2.core.NameID;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -108,20 +113,31 @@ public class StoredIdTest extends BaseAttributeDefinitionParserTest {
     }
 
     
-    @Test(enabled=true) public void directStore() throws ResolutionException {
+    @Test public void directStore() throws ResolutionException, AttributeEncodingException, NameDecoderException {
         setupConnectors("stored-direct.xml");
         
-        final AttributeResolutionContext context = new AttributeResolutionContext();
-        context.setPrincipal("PRINCIPAL");
-        context.setAttributeIssuerID("ISSUER");
-        context.setAttributeRecipientID("Recipient");
-        context.getSubcontext(AttributeResolverWorkContext.class, true);
+        final AttributeResolutionContext arc = new AttributeResolutionContext();
+        arc.setPrincipal("PRINCIPAL");
+        arc.setAttributeIssuerID("ISSUER");
+        arc.setAttributeRecipientID("Recipient");
+        arc.getSubcontext(AttributeResolverWorkContext.class, true);
        
-        ar.resolveAttributes(context);
+        ar.resolveAttributes(arc);
         
-        final Map<String, IdPAttribute> result = context.getResolvedIdPAttributes();
-
-        Assert.assertNotNull(result.get("result"));
+        final IdPAttribute result = arc.getResolvedIdPAttributes().get("result");
+        
+        final AttributeEncoder<NameID> encoder = (AttributeEncoder<NameID>) ar.getAttributeDefinitions().get("result").getAttributeEncoders().iterator().next();
+        
+        NameID nameID = encoder.encode(result);
+        
+        Assert.assertEquals(result.getValues().size(), 1);
+        
+        final SubjectCanonicalizationContext scc = new SubjectCanonicalizationContext();
+        scc.setPrincipalName(arc.getPrincipal());
+        scc.setRequesterId(arc.getAttributeRecipientID());
+        scc.setResponderId(arc.getAttributeIssuerID());
+        
+        Assert.assertEquals(principalConnector.getNameIDDecoder().decode(scc, nameID), arc.getPrincipal());
     }
     
 }

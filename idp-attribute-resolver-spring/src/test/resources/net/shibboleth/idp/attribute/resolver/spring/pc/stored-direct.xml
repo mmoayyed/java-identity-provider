@@ -30,5 +30,6 @@
 	<resolver:AttributeDefinition id="result"
 		xsi:type="ad:Simple" sourceAttributeID="output">
 		<resolver:Dependency ref="dc" />
+		<resolver:AttributeEncoder xsi:type="enc:SAML2StringNameID" nameFormat="https://example.org/stored" />
 	</resolver:AttributeDefinition>
 </resolver:AttributeResolver>
