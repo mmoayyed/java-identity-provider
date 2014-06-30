@@ -261,7 +261,7 @@
                         </annotation>
                     </element>
                 </sequence>
-                <attribute name="verifyDepth" type="unsignedByte">
+                <attribute name="verifyDepth" type="string">
                     <annotation>
                         <documentation>
                             The maximum path verification depth to consider when constructing a PKIX cert path.
@@ -287,17 +287,17 @@
         <annotation>
             <documentation>Type for basic PKIX validation options set for PKIX trust engines.</documentation>
         </annotation>
-        <attribute name="processEmptyCRLs" type="boolean">
+        <attribute name="processEmptyCRLs" type="string">
             <annotation>
                 <documentation>Flag as to whether empty CRL's will be processed. Defaults to true.</documentation>
             </annotation>
         </attribute>
-        <attribute name="processExpiredCRLs" type="boolean">
+        <attribute name="processExpiredCRLs" type="string">
             <annotation>
                 <documentation>Flag as to whether expired CRL's will be processed. Defaults to true.</documentation>
             </annotation>
         </attribute>
-        <attribute name="processCredentialCRLs" type="boolean">
+        <attribute name="processCredentialCRLs" type="string">
             <annotation>
                 <documentation>
                     Flag as to whether CRL's supplied in the untrusted credential 
@@ -305,7 +305,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="defaultVerificationDepth" type="unsignedInt">
+        <attribute name="defaultVerificationDepth" type="string">
             <annotation>
                 <documentation>Default PKIX path verification depth. Defaults to 1.</documentation>
             </annotation>
@@ -333,7 +333,7 @@
                         </annotation>
                     </element>
                 </sequence>
-                <attribute name="forceRevocationEnabled" type="boolean">
+                <attribute name="forceRevocationEnabled" type="string">
                     <annotation>
                         <documentation>
                             If true, the revocation behavior of the underlying CertPath provider will be forced to the
@@ -343,7 +343,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="revocationEnabled" type="boolean">
+                <attribute name="revocationEnabled" type="string">
                     <annotation>
                         <documentation>
                             If the attribute forceRevocationEnabled is true, the revocation behavior of the underlying CertPath
@@ -353,7 +353,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="policyMappingInhibit" type="boolean">
+                <attribute name="policyMappingInhibit" type="string">
                     <annotation>
                         <documentation>
                             Sets the policy mapping inhibited flag for the underlying CertPath Provider.
@@ -362,7 +362,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="anyPolicyInhibit" type="boolean">
+                <attribute name="anyPolicyInhibit" type="string">
                     <annotation>
                         <documentation>
                             Sets the any policy inhibited flag for the underlying CertPath Provider.

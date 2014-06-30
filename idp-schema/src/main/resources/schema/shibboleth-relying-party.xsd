@@ -125,7 +125,7 @@
     			</documentation>
     		</annotation>
     	</attribute>
-    	<attribute name="detailedErrors" type="boolean">
+    	<attribute name="detailedErrors" type="string">
             <annotation>
                 <documentation>
                     a boolean to indicate whether details errors are to be reported

@@ -71,12 +71,12 @@
                 <attribute name="connectionTimeout" type="string"/>
                 <attribute name="readTimeout" type="string"/>
                 <attribute name="workingCopyDirectory" type="string" use="required"/>
-                <attribute name="revision" type="positiveInteger"/>
+                <attribute name="revision" type="string"/>
                 <attribute name="resourceFile" type="string" use="required"/>
                 <attribute name="username" type="string"/>
                 <attribute name="password" type="string"/>
                 <attribute name="proxyHost" type="string"/>
-                <attribute name="proxyPort" type="positiveInteger"/>
+                <attribute name="proxyPort" type="string"/>
                 <attribute name="proxyUsername" type="string"/>
                 <attribute name="proxyPassword" type="string"/>
             </extension>

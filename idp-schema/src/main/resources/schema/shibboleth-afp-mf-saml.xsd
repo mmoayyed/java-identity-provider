@@ -260,7 +260,7 @@
                         <documentation>The string values to match.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="matchIfMetadataSilent" type="boolean">
+                <attribute name="matchIfMetadataSilent" type="string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether a match should occur if the metadata does

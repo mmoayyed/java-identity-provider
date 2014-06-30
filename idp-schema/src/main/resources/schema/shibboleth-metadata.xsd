@@ -121,13 +121,13 @@
                         <documentation>The URL from which to retrieve the metadata.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="disregardSslCertificate" type="boolean">
+                <attribute name="disregardSslCertificate" type="string">
                     <annotation>
                         <documentation>Server certificate will be ignored when fetching from an HTTPS source.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maintainExpiredMetadata" type="boolean">
+                <attribute name="maintainExpiredMetadata" type="string">
                     <annotation>
                         <documentation>This is deprecated, use requireValidMetadata instead.</documentation>
                     </annotation>
@@ -152,7 +152,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="proxyPort" type="positiveInteger">
+                <attribute name="proxyPort" type="string">
                     <annotation>
                         <documentation>Port of the HTTP proxy through which connections will be made.</documentation>
                     </annotation>
@@ -201,7 +201,7 @@
                         <documentation>The path to the metadata file.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maintainExpiredMetadata" type="boolean">
+                <attribute name="maintainExpiredMetadata" type="string">
                     <annotation>
                         <documentation>This is deprecated, use requireValidMetadata instead.</documentation>
                     </annotation>
@@ -226,19 +226,19 @@
                         <documentation>ID of the task timer used to schedule background refresh jobs.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="refreshDelayFactor" type="decimal">
+                <attribute name="refreshDelayFactor" type="string">
                     <annotation>
                         <documentation>Factor applied to metadata's expiration time in order to determine next refresh
                             time. Must be between 0.0 and 1.0, exclusive.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maxRefreshDelay" type="duration">
+                <attribute name="maxRefreshDelay" type="string">
                     <annotation>
                         <documentation>Maximum amount time, from the previous, before a metadata refresh cycle runs.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="minRefreshDelay" type="duration">
+                <attribute name="minRefreshDelay" type="string">
                     <annotation>
                         <documentation>Minimum amount of time, from the previous, before a metadata refresh cycle runs.
                         </documentation>
@@ -270,7 +270,7 @@
                 <documentation>A unique identifier that may be used to identify a particular provider</documentation>
             </annotation>
         </attribute>
-        <attribute name="requireValidMetadata" type="boolean">
+        <attribute name="requireValidMetadata" type="string">
             <annotation>
                 <documentation>
                     A boolean flag indicating whether the
@@ -282,7 +282,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="failFastInitialization" type="boolean">
+        <attribute name="failFastInitialization" type="string">
             <annotation>
                 <documentation>Determines if the metadata provider "fails fast" during initialization. This means that
                     if there is a problem initializing the metadata provider it will stop the IdP from starting.
@@ -393,7 +393,7 @@
                         <documentation>The ID of the trust engine used to validate the signature.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="requireSignedMetadata" type="boolean">
+                <attribute name="requireSignedMetadata" type="string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether a signature is required on incoming metadata.
@@ -438,7 +438,7 @@
                         </annotation>
                     </element>
                 </sequence>
-                <attribute name="removeRolelessEntityDescriptors" type="boolean">
+                <attribute name="removeRolelessEntityDescriptors" type="string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating that entity descriptors that do not contain at least
@@ -447,7 +447,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="removeEmptyEntitiesDescriptors" type="boolean">
+                <attribute name="removeEmptyEntitiesDescriptors" type="string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating that entities descriptors that do not contain at least
