@@ -41,7 +41,7 @@ public class ComputedIDDataConnectorParserTest extends BaseAttributeDefinitionPa
     }
 
     @Test(enabled=false) public void withoutSalt()  {
-        ComputedIDDataConnector connector = getDataConnector("computedNoSalt.xml", ComputedIDDataConnector.class, true);
+        ComputedIDDataConnector connector = getDataConnector("computedNoSalt.xml", ComputedIDDataConnector.class);
         
         Assert.assertEquals(connector.getId(), "computedNoSalt");
         Assert.assertEquals(connector.getSourceAttributeId(), "theSourceRemainsDifferent");

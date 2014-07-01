@@ -33,7 +33,7 @@ public class TemplateAttributeDefinitionParserTest extends BaseAttributeDefiniti
     @Test(enabled=false)
     public void noAttr() throws ComponentInitializationException {
 
-        TemplateAttributeDefinition defn = getAttributeDefn("templateNoAttributes.xml", "velocity.xml", TemplateAttributeDefinition.class, true);
+        TemplateAttributeDefinition defn = getAttributeDefn("templateNoAttributes.xml", "velocity.xml", TemplateAttributeDefinition.class);
         
         Assert.assertEquals(defn.getId(), "templateId");
         Assert.assertNull(defn.getTemplateText());
@@ -45,12 +45,12 @@ public class TemplateAttributeDefinitionParserTest extends BaseAttributeDefiniti
     public void withAttr() throws ComponentInitializationException {
 
         try {
-            getAttributeDefn("templateAttributes.xml", "velocity.xml", TemplateAttributeDefinition.class, true);
+            getAttributeDefn("templateAttributes.xml", "velocity.xml", TemplateAttributeDefinition.class);
             Assert.fail("should not find bean");
         } catch (BeanCreationException e) {
             // OK
         }
-        TemplateAttributeDefinition defn = getAttributeDefn("templateAttributes.xml", "velocity2.xml", TemplateAttributeDefinition.class, true);
+        TemplateAttributeDefinition defn = getAttributeDefn("templateAttributes.xml", "velocity2.xml", TemplateAttributeDefinition.class);
         
         Assert.assertEquals(defn.getId(), "templateIdAttr");
         Assert.assertEquals(defn.getTemplateText(), "TheTemplate");

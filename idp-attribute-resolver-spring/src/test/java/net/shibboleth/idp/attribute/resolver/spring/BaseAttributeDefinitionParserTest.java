@@ -39,7 +39,10 @@ import org.testng.Assert;
 import com.google.common.collect.Sets;
 
 /**
- * Test for {@link SimpleAttributeDefinitionParser} and by extension {@link BaseAttributeDefinitionParser}.
+ * Base class for tests for {@link SimpleAttributeDefinitionParser} and by extension {@link BaseAttributeDefinitionParser}.
+ * 
+ * Note that several helper classes are marked private.  This is purely to discourage accidental use of non validating
+ * parsers with no need. 
  */
 public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBaseTestCase {
 
@@ -53,17 +56,21 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
 
     public static final String PRINCIPALCONNECTOR_FILE_PATH = BEAN_FILE_PATH + "pc/";
 
-    protected void loadFile(String fileName, GenericApplicationContext context, boolean supressValid) {
+    private void loadFile(String fileName, GenericApplicationContext context, boolean supressValid) {
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
         if (supressValid) {
-            beanDefinitionReader.setValidating(false);
+           beanDefinitionReader.setValidating(false);
         }
         beanDefinitionReader.loadBeanDefinitions(fileName);
     }
 
-    protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context,
+    protected void loadFile(String fileName, GenericApplicationContext context) {
+        loadFile(fileName, context, false);
+    }
+
+    private <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context,
             boolean supressValid) {
 
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
@@ -93,7 +100,7 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         return getBean(ATTRIBUTE_FILE_PATH + fileName, claz, context);
     }
 
-    protected <Type extends AttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz,
+    private <Type extends AttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz,
             GenericApplicationContext context, boolean supressValidation) {
 
         return getBean(ATTRIBUTE_FILE_PATH + fileName, claz, context, supressValidation);
@@ -105,7 +112,7 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
 
     }
 
-    protected <Type extends AttributeDefinition> Type getAttributeDefn(String fileName, String beanFileName,
+    private <Type extends AttributeDefinition> Type getAttributeDefn(String fileName, String beanFileName,
             Class<Type> claz, boolean supressValidation) {
 
         GenericApplicationContext context = new GenericApplicationContext();
@@ -142,7 +149,7 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         return getDataConnector(fileName, claz, false);
     }
 
-    protected <Type extends DataConnector> Type
+    private <Type extends DataConnector> Type
             getDataConnector(String fileName, Class<Type> claz, boolean supressValid) {
 
         GenericApplicationContext context = new GenericApplicationContext();
