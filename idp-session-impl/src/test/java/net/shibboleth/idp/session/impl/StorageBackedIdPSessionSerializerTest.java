@@ -114,7 +114,7 @@ public class StorageBackedIdPSessionSerializerTest {
         session.doAddSPSession(new BasicSPSession("baz", "c", INSTANT, exp));
         
         String s = serializer.serialize(session);
-        String s2 = fileToString(DATAPATH + "complexIdPSession.json");
+        String s2 = fileToString(DATAPATH + "complexIdPSession." + (isV8() ? "jdk8" : "json"));
         Assert.assertEquals(s, s2);
         
         StorageBackedIdPSession session2 = serializer.deserialize(1, "test", KEY, s2, exp);
@@ -123,6 +123,11 @@ public class StorageBackedIdPSessionSerializerTest {
         Assert.assertEquals(session.getPrincipalName(), session2.getPrincipalName());
         Assert.assertEquals(session.getCreationInstant(), session2.getCreationInstant());
         Assert.assertEquals(session.getLastActivityInstant(), session2.getLastActivityInstant());
+    }
+    
+    private boolean isV8() {
+        final String ver = System.getProperty("java.version");
+        return ver.startsWith("1.8");
     }
     
     private String fileToString(String pathname) throws URISyntaxException, IOException {
