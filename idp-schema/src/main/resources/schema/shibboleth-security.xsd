@@ -226,10 +226,7 @@
     
     <complexType name="PKIXResourceBacked">
         <annotation>
-            <documentation>
-                Allows PKIX validation info components read from configured resources.
-                Certificates, and CRLs may be PKCS#12, DER, or PEM encoded and may be encrypted or not.
-            </documentation>
+            <documentation>This credential type is not supported by the Shibboleth IdP</documentation>
         </annotation>
         <complexContent>
             <extension base="sec:PKIXValidationInfoType"/>

@@ -25,6 +25,7 @@ import net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicI
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.ResourceCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509FilesystemCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509InlineCredentialParser;
+import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.PKIXResourceBackedValidationInfoParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.SignatureChainingParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.StaticExplicitKeySignatureParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.StaticPKIXSignatureParser;
@@ -52,10 +53,6 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(BasicInlineCredentialParser.ELEMENT_NAME, new BasicInlineCredentialParser());
         registerBeanDefinitionParser(BasicFilesystemCredentialParser.ELEMENT_NAME,
                 new BasicFilesystemCredentialParser());
-        registerBeanDefinitionParser(ResourceCredentialParser.X509_RESOURCE_ELEMENT_NAME,
-                new ResourceCredentialParser());
-        registerBeanDefinitionParser(ResourceCredentialParser.BASIC_RESOURCE_ELEMENT_NAME,
-                new ResourceCredentialParser());
 
         registerBeanDefinitionParser(StaticExplicitKeySignatureParser.ELEMENT_NAME,
                 new StaticExplicitKeySignatureParser());
@@ -75,5 +72,14 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
         // Credential unsupported
         registerBeanDefinitionParser(UnsupportedTrustEngineParser.CHAINING, new UnsupportedTrustEngineParser());
         registerBeanDefinitionParser(UnsupportedTrustEngineParser.PKIX_CREDENTIAL, new UnsupportedTrustEngineParser());
+
+        // Resource backed anything
+        registerBeanDefinitionParser(ResourceCredentialParser.X509_RESOURCE_ELEMENT_NAME,
+                new ResourceCredentialParser());
+        registerBeanDefinitionParser(ResourceCredentialParser.BASIC_RESOURCE_ELEMENT_NAME,
+                new ResourceCredentialParser());
+        registerBeanDefinitionParser(PKIXResourceBackedValidationInfoParser.ELEMENT_NAME,
+                new PKIXResourceBackedValidationInfoParser());
+        
     }
 }
