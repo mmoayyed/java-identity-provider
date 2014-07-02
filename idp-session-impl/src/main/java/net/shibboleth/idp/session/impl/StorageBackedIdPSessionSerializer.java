@@ -49,40 +49,39 @@ import com.google.common.base.Optional;
 
 /**
  * A serializer for instances of {@link StorageBackedIdPSession} designed in conjunction with the
- * {@link org.opensaml.storage.StorageService}-backed {@link net.shibboleth.idp.session.SessionManager}
- * implementation.
+ * {@link org.opensaml.storage.StorageService}-backed {@link net.shibboleth.idp.session.SessionManager} implementation.
  */
 @ThreadSafe
-public class StorageBackedIdPSessionSerializer extends AbstractInitializableComponent
-        implements StorageSerializer<StorageBackedIdPSession> {
+public class StorageBackedIdPSessionSerializer extends AbstractInitializableComponent implements
+        StorageSerializer<StorageBackedIdPSession> {
 
     /** Field name of creation instant. */
     @Nonnull @NotEmpty private static final String CREATION_INSTANT_FIELD = "ts";
 
     /** Field name of principal name. */
     @Nonnull @NotEmpty private static final String PRINCIPAL_NAME_FIELD = "nam";
-    
+
     /** Field name of IPv4 address. */
     @Nonnull @NotEmpty private static final String IPV4_ADDRESS_FIELD = "v4";
 
     /** Field name of IPv6 address. */
     @Nonnull @NotEmpty private static final String IPV6_ADDRESS_FIELD = "v6";
-    
+
     /** Field name of flow ID array. */
     @Nonnull @NotEmpty private static final String FLOW_ID_ARRAY_FIELD = "flows";
 
     /** Field name of service ID array. */
     @Nonnull @NotEmpty private static final String SERVICE_ID_ARRAY_FIELD = "svcs";
-    
+
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(StorageBackedIdPSessionSerializer.class);
-    
+
     /** Back-reference to parent instance. */
     @Nonnull private final StorageBackedSessionManager sessionManager;
-    
+
     /** Object instance to overwrite with deserialization method. */
     @Nullable private final StorageBackedIdPSession targetObject;
-    
+
     /**
      * Constructor.
      * 
@@ -94,18 +93,17 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
         sessionManager = Constraint.isNotNull(manager, "SessionManager cannot be null");
         targetObject = target;
     }
-    
+
     /** {@inheritDoc} */
-    @Override
-    @Nonnull @NotEmpty public String serialize(@Nonnull final StorageBackedIdPSession instance) throws IOException {
-        
+    @Override @Nonnull @NotEmpty public String serialize(@Nonnull final StorageBackedIdPSession instance)
+            throws IOException {
+
         try {
             final StringWriter sink = new StringWriter(128);
             final JsonGenerator gen = Json.createGenerator(sink);
-            gen.writeStartObject()
-                .write(CREATION_INSTANT_FIELD, instance.getCreationInstant())
-                .write(PRINCIPAL_NAME_FIELD, instance.getPrincipalName());
-            
+            gen.writeStartObject().write(CREATION_INSTANT_FIELD, instance.getCreationInstant())
+                    .write(PRINCIPAL_NAME_FIELD, instance.getPrincipalName());
+
             if (instance.getAddress(AbstractIdPSession.AddressFamily.IPV4) != null) {
                 gen.write(IPV4_ADDRESS_FIELD, instance.getAddress(AbstractIdPSession.AddressFamily.IPV4));
             }
@@ -113,7 +111,7 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
             if (instance.getAddress(AbstractIdPSession.AddressFamily.IPV6) != null) {
                 gen.write(IPV6_ADDRESS_FIELD, instance.getAddress(AbstractIdPSession.AddressFamily.IPV6));
             }
-            
+
             Set<AuthenticationResult> results = instance.getAuthenticationResults();
             if (!results.isEmpty()) {
                 gen.writeStartArray(FLOW_ID_ARRAY_FIELD);
@@ -122,7 +120,7 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
                 }
                 gen.writeEnd();
             }
-            
+
             if (sessionManager.isTrackSPSessions()) {
                 Set<SPSession> services = instance.getSPSessions();
                 if (!services.isEmpty()) {
@@ -133,9 +131,9 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
                     gen.writeEnd();
                 }
             }
-            
+
             gen.writeEnd().close();
-            
+
             return sink.toString();
         } catch (JsonException e) {
             log.error("Exception while serializing IdPSession", e);
@@ -144,12 +142,11 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
     }
 
     /** {@inheritDoc} */
-    @Override
     // Checkstyle: CyclomaticComplexity OFF
-    @Nonnull public StorageBackedIdPSession deserialize(final int version, @Nonnull @NotEmpty final String context,
-            @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value, @Nullable final Long expiration)
-                    throws IOException {
-        
+    @Override @Nonnull public StorageBackedIdPSession deserialize(final int version,
+            @Nonnull @NotEmpty final String context, @Nonnull @NotEmpty final String key,
+            @Nonnull @NotEmpty final String value, @Nullable final Long expiration) throws IOException {
+
         if (expiration == null) {
             throw new IOException("IdPSession objects must have an expiration");
         }
@@ -161,7 +158,7 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
                 throw new IOException("Found invalid data structure while parsing IdPSession");
             }
             final JsonObject obj = (JsonObject) st;
-            
+
             // Create new object if necessary.
             StorageBackedIdPSession objectToPopulate = targetObject;
             if (objectToPopulate == null) {
@@ -169,18 +166,18 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
                 final String principalName = obj.getString(PRINCIPAL_NAME_FIELD);
                 objectToPopulate = new StorageBackedIdPSession(sessionManager, context, principalName, creation);
             }
-            
+
             // Populate fields in-place, bypassing any storage interactions.
             objectToPopulate.setVersion(version);
-            objectToPopulate.doSetLastActivityInstant(
-                    expiration - sessionManager.getSessionTimeout() - sessionManager.getSessionSlop());
+            objectToPopulate.doSetLastActivityInstant(expiration - sessionManager.getSessionTimeout()
+                    - sessionManager.getSessionSlop());
             if (obj.containsKey(IPV4_ADDRESS_FIELD)) {
                 objectToPopulate.doBindToAddress(obj.getString(IPV4_ADDRESS_FIELD));
             }
             if (obj.containsKey(IPV6_ADDRESS_FIELD)) {
                 objectToPopulate.doBindToAddress(obj.getString(IPV6_ADDRESS_FIELD));
             }
-            
+
             objectToPopulate.getAuthenticationResultMap().clear();
             if (obj.containsKey(FLOW_ID_ARRAY_FIELD)) {
                 JsonArray flowIds = obj.getJsonArray(FLOW_ID_ARRAY_FIELD);
@@ -188,7 +185,7 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
                     for (JsonString flowId : flowIds.getValuesAs(JsonString.class)) {
                         // An absent mapping is used to signify the existence of a result not yet loaded.
                         objectToPopulate.getAuthenticationResultMap().put(flowId.getString(),
-                                Optional.<AuthenticationResult>absent());
+                                Optional.<AuthenticationResult> absent());
                     }
                 }
             }
@@ -199,14 +196,13 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
                 if (svcIds != null) {
                     for (JsonString svcId : svcIds.getValuesAs(JsonString.class)) {
                         // An absent mapping is used to signify the existence of a session not yet loaded.
-                        objectToPopulate.getSPSessionMap().put(
-                                svcId.getString(), Optional.<SPSession>absent());
+                        objectToPopulate.getSPSessionMap().put(svcId.getString(), Optional.<SPSession> absent());
                     }
                 }
             }
-            
+
             return objectToPopulate;
-            
+
         } catch (NullPointerException | ClassCastException | ArithmeticException | JsonException e) {
             log.error("Exception while parsing IdPSession", e);
             throw new IOException("Found invalid data structure while parsing IdPSession", e);
