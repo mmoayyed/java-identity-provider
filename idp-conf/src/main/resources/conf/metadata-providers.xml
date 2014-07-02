@@ -8,19 +8,19 @@
                         urn:mace:shibboleth:2.0:resource http://shibboleth.net/schema/idp/shibboleth-resource.xsd 
                         urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd
                         urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd">
+                        
 	<!-- ========================================== -->
 	<!-- Metadata Configuration -->
 	<!-- ========================================== -->
-	<!-- MetadataProvider the combining other MetadataProviders -->
 
 
 	<!-- Example metadata provider. -->
-	<!-- Reads metadata from a URL and store a backup copy on the file system. -->
-	<!-- Validates the signature of the metadata and filters out all by SP entities 
-		in order to save memory -->
+    
 	<MetadataProvider id="URLMD" xsi:type="FilesystemMetadataProvider"
 		metadataFile="%{idp.home}/metadata/example-metadata.xml">
+        
 		<MetadataFilter xsi:type="ChainingFilter">
+            <!-- Validates the signature of the metadata and filters out all but SP roles to save memory -->
 			<MetadataFilter xsi:type="SignatureValidation"
 				requireSignedMetadata="false"> <!-- TODO -->
 				<PublicKey>
@@ -37,6 +37,7 @@
 				<RetainedRole>samlmd:SPSSODescriptor</RetainedRole>
 			</MetadataFilter>
 		</MetadataFilter>
+        
 	</MetadataProvider>
 
 </MetadataProvider>
