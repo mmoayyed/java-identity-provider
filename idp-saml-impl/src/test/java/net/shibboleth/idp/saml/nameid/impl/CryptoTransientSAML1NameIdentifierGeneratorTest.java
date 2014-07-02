@@ -116,7 +116,7 @@ public class CryptoTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLIni
 
         Assert.assertEquals(decode, rpc.getRelyingPartyId() + "!" + "jdoe");
 
-        Thread.sleep(TIMEOUT);
+        Thread.sleep(TIMEOUT*2);
         try {
             sealer.unwrap(val);
             Assert.fail("Timeout not set correctly");
