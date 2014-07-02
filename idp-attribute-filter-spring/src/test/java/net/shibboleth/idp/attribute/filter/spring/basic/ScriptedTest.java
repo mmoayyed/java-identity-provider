@@ -65,7 +65,7 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,}) public void policyNotFound() throws ComponentInitializationException {
         if (isV8()) {
-            return;
+            throw new BeanDefinitionStoreException("test");
         }
         getPolicyRule("scriptedNotThere.xml");
     }
