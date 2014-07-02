@@ -41,6 +41,11 @@ import org.testng.annotations.Test;
 public class ScriptedTest extends BaseAttributeFilterParserTest {
 
     private Map<String, IdPAttribute> epaUid;
+    
+    private boolean isV8() {
+        final String ver = System.getProperty("java.version");
+        return ver.startsWith("1.8");
+    }
 
     @BeforeClass public void setupAttributes() throws ComponentInitializationException, ResolutionException {
 
@@ -48,6 +53,9 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
     }
 
     @Test public void policy() throws ComponentInitializationException {
+        if (isV8()) {
+            return;
+        }
         final ScriptedPolicyRule rule = (ScriptedPolicyRule) getPolicyRule("scripted.xml");
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
@@ -56,10 +64,16 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,}) public void policyNotFound() throws ComponentInitializationException {
+        if (isV8()) {
+            return;
+        }
         getPolicyRule("scriptedNotThere.xml");
     }
     
     @Test public void matcher()  throws ComponentInitializationException {
+        if (isV8()) {
+            return;
+        }
         final ScriptedMatcher matcher = (ScriptedMatcher) getMatcher("scripted.xml");
         
         AttributeFilterContext filterContext = new AttributeFilterContext();
