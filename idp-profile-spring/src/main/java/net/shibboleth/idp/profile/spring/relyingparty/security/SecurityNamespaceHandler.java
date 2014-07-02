@@ -47,18 +47,20 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** {@inheritDoc} */
     @Override public void init() {
-        registerBeanDefinitionParser(X509FilesystemCredentialParser.SCHEMA_TYPE, new X509FilesystemCredentialParser());
-        registerBeanDefinitionParser(X509InlineCredentialParser.SCHEMA_TYPE, new X509InlineCredentialParser());
-        registerBeanDefinitionParser(BasicInlineCredentialParser.SCHEMA_TYPE, new BasicInlineCredentialParser());
-        registerBeanDefinitionParser(BasicFilesystemCredentialParser.SCHEMA_TYPE, 
+        registerBeanDefinitionParser(X509FilesystemCredentialParser.ELEMENT_NAME, new X509FilesystemCredentialParser());
+        registerBeanDefinitionParser(X509InlineCredentialParser.ELEMENT_NAME, new X509InlineCredentialParser());
+        registerBeanDefinitionParser(BasicInlineCredentialParser.ELEMENT_NAME, new BasicInlineCredentialParser());
+        registerBeanDefinitionParser(BasicFilesystemCredentialParser.ELEMENT_NAME,
                 new BasicFilesystemCredentialParser());
-        registerBeanDefinitionParser(ResourceCredentialParser.X509_RESOURCE_TYPE, new ResourceCredentialParser());
-        registerBeanDefinitionParser(ResourceCredentialParser.BASIC_RESOURCE_TYPE, new ResourceCredentialParser());
+        registerBeanDefinitionParser(ResourceCredentialParser.X509_RESOURCE_ELEMENT_NAME,
+                new ResourceCredentialParser());
+        registerBeanDefinitionParser(ResourceCredentialParser.BASIC_RESOURCE_ELEMENT_NAME,
+                new ResourceCredentialParser());
 
-        registerBeanDefinitionParser(StaticExplicitKeySignatureParser.SCHEMA_TYPE,
+        registerBeanDefinitionParser(StaticExplicitKeySignatureParser.ELEMENT_NAME,
                 new StaticExplicitKeySignatureParser());
-        registerBeanDefinitionParser(StaticPKIXSignatureParser.SCHEMA_TYPE, new StaticPKIXSignatureParser());
-        registerBeanDefinitionParser(SignatureChainingParser.SCHEMA_TYPE, new SignatureChainingParser());
+        registerBeanDefinitionParser(StaticPKIXSignatureParser.ELEMENT_NAME, new StaticPKIXSignatureParser());
+        registerBeanDefinitionParser(SignatureChainingParser.ELEMENT_NAME, new SignatureChainingParser());
 
         // Metadata based unsupported
         registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_EXPLICIT_KEY,

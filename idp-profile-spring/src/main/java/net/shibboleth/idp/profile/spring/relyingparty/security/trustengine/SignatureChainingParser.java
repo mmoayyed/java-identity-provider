@@ -39,7 +39,7 @@ import org.w3c.dom.Element;
 public class SignatureChainingParser extends AbstractTrustEngineParser {
     
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "SignatureChaining");
+    public static final QName ELEMENT_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "SignatureChaining");
 
     /** TrustEngineRef element name. */
     public static final QName TRUST_ENGINE_REF= new QName(SecurityNamespaceHandler.NAMESPACE, "TrustEngineRef");

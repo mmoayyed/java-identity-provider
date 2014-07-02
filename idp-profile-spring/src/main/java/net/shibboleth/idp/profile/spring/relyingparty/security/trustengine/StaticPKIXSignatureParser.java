@@ -37,12 +37,12 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Parser for trust engines of type StaticExplicitKeySignature.
+ * Parser for trust engines of type StaticPKIXKeySignature.
  */
 public class StaticPKIXSignatureParser extends AbstractTrustEngineParser {
     
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "StaticPKIXSignature");
+    public static final QName ELEMENT_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "StaticPKIXSignature");
     
     /** log.*/
     private final Logger log = LoggerFactory.getLogger(StaticPKIXSignatureParser.class);

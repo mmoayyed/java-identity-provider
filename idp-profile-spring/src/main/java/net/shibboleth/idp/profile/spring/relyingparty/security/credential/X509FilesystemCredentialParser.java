@@ -29,7 +29,7 @@ import org.w3c.dom.Element;
 public class X509FilesystemCredentialParser extends AbstractX509CredentialParser {
 
     /** Element Name.*/
-    public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "X509Filesystem");
+    public static final QName ELEMENT_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "X509Filesystem");
 
     @Override protected Class<?> getBeanClass(Element element) {
         return X509FilesystemCredentialFactoryBean.class;

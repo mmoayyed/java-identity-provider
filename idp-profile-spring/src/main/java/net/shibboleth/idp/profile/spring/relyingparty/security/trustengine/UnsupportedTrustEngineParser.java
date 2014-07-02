@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine;
 
-import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
@@ -57,10 +56,6 @@ public class UnsupportedTrustEngineParser extends AbstractTrustEngineParser {
     public static final QName PKIX_CREDENTIAL = new QName(SecurityNamespaceHandler.NAMESPACE,
             "StaticPKIXX509Credential");
 
-    /** The list of all unsupported trust engine types. */
-    private static final QName[] UNSUPPORTED = {PKIX_CREDENTIAL, CHAINING, METADATA_EXPLICIT_KEY,
-            METADATA_PKIX_CREDENTIAL, METADATA_EXPLICIT_KEY_SIGNATURE, METADATA_PKIX_SIGNATURE,};
-
     /** log. */
     private Logger log = LoggerFactory.getLogger(UnsupportedTrustEngineParser.class);
 
@@ -75,18 +70,4 @@ public class UnsupportedTrustEngineParser extends AbstractTrustEngineParser {
                 .getReaderContext().getResource().getDescription(), DOMTypeSupport.getXSIType(element).toString());
     }
 
-    /**
-     * Is this type unsupported?
-     * 
-     * @param engine the engine to test.
-     * @return whether it is in the list.
-     */
-    static boolean unsupportedEngineType(@Nonnull QName engine) {
-        for (QName qName : UNSUPPORTED) {
-            if (qName.equals(engine)) {
-                return true;
-            }
-        }
-        return false;
-    }
 }
