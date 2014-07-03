@@ -26,6 +26,7 @@ import net.shibboleth.idp.profile.spring.relyingparty.security.credential.Resour
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509FilesystemCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509InlineCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.PKIXFilesystemValidationInfoParser;
+import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.PKIXInlineValidationInfoParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.PKIXResourceBackedValidationInfoParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.SignatureChainingParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.StaticExplicitKeySignatureParser;
@@ -73,6 +74,8 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
         // Validation Info
         registerBeanDefinitionParser(PKIXFilesystemValidationInfoParser.SCHEMA_TYPE,
                 new PKIXFilesystemValidationInfoParser());
+        registerBeanDefinitionParser(PKIXInlineValidationInfoParser.SCHEMA_TYPE,
+                new PKIXInlineValidationInfoParser());
 
         // Credential unsupported
         registerBeanDefinitionParser(UnsupportedTrustEngineParser.CHAINING_TYPE, new UnsupportedTrustEngineParser());

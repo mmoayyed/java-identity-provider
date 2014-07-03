@@ -2,7 +2,7 @@
 <security:ValidationInfo xmlns:security="urn:mace:shibboleth:2.0:security"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd"
-	id="IdPCredential" xsi:type="security:PKIXFilesystem" verifyDepth="99">
+	id="IdPCredential" xsi:type="security:PKIXInline" verifyDepth="98">
 	<security:Certificate>${DIR}/trustengine/cert1.pem</security:Certificate>
 	<security:Certificate>${DIR}/trustengine/cert2.pem</security:Certificate>
 	<security:CRL>${DIR}/trustengine/crl.pem</security:CRL>
