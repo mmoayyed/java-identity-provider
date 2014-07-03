@@ -91,21 +91,21 @@ public abstract class AbstractServiceableComponent<T> extends AbstractIdentified
             return;
         }
 
-        ConfigurableApplicationContext component = null;
+        ConfigurableApplicationContext oldContext = null;
         log.debug("Component '{}': Component unload called", getId());
         try {
             log.trace("Component '{}': Queueing for write lock", getId());
             serviceLock.writeLock().lock();
             log.trace("Component '{}': Got write lock", getId());
-            component = (ConfigurableApplicationContext) applicationContext;
+            oldContext = (ConfigurableApplicationContext) applicationContext;
             applicationContext = null;
         } finally {
             serviceLock.writeLock().unlock();
         }
 
-        if (null != component) {
+        if (null != oldContext) {
             log.debug("Component '{}': Closing the appcontext", getId());
-            component.close();
+            oldContext.close();
         }
     }
 
