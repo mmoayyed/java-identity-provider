@@ -42,7 +42,7 @@ public class PKIXInlineParserTest extends AbstractSecurityParserTest {
         Assert.assertTrue(info.getCRLs().isEmpty());
     }
     
-    @Test public void complex() throws IOException {
+    @Test(enabled=false) public void complex() throws IOException {
         final BasicPKIXValidationInformation info = lookup("inlineValidationInfoValues.xml");
         Assert.assertEquals(info.getVerificationDepth().intValue(), 98);
         Assert.assertEquals(info.getCertificates().size(), 2);
