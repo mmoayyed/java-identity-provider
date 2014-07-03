@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
+import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.ConversionServiceFactoryBean;
@@ -80,7 +81,7 @@ public class AbstractSecurityParserTest {
             resources[i] = new ClassPathResource(PATH + files[i]);
         }
         
-        final GenericApplicationContext context = new GenericApplicationContext();
+        final GenericApplicationContext context = new FilesystemGenericApplicationContext();
 
         setDirectoryPlaceholder(context);
         

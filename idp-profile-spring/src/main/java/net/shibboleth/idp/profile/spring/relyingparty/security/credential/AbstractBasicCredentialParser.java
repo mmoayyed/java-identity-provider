@@ -56,7 +56,7 @@ public abstract class AbstractBasicCredentialParser extends AbstractCredentialPa
     /** {@inheritDoc} */
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
-        builder.addPropertyValue("configFile", parserContext.getReaderContext().getResource().getDescription());
+        builder.addPropertyValue("configDescription", parserContext.getReaderContext().getResource().getDescription());
         
         parsePrivateKey(ElementSupport.getChildElements(element, PRIVATE_KEY_ELEMENT_NAME), parserContext, builder);
         parsePublicKey(ElementSupport.getChildElements(element, PUBLIC_KEY_ELEMENT_NAME), parserContext, builder);

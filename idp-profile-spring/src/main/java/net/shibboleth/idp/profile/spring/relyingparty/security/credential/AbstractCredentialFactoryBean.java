@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.credential;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.security.credential.Credential;
@@ -43,8 +44,8 @@ public abstract class AbstractCredentialFactoryBean<T extends Credential> extend
     /** The privateKey Password (if any). */
     @Nullable private char[] privateKeyPassword;
 
-    /** For logging: The config file.*/
-    private String configFile;
+    /** For logging: The description of the source of the configuration.*/
+    @Nonnull private String configDescription;
    
     /**
      * Gets the names for the key represented by the credential.
@@ -126,18 +127,17 @@ public abstract class AbstractCredentialFactoryBean<T extends Credential> extend
         }
     }
 
-    /** For logging, get the file that defined this bean.
-     * @return Returns the configFile.
+    /** For logging, get the description of the resource that defined this bean.
+     * @return Returns the description.
      */
-    public String getConfigFile() {
-        return configFile;
+    public String getConfigDescription() {
+        return configDescription;
     }
 
-    /** For logging, set the file that defined this bean.
-     * @param file The configFile to set.
+    /** For logging, set the description of the resource that defined this bean.
+     * @param desc what to set.
      */
-    public void setConfigFile(String file) {
-        configFile = file;
+    public void setConfigDescription(@Nonnull String desc) {
+        configDescription = desc;
     }
-
 }

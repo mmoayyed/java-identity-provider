@@ -52,14 +52,14 @@ public abstract class AbstractBasicCredentialFactoryBean extends AbstractCredent
         final BasicCredential credential;
         
         if (null == publicKey) {
-            log.error("{}: No Public Key Specified", getConfigFile());
+            log.error("{}: No Public Key Specified", getConfigDescription());
             throw new BeanCreationException("No Public Key specified");            
         }
         if (null == privateKey) {
             credential = new BasicCredential(publicKey);
         } else {
             if (!KeyPairUtil.isKeyPair(publicKey, privateKey)) {
-                log.error("{}: Public and private keys do not match", getConfigFile());
+                log.error("{}: Public and private keys do not match", getConfigDescription());
                 throw new BeanCreationException("Public and private keys do not match");
             }
             credential = new BasicCredential(publicKey, privateKey);

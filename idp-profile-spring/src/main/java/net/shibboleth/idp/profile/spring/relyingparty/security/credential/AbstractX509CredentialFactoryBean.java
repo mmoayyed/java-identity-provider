@@ -49,7 +49,7 @@ public abstract class AbstractX509CredentialFactoryBean extends AbstractCredenti
 
         final List<X509Certificate> certificates = getCertificates();
         if (null == certificates || certificates.isEmpty()) {
-            log.error("{}: No Certificates provided", getConfigFile());
+            log.error("{}: No Certificates provided", getConfigDescription());
             throw new BeanCreationException("No Certificates provided");
         }
 
@@ -67,7 +67,7 @@ public abstract class AbstractX509CredentialFactoryBean extends AbstractCredenti
             credential = new BasicX509Credential(entityCertificate, privateKey);
 
             if (!KeyPairUtil.isKeyPair(entityCertificate.getPublicKey(), privateKey)) {
-                log.error("{}: Public and private keys do not match", getConfigFile());
+                log.error("{}: Public and private keys do not match", getConfigDescription());
                 throw new BeanCreationException("Public and private keys do not match");
             }
         }
