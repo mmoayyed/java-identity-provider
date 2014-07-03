@@ -29,7 +29,7 @@ import org.w3c.dom.Element;
 public class X509InlineCredentialParser extends AbstractX509CredentialParser {
 
     /** Element Name.*/
-    public static final QName ELEMENT_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "X509Inline");
+    public static final QName TYPE_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "X509Inline");
 
     @Override protected Class<?> getBeanClass(Element element) {
         return X509InlineCredentialFactoryBean.class;

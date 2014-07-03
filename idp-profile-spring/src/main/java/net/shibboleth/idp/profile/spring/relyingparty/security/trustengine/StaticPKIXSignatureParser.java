@@ -42,7 +42,7 @@ import org.w3c.dom.Element;
 public class StaticPKIXSignatureParser extends AbstractTrustEngineParser {
     
     /** Schema type. */
-    public static final QName ELEMENT_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "StaticPKIXSignature");
+    public static final QName TYPE_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "StaticPKIXSignature");
     
     /** log.*/
     private final Logger log = LoggerFactory.getLogger(StaticPKIXSignatureParser.class);

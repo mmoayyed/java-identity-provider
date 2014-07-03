@@ -49,25 +49,25 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** {@inheritDoc} */
     @Override public void init() {
-        registerBeanDefinitionParser(X509FilesystemCredentialParser.ELEMENT_NAME, new X509FilesystemCredentialParser());
-        registerBeanDefinitionParser(X509InlineCredentialParser.ELEMENT_NAME, new X509InlineCredentialParser());
-        registerBeanDefinitionParser(BasicInlineCredentialParser.ELEMENT_NAME, new BasicInlineCredentialParser());
-        registerBeanDefinitionParser(BasicFilesystemCredentialParser.ELEMENT_NAME,
+        registerBeanDefinitionParser(X509FilesystemCredentialParser.TYPE_NAME, new X509FilesystemCredentialParser());
+        registerBeanDefinitionParser(X509InlineCredentialParser.TYPE_NAME, new X509InlineCredentialParser());
+        registerBeanDefinitionParser(BasicInlineCredentialParser.TYPE_NAME, new BasicInlineCredentialParser());
+        registerBeanDefinitionParser(BasicFilesystemCredentialParser.TYPE_NAME,
                 new BasicFilesystemCredentialParser());
 
-        registerBeanDefinitionParser(StaticExplicitKeySignatureParser.ELEMENT_NAME,
+        registerBeanDefinitionParser(StaticExplicitKeySignatureParser.TYPE_NAME,
                 new StaticExplicitKeySignatureParser());
-        registerBeanDefinitionParser(StaticPKIXSignatureParser.ELEMENT_NAME, new StaticPKIXSignatureParser());
-        registerBeanDefinitionParser(SignatureChainingParser.ELEMENT_NAME, new SignatureChainingParser());
+        registerBeanDefinitionParser(StaticPKIXSignatureParser.TYPE_NAME, new StaticPKIXSignatureParser());
+        registerBeanDefinitionParser(SignatureChainingParser.TYPE_NAME, new SignatureChainingParser());
 
         // Metadata based unsupported
-        registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_EXPLICIT_KEY,
+        registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_EXPLICIT_KEY_TYPE,
                 new UnsupportedTrustEngineParser());
-        registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_EXPLICIT_KEY_SIGNATURE,
+        registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_EXPLICIT_KEY_SIGNATURE_TYPE,
                 new UnsupportedTrustEngineParser());
-        registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_PKIX_CREDENTIAL,
+        registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_PKIX_CREDENTIAL_TYPE,
                 new UnsupportedTrustEngineParser());
-        registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_PKIX_SIGNATURE,
+        registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_PKIX_SIGNATURE_TYPE,
                 new UnsupportedTrustEngineParser());
 
         // Validation Info
@@ -75,15 +75,15 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
                 new PKIXFilesystemValidationInfoParser());
 
         // Credential unsupported
-        registerBeanDefinitionParser(UnsupportedTrustEngineParser.CHAINING, new UnsupportedTrustEngineParser());
+        registerBeanDefinitionParser(UnsupportedTrustEngineParser.CHAINING_TYPE, new UnsupportedTrustEngineParser());
         registerBeanDefinitionParser(UnsupportedTrustEngineParser.PKIX_CREDENTIAL, new UnsupportedTrustEngineParser());
 
         // Resource backed anything
-        registerBeanDefinitionParser(ResourceCredentialParser.X509_RESOURCE_ELEMENT_NAME,
+        registerBeanDefinitionParser(ResourceCredentialParser.X509_RESOURCE_TYPE,
                 new ResourceCredentialParser());
-        registerBeanDefinitionParser(ResourceCredentialParser.BASIC_RESOURCE_ELEMENT_NAME,
+        registerBeanDefinitionParser(ResourceCredentialParser.BASIC_RESOURCE_TYPE,
                 new ResourceCredentialParser());
-        registerBeanDefinitionParser(PKIXResourceBackedValidationInfoParser.ELEMENT_NAME,
+        registerBeanDefinitionParser(PKIXResourceBackedValidationInfoParser.TYPE_NAME,
                 new PKIXResourceBackedValidationInfoParser());
 
     }

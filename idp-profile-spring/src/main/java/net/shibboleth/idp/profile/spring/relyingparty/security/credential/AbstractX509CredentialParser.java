@@ -141,6 +141,6 @@ public abstract class AbstractX509CredentialParser extends AbstractCredentialPar
             log.debug("Found a CRL {}", crl);
             crls.add(crl);
         }
-        builder.addPropertyValue("crls", crls);
+        builder.addPropertyValue("CRLs", crls);
     }
 }

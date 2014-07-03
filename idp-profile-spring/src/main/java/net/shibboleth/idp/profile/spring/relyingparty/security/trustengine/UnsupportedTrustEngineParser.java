@@ -34,23 +34,23 @@ import org.w3c.dom.Element;
 public class UnsupportedTrustEngineParser extends AbstractTrustEngineParser {
 
     /** Schema type for MetadataPKIXSignature. */
-    public static final QName METADATA_PKIX_SIGNATURE = new QName(SecurityNamespaceHandler.NAMESPACE,
+    public static final QName METADATA_PKIX_SIGNATURE_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE,
             "MetadataPKIXSignature");
 
     /** Schema type for MetadataExplicitKeySignature. */
-    public static final QName METADATA_EXPLICIT_KEY_SIGNATURE = new QName(SecurityNamespaceHandler.NAMESPACE,
+    public static final QName METADATA_EXPLICIT_KEY_SIGNATURE_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE,
             "MetadataExplicitKeySignature");
 
     /** Schema type for MetadataPKIXX509Credential. */
-    public static final QName METADATA_PKIX_CREDENTIAL = new QName(SecurityNamespaceHandler.NAMESPACE,
+    public static final QName METADATA_PKIX_CREDENTIAL_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE,
             "MetadataPKIXX509Credential");
 
     /** Schema type for MetadataExplicitKey. */
-    public static final QName METADATA_EXPLICIT_KEY = new QName(SecurityNamespaceHandler.NAMESPACE,
+    public static final QName METADATA_EXPLICIT_KEY_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE,
             "MetadataExplicitKey");
 
     /** Schema type for Chaining. */
-    public static final QName CHAINING = new QName(SecurityNamespaceHandler.NAMESPACE, "Chaining");
+    public static final QName CHAINING_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "Chaining");
 
     /** Schema type for StaticPKIXX509Credential. */
     public static final QName PKIX_CREDENTIAL = new QName(SecurityNamespaceHandler.NAMESPACE,

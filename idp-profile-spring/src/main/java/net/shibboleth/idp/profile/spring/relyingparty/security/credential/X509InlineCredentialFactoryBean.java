@@ -88,7 +88,7 @@ public class X509InlineCredentialFactoryBean extends AbstractX509CredentialFacto
      * 
      * @param list The value to set.
      */
-    public void setCrls(@Nullable @NotEmpty final List<String> list) {
+    public void setCRLs(@Nullable @NotEmpty final List<String> list) {
         crls = list;
     }
 
@@ -129,7 +129,7 @@ public class X509InlineCredentialFactoryBean extends AbstractX509CredentialFacto
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable protected List<X509CRL> getCrls() {
+    @Override @Nullable protected List<X509CRL> getCRLs() {
         if (null == crls) {
             return null;
         }

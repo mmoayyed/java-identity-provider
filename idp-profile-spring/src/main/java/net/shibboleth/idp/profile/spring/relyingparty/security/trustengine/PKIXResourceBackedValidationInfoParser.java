@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
  */
 public class PKIXResourceBackedValidationInfoParser extends AbstractSingleBeanDefinitionParser {
     /** Schema type for PKIXResourceBackedValidationInformation. */
-    public static final QName ELEMENT_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "PKIXResourceBacked");
+    public static final QName TYPE_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "PKIXResourceBacked");
 
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(Element element) {

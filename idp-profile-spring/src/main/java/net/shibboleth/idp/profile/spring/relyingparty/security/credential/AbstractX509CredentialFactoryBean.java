@@ -74,7 +74,7 @@ public abstract class AbstractX509CredentialFactoryBean extends AbstractCredenti
 
         credential.setEntityCertificateChain(certificates);
 
-        final List<X509CRL> crls = getCrls();
+        final List<X509CRL> crls = getCRLs();
         if (null != crls && !crls.isEmpty()) {
             credential.setCRLs(crls);
         }
@@ -129,6 +129,6 @@ public abstract class AbstractX509CredentialFactoryBean extends AbstractCredenti
      * 
      * @return the crls or null
      */
-    @Nullable protected abstract List<X509CRL> getCrls();
+    @Nullable protected abstract List<X509CRL> getCRLs();
 
 }

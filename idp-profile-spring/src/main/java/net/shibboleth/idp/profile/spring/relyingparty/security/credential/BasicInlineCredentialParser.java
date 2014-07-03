@@ -29,7 +29,7 @@ import org.w3c.dom.Element;
 public class BasicInlineCredentialParser extends AbstractBasicCredentialParser {
 
     /** Element Name.*/
-    public static final QName ELEMENT_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "BasicInline");
+    public static final QName TYPE_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "BasicInline");
 
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(Element element) {

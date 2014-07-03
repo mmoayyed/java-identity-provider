@@ -39,7 +39,7 @@ import org.w3c.dom.Element;
 public class StaticExplicitKeySignatureParser extends AbstractTrustEngineParser {
 
     /** Schema type. */
-    public static final QName ELEMENT_NAME =
+    public static final QName TYPE_NAME =
             new QName(SecurityNamespaceHandler.NAMESPACE, "StaticExplicitKeySignature");
 
     /** {@inheritDoc} */

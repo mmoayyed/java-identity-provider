@@ -31,11 +31,11 @@ import org.w3c.dom.Element;
 public class ResourceCredentialParser extends AbstractSingleBeanDefinitionParser {
 
     /** Type for Basic credentials. */
-    public static final QName BASIC_RESOURCE_ELEMENT_NAME = new QName(SecurityNamespaceHandler.NAMESPACE,
+    public static final QName BASIC_RESOURCE_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE,
             "BasicResourceBacked");
 
     /** Type for X509 credentials. */
-    public static final QName X509_RESOURCE_ELEMENT_NAME = new QName(SecurityNamespaceHandler.NAMESPACE,
+    public static final QName X509_RESOURCE_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE,
             "X509ResourceBacked");
 
     /** {@inheritDoc} */

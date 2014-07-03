@@ -91,7 +91,7 @@ public class X509FilesystemCredentialFactoryBean extends AbstractX509CredentialF
      * 
      * @param files The value to set.
      */
-    public void setCrls(@Nullable @NotEmpty final List<File> files) {
+    public void setCRLs(@Nullable @NotEmpty final List<File> files) {
         crlFiles = files;
     }
 
@@ -148,7 +148,7 @@ public class X509FilesystemCredentialFactoryBean extends AbstractX509CredentialF
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable protected List<X509CRL> getCrls() {
+    @Override @Nullable protected List<X509CRL> getCRLs() {
         if (null == crlFiles) {
             return null;
         }

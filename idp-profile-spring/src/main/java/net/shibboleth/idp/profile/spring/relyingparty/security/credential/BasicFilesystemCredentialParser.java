@@ -29,7 +29,7 @@ import org.w3c.dom.Element;
 public class BasicFilesystemCredentialParser extends AbstractBasicCredentialParser {
 
     /** Element Name.*/
-    public static final QName ELEMENT_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "BasicFilesystem");
+    public static final QName TYPE_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "BasicFilesystem");
 
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(Element element) {
