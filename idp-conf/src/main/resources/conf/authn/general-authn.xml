@@ -47,11 +47,7 @@
 
         <bean id="authn/RemoteUserInternal" parent="shibboleth.AuthenticationFlow" />
 
-        <bean id="authn/JAAS" parent="shibboleth.AuthenticationFlow"
-                p:passiveAuthenticationSupported="true"
-                p:forcedAuthenticationSupported="true" />
-
-        <bean id="authn/LDAP" parent="shibboleth.AuthenticationFlow"
+        <bean id="authn/Password" parent="shibboleth.AuthenticationFlow"
                 p:passiveAuthenticationSupported="true"
                 p:forcedAuthenticationSupported="true" />
 

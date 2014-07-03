@@ -12,8 +12,6 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
        
-    <context:property-placeholder />
-    
     <!-- LDAP configuration. -->
     
     <bean id="shibboleth.authn.LDAP.ldapUrl" class="java.lang.String" c:_0="ldap://localhost:10389" />
@@ -28,48 +26,6 @@
         <value>mail</value>
     </util:list>
     
-    <!-- Names of form fields to pull username and password from. -->
-    <bean id="shibboleth.authn.LDAP.UsernameFieldName" class="java.lang.String" c:_0="j_username" />
-    <bean id="shibboleth.authn.LDAP.PasswordFieldName" class="java.lang.String" c:_0="j_password" />
-    <bean id="shibboleth.authn.LDAP.SSOBypassFieldName" class="java.lang.String" c:_0="donotcache" />
+    <alias name="ValidateUsernamePasswordAgainstLDAP" alias="ValidateUsernamePassword"/>
 
-    <!-- Simple transforms to apply to username before validation. -->
-    <util:constant id="shibboleth.authn.LDAP.Lowercase" static-field="java.lang.Boolean.FALSE"/>
-    <util:constant id="shibboleth.authn.LDAP.Uppercase" static-field="java.lang.Boolean.FALSE"/>
-    <util:constant id="shibboleth.authn.LDAP.Trim" static-field="java.lang.Boolean.TRUE"/>
-
-    <!-- Apply any regular expression replacement pairs before validation. -->
-    <util:list id="shibboleth.authn.LDAP.Transforms">
-        <!--
-        <bean parent="shibboleth.Pair" p:first="^(.+)@example\.edu$" p:second="$1" />
-        -->
-    </util:list>
-    
-    <!--
-    Define entries here to map error messages thrown by LDAP module and classify them as particular
-    kinds of errors for use in your templates and as events in flows.
-    -->
-    <util:map id="shibboleth.authn.LDAP.ClassifiedMessageMap">
-        <entry key="UnknownUsername">
-            <list>
-                <value>DN_RESOLUTION_FAILURE</value>
-            </list>
-        </entry>
-        <entry key="InvalidPassword">
-            <list>
-                <value>INVALID_CREDENTIALS</value>
-            </list>
-        </entry>
-        <entry key="ExpiredPassword">
-            <list>
-                <value>PASSWORD_EXPIRED</value>
-            </list>
-        </entry>
-        <entry key="ExpiringPassword">
-            <list>
-                <value>ACCOUNT_WARNING</value>
-            </list>
-        </entry>
-    </util:map>
-    
 </beans>

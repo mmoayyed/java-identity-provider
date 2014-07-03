@@ -69,7 +69,7 @@
         <appender-ref ref="IDP_AUDIT"/>
     </logger>
         
-    <logger name="org.springframework" level="OFF"/>
+    <logger name="org.springframework" level="ERROR"/>
     
     <logger name="org.apache.catalina" level="ERROR"/>
     

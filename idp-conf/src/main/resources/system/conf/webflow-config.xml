@@ -58,8 +58,7 @@
         <!-- Login methods. -->
         <webflow:flow-location id="authn/IPAddress" path="/authn/ipaddress-authn-flow.xml" />
         <webflow:flow-location id="authn/RemoteUserInternal" path="/authn/remoteuser-internal-authn-flow.xml" />
-        <webflow:flow-location id="authn/JAAS" path="/authn/jaas-authn-flow.xml" />
-        <webflow:flow-location id="authn/LDAP" path="/authn/ldap-authn-flow.xml" />
+        <webflow:flow-location id="authn/Password" path="/authn/password-authn-flow.xml" />
         <webflow:flow-location id="authn/RemoteUser" path="/authn/remoteuser-authn-flow.xml" />
         <webflow:flow-location id="authn/External" path="/authn/external-authn-flow.xml" />
 
