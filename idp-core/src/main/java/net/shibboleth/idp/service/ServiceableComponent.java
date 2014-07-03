@@ -20,8 +20,7 @@ package net.shibboleth.idp.service;
 import javax.annotation.Nonnull;
 
 /**
- * Any Component that wants to be reloaded via the Service interface and spring implements this interface.
- * @param <T> The underlying type of the component.
+ * Any component that wants to be reloaded via the Service interface and Spring implements this interface.
  * 
  * The idea is that the attribute resolver will be
  * <code>
@@ -29,6 +28,8 @@ import javax.annotation.Nonnull;
  *  AttributeResolver, ServiceableComponent<ServiceableComponent>.
  *  </code>
  *  AbstractServiceableComponent will do all the work around reload and synchronization.
+ *  
+ * @param <T> The underlying type of the component.
  */
 public interface ServiceableComponent<T> {
 
@@ -41,15 +42,14 @@ public interface ServiceableComponent<T> {
     @Nonnull public T getComponent();
     
     /**
-     * This function takes a lock on the component which guarantees that it will not be disposed until the release call
+     * This function takes a lock on the component which guarantees that it will not be disposed until the unpin call
      * is made.<br/>
-     * <em>Every call to {@link #pinComponent()} must be matched by a call to {@link #unpinComponent()}</em>
-     * <br/> The need to have the type converting return parameter is to get around the java typing restrictions. 
+     * <em>Every call to {@link #pinComponent()} must be matched by a call to {@link #unpinComponent()}</em>. 
      */
     public void pinComponent();
 
     /**
-     * This undoes the work that is done by {@link #getComponent()}.
+     * This undoes the work that is done by {@link #pinComponent()}.
      */
     public void unpinComponent();
     
@@ -59,6 +59,5 @@ public interface ServiceableComponent<T> {
      * calls dispose on the components.  <br/>Implementations should avoid calling
      * this with locks held.
      */
-    
     public void unloadComponent();
 }
