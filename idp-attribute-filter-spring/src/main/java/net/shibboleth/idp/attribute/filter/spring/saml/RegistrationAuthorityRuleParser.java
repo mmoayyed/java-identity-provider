@@ -37,7 +37,7 @@ public class RegistrationAuthorityRuleParser extends BasePolicyRuleParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
-            "AttributeRequesterRegistrationAuthority");
+            "RegistrationAuthority");
 
     /** Name of the attribute carrying the Issuers list. */
     public static final String REGISTRARS_ATTR_NAME = "registrars";

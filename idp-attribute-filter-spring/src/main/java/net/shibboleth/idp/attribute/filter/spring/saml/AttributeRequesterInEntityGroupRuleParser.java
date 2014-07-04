@@ -23,7 +23,10 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterInEntityGroupPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -34,8 +37,14 @@ import org.w3c.dom.Element;
 public class AttributeRequesterInEntityGroupRuleParser extends BasePolicyRuleParser {
 
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
+    public static final QName SCHEMA_TYPE = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE, "InEntityGroup");
+
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE_V2 = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
             "AttributeRequesterInEntityGroup");
+
+    /** log. */
+    private final Logger log = LoggerFactory.getLogger(AttributeRequesterInEntityGroupRuleParser.class);
 
     /** {@inheritDoc} */
     @Override @Nonnull protected Class<AttributeRequesterInEntityGroupPolicyRule> getNativeBeanClass() {
@@ -45,6 +54,11 @@ public class AttributeRequesterInEntityGroupRuleParser extends BasePolicyRulePar
     /** {@inheritDoc} */
     @Override protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
+
+        if (SCHEMA_TYPE_V2.equals(DOMTypeSupport.getXSIType(element))) {
+            log.info("Filter type '{}' has been deprecated, please use '{}'.", SCHEMA_TYPE_V2.getLocalPart(),
+                    SCHEMA_TYPE.getLocalPart());
+        }
 
         builder.addPropertyValue("entityGroup", StringSupport.trimOrNull(element.getAttributeNS(null, "groupID")));
     }

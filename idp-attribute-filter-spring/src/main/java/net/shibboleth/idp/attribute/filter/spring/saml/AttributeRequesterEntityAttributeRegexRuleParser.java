@@ -21,7 +21,10 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterEntityAttributeRegexPolicyRule;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -33,7 +36,14 @@ public class AttributeRequesterEntityAttributeRegexRuleParser extends AbstractEn
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
+            "EntityAttributeRegexMatch");
+
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE_V2 = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
             "AttributeRequesterEntityAttributeRegexMatch");
+
+    /** log. */
+    private final Logger log = LoggerFactory.getLogger(AttributeRequesterEntityAttributeRegexRuleParser.class);
 
     /** {@inheritDoc} */
     @Override @Nonnull protected Class<AttributeRequesterEntityAttributeRegexPolicyRule> getNativeBeanClass() {
@@ -46,7 +56,11 @@ public class AttributeRequesterEntityAttributeRegexRuleParser extends AbstractEn
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
 
-        builder.addPropertyValue("valueRegex", element.getAttributeNS(null, "attributeValueRegex"));
+        if (SCHEMA_TYPE_V2.equals(DOMTypeSupport.getXSIType(element))) {
+            log.info("Filter type '{}' has been deprecated, please use '{}'.", SCHEMA_TYPE_V2.getLocalPart(),
+                    SCHEMA_TYPE.getLocalPart());
+        }
 
+        builder.addPropertyValue("valueRegex", element.getAttributeNS(null, "attributeValueRegex"));
     }
 }

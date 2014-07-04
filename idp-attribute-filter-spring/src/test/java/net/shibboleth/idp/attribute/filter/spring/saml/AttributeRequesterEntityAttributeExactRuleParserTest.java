@@ -30,6 +30,13 @@ import org.testng.annotations.Test;
 public class AttributeRequesterEntityAttributeExactRuleParserTest extends  BaseAttributeFilterParserTest {
 
     @Test public void basic() throws ComponentInitializationException {
+        AttributeRequesterEntityAttributeExactPolicyRule rule = (AttributeRequesterEntityAttributeExactPolicyRule) getPolicyRule("requesterEA2.xml");
+     
+        Assert.assertEquals(rule.getValue(), "urn:example.org:policy:ABCD1234");
+        Assert.assertEquals(rule.getAttributeName(), "urn:example.org:policy");
+    }
+
+    @Test public void v2() throws ComponentInitializationException {
         AttributeRequesterEntityAttributeExactPolicyRule rule = (AttributeRequesterEntityAttributeExactPolicyRule) getPolicyRule("requesterEA.xml");
      
         Assert.assertEquals(rule.getValue(), "urn:example.org:policy:ABCD1234");

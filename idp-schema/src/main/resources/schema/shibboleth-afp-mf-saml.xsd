@@ -22,6 +22,18 @@
         </complexContent>
     </complexType>
 
+    <complexType name="EntityAttributeExactMatch">
+        <annotation>
+            <documentation>
+                A match function that checks if the attribute issuer contains an entity attribute with the
+                specified value.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="saml:EntityAttributeExactMatchType"/>
+        </complexContent>
+    </complexType>
+
     <complexType name="AttributeRequesterEntityAttributeExactMatch">
         <annotation>
             <documentation>
@@ -57,6 +69,18 @@
     </complexType>
 
     <complexType name="AttributeIssuerEntityAttributeRegexMatch">
+        <annotation>
+            <documentation>
+                A match function that checks if the attribute issuer contains an entity attribute with a
+                value that matches the given regular expression.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="saml:EntityAttributeRegexMatchType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="EntityAttributeRegexMatch">
         <annotation>
             <documentation>
                 A match function that checks if the attribute issuer contains an entity attribute with a
@@ -115,6 +139,18 @@
         </complexContent>
     </complexType>
 
+    <complexType name="NameIDFormatExactMatch">
+        <annotation>
+            <documentation>
+                A match function that evaluates to true if the attribute issuer supports a specified
+                NameID format.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="saml:NameIDFormatExactMatchType"/>
+        </complexContent>
+    </complexType>
+
     <complexType name="AttributeRequesterNameIDFormatExactMatch">
         <annotation>
             <documentation>
@@ -140,6 +176,19 @@
     </complexType>
 
     <complexType name="AttributeRequesterInEntityGroup">
+        <annotation>
+            <documentation>
+                A match function that evaluates to true if the attribute requester is found in metadata and
+                is a member
+                of the given entity group.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="saml:EntityGroupMatchType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="InEntityGroup">
         <annotation>
             <documentation>
                 A match function that evaluates to true if the attribute requester is found in metadata and
@@ -189,7 +238,7 @@
         </complexContent>
     </complexType>
 
-    <complexType name="AttributeRequesterRegistrationAuthority">
+    <complexType name="RegistrationAuthority">
         <annotation>
             <documentation>
                 A match function that matches the SP (requester) MDRPI against a list of potential values.

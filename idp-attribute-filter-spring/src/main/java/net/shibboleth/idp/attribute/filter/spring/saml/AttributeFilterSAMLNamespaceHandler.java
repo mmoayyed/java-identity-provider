@@ -36,11 +36,17 @@ public class AttributeFilterSAMLNamespaceHandler extends BaseSpringNamespaceHand
 
         registerBeanDefinitionParser(AttributeRequesterEntityAttributeExactRuleParser.SCHEMA_TYPE,
                 new AttributeRequesterEntityAttributeExactRuleParser());
+        registerBeanDefinitionParser(AttributeRequesterEntityAttributeExactRuleParser.SCHEMA_TYPE_V2,
+                new AttributeRequesterEntityAttributeExactRuleParser());
 
         registerBeanDefinitionParser(AttributeRequesterEntityAttributeRegexRuleParser.SCHEMA_TYPE,
                 new AttributeRequesterEntityAttributeRegexRuleParser());
+        registerBeanDefinitionParser(AttributeRequesterEntityAttributeRegexRuleParser.SCHEMA_TYPE_V2,
+                new AttributeRequesterEntityAttributeRegexRuleParser());
 
         registerBeanDefinitionParser(AttributeRequesterNameIdFormatRuleParser.SCHEMA_TYPE,
+                new AttributeRequesterNameIdFormatRuleParser());
+        registerBeanDefinitionParser(AttributeRequesterNameIdFormatRuleParser.SCHEMA_TYPE_V2,
                 new AttributeRequesterNameIdFormatRuleParser());
 
         registerBeanDefinitionParser(AttributeIssuerNameIdFormatRuleParser.SCHEMA_TYPE,
@@ -50,6 +56,8 @@ public class AttributeFilterSAMLNamespaceHandler extends BaseSpringNamespaceHand
                 new AttributeIssuerInEntityGroupRuleParser());
 
         registerBeanDefinitionParser(AttributeRequesterInEntityGroupRuleParser.SCHEMA_TYPE,
+                new AttributeRequesterInEntityGroupRuleParser());
+        registerBeanDefinitionParser(AttributeRequesterInEntityGroupRuleParser.SCHEMA_TYPE_V2,
                 new AttributeRequesterInEntityGroupRuleParser());
 
         registerBeanDefinitionParser(AttributeInMetadataRuleParser.ATTRIBUTE_IN_METADATA,
