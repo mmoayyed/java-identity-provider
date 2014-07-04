@@ -136,7 +136,7 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
         final String generatedId = getQualifiedId(element, element.getLocalName(), suppliedId);
 
         if (suppliedId == null) {
-            log.warn("Element '{}' did not contain an 'id' attribute.  Generated id '{}' will be used",
+            log.info("Element '{}' did not contain an 'id' attribute.  Generated id '{}' will be used",
                     element.getLocalName(), generatedId);
 
         } else {
