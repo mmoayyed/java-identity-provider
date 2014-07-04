@@ -189,64 +189,6 @@
         </complexContent>
     </complexType>
 
-    <complexType name="AttributeInMetadata">
-        <annotation>
-            <documentation>
-                A match function that evaluates to true if an attribute (or specific values) is specified by
-                the requesting entity's AttributeConsumingService SP metadata.
-            </documentation>
-        </annotation>
-        <complexContent>
-            <extension base="afp:MatchFunctorType">
-                <attribute name="onlyIfRequired" type="string">
-                    <annotation>
-                        <documentation>
-                            A boolean flag indicating whether attributes noted as optional should match.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="matchIfMetadataSilent" type="string">
-                    <annotation>
-                        <documentation>
-                            A boolean flag indicating whether a match should occur if (after mapping)
-                            the metadata does not contain and Attributes.
-                        </documentation>
-                    </annotation>
-                </attribute>
-            </extension>
-        </complexContent>
-    </complexType>
-    
-    <complexType name="EntityAttributeInMetadata">
-        <annotation>
-            <documentation>
-                A match function that evaluates to true if an attribute (or specific values) is specified by
-                the EntityAttributes on the requesting entity's SP metadata.
-                
-                CURRENTLY DEPRECATED awaiting finalization of configurations
-            </documentation>
-        </annotation>
-        <complexContent>
-            <extension base="afp:MatchFunctorType">
-                <attribute name="matchIfMetadataSilent" type="string">
-                    <annotation>
-                        <documentation>
-                            A boolean flag indicating whether a match should occur if (after mapping)
-                            the metadata does not contain and Attributes.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="attributeID" type="string">
-                    <annotation>
-                        <documentation>
-                            The name of the (IdP) attribute Identifier to apply this to.
-                        </documentation>
-                    </annotation>
-                </attribute>
-            </extension>
-        </complexContent>
-    </complexType>
-
     <complexType name="AttributeRequesterRegistrationAuthority">
         <annotation>
             <documentation>
@@ -271,7 +213,81 @@
             </extension>
         </complexContent>
     </complexType>
-    
+
+    <complexType name="AttributeInMetadataType" abstract="true">
+        <annotation>
+            <documentation>
+                Functions that evaluates to true if an attribute (or specific values) is specified by
+                the supplied metadata.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:MatchFunctorType">
+                <attribute name="onlyIfRequired" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether attributes noted as optional should match.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="attributeID" type="string">
+                    <annotation>
+                        <documentation>
+                            The ID of the attribute whose value should be matched. If no attribute ID is specified the
+                            ID of the containing attribute rule is assumed.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="matchIfMetadataSilent" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether a match should occur if (after mapping)
+                            the metadata does not contain and Attributes.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="AttributeInMetadata">
+        <annotation>
+            <documentation>
+                A match function that evaluates to true if an attribute (or specific values) is specified by
+                the requesting entity's AttributeConsumingService SP metadata. Deprecated in V3.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="saml:AttributeInMetadataType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="RequestedAttributeInMetadata">
+        <annotation>
+            <documentation>
+                A match function that evaluates to true if an attribute (or specific values) is specified by
+                the requesting entity's AttributeConsumingService SP metadata.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="saml:AttributeInMetadataType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="EntityAttributeInMetadata">
+        <annotation>
+            <documentation>
+                A match function that evaluates to true if an attribute (or specific values) is specified by
+                the EntityAttributes on the requesting entity's SP metadata.
+                
+                CURRENTLY DEPRECATED awaiting finalization of configurations
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="saml:AttributeInMetadataType"/>
+        </complexContent>
+    </complexType>
+
     <simpleType name="anyURIListType">
         <list itemType="string"/>
     </simpleType>

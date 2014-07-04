@@ -26,10 +26,13 @@ import net.shibboleth.idp.attribute.filter.spring.matcher.BaseAttributeValueMatc
 import net.shibboleth.idp.saml.profile.config.navigate.AttributeConsumerServiceLookupFunction;
 import net.shibboleth.idp.saml.profile.config.navigate.EntityDescriptorLookupFunction;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
+import net.shibboleth.utilities.java.support.xml.QNameSupport;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.saml.common.messaging.context.AttributeConsumingServiceContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -41,6 +44,7 @@ import com.google.common.base.Functions;
  */
 public class AttributeInMetadataRuleParser extends BaseAttributeValueMatcherParser {
 
+    
     /** Schema type. */
     public static final QName ATTRIBUTE_IN_METADATA = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
             "AttributeInMetadata");
@@ -48,6 +52,13 @@ public class AttributeInMetadataRuleParser extends BaseAttributeValueMatcherPars
     /** Schema type. */
     public static final QName ENTITY_ATTRIBUTE_IN_METADATA = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
             "EntityAttributeInMetadata");
+
+    /** Schema type. */
+    public static final QName REQUESTED_ATTRIBUTE_IN_METADATA = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
+            "RequestedAttributeInMetadata");
+
+    /** log. */
+    private final Logger log = LoggerFactory.getLogger(AttributeInMetadataRuleParser.class);
 
     /** {@inheritDoc} */
     @Override @Nonnull protected Class<AttributeInMetadataMatcher> getNativeBeanClass() {
@@ -58,6 +69,10 @@ public class AttributeInMetadataRuleParser extends BaseAttributeValueMatcherPars
     @Override protected void doNativeParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, builder);
+        
+        if (ATTRIBUTE_IN_METADATA.equals(QNameSupport.getNodeQName(config))) {
+            log.info("AttributeInMetadata is deprecated and superseded by RequestedAttributeInMetadata");
+        }
 
         if (config.hasAttributeNS(null, "onlyIfRequired")) {
             builder.addPropertyValue("onlyIfRequired", config.getAttributeNodeNS(null, "onlyIfRequired"));
