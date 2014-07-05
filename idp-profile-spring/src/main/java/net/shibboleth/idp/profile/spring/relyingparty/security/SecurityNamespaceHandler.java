@@ -20,10 +20,9 @@ package net.shibboleth.idp.profile.spring.relyingparty.security;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
-import net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicFilesystemCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicInlineCredentialParser;
-import net.shibboleth.idp.profile.spring.relyingparty.security.credential.ResourceCredentialParser;
-import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509FilesystemCredentialParser;
+import net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicResourceCredentialParser;
+import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509ResourceCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509InlineCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.PKIXFilesystemValidationInfoParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.PKIXInlineValidationInfoParser;
@@ -50,13 +49,19 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** {@inheritDoc} */
     @Override public void init() {
-        registerBeanDefinitionParser(X509FilesystemCredentialParser.TYPE_NAME, new X509FilesystemCredentialParser());
+        // Credentials
+        registerBeanDefinitionParser(X509ResourceCredentialParser.TYPE_NAME_FILESYSTEM,
+                new X509ResourceCredentialParser());
+        registerBeanDefinitionParser(X509ResourceCredentialParser.TYPE_NAME_RESOURCE,
+                new X509ResourceCredentialParser());
         registerBeanDefinitionParser(X509InlineCredentialParser.TYPE_NAME, new X509InlineCredentialParser());
         registerBeanDefinitionParser(BasicInlineCredentialParser.TYPE_NAME, new BasicInlineCredentialParser());
-        registerBeanDefinitionParser(BasicFilesystemCredentialParser.TYPE_NAME,
-                new BasicFilesystemCredentialParser());
+        registerBeanDefinitionParser(BasicResourceCredentialParser.TYPE_NAME_FILESYSTEM,
+                new BasicResourceCredentialParser());
+        registerBeanDefinitionParser(BasicResourceCredentialParser.TYPE_NAME_RESOURCE,
+                new BasicResourceCredentialParser());
 
-        registerBeanDefinitionParser(StaticExplicitKeySignatureParser.TYPE_NAME,
+        registerBeanDefinitionParser(StaticExplicitKeySignatureParser.TYPE_NAME, 
                 new StaticExplicitKeySignatureParser());
         registerBeanDefinitionParser(StaticPKIXSignatureParser.TYPE_NAME, new StaticPKIXSignatureParser());
         registerBeanDefinitionParser(SignatureChainingParser.TYPE_NAME, new SignatureChainingParser());
@@ -74,18 +79,13 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
         // Validation Info
         registerBeanDefinitionParser(PKIXFilesystemValidationInfoParser.SCHEMA_TYPE,
                 new PKIXFilesystemValidationInfoParser());
-        registerBeanDefinitionParser(PKIXInlineValidationInfoParser.SCHEMA_TYPE,
-                new PKIXInlineValidationInfoParser());
+        registerBeanDefinitionParser(PKIXInlineValidationInfoParser.SCHEMA_TYPE, new PKIXInlineValidationInfoParser());
 
         // Credential unsupported
         registerBeanDefinitionParser(UnsupportedTrustEngineParser.CHAINING_TYPE, new UnsupportedTrustEngineParser());
         registerBeanDefinitionParser(UnsupportedTrustEngineParser.PKIX_CREDENTIAL, new UnsupportedTrustEngineParser());
 
         // Resource backed anything
-        registerBeanDefinitionParser(ResourceCredentialParser.X509_RESOURCE_TYPE,
-                new ResourceCredentialParser());
-        registerBeanDefinitionParser(ResourceCredentialParser.BASIC_RESOURCE_TYPE,
-                new ResourceCredentialParser());
         registerBeanDefinitionParser(PKIXResourceBackedValidationInfoParser.TYPE_NAME,
                 new PKIXResourceBackedValidationInfoParser());
 

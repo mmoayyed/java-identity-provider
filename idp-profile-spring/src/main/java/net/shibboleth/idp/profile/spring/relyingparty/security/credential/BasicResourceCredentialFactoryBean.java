@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.security.credential;
 
-import java.io.File;
 import java.io.IOException;
 import java.security.KeyException;
 import java.security.PrivateKey;
@@ -32,32 +31,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.core.io.Resource;
 
 import com.google.common.io.Files;
 
 /**
- * Factory bean for BasicFilesystem Credentials.
+ * Factory bean for BasicFilesystem & BasicResourceBacked Credentials.
  */
-public class BasicFilesystemCredentialFactoryBean extends AbstractBasicCredentialFactoryBean {
+public class BasicResourceCredentialFactoryBean extends AbstractBasicCredentialFactoryBean {
 
     /** log. */
-    private final Logger log = LoggerFactory.getLogger(BasicFilesystemCredentialFactoryBean.class);
+    private final Logger log = LoggerFactory.getLogger(BasicResourceCredentialFactoryBean.class);
 
     /** Configured public key Info. */
-    @Nullable private File publicKeyInfo;
+    @Nullable private Resource publicKeyInfo;
 
     /** Configured private key Info. */
-    @Nullable private File privateKeyInfo;
+    @Nullable private Resource privateKeyInfo;
 
     /** Configured secret key Info. */
-    @Nullable private File secretKeyInfo;
+    @Nullable private Resource secretKeyInfo;
 
     /**
      * Get the information used to generate the public key.
      * 
      * @return Returns the info.
      */
-    @Nullable public File getPublicKeyInfo() {
+    @Nullable public Resource getPublicKeyInfo() {
         return publicKeyInfo;
     }
 
@@ -66,7 +66,7 @@ public class BasicFilesystemCredentialFactoryBean extends AbstractBasicCredentia
      * 
      * @param info The info to set.
      */
-    public void setPublicKeyInfo(@Nullable File info) {
+    public void setPublicKeyInfo(@Nullable Resource info) {
         publicKeyInfo = info;
     }
 
@@ -75,7 +75,7 @@ public class BasicFilesystemCredentialFactoryBean extends AbstractBasicCredentia
      * 
      * @return Returns the info.
      */
-    @Nullable public File getPrivateKeyInfo() {
+    @Nullable public Resource getPrivateKeyInfo() {
         return privateKeyInfo;
     }
 
@@ -84,7 +84,7 @@ public class BasicFilesystemCredentialFactoryBean extends AbstractBasicCredentia
      * 
      * @param info The info to set.
      */
-    public void setPrivateKeyInfo(@Nullable File info) {
+    public void setPrivateKeyInfo(@Nullable Resource info) {
         privateKeyInfo = info;
     }
 
@@ -93,7 +93,7 @@ public class BasicFilesystemCredentialFactoryBean extends AbstractBasicCredentia
      * 
      * @return Returns the info.
      */
-    @Nullable public File getSecretKeyInfo() {
+    @Nullable public Resource getSecretKeyInfo() {
         return secretKeyInfo;
     }
 
@@ -102,7 +102,7 @@ public class BasicFilesystemCredentialFactoryBean extends AbstractBasicCredentia
      * 
      * @param info The info to set.
      */
-    public void setSecretKeyInfo(@Nullable File info) {
+    public void setSecretKeyInfo(@Nullable Resource info) {
         secretKeyInfo = info;
     }
 
@@ -112,7 +112,7 @@ public class BasicFilesystemCredentialFactoryBean extends AbstractBasicCredentia
             return null;
         }
         try {
-            return KeyPairUtil.readPublicKey(getPublicKeyInfo());
+            return KeyPairUtil.readPublicKey(getPublicKeyInfo().getFile());
         } catch (IOException e) {
             log.error("{}: Could not decode public key: {}", getConfigDescription(), e);
             throw new FatalBeanException("Could not decode public key", e);
@@ -125,8 +125,8 @@ public class BasicFilesystemCredentialFactoryBean extends AbstractBasicCredentia
             return null;
         }
         try {
-            return KeySupport.decodePrivateKey(getPrivateKeyInfo(), getSecretKeyPassword());
-        } catch (KeyException e) {
+            return KeySupport.decodePrivateKey(getPrivateKeyInfo().getFile(), getSecretKeyPassword());
+        } catch (KeyException | IOException e) {
             log.error("{}: Could not decode private key: {}", e);
             throw new BeanCreationException("Could not decode private key", getConfigDescription(), e);
         }
@@ -138,7 +138,7 @@ public class BasicFilesystemCredentialFactoryBean extends AbstractBasicCredentia
             return null;
         }
         try {
-            return KeySupport.decodeSecretKey(Files.toByteArray(getSecretKeyInfo()), getSecretKeyPassword());
+            return KeySupport.decodeSecretKey(Files.toByteArray(getSecretKeyInfo().getFile()), getSecretKeyPassword());
         } catch (KeyException | IOException e) {
             log.error("{} Could not decode secret key: {}", getConfigDescription(), e);
             throw new BeanCreationException("Could not decode secret key", e);

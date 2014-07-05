@@ -24,7 +24,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.MetadataNamespaceHandler;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicInlineCredentialFactoryBean;
-import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509FilesystemCredentialFactoryBean;
+import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509ResourceCredentialFactoryBean;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -173,7 +173,7 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
      */
     private BeanDefinition buildCertificateCredential(String attribute) {
         final BeanDefinitionBuilder credentialBuilder =
-                BeanDefinitionBuilder.genericBeanDefinition(X509FilesystemCredentialFactoryBean.class);
+                BeanDefinitionBuilder.genericBeanDefinition(X509ResourceCredentialFactoryBean.class);
         credentialBuilder.addPropertyValue("certificates", attribute);
         return credentialBuilder.getBeanDefinition();
     }

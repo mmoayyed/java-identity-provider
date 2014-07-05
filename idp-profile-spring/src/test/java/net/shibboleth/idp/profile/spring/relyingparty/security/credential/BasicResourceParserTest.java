@@ -28,9 +28,9 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * test parsing Basic Filesystem Credentials
+ * test parsing Basic File System & Resource Credentials
  */
-public class BasicFilesystemParserTest extends AbstractSecurityParserTest {
+public class BasicResourceParserTest extends AbstractSecurityParserTest {
 
     @Test public void publicOnly() throws IOException {
         final BasicCredential credential =

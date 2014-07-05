@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.security.credential;
 
-import java.io.File;
+import java.io.IOException;
 import java.security.KeyException;
 import java.security.PrivateKey;
 import java.security.cert.CRLException;
@@ -38,71 +38,72 @@ import org.opensaml.security.x509.X509Support;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.FatalBeanException;
+import org.springframework.core.io.Resource;
 
 /**
- * A factory bean to understand X509Filesystem credentials.
+ * A factory bean to understand X509Filesystem & X509ResourceBacked credentials.
  */
-public class X509FilesystemCredentialFactoryBean extends AbstractX509CredentialFactoryBean {
+public class X509ResourceCredentialFactoryBean extends AbstractX509CredentialFactoryBean {
 
     /** log. */
-    private final Logger log = LoggerFactory.getLogger(X509FilesystemCredentialFactoryBean.class);
+    private final Logger log = LoggerFactory.getLogger(X509ResourceCredentialFactoryBean.class);
 
-    /** The specification of where the entity File is to be found. */
-    private File entityFile;
+    /** The specification of where the entity Resource is to be found. */
+    private Resource entityResource;
 
     /** Where the certificates are to be found. */
-    private List<File> certificateFiles;
+    private List<Resource> certificateResources;
 
     /** Where the private key is to be found. */
-    private File privateKeyFile;
+    private Resource privateKeyResource;
 
     /** Where the crls are to be found. */
-    private List<File> crlFiles;
+    private List<Resource> crlResources;
 
     /**
-     * Set the file with the entity certificate.
+     * Set the Resource with the entity certificate.
      * 
-     * @param file The file to set.
+     * @param what The Resource to set.
      */
-    public void setEntity(@Nonnull final File file) {
-        entityFile = file;
+    public void setEntity(@Nonnull final Resource what) {
+        entityResource = what;
     }
 
     /**
-     * Sets the files which contain the certificates.
+     * Sets the Resources which contain the certificates.
      * 
-     * @param files The value to set.
+     * @param what The values to set.
      */
-    public void setCertificates(@Nullable @NotEmpty final List<File> files) {
-        certificateFiles = files;
+    public void setCertificates(@Nullable @NotEmpty final List<Resource> what) {
+        certificateResources = what;
     }
 
     /**
-     * Set the file with the entity certificate.
+     * Set the Resource with the entity certificate.
      * 
-     * @param file The file to set.
+     * @param what The resource to set.
      */
-    public void setPrivateKey(@Nullable final File file) {
-        privateKeyFile = file;
+    public void setPrivateKey(@Nullable final Resource what) {
+        privateKeyResource = what;
     }
 
     /**
-     * Sets the files which contain the crls.
+     * Sets the Resources which contain the crls.
      * 
-     * @param files The value to set.
+     * @param what The value to set.
      */
-    public void setCRLs(@Nullable @NotEmpty final List<File> files) {
-        crlFiles = files;
+    public void setCRLs(@Nullable @NotEmpty final List<Resource> what) {
+        crlResources = what;
     }
 
     /** {@inheritDoc}. */
     @Override @Nullable protected X509Certificate getEntityCertificate() {
 
-        if (null == entityFile) {
+        if (null == entityResource) {
             return null;
         }
         try {
-            final Collection<X509Certificate> certs = X509Support.decodeCertificates(entityFile);
+            final Collection<X509Certificate> certs = X509Support.decodeCertificates(entityResource.getFile());
             if (certs.size() > 1) {
                 log.error("{}: Configuration element indicated an entityCertificate,"
                         + " but multiple certificates were decoded", getConfigDescription());
@@ -110,24 +111,24 @@ public class X509FilesystemCredentialFactoryBean extends AbstractX509CredentialF
                         + " but multiple certificates were decoded");
             }
             return certs.iterator().next();
-        } catch (CertificateException e) {
+        } catch (CertificateException | IOException e) {
             log.error("{}: Could not decode provided Entity Certificate at {}: {}", getConfigDescription(),
-                    entityFile.getAbsolutePath(), e);
+                    entityResource.getDescription(), e);
             throw new FatalBeanException("Could not decode provided Entity Certificate file "
-                    + entityFile.getAbsolutePath(), e);
+                    + entityResource.getDescription(), e);
         }
     }
 
     /** {@inheritDoc} */
     @Override @Nonnull protected List<X509Certificate> getCertificates() {
         List<X509Certificate> certificates = new LazyList<>();
-        for (File f : certificateFiles) {
+        for (Resource r : certificateResources) {
             try {
-                certificates.addAll(X509Support.decodeCertificates(f));
-            } catch (CertificateException e) {
+                certificates.addAll(X509Support.decodeCertificates(r.getFile()));
+            } catch (CertificateException | IOException e) {
                 log.error("{}: could not decode CertificateFile at {}: {}", getConfigDescription(),
-                        f.getAbsolutePath(), e);
-                throw new FatalBeanException("Could not decode provided CertificateFile: " + f.getAbsolutePath(), e);
+                        r.getDescription(), e);
+                throw new FatalBeanException("Could not decode provided CertificateFile: " + r.getDescription(), e);
             }
         }
         return certificates;
@@ -135,30 +136,30 @@ public class X509FilesystemCredentialFactoryBean extends AbstractX509CredentialF
 
     /** {@inheritDoc} */
     @Override @Nullable protected PrivateKey getPrivateKey() {
-        if (null == privateKeyFile) {
+        if (null == privateKeyResource) {
             return null;
         }
         try {
-            return KeySupport.decodePrivateKey(privateKeyFile, getPrivateKeyPassword());
-        } catch (KeyException e) {
+            return KeySupport.decodePrivateKey(privateKeyResource.getFile(), getPrivateKeyPassword());
+        } catch (KeyException | IOException e) {
             log.error("{}: Could not decode KeyFile at {}: {}", getConfigDescription(),
-                    privateKeyFile.getAbsolutePath(), e);
-            throw new FatalBeanException("Could not decode provided KeyFile " + privateKeyFile.getAbsolutePath(), e);
+                    privateKeyResource.getDescription(), e);
+            throw new FatalBeanException("Could not decode provided KeyFile " + privateKeyResource.getDescription(), e);
         }
     }
 
     /** {@inheritDoc} */
     @Override @Nullable protected List<X509CRL> getCRLs() {
-        if (null == crlFiles) {
+        if (null == crlResources) {
             return null;
         }
         List<X509CRL> crls = new LazyList<>();
-        for (File crlFile : crlFiles) {
+        for (Resource crl : crlResources) {
             try {
-                crls.addAll(X509Support.decodeCRLs(crlFile));
-            } catch (CRLException e) {
-                log.error("{}: Could not decode CRL file: {}", getConfigDescription(), crlFile.getAbsolutePath(), e);
-                throw new FatalBeanException("Could not decode provided CRL file " + crlFile.getAbsolutePath(), e);
+                crls.addAll(X509Support.decodeCRLs(crl.getFile()));
+            } catch (CRLException | IOException e) {
+                log.error("{}: Could not decode CRL file: {}", getConfigDescription(), crl.getDescription(), e);
+                throw new FatalBeanException("Could not decode provided CRL file " + crl.getDescription(), e);
             }
         }
         return crls;

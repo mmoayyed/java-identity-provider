@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
+import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataParserTest;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
@@ -80,7 +81,7 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
             resources[i] = new ClassPathResource(PATH + files[i]);
         }
 
-        final GenericApplicationContext context = new GenericApplicationContext();
+        final GenericApplicationContext context = new FilesystemGenericApplicationContext();
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         context.setDisplayName("ApplicationContext");
         service.setConverters(Sets.newHashSet(new DurationToLongConverter(), new StringToIPRangeConverter()));
