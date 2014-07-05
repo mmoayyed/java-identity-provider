@@ -73,10 +73,14 @@ public class StaticPKIXSignatureParserTest extends AbstractSecurityParserTest {
         Assert.assertTrue(tns.contains("Name2"));
         Assert.assertTrue(tns.contains("Name3"));
 
-        List<PKIXValidationInformation> infos = Lists.newArrayList(Sets.newHashSet(resolver.resolve(null)));
+        final List<PKIXValidationInformation> infos = Lists.newArrayList(Sets.newHashSet(resolver.resolve(null)));
         Assert.assertEquals(infos.size(), 2);
-        Assert.assertEquals(((BasicPKIXValidationInformation)infos.get(0)).getVerificationDepth().intValue(), 99);
-        Assert.assertEquals(((BasicPKIXValidationInformation)infos.get(1)).getVerificationDepth().intValue(), 98);
+        final int firstVal = ((BasicPKIXValidationInformation) infos.get(0)).getVerificationDepth().intValue();
+        final int secondVal = ((BasicPKIXValidationInformation) infos.get(1)).getVerificationDepth().intValue();
+
+        Assert.assertTrue((98 == firstVal) || (99 == firstVal));
+        Assert.assertTrue((98 == secondVal) || (99 == secondVal));
+        Assert.assertNotEquals(firstVal, secondVal);
 
         final CertPathPKIXTrustEvaluator trustEvaluator = (CertPathPKIXTrustEvaluator) engine.getPKIXTrustEvaluator();
         final PKIXValidationOptions options = trustEvaluator.getPKIXValidationOptions();
