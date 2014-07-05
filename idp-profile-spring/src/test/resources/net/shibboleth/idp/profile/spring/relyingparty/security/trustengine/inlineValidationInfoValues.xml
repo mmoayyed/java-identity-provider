@@ -2,7 +2,7 @@
 <security:ValidationInfo xmlns:security="urn:mace:shibboleth:2.0:security"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd"
-	id="IdPCredential" xsi:type="security:PKIXInline" verifyDepth="98">
+	id="PKIXInlineValues" xsi:type="security:PKIXInline" verifyDepth="98">
     <security:Certificate>
         MIIDSTCCArKgAwIBAgIJAKg8tR5hjVM4MA0GCSqGSIb3DQEBBQUAMHcxCzAJBgNV
         BAYTAlVTMR0wGwYDVQQIExREaXN0cmljdCBvZiBDb2x1bWJpYTETMBEGA1UEBxMK

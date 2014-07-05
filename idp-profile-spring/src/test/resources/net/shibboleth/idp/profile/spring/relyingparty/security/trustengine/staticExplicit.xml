@@ -3,7 +3,7 @@
 	xsi:type="security:StaticExplicitKeySignature" xmlns:security="urn:mace:shibboleth:2.0:security"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd">
-	<security:Credential id="IdPCredential" xsi:type="security:X509Inline">
+	<security:Credential id="InLineBean" xsi:type="security:X509Inline">
 		<security:Certificate>
 			MIIDtTCCAp2gAwIBAgIJAPmsD+VGldyPMA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNV
 			BAYTAkFVMRMwEQYDVQQIEwpTb21lLVN0YXRlMSEwHwYDVQQKExhJbnRlcm5ldCBX
