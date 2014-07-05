@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -156,14 +155,7 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
         List<Element> audienceElems =
                 ElementSupport.getChildElementsByTagNameNS(element, RelyingPartySAMLNamespaceHandler.NAMESPACE,
                         "Audience");
-        List<String> result = new ManagedList<>(audienceElems.size());
-        for (Element audienceElement : audienceElems) {
-            final String audience = StringSupport.trimOrNull(audienceElement.getTextContent());
-            if (null != audience) {
-                result.add(audience);
-            }
-        }
-        return result;
+        return SpringSupport.getElementTextContentAsManagedList(audienceElems);
     }
 
     /**

@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
@@ -131,16 +132,6 @@ public abstract class AbstractX509CredentialParser extends AbstractCredentialPar
             return;
         }
 
-        List<String> crls = new ManagedList<>(childElements.size());
-
-        for (Element elem : childElements) {
-            final String crl = StringSupport.trimOrNull(elem.getTextContent());
-            if (null == crl) {
-                throw new BeanCreationException("All <CRL> elements must contain text.");
-            }
-            log.debug("Found a CRL {}", crl);
-            crls.add(crl);
-        }
-        builder.addPropertyValue("CRLs", crls);
+        builder.addPropertyValue("CRLs", SpringSupport.getElementTextContentAsManagedList(childElements));
     }
 }

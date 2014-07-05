@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.MetadataNamespaceHandler;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -28,7 +29,6 @@ import org.opensaml.saml.metadata.resolver.filter.impl.SchemaValidationFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -61,12 +61,7 @@ public class SchemaValidationParser extends AbstractSingleBeanDefinitionParser {
 
             log.warn("Use of <ExtensionSchema> elements is deprecated."
                     + "  Inject a customer SAMLSchemaBuilder identified as 'shibboleth.SchemaBuilder'");
-
-            List<String> schemaNames = new ManagedList<>(schemaNameElements.size());
-            for (Element schemaElement : schemaNameElements) {
-                schemaNames.add(schemaElement.getTextContent());
-            }
-            builder.addConstructorArgValue(schemaNames);
+            builder.addConstructorArgValue(SpringSupport.getElementTextContentAsManagedList(schemaNameElements));
         }
     }
 

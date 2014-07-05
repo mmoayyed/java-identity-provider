@@ -19,11 +19,10 @@ package net.shibboleth.idp.profile.spring.relyingparty.saml;
 
 import java.util.List;
 
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
@@ -44,14 +43,7 @@ public abstract class BaseSAML2ProfileConfigurationParser extends BaseSAMLProfil
         List<Element> audienceElems =
                 ElementSupport.getChildElementsByTagNameNS(element, RelyingPartySAMLNamespaceHandler.NAMESPACE,
                         "ProxyAudience");
-        List<String> result = new ManagedList<>(audienceElems.size());
-        for (Element audienceElement : audienceElems) {
-            final String audience = StringSupport.trimOrNull(audienceElement.getTextContent());
-            if (null != audience) {
-                result.add(audience);
-            }
-        }
-        return result;
+        return SpringSupport.getElementTextContentAsManagedList(audienceElems);
     }
 
     /** {@inheritDoc} */

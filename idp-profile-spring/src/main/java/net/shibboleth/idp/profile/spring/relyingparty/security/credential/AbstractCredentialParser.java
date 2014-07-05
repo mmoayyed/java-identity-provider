@@ -21,13 +21,13 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -85,15 +85,6 @@ public abstract class AbstractCredentialParser extends AbstractSingleBeanDefinit
             return;
         }
 
-        String keyName;
-        List<String> keyNames = new ManagedList<String>(keyNameElems.size());
-        for (Element keyNameElem : keyNameElems) {
-            keyName = StringSupport.trimOrNull(keyNameElem.getTextContent());
-            if (keyName != null) {
-                keyNames.add(keyName);
-            }
-        }
-
-        builder.addPropertyValue("keyNames", keyNames);
+        builder.addPropertyValue("keyNames", SpringSupport.getElementTextContentAsManagedList(keyNameElems));
     }
 }
