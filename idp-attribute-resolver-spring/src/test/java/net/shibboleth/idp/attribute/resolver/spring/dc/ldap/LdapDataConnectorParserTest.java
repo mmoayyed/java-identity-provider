@@ -21,6 +21,7 @@ import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -167,7 +168,7 @@ public class LdapDataConnectorParserTest {
      * @return 
      */
     @Test public void IdP338Canary() {
-        GenericApplicationContext context = new GenericApplicationContext();
+        GenericApplicationContext context = new FilesystemGenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + LdapDataConnectorParserTest.class);
 
         XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
@@ -192,7 +193,7 @@ public class LdapDataConnectorParserTest {
     }
 
     protected LDAPDataConnector getLdapDataConnector(final String[] beanDefinitions) {
-        GenericApplicationContext context = new GenericApplicationContext();
+        GenericApplicationContext context = new FilesystemGenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + LdapDataConnectorParserTest.class);
 
         XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
