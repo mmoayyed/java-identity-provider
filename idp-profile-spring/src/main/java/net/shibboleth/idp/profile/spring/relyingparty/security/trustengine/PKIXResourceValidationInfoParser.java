@@ -20,22 +20,41 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.w3c.dom.Element;
 
 /**
- * Parser for &lt;ValidationInfo type="PKIXFilesystem"&gt;.<br/>
+ * Parser for &lt;ValidationInfo type="PKIXFilesystem"&gt; and &lt;ValidationInfo type="PKIXResourceBacked"&gt;.<br/>
  * 
  * All of the heavy lifting is done in the super class and the associated factory bean (which gets the parameters of
  * the type is wants by virtue of Springs type coercion.
  */
-public class PKIXFilesystemValidationInfoParser extends AbstractPKIXValidationInfoParser {
+public class PKIXResourceValidationInfoParser extends AbstractPKIXValidationInfoParser {
     
     /** Element Name.*/
-    public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "PKIXFilesystem");
+    public static final QName TYPE_NAME_FILESYSTEM = new QName(SecurityNamespaceHandler.NAMESPACE, "PKIXFilesystem");
     
+    /** Schema type for PKIXResourceBackedValidationInformation. */
+    public static final QName TYPE_NAME_RESOURCE = new QName(SecurityNamespaceHandler.NAMESPACE, "PKIXResourceBacked");
+
+    /** log. */
+    private final Logger log = LoggerFactory.getLogger(PKIXResourceValidationInfoParser.class);
+
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(Element element) {
-        return PKIXFilesystemValidationInfoFactoryBean.class;
+        return PKIXResourceValidationInfoFactoryBean.class;
+    }
+
+    /** {@inheritDoc} */
+    @Override protected void doParse(Element element, BeanDefinitionBuilder builder) {
+        if (TYPE_NAME_FILESYSTEM.equals(DOMTypeSupport.getXSIType(element))) {
+            log.warn("Credential type '{}' has been deprecated; use the compatible Credential type '{}'",
+                    TYPE_NAME_FILESYSTEM.getLocalPart(), TYPE_NAME_RESOURCE.getLocalPart());
+        }
+        super.doParse(element, builder);
     }
 }

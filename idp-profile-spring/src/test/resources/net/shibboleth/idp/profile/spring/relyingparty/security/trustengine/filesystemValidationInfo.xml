@@ -2,4 +2,4 @@
 <security:ValidationInfo xmlns:security="urn:mace:shibboleth:2.0:security" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xsi:schemaLocation="urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd"
 
-    id="IdPCredential" xsi:type="security:PKIXFilesystem"/>
+    id="IdPCredential" xsi:type="security:PKIXResourceBacked"/>

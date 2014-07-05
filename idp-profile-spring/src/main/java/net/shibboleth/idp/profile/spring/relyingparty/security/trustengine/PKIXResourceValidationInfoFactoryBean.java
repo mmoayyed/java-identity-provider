@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine;
 
-import java.io.File;
+import java.io.IOException;
 import java.security.cert.CRLException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
@@ -31,27 +31,28 @@ import org.opensaml.security.x509.X509Support;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.FatalBeanException;
+import org.springframework.core.io.Resource;
 
 /**
  * File system specific bean for PKIXValidationInfo.
  */
-public class PKIXFilesystemValidationInfoFactoryBean extends AbstractBasicPKIXValidationInfoFactoryBean {
+public class PKIXResourceValidationInfoFactoryBean extends AbstractBasicPKIXValidationInfoFactoryBean {
 
     /** log. */
-    private Logger log = LoggerFactory.getLogger(PKIXFilesystemValidationInfoFactoryBean.class);
+    private Logger log = LoggerFactory.getLogger(PKIXResourceValidationInfoFactoryBean.class);
 
     /** The file to be turned into the certificates. */
-    private List<File> certificateFiles;
+    private List<Resource> certificateFiles;
 
     /** The file to be turned into the crls. */
-    private List<File> crlFiles;
+    private List<Resource> crlFiles;
 
     /**
      * Set the file names which we will convert into certificates.
      * 
      * @param certs the file names.
      */
-    public void setCertificates(@Nullable final List<File> certs) {
+    public void setCertificates(@Nullable final List<Resource> certs) {
         certificateFiles = certs;
     }
 
@@ -60,7 +61,7 @@ public class PKIXFilesystemValidationInfoFactoryBean extends AbstractBasicPKIXVa
      * 
      * @param crls the file names.
      */
-    public void setCRLs(@Nullable final List<File> crls) {
+    public void setCRLs(@Nullable final List<Resource> crls) {
         crlFiles = crls;
     }
 
@@ -74,12 +75,12 @@ public class PKIXFilesystemValidationInfoFactoryBean extends AbstractBasicPKIXVa
             return null;
         }
         List<X509Certificate> certificates = new ArrayList<>(certificateFiles.size());
-        for (File f : certificateFiles) {
+        for (Resource f : certificateFiles) {
             try {
-                certificates.addAll(X509Support.decodeCertificates(f));
-            } catch (CertificateException e) {
-                log.error("{}: Could not decode Certificate at {}: {}", getConfigDescription(), f.getAbsolutePath(), e);
-                throw new FatalBeanException("Could not decode provided CertificateFile: " + f.getAbsolutePath(), e);
+                certificates.addAll(X509Support.decodeCertificates(f.getFile()));
+            } catch (CertificateException | IOException e) {
+                log.error("{}: Could not decode Certificate at {}: {}", getConfigDescription(), f.getDescription(), e);
+                throw new FatalBeanException("Could not decode provided CertificateFile: " + f.getDescription(), e);
             }
         }
         return certificates;
@@ -95,13 +96,13 @@ public class PKIXFilesystemValidationInfoFactoryBean extends AbstractBasicPKIXVa
             return null;
         }
         List<X509CRL> crls = new ArrayList<>(crlFiles.size());
-        for (File crlFile : crlFiles) {
+        for (Resource crlFile : crlFiles) {
             try {
-                crls.addAll(X509Support.decodeCRLs(crlFile));
-            } catch (CRLException e) {
-                log.error("{}: Could not decode CRL file at {}: {}", getConfigDescription(), crlFile.getAbsolutePath(),
+                crls.addAll(X509Support.decodeCRLs(crlFile.getFile()));
+            } catch (CRLException | IOException e) {
+                log.error("{}: Could not decode CRL file at {}: {}", getConfigDescription(), crlFile.getDescription(),
                         e);
-                throw new FatalBeanException("Could not decode provided CRL file " + crlFile.getAbsolutePath(), e);
+                throw new FatalBeanException("Could not decode provided CRL file " + crlFile.getDescription(), e);
             }
         }
         return crls;

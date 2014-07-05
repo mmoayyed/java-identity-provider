@@ -22,11 +22,10 @@ import javax.xml.namespace.QName;
 import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicInlineCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicResourceCredentialParser;
-import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509ResourceCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509InlineCredentialParser;
-import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.PKIXFilesystemValidationInfoParser;
+import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509ResourceCredentialParser;
+import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.PKIXResourceValidationInfoParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.PKIXInlineValidationInfoParser;
-import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.PKIXResourceBackedValidationInfoParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.SignatureChainingParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.StaticExplicitKeySignatureParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.StaticPKIXSignatureParser;
@@ -77,17 +76,15 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
                 new UnsupportedTrustEngineParser());
 
         // Validation Info
-        registerBeanDefinitionParser(PKIXFilesystemValidationInfoParser.SCHEMA_TYPE,
-                new PKIXFilesystemValidationInfoParser());
+        registerBeanDefinitionParser(PKIXResourceValidationInfoParser.TYPE_NAME_FILESYSTEM,
+                new PKIXResourceValidationInfoParser());
+        registerBeanDefinitionParser(PKIXResourceValidationInfoParser.TYPE_NAME_RESOURCE,
+                new PKIXResourceValidationInfoParser());
         registerBeanDefinitionParser(PKIXInlineValidationInfoParser.SCHEMA_TYPE, new PKIXInlineValidationInfoParser());
 
         // Credential unsupported
         registerBeanDefinitionParser(UnsupportedTrustEngineParser.CHAINING_TYPE, new UnsupportedTrustEngineParser());
         registerBeanDefinitionParser(UnsupportedTrustEngineParser.PKIX_CREDENTIAL, new UnsupportedTrustEngineParser());
-
-        // Resource backed anything
-        registerBeanDefinitionParser(PKIXResourceBackedValidationInfoParser.TYPE_NAME,
-                new PKIXResourceBackedValidationInfoParser());
 
     }
 }

@@ -42,7 +42,6 @@ public class X509ResourceCredentialParser extends AbstractX509CredentialParser {
     /** log. */
     private final Logger log = LoggerFactory.getLogger(X509ResourceCredentialParser.class);
 
-
     @Override protected Class<?> getBeanClass(Element element) {
         return X509ResourceCredentialFactoryBean.class;
     }
