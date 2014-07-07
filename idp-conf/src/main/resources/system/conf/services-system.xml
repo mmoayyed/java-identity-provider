@@ -29,7 +29,7 @@
         p:reloadTaskTimer="shibboleth.TaskTimer" />
 
     <bean id="shibboleth.AttributeResolverService" class="net.shibboleth.idp.service.ReloadableSpringService" 
-          init-method="start" destroy-method="stop" depends-on="shibboleth.VelocityEngine"
+        depends-on="shibboleth.VelocityEngine"
         c:claz="net.shibboleth.idp.attribute.resolver.AttributeResolver"
         p:serviceConfigurations-ref="shibboleth.AttributeResolverResources"
         p:failFast="%{idp.service.attribute.resolver.failFast:false}"
@@ -37,7 +37,6 @@
         p:reloadTaskTimer="shibboleth.TaskTimer" />
 
     <bean id="shibboleth.NameIdentifierGenerationService" class="net.shibboleth.idp.service.ReloadableSpringService" 
-          init-method="start" destroy-method="stop"
         c:claz="net.shibboleth.idp.saml.nameid.NameIdentifierGenerationService"
         p:serviceConfigurations-ref="shibboleth.NameIdentifierGenerationResources"
         p:failFast="%{idp.service.nameidGeneration.failFast:false}"
@@ -45,27 +44,37 @@
         p:reloadTaskTimer="shibboleth.TaskTimer" />
 
     <bean id="shibboleth.RelyingPartyResolverService" class="net.shibboleth.idp.service.ReloadableSpringService"
-        c:claz="net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver"
-        c:servicableClaz="net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver"
         p:serviceConfigurations-ref="shibboleth.RelyingPartyResolverResources"
         p:failFast="%{idp.service.relyingparty.failFast:false}"
         p:reloadCheckDelay="%{idp.service.relyingparty.checkInterval:0}"
-        p:reloadTaskTimer="shibboleth.TaskTimer" />
-    
+        p:reloadTaskTimer="shibboleth.TaskTimer">
+        <constructor-arg name="claz"
+            value="net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver" />
+        <constructor-arg name="strategy">
+            <bean class="net.shibboleth.idp.service.ClassBasedServiceStrategy"
+                c:serviceableClaz="net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver" />
+        </constructor-arg>
+    </bean>
+
     <bean id="shibboleth.MetadataResolverService" class="net.shibboleth.idp.service.ReloadableSpringService"
-        depends-on="shibboleth.AttributeResolverService"
-        c:claz="org.opensaml.saml.metadata.resolver.MetadataResolver"
-        c:servicableClaz="net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider"
+        depends-on="shibboleth.AttributeResolverService" 
         p:serviceConfigurations-ref="shibboleth.MetadataResolverResources"
         p:failFast="%{idp.service.metadata.failFast:false}"
         p:reloadCheckDelay="%{idp.service.metadata.checkInterval:0}"
         p:reloadTaskTimer="shibboleth.TaskTimer">
+        <constructor-arg name="claz"
+            value="org.opensaml.saml.metadata.resolver.MetadataResolver" />
+        <constructor-arg name="strategy">
+            <bean class="net.shibboleth.idp.service.ClassBasedServiceStrategy"
+                c:serviceableClaz="net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider" />
+        </constructor-arg>
         <property name="beanPostProcessors">
-            <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.NodeProcessingAttachingBeanPostProcessor" 
-                c:service-ref="shibboleth.AttributeResolverService"/>
+            <bean
+                class="net.shibboleth.idp.profile.spring.relyingparty.metadata.NodeProcessingAttachingBeanPostProcessor"
+                c:service-ref="shibboleth.AttributeResolverService" />
         </property>
     </bean>
-    
+
     <!--
     These are proxies/facades that expose a service-unaware interface to client components.
     Services without such facades are being consumed directly in a service-aware way.

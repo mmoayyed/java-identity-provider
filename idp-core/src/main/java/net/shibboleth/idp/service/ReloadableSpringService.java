@@ -18,7 +18,6 @@
 package net.shibboleth.idp.service;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,6 +29,7 @@ import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +41,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.Resource;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
@@ -61,18 +62,15 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
 
     /** List of configuration resources for this service. */
     private List<Resource> serviceConfigurations;
-    
+
     /** List of bean post processors for this service's content. */
     private List<BeanPostProcessor> postProcessors;
 
     /** The class we are looking for. */
-    private final Class<T> theClaz;
+    @Nonnull private final Class<T> theClaz;
 
-    /**
-     * The precise class to look for. This is required if the parsed file may produce more than one
-     * {@link ServiceableComponent}.
-     */
-    private final Class<? extends ServiceableComponent> theServiceClaz;
+    /** How to summon up the {@link ServiceableComponent} from the {@link ApplicationContext}. */
+    @Nonnull private final Function<GenericApplicationContext, ServiceableComponent> serviceStrategy;
 
     /** Application context owning this engine. */
     private ApplicationContext parentContext;
@@ -97,20 +95,20 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
      * 
      * @param claz The interface being implemented.
      */
-    public ReloadableSpringService(Class<T> claz) {
-        this(claz, ServiceableComponent.class);
-        
+    public ReloadableSpringService(@Nonnull Class<T> claz) {
+        this(claz, new ClassBasedServiceStrategy());
     }
 
     /**
      * Constructor.
      * 
      * @param claz The interface being implemented.
-     * @param servicableClaz the service to look for.
+     * @param strategy the strategy to use to look up servicable component to look for.
      */
-    public ReloadableSpringService(Class<T> claz, Class<? extends ServiceableComponent> servicableClaz) {
-        theClaz = claz;
-        theServiceClaz = servicableClaz;
+    public ReloadableSpringService(@Nonnull Class<T> claz,
+            @Nonnull Function<GenericApplicationContext, ServiceableComponent> strategy) {
+        theClaz = Constraint.isNotNull(claz, "Class cannot be null");
+        serviceStrategy = Constraint.isNotNull(strategy, "Strategy cannot be null");
         postProcessors = Collections.emptyList();
     }
 
@@ -181,7 +179,7 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
             resourceLastModifiedTimes = null;
         }
     }
-    
+
     /**
      * Set the list of bean post processors for this service.
      * 
@@ -190,7 +188,7 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
     public void setBeanPostProcessors(@Nonnull @NonnullElements final List<BeanPostProcessor> processors) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        
+
         postProcessors = Lists.newArrayList(Collections2.filter(processors, Predicates.notNull()));
     }
 
@@ -257,36 +255,28 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
     // Checkstyle: CyclomaticComplexity ON
 
     /** {@inheritDoc} */
-    @Override protected void doReload() throws ServiceException {
+    @Override protected void doReload() {
         super.doReload();
 
         log.debug("Creating new ApplicationContext for service '{}'", getId());
-        GenericApplicationContext appContext = null;
+        final GenericApplicationContext appContext;
         try {
-            appContext = SpringSupport.newContext(getId(), getServiceConfigurations(), postProcessors,
-                    getParentContext());
+            appContext =
+                    SpringSupport.newContext(getId(), getServiceConfigurations(), postProcessors, getParentContext());
         } catch (FatalBeanException e) {
             throw new ServiceException(e);
         }
 
         log.trace("{} New Application Context created.", getLogPrefix());
 
-        final Collection<? extends ServiceableComponent> components =
-                appContext.getBeansOfType(theServiceClaz).values();
-
-        log.debug("{} Context yielded {} beans", getLogPrefix(), components.size());
-
-        if (components.size() == 0) {
+        final ServiceableComponent<T> service;
+        try {
+            service = serviceStrategy.apply(appContext);
+        } catch (ServiceException e) {
             appContext.close();
-            throw new ServiceException(getLogPrefix() + "Reload did not produce any bean of type"
-                    + theServiceClaz.getName());
-        }
-        if (components.size() > 1) {
-            appContext.close();
-            throw new ServiceException("Reload produced too many ServiceableComponents");
+            throw new ServiceException("Failed to load " + getServiceConfigurations(), e);
         }
 
-        final ServiceableComponent<T> service = components.iterator().next();
         service.pinComponent();
 
         //

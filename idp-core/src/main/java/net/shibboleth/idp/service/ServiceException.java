@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 /**
  * Base exception for Service related errors.
  */
-public class ServiceException extends Exception {
+public class ServiceException extends RuntimeException {
 
     /** Serial version UID. */
     private static final long serialVersionUID = 5875639786427807960L;
