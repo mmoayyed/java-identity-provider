@@ -33,7 +33,8 @@ import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
+import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.idp.service.ReloadableService;
 import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -48,17 +49,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 
 /**
  * Action that invokes the {@link AttributeResolver} for the current request.
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
  * @event {@link IdPEventIds#INVALID_SUBJECT_CTX}
  * @event {@link IdPEventIds#UNABLE_RESOLVE_ATTRIBS}
  * 
- * @post If resolution is successful, the relevant RelyingPartyContext.getSubcontext(AttributeContext.class, false) !=
- *       null
+ * @post If resolution successful, the relevant RelyingPartyContext.getSubcontext(AttributeContext.class) != null
  */
 public final class ResolveAttributes extends AbstractProfileAction {
 
@@ -68,11 +68,12 @@ public final class ResolveAttributes extends AbstractProfileAction {
     /** Service used to get the resolver used to fetch attributes. */
     @Nonnull private final ReloadableService<AttributeResolver> attributeResolverService;
 
-    /**
-     * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
-     */
-    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
+    /** Strategy used to locate the identity of the issuer associated with the attribute resolution. */
+    @Nullable private Function<ProfileRequestContext,String> issuerLookupStrategy;
 
+    /** Strategy used to locate the identity of the recipient associated with the attribute resolution. */
+    @Nullable private Function<ProfileRequestContext,String> recipientLookupStrategy;
+    
     /**
      * Strategy used to locate the {@link SubjectContext} associated with a given {@link ProfileRequestContext}.
      */
@@ -83,11 +84,11 @@ public final class ResolveAttributes extends AbstractProfileAction {
      */
     @Nonnull private Function<ProfileRequestContext,AuthenticationContext> authnContextLookupStrategy;
 
+    /** Strategy used to locate or create the {@link AttributeContext} to populate. */
+    @Nonnull private Function<ProfileRequestContext,AttributeContext> attributeContextCreationStrategy;
+    
     /** Attribute IDs to pass into resolver. */
     @Nonnull @NonnullElements private Collection<String> attributesToResolve;
-    
-    /** RelyingPartyContext to operate on. */
-    @Nullable private RelyingPartyContext rpContext;
 
     /** SubjectContext to work from. */
     @Nullable private SubjectContext subjectContext;
@@ -103,27 +104,42 @@ public final class ResolveAttributes extends AbstractProfileAction {
      */
     public ResolveAttributes(@Nonnull final ReloadableService<AttributeResolver> resolverService) {
         attributeResolverService = Constraint.isNotNull(resolverService, "AttributeResolver cannot be null");
-        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
-        subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class, false);
-        authnContextLookupStrategy = new ChildContextLookup<>(AuthenticationContext.class, false);
+        
+        issuerLookupStrategy = new ResponderIdLookupFunction();
+        recipientLookupStrategy = new RelyingPartyIdLookupFunction();
+        
+        subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
+        authnContextLookupStrategy = new ChildContextLookup<>(AuthenticationContext.class);
+        
+        // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeContext.
+        attributeContextCreationStrategy = Functions.compose(new ChildContextLookup<>(AttributeContext.class, true),
+                new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
+        
         attributesToResolve = Collections.emptyList();
+    }
+    
+    /**
+     * Set the strategy used to lookup the issuer for this attribute resolution.
+     * 
+     * @param strategy  lookup strategy
+     */
+    public void setIssuerLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        issuerLookupStrategy = strategy;
     }
 
     /**
-     * Set the strategy used to locate the {@link RelyingPartyContext} associated with a given
-     * {@link ProfileRequestContext}.
+     * Set the strategy used to lookup the recipient for this attribute resolution.
      * 
-     * @param strategy strategy used to locate the {@link RelyingPartyContext} associated with a given
-     *            {@link ProfileRequestContext}
+     * @param strategy  lookup strategy
      */
-    public void setRelyingPartyContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
+    public void setRecipientLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        relyingPartyContextLookupStrategy =
-                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
+        recipientLookupStrategy = strategy;
     }
-
+    
     /**
      * Set the strategy used to locate the {@link SubjectContext} associated with a given {@link ProfileRequestContext}.
      * 
@@ -153,6 +169,19 @@ public final class ResolveAttributes extends AbstractProfileAction {
     }
     
     /**
+     * Set the strategy used to locate or create the {@link AttributeContext} to populate.
+     * 
+     * @param strategy lookup/creation strategy
+     */
+    public void setAttributeContextCreationStrategy(
+            @Nonnull final Function<ProfileRequestContext,AttributeContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        attributeContextCreationStrategy =
+                Constraint.isNotNull(strategy, "AttributeContext creation strategy cannot be null");
+    }
+    
+    /**
      * Set the attribute IDs to pass into the resolver.
      * 
      * @param attributeIds  attribute ID collection
@@ -167,13 +196,6 @@ public final class ResolveAttributes extends AbstractProfileAction {
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-
-        rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (rpContext == null) {
-            log.debug("{} No relying party context available.", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
-            return false;
-        }
 
         subjectContext = subjectContextLookupStrategy.apply(profileRequestContext);
         if (subjectContext == null) {
@@ -190,6 +212,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
         return super.doPreExecute(profileRequestContext);
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -215,11 +238,14 @@ public final class ResolveAttributes extends AbstractProfileAction {
             }
         }
 
-        resolutionContext.setAttributeRecipientID(rpContext.getRelyingPartyId());
+        if (recipientLookupStrategy != null) {
+            resolutionContext.setAttributeRecipientID(recipientLookupStrategy.apply(profileRequestContext));
+        } else {
+            resolutionContext.setAttributeRecipientID(null);
+        }
 
-        final RelyingPartyConfiguration config = rpContext.getConfiguration();
-        if (null != config) {
-            resolutionContext.setAttributeIssuerID(config.getResponderId());
+        if (issuerLookupStrategy != null) {
+            resolutionContext.setAttributeIssuerID(issuerLookupStrategy.apply(profileRequestContext));
         } else {
             resolutionContext.setAttributeIssuerID(null);
         }
@@ -228,19 +254,22 @@ public final class ResolveAttributes extends AbstractProfileAction {
         try {
             component = attributeResolverService.getServiceableComponent();
             if (null == component) {
-                log.error("{} Error resolving attributes: Invalid Attribute resolver configuration.", getLogPrefix());
+                log.error("{} Error resolving attributes: Invalid Attribute resolver configuration", getLogPrefix());
                 ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
             } else {
                 final AttributeResolver attributeResolver = component.getComponent();
                 attributeResolver.resolveAttributes(resolutionContext);
                 profileRequestContext.removeSubcontext(resolutionContext);
 
-                final AttributeContext attributeCtx = rpContext.getSubcontext(AttributeContext.class, true);
+                final AttributeContext attributeCtx = attributeContextCreationStrategy.apply(profileRequestContext);
+                if (null == attributeCtx) {
+                    throw new ResolutionException("Unable to create or locate AttributeContext to populate");
+                }
                 attributeCtx.setIdPAttributes(resolutionContext.getResolvedIdPAttributes().values());
 
             }
-        } catch (ResolutionException e) {
-            log.error("{} Error resolving attributes", getLogPrefix(), e);
+        } catch (final ResolutionException e) {
+            log.error(getLogPrefix() + " Error resolving attributes", e);
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
         } finally {
             if (null != component) {
@@ -248,5 +277,6 @@ public final class ResolveAttributes extends AbstractProfileAction {
             }
         }
     }
+// Checkstyle: CyclomaticComplexity ON
 
 }

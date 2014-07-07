@@ -61,26 +61,6 @@ public class ResolveAttributesTest {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
     }
     
-    /** Test that the action errors out properly if there is no relying party context. */
-    @Test public void testNoRelyingPartyContext() throws Exception {
-        prc.removeSubcontext(RelyingPartyContext.class);
-
-        final IdPAttribute attribute = new IdPAttribute("ad1");
-        attribute.setValues(Collections.singleton(new StringAttributeValue("value1")));
-
-        final LazySet<AttributeDefinition> definitions = new LazySet<>();
-        definitions.add(new MockAttributeDefinition("ad1", attribute));
-
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("resolver", definitions, null, null);
-        resolver.initialize();
-
-        final ResolveAttributes action = new ResolveAttributes(new AttributeService(resolver));
-        action.initialize();
-
-        final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_RELYING_PARTY_CTX);
-    }
-
     /** Test that the action resolves attributes and proceeds properly. */
     @Test public void testResolveAttributes() throws Exception {
         prc.getSubcontext(SubjectContext.class, true);

@@ -30,7 +30,8 @@ import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
+import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.idp.service.ReloadableService;
 import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -65,13 +66,17 @@ public class FilterAttributes extends AbstractProfileAction {
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(FilterAttributes.class);
 
-    /** Service used to get the engine used to fetch attributes. */
+    /** Service used to get the engine used to filter attributes. */
     @Nonnull private final ReloadableService<AttributeFilter> attributeFilterService;
 
-    /**
-     * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
-     */
-    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
+    /** Strategy used to locate the identity of the issuer associated with the attribute filtering. */
+    @Nullable private Function<ProfileRequestContext,String> issuerLookupStrategy;
+
+    /** Strategy used to locate the identity of the recipient associated with the attribute filtering. */
+    @Nullable private Function<ProfileRequestContext,String> recipientLookupStrategy;
+    
+    /** Strategy used to locate or create the {@link AttributeFilterContext}. */
+    @Nonnull private Function<ProfileRequestContext,AttributeFilterContext> filterContextCreationStrategy;
 
     /** Strategy used to locate the {@link AttributeContext} to filter. */
     @Nonnull private Function<ProfileRequestContext,AttributeContext> attributeContextLookupStrategy;
@@ -96,9 +101,6 @@ public class FilterAttributes extends AbstractProfileAction {
      */
     @Nonnull private Function<AttributeFilterContext,SAMLMetadataContext> metadataFromFilterLookupStrategy;
 
-    /** RelyingPartyContext to operate on. */
-    @Nullable private RelyingPartyContext rpContext;
-
     /** SubjectContext to work from. */
     @Nullable private SubjectContext subjectContext;
 
@@ -118,11 +120,14 @@ public class FilterAttributes extends AbstractProfileAction {
      */
     public FilterAttributes(@Nonnull final ReloadableService<AttributeFilter> filterService) {
         attributeFilterService = Constraint.isNotNull(filterService, "Service cannot be null");
-        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class, false);
+        
+        issuerLookupStrategy = new ResponderIdLookupFunction();
+        recipientLookupStrategy = new RelyingPartyIdLookupFunction();
+        
         attributeContextLookupStrategy = Functions.compose(new ChildContextLookup<>(AttributeContext.class),
                 new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
-        subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class, false);
-        authnContextLookupStrategy = new ChildContextLookup<>(AuthenticationContext.class, false);
+        subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
+        authnContextLookupStrategy = new ChildContextLookup<>(AuthenticationContext.class);
         
         // Default: inbound msg context -> SAMLPeerEntityContext -> SAMLMetadataContext
         metadataContextLookupStrategy = Functions.compose(
@@ -139,21 +144,45 @@ public class FilterAttributes extends AbstractProfileAction {
                     }
                 },
                 new RootContextLookup<AttributeFilterContext,ProfileRequestContext>());
+
+        // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeFilterContext.
+        filterContextCreationStrategy = Functions.compose(new ChildContextLookup<>(AttributeFilterContext.class, true),
+                new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
+    }
+    
+    /**
+     * Set the strategy used to lookup the issuer for this attribute filtering.
+     * 
+     * @param strategy  lookup strategy
+     */
+    public void setIssuerLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        issuerLookupStrategy = strategy;
     }
 
     /**
-     * Sets the strategy used to locate the {@link RelyingPartyContext} associated with a given
-     * {@link ProfileRequestContext}.
+     * Set the strategy used to lookup the recipient for this attribute filtering.
      * 
-     * @param strategy strategy used to locate the {@link RelyingPartyContext} associated with a given
-     *            {@link ProfileRequestContext}
+     * @param strategy  lookup strategy
      */
-    public void setRelyingPartyContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
+    public void setRecipientLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        relyingPartyContextLookupStrategy =
-                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
+        recipientLookupStrategy = strategy;
+    }
+
+    /**
+     * Set the strategy used to locate or create the {@link AttributeFilterContext} to populate.
+     * 
+     * @param strategy lookup/creation strategy
+     */
+    public void setFilterContextCreationStrategy(
+            @Nonnull final Function<ProfileRequestContext,AttributeFilterContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        filterContextCreationStrategy =
+                Constraint.isNotNull(strategy, "AttributeContext creation strategy cannot be null");
     }
 
     /**
@@ -232,13 +261,6 @@ public class FilterAttributes extends AbstractProfileAction {
             return false;
         }
 
-        rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (rpContext == null) {
-            log.debug("{} No relying party context available", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
-            return false;
-        }
-        
         subjectContext = subjectContextLookupStrategy.apply(profileRequestContext);
         if (subjectContext == null) {
             log.debug("{} No subject context available.", getLogPrefix());
@@ -260,7 +282,12 @@ public class FilterAttributes extends AbstractProfileAction {
 
         // Get the filter context from the profile request
         // this may already exist but if not, auto-create it.
-        final AttributeFilterContext filterContext = rpContext.getSubcontext(AttributeFilterContext.class, true);
+        final AttributeFilterContext filterContext = filterContextCreationStrategy.apply(profileRequestContext);
+        if (filterContext == null) {
+            log.error("{} Unable to locate or create AttributeFilterContext", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
+            return;
+        }
 
         filterContext.setPrincipal(subjectContext.getPrincipalName());
 
@@ -272,15 +299,18 @@ public class FilterAttributes extends AbstractProfileAction {
             }
         }
 
-        filterContext.setAttributeRecipientID(rpContext.getRelyingPartyId());
+        if (recipientLookupStrategy != null) {
+            filterContext.setAttributeRecipientID(recipientLookupStrategy.apply(profileRequestContext));
+        } else {
+            filterContext.setAttributeRecipientID(null);
+        }
 
-        final RelyingPartyConfiguration config = rpContext.getConfiguration();
-        if (null != config) {
-            filterContext.setAttributeIssuerID(config.getResponderId());
+        if (issuerLookupStrategy != null) {
+            filterContext.setAttributeIssuerID(issuerLookupStrategy.apply(profileRequestContext));
         } else {
             filterContext.setAttributeIssuerID(null);
         }
-        
+                
         filterContext.setRequesterMetadataContextLookupStrategy(metadataFromFilterLookupStrategy);
 
         // If the filter context doesn't have a set of attributes to filter already
@@ -298,13 +328,13 @@ public class FilterAttributes extends AbstractProfileAction {
                         getLogPrefix());
                 ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
             } else {
-                AttributeFilter filter = component.getComponent();
+                final AttributeFilter filter = component.getComponent();
                 filter.filterAttributes(filterContext);
-                rpContext.removeSubcontext(filterContext);
+                filterContext.getParent().removeSubcontext(filterContext);
                 attributeContext.setIdPAttributes(filterContext.getFilteredIdPAttributes().values());
             }
         } catch (final AttributeFilterException e) {
-            log.error("{} Error encountered while filtering attributes", getLogPrefix(), e);
+            log.error(getLogPrefix() + " Error encountered while filtering attributes", e);
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
         } finally {
             if (null != component) {
