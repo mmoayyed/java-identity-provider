@@ -6,13 +6,19 @@
 		<evaluate expression="InitializeProfileRequestContext" />
 	</on-start>
 
-	<action-state id="TestAfterFilter">
+	<action-state id="StartTest">
 		<evaluate expression="SetupSAMLMessage" />
 		<evaluate expression="SAMLMetadataLookup" />
 		<evaluate expression="SAMLPopulateACS" />
 		<evaluate expression="PopulateResolution" />
 		<evaluate expression="ResolveAttributes" />
 		<evaluate expression="FilterAttributes" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="AfterTest" />
+    </action-state>
+
+    <action-state id="AfterTest">
 		<evaluate expression="TestAfterFilter" />
 		<evaluate expression="'proceed'" />
 
