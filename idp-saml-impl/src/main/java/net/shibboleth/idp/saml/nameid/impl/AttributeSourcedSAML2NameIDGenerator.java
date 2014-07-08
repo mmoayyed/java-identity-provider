@@ -67,6 +67,9 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
     /** Strategy function to lookup AttributeContext. */
     @Nonnull private Function<ProfileRequestContext, AttributeContext> attributeContextLookupStrategy;
     
+    /** Delimiter to use for scoped attribute serialization. */
+    private char delimiter;
+    
     /** Attribute(s) to use as an identifier source. */
     @Nonnull @NonnullElements private List<String> attributeSourceIds;
     
@@ -75,6 +78,7 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
         attributeContextLookupStrategy = Functions.compose(
                 new ChildContextLookup<RelyingPartyContext,AttributeContext>(AttributeContext.class),
                 new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
+        delimiter = '@';
         attributeSourceIds = Collections.emptyList();
         setDefaultIdPNameQualifierLookupStrategy(new ResponderIdLookupFunction());
         setDefaultSPNameQualifierLookupStrategy(new RelyingPartyIdLookupFunction());
@@ -85,7 +89,7 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
      * 
      * @param strategy lookup function to use
      */
-    public synchronized void setAttributeContextLookupStrategy(
+    public void setAttributeContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, AttributeContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
@@ -94,11 +98,22 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
     }
     
     /**
+     * Set the delimiter to use for serializing scoped attribute values.
+     * 
+     * @param ch
+     */
+    public void setScopedDelimiter(final char ch) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        delimiter = ch;
+    }    
+    
+    /**
      * Set the attribute sources to pull from.
      * 
      * @param ids   attribute IDs to pull from
      */
-    public synchronized void setAttributeSourceIds(@Nonnull @NonnullElements final List<String> ids) {
+    public void setAttributeSourceIds(@Nonnull @NonnullElements final List<String> ids) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(ids, "Attribute ID collection cannot be null");
         
@@ -174,14 +189,14 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
             final Set<IdPAttributeValue<?>> values = attribute.getValues();
             for (final IdPAttributeValue value : values) {
                 if (value instanceof ScopedStringAttributeValue) {
-                    log.info("Generating NameID from Scoped String-valued attribute {}", sourceId);
+                    log.debug("Generating NameID from Scoped String-valued attribute {}", sourceId);
                     return ((ScopedStringAttributeValue) value).getValue()
-                            + '@' + ((ScopedStringAttributeValue) value).getScope(); 
+                            + delimiter + ((ScopedStringAttributeValue) value).getScope(); 
                 } else if (value instanceof StringAttributeValue) {
-                    log.info("Generating NameID from String-valued attribute {}", sourceId);
+                    log.debug("Generating NameID from String-valued attribute {}", sourceId);
                     return ((StringAttributeValue) value).getValue();
                 } else {
-                    log.info("Unrecognized attribute value type: {}", value.getClass().getName());
+                    log.warn("Unrecognized attribute value type: {}", value.getClass().getName());
                 }
             }
         }
