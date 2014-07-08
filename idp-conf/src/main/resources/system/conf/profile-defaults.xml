@@ -52,6 +52,8 @@
     <bean id="shibboleth.SAML1.AttributeQuery.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/soap" />
         
+    <bean id="shibboleth.SAML1.BrowserSSO.ArtifactServiceIndex" class="java.lang.String"
+        c:_0="%{idp.artifact.endpointIndex:1}" />
     <bean id="shibboleth.SAML1.BrowserSSO.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/shibboleth-sso" />
             
