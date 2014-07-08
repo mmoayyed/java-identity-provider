@@ -186,7 +186,14 @@ public abstract class AbstractSubjectCanonicalizationAction<InboundMessageType, 
     protected boolean doPreExecute(
             @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
             @Nonnull final SubjectCanonicalizationContext c14nContext) {
-        return c14nContext.getSubject() != null;
+        
+        if (c14nContext.getSubject() == null) {
+            c14nContext.setException(new SubjectCanonicalizationException("No Subject found in context"));
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+            return false;
+        }
+        
+        return true;
     }
     
     /** {@inheritDoc} */

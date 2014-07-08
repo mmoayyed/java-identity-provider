@@ -12,7 +12,10 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean id="c14n/simple" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
+    <bean id="shibboleth.PostLoginSubjectCanonicalizationFlow" abstract="true"
+        class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor" />
+
+    <bean id="c14n/simple" parent="shibboleth.PostLoginSubjectCanonicalizationFlow">
         <property name="activationCondition">
             <bean class="net.shibboleth.idp.authn.impl.SimpleSubjectCanonicalization.ActivationCondition" />
         </property>

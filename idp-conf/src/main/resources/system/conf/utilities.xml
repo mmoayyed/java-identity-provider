@@ -40,6 +40,19 @@
         c:type="#{ T(org.opensaml.xmlsec.context.SecurityParametersContext) }"
         c:createContext="true" />
 
+    <bean id="shibboleth.ChildLookupOrCreate.AttributeContext"
+        class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+        c:type="#{ T(net.shibboleth.idp.attribute.context.AttributeContext) }"
+        c:createContext="true" />
+    <bean id="shibboleth.ChildLookupOrCreate.AttributeFilterContext"
+        class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+        c:type="#{ T(net.shibboleth.idp.attribute.filter.context.AttributeFilterContext) }"
+        c:createContext="true" />
+
+    <bean id="shibboleth.ChildLookup.SubjectCanonicalizationContext"
+        class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+        c:type="#{ T(net.shibboleth.idp.authn.context.SubjectCanonicalizationContext) }" />
+
     <bean id="shibboleth.ResponderIdLookup.Simple"
         class="net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction" />
 

@@ -24,9 +24,17 @@
     <!-- Flows used after authentication to produce canonical principal name. -->
     <util:list id="shibboleth.PostLoginSubjectCanonicalizationFlows">
         <!--
+        This is an advanced post-login step that performs attribute resolution and then produces a username
+        from an attribute value. Most of this configuration is handled by attribute-sourced-c14n-config.xml.
+        To enable universally, just uncomment, but if you want it to run under more specific conditions,
+        set an activationCondition property to a condition function to use to control when it should run. 
+        -->
+        <!-- <bean id="c14n/attribute" parent="shibboleth.PostLoginSubjectCanonicalizationFlow" /> -->
+
+        <!--
         This is the standard post-login step that returns a username derived from the login process. If you
         have more complex needs such as mapping a certificate DN into a principal name, an alternative may
-        be required, but you can configure some simple transforms in simple-subject-c14n-config.xml
+        be required such as that above, but you can configure simple transforms in simple-subject-c14n-config.xml
         -->
         <ref bean="c14n/simple" />
     </util:list>
