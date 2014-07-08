@@ -18,7 +18,7 @@
     an empty list if you just want to resolve everything you normally would.
     -->
     <util:list id="shibboleth.c14n.attribute.AttributesToResolve">
-        <value>uid</value>
+        <value>altuid</value>
     </util:list>
     
     <!--
@@ -26,7 +26,7 @@
     This will normally be something you resolve above.
     -->
     <util:list id="shibboleth.c14n.attribute.AttributeSourceIds">
-        <value>uid</value>
+        <value>altuid</value>
     </util:list>
 
     <!-- Simple transforms to apply to attribute value used for canonicalization result. -->

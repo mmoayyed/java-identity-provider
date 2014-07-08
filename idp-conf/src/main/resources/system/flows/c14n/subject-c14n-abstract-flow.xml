@@ -14,6 +14,7 @@
     <!-- Error events to reflect back from this subflow. -->
     <end-state id="InvalidProfileContext" />
     <end-state id="InvalidSubject" />
+    <end-state id="InvalidSubjectContext" />
     <end-state id="InvalidSubjectCanonicalizationContext" />
     <end-state id="ReselectFlow" />
     <end-state id="NoPotentialFlow" />

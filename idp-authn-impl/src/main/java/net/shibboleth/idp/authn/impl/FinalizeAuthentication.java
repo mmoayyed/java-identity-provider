@@ -92,12 +92,15 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
         if (c14nCtx != null) {
             canonicalPrincipalName = c14nCtx.getPrincipalName();
             profileRequestContext.removeSubcontext(c14nCtx);
+            log.debug("{} Canonical principal name was established as '{}'", getLogPrefix(), canonicalPrincipalName);
         }
         
         if (canonicalPrincipalName == null) {
             final SessionContext sessionCtx = profileRequestContext.getSubcontext(SessionContext.class);
             if (sessionCtx != null && sessionCtx.getIdPSession() != null) {
                 canonicalPrincipalName = sessionCtx.getIdPSession().getPrincipalName();
+                log.debug("{} Canonical principal name established from session as '{}'", getLogPrefix(),
+                        canonicalPrincipalName);
             }
         }
         

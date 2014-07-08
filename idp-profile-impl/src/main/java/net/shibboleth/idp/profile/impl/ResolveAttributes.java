@@ -55,10 +55,9 @@ import com.google.common.base.Functions;
  * Action that invokes the {@link AttributeResolver} for the current request.
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @event {@link IdPEventIds#INVALID_SUBJECT_CTX}
  * @event {@link IdPEventIds#UNABLE_RESOLVE_ATTRIBS}
  * 
- * @post If resolution successful, the relevant RelyingPartyContext.getSubcontext(AttributeContext.class) != null
+ * @post If resolution is successful, an AttributeContext is created with the results.
  */
 public final class ResolveAttributes extends AbstractProfileAction {
 
@@ -200,8 +199,6 @@ public final class ResolveAttributes extends AbstractProfileAction {
         subjectContext = subjectContextLookupStrategy.apply(profileRequestContext);
         if (subjectContext == null) {
             log.debug("{} No subject context available.", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_SUBJECT_CTX);
-            return false;
         }
 
         authenticationContext = authnContextLookupStrategy.apply(profileRequestContext);
@@ -212,7 +209,6 @@ public final class ResolveAttributes extends AbstractProfileAction {
         return super.doPreExecute(profileRequestContext);
     }
 
-// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -222,33 +218,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
         final AttributeResolutionContext resolutionContext =
                 profileRequestContext.getSubcontext(AttributeResolutionContext.class, true);
         
-        // Populate requested attributes, if not already set.
-        if (resolutionContext.getRequestedIdPAttributeNames() == null
-                || resolutionContext.getRequestedIdPAttributeNames().isEmpty()) {
-            resolutionContext.setRequestedIdPAttributeNames(attributesToResolve);
-        }
-        
-        resolutionContext.setPrincipal(subjectContext.getPrincipalName());
-        
-        resolutionContext.setPrincipalAuthenticationMethod(null);
-        if (null != authenticationContext) {
-            final AuthenticationResult result = authenticationContext.getAuthenticationResult();
-            if (null != result) {
-                resolutionContext.setPrincipalAuthenticationMethod(result.getAuthenticationFlowId());
-            }
-        }
-
-        if (recipientLookupStrategy != null) {
-            resolutionContext.setAttributeRecipientID(recipientLookupStrategy.apply(profileRequestContext));
-        } else {
-            resolutionContext.setAttributeRecipientID(null);
-        }
-
-        if (issuerLookupStrategy != null) {
-            resolutionContext.setAttributeIssuerID(issuerLookupStrategy.apply(profileRequestContext));
-        } else {
-            resolutionContext.setAttributeIssuerID(null);
-        }
+        populateResolutionContext(profileRequestContext, resolutionContext);
 
         ServiceableComponent<AttributeResolver> component = null;
         try {
@@ -277,6 +247,47 @@ public final class ResolveAttributes extends AbstractProfileAction {
             }
         }
     }
-// Checkstyle: CyclomaticComplexity ON
 
+    /**
+     * Fill in the resolution context data.
+     * 
+     * @param profileRequestContext current profile request context
+     * @param resolutionContext context to populate
+     */
+    private void populateResolutionContext(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AttributeResolutionContext resolutionContext) {
+        
+        // Populate requested attributes, if not already set.
+        if (resolutionContext.getRequestedIdPAttributeNames() == null
+                || resolutionContext.getRequestedIdPAttributeNames().isEmpty()) {
+            resolutionContext.setRequestedIdPAttributeNames(attributesToResolve);
+        }
+        
+        if (null != subjectContext) {
+            resolutionContext.setPrincipal(subjectContext.getPrincipalName());
+        } else {
+            resolutionContext.setPrincipal(null);
+        }
+        
+        resolutionContext.setPrincipalAuthenticationMethod(null);
+        if (null != authenticationContext) {
+            final AuthenticationResult result = authenticationContext.getAuthenticationResult();
+            if (null != result) {
+                resolutionContext.setPrincipalAuthenticationMethod(result.getAuthenticationFlowId());
+            }
+        }
+
+        if (recipientLookupStrategy != null) {
+            resolutionContext.setAttributeRecipientID(recipientLookupStrategy.apply(profileRequestContext));
+        } else {
+            resolutionContext.setAttributeRecipientID(null);
+        }
+
+        if (issuerLookupStrategy != null) {
+            resolutionContext.setAttributeIssuerID(issuerLookupStrategy.apply(profileRequestContext));
+        } else {
+            resolutionContext.setAttributeIssuerID(null);
+        }
+    }
+    
 }

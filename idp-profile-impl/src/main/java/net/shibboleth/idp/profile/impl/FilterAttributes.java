@@ -54,8 +54,6 @@ import com.google.common.base.Functions;
  * Action that invokes the {@link AttributeFilter} for the current request.
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
- * @event {@link IdPEventIds#INVALID_SUBJECT_CTX}
  * @event {@link IdPEventIds#UNABLE_FILTER_ATTRIBS}
  * 
  * @post If resolution is successful, the relevant RelyingPartyContext.getSubcontext(AttributeContext.class, false) !=
@@ -264,8 +262,6 @@ public class FilterAttributes extends AbstractProfileAction {
         subjectContext = subjectContextLookupStrategy.apply(profileRequestContext);
         if (subjectContext == null) {
             log.debug("{} No subject context available.", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_SUBJECT_CTX);
-            return false;
         }
         
         authenticationContext = authnContextLookupStrategy.apply(profileRequestContext);
@@ -275,7 +271,7 @@ public class FilterAttributes extends AbstractProfileAction {
 
         return super.doPreExecute(profileRequestContext);
     }
-
+    
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -288,8 +284,47 @@ public class FilterAttributes extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
             return;
         }
+        
+        populateFilterContext(profileRequestContext, filterContext);
 
-        filterContext.setPrincipal(subjectContext.getPrincipalName());
+        ServiceableComponent<AttributeFilter> component = null;
+
+        try {
+            component = attributeFilterService.getServiceableComponent();
+            if (null == component) {
+                log.error("{} Error encountered while filtering attributes : Invalid Attribute Filter configuration",
+                        getLogPrefix());
+                ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
+            } else {
+                final AttributeFilter filter = component.getComponent();
+                filter.filterAttributes(filterContext);
+                filterContext.getParent().removeSubcontext(filterContext);
+                attributeContext.setIdPAttributes(filterContext.getFilteredIdPAttributes().values());
+            }
+        } catch (final AttributeFilterException e) {
+            log.error(getLogPrefix() + " Error encountered while filtering attributes", e);
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
+        } finally {
+            if (null != component) {
+                component.unpinComponent();
+            }
+        }
+    }
+    
+    /**
+     * Fill in the filter context data.
+     * 
+     * @param profileRequestContext current profile request context
+     * @param filterContext context to populate
+     */
+    private void populateFilterContext(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AttributeFilterContext filterContext) {
+        
+        if (null != subjectContext) {
+            filterContext.setPrincipal(subjectContext.getPrincipalName());
+        } else {
+            filterContext.setPrincipal(null);
+        }
 
         filterContext.setPrincipalAuthenticationMethod(null);
         if (null != authenticationContext) {
@@ -317,29 +352,6 @@ public class FilterAttributes extends AbstractProfileAction {
         // then look for them in the AttributeContext.
         if (filterContext.getPrefilteredIdPAttributes().isEmpty()) {
             filterContext.setPrefilteredIdPAttributes(attributeContext.getIdPAttributes().values());
-        }
-
-        ServiceableComponent<AttributeFilter> component = null;
-
-        try {
-            component = attributeFilterService.getServiceableComponent();
-            if (null == component) {
-                log.error("{} Error encountered while filtering attributes : Invalid Attribute Filter configuration",
-                        getLogPrefix());
-                ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
-            } else {
-                final AttributeFilter filter = component.getComponent();
-                filter.filterAttributes(filterContext);
-                filterContext.getParent().removeSubcontext(filterContext);
-                attributeContext.setIdPAttributes(filterContext.getFilteredIdPAttributes().values());
-            }
-        } catch (final AttributeFilterException e) {
-            log.error(getLogPrefix() + " Error encountered while filtering attributes", e);
-            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
-        } finally {
-            if (null != component) {
-                component.unpinComponent();
-            }
         }
     }
 

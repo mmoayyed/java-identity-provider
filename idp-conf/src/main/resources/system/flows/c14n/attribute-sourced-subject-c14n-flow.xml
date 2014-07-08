@@ -13,6 +13,6 @@
         <transition on="proceed" to="proceed" />
     </action-state>
 
-    <bean-import resource="simple-subject-c14n-beans.xml" />
+    <bean-import resource="attribute-sourced-subject-c14n-beans.xml" />
 
 </flow>
