@@ -50,7 +50,7 @@ public class AttributeQueryProfileConfiguration
      */
     protected AttributeQueryProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
-        setSignResponsesPredicate(new NoIntegrityMessageChannelPredicate());
+        setSignResponses(new NoIntegrityMessageChannelPredicate());
     }
     
     /** {@inheritDoc} */

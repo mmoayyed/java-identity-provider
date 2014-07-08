@@ -271,15 +271,15 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
         builder.addPropertyValue("outboundSubflowId", element.getAttributeNS(null, "outboundFlowId"));
 
         if (element.hasAttributeNS(null, "signAssertions")) {
-            builder.addPropertyValue("signAssertionsPredicate",
+            builder.addPropertyValue("signAssertions",
                     predicateForSigning(element.getAttributeNS(null, "signAssertions")));
         }
         if (element.hasAttributeNS(null, "signRequests")) {
-            builder.addPropertyValue("signRequestsPredicate",
+            builder.addPropertyValue("signRequests",
                     predicateForSigning(element.getAttributeNS(null, "signRequests")));
         }
         if (element.hasAttributeNS(null, "signResponses")) {
-            builder.addPropertyValue("signResponsesPredicate",
+            builder.addPropertyValue("signResponses",
                     predicateForSigning(element.getAttributeNS(null, "signResponses")));
         }
         builder.addPropertyValue("additionalAudienceForAssertion", getAudiences(element));

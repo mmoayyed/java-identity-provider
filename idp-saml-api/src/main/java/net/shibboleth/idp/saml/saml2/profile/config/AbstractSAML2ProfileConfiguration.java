@@ -130,7 +130,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
     }
 
     /** {@inheritDoc} */
-    @Override public Predicate<ProfileRequestContext> getEncryptAssertionsPredicate() {
+    @Override @Nonnull public Predicate<ProfileRequestContext> getEncryptAssertions() {
         return encryptAssertionsPredicate;
     }
 
@@ -139,14 +139,14 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * 
      * @param predicate predicate used to determine if assertions should be encrypted
      */
-    public void setEncryptAssertionsPredicate(Predicate<ProfileRequestContext> predicate) {
+    public void setEncryptAssertions(@Nonnull final Predicate<ProfileRequestContext> predicate) {
         encryptAssertionsPredicate =
                 Constraint.isNotNull(predicate,
                         "Predicate to determine if assertions should be enecrypted cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override public Predicate<ProfileRequestContext> getEncryptNameIDsPredicate() {
+    @Override @Nonnull public Predicate<ProfileRequestContext> getEncryptNameIDs() {
         return encryptNameIDsPredicate;
     }
 
@@ -155,14 +155,14 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * 
      * @param predicate predicate used to determine if name identifiers should be encrypted
      */
-    public void setEncryptNameIDsPredicate(Predicate<ProfileRequestContext> predicate) {
+    public void setEncryptNameIDs(@Nonnull final Predicate<ProfileRequestContext> predicate) {
         encryptNameIDsPredicate =
                 Constraint.isNotNull(predicate,
                         "Predicate to determine if name identifiers should be encrypted cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override public Predicate<ProfileRequestContext> getEncryptAttributesPredicate() {
+    @Override @Nonnull public Predicate<ProfileRequestContext> getEncryptAttributes() {
         return encryptAttributesPredicate;
     }
 
@@ -171,7 +171,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * 
      * @param predicate predicate used to determine if attributes should be encrypted
      */
-    public void setEncryptAttributesPredicate(Predicate<ProfileRequestContext> predicate) {
+    public void setEncryptAttributes(@Nonnull final Predicate<ProfileRequestContext> predicate) {
         encryptAttributesPredicate =
                 Constraint.isNotNull(predicate,
                         "Predicate to determine if attributes should be encrypted cannot be null");

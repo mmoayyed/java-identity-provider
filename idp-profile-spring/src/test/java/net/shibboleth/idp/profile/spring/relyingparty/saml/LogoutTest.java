@@ -34,13 +34,13 @@ public class LogoutTest extends BaseSAMLProfileTest {
 
         // defaults for AbstractSAML2ProfileConfiguration
 
-        assertFalsePredicate(profile.getEncryptAssertionsPredicate());
+        assertFalsePredicate(profile.getEncryptAssertions());
         Assert.assertEquals(profile.getProxyCount(), 0);
-        assertConditionalPredicate(profile.getEncryptNameIDsPredicate());
+        assertConditionalPredicate(profile.getEncryptNameIDs());
 
-        assertConditionalPredicate(profile.getSignRequestsPredicate());
-        assertFalsePredicate(profile.getSignAssertionsPredicate());
-        assertConditionalPredicate(profile.getSignResponsesPredicate());
+        assertConditionalPredicate(profile.getSignRequests());
+        assertFalsePredicate(profile.getSignAssertions());
+        assertConditionalPredicate(profile.getSignResponses());
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
@@ -58,17 +58,17 @@ public class LogoutTest extends BaseSAMLProfileTest {
         SingleLogoutProfileConfiguration profile =
                 getBean(SingleLogoutProfileConfiguration.class, "beans.xml", "saml/logoutValues.xml");
 
-        assertTruePredicate(profile.getEncryptAssertionsPredicate());
-        assertFalsePredicate(profile.getEncryptNameIDsPredicate());
+        assertTruePredicate(profile.getEncryptAssertions());
+        assertFalsePredicate(profile.getEncryptNameIDs());
 
         Assert.assertEquals(profile.getProxyCount(), 98);
         final Collection<String> proxyAudiences = profile.getProxyAudiences();
         Assert.assertEquals(proxyAudiences.size(), 1);
         Assert.assertTrue(proxyAudiences.contains("NibbleAHappyWarthog"));
 
-        assertConditionalPredicate(profile.getSignRequestsPredicate());
-        assertFalsePredicate(profile.getSignAssertionsPredicate());
-        assertFalsePredicate(profile.getSignResponsesPredicate());
+        assertConditionalPredicate(profile.getSignRequests());
+        assertFalsePredicate(profile.getSignAssertions());
+        assertFalsePredicate(profile.getSignResponses());
 
         Assert.assertEquals(profile.getAssertionLifetime(), 8 * 60 * 1000);
 

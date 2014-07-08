@@ -67,20 +67,20 @@ public interface SAML2ProfileConfiguration {
      * 
      * @return predicate used to determine if assertions should be encrypted
      */
-    @Nonnull Predicate<ProfileRequestContext> getEncryptAssertionsPredicate();
+    @Nonnull Predicate<ProfileRequestContext> getEncryptAssertions();
 
     /**
      * Get the predicate used to determine if name identifiers should be encrypted.
      * 
      * @return predicate used to determine if name identifiers should be encrypted
      */
-    @Nonnull Predicate<ProfileRequestContext> getEncryptNameIDsPredicate();
+    @Nonnull Predicate<ProfileRequestContext> getEncryptNameIDs();
 
     /**
      * Get the predicate used to determine if attributes should be encrypted.
      * 
      * @return predicate used to determine if attributes should be encrypted
      */
-    @Nonnull Predicate<ProfileRequestContext> getEncryptAttributesPredicate();
+    @Nonnull Predicate<ProfileRequestContext> getEncryptAttributes();
     
 }

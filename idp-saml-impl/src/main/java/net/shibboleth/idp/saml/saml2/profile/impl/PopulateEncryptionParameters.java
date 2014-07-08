@@ -290,13 +290,13 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
         }
 
         if (!encryptIdentifiers) {
-            encryptIdentifiers = profileConfiguration.getEncryptNameIDsPredicate().apply(profileRequestContext);
+            encryptIdentifiers = profileConfiguration.getEncryptNameIDs().apply(profileRequestContext);
             // Encryption can only be optional if the request didn't specify it above.
             encryptionOptional = profileConfiguration.isEncryptionOptional();
         }
         
-        encryptAssertions = profileConfiguration.getEncryptAssertionsPredicate().apply(profileRequestContext);
-        encryptAttributes = profileConfiguration.getEncryptAttributesPredicate().apply(profileRequestContext);
+        encryptAssertions = profileConfiguration.getEncryptAssertions().apply(profileRequestContext);
+        encryptAttributes = profileConfiguration.getEncryptAttributes().apply(profileRequestContext);
         
         if (!encryptAssertions && !encryptIdentifiers && !encryptAttributes) {
             log.debug("{} No encryption requested, nothing to do", getLogPrefix());

@@ -39,21 +39,21 @@ public interface SAMLProfileConfiguration extends ProfileConfiguration {
      * 
      * @return predicate used to determine if generated assertions should be signed
      */
-    @Nonnull Predicate<ProfileRequestContext> getSignAssertionsPredicate();
+    @Nonnull Predicate<ProfileRequestContext> getSignAssertions();
 
     /**
      * Get the predicate used to determine if generated requests should be signed.
      * 
      * @return predicate used to determine if generated requests should be signed
      */
-    @Nonnull Predicate<ProfileRequestContext> getSignRequestsPredicate();
+    @Nonnull Predicate<ProfileRequestContext> getSignRequests();
 
     /**
      * Get the predicate used to determine if generated responses should be signed.
      * 
      * @return predicate used to determine if generated responses should be signed
      */
-    Predicate<ProfileRequestContext> getSignResponsesPredicate();
+    @Nonnull Predicate<ProfileRequestContext> getSignResponses();
 
     /**
      * Get the lifetime of generated assertions in milliseconds.

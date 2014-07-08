@@ -93,8 +93,8 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      */
     protected BrowserSSOProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
-        setSignResponsesPredicate(Predicates.<ProfileRequestContext>alwaysTrue());
-        setEncryptAssertionsPredicate(Predicates.<ProfileRequestContext>alwaysTrue());
+        setSignResponses(Predicates.<ProfileRequestContext>alwaysTrue());
+        setEncryptAssertions(Predicates.<ProfileRequestContext>alwaysTrue());
 
         includeAttributeStatement = true;
         skipEndpointValidationWhenSigned = false;

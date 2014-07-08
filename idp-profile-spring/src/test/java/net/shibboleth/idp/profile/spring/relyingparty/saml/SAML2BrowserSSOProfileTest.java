@@ -39,17 +39,17 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
 
         // defaults for AbstractSAML2ProfileConfiguration
 
-        assertTruePredicate(profile.getEncryptAssertionsPredicate());
-        assertFalsePredicate(profile.getEncryptNameIDsPredicate());
+        assertTruePredicate(profile.getEncryptAssertions());
+        assertFalsePredicate(profile.getEncryptNameIDs());
 
         Assert.assertEquals(profile.getProxyCount(), 0);
         Assert.assertTrue(profile.getProxyAudiences().isEmpty());
 
         // defaults for AbstractSAMLProfileConfiguration
-        assertFalsePredicate(profile.getSignRequestsPredicate());
-        assertFalsePredicate(profile.getSignAssertionsPredicate());
-        assertTruePredicate(profile.getSignResponsesPredicate());
-        assertFalsePredicate(profile.getEncryptAttributesPredicate());
+        assertFalsePredicate(profile.getSignRequests());
+        assertFalsePredicate(profile.getSignAssertions());
+        assertTruePredicate(profile.getSignResponses());
+        assertFalsePredicate(profile.getEncryptAttributes());
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
@@ -71,8 +71,8 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertTrue(profile.skipEndpointValidationWhenSigned());
         Assert.assertEquals(profile.getMaximumSPSessionLifetime(), 1);
 
-        assertConditionalPredicate(profile.getEncryptAssertionsPredicate());
-        assertFalsePredicate(profile.getEncryptNameIDsPredicate());
+        assertConditionalPredicate(profile.getEncryptAssertions());
+        assertFalsePredicate(profile.getEncryptNameIDs());
         Assert.assertTrue(profile.isEncryptionOptional());
         Assert.assertTrue(profile.isAllowingDelegation());
 
@@ -80,10 +80,10 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertTrue(profile.getProxyAudiences().isEmpty());
 
         // defaults for AbstractSAMLProfileConfiguration
-        assertConditionalPredicate(profile.getSignRequestsPredicate());
-        assertTruePredicate(profile.getSignAssertionsPredicate());
-        assertFalsePredicate(profile.getSignResponsesPredicate());
-        assertTruePredicate(profile.getEncryptAttributesPredicate());
+        assertConditionalPredicate(profile.getSignRequests());
+        assertTruePredicate(profile.getSignAssertions());
+        assertFalsePredicate(profile.getSignResponses());
+        assertTruePredicate(profile.getEncryptAttributes());
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());

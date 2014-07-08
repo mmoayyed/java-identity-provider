@@ -34,16 +34,16 @@ public class SAML2ArtifactTest extends BaseSAMLProfileTest {
 
         // defaults for AbstractSAML2ProfileConfiguration
 
-        assertConditionalPredicate(profile.getEncryptAssertionsPredicate());
-        assertFalsePredicate(profile.getEncryptNameIDsPredicate());
+        assertConditionalPredicate(profile.getEncryptAssertions());
+        assertFalsePredicate(profile.getEncryptNameIDs());
 
         Assert.assertEquals(profile.getProxyCount(), 0);
         Assert.assertTrue(profile.getProxyAudiences().isEmpty());
 
         // defaults for AbstractSAMLProfileConfiguration
-        assertFalsePredicate(profile.getSignRequestsPredicate());
-        assertFalsePredicate(profile.getSignAssertionsPredicate());
-        assertConditionalPredicate(profile.getSignResponsesPredicate());
+        assertFalsePredicate(profile.getSignRequests());
+        assertFalsePredicate(profile.getSignAssertions());
+        assertConditionalPredicate(profile.getSignResponses());
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
@@ -56,8 +56,8 @@ public class SAML2ArtifactTest extends BaseSAMLProfileTest {
         ArtifactResolutionProfileConfiguration profile =
                 getBean(ArtifactResolutionProfileConfiguration.class, "beans.xml", "saml/saml2artifactValues.xml");
 
-        assertFalsePredicate(profile.getEncryptAssertionsPredicate());
-        assertTruePredicate(profile.getEncryptNameIDsPredicate());
+        assertFalsePredicate(profile.getEncryptAssertions());
+        assertTruePredicate(profile.getEncryptNameIDs());
 
         Assert.assertEquals(profile.getProxyCount(), 99);
         final Collection<String> proxyAudiences = profile.getProxyAudiences();
@@ -65,9 +65,9 @@ public class SAML2ArtifactTest extends BaseSAMLProfileTest {
         Assert.assertTrue(proxyAudiences.contains("ProxyAudience1"));
         Assert.assertTrue(proxyAudiences.contains("ProxyAudience2"));
 
-        assertFalsePredicate(profile.getSignRequestsPredicate());
-        assertFalsePredicate(profile.getSignAssertionsPredicate());
-        assertConditionalPredicate(profile.getSignResponsesPredicate());
+        assertFalsePredicate(profile.getSignRequests());
+        assertFalsePredicate(profile.getSignAssertions());
+        assertConditionalPredicate(profile.getSignResponses());
         
         Assert.assertEquals(profile.getInboundSubflowId(), "artifact2ibfid");
         Assert.assertEquals(profile.getOutboundSubflowId(), "artifact2obfid");

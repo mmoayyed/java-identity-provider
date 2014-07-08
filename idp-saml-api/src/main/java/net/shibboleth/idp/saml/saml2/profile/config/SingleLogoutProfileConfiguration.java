@@ -49,9 +49,9 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ProfileConfig
      */
     protected SingleLogoutProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
-        setSignRequestsPredicate(new NoIntegrityMessageChannelPredicate());
-        setSignResponsesPredicate(new NoIntegrityMessageChannelPredicate());
-        setEncryptNameIDsPredicate(new NoConfidentialityMessageChannelPredicate());
+        setSignRequests(new NoIntegrityMessageChannelPredicate());
+        setSignResponses(new NoIntegrityMessageChannelPredicate());
+        setEncryptNameIDs(new NoConfidentialityMessageChannelPredicate());
     }
     
     /** {@inheritDoc} */

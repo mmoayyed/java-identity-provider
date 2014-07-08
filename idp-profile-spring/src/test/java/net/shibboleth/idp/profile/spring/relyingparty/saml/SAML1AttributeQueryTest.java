@@ -34,9 +34,9 @@ public class SAML1AttributeQueryTest extends BaseSAMLProfileTest {
                 getBean(AttributeQueryProfileConfiguration.class, "saml/saml1attributeQuery.xml", "beans.xml");
 
         // defaults for AbstractSAMLProfileConfiguration
-        assertFalsePredicate(profile.getSignRequestsPredicate());
-        assertFalsePredicate(profile.getSignAssertionsPredicate());
-        assertConditionalPredicate(profile.getSignResponsesPredicate());
+        assertFalsePredicate(profile.getSignRequests());
+        assertFalsePredicate(profile.getSignAssertions());
+        assertConditionalPredicate(profile.getSignResponses());
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
@@ -53,9 +53,9 @@ public class SAML1AttributeQueryTest extends BaseSAMLProfileTest {
         AttributeQueryProfileConfiguration profile =
                 getBean(AttributeQueryProfileConfiguration.class, "beans.xml", "saml/saml1attributeQueryValues.xml");
 
-        assertFalsePredicate(profile.getSignRequestsPredicate());
-        assertFalsePredicate(profile.getSignAssertionsPredicate());
-        assertConditionalPredicate(profile.getSignResponsesPredicate());
+        assertFalsePredicate(profile.getSignRequests());
+        assertFalsePredicate(profile.getSignAssertions());
+        assertConditionalPredicate(profile.getSignResponses());
 
         Assert.assertEquals(profile.getAssertionLifetime(), 10 * 60 * 1000);
 

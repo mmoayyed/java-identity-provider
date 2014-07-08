@@ -42,8 +42,8 @@ public class ArtifactResolutionProfileConfiguration extends AbstractSAML2Profile
      */
     protected ArtifactResolutionProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
-        setSignResponsesPredicate(new NoIntegrityMessageChannelPredicate());
-        setEncryptAssertionsPredicate(new NoConfidentialityMessageChannelPredicate());
+        setSignResponses(new NoIntegrityMessageChannelPredicate());
+        setEncryptAssertions(new NoConfidentialityMessageChannelPredicate());
     }
     
 }

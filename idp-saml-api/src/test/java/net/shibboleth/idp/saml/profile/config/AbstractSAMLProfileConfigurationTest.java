@@ -34,13 +34,13 @@ public class AbstractSAMLProfileConfigurationTest {
 
     @Test public void testSignAssertionsCriteria() {
         MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
-        Assert.assertNotNull(config.getSignAssertionsPredicate());
+        Assert.assertNotNull(config.getSignAssertions());
 
-        config.setSignAssertionsPredicate(Predicates.<ProfileRequestContext> alwaysFalse());
-        Assert.assertSame(config.getSignAssertionsPredicate(), Predicates.<ProfileRequestContext> alwaysFalse());
+        config.setSignAssertions(Predicates.<ProfileRequestContext> alwaysFalse());
+        Assert.assertSame(config.getSignAssertions(), Predicates.<ProfileRequestContext> alwaysFalse());
 
         try {
-            config.setSignAssertionsPredicate(null);
+            config.setSignAssertions(null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // excepted this
@@ -49,13 +49,13 @@ public class AbstractSAMLProfileConfigurationTest {
 
     @Test public void testSignResponsesCriteria() {
         MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
-        Assert.assertNotNull(config.getSignResponsesPredicate());
+        Assert.assertNotNull(config.getSignResponses());
 
-        config.setSignResponsesPredicate(Predicates.<ProfileRequestContext> alwaysFalse());
-        Assert.assertSame(config.getSignResponsesPredicate(), Predicates.<ProfileRequestContext> alwaysFalse());
+        config.setSignResponses(Predicates.<ProfileRequestContext> alwaysFalse());
+        Assert.assertSame(config.getSignResponses(), Predicates.<ProfileRequestContext> alwaysFalse());
 
         try {
-            config.setSignResponsesPredicate(null);
+            config.setSignResponses(null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // excepted this
@@ -64,13 +64,13 @@ public class AbstractSAMLProfileConfigurationTest {
 
     @Test public void testSignRequestsCriteria() {
         MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
-        Assert.assertNotNull(config.getSignRequestsPredicate());
+        Assert.assertNotNull(config.getSignRequests());
 
-        config.setSignRequestsPredicate(Predicates.<ProfileRequestContext> alwaysFalse());
-        Assert.assertSame(config.getSignRequestsPredicate(), Predicates.<ProfileRequestContext> alwaysFalse());
+        config.setSignRequests(Predicates.<ProfileRequestContext> alwaysFalse());
+        Assert.assertSame(config.getSignRequests(), Predicates.<ProfileRequestContext> alwaysFalse());
 
         try {
-            config.setSignRequestsPredicate(null);
+            config.setSignRequests(null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // excepted this

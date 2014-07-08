@@ -49,8 +49,8 @@ public class AttributeQueryProfileConfiguration extends AbstractSAML2ProfileConf
      */
     protected AttributeQueryProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
-        setSignResponsesPredicate(new NoIntegrityMessageChannelPredicate());
-        setEncryptAssertionsPredicate(new NoConfidentialityMessageChannelPredicate());
+        setSignResponses(new NoIntegrityMessageChannelPredicate());
+        setEncryptAssertions(new NoConfidentialityMessageChannelPredicate());
     }
     
     /** {@inheritDoc} */

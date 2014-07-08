@@ -85,7 +85,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAMLProfileConfigura
      */
     protected BrowserSSOProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
-        setSignResponsesPredicate(Predicates.<ProfileRequestContext>alwaysTrue());
+        setSignResponses(Predicates.<ProfileRequestContext>alwaysTrue());
         includeAttributeStatement = false;
         defaultAuthenticationMethods = Collections.emptyList();
         authenticationFlows = Collections.emptySet();

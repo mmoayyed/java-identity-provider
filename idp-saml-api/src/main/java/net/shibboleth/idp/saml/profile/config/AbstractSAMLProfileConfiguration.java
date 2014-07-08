@@ -78,7 +78,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull public Predicate<ProfileRequestContext> getSignAssertionsPredicate() {
+    @Override @Nonnull public Predicate<ProfileRequestContext> getSignAssertions() {
         return signAssertionsPredicate;
     }
 
@@ -87,13 +87,13 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * 
      * @param predicate predicate used to determine if generated assertions should be signed
      */
-    public void setSignAssertionsPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
+    public void setSignAssertions(@Nonnull final Predicate<ProfileRequestContext> predicate) {
         signAssertionsPredicate =
                 Constraint.isNotNull(predicate, "Predicate to determine if assertions should be signed cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull public Predicate<ProfileRequestContext> getSignRequestsPredicate() {
+    @Override @Nonnull public Predicate<ProfileRequestContext> getSignRequests() {
         return signedRequestsPredicate;
     }
 
@@ -102,14 +102,14 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * 
      * @param predicate predicate used to determine if generated requests should be signed
      */
-    public void setSignRequestsPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
+    public void setSignRequests(@Nonnull final Predicate<ProfileRequestContext> predicate) {
         signedRequestsPredicate =
                 Constraint.isNotNull(predicate,
                         "Predicate to determine if received requests should be signed cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override public Predicate<ProfileRequestContext> getSignResponsesPredicate() {
+    @Override @Nonnull public Predicate<ProfileRequestContext> getSignResponses() {
         return signResponsesPredicate;
     }
 
@@ -118,7 +118,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * 
      * @param predicate predicate used to determine if generated responses should be signed
      */
-    public void setSignResponsesPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
+    public void setSignResponses(@Nonnull final Predicate<ProfileRequestContext> predicate) {
         signResponsesPredicate =
                 Constraint.isNotNull(predicate, "Predicate to determine if responses should be signed cannot be null");
     }

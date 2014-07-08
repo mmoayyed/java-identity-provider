@@ -39,16 +39,16 @@ public class SAML2ECPProfileTest extends BaseSAMLProfileTest {
 
         // defaults for AbstractSAML2ProfileConfiguration
 
-        assertTruePredicate(profile.getEncryptAssertionsPredicate());
-        assertFalsePredicate(profile.getEncryptNameIDsPredicate());
+        assertTruePredicate(profile.getEncryptAssertions());
+        assertFalsePredicate(profile.getEncryptNameIDs());
 
         Assert.assertEquals(profile.getProxyCount(), 0);
         Assert.assertTrue(profile.getProxyAudiences().isEmpty());
 
         // defaults for AbstractSAMLProfileConfiguration
-        assertFalsePredicate(profile.getSignRequestsPredicate());
-        assertFalsePredicate(profile.getSignAssertionsPredicate());
-        assertTruePredicate(profile.getSignResponsesPredicate());
+        assertFalsePredicate(profile.getSignRequests());
+        assertFalsePredicate(profile.getSignAssertions());
+        assertTruePredicate(profile.getSignResponses());
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
@@ -66,16 +66,16 @@ public class SAML2ECPProfileTest extends BaseSAMLProfileTest {
         Assert.assertTrue(profile.skipEndpointValidationWhenSigned());
         Assert.assertEquals(profile.getMaximumSPSessionLifetime(), 1);
 
-        assertTruePredicate(profile.getEncryptAssertionsPredicate());
-        assertFalsePredicate(profile.getEncryptNameIDsPredicate());
+        assertTruePredicate(profile.getEncryptAssertions());
+        assertFalsePredicate(profile.getEncryptNameIDs());
 
         Assert.assertEquals(profile.getProxyCount(), 0);
         Assert.assertTrue(profile.getProxyAudiences().isEmpty());
 
         // defaults for AbstractSAMLProfileConfiguration
-        assertFalsePredicate(profile.getSignRequestsPredicate());
-        assertFalsePredicate(profile.getSignAssertionsPredicate());
-        assertTruePredicate(profile.getSignResponsesPredicate());
+        assertFalsePredicate(profile.getSignRequests());
+        assertFalsePredicate(profile.getSignAssertions());
+        assertTruePredicate(profile.getSignResponses());
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());

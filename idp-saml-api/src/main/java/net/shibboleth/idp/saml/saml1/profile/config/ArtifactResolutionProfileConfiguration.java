@@ -43,7 +43,7 @@ public class ArtifactResolutionProfileConfiguration
      */
     protected ArtifactResolutionProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
-        setSignResponsesPredicate(new NoIntegrityMessageChannelPredicate());
+        setSignResponses(new NoIntegrityMessageChannelPredicate());
     }
     
 }

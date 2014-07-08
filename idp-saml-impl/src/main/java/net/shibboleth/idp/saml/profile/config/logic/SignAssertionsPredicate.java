@@ -31,7 +31,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
-/** A predicate implementation that forwards to {@link SAMLProfileConfiguration#getSignAssertionsPredicate()}. */
+/** A predicate implementation that forwards to {@link SAMLProfileConfiguration#getSignAssertions()}. */
 public class SignAssertionsPredicate implements Predicate<ProfileRequestContext> {
 
     /**
@@ -63,7 +63,7 @@ public class SignAssertionsPredicate implements Predicate<ProfileRequestContext>
             if (rpc != null) {
                 final ProfileConfiguration pc = rpc.getProfileConfig();
                 if (pc != null && pc instanceof SAMLProfileConfiguration) {
-                    return ((SAMLProfileConfiguration) pc).getSignAssertionsPredicate().apply(input);
+                    return ((SAMLProfileConfiguration) pc).getSignAssertions().apply(input);
                 }
             }
         }
