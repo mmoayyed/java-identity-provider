@@ -1,9 +1,12 @@
-Changes in Release 3.0.0-alpha2
-=============================================
+Identity Provider Release Notes
+https://issues.shibboleth.net/jira/browse/IDP
+
+Changes in version 3.0.0-alpha2 - 
+============================================
 TODO
 
-Changes in Release 3.0.0-alpha1
-=============================================
+Changes in version 3.0.0-alpha1 - 2014-06-26
+============================================
 Bug
 [IDP-303] - Fix namespace -> schema mapping in Spring-based configurations
 [IDP-325] - Escape LDAP values in the velocity template
