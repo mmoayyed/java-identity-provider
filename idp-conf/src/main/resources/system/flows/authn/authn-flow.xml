@@ -14,6 +14,28 @@
         <evaluate expression="PopulateAuthenticationContext" />
         <evaluate expression="PopulateSessionContext" />
         <evaluate expression="ExtractActiveAuthenticationResults" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="SessionExists" />
+    </action-state>
+   
+    <!-- Check for an existing session, and do attribute resolution if so (which may be disabled, but...) -->
+    <decision-state id="SessionExists">
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.SessionContext)) != null and opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.SessionContext)).getIdPSession() != null"
+            then="ResolveAttributes"
+            else="FilterFlows" />
+    </decision-state>
+   
+    <action-state id="ResolveAttributes">
+        <evaluate expression="ResolveAttributes" />
+        <evaluate expression="'proceed'" />
+
+        <transition on="proceed" to="FilterFlows" />
+        <!-- Suppress resolution failure. -->
+        <transition on="UnableToResolveAttributes" to="FilterFlows" />
+    </action-state>
+   
+    <action-state id="FilterFlows">
         <evaluate expression="FilterFlowsByForcedAuthn" />
         <evaluate expression="FilterFlowsByPassivity" />
         <evaluate expression="FilterFlowsByNonBrowserSupport" />

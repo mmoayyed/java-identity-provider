@@ -25,13 +25,30 @@
 
     <bean id="PopulateSessionContext"
         class="net.shibboleth.idp.session.impl.PopulateSessionContext" scope="prototype"
-        p:activationCondition-ref="%{idp.session.enabled:shibboleth.Conditions.True}"
+        p:activationCondition-ref="#{ %{idp.session.enabled:true} ? 'shibboleth.Conditions.True' : 'shibboleth.Conditions.False' }"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:sessionResolver-ref="shibboleth.SessionManager" />
     
     <bean id="ExtractActiveAuthenticationResults"
         class="%{idp.session.activeResultExtraction:net.shibboleth.idp.session.impl.ExtractActiveAuthenticationResults}"
         scope="prototype" />
+
+    <bean id="ResolveAttributes"
+            class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
+            c:resolverService-ref="shibboleth.AttributeResolverService"
+            p:activationCondition-ref="#{ %{idp.authn.resolveAttribute:null} != null ? 'shibboleth.Conditions.True' : 'shibboleth.Conditions.False' }"
+            p:attributesToResolve="#{ { %{idp.authn.resolveAttribute:null} } }">
+        <property name="principalNameLookupStrategy">
+            <bean class="com.google.common.base.Functions" factory-method="compose"
+                c:g-ref="shibboleth.PrincipalNameLookup.Session"
+                c:f-ref="shibboleth.ChildLookup.SessionContext" />
+        </property>
+        <property name="attributeContextCreationStrategy">
+            <bean class="com.google.common.base.Functions" factory-method="compose"
+                c:g-ref="shibboleth.ChildLookupOrCreate.AttributeContext"
+                c:f-ref="shibboleth.ChildLookup.AuthenticationContext" />
+        </property>
+    </bean>
 
     <bean id="FilterFlowsByForcedAuthn"
         class="net.shibboleth.idp.authn.impl.FilterFlowsByForcedAuthn" scope="prototype" />
@@ -55,7 +72,7 @@
     
     <bean id="UpdateSessionWithAuthenticationResult"
         class="net.shibboleth.idp.session.impl.UpdateSessionWithAuthenticationResult" scope="prototype"
-        p:activationCondition-ref="%{idp.session.enabled:shibboleth.Conditions.True}"
+        p:activationCondition-ref="#{ %{idp.session.enabled:true} ? 'shibboleth.Conditions.True' : 'shibboleth.Conditions.False' }"
         p:sessionManager-ref="shibboleth.SessionManager" />
     
 </beans>

@@ -49,15 +49,24 @@
         c:type="#{ T(net.shibboleth.idp.attribute.filter.context.AttributeFilterContext) }"
         c:createContext="true" />
 
+    <bean id="shibboleth.ChildLookup.AuthenticationContext"
+        class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+        c:type="#{ T(net.shibboleth.idp.authn.context.AuthenticationContext) }" />
     <bean id="shibboleth.ChildLookup.SubjectCanonicalizationContext"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(net.shibboleth.idp.authn.context.SubjectCanonicalizationContext) }" />
+    <bean id="shibboleth.ChildLookup.SessionContext"
+        class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+        c:type="#{ T(net.shibboleth.idp.session.context.SessionContext) }" />
 
     <bean id="shibboleth.ResponderIdLookup.Simple"
         class="net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction" />
 
     <bean id="shibboleth.RelyingPartyIdLookup.Simple"
         class="net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction" />
+
+    <bean id="shibboleth.PrincipalNameLookup.Session"
+        class="net.shibboleth.idp.profile.context.navigate.SessionContextPrincipalLookupFunction" />
 
     <bean id="shibboleth.SignatureValidationConfigurationLookup"
         class="net.shibboleth.idp.profile.config.navigate.SignatureValidationConfigurationLookupFunction"
