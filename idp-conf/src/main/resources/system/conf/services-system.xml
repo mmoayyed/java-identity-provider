@@ -30,17 +30,23 @@
             value="net.shibboleth.idp.attribute.filter.AttributeFilter" />
         <constructor-arg name="strategy">
             <bean class="net.shibboleth.idp.attribute.filter.spring.AttributeFilterServiceStrategy"
-                p:id="FilterManagerFactory"/>
+                p:id="ShibbolethAttributeFilter"/>
         </constructor-arg>
     </bean>
 
     <bean id="shibboleth.AttributeResolverService" class="net.shibboleth.idp.service.ReloadableSpringService" 
         depends-on="shibboleth.VelocityEngine"
-        c:claz="net.shibboleth.idp.attribute.resolver.AttributeResolver"
         p:serviceConfigurations-ref="shibboleth.AttributeResolverResources"
         p:failFast="%{idp.service.attribute.resolver.failFast:false}"
         p:reloadCheckDelay="%{idp.service.attribute.resolver.checkInterval:0}"
-        p:reloadTaskTimer="shibboleth.TaskTimer" />
+        p:reloadTaskTimer="shibboleth.TaskTimer">
+        <constructor-arg name="claz"
+            value="net.shibboleth.idp.attribute.resolver.AttributeResolver" />
+        <constructor-arg name="strategy">
+            <bean class="net.shibboleth.idp.attribute.resolver.spring.AttributeResolverServiceStrategy"
+                p:id="ShibbolethAttributeResolver"/>
+        </constructor-arg>
+    </bean>
 
     <bean id="shibboleth.NameIdentifierGenerationService" class="net.shibboleth.idp.service.ReloadableSpringService" 
         c:claz="net.shibboleth.idp.saml.nameid.NameIdentifierGenerationService"

@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-    This file is an EXAMPLE configuration file.  While the configuration presented in this 
-    example file is functional, it isn't very interesting.  However, there are lots of example
-    attributes, encoders, and a couple example data connectors.
-    
-    Not all attribute definitions, data connectors, or principal connectors are demonstrated.
-    Deployers should refer to the Shibboleth 2 documentation for a complete list of components 
-    and their options.
+Part 1 of a two part attribute resolver.
 -->
 <resolver:AttributeResolver
         xmlns:resolver="urn:mace:shibboleth:2.0:resolver" 
@@ -33,6 +27,7 @@
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.1" friendlyName="eduPersonAffiliation" />
     </resolver:AttributeDefinition>
 
+
     <resolver:DataConnector id="staticAttributes" xsi:type="dc:Static">
         <dc:Attribute id="ra_1">
             <dc:Value>RA1</dc:Value>
@@ -45,9 +40,6 @@
         </dc:Attribute>
         <dc:Attribute id="OK">
             <dc:Value>OK</dc:Value>
-        </dc:Attribute>
-        <dc:Attribute id="NOTOK">
-            <dc:Value>NOTOK</dc:Value>
         </dc:Attribute>
         
     </resolver:DataConnector>

@@ -20,27 +20,29 @@ package net.shibboleth.idp.attribute.resolver.spring;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
-import net.shibboleth.idp.saml.attribute.principalconnector.impl.PrinicpalConnectorCanonicalizer;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
  * Bean definition parser for an {@link net.shibboleth.idp.attribute.resolver.AttributeResolver}. <br/>
- * This creates a {@link AttributeResolverImpl} from a &lt;resolver:AttributeResolver&gt; definition.
+ * 
+ * There is no bean being summoned up here. Rather we just parse all the children. Then over in the service all the *
+ * {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition},
+ * {@link net.shibboleth.idp.attribute.resolver.DataConnector} and
+ * {@link net.shibboleth.idp.saml.attribute.principalconnector.impl.PrincipalConnector} beans are sucked out of spring
+ * by type and injected into a new {@link net.shibboleth.idp.attribute.filter.AttributeFilterImpl} via a
+ * {@link AttributeResolverServiceStrategy}.
  */
-public class AttributeResolverParser extends AbstractSingleBeanDefinitionParser {
+public class AttributeResolverParser implements BeanDefinitionParser {
 
     /** Element name. */
     public static final QName ELEMENT_NAME =
@@ -50,46 +52,24 @@ public class AttributeResolverParser extends AbstractSingleBeanDefinitionParser 
     public static final QName SCHEMA_TYPE = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
             "AttributeResolverType");
 
-    /** {@inheritDoc} */
-    @Override protected Class<AttributeResolverImpl> getBeanClass(@Nullable Element element) {
-        return AttributeResolverImpl.class;
-    }
-
-    /** {@inheritDoc} */
-    @Override protected void doParse(Element config, ParserContext context, BeanDefinitionBuilder builder) {
+    /**
+     * {@inheritDoc}
+     * 
+     * @return
+     */
+    @Override public BeanDefinition parse(Element config, ParserContext context) {
 
         final Map<QName, List<Element>> configChildren = ElementSupport.getIndexedChildElements(config);
         List<Element> children;
 
-        String id = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
-
-        if (null == id) {
-            // Compatibility with V2
-            id = "Shibboleth.Resolver";
-        }
-        builder.setInitMethodName("initialize");
-        builder.setDestroyMethodName("destroy");
-
-        builder.addConstructorArgValue(id);
-
         children = configChildren.get(BaseAttributeDefinitionParser.ELEMENT_NAME);
-        builder.addConstructorArgValue(SpringSupport.parseCustomElements(children, context));
+        SpringSupport.parseCustomElements(children, context);
 
         children = configChildren.get(AbstractDataConnectorParser.ELEMENT_NAME);
-        builder.addConstructorArgValue(SpringSupport.parseCustomElements(children, context));
+        SpringSupport.parseCustomElements(children, context);
 
-        // Prinicipal.
         children = configChildren.get(new QName(AttributeResolverNamespaceHandler.NAMESPACE, "PrincipalConnector"));
-        BeanDefinitionBuilder childBuilder =
-                BeanDefinitionBuilder.genericBeanDefinition(PrinicpalConnectorCanonicalizer.class);
-
-        childBuilder.addConstructorArgValue(SpringSupport.parseCustomElements(children, context));
-        builder.addConstructorArgValue(childBuilder.getBeanDefinition());
-
-    }
-
-    /** {@inheritDoc} */
-    @Override protected boolean shouldGenerateId() {
-        return true;
+        SpringSupport.parseCustomElements(children, context);
+        return null;
     }
 }

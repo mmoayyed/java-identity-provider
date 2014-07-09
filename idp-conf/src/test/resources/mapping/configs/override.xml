@@ -9,7 +9,8 @@
 	default-init-method="initialize" default-destroy-method="destroy">
 
 	<util:list id="shibboleth.AttributeResolverResources">
-		<value>classpath:/mapping/configs/attribute-resolver.xml</value>
+        <value>classpath:/mapping/configs/attribute-resolver.xml</value>
+        <value>classpath:/mapping/configs/attribute-resolver2.xml</value>
 		<value>%{idp.home}/conf/property-placeholder.xml</value>
 	</util:list>
 
