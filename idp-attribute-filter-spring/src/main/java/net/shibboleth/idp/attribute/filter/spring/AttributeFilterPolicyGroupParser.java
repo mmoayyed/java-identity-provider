@@ -20,18 +20,16 @@ package net.shibboleth.idp.attribute.filter.spring;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.attribute.filter.AttributeFilterImpl;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
@@ -40,9 +38,10 @@ import org.w3c.dom.Element;
  * 
  * There is no bean being summoned up here. Rather we just parse all the children. Then over in the service all the *
  * {@link net.shibboleth.idp.attribute.filter.AttributeFilterPolicy} beans are sucked out of spring by type and injected
- * into a new {@link net.shibboleth.idp.attribute.filter.AttributeFilter}.
+ * into a new {@link net.shibboleth.idp.attribute.filter.AttributeFilterImpl} via a
+ * {@link AttributeFilterServiceStrategy}.
  */
-public class AttributeFilterPolicyGroupParser extends AbstractSingleBeanDefinitionParser {
+public class AttributeFilterPolicyGroupParser implements BeanDefinitionParser {
     /** Element name. */
     public static final QName ELEMENT_NAME = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
             "AttributeFilterPolicyGroup");
@@ -63,21 +62,11 @@ public class AttributeFilterPolicyGroupParser extends AbstractSingleBeanDefiniti
     private final Logger log = LoggerFactory.getLogger(AttributeFilterPolicyGroupParser.class);
 
     /** {@inheritDoc} */
-    @Override
-    protected Class<AttributeFilterImpl> getBeanClass(@Nullable Element element) {
-        return AttributeFilterImpl.class;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void doParse(Element config, ParserContext context, BeanDefinitionBuilder builder) {
+    @Override public BeanDefinition parse(Element config, ParserContext context) {
 
         String policyId = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
 
         log.debug("Parsing attribute filter policy group {}", policyId);
-
-        builder.setInitMethodName("initialize");
-        builder.setDestroyMethodName("destroy");
 
         List<Element> children;
         Map<QName, List<Element>> childrenMap = ElementSupport.getIndexedChildElements(config);
@@ -85,7 +74,7 @@ public class AttributeFilterPolicyGroupParser extends AbstractSingleBeanDefiniti
         //
         // Top level definitions
         //
-        
+
         children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "PolicyRequirementRule"));
         SpringSupport.parseCustomElements(children, context);
 
@@ -102,8 +91,8 @@ public class AttributeFilterPolicyGroupParser extends AbstractSingleBeanDefiniti
         // The actual policies
         //
         children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeFilterPolicy"));
-        
-        builder.addConstructorArgValue(policyId);
-        builder.addConstructorArgValue(SpringSupport.parseCustomElements(children, context));
+
+        SpringSupport.parseCustomElements(children, context);
+        return null;
     }
 }

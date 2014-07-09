@@ -14,7 +14,8 @@
 	</util:list>
 
 	<util:list id="shibboleth.AttributeFilterResources">
-		<value>classpath:/mapping/configs/attribute-filter.xml</value>
+        <value>classpath:/mapping/configs/attribute-filter.xml</value>
+        <value>classpath:/mapping/configs/attribute-filter2.xml</value>
 		<value>%{idp.home}/conf/property-placeholder.xml</value>
 	</util:list>
 

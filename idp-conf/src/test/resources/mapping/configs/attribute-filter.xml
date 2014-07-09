@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- This file is an EXAMPLE policy file. While the policy presented in this 
-	example file is functional, it isn't very interesting. Deployers should refer 
-	to the Shibboleth 2 documentation for a complete list of components and their 
-	options. -->
+<!-- Part one of a two part Attribute Filter Policy. -->
 <afp:AttributeFilterPolicyGroup id="ShibbolethFilterPolicy"
 	xmlns:afp="urn:mace:shibboleth:2.0:afp" xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic"
 	xmlns:saml="urn:mace:shibboleth:2.0:afp:mf:saml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

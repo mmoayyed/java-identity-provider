@@ -107,6 +107,9 @@ public abstract class AbstractServiceableComponent<T> extends AbstractIdentified
             log.debug("Component '{}': Closing the appcontext", getId());
             oldContext.close();
         }
+        // If we were not created by spring we need to do the destroy of ourself.
+        // Note that we will end up being called here but will fall out at the top.
+        destroy();
     }
 
     /**
