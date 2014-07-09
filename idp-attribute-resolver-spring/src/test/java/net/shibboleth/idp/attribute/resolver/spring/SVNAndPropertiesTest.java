@@ -98,8 +98,6 @@ public class SVNAndPropertiesTest extends OpenSAMLInitBaseTestCase {
         theDir = null;
     }
 
-
-
     @Test public void attributesTest() throws ResolutionException, SVNException {
         final GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + AttributeResolverTest.class);
@@ -122,7 +120,7 @@ public class SVNAndPropertiesTest extends OpenSAMLInitBaseTestCase {
 
         context.refresh();
 
-        final AttributeResolver resolver = context.getBean(AttributeResolver.class);
+        final AttributeResolver resolver = BaseAttributeDefinitionParserTest.getResolver(context);
 
         AttributeResolutionContext attributeContext = new AttributeResolutionContext();
         resolver.resolveAttributes(attributeContext);

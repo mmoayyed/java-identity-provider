@@ -28,6 +28,7 @@ import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.service.ServiceException;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.support.GenericApplicationContext;
@@ -56,12 +57,17 @@ public class AttributeFilterServiceTest {
      * @param resources configuration resources
      * @return the service
      * @throws ServiceException if an error occurs loading the service
+     * @throws ComponentInitializationException 
      */
-    public static AttributeFilter getFilter(String name) throws ServiceException {
+    private static AttributeFilter getFilter(String name) throws ServiceException, ComponentInitializationException {
         final Resource resource = new ClassPathResource(SERVICE_CONFIG_DIR + name);
-        final GenericApplicationContext context = SpringSupport.newContext(name, Collections.singletonList(resource),
-                Collections.<BeanPostProcessor>emptyList(), null);
-        return context.getBean(AttributeFilter.class);
+        final GenericApplicationContext context =
+                SpringSupport.newContext(name, Collections.singletonList(resource),
+                        Collections.<BeanPostProcessor> emptyList(), null);
+        final AttributeFilterServiceStrategy strategy = new AttributeFilterServiceStrategy();
+        strategy.setId("ID");
+        strategy.initialize();
+        return (AttributeFilter) strategy.apply(context);
     }
 
     @BeforeClass protected void setUp() throws Exception {
@@ -88,7 +94,7 @@ public class AttributeFilterServiceTest {
         attributesToBeFiltered.put(affiliation.getId(), affiliation);
     }
 
-    @Test public void testPolicy2() throws ServiceException, AttributeFilterException {
+    @Test public void testPolicy2() throws ServiceException, AttributeFilterException, ComponentInitializationException {
 
         final AttributeFilter filter = getFilter("policy2.xml");
 
@@ -116,7 +122,7 @@ public class AttributeFilterServiceTest {
 
     }
 
-    @Test public void testPolicy3() throws ServiceException, AttributeFilterException {
+    @Test public void testPolicy3() throws ServiceException, AttributeFilterException, ComponentInitializationException {
 
         final AttributeFilter filter = getFilter("policy3.xml");
 
@@ -143,7 +149,7 @@ public class AttributeFilterServiceTest {
         Assert.assertNull(filteredAttributes.get("affiliation"));
     }
 
-    @Test public void testPolicy4() throws ServiceException, AttributeFilterException {
+    @Test public void testPolicy4() throws ServiceException, AttributeFilterException, ComponentInitializationException {
 
         final AttributeFilter filter = getFilter("policy4.xml");
 

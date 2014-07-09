@@ -79,7 +79,7 @@ public class StoredIdTest extends BaseAttributeDefinitionParserTest {
 
         principalConnector = getBean(PRINCIPALCONNECTOR_FILE_PATH + fileName, PrincipalConnector.class, context);
         dataConnector = context.getBean("dc", DataConnector.class);
-        ar = context.getBean(AttributeResolverImpl.class);
+        ar = BaseAttributeDefinitionParserTest.getResolver(context);
     }
 
 

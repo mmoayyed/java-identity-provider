@@ -18,5 +18,5 @@
     </resolver:AttributeDefinition>
     
      <resolver:PrincipalConnector xsi:type="pc:Transient" nameIDFormat="http://example.org/SAML1" id="Transient"/>
-     <resolver:PrincipalConnector xsi:type="pc:Transient" nameIDFormat="http://example.org/SAML2" id="Transient"/>
+     <resolver:PrincipalConnector xsi:type="pc:Transient" nameIDFormat="http://example.org/SAML2" id="TransientSAML1"/>
 </resolver:AttributeResolver>

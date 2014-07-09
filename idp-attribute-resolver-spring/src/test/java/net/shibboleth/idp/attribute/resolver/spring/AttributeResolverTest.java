@@ -313,7 +313,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
                 new ClassPathResource("net/shibboleth/idp/attribute/resolver/spring/predicates.xml"));
         context.refresh();
 
-        final AttributeResolver resolver = context.getBean(AttributeResolver.class);
+        final AttributeResolver resolver = BaseAttributeDefinitionParserTest.getResolver(context);
         AttributeResolutionContext resolutionContext =
                 TestSources.createResolutionContext("PETER", "issuer", "recipient");
 
@@ -344,7 +344,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
                 new ClassPathResource("net/shibboleth/idp/attribute/resolver/spring/predicates-navigate.xml"));
         context.refresh();
 
-        final AttributeResolver resolver = context.getBean(AttributeResolver.class);
+        final AttributeResolver resolver =  BaseAttributeDefinitionParserTest.getResolver(context);
         AttributeResolutionContext resolutionContext =
                 TestSources.createResolutionContext("PETER", "issuer", "recipient");
         resolver.resolveAttributes(resolutionContext);

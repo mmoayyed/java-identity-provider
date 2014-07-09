@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring;
 
+import java.util.Collection;
+
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
@@ -45,10 +47,12 @@ public class AttributeResolverServiceStrategy extends AbstractIdentifiableInitia
     /** {@inheritDoc} */
     @Override @Nullable public ServiceableComponent<AttributeResolver> apply(@Nullable ApplicationContext appContext) {
 
+        Collection<PrincipalConnector> pcs = appContext.getBeansOfType(PrincipalConnector.class).values();
+        PrinicpalConnectorCanonicalizer pcc = new PrinicpalConnectorCanonicalizer(pcs);
+        
         final AttributeResolverImpl resolver =
                 new AttributeResolverImpl(getId(), appContext.getBeansOfType(AttributeDefinition.class).values(),
-                        appContext.getBeansOfType(DataConnector.class).values(), new PrinicpalConnectorCanonicalizer(
-                                appContext.getBeansOfType(PrincipalConnector.class).values()));
+                        appContext.getBeansOfType(DataConnector.class).values(), pcc);
         resolver.setApplicationContext(appContext);
 
         try {

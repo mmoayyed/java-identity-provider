@@ -26,12 +26,15 @@ import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
+import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.SimpleAttributeDefinitionParser;
 import net.shibboleth.idp.saml.attribute.principalconnector.impl.PrincipalConnector;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
@@ -191,6 +194,17 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         configReader.loadBeanDefinitions(BEAN_FILE_PATH + beanFileName);
 
         return getBean(PRINCIPALCONNECTOR_FILE_PATH + fileName, PrincipalConnector.class, context);
+    }
+
+    static public AttributeResolverImpl getResolver(ApplicationContext appCtx) {
+        AttributeResolverServiceStrategy strategy = new AttributeResolverServiceStrategy();
+        strategy.setId("testResolver");
+        try {
+            strategy.initialize();
+        } catch (ComponentInitializationException e) {
+            return null;
+        }
+        return (AttributeResolverImpl) strategy.apply(appCtx);
     }
 
 }

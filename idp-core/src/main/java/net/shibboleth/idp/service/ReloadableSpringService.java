@@ -259,6 +259,7 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
         super.doReload();
 
         log.debug("Creating new ApplicationContext for service '{}'", getId());
+        log.debug("Reloading from {}", getServiceConfigurations());
         final GenericApplicationContext appContext;
         try {
             appContext =
