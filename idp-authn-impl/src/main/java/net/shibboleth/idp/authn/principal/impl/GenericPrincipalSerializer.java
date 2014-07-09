@@ -109,8 +109,8 @@ public class GenericPrincipalSerializer extends AbstractPrincipalSerializer<Stri
             principalType.getConstructor(String.class);
             compatiblePrincipalTypes.add(principalType);
             return true;
-        } catch (NoSuchMethodException | SecurityException e) {
-            log.warn("Unsupported Principal type will be omitted: {}", principalType.getClass().getName());
+        } catch (final NoSuchMethodException | SecurityException e) {
+            log.warn("Unsupported Principal type will be omitted: {}", principalType.getName());
         }
         
         return false;
@@ -176,7 +176,7 @@ public class GenericPrincipalSerializer extends AbstractPrincipalSerializer<Stri
                     final Class<? extends Principal> pclass = Class.forName(type).asSubclass(Principal.class);
                     final Constructor<? extends Principal> ctor = pclass.getConstructor(String.class);
                     return ctor.newInstance(name);
-                } catch (ClassNotFoundException | NoSuchMethodException | SecurityException
+                } catch (final ClassNotFoundException | NoSuchMethodException | SecurityException
                             | InstantiationException | IllegalAccessException | IllegalArgumentException
                             | InvocationTargetException e) {
                     log.warn("Exception instantiating custom Principal type " + type + " with name " + name, e);
