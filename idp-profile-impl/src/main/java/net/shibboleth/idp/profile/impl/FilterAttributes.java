@@ -32,6 +32,7 @@ import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.idp.profile.context.navigate.SubjectContextPrincipalLookupFunction;
 import net.shibboleth.idp.service.ReloadableService;
 import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -79,10 +80,8 @@ public class FilterAttributes extends AbstractProfileAction {
     /** Strategy used to locate the {@link AttributeContext} to filter. */
     @Nonnull private Function<ProfileRequestContext,AttributeContext> attributeContextLookupStrategy;
     
-    /**
-     * Strategy used to locate the {@link SubjectContext} associated with a given {@link ProfileRequestContext}.
-     */
-    @Nonnull private Function<ProfileRequestContext,SubjectContext> subjectContextLookupStrategy;
+    /** Strategy used to locate the principal name associated with the attribute filtering. */
+    @Nonnull private Function<ProfileRequestContext,String> principalNameLookupStrategy;
 
     /**
      * Strategy used to locate the {@link AuthenticationContext} associated with a given {@link ProfileRequestContext}.
@@ -99,9 +98,6 @@ public class FilterAttributes extends AbstractProfileAction {
      */
     @Nonnull private Function<AttributeFilterContext,SAMLMetadataContext> metadataFromFilterLookupStrategy;
 
-    /** SubjectContext to work from. */
-    @Nullable private SubjectContext subjectContext;
-
     /** AuthenticationContext to work from (if any). */
     @Nullable private AuthenticationContext authenticationContext;
 
@@ -110,9 +106,6 @@ public class FilterAttributes extends AbstractProfileAction {
 
     /**
      * Constructor.
-     * 
-     * <p>Initializes {@link #relyingPartyContextLookupStrategy}, {@link #authnContextLookupStrategy} and
-     * {@link #subjectContextLookupStrategy} to {@link ChildContextLookup}.</p>
      * 
      * @param filterService engine used to filter attributes
      */
@@ -124,7 +117,11 @@ public class FilterAttributes extends AbstractProfileAction {
         
         attributeContextLookupStrategy = Functions.compose(new ChildContextLookup<>(AttributeContext.class),
                 new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
-        subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
+
+        principalNameLookupStrategy = Functions.compose(
+                new SubjectContextPrincipalLookupFunction(),
+                new ChildContextLookup<ProfileRequestContext,SubjectContext>(SubjectContext.class));
+        
         authnContextLookupStrategy = new ChildContextLookup<>(AuthenticationContext.class);
         
         // Default: inbound msg context -> SAMLPeerEntityContext -> SAMLMetadataContext
@@ -199,16 +196,14 @@ public class FilterAttributes extends AbstractProfileAction {
     }
     
     /**
-     * Set the strategy used to locate the {@link SubjectContext} associated with a given {@link ProfileRequestContext}.
+     * Set the strategy used to locate the principal name for this attribute filtering.
      * 
-     * @param strategy strategy used to locate the {@link SubjectContext} associated with a given
-     *            {@link ProfileRequestContext}
+     * @param strategy lookup strategy
      */
-    public void setSubjectContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,SubjectContext> strategy) {
+    public void setPrincipalNameLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        subjectContextLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
+        principalNameLookupStrategy = Constraint.isNotNull(strategy, "Principal name lookup strategy cannot be null");
     }
 
     /**
@@ -257,11 +252,6 @@ public class FilterAttributes extends AbstractProfileAction {
         if (attributeContext.getIdPAttributes().isEmpty()) {
             log.debug("{} No attributes to filter", getLogPrefix());
             return false;
-        }
-
-        subjectContext = subjectContextLookupStrategy.apply(profileRequestContext);
-        if (subjectContext == null) {
-            log.debug("{} No subject context available.", getLogPrefix());
         }
         
         authenticationContext = authnContextLookupStrategy.apply(profileRequestContext);
@@ -320,11 +310,7 @@ public class FilterAttributes extends AbstractProfileAction {
     private void populateFilterContext(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AttributeFilterContext filterContext) {
         
-        if (null != subjectContext) {
-            filterContext.setPrincipal(subjectContext.getPrincipalName());
-        } else {
-            filterContext.setPrincipal(null);
-        }
+        filterContext.setPrincipal(principalNameLookupStrategy.apply(profileRequestContext));
 
         filterContext.setPrincipalAuthenticationMethod(null);
         if (null != authenticationContext) {
