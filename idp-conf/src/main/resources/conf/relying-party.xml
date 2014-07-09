@@ -51,10 +51,24 @@
         <bean parent="RelyingPartyByName" c:relyingPartyIds="https://sp.example.org">
             <property name="profileConfigurations">
                 <util:list>
-                    <ref bean="Shibboleth.SSO" />
+                    <bean parent="Shibboleth.SSO">
+                        <property name="defaultAuthenticationMethods">
+                            <util:list>
+                                <bean parent="shibboleth.SAML1AuthenticationMethod"
+                                    c:method="urn:oasis:names:tc:SAML:1.0:am:password" />
+                            </util:list>
+                        </property>
+                    </bean>
                     <ref bean="SAML1.AttributeQuery" />
                     <ref bean="SAML1.ArtifactResolution" />
-                    <ref bean="SAML2.SSO" />
+                    <bean parent="SAML2.SSO">
+                        <property name="defaultAuthenticationMethods">
+                            <util:list>
+                                <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                                    c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" />
+                            </util:list>
+                        </property>
+                    </bean>
                     <ref bean="SAML2.ECP" />
                     <ref bean="SAML2.AttributeQuery" />
                     <ref bean="SAML2.ArtifactResolution" />

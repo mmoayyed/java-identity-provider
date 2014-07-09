@@ -117,6 +117,9 @@
         class="net.shibboleth.idp.authn.principal.impl.InexactPrincipalEvalPredicateFactory" />
 
     <!-- Boilerplate objects needed to key the installation of matching rules in the comparison registry. -->
+
+    <bean id="shibboleth.SAMLAuthnMethodExact" class="net.shibboleth.utilities.java.support.collection.Pair"
+        p:first="#{ T(net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal) }" p:second="exact"/>
     
     <bean id="shibboleth.SAMLACClassRefExact" class="net.shibboleth.utilities.java.support.collection.Pair"
         p:first="#{ T(net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal) }" p:second="exact"/>
