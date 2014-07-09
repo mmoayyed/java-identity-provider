@@ -32,15 +32,16 @@ import org.springframework.context.ApplicationContext;
 import com.google.common.base.Function;
 
 /**
- * Strategy for summoning up a {@link AttributeFilterImpl} from a populated {@link ApplicationContext}. We do this by
- * finding all the configured {@link AttributeFilterPolicy} beans and bunging them into the Filter which we then
- * initialize.
+ * Strategy for summoning up an {@link AttributeFilterImpl} from a populated {@link ApplicationContext}. We do this by
+ * finding all the configured {@link AttributeFilterPolicy} beans and bunging them into the Attribute Filter which we
+ * then initialize.
  */
 public class AttributeFilterServiceStrategy extends AbstractIdentifiableInitializableComponent implements
         Function<ApplicationContext, ServiceableComponent<AttributeFilter>> {
 
     /** {@inheritDoc} */
-    @Override @Nullable public ServiceableComponent<AttributeFilter> apply(@Nullable ApplicationContext appContext) {
+    @Override
+    @Nullable public ServiceableComponent<AttributeFilter> apply(@Nullable final ApplicationContext appContext) {
 
         final AttributeFilterImpl filter =
                 new AttributeFilterImpl(getId(), appContext.getBeansOfType(AttributeFilterPolicy.class).values());
@@ -49,7 +50,7 @@ public class AttributeFilterServiceStrategy extends AbstractIdentifiableInitiali
         try {
             filter.initialize();
         } catch (ComponentInitializationException e) {
-            throw new ServiceException("Exception initializing filter for " + appContext.getDisplayName(), e);
+            throw new ServiceException("Unable to initialize attribute filter for " + appContext.getDisplayName(), e);
         }
         return filter;
     }

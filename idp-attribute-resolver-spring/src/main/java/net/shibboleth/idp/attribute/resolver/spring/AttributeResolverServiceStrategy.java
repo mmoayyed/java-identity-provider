@@ -37,28 +37,32 @@ import org.springframework.context.ApplicationContext;
 import com.google.common.base.Function;
 
 /**
- * Strategy for summoning up a {@link AttributeResolverImpl} from a populated {@link ApplicationContext}. We do this by
+ * Strategy for summoning up an {@link AttributeResolverImpl} from a populated {@link ApplicationContext}. We do this by
  * finding all the configured {@link AttributeDefinition}, {@link DataConnector} and {@link PrincipalConnector} beans
- * and bunging them into the Attribute resolver which we then initialize.
+ * and bunging them into the Attribute Resolver which we then initialize.
  */
 public class AttributeResolverServiceStrategy extends AbstractIdentifiableInitializableComponent implements
         Function<ApplicationContext, ServiceableComponent<AttributeResolver>> {
 
     /** {@inheritDoc} */
-    @Override @Nullable public ServiceableComponent<AttributeResolver> apply(@Nullable ApplicationContext appContext) {
+    @Override
+    @Nullable public ServiceableComponent<AttributeResolver> apply(@Nullable final ApplicationContext appContext) {
 
-        Collection<PrincipalConnector> pcs = appContext.getBeansOfType(PrincipalConnector.class).values();
-        PrinicpalConnectorCanonicalizer pcc = new PrinicpalConnectorCanonicalizer(pcs);
-        
-        final AttributeResolverImpl resolver =
-                new AttributeResolverImpl(getId(), appContext.getBeansOfType(AttributeDefinition.class).values(),
-                        appContext.getBeansOfType(DataConnector.class).values(), pcc);
+        final Collection<PrincipalConnector> pcs = appContext.getBeansOfType(PrincipalConnector.class).values();
+        final PrinicpalConnectorCanonicalizer pcc = new PrinicpalConnectorCanonicalizer(pcs);
+
+        final Collection<AttributeDefinition> definitions =
+                appContext.getBeansOfType(AttributeDefinition.class).values();
+
+        final Collection<DataConnector> connectors = appContext.getBeansOfType(DataConnector.class).values();
+
+        final AttributeResolverImpl resolver = new AttributeResolverImpl(getId(), definitions, connectors, pcc);
         resolver.setApplicationContext(appContext);
 
         try {
             resolver.initialize();
         } catch (ComponentInitializationException e) {
-            throw new ServiceException("Exception initializing filter for " + appContext.getDisplayName(), e);
+            throw new ServiceException("Unable to initialize attribute resolver for " + appContext.getDisplayName(), e);
         }
         return resolver;
     }
