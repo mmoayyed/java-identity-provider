@@ -1,0 +1,221 @@
+Changes in Release 3.0.0-alpha2
+=============================================
+TODO
+
+Changes in Release 3.0.0-alpha1
+=============================================
+Bug
+[IDP-303] - Fix namespace -> schema mapping in Spring-based configurations
+[IDP-325] - Escape LDAP values in the velocity template
+[IDP-336] - The great capitalization work item
+[IDP-354] - Review all custom parsers for direct injection of contained beans
+[IDP-405] - Crypto defaults for Legacy relying party.xml
+[IDP-422] - Spring property syntax creates a conflict with Velocity syntax
+[IDP-425] - Computed and Stored Data Connectors cannot have sourceAttribute from another DC
+
+Documentation
+[IDP-395] - Amendments to SignatureValidation documentation
+
+Improvement
+[IDP-83] - More flexibility in resolver error handling
+[IDP-274] - Data Connector Validate Interface
+[IDP-285] - Use reflection for setting spring beans in data connector parsers
+[IDP-289] - Update ldaptive to 1.0.1
+[IDP-307] - Move attribute mapper from idp-attribute-filter to new module
+[IDP-337] - Allow override of determination of which results are active for reuse
+[IDP-366] - Make AttributeContext a top-level child and retrieve via lookup function in actions.
+[IDP-367] - Rebase IdP actions on net.shibboleth.idp.profile.AbstractProfileAction
+
+New Feature
+[IDP-67] - Allow attribute resolver plugins to carry a condition that, if not met, would cause the plugin not to be evaluated for a given request.
+
+Task
+[IDP-1] - Port IdPv2 Attribute Resolver to new APIs
+[IDP-2] - Port IdPv2 Attribute Filtering Engine to new APIs
+[IDP-3] - Port IdPv2 Attribute Resolver LDAP Data Connector to new APIs
+[IDP-4] - Port IdPv2 Attribute Resolver Relational Database Data Connector to new APIs
+[IDP-5] - Port IdPv2 Attribute Resolver Static Data Connector to new APIs
+[IDP-7] - Port IdPv2 Attribute Resolver Mapped Attribute Definition to new APIs
+[IDP-8] - Port IdPv2 Attribute Resolver Prescoped Attribute Definition to new APIs
+[IDP-9] - Port IdPv2 Attribute Resolver Principal Authentication Method Attribute Definition to new APIs
+[IDP-10] - Port IdPv2 Attribute Resolver Principal Name Attribute Definition to new APIs
+[IDP-11] - Port IdPv2 Attribute Resolver Regex Split Attribute Definition to new APIs
+[IDP-14] - Port IdPv2 Attribute Resolver Scope Attribute Definition to new APIs
+[IDP-15] - Port IdPv2 Attribute Resolver Scripted Attribute Definition to new APIs
+[IDP-16] - Port IdPv2 Attribute Resolver Simple Attribute Definition to new APIs
+[IDP-17] - Port IdPv2 Attribute Resolver Template Attribute Definition to new APIs
+[IDP-19] - Port IdPv2 Attribute Resolver SAML1 Base64 Attribute Encoder to new APIs
+[IDP-20] - Port IdPv2 Attribute Resolver SAML1 Scoped Attribute Encoder to new APIs
+[IDP-21] - Port IdPv2 Attribute Resolver SAML1 String Attribute Encoder to new APIs
+[IDP-22] - Port IdPv2 Attribute Resolver SAML1 String NameIdentifier Attribute Encoder to new APIs
+[IDP-23] - Port IdPv2 Attribute Resolver SAML1 XMLObject Attribute Encoder to new APIs
+[IDP-24] - Port IdPv2 Attribute Resolver SAML2 Base64 Attribute Encoder to new APIs
+[IDP-26] - Port IdPv2 Attribute Resolver SAML2 String Attribute Encoder to new APIs
+[IDP-27] - Port IdPv2 Attribute Resolver SAML2 NameID Attribute Encoder to new APIs
+[IDP-28] - Port IdPv2 Attribute Resolver SAML2 XMLObject Attribute Encoder to new APIs
+[IDP-29] - Create attribute policy requirement implementation based on IdPv2 AND match functor
+[IDP-30] - Create attribute policy requirement implementation based on IdPv2 ANY match functor
+[IDP-31] - Create attribute policy requirement implementation based on IdPv2 Attribute Issuer regex match functor
+[IDP-32] - Create attribute policy requirement implementation based on IdPv2 Attribute Issuer string match functor
+[IDP-33] - Create attribute policy requirement implementation based on IdPv2 Attribute Requester regex match functor
+[IDP-34] - Create attribute policy requirement implementation based on IdPv2 Attribute Requester string match functor
+[IDP-35] - Create attribute policy requirement implementation based on IdPv2 Attribute Scope regex match functor
+[IDP-36] - Create attribute policy requirement implementation based on IdPv2 Attribute Scope string match functor
+[IDP-37] - Create attribute policy requirement implementation based on IdPv2 Attribute value regex match functor
+[IDP-38] - Create attribute policy requirement implementation based on IdPv2 Attribute Value string match functor
+[IDP-39] - Create attribute policy requirement implementation based on IdPv2 Authentication Method regex match functor
+[IDP-40] - Create attribute policy requirement implementation based on IdPv2 Authentication Method string match functor
+[IDP-41] - Create attribute policy requirement implementation based on IdPv2 NOT match functor
+[IDP-42] - Create attribute policy requirement implementation based on IdPv2 OR match functor
+[IDP-43] - Create attribute policy requirement implementation based on IdPv2 Principal Name regex match functor
+[IDP-44] - Create attribute policy requirement implementation based on IdPv2 Principal Name string match functor
+[IDP-45] - Create attribute policy requirement implementation based on IdPv2 Scripted match functor
+[IDP-48] - Create attribute value matcher implementation based on IdPv2 AND functor
+[IDP-49] - Create attribute value matcher implementation based on IdPv2 ANY functor
+[IDP-54] - Create attribute value matcher implementation based on IdPv2 Attribute Scope regex functor
+[IDP-55] - Create attribute value matcher implementation based on IdPv2 Attribute Scope string match functor
+[IDP-56] - Create attribute value matcher implementation based on IdPv2 Attribute Value regex match functor
+[IDP-57] - Create attribute value matcher implementation based on IdPv2 Attribute Value string match functor
+[IDP-60] - Create attribute value matcher implementation based on IdPv2 NOT match functor
+[IDP-61] - Create attribute value matcher implementation based on IdPv2 OR match functor
+[IDP-64] - Create attribute value matcher implementation based on IdPv2 Scripted functor
+[IDP-98] - Code review comments on Attribute resolvers
+[IDP-99] - Create attribute policy requirement implementation based on IdPv2 Attribute Scope regex match functor
+[IDP-147] - Create a SAML 1 workflow task that creates a skeletal Response and adds it to the outbound message context
+[IDP-148] - Create a SAML 2 workflow task that creates a skeletal Response and adds it to the outbound message context
+[IDP-149] - Create a SAML 1 task that checks to ensure the incoming message is the correct SAML version
+[IDP-150] - Create a SAML 2 task that checks to ensure the incoming message is the correct SAML version
+[IDP-153] - Complete Attribute Filter Unit Tests
+[IDP-161] - Enhance / write unit tests to improve coverage idp-attribute-api, idp-attribute-impl
+[IDP-162] - Enhance / write unit tests to improve coverage idp-attribute-filter-api, idp-attribute-filter-impl
+[IDP-199] - Create an action that schema validates incoming message
+[IDP-270] - Add LDAP Data Connector Unit Tests
+[IDP-297] - Resolver should detect connector or definition collisions with duplicate IDs.
+[IDP-298] - Review resources and their use
+[IDP-315] - Check Dependencies and mvn plugins in all POMS
+[IDP-324] - Client-side storage implementation
+[IDP-326] - Remove needless synchronization in Resolver definition base (Abstract) classes
+[IDP-328] - Improve handling of error message mappings in authentication flow actions
+[IDP-330] - Subsystem reload, services, thread safety,
+[IDP-332] - Placeholder subflows for some login conditions
+[IDP-338] - Track and work around SPR-11112
+[IDP-339] - RelyingPartyConfig Predicate for matching by entityID
+[IDP-350] - Modify and then document the use of context by attribute resolution
+[IDP-352] - File Spring Web Flow issue to support relative flow locations for "file:" base paths.
+[IDP-361] - Split the attribute filter context in internal and external forms
+[IDP-362] - Design and implementation of a new NameID generation facility
+[IDP-363] - Ensure idp-attribute-resolver-api does not depends on idp-saml-api
+[IDP-371] - Generalize the attribute-cli to test any webflow (including the deployed ones)
+[IDP-372] - Profile action to implement endpoint resolution/verification and populate contexts
+[IDP-376] - Add Action to map requested attributes from metadata
+[IDP-379] - Revisit Attribute filter and resolver parsers with a view to making them more robust against property replacement
+[IDP-385] - Revisit schema to relax type restrictions and thus allow property replacement
+[IDP-386] - Externalize spring beans configuration
+[IDP-398] - Centralize parsing of <sec:Credentials>
+[IDP-403] - Make new NameID generation facilities reloadable
+[IDP-413] - Metadata schema parser support for NodeProcessorFilter
+[IDP-416] - Add profile actions to set MessageChannelSecurityContext and fix up related code
+[IDP-420] - Investigate adding trust engines to metadata-providers
+[IDP-421] - Add a scripted Predicate
+    
+Sub-task
+[IDP-6] - Port IdPv2 Attribute Resolver ComputedID to new APIs
+[IDP-12] - Port IdPv2 Attribute Resolver SAML1 NameIdentifier Attribute Definition to new APIs
+[IDP-13] - Port IdPv2 Attribute Resolver SAML2 NameID Attribute Definition to new APIs
+[IDP-18] - Port IdPv2 Attribute Resolver Transient ID Attribute Definition to new APIs
+[IDP-25] - Port IdPv2 Attribute Resolver SAML2 Scoped String Attribute Encoder to new APIs
+[IDP-47] - Create attribute policy requirement implementation based on IdPv2 SAML Requester in metadata entity group functor
+[IDP-82] - Support for EncryptionMethod in metadata
+[IDP-84] - Create a profile action to verify response location
+[IDP-90] - Ensure transients are per-session
+[IDP-103] - Develop authentication workflow action that finalizes the authentication process
+[IDP-108] - Create an authentication workflow action that selects which workflow to execute
+[IDP-109] - Create an authentication workflow action that updates the current user session once authentication has completed
+[IDP-110] - Create an authentication workflow action that validates the user agent's IP address against a given list
+[IDP-112] - Create an authentication workflow action that validates the REMOTE_USER present in the HTTP request
+[IDP-113] - Create an authentication workflow action that validates a username/password against an LDAP directory
+[IDP-116] - Create a profile workflow action that filters user attributes
+[IDP-117] - Create a profile workflow action that resolves attributes for the user
+[IDP-119] - Create a SAML 1 profile workflow action that adds an attribute statement to outgoing assertion
+[IDP-120] - Create a SAML 2 profile workflow action that adds an attribute statement to outgoing assertion
+[IDP-121] - Create a SAML 1 profile workflow action that add audience restriction conditions to outgoing response
+[IDP-122] - Create a SAML 2 profile workflow action that add audience restriction conditions to outgoing response
+[IDP-123] - Create a SAML 1 profile workflow action that adds not on or after condition to outgoing response
+[IDP-124] - Create a SAML 2 profile workflow action that adds not on or after condition to outgoing response
+[IDP-127] - Create a SAML 1 profile workflow action that adds the Subject to the outgoing response
+[IDP-128] - Create a SAML 2 profile workflow action that adds the Subject to the outgoing response
+[IDP-129] - Create a SAML 1 profile workflow action that signs outgoing assertions
+[IDP-130] - Create a SAML 2 profile workflow action that signs outgoing assertions
+[IDP-131] - Create a SAML 1 profile workflow action that signs outgoing response
+[IDP-132] - Create a SAML 2 profile workflow action that signs outgoing response
+[IDP-133] - Create SAML 2 profile workflow action that adds consent URI to outgoing response
+[IDP-135] - Create SAML 2 profile workflow action to add InResponseTo to outgoing response
+[IDP-136] - Create SAML 2 profile workflow action that adds OneTimeUse condition to outgoing response
+[IDP-138] - Create SAML 2 profile workflow action that decrypts attributes in incoming request
+[IDP-139] - Create a SAML 2 profile workflow action that decrypts incoming Subject name identifier
+[IDP-145] - Create a SAML 2 profile workflow action that adds not before condition to outgoing response
+[IDP-146] - Create a SAML 1 profile workflow action that adds not before condition to outgoing response
+[IDP-152] - Complete Attribute Module Unit Tests
+[IDP-154] - Complete Attribute Resolver Unit Tests
+[IDP-155] - Options for RequestedAuthnContext spec strictness
+[IDP-158] - Create a stage that extracts the user-agent address
+[IDP-159] - Create a stage that extracts a list of requested authentication mechanisms from a message
+[IDP-160] - Create a stage that "authenticates" user based on existing session
+[IDP-174] - Develop message decoder for IdP-initiated SSO message
+[IDP-176] - Create action that ensures the incoming message identifies its issuer
+[IDP-177] - Create action that ensures that a message is not stale
+[IDP-178] - Create action that ensures a message is not being replayed
+[IDP-179] - Create a task that lookup metadata for a message issuer and adds it to the message context
+[IDP-180] - Create task that looks up relying party configuration and attaches it to profile context
+[IDP-181] - Create stage that selects the profile configuration for the request
+[IDP-182] - Create action that sets ID of current message profile
+[IDP-187] - Create action that determines encryption configuration to use in response generation
+[IDP-188] - Create action that encrypts attributes
+[IDP-189] - Create action that encrypts NameIDs
+[IDP-190] - Create action that encrypts outbound assertions
+[IDP-191] - Create action that generates empty response
+[IDP-192] - Create action that generates empty SAML 2 Response
+[IDP-193] - Create action that generates SAML 1 authentication statement and adds to the response
+[IDP-194] - Create action that generates SAML 2 authentication statement and adds to response
+[IDP-196] - Create stage that populates SamlProtocolContext for inbound/outbound message contexts
+[IDP-200] - Create action that initializes a authentication request context
+[IDP-201] - Create an action that filters potential authentication workflows by passive or forced requirements
+[IDP-202] - Create an action that filters potential workflows by requested workflows
+[IDP-204] - Port the existing attribute resolver stored ID data connector to use new IdP v3 APIs
+[IDP-205] - Port IdPv2 Configuration to new APIs
+[IDP-206] - Conversion tools for upgrading IdPv2 configuration
+[IDP-209] - Port IdPv2 Configuration to new APIs
+[IDP-231] - Create an authentication workflow action that validates a username/password against a JAAS module
+[IDP-232] - Create an end to end workflow for basic username/password validation by form
+[IDP-233] - Create an end to end workflow for basic username/password validation by REMOTE_USER
+[IDP-234] - Create an end to end workflow for externalized authentication
+[IDP-237] - In-memory persistence implementation
+[IDP-254] - Create Function to drive Principal Name Attribute definition.
+[IDP-255] - Create Functions to Navigate the Context hierarchy for IdP& SP EntityID and Principal Name
+[IDP-256] - Static Data connector.
+[IDP-257] - Thread safety in idp-attribute-*
+[IDP-260] - Port the existing attribute resolver SAML1 Scoped String attribute encoder to use new IdP v3 APIs
+[IDP-264] - Reverse Mapping from SAML attributes to IdP Attributes
+[IDP-277] - Handle Filter Identification
+[IDP-280] - Define Syntax for, and add parsers for the ActivationCriteria inside the Attribute Resolvers
+[IDP-286] - Revisit NameID/NameIdenitifier encoders and TransientAttribute definitions
+[IDP-293] - Create an action that extracts Basic auth credentials
+[IDP-294] - Create an action that extracts credentials from a form
+[IDP-313] - Create an end to end workflow for username/password validation by basic-auth
+[IDP-319] - Create an authentication workflow action that extracts an active IdP session for later use
+[IDP-320] - Create an action to handle identity switches
+[IDP-321] - Rename net.shibboleth.idp.attribute.Attribute net.shibboleth.idp.attribute.IdPAttribute
+[IDP-322] - Use Interfaces for top level components, not concrete BaseXXXX classes
+[IDP-323] - Create a way to selectively disable SSO
+[IDP-346] - Port SVN resource from V2
+[IDP-353] - Create action that adds a record of a SAML 1 SP login to the IdP Session
+[IDP-355] - Create action that updates the Status of a Response message
+[IDP-356] - Create action that updates the Status of a Response message
+[IDP-383] - Support for NameIDPolicy-specified SPNameQualifier
+[IDP-387] - Parser for HTTP metadata resolver
+[IDP-388] - Parsers for Resolver backed metadata resolver.
+[IDP-389] - Parsers for Metadata Filters
+[IDP-390] - Parsing Security Configuration: Overview
+[IDP-391] - Services for RelyingParty, MetadataProvider and SecurityProvider
+[IDP-392] - Create action to copy NameIdentifier from request to response subjects
+[IDP-393] - Create action to copy NameID from request to response subjects
