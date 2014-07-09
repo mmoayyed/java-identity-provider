@@ -18,8 +18,6 @@
 package net.shibboleth.idp.test.flows;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -70,7 +68,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.util.StringUtils;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.engine.EndState;
@@ -185,13 +182,10 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
     }
 
     /**
-     * Set the 'idp.home' property to absolute path to idp-conf/src/main/resources.
+     * Set the 'idp.home' property to "classpath:".
      */
     public static void setIdPHomeProperty() {
-        Path idpHome = Paths.get(Paths.get("").toAbsolutePath().toString(), "src", "main", "resources");
-        String normalized = StringUtils.cleanPath(idpHome.toString());
-        System.setProperty("idp.home", normalized);
-        log.debug("Setting idp.home to '{}'", normalized);
+        System.setProperty("idp.home", "classpath:");
     }
 
     /**
