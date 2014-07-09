@@ -158,7 +158,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
      * 
      * @param strategy lookup strategy
      */
-    public synchronized void setRequesterLookupStrategy(
+    public void setRequesterLookupStrategy(
             @Nullable final Function<ProfileRequestContext,String> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
@@ -170,7 +170,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
      * 
      * @param strategy lookup strategy
      */
-    public synchronized void setResponderLookupStrategy(
+    public void setResponderLookupStrategy(
             @Nullable final Function<ProfileRequestContext,String> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
@@ -193,7 +193,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
      */
     public <T extends Principal> void setSupportedPrincipals(@Nonnull @NonnullElements final Collection<T> principals) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(principals, "Principal collection cannot be null.");
+        Constraint.isNotNull(principals, "Principal collection cannot be null");
         
         principalsAdded = true;
         authenticatedSubject.getPrincipals().clear();
@@ -220,7 +220,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
         // able to satisfy the request.
         final RequestedPrincipalContext rpCtx =
                 authenticationContext.getSubcontext(RequestedPrincipalContext.class, false);
-        if (rpCtx != null && rpCtx.getOperator() != null) {
+        if (principalsAdded && rpCtx != null && rpCtx.getOperator() != null) {
             log.debug("{} Request contains principal requirements, evaluating for compatibility", getLogPrefix());
             for (Principal p : rpCtx.getRequestedPrincipals()) {
                 final PrincipalEvalPredicateFactory factory =
