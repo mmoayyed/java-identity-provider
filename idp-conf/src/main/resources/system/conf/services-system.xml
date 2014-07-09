@@ -77,8 +77,7 @@
         <constructor-arg name="claz"
             value="org.opensaml.saml.metadata.resolver.MetadataResolver" />
         <constructor-arg name="strategy">
-            <bean class="net.shibboleth.idp.service.ClassBasedServiceStrategy"
-                c:serviceableClaz="net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider" />
+            <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.MetadataResolverServiceStrategy" />
         </constructor-arg>
         <property name="beanPostProcessors">
             <bean
