@@ -95,7 +95,7 @@
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <outputDirectory>${assembly-directory}</outputDirectory>
-                                    <excludes>**/META-INF/**</excludes>
+                                    <excludes>**/META-INF/**,**/logs/*,**/creds/*</excludes>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
