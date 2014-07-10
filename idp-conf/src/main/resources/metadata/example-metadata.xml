@@ -90,6 +90,7 @@ h+XNZ5oAql/cjrwDWw==
         <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:1.0:profiles:browser-post" Location="https://localhost:8443/sp/SAML1/POST/ACS" index="10"/>
         <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:1.0:profiles:artifact-01" Location="https://localhost:8443/sp/SAML1/Artifact/ACS" index="11"/>
         <AttributeConsumingService isDefault="true" index="1">
+            <ServiceName xml:lang="en">Service Name</ServiceName>
             <RequestedAttribute FriendlyName="displayName"
                 Name="urn:mace:dir:attribute-def:displayName" NameFormat="urn:mace:shibboleth:1.0:attributeNamespace:uri" />
             <RequestedAttribute FriendlyName="displayName" isRequired="true"

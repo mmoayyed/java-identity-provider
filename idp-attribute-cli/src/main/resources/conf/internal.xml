@@ -7,9 +7,7 @@
 
     <bean id="shibboleth.LogbackLogging" class="net.shibboleth.idp.log.LogbackLoggingService" init-method="start" destroy-method="stop">
         <property name="id" value="shibboleth.LogbackLogging"/>
-        <property name="loggingConfiguration">
-            <constructor-arg value="conf/logging.xml"/>
-        </property>
+        <property name="loggingConfiguration" value="conf/logging.xml"/>
         <property name="reloadCheckDelay" value="0"/>
     </bean>
     
