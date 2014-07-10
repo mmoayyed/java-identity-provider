@@ -29,11 +29,10 @@ import org.opensaml.xmlsec.signature.support.impl.ChainingSignatureTrustEngine;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 /**
- * Factory bean for  {@list ChainingSignatureTrustEngine}.  This finesses the issue that some parsers
+ * Factory bean for {@link ChainingSignatureTrustEngine}.  This finesses the issue that some parsers
  * are not supported and return a bean of type object and these cannot be injected into the trust engine.
  * This factory just filters the unsupported engines out.  A warning has been issued at point of parse
  * so no further logging is required.
- * 
  */
 public class ChainingSignatureTrustEngineFactory extends AbstractFactoryBean<ChainingSignatureTrustEngine> {
 
