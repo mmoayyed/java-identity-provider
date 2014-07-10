@@ -67,11 +67,6 @@
                 <prop key="string.resource.loader.class">
                     org.apache.velocity.runtime.resource.loader.StringResourceLoader
                 </prop>
-                <prop key="file.resource.loader.class">
-                    org.apache.velocity.runtime.resource.loader.FileResourceLoader
-                </prop>
-                <prop key="file.resource.loader.path">%{idp.home}</prop>
-                <prop key="file.resource.loader.cache">false</prop>
             </props>
         </property>
     </bean>
