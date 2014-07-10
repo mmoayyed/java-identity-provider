@@ -40,8 +40,6 @@ public class ClassBasedServiceStrategy<T> implements Function<ApplicationContext
 
     /**
      * Constructor.
-     * 
-     * @param claz
      */
     public ClassBasedServiceStrategy() {
         this(ServiceableComponent.class);
