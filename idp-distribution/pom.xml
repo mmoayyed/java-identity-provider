@@ -59,12 +59,12 @@
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
-                    <!-- Copy war to assembly directory. -->
+                    <!-- Unpack idp-war to assembly directory. -->
                     <execution>
                         <id>copy-idp-war</id>
                         <phase>prepare-package</phase>
                         <goals>
-                            <goal>copy</goal>
+                            <goal>unpack</goal>
                         </goals>
                         <configuration>
                             <artifactItems>
@@ -73,9 +73,7 @@
                                     <artifactId>idp-war</artifactId>
                                     <version>${project.version}</version>
                                     <type>war</type>
-                                    <overWrite>false</overWrite>
                                     <outputDirectory>${assembly-directory}/war/</outputDirectory>
-                                    <destFileName>idp.war</destFileName>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
