@@ -58,7 +58,7 @@ public abstract class AbstractReloadableService<T> extends AbstractIdentifiableI
 
     /**
      * Number of milliseconds between one reload check and another. A value of 0 or less indicates that no reloading
-     * will be performed. Default value: {@value} (5 minutes)
+     * will be performed. Default value: 300,000 (5*60*1000, or 5 minutes)
      */
     @Duration private long reloadCheckDelay = 300000;
 
