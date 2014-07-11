@@ -27,8 +27,8 @@ import org.w3c.dom.Element;
 
 /**
  * Parser for the &lt:rp:AnonymousRelyingParty&gt; element. <br/>
- * The {@link com.google.common.base.Predicate<org.opensaml.profile.context.ProfileRequestContext>} which is injected
- * looks to see if there vis metadata associated with the RelyingParty and if so says TRUE.
+ * The {@link com.google.common.base.Predicate} which is injected
+ * looks to see if there is metadata associated with the RelyingParty and if so says TRUE.
  */
 public class AnonymousRelyingPartyParser extends AbstractRelyingPartyParser {
 

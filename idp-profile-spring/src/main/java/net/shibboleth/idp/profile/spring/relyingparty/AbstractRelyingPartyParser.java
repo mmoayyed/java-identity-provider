@@ -35,7 +35,7 @@ import org.w3c.dom.Element;
 /**
  * Parser for the common parts of &lt;AnonymousRelyingParty&gt; &lt;DefaultRelyingParty&gt; and &lt;RelyingParty&gt;.
  * Implementations only differ by being named or not (for reference elsewhere) and by the
- * {@link com.google.common.base.Predicate<org.opensaml.profile.context.ProfileRequestContext>} which is injected. 
+ * {@link com.google.common.base.Predicate} which is injected. 
  */
 public abstract class AbstractRelyingPartyParser extends AbstractSingleBeanDefinitionParser {
 

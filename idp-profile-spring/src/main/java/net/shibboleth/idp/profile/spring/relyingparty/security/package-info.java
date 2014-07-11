@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Basis of all parsers in the {@value SecurityNamespaceHandler#NAMESPACE} schema.
- */
 
+/**
+ * Basis of all parsers in the
+ * {@value net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler#NAMESPACE} schema.
+ */
 package net.shibboleth.idp.profile.spring.relyingparty.security;

@@ -105,7 +105,7 @@ public class StaticPKIXSignatureParser extends AbstractTrustEngineParser {
      *  org.opensaml.security.x509.PKIXValidationInformationResolver,
      *  org.opensaml.xmlsec.keyinfo.KeyInfoCredentialResolver, 
      *  org.opensaml.security.x509.PKIXTrustEvaluator, 
-     *  org.opensaml.security.x509.impl.X509CredentialNameEvaluator)
+     *  org.opensaml.security.x509.impl.X509CredentialNameEvaluator)}
      * .
      */
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {

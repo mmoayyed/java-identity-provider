@@ -163,13 +163,12 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
      * Parse the provided &lt;Resource&gt; and populate an appropriate {@link HTTPMetadataResolver}.
      * 
      * <br/>
-     * See {@link HTTPMetadataProviderParser#doParse(Element, ParserContext, BeanDefinitionBuilder).
+     * See {@link HTTPMetadataProviderParser#doParse(Element, ParserContext, BeanDefinitionBuilder)}.
      * 
      * @param element the &lt;Resource&gt; element
      * @param parserContext the parser context
      * @param builder the builder for the {@link HTTPMetadataResolver}.
      */
-
     private void parseHTTPResource(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
 
         BeanDefinitionBuilder clientBuilder = BeanDefinitionBuilder.genericBeanDefinition(HttpClientFactoryBean.class);
@@ -198,7 +197,7 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
 /**
      * Parse the provided &lt;Resource&gt; and populate an appropriate {@link FilesystemMetadataResolver}.
      * 
-     * <br/>See {@link FilesystemMetadataProviderParser#doParse(Element, ParserContext, BeanDefinitionBuilder).
+     * <br/>See {@link FilesystemMetadataProviderParser#doParse(Element, ParserContext, BeanDefinitionBuilder)}.
      * 
      * @param element the &lt;Resource&gt; element
      * @param parserContext the parser context

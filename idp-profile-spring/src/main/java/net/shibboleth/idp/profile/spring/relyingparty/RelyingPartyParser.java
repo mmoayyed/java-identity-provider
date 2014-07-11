@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
 import com.google.common.base.Predicates;
 
 /**
- * Parser for the &lt:rp:relyingParty&gt; element.
+ * Parser for the &lt:rp:RelyingParty&gt; element.
  */
 public class RelyingPartyParser extends AbstractRelyingPartyParser {
 
@@ -41,7 +41,7 @@ public class RelyingPartyParser extends AbstractRelyingPartyParser {
      * {@inheritDoc} The construction of the activation Condition is more complicated than one might suppose. The
      * definition is that if the it matches the relyingPartyID *or* it matches the &lt;EntitiesDescriptor&gt;, then the
      * configuration matches. So we need to
-     * {@link Predicates#or(com.google.common.base.Predicate, com.google.common.base.Predicate) a
+     * {@link Predicates#or(com.google.common.base.Predicate, com.google.common.base.Predicate)} a
      * {@link RelyingPartyIdPredicate} and a {@link EntitiesDescriptorPredicate} These however may have injected lookup
      * strategies and so these need to be constructed as a BeanDefinition.
      * */
