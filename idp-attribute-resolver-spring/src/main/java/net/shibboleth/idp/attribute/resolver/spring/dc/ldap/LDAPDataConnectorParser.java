@@ -144,12 +144,26 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                         .getProviderConfig().getClass());
         String connectionStrategy = AttributeSupport.getAttributeValue(config, new QName("connectionStrategy"));
         if (connectionStrategy == null) {
-            connectionStrategy = ConnectionStrategy.ACTIVE_PASSIVE.name();
+            providerConfig.addPropertyValue("connectionStrategy", ConnectionStrategy.ACTIVE_PASSIVE);
+        } else {
+            switch (connectionStrategy) {
+                case "DEFAULT":
+                    providerConfig.addPropertyValue("connectionStrategy", ConnectionStrategy.DEFAULT);
+                    break;
+
+                case "ROUND_ROBIN":
+                    providerConfig.addPropertyValue("connectionStrategy", ConnectionStrategy.ROUND_ROBIN);
+                    break;
+
+                case "RANDOM":
+                    providerConfig.addPropertyValue("connectionStrategy", ConnectionStrategy.RANDOM);
+                    break;
+
+                default:
+                    providerConfig.addPropertyValue("connectionStrategy", ConnectionStrategy.ACTIVE_PASSIVE);
+                    break;
+            }
         }
-        final BeanDefinitionBuilder strategy =
-                BeanDefinitionBuilder.rootBeanDefinition(ConnectionStrategy.class, "valueOf");
-        strategy.addConstructorArgValue(connectionStrategy);
-        providerConfig.addPropertyValue("connectionStrategy", strategy.getBeanDefinition());
 
         final ManagedMap<String, String> props = new ManagedMap<>();
         final List<Element> propertyElements =
