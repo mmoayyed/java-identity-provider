@@ -32,6 +32,8 @@ import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import com.google.common.base.Function;
@@ -44,9 +46,12 @@ import com.google.common.base.Function;
 public class AttributeResolverServiceStrategy extends AbstractIdentifiableInitializableComponent implements
         Function<ApplicationContext, ServiceableComponent<AttributeResolver>> {
 
+    /** log. */
+    private final Logger log = LoggerFactory.getLogger(AttributeResolverServiceStrategy.class);
+
     /** {@inheritDoc} */
-    @Override
-    @Nullable public ServiceableComponent<AttributeResolver> apply(@Nullable final ApplicationContext appContext) {
+    @Override @Nullable public ServiceableComponent<AttributeResolver> apply(
+            @Nullable final ApplicationContext appContext) {
 
         final Collection<PrincipalConnector> pcs = appContext.getBeansOfType(PrincipalConnector.class).values();
         final PrinicpalConnectorCanonicalizer pcc = new PrinicpalConnectorCanonicalizer(pcs);
@@ -55,6 +60,9 @@ public class AttributeResolverServiceStrategy extends AbstractIdentifiableInitia
                 appContext.getBeansOfType(AttributeDefinition.class).values();
 
         final Collection<DataConnector> connectors = appContext.getBeansOfType(DataConnector.class).values();
+
+        log.debug("Creating Attribute Resolver {} with {} Attribute Definition(s), {} Data Connector(s)"
+                + " and {} Principal Connector(s)", getId(), definitions.size(), connectors.size(), pcs.size());
 
         final AttributeResolverImpl resolver = new AttributeResolverImpl(getId(), definitions, connectors, pcc);
         resolver.setApplicationContext(appContext);

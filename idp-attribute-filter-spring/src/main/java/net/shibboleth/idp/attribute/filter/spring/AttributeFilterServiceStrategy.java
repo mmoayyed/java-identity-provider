@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter.spring;
 
+import java.util.Collection;
+
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
@@ -27,6 +29,8 @@ import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import com.google.common.base.Function;
@@ -39,12 +43,17 @@ import com.google.common.base.Function;
 public class AttributeFilterServiceStrategy extends AbstractIdentifiableInitializableComponent implements
         Function<ApplicationContext, ServiceableComponent<AttributeFilter>> {
 
-    /** {@inheritDoc} */
-    @Override
-    @Nullable public ServiceableComponent<AttributeFilter> apply(@Nullable final ApplicationContext appContext) {
+    /** log. */
+    private final Logger log = LoggerFactory.getLogger(AttributeFilterServiceStrategy.class);
 
-        final AttributeFilterImpl filter =
-                new AttributeFilterImpl(getId(), appContext.getBeansOfType(AttributeFilterPolicy.class).values());
+    /** {@inheritDoc} */
+    @Override @Nullable public ServiceableComponent<AttributeFilter>
+            apply(@Nullable final ApplicationContext appContext) {
+
+        final Collection<AttributeFilterPolicy> afps = appContext.getBeansOfType(AttributeFilterPolicy.class).values();
+        log.debug("Creating Attribute Filter {} with  {} Policies", getId(), afps.size());
+
+        final AttributeFilterImpl filter = new AttributeFilterImpl(getId(), afps);
         filter.setApplicationContext(appContext);
 
         try {
