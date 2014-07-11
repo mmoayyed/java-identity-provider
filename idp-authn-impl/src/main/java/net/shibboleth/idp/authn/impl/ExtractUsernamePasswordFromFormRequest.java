@@ -113,12 +113,16 @@ public class ExtractUsernamePasswordFromFormRequest extends AbstractExtractionAc
             return;
         }
         
+        final UsernamePasswordContext upCtx = authenticationContext.getSubcontext(UsernamePasswordContext.class, true);
+        
         final String username = request.getParameter(usernameFieldName);
         if (username == null || username.isEmpty()) {
             log.debug("{} No username in request", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return;
         }
+        
+        upCtx.setUsername(applyTransforms(username));
 
         final String password = request.getParameter(passwordFieldName);
         if (password == null || password.isEmpty()) {
@@ -127,8 +131,7 @@ public class ExtractUsernamePasswordFromFormRequest extends AbstractExtractionAc
             return;
         }
 
-        authenticationContext.getSubcontext(UsernamePasswordContext.class, true).setUsername(applyTransforms(username))
-                .setPassword(password);
+        upCtx.setPassword(password);
         
         final String donotcache = request.getParameter(ssoBypassFieldName);
         if (donotcache != null && "1".equals(donotcache)) {

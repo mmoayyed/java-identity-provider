@@ -240,7 +240,7 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
         final Event event = action.execute(src);
         Assert.assertNull(ac.getAuthenticationResult());
         Assert.assertNull(ac.getSubcontext(AuthenticationErrorContext.class, false));
-        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
     }
 
     @Test public void testBadPassword() throws Exception {

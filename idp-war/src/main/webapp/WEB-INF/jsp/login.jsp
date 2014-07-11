@@ -6,9 +6,16 @@
 <%@ page import="net.shibboleth.utilities.java.support.codec.HTMLEncoder" %>
 <%@ page import="net.shibboleth.idp.authn.context.AuthenticationContext" %>
 <%@ page import="net.shibboleth.idp.authn.context.AuthenticationErrorContext" %>
-<%@ page import="net.shibboleth.idp.authn.context.AuthenticationWarningContext" %>
+<%@ page import="net.shibboleth.idp.authn.context.UsernamePasswordContext" %>
 <%@ page import="org.springframework.webflow.execution.RequestContext" %>
 
+<%
+final AuthenticationContext authenticationContext = (AuthenticationContext) request.getAttribute("authenticationContext");
+String username = authenticationContext.getSubcontext(UsernamePasswordContext.class, true).getUsername();
+if (username == null) {
+	username = "";
+}
+%>
 
 <html>
   <head>
@@ -29,28 +36,19 @@
             <form action="<%= request.getAttribute("flowExecutionUrl") %>" method="post">
 
                 <%
-                AuthenticationErrorContext authenticationErrorContext = (AuthenticationErrorContext) request.getAttribute("authenticationErrorContext");
-                AuthenticationWarningContext authenticationWarningContext = (AuthenticationWarningContext) request.getAttribute("authenticationWarningContext");
-
-                if (authenticationErrorContext != null || authenticationWarningContext != null) { %>
+                final AuthenticationErrorContext authenticationErrorContext = (AuthenticationErrorContext) request.getAttribute("authenticationErrorContext");
+                if (authenticationErrorContext != null) { %>
                 <section>
-                  <% if ( authenticationErrorContext != null && !authenticationErrorContext.getExceptions().isEmpty()) { %>
+                  <% if ( authenticationErrorContext != null && !authenticationErrorContext.getClassifiedErrors().isEmpty()) { %>
+                  <p class="form-element form-error">
+                    ERROR: <%= HTMLEncoder.encodeForHTML(authenticationErrorContext.getClassifiedErrors().toString()) %>
+                  </p>
+                  <% } else if ( authenticationErrorContext != null && !authenticationErrorContext.getExceptions().isEmpty()) { %>
 		          <p class="form-element form-error">
                     ERROR: <%= HTMLEncoder.encodeForHTML(authenticationErrorContext.getExceptions().get(0).getMessage()) %>
                   </p>
                   <% } %>
 
-                  <% if ( authenticationErrorContext != null && !authenticationErrorContext.getClassifiedErrors().isEmpty()) { %>
-                  <p class="form-element form-error">
-                    Classified errors: <%= HTMLEncoder.encodeForHTML(authenticationErrorContext.getClassifiedErrors().toString()) %>
-                  </p>
-                  <% } %>
-
-                  <% if ( authenticationWarningContext != null && !authenticationWarningContext.getClassifiedWarnings().isEmpty()) { %>
-                  <p class="form-element form-error">
-                    Classified warnings: <%= HTMLEncoder.encodeForHTML(authenticationWarningContext.getClassifiedWarnings().toString()) %>
-                  </p>
-                  <% } %>
                 </section>
               <% }  %>
 
@@ -60,7 +58,8 @@
 
               <section>
                 <Label for="username">Username</label>
-                <input class="form-element form-field" name="j_username" type="text" value="">
+                <input class="form-element form-field" name="j_username" type="text"
+                	value="<%= HTMLEncoder.encodeForHTML(username) %>">
               </section>
 
               <section>

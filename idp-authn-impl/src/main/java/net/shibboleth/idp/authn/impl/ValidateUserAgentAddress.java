@@ -101,6 +101,11 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
+        
+        if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
+            return false;
+        }
+        
         if (authenticationContext.getAttemptedFlow() == null) {
             log.debug("{} No attempted flow within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
@@ -110,17 +115,17 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
         uaContext = authenticationContext.getSubcontext(UserAgentContext.class, false);
         if (uaContext == null) {
             log.debug("{} No UserAgentContext available within authentication context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
+            handleError(profileRequestContext, authenticationContext, "NoCredentials", AuthnEventIds.NO_CREDENTIALS);
             return false;
         }
 
         if (uaContext.getAddress() == null) {
             log.debug("{} No address available within UserAgentContext", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
+            handleError(profileRequestContext, authenticationContext, "NoCredentials", AuthnEventIds.NO_CREDENTIALS);
             return false;
         }
         
-        return super.doPreExecute(profileRequestContext, authenticationContext);
+        return true;
     }
     
     /** {@inheritDoc} */

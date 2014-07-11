@@ -102,26 +102,34 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractValidationA
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
+        
+        if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
+            return false;
+        }
+
         if (authenticationContext.getAttemptedFlow() == null) {
             log.debug("{} No attempted flow within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
-        
-        upContext = authenticationContext.getSubcontext(UsernamePasswordContext.class, false);
-        if (upContext == null) {
-            log.debug("{} No UsernameContext available within authentication context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
-            return false;
-        }
 
-        if (upContext.getUsername() == null || upContext.getPassword() == null) {
-            log.debug("{} No username or password available within UsernamePasswordContext", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
+        upContext = authenticationContext.getSubcontext(UsernamePasswordContext.class);
+        if (upContext == null) {
+            log.info("{} No UsernamePasswordContext available within authentication context", getLogPrefix());
+            handleError(profileRequestContext, authenticationContext, "NoCredentials", AuthnEventIds.NO_CREDENTIALS);
+            return false;
+        } else if (upContext.getUsername() == null) {
+            log.info("{} No username available within UsernamePasswordContext", getLogPrefix());
+            handleError(profileRequestContext, authenticationContext, "NoCredentials", AuthnEventIds.NO_CREDENTIALS);
+            return false;
+        } else if (upContext.getPassword() == null) {
+            log.info("{} No password available within UsernamePasswordContext", getLogPrefix());
+            handleError(profileRequestContext, authenticationContext, "InvalidCredentials",
+                    AuthnEventIds.INVALID_CREDENTIALS);
             return false;
         }
-        
-        return super.doPreExecute(profileRequestContext, authenticationContext);
+                
+        return true;
     }
     
     /** {@inheritDoc} */

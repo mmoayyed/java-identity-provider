@@ -9,6 +9,8 @@
 ## request - HttpServletRequest
 ## response - HttpServletResponse
 
+#set ($username = $authenticationContext.getSubcontext('net.shibboleth.idp.authn.context.UsernamePasswordContext', true).getUsername() )
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
   	<head>
     	<meta charset="utf-8" />
@@ -26,24 +28,24 @@
         <div class="content">
           <div class="column one">
             <form action="$flowExecutionUrl" method="post">
-              #if ( $authenticationErrorContext && $authenticationErrorContext.getExceptions().size() > 0 )
-                <p>ERROR: $encoder.encodeForHTML($authenticationErrorContext.getExceptions().get(0).getMessage())</p>
-              #end
-
               #if ( $authenticationErrorContext && $authenticationErrorContext.getClassifiedErrors().size() > 0 )
-                <p>Classified errors: $encoder.encodeForHTML($authenticationErrorContext.getClassifiedErrors().toString())</p>
+                <p class="form-element form-error">
+                ERROR: $encoder.encodeForHTML($authenticationErrorContext.getClassifiedErrors().toString())
+                </p>
+              #elseif ( $authenticationErrorContext && $authenticationErrorContext.getExceptions().size() > 0 )
+                <p class="form-element form-error">
+                ERROR: $encoder.encodeForHTML($authenticationErrorContext.getExceptions().get(0).getMessage())
+                </p>
               #end
 
-              #if ( $authenticationWarningContext && $authenticationWarningContext.getClassifiedWarnings().size() > 0 )
-                <p>Classified warnings: $encoder.encodeForHTML($authenticationWarningContext.getClassifiedWarnings().toString())</p>
-              #end
               <legend>
                 <!-- Log in to TODO: SP UI info -->
               </legend>
 
               <section>
                 <Label for="username">Username</label>
-                <input class="form-element form-field" name="j_username" type="text" value="">
+                <input class="form-element form-field" name="j_username" type="text"
+                	value="#if($username)$encoder.encodeForHTML($username)#end">
               </section>
 
               <section>

@@ -118,6 +118,11 @@ public class ValidateRemoteUser extends AbstractValidationAction {
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
+
+        if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
+            return false;
+        }
+        
         if (authenticationContext.getAttemptedFlow() == null) {
             log.debug("{} No attempted flow within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
@@ -137,7 +142,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
             return false;
         }
         
-        return super.doPreExecute(profileRequestContext, authenticationContext);
+        return true;
     }
     
     /** {@inheritDoc} */

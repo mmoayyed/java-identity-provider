@@ -215,6 +215,10 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
             @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
+        if (clearErrorContext) {
+            authenticationContext.removeSubcontext(AuthenticationErrorContext.class);
+        }
+        
         // If the request mandates particular principals, evaluate this validating component to see if it
         // can produce a matching principal. This skips validators chained together in flows that aren't
         // able to satisfy the request.
@@ -246,10 +250,6 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
             log.info("{} Skipping validator, not compatible with request's principal requirements", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
             return false;
-        }
-        
-        if (clearErrorContext) {
-            authenticationContext.removeSubcontext(AuthenticationErrorContext.class);
         }
         
         return super.doPreExecute(profileRequestContext, authenticationContext);
@@ -354,16 +354,14 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
             @Nonnull final AuthenticationContext authenticationContext, @Nonnull @NotEmpty final String message,
             @Nonnull @NotEmpty final String eventId) {
         
-        final AuthenticationErrorContext errorCtx =
-                authenticationContext.getSubcontext(AuthenticationErrorContext.class, true);
-        
         final MessageChecker checker = new MessageChecker(message);
         
         boolean eventSet = false;
         
         for (final Map.Entry<String, Collection<String>> entry : classifiedMessages.entrySet()) {
             if (Iterables.any(entry.getValue(), checker)) {
-                errorCtx.getClassifiedErrors().add(entry.getKey());
+                authenticationContext.getSubcontext(AuthenticationErrorContext.class, true).getClassifiedErrors().add(
+                        entry.getKey());
                 if (!eventSet) {
                     eventSet = true;
                     ActionSupport.buildEvent(profileRequestContext, entry.getKey());
@@ -396,16 +394,14 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
             @Nonnull final AuthenticationContext authenticationContext, @Nonnull @NotEmpty final String message,
             @Nonnull @NotEmpty final String eventId) {
         
-        final AuthenticationWarningContext warningCtx =
-                authenticationContext.getSubcontext(AuthenticationWarningContext.class, true);
-        
         final MessageChecker checker = new MessageChecker(message);
 
         boolean eventSet = false;
         
         for (Map.Entry<String, Collection<String>> entry : classifiedMessages.entrySet()) {
             if (Iterables.any(entry.getValue(), checker)) {
-                warningCtx.getClassifiedWarnings().add(entry.getKey());
+                authenticationContext.getSubcontext(AuthenticationWarningContext.class,
+                        true).getClassifiedWarnings().add(entry.getKey());
                 if (!eventSet) {
                     eventSet = true;
                     ActionSupport.buildEvent(profileRequestContext, entry.getKey());
