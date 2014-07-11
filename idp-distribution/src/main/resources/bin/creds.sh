@@ -17,4 +17,4 @@ java -cp "war/WEB-INF/lib/*" $CLASS --hostname $HOSTNAME --keyfile creds/idp-enc
 java -cp "war/WEB-INF/lib/*" $CLASS --hostname $HOSTNAME --storefile creds/idp-tls.p12 --storepass changeit --uriAltName $URI_ALT_NAME
 
 # TODO generate creds/sealer.jks
-svn export https://svn.shibboleth.net/java-identity-provider/trunk/idp-conf/src/test/resources/creds/sealer.jks creds/sealer.jks
+keytool -genseckey -alias idpSecretKey -keypass password -storepass password -storetype JCEKS -keyalg AES -keysize 256 -keystore creds/sealer.jks
