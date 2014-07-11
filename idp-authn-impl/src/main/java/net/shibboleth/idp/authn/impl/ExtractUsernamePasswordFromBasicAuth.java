@@ -64,6 +64,10 @@ public class ExtractUsernamePasswordFromBasicAuth extends AbstractExtractionActi
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
+        final UsernamePasswordContext upCtx = authenticationContext.getSubcontext(UsernamePasswordContext.class, true);
+        upCtx.setUsername(null);
+        upCtx.setPassword(null);
+        
         final HttpServletRequest request = getHttpServletRequest();
         if (request == null) {
             log.debug("{} Profile action does not contain an HttpServletRequest", getLogPrefix());
@@ -83,8 +87,7 @@ public class ExtractUsernamePasswordFromBasicAuth extends AbstractExtractionActi
             return;
         }
         
-        authenticationContext.getSubcontext(UsernamePasswordContext.class, true).setUsername(
-                applyTransforms(decodedCredentials.getFirst())).setPassword(decodedCredentials.getSecond());
+        upCtx.setUsername(applyTransforms(decodedCredentials.getFirst())).setPassword(decodedCredentials.getSecond());
     }
 
     /**

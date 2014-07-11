@@ -106,14 +106,16 @@ public class ExtractUsernamePasswordFromFormRequest extends AbstractExtractionAc
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
+        final UsernamePasswordContext upCtx = authenticationContext.getSubcontext(UsernamePasswordContext.class, true);
+        upCtx.setUsername(null);
+        upCtx.setPassword(null);
+        
         final HttpServletRequest request = getHttpServletRequest();
         if (request == null) {
             log.debug("{} Profile action does not contain an HttpServletRequest", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return;
         }
-        
-        final UsernamePasswordContext upCtx = authenticationContext.getSubcontext(UsernamePasswordContext.class, true);
         
         final String username = request.getParameter(usernameFieldName);
         if (username == null || username.isEmpty()) {
