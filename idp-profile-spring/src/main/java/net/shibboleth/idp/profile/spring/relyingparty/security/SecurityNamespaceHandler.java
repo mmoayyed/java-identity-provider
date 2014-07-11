@@ -45,7 +45,7 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
     public static final QName TRUST_ENGINE_ELEMENT_NAME = new QName(NAMESPACE, "TrustEngine");
 
     /** SecurityPolicy element name. */
-    public static final QName SECRURITY_POLICY_NAME = new QName(NAMESPACE, "SecurityPolicy");
+    public static final QName SECURITY_POLICY_NAME = new QName(NAMESPACE, "SecurityPolicy");
 
     /** {@inheritDoc} */
     @Override public void init() {
