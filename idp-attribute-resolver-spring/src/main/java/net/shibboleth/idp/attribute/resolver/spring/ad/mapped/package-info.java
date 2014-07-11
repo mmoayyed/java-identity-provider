@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 /**
- * Contains the parsers for the {@link net.shibboleth.idp.attribute.resolver.ad.impl.mapped.MappedAttributeDefinition} 
+ * Contains the parsers for the {@link net.shibboleth.idp.attribute.resolver.ad.mapped.impl.MappedAttributeDefinition} 
  * and its child elements.
  */
 

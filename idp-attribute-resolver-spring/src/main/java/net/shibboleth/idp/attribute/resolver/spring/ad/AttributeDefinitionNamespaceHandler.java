@@ -23,7 +23,7 @@ import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.SourceValueParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.ValueMapParser;
 
 /**
- * Namespace handler for {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition.BaseAttributeDefinition}s.
+ * Namespace handler for {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition}s.
  */
 public class AttributeDefinitionNamespaceHandler extends BaseSpringNamespaceHandler {
 
