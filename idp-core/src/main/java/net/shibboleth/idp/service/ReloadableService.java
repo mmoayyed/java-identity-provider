@@ -54,7 +54,7 @@ public interface ReloadableService<T> extends Lifecycle {
      * 
      * @throws ServiceException thrown if there is a problem reloading the service
      */
-    public void reload() throws ServiceException;
+    public void reload() ;
     
     /** Get the serviceable component that this service supports .  If
      * The component hasn't been successfully loaded yet or if this service

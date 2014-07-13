@@ -100,7 +100,7 @@ public class AttributeSourcedSAML1NameIdentifierGenerator extends AbstractSAML1N
     /**
      * Set the delimiter to use for serializing scoped attribute values.
      * 
-     * @param ch
+     * @param ch scope to set
      */
     public void setScopedDelimiter(final char ch) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);

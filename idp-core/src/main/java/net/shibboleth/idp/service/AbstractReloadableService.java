@@ -54,7 +54,7 @@ public abstract class AbstractReloadableService<T> extends AbstractIdentifiableI
         ReloadableService<T>, UnmodifiableComponent {
 
     /** Class logger. */
-    private Logger log = LoggerFactory.getLogger(AbstractReloadableService.class);
+    private final Logger log = LoggerFactory.getLogger(AbstractReloadableService.class);
 
     /**
      * Number of milliseconds between one reload check and another. A value of 0 or less indicates that no reloading
@@ -266,7 +266,7 @@ public abstract class AbstractReloadableService<T> extends AbstractIdentifiableI
      * 
      * @throws ServiceException thrown if there is a problem reloading the service
      */
-    protected void doReload() throws ServiceException {
+    protected void doReload() {
 
     }
 

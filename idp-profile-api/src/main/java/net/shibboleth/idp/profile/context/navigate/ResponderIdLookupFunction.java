@@ -21,7 +21,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -31,18 +30,21 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import com.google.common.base.Function;
 
 /**
- * A function that returns {@link RelyingPartyConfiguration#getResponderId()} if available from a
- * {@link RelyingPartyContext} obtained via a lookup function, by default a child of the {@link ProfileRequestContext}.
+ * A function that returns {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration#getResponderId()} if
+ * available from a {@link RelyingPartyContext} obtained via a lookup function, by default a child of the
+ * {@link ProfileRequestContext}.
  * 
- * <p>If a specific setting is unavailable, a null value is returned.</p>
+ * <p>
+ * If a specific setting is unavailable, a null value is returned.
+ * </p>
  */
 public class ResponderIdLookupFunction implements ContextDataLookupFunction<ProfileRequestContext, String> {
 
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
      */
-    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
-    
+    @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
+
     /** Constructor. */
     public ResponderIdLookupFunction() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
@@ -56,21 +58,20 @@ public class ResponderIdLookupFunction implements ContextDataLookupFunction<Prof
      *            {@link ProfileRequestContext}
      */
     public void setRelyingPartyContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
+            @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable public String apply(@Nullable final ProfileRequestContext input) {
+    @Override @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         if (input != null) {
             final RelyingPartyContext rpc = relyingPartyContextLookupStrategy.apply(input);
             if (rpc != null && rpc.getConfiguration() != null) {
                 return rpc.getConfiguration().getResponderId();
             }
         }
-        
+
         return null;
     }
 

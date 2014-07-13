@@ -60,7 +60,7 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
 
     /** Logging configuration resource. */
     private Resource configurationResource;
-    
+
     /** Spring application context. */
     @Nullable private ApplicationContext applicationContext;
 
@@ -87,13 +87,13 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setApplicationContext(ApplicationContext context) {
         applicationContext = context;
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected synchronized boolean shouldReload() {
+    @Override protected synchronized boolean shouldReload() {
         try {
             final DateTime lastReload = getLastSuccessfulReloadInstant();
             if (null == lastReload) {
@@ -109,8 +109,7 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected synchronized void doReload() throws ServiceException {
+    @Override protected synchronized void doReload() {
 
         loadLoggingConfiguration();
     }
@@ -120,7 +119,7 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
      * 
      * @throws ServiceException thrown if there is a problem loading the logging configuration
      */
-    protected void loadLoggingConfiguration() throws ServiceException {
+    protected void loadLoggingConfiguration() {
         InputStream ins = null;
         try {
             statusManager.add(new InfoStatus("Loading new logging configuration resource: "
@@ -159,6 +158,7 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
             }
         }
     }
+
     // Checkstyle: EmtpyBlock ON
 
     /**
@@ -169,7 +169,7 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
      * 
      * @throws ServiceException thrown is there is a problem loading the logging configuration
      */
-    protected void loadLoggingConfiguration(InputStream loggingConfig) throws ServiceException {
+    protected void loadLoggingConfiguration(InputStream loggingConfig) {
         try {
             loggerContext.reset();
             loadIdPHomeProperty();
@@ -202,8 +202,7 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         if (configurationResource == null) {
             throw new ComponentInitializationException("Logging configuration must be specified.");
         }
@@ -222,10 +221,10 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
 
     }
 
-    /** {@inheritDoc}.
-     * This service does not support a ServiceableComponent, so return null. */
-    @Override
-    @Nullable public ServiceableComponent<Object> getServiceableComponent() {
+    /**
+     * {@inheritDoc}. This service does not support a ServiceableComponent, so return null.
+     */
+    @Override @Nullable public ServiceableComponent<Object> getServiceableComponent() {
         return null;
     }
 }

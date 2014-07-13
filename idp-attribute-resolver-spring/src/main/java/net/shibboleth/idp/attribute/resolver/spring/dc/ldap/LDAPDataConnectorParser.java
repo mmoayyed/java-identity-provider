@@ -128,6 +128,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
      * @param parserContext bean definition parsing context
      * @param builder to initialize
      */
+    // CheckStyle: MethodLength OFF
     protected void doParseV2(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
 
@@ -201,6 +202,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
     }
+    // CheckStyle: MethodLength ON
 
     /** Utility class for parsing v2 schema configuration. */
     protected static class V2Parser {
