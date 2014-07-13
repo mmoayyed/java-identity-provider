@@ -78,7 +78,7 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
      * 
      * @param configuration logging configuration
      */
-    public synchronized void setLoggingConfiguration(Resource configuration) {
+    public void setLoggingConfiguration(Resource configuration) {
         if (isInitialized()) {
             return;
         }
