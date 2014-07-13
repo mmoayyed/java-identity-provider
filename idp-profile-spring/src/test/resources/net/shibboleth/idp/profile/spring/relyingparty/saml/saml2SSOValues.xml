@@ -11,15 +11,12 @@
 	<rp:RelyingParty id="rp" provider="provider"
 		nameIDFormatPrecedence="one two" defaultSigningCredentialRef="signer"
 		defaultAuthenticationMethod="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport">
-		
+
 		<rp:ProfileConfiguration xsi:type="saml:SAML2SSOProfile"
 			includeAttributeStatement="false" securityPolicyRef="ignore"
 			maximumSPSessionLifetime="1" encryptionOptional="true"
-			encryptAttributes="always" allowDelegation="true"
-			encryptAssertions="conditional"
-			signRequests="conditional"
-			signAssertions="always"
-			signResponses="never"
+			encryptAttributes="always" allowDelegation="true" encryptAssertions="conditional"
+			signRequests="conditional" signAssertions="always" signResponses="never"
 			skipEndpointValidationWhenSigned="true" artifactType="7654"
 			inboundFlowId="sso2ibfid" outboundFlowId="sso2obfid">
 		</rp:ProfileConfiguration>
@@ -27,15 +24,13 @@
 	</rp:RelyingParty>
 	<sec:Credential id="signer" xsi:type="sec:BasicInline">
 		<sec:PublicKey>
------BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxg0TyQAP/tIvOH89EtaX
-uRRn8SYzTj7W1TbNY4VvBmobjkRmSkki4hH9x4sQpi635wn6WtXTN/FNNmkTK3N/
-LspmBWxfZS+n+cc7I82E5yvCAPX67QsZgqgglp2W5dvK/FsMMCS6X6SVqzBLMP88
-NenXKxY+HMxMs0sT0UKYh1cAEqadrHRBO65aDBcm5a0sBVYt9K6pgaOHrp/zSIbh
-nR5tFFLjBbtFktDpHL3AdGBH3OYidNGKBO3tJ3Ms7LeKXsM0+0Y4P+9fHZINL2X3
-E2N6GVnKs5PZTg9sP0FtIpAbYm/+zCx7Yj1ET/Er8mDd6tNVGSQsn9s5xUBwGqn1
-4wIDAQAB
------END PUBLIC KEY-----
-	</sec:PublicKey>
+			MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxg0TyQAP/tIvOH89EtaX
+			uRRn8SYzTj7W1TbNY4VvBmobjkRmSkki4hH9x4sQpi635wn6WtXTN/FNNmkTK3N/
+			LspmBWxfZS+n+cc7I82E5yvCAPX67QsZgqgglp2W5dvK/FsMMCS6X6SVqzBLMP88
+			NenXKxY+HMxMs0sT0UKYh1cAEqadrHRBO65aDBcm5a0sBVYt9K6pgaOHrp/zSIbh
+			nR5tFFLjBbtFktDpHL3AdGBH3OYidNGKBO3tJ3Ms7LeKXsM0+0Y4P+9fHZINL2X3
+			E2N6GVnKs5PZTg9sP0FtIpAbYm/+zCx7Yj1ET/Er8mDd6tNVGSQsn9s5xUBwGqn1
+			4wIDAQAB
+		</sec:PublicKey>
 	</sec:Credential>
 </rp:RelyingPartyGroup>
