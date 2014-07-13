@@ -134,7 +134,6 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(set.size(), 1);
 
         Assert.assertNotNull(resolver.resolveSingle(ctx));
-        // TODO - more testing
     }
 
     @Test(enabled = true) public void metadataConfig() throws ResolverException, FileNotFoundException, IOException {

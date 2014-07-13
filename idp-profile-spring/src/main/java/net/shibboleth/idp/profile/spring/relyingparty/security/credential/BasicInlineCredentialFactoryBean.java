@@ -101,7 +101,6 @@ public class BasicInlineCredentialFactoryBean extends AbstractBasicCredentialFac
         if (null == getPublicKeyInfo()) {
             return null;
         }
-        // TODO - why does the KeySupport library not appear to work?
         return KeyPairUtil.decodePublicKey(getPublicKeyInfo());
     }
 

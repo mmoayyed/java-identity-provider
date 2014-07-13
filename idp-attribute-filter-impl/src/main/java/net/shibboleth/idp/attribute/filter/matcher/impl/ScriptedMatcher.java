@@ -150,7 +150,6 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
         }
     }
 
-    // TODO : Do we still need these?
     /** {@inheritDoc} */
     @Override public boolean equals(Object obj) {
         if (obj == null) {

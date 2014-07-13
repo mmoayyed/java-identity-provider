@@ -212,7 +212,6 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
         clone.setDisplayDescriptions(getDisplayDescriptions());
         clone.setDisplayNames(getDisplayNames());
         clone.setEncoders(getEncoders());
-        // TODO(lajoie): should we clone the values?
         clone.setValues(getValues());
         return clone;
     }

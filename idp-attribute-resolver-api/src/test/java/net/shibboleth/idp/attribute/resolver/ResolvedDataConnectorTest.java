@@ -36,7 +36,7 @@ import org.testng.annotations.Test;
  */
 public class ResolvedDataConnectorTest {
 
-    private Map<String, IdPAttribute> resolvedData = Collections.EMPTY_MAP;
+    private final Map<String, IdPAttribute> resolvedData = Collections.EMPTY_MAP;
 
     @Test public void init() {
         MockStaticDataConnector dc = new MockStaticDataConnector();
@@ -114,9 +114,6 @@ public class ResolvedDataConnectorTest {
         Assert.assertNull(resolvedDataConnector.getActivationCondition());
         Assert.assertFalse(resolvedDataConnector.isPropagateResolutionExceptions());
 
-        //
-        // TODO - do we want to do more about seeing that these are indeed noops?
-        //
         resolvedDataConnector.setFailoverDataConnectorId("otherthing");
 
         resolvedDataConnector.setPropagateResolutionExceptions(true);

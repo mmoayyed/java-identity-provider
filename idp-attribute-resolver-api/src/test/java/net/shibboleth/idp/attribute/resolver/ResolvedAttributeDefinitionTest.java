@@ -107,9 +107,6 @@ public class ResolvedAttributeDefinitionTest {
         Assert.assertNull(resolvedAttributeDefinition.getActivationCondition());
         Assert.assertFalse(resolvedAttributeDefinition.isPropagateResolutionExceptions());
 
-        //
-        // TODO - do we want to do more about seeing that these are indeed noops?
-        //
         resolvedAttributeDefinition.setDependencyOnly(true);
         resolvedAttributeDefinition.setDisplayDescriptions(null);
         resolvedAttributeDefinition.setDisplayNames(null);
