@@ -114,7 +114,7 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
      * 
      * @param velocityEngine engine to be used
      */
-    public synchronized void setVelocityEngine(VelocityEngine velocityEngine) {
+    public void setVelocityEngine(VelocityEngine velocityEngine) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         engine = velocityEngine;

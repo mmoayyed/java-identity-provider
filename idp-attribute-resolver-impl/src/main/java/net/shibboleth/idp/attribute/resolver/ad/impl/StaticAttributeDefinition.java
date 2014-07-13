@@ -48,7 +48,7 @@ public class StaticAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @param newAttribute what to set.
      */
-    public synchronized void setValue(@Nullable final IdPAttribute newAttribute) {
+    public void setValue(@Nullable final IdPAttribute newAttribute) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 

@@ -33,25 +33,30 @@ import com.google.common.base.Function;
 
 /**
  * Function that returns the first custom {@link Principal} of a particular type found on the
- * {@link AuthenticationResult} returned by {@link AuthenticationContext#getAuthenticationResult()}.
+ * {@link net.shibboleth.idp.authn.AuthenticationResult} returned by
+ * {@link AuthenticationContext#getAuthenticationResult()}.
  * 
- * <p>The context is located using a lookup strategy, by default a child of the input context.<p>
+ * <p>
+ * The context is located using a lookup strategy, by default a child of the input context.
+ * <p>
  * 
- * <p>If for any reason a matching Principal can't be located, a default is returned.</p>
+ * <p>
+ * If for any reason a matching Principal can't be located, a default is returned.
+ * </p>
  * 
- * @param <T>   the custom Principal type to locate
+ * @param <T> the custom Principal type to locate
  */
 public class DefaultPrincipalDeterminationStrategy<T extends Principal> implements Function<ProfileRequestContext, T> {
-    
+
     /** Authentication context lookup strategy. */
     @Nonnull private Function<ProfileRequestContext, AuthenticationContext> authnContextLookupStrategy;
-    
+
     /** Type of Principal to return. */
-    @Nonnull private Class<T> principalType;
-    
+    @Nonnull private final Class<T> principalType;
+
     /** Default Principal to return. */
-    @Nonnull private T defaultPrincipal;
-    
+    @Nonnull private final T defaultPrincipal;
+
     /**
      * Constructor.
      * 
@@ -63,25 +68,24 @@ public class DefaultPrincipalDeterminationStrategy<T extends Principal> implemen
         defaultPrincipal = Constraint.isNotNull(principal, "Default Principal cannot be null");
         authnContextLookupStrategy = new ChildContextLookup<>(AuthenticationContext.class, false);
     }
-    
+
     /**
      * Set lookup strategy for {@link AuthenticationContext}.
      * 
-     * @param strategy  lookup strategy
+     * @param strategy lookup strategy
      */
-    public synchronized void setAuthenticationContextLookupStrategy(
+    public void setAuthenticationContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, AuthenticationContext> strategy) {
         authnContextLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable public T apply(@Nullable final ProfileRequestContext input) {
+    @Override @Nullable public T apply(@Nullable final ProfileRequestContext input) {
         final AuthenticationContext ac = authnContextLookupStrategy.apply(input);
         if (ac == null || ac.getAuthenticationResult() == null) {
             return defaultPrincipal;
         }
-        
+
         final Set<T> principals = ac.getAuthenticationResult().getSupportedPrincipals(principalType);
         if (principals.isEmpty()) {
             return defaultPrincipal;

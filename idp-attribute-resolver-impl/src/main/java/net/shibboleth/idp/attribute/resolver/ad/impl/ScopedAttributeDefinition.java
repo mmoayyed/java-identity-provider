@@ -64,7 +64,7 @@ public class ScopedAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @param newScope what to set.
      */
-    public synchronized void setScope(@Nonnull @NotEmpty final String newScope) {
+    public void setScope(@Nonnull @NotEmpty final String newScope) {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 

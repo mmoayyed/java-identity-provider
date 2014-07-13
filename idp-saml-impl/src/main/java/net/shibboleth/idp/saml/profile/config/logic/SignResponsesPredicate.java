@@ -50,13 +50,14 @@ public class SignResponsesPredicate implements Predicate<ProfileRequestContext> 
      * 
      * @param strategy lookup strategy
      */
-    public synchronized void setRelyingPartyContextLookupStrategy(
+    public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
     
     /** {@inheritDoc} */
+    @Override
     public boolean apply(@Nullable final ProfileRequestContext input) {
         if (input != null) {
             final RelyingPartyContext rpc = relyingPartyContextLookupStrategy.apply(input);

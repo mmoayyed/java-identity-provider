@@ -76,7 +76,7 @@ public class RDBMSDataConnector extends AbstractSearchDataConnector<ExecutableSt
      * 
      * @param source JDBC data source for retrieving {@link Connection}s
      */
-    public synchronized void setDataSource(@Nonnull final DataSource source) {
+    public void setDataSource(@Nonnull final DataSource source) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 

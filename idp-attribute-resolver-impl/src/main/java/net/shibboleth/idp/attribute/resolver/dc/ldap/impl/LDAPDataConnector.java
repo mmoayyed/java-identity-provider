@@ -78,7 +78,7 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
      * 
      * @param factory connection factory for retrieving {@link Connection}s
      */
-    public synchronized void setConnectionFactory(@Nonnull final ConnectionFactory factory) {
+    public void setConnectionFactory(@Nonnull final ConnectionFactory factory) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -99,7 +99,7 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
      * 
      * @param executor search executor for executing searches
      */
-    public synchronized void setSearchExecutor(@Nonnull final SearchExecutor executor) {
+    public void setSearchExecutor(@Nonnull final SearchExecutor executor) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -107,8 +107,7 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         if (connectionFactory == null) {
@@ -138,7 +137,7 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
      * 
      * @throws ResolutionException thrown if there is a problem retrieving data from the LDAP
      */
-    @Nullable protected Map<String, IdPAttribute> retrieveAttributes(final ExecutableSearchFilter filter)
+    @Override @Nullable protected Map<String, IdPAttribute> retrieveAttributes(final ExecutableSearchFilter filter)
             throws ResolutionException {
 
         if (filter == null) {
@@ -164,7 +163,7 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
     public class DefaultValidator implements Validator {
 
         /** {@inheritDoc} */
-        public void validate() throws ValidationException {
+        @Override public void validate() throws ValidationException {
             Connection connection = null;
             try {
                 connection = connectionFactory.getConnection();
@@ -186,7 +185,7 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
     public class SearchValidator implements Validator {
 
         /** Search filter for validating this connector. */
-        private SearchFilter validateFilter;
+        private final SearchFilter validateFilter;
 
         /**
          * Constructor.
@@ -198,7 +197,7 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
         }
 
         /** {@inheritDoc} */
-        public void validate() throws ValidationException {
+        @Override public void validate() throws ValidationException {
             try {
                 searchExecutor.search(connectionFactory, validateFilter);
             } catch (LdapException e) {

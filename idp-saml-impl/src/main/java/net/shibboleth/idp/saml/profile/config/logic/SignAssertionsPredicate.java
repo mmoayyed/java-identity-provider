@@ -37,8 +37,8 @@ public class SignAssertionsPredicate implements Predicate<ProfileRequestContext>
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
      */
-    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
-    
+    @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
+
     /** Constructor. */
     public SignAssertionsPredicate() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
@@ -50,13 +50,14 @@ public class SignAssertionsPredicate implements Predicate<ProfileRequestContext>
      * 
      * @param strategy lookup strategy
      */
-    public synchronized void setRelyingPartyContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
+    public void setRelyingPartyContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
-    
+
     /** {@inheritDoc} */
+    @Override
     public boolean apply(@Nullable final ProfileRequestContext input) {
         if (input != null) {
             final RelyingPartyContext rpc = relyingPartyContextLookupStrategy.apply(input);
@@ -67,7 +68,7 @@ public class SignAssertionsPredicate implements Predicate<ProfileRequestContext>
                 }
             }
         }
-        
+
         return false;
     }
 

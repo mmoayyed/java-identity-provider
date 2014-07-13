@@ -22,8 +22,8 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -66,6 +66,7 @@ public abstract class AbstractSAML1AttributeEncoder<EncodedType extends IdPAttri
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty public final String getProtocol() {
         return SAMLConstants.SAML11P_NS;
     }
@@ -84,7 +85,7 @@ public abstract class AbstractSAML1AttributeEncoder<EncodedType extends IdPAttri
      * 
      * @param attributeNamespace namespace in which the attribute name is interpreted
      */
-    public synchronized void setNamespace(@Nonnull @NotEmpty final String attributeNamespace) {
+    public void setNamespace(@Nonnull @NotEmpty final String attributeNamespace) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         namespace = Constraint.isNotNull(StringSupport.trimOrNull(attributeNamespace),

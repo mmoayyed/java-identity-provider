@@ -87,7 +87,7 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @param mappings functions used to map an input value to an output value
      */
-    public synchronized void setValueMaps(@Nullable @NullableElements final Collection<ValueMap> mappings) {
+    public void setValueMaps(@Nullable @NullableElements final Collection<ValueMap> mappings) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 

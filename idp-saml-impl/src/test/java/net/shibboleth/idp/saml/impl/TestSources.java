@@ -228,7 +228,7 @@ public final class TestSources {
          * 
          * @param newAttribute what to set.
          */
-        public synchronized void setValue(@Nullable final IdPAttribute newAttribute) {
+        public void setValue(@Nullable final IdPAttribute newAttribute) {
             ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
             ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -280,7 +280,7 @@ public final class TestSources {
          * 
          * @param newValues static values returned by this connector
          */
-        public synchronized void setValues(@Nullable @NullableElements Collection<IdPAttribute> newValues) {
+        public void setValues(@Nullable @NullableElements Collection<IdPAttribute> newValues) {
 
             if (null == newValues) {
                 attributes = null;

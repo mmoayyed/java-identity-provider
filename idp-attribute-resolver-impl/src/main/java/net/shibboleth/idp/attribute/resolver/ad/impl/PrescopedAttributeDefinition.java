@@ -70,7 +70,7 @@ public class PrescopedAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @param newScopeDelimiter delimiter between value and scope
      */
-    public synchronized void setScopeDelimiter(@Nonnull @NotEmpty final String newScopeDelimiter) {
+    public void setScopeDelimiter(@Nonnull @NotEmpty final String newScopeDelimiter) {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 

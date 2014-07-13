@@ -56,8 +56,8 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
 /**
- * Generator for "persistent" Format {@link NameID} objects that provides a source/seed ID
- * based on {@link IdPAttribute} data.
+ * Generator for "persistent" Format {@link NameID} objects that provides a source/seed ID based on {@link IdPAttribute}
+ * data.
  */
 @ThreadSafeAfterInit
 public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator {
@@ -66,24 +66,25 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
     @Nonnull private final Logger log = LoggerFactory.getLogger(PersistentSAML2NameIDGenerator.class);
 
     /** Strategy function to lookup SubjectContext. */
-    @Nonnull private Function<ProfileRequestContext,SubjectContext> subjectContextLookupStrategy;
-    
+    @Nonnull private Function<ProfileRequestContext, SubjectContext> subjectContextLookupStrategy;
+
     /** Strategy function to lookup AttributeContext. */
-    @Nonnull private Function<ProfileRequestContext,AttributeContext> attributeContextLookupStrategy;
-    
+    @Nonnull private Function<ProfileRequestContext, AttributeContext> attributeContextLookupStrategy;
+
     /** Attribute(s) to use as an identifier source. */
     @Nonnull @NonnullElements private List<String> attributeSourceIds;
-    
+
     /** Generation strategy for IDs. */
     @NonnullAfterInit private PersistentIdGenerationStrategy persistentIdStrategy;
-    
+
     /** Constructor. */
     public PersistentSAML2NameIDGenerator() {
         setFormat(NameID.PERSISTENT);
         subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
-        attributeContextLookupStrategy = Functions.compose(
-                new ChildContextLookup<RelyingPartyContext,AttributeContext>(AttributeContext.class),
-                new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
+        attributeContextLookupStrategy =
+                Functions.compose(
+                        new ChildContextLookup<RelyingPartyContext, AttributeContext>(AttributeContext.class),
+                        new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class));
         attributeSourceIds = Collections.emptyList();
         setDefaultIdPNameQualifierLookupStrategy(new ResponderIdLookupFunction());
         setDefaultSPNameQualifierLookupStrategy(new RelyingPartyIdLookupFunction());
@@ -94,69 +95,66 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
      * 
      * @param strategy lookup function to use
      */
-    public synchronized void setSubjectContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,SubjectContext> strategy) {
+    public void setSubjectContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        subjectContextLookupStrategy = Constraint.isNotNull(strategy,
-                "SubjectContext lookup strategy cannot be null");
+
+        subjectContextLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
     }
-    
+
     /**
      * Set the lookup strategy to use to locate the {@link AttributeContext}.
      * 
      * @param strategy lookup function to use
      */
-    public synchronized void setAttributeContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,AttributeContext> strategy) {
+    public void setAttributeContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, AttributeContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        attributeContextLookupStrategy = Constraint.isNotNull(strategy,
-                "AttributeContext lookup strategy cannot be null");
+
+        attributeContextLookupStrategy =
+                Constraint.isNotNull(strategy, "AttributeContext lookup strategy cannot be null");
     }
-    
+
     /**
      * Set the attribute sources to pull from.
      * 
-     * @param ids   attribute IDs to pull from
+     * @param ids attribute IDs to pull from
      */
-    public synchronized void setAttributeSourceIds(@Nonnull @NonnullElements final List<String> ids) {
+    public void setAttributeSourceIds(@Nonnull @NonnullElements final List<String> ids) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(ids, "Attribute ID collection cannot be null");
-        
+
         attributeSourceIds = Lists.newArrayList(Collections2.filter(ids, Predicates.notNull()));
     }
-    
+
     /**
      * Set the generation strategy for the persistent ID.
      * 
      * @param strategy generation strategy
      */
-    public synchronized void setPersistentIdGenerator(@Nonnull final PersistentIdGenerationStrategy strategy) {
+    public void setPersistentIdGenerator(@Nonnull final PersistentIdGenerationStrategy strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         persistentIdStrategy = Constraint.isNotNull(strategy, "PersistentIdGenerationStrategy cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        
+
         if (persistentIdStrategy == null) {
             throw new ComponentInitializationException("PersistentIdGenerationStrategy cannot be null");
         } else if (attributeSourceIds.isEmpty()) {
             throw new ComponentInitializationException("Attribute source ID list cannot be empty");
         }
     }
-    
-// Checkstyle: CyclomaticComplexity OFF
-    /** {@inheritDoc} */    
-    @Override
-    @Nullable protected String getIdentifier(@Nonnull final ProfileRequestContext profileRequestContext)
+
+    // Checkstyle: CyclomaticComplexity OFF
+    /** {@inheritDoc} */
+    @Override @Nullable protected String getIdentifier(@Nonnull final ProfileRequestContext profileRequestContext)
             throws SAMLException {
 
-        Function<ProfileRequestContext,String> lookup = getDefaultIdPNameQualifierLookupStrategy();
+        Function<ProfileRequestContext, String> lookup = getDefaultIdPNameQualifierLookupStrategy();
         final String responderId = lookup != null ? lookup.apply(profileRequestContext) : null;
         if (responderId == null) {
             log.debug("No responder identifier, can't generate persistent ID");
@@ -173,35 +171,35 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
             log.debug("No relying party identifier, can't generate persistent ID");
             return null;
         }
-        
+
         final SubjectContext subjectCtx = subjectContextLookupStrategy.apply(profileRequestContext);
         if (subjectCtx == null || subjectCtx.getPrincipalName() == null) {
             log.debug("No principal name, can't generate persistent ID");
             return null;
         }
-        
+
         final AttributeContext attributeCtx = attributeContextLookupStrategy.apply(profileRequestContext);
         if (attributeCtx == null) {
             log.debug("No attribute context, can't generate persistent ID");
             return null;
         }
-        
+
         final Map<String, IdPAttribute> attributes = attributeCtx.getIdPAttributes();
         for (final String sourceId : attributeSourceIds) {
             log.debug("Checking for source attribute {}", sourceId);
-            
+
             final IdPAttribute attribute = attributes.get(sourceId);
             if (attribute == null) {
                 continue;
             }
-            
+
             final Set<IdPAttributeValue<?>> values = attribute.getValues();
             for (final IdPAttributeValue value : values) {
                 if (value instanceof ScopedStringAttributeValue) {
                     log.info("Generating NameID from Scoped String-valued attribute {}", sourceId);
                     return persistentIdStrategy.generate(responderId, relyingPartyId, subjectCtx.getPrincipalName(),
                             ((ScopedStringAttributeValue) value).getValue() + '@'
-                                + ((ScopedStringAttributeValue) value).getScope());
+                                    + ((ScopedStringAttributeValue) value).getScope());
                 } else if (value instanceof StringAttributeValue) {
                     log.info("Generating NameID from String-valued attribute {}", sourceId);
                     return persistentIdStrategy.generate(responderId, relyingPartyId, subjectCtx.getPrincipalName(),
@@ -211,10 +209,10 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
                 }
             }
         }
-        
+
         log.info("Attribute sources {} did not produce a usable source identifier", attributeSourceIds);
         return null;
     }
-// Checkstyle: CyclomaticComplexity ON
+    // Checkstyle: CyclomaticComplexity ON
 
 }

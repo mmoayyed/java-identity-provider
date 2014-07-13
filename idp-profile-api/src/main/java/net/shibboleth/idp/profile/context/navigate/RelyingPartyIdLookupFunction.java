@@ -54,7 +54,7 @@ public class RelyingPartyIdLookupFunction implements ContextDataLookupFunction<P
      * @param strategy strategy used to locate the {@link RelyingPartyContext} associated with a given
      *            {@link ProfileRequestContext}
      */
-    public synchronized void setRelyingPartyContextLookupStrategy(
+    public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");

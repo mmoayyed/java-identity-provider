@@ -86,7 +86,7 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
      *
      * @param newValues functions used to map an input value to an output value
      */
-    public synchronized void setSourceValues(@Nullable @NullableElements final Collection<SourceValue> newValues) {
+    public void setSourceValues(@Nullable @NullableElements final Collection<SourceValue> newValues) {
 
         sourceValues = ImmutableSet.copyOf(Iterables.filter(newValues, Predicates.notNull()));
     }

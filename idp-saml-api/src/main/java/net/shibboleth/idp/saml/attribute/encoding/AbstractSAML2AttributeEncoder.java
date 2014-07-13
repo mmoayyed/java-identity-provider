@@ -23,8 +23,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -67,6 +67,7 @@ public abstract class AbstractSAML2AttributeEncoder<EncodedType extends IdPAttri
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull public final String getProtocol() {
         return SAMLConstants.SAML20P_NS;
     }
@@ -85,7 +86,7 @@ public abstract class AbstractSAML2AttributeEncoder<EncodedType extends IdPAttri
      * 
      * @param attributeFriendlyName friendly, human readable, name for the attribute
      */
-    public synchronized void setFriendlyName(@Nullable final String attributeFriendlyName) {
+    public void setFriendlyName(@Nullable final String attributeFriendlyName) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         friendlyName = StringSupport.trimOrNull(attributeFriendlyName);
@@ -114,7 +115,7 @@ public abstract class AbstractSAML2AttributeEncoder<EncodedType extends IdPAttri
      * 
      * @param nameFormat format in which the attribute name is interpreted
      */
-    public synchronized void setNameFormat(@Nullable final String nameFormat) {
+    public void setNameFormat(@Nullable final String nameFormat) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         format = StringSupport.trimOrNull(nameFormat);

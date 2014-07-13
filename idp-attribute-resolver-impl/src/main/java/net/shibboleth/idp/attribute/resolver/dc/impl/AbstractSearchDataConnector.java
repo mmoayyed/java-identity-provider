@@ -142,7 +142,7 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
      * 
      * @param isAnError whether an empty result set is treated as an error
      */
-    public synchronized void setNoResultAnError(final boolean isAnError) {
+    public void setNoResultAnError(final boolean isAnError) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 

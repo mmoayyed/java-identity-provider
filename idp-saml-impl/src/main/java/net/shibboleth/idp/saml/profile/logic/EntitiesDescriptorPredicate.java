@@ -68,7 +68,7 @@ public class EntitiesDescriptorPredicate implements Predicate<ProfileRequestCont
      * 
      * @param strategy lookup function to use
      */
-    public synchronized void setMetadataContextLookupStrategy(
+    public void setMetadataContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
 
         metadataContextLookupStrategy =

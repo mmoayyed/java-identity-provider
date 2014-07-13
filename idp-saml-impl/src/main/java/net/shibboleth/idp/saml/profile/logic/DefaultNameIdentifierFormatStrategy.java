@@ -41,28 +41,28 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 /**
- * Function to filter a set of candidate NameIdentifier/NameID Format values derived from an entity's
- * SAML metadata against configuration preferences. 
+ * Function to filter a set of candidate NameIdentifier/NameID Format values derived from an entity's SAML metadata
+ * against configuration preferences.
  */
 public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierFormatStrategy {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(DefaultNameIdentifierFormatStrategy.class);
-    
+
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
      */
     @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
-    
+
     /** Default format to use if nothing else is known. */
-    @Nonnull @NotEmpty private String defaultFormat; 
-    
+    @Nonnull @NotEmpty private String defaultFormat;
+
     /** Constructor. */
     public DefaultNameIdentifierFormatStrategy() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         defaultFormat = NameID.UNSPECIFIED;
     }
-    
+
     /**
      * Set the strategy used to locate the {@link RelyingPartyContext} associated with a given
      * {@link ProfileRequestContext}.
@@ -70,29 +70,28 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
      * @param strategy strategy used to locate the {@link RelyingPartyContext} associated with a given
      *            {@link ProfileRequestContext}
      */
-    public synchronized void setRelyingPartyContextLookupStrategy(
+    public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
 
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
-    
+
     /**
      * Set the default format to return.
      * 
-     * @param format    default format
+     * @param format default format
      */
-    public synchronized void setDefaultFormat(@Nonnull @NotEmpty final String format) {
-        defaultFormat = Constraint.isNotNull(StringSupport.trimOrNull(format),
-                "Default format cannot be null or empty");
+    public void setDefaultFormat(@Nonnull @NotEmpty final String format) {
+        defaultFormat =
+                Constraint.isNotNull(StringSupport.trimOrNull(format), "Default format cannot be null or empty");
     }
-    
+
     /** {@inheritDoc} */
-    @Override
-    @Nullable public List<String> apply(@Nullable final ProfileRequestContext input) {
+    @Override @Nullable public List<String> apply(@Nullable final ProfileRequestContext input) {
         List<String> fromConfig = Lists.newArrayList();
         final List<String> fromMetadata = super.apply(input);
-        
+
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(input);
         if (relyingPartyCtx != null) {
             final ProfileConfiguration profileConfig = relyingPartyCtx.getProfileConfig();
@@ -105,7 +104,7 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
         } else {
             log.debug("No RelyingPartyContext available");
         }
-        
+
         if (fromConfig.isEmpty()) {
             if (fromMetadata.isEmpty()) {
                 log.debug("No formats specified in configuration or in metadata, returning default");
@@ -123,5 +122,5 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
             return fromConfig;
         }
     }
-    
+
 }

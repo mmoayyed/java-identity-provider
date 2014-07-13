@@ -113,7 +113,7 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
      * 
      * @param velocityEngine engine to be used
      */
-    public synchronized void setVelocityEngine(@Nonnull final VelocityEngine velocityEngine) {
+    public void setVelocityEngine(@Nonnull final VelocityEngine velocityEngine) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         engine = velocityEngine;

@@ -46,7 +46,7 @@ public class MockStaticAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @param newAttribute what to set.
      */
-    public synchronized void setValue(@Nullable IdPAttribute newAttribute) {
+    public void setValue(@Nullable IdPAttribute newAttribute) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         

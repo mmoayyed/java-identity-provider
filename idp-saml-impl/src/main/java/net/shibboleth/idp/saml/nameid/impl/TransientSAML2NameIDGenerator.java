@@ -49,11 +49,11 @@ public class TransientSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator 
     @Nonnull private final Logger log = LoggerFactory.getLogger(TransientSAML2NameIDGenerator.class);
 
     /** Strategy function to lookup SubjectContext. */
-    @Nonnull private Function<ProfileRequestContext,SubjectContext> subjectContextLookupStrategy;
-    
+    @Nonnull private Function<ProfileRequestContext, SubjectContext> subjectContextLookupStrategy;
+
     /** Generator for transients. */
     @NonnullAfterInit private TransientIdGenerationStrategy transientIdGenerator;
-    
+
     /** Constructor. */
     public TransientSAML2NameIDGenerator() {
         setFormat(NameID.TRANSIENT);
@@ -61,64 +61,61 @@ public class TransientSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator 
         setDefaultIdPNameQualifierLookupStrategy(new ResponderIdLookupFunction());
         setDefaultSPNameQualifierLookupStrategy(new RelyingPartyIdLookupFunction());
     }
-    
+
     /**
      * Set the lookup strategy to use to locate the {@link SubjectContext}.
      * 
      * @param strategy lookup function to use
      */
-    public synchronized void setSubjectContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,SubjectContext> strategy) {
+    public void setSubjectContextLookupStrategy(@Nonnull final Function<ProfileRequestContext,
+            SubjectContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        subjectContextLookupStrategy = Constraint.isNotNull(strategy,
-                "SubjectContext lookup strategy cannot be null");
+
+        subjectContextLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
     }
-    
+
     /**
      * Set the generator of transient IDs.
      * 
      * @param generator transient ID generator
      */
-    public synchronized void setTransientIdGenerator(@Nonnull final TransientIdGenerationStrategy generator) {
+    public void setTransientIdGenerator(@Nonnull final TransientIdGenerationStrategy generator) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         transientIdGenerator = Constraint.isNotNull(generator, "TransientIdGenerationStrategy cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        
+
         if (transientIdGenerator == null) {
             throw new ComponentInitializationException("TransientIdGenerationStrategy cannot be null");
         }
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable protected String getIdentifier(@Nonnull final ProfileRequestContext profileRequestContext)
+    @Override @Nullable protected String getIdentifier(@Nonnull final ProfileRequestContext profileRequestContext)
             throws SAMLException {
 
         // Effective qualifier may override default in the case of an Affiliation.
         // This doesn't really impact transients typically, but for consistency...
         String relyingPartyId = getEffectiveSPNameQualifier(profileRequestContext);
         if (relyingPartyId == null) {
-            final Function<ProfileRequestContext,String> lookup = getDefaultSPNameQualifierLookupStrategy();
+            final Function<ProfileRequestContext, String> lookup = getDefaultSPNameQualifierLookupStrategy();
             relyingPartyId = lookup != null ? lookup.apply(profileRequestContext) : null;
         }
         if (relyingPartyId == null) {
             log.debug("No relying party identifier available, can't generate transient ID");
             return null;
         }
-        
+
         final SubjectContext subjectCtx = subjectContextLookupStrategy.apply(profileRequestContext);
         if (subjectCtx == null || subjectCtx.getPrincipalName() == null) {
             log.debug("No principal name available, can't generate transient ID");
             return null;
         }
-        
+
         try {
             return transientIdGenerator.generate(relyingPartyId, subjectCtx.getPrincipalName());
         } catch (final SAMLException e) {

@@ -70,7 +70,7 @@ public class RegexSplitAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @param expression regular expression used to split input values
      */
-    public synchronized void setRegularExpression(@Nonnull final Pattern expression) {
+    public void setRegularExpression(@Nonnull final Pattern expression) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 

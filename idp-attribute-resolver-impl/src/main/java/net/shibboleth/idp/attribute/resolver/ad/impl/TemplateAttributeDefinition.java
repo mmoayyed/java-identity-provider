@@ -131,7 +131,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @param velocityTemplate template to be evaluated
      */
-    public synchronized void setTemplateText(@Nullable final String velocityTemplate) {
+    public void setTemplateText(@Nullable final String velocityTemplate) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -152,7 +152,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @param velocityEngine engine to be used
      */
-    public synchronized void setVelocityEngine(@Nullable final VelocityEngine velocityEngine) {
+    public void setVelocityEngine(@Nullable final VelocityEngine velocityEngine) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 

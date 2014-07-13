@@ -67,7 +67,7 @@ public class StaticDataConnector extends AbstractDataConnector {
      * 
      * @param newValues static values returned by this connector
      */
-    public synchronized void setValues(@Nullable @NullableElements Collection<IdPAttribute> newValues) {
+    public void setValues(@Nullable @NullableElements Collection<IdPAttribute> newValues) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 

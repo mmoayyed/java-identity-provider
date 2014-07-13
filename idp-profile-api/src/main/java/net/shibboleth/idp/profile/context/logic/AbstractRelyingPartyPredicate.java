@@ -56,7 +56,7 @@ public abstract class AbstractRelyingPartyPredicate implements Predicate<Profile
      * 
      * @param strategy lookup function to use
      */
-    public synchronized void setRelyingPartyContextLookupStrategy(
+    public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
 
         relyingPartyContextLookupStrategy =
