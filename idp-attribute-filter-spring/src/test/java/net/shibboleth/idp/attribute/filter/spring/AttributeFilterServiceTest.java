@@ -57,7 +57,7 @@ public class AttributeFilterServiceTest {
      * @param resources configuration resources
      * @return the service
      * @throws ServiceException if an error occurs loading the service
-     * @throws ComponentInitializationException 
+     * @throws ComponentInitializationException
      */
     private static AttributeFilter getFilter(String name) throws ServiceException, ComponentInitializationException {
         final Resource resource = new ClassPathResource(SERVICE_CONFIG_DIR + name);
@@ -151,7 +151,18 @@ public class AttributeFilterServiceTest {
 
     @Test public void testPolicy4() throws ServiceException, AttributeFilterException, ComponentInitializationException {
 
-        final AttributeFilter filter = getFilter("policy4.xml");
+        common45("policy4.xml");
+    }
+
+    @Test public void testPolicy5() throws ServiceException, AttributeFilterException, ComponentInitializationException {
+
+        common45("policy5.xml");
+    }
+
+    private void common45(String file) throws ServiceException, AttributeFilterException,
+            ComponentInitializationException {
+
+        final AttributeFilter filter = getFilter(file);
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());
@@ -174,6 +185,40 @@ public class AttributeFilterServiceTest {
                 .contains(new StringAttributeValue("employee")));
 
         Assert.assertTrue(filteredAttributes.get("affiliation").getValues().contains(new StringAttributeValue("staff")));
+
+    }
+
+    @Test public void deny1() throws ServiceException, AttributeFilterException, ComponentInitializationException {
+        denyTest("deny1.xml");
+    }
+
+    @Test public void deny2() throws ServiceException, AttributeFilterException, ComponentInitializationException {
+        denyTest("deny2.xml");
+    }
+
+    private void denyTest(String file) throws ServiceException, AttributeFilterException,
+            ComponentInitializationException {
+        final AttributeFilter filter = getFilter(file);
+
+        AttributeFilterContext filterContext = new AttributeFilterContext();
+        filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());
+
+        filter.filterAttributes(filterContext);
+
+        Map<String, IdPAttribute> filteredAttributes = filterContext.getFilteredIdPAttributes();
+
+        Assert.assertEquals(1, filteredAttributes.size());
+
+        Assert.assertNull(filteredAttributes.get("firstName"));
+
+        Assert.assertNull(filteredAttributes.get("lastName"));
+
+        Assert.assertNull(filteredAttributes.get("email"));
+
+        Assert.assertEquals(2, filteredAttributes.get("affiliation").getValues().size(), 1);
+
+        Assert.assertTrue(filteredAttributes.get("affiliation").getValues()
+                .contains(new StringAttributeValue("employee")));
 
     }
 

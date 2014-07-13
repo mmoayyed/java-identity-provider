@@ -21,6 +21,8 @@ import java.util.List;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -166,5 +168,37 @@ public class AttributeFilterContextTest {
         context.setFilteredIdPAttributes(null);
         Assert.assertNotNull(context.getFilteredIdPAttributes());
         Assert.assertTrue(context.getFilteredIdPAttributes().isEmpty());
+    }
+
+    @Test public void fields() {
+        AttributeFilterContext context = new AttributeFilterContext();
+        Assert.assertNull(context.getAttributeIssuerID());
+        Assert.assertNull(context.getAttributeRecipientID());
+        Assert.assertNull(context.getPrincipal());
+        Assert.assertNull(context.getPrincipalAuthenticationMethod());
+
+        context.setAttributeIssuerID("aiid");
+        Assert.assertEquals(context.getAttributeIssuerID(), "aiid");
+
+        context.setAttributeRecipientID("arid");
+        Assert.assertEquals(context.getAttributeRecipientID(), "arid");
+
+        context.setPrincipal("princ");
+        Assert.assertEquals(context.getPrincipal(), "princ");
+
+        context.setPrincipalAuthenticationMethod("princam");
+        Assert.assertEquals(context.getPrincipalAuthenticationMethod(), "princam");
+
+    }
+
+    @Test public void strategies() {
+        AttributeFilterContext context = new AttributeFilterContext();
+        Assert.assertNull(context.getRequesterMetadataContext());
+
+        final SAMLMetadataContext mas = context.getSubcontext(SAMLMetadataContext.class, true);
+        context.setRequesterMetadataContextLookupStrategy(new ChildContextLookup<AttributeFilterContext, SAMLMetadataContext>(
+                SAMLMetadataContext.class));
+
+        Assert.assertSame(context.getRequesterMetadataContext(), mas);
     }
 }
