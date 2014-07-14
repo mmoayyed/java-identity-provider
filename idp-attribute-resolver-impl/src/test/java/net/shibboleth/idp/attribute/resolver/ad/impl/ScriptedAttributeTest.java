@@ -365,7 +365,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(attributeName);
-        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript(exampleScript)));
+        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript(exampleScript, false)));
         scripted.setDependencies(ds);
 
         final Set<DataConnector> dataDefinitions = Collections.singleton((DataConnector) connector);
@@ -391,9 +391,6 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
     @Test public void examples() throws ScriptException, IOException, ComponentInitializationException {
 
-        if (isV8()) {
-            return;
-        }
         IdPAttribute attribute = runExample("example1.script", "example1.attribute.xml", "swissEduPersonUniqueID");
 
         Assert.assertEquals(attribute.getValues().iterator().next().getValue(),
