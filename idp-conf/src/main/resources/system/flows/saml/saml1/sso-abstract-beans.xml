@@ -47,7 +47,7 @@
 
     <bean id="UpdateSessionWithSPSession"
         class="net.shibboleth.idp.session.impl.UpdateSessionWithSPSession" scope="prototype"
-        p:activationCondition-ref="#{ %{idp.session.enabled:true} ? 'shibboleth.Conditions.True' : 'shibboleth.Conditions.False' }"
+        p:activationCondition="%{idp.session.enabled:true}"
         p:sessionManager-ref="shibboleth.SessionManager"
         p:sessionLifetime="%{idp.session.defaultSPlifetime:PT2H}" />
 

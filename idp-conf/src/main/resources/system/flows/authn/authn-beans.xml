@@ -36,7 +36,7 @@
     <bean id="ResolveAttributes"
             class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
             c:resolverService-ref="shibboleth.AttributeResolverService"
-            p:activationCondition-ref="#{ %{idp.authn.resolveAttribute:null} != null ? 'shibboleth.Conditions.True' : 'shibboleth.Conditions.False' }"
+            p:activationCondition="#{ %{idp.authn.resolveAttribute:null} != null }"
             p:attributesToResolve="#{ { %{idp.authn.resolveAttribute:null} } }">
         <property name="principalNameLookupStrategy">
             <bean class="com.google.common.base.Functions" factory-method="compose"
@@ -72,7 +72,7 @@
     
     <bean id="UpdateSessionWithAuthenticationResult"
         class="net.shibboleth.idp.session.impl.UpdateSessionWithAuthenticationResult" scope="prototype"
-        p:activationCondition-ref="#{ %{idp.session.enabled:true} ? 'shibboleth.Conditions.True' : 'shibboleth.Conditions.False' }"
+        p:activationCondition="%{idp.session.enabled:true}"
         p:sessionManager-ref="shibboleth.SessionManager" />
     
 </beans>
