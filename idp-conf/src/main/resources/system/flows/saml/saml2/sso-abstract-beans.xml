@@ -24,6 +24,9 @@
     <bean id="InitializeMessageChannelSecurityContext"
         class="org.opensaml.profile.action.impl.StaticMessageChannelSecurity" scope="prototype"
         p:confidentialityActive="false" p:integrityActive="false" />
+        
+    <bean id="VerifyChannelBindings"
+        class="org.opensaml.saml.common.profile.impl.VerifyChannelBindings" scope="prototype" />
     
     <bean id="ProcessRequestedAuthnContext"
         class="net.shibboleth.idp.saml.saml2.profile.impl.ProcessRequestedAuthnContext" scope="prototype" />

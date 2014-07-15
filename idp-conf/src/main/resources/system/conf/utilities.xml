@@ -141,6 +141,11 @@
         <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.REQUESTER_URI" />
         <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.INVALID_NAMEID_POLICY_URI" />
     </util:list>
+
+    <util:list id="shibboleth.SAML2Status.ChannelBindingsError">
+        <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.REQUESTER_URI" />
+        <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML20CB_NS" />
+    </util:list>
     
     <util:constant id="shibboleth.SOAP.Client" static-field="org.opensaml.soap.soap11.FaultCode.CLIENT"/>
     <util:constant id="shibboleth.SOAP.Server" static-field="org.opensaml.soap.soap11.FaultCode.SERVER"/>
