@@ -14,7 +14,7 @@
         <evaluate expression="SAML1ArtifactRequestIssuer" />
         <evaluate expression="SAMLProtocolAndRole" />
         <evaluate expression="SAMLMetadataLookup" />
-        <evaluate expression="SAMLPopulateACS" />
+        <evaluate expression="SAMLPopulateAttributeConsumingService" />
 
         <evaluate expression="InitializeRelyingPartyContexFromSAMLPeer" />
         <evaluate expression="SelectRelyingPartyConfiguration" />

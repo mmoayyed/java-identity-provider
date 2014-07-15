@@ -64,7 +64,7 @@
         </constructor-arg>
     </bean>
     
-    <bean id="SAMLPopulateACS"
+    <bean id="SAMLPopulateAttributeConsumingService"
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
             c:executionDirection="INBOUND">
         <constructor-arg name="messageHandler">
