@@ -49,11 +49,6 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
     /** A script that returns an object other than a set. */
     private EvaluableScript invalidReturnObjectScript;
 
-    private boolean isV8() {
-        final String ver = System.getProperty("java.version");
-        return ver.startsWith("1.8");
-    }
-
     @BeforeTest public void setup() throws Exception {
         super.setUp();
 
@@ -69,9 +64,6 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testNullArguments() throws Exception {
-        if (isV8()) {
-            return;
-        }
         ScriptedPolicyRule rule = new ScriptedPolicyRule(trueReturnScript);
         rule.setId("Test");
         rule.initialize();
@@ -92,9 +84,6 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testNullReturnScript() throws Exception {
-        if (isV8()) {
-            return;
-        }
         ScriptedPolicyRule rule = new ScriptedPolicyRule(nullReturnScript);
         rule.setId("Test");
         rule.initialize();
@@ -103,9 +92,6 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testInvalidReturnObjectValue() throws Exception {
-        if (isV8()) {
-            return;
-        }
         ScriptedPolicyRule rule = new ScriptedPolicyRule(invalidReturnObjectScript);
         rule.setId("Test");
         rule.initialize();
@@ -114,9 +100,6 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testInitTeardown() throws ComponentInitializationException {
-        if (isV8()) {
-            return;
-        }
         ScriptedPolicyRule rule = new ScriptedPolicyRule(trueReturnScript);
 
         boolean thrown = false;
@@ -159,9 +142,6 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testEqualsHashToString() {
-        if (isV8()) {
-            return;
-        }
         ScriptedPolicyRule rule = new ScriptedPolicyRule(trueReturnScript);
 
         rule.toString();
@@ -183,9 +163,6 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
     }
     
     @Test public void testPredicate() throws ComponentInitializationException {
-        if (isV8()) {
-            return;
-        }
         ScriptedPolicyRule rule = new ScriptedPolicyRule(nullReturnScript);
         rule.setId("test");
         rule.initialize();

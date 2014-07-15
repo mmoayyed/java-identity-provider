@@ -60,28 +60,43 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
         filterContext = new AttributeFilterContext();
 
-        returnOneValueScript =
-                new EvaluableScript("JavaScript", new StringBuilder().append("importPackage(Packages.java.util);")
-                        .append("filterContext.getPrefilteredIdPAttributes();").append("x = new HashSet();")
-                        .append("x.add(attribute.getValues().iterator().next());").append("x;").toString());
-
         nullReturnScript = new EvaluableScript("JavaScript", "null;");
-
-        invalidReturnObjectScript = new EvaluableScript("JavaScript", "new java.lang.String();");
-
-        addedValuesScript =
-                new EvaluableScript("JavaScript", new StringBuilder().append("importPackage(Packages.java.util);")
-                        .append("filterContext.getPrefilteredIdPAttributes();").append("x = new HashSet();")
-                        .append("x.add(attribute.getValues().iterator().next());")
-                        .append("x.add(new net.shibboleth.idp.attribute.StringAttributeValue(\"a\"));").append("x;")
-                        .toString());
-
+        
+        
+        if (!isV8()){
+            returnOneValueScript =
+                    new EvaluableScript("JavaScript", new StringBuilder().append("importPackage(Packages.java.util);")
+                            .append("filterContext.getPrefilteredIdPAttributes();").append("x = new HashSet();")
+                            .append("x.add(attribute.getValues().iterator().next());").append("x;").toString());
+    
+            invalidReturnObjectScript = new EvaluableScript("JavaScript", "new java.lang.String();");
+    
+            addedValuesScript =
+                    new EvaluableScript("JavaScript", new StringBuilder().append("importPackage(Packages.java.util);")
+                            .append("filterContext.getPrefilteredIdPAttributes();").append("x = new HashSet();")
+                            .append("x.add(attribute.getValues().iterator().next());")
+                            .append("x.add(new net.shibboleth.idp.attribute.StringAttributeValue(\"a\"));").append("x;")
+                            .toString());
+        } else {
+            
+            returnOneValueScript =
+                    new EvaluableScript("JavaScript", new StringBuilder().append("load('nashorn:mozilla_compat.js');importPackage(Packages.java.util);")
+                            .append("filterContext.getPrefilteredIdPAttributes();").append("x = new HashSet();")
+                            .append("x.add(attribute.getValues().iterator().next());").append("x;").toString());
+    
+            invalidReturnObjectScript = new EvaluableScript("JavaScript", "load('nashorn:mozilla_compat.js');new java.lang.String();");
+    
+            addedValuesScript =
+                    new EvaluableScript("JavaScript", new StringBuilder().append("load('nashorn:mozilla_compat.js');importPackage(Packages.java.util);")
+                            .append("importPackage(Packages.net.shibboleth.idp.attribute);")
+                            .append("filterContext.getPrefilteredIdPAttributes();").append("x = new HashSet();")
+                            .append("x.add(attribute.getValues().iterator().next());")
+                            .append("x.add(new StringAttributeValue(\"a\"));").append("x;")
+                            .toString());
+        }
     }
 
     @Test public void testGetMatcher() throws Exception {
-        if (isV8()) {
-            return;
-        }
         
         ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
         matcher.setId("Test");
@@ -92,9 +107,6 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
     
 
     @Test public void testNullArguments() throws Exception {
-        if (isV8()) {
-            return;
-        }
 
         ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
         matcher.setId("Test");
@@ -137,10 +149,6 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testValidScript() throws Exception {
-        if (isV8()) {
-            return;
-        }
-
         ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
         matcher.setId("Test");
         matcher.initialize();
@@ -152,9 +160,6 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testNullReturnScript() throws Exception {
-        if (isV8()) {
-            return;
-        }
 
         ScriptedMatcher matcher = new ScriptedMatcher(nullReturnScript);
         matcher.setId("Test");
@@ -164,9 +169,6 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testInvalidReturnObjectValue() throws Exception {
-        if (isV8()) {
-            return;
-        }
 
         ScriptedMatcher matcher = new ScriptedMatcher(invalidReturnObjectScript);
         matcher.setId("Test");
@@ -176,9 +178,6 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testAddedValuesScript() throws Exception {
-        if (isV8()) {
-            return;
-        }
 
         ScriptedMatcher matcher = new ScriptedMatcher(addedValuesScript);
         matcher.setId("Test");
@@ -191,9 +190,6 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testInitTeardown() throws ComponentInitializationException {
-        if (isV8()) {
-            return;
-        }
 
         ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
 
@@ -236,9 +232,6 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testEqualsHashToString() {
-        if (isV8()) {
-            return;
-        }
 
         ScriptedMatcher matcher = new ScriptedMatcher(addedValuesScript);
 

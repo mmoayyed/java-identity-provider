@@ -48,6 +48,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
 import org.opensaml.saml.saml2.core.Attribute;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -64,6 +66,8 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
     /** Simple result. */
     private static final String SIMPLE_VALUE = "simple";
+
+    private static Logger log = LoggerFactory.getLogger(ScriptedAttributeTest.class);
 
     private String fileNameToPath(String fileName, boolean isV8Capable) {
         if (isV8() && !isV8Capable) {
@@ -193,20 +197,27 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
             buildTest(failingScript, v8Safe).resolve(generateContext());
             Assert.fail("Script: '" + failingScript + "' should have thrown an exception: " + failingMessage);
         } catch (ResolutionException ex) {
-            // OK
+            log.trace("Successful exception", ex);
+        } catch (RuntimeException ex) {
+            if (isV8() && (ex.getCause() instanceof ResolutionException)) {
+                // nashhorn wraps exceptions
+                log.trace("Successful exception", ex);
+            } else {
+                throw ex;
+            }
         }
     }
 
     @Test public void fails() throws ResolutionException, ComponentInitializationException, ScriptException,
             IOException {
 
-        if (isV8()) {
-            return;
-        }
         // TODO
         failureTest("fail1.script", "Unknown method", true);
         failureTest("fail2.script", "Bad output type", true);
-        Assert.assertNull(buildTest("fail3.script", true).resolve(generateContext()), "returns nothing");
+        if (!isV8()) {
+            // nashhorn is much more forgiving - and we tested for most of this in fails2
+            Assert.assertNull(buildTest("fail3.script", true).resolve(generateContext()), "returns nothing");
+        }
 
         failureTest("fail4.script", "getValues, then getNativeAttributes", true);
         failureTest("fail5.script", "getNativeAttributes, then getValues", true);
