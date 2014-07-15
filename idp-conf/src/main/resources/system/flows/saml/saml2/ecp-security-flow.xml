@@ -3,22 +3,24 @@
     xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
     parent="security-policy.abstract">
 
-    <!-- Default inbound security processing for SOAP-bound profiles. -->
+    <!-- Default inbound security processing for SAML 2 ECP profile. -->
 
-    <action-state id="SOAPSecurityPolicy">
+    <action-state id="SAML2ECPSecurityPolicy">
         <evaluate expression="ReceivedEndpointSecurityHandler" />
         <evaluate expression="MessageReplaySecurityHandler" />
         <evaluate expression="MessageLifetimeSecurityHandler" />
-        <evaluate expression="SAMLMDClientCertAuthSecurityHandler" />
+        <evaluate expression="SAML2AuthnRequestsSignedSecurityHandler" />
         <evaluate expression="SAMLProtocolMessageXMLSignatureSecurityHandler" />
+        <evaluate expression="SAML2HTTPRedirectDeflateSignatureSecurityHandler" />
+        <evaluate expression="SAML2HTTPPostSimpleSignSecurityHandler" />
         <evaluate expression="CheckMandatoryIssuer" />
-        <evaluate expression="CheckMandatoryAuthentication" />
+        <evaluate expression="ExtractChannelBindingsHeadersHandler" />
         <evaluate expression="ExtractChannelBindingsExtensionsHandler" />
         <evaluate expression="'proceed'" />
-        
+
         <transition on="proceed" to="proceed" />
     </action-state>
-
-    <bean-import resource="security-beans.xml" />
+    
+    <bean-import resource="../security-beans.xml" />
 
 </flow>

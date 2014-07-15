@@ -49,6 +49,7 @@
         <webflow:flow-location id="security-policy.abstract" path="/saml/security-abstract-flow.xml" />
         <webflow:flow-location id="security-policy/shibboleth-sso" path="/saml/saml1/sso-security-flow.xml" />
         <webflow:flow-location id="security-policy/saml2-sso" path="/saml/saml2/sso-security-flow.xml" />
+        <webflow:flow-location id="security-policy/saml2-ecp" path="/saml/saml2/ecp-security-flow.xml" />
         <webflow:flow-location id="security-policy/soap" path="/saml/soap-security-flow.xml" />
 
         <!-- Master flow for authentication. -->

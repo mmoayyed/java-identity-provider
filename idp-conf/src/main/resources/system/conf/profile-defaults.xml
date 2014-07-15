@@ -37,7 +37,7 @@
         c:_0="security-policy/saml2-sso" />
         
     <bean id="shibboleth.SAML2.ECP.InboundFlowId" class="java.lang.String"
-        c:_0="security-policy/saml2-sso" />
+        c:_0="security-policy/saml2-ecp" />
 
     <!--  SAML2 - Liberty -->
     <bean id="shibboleth.SAML2.SSOS.InboundFlowId" class="java.lang.String"
