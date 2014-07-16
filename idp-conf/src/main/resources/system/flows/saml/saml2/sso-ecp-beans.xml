@@ -36,6 +36,7 @@
         <property name="handlers">
             <util:list>
                 <bean class="org.opensaml.saml.saml2.binding.impl.AddECPResponseHeaderHandler" scope="prototype" />
+                <bean class="org.opensaml.saml.common.binding.impl.AddChannelBindingsHeaderHandler" scope="prototype" />
             </util:list>
         </property>
     </bean>
