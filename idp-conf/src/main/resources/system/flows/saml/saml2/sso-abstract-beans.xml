@@ -28,6 +28,18 @@
     <bean id="VerifyChannelBindings"
         class="org.opensaml.saml.common.profile.impl.VerifyChannelBindings" scope="prototype" />
     
+    <bean id="PopulateECPContext"
+            class="org.opensaml.saml.saml2.profile.impl.PopulateECPContext" scope="prototype">
+        <property name="activationCondition">
+            <bean class="org.opensaml.profile.logic.ProfileIdPredicate">
+                <constructor-arg>
+                    <util:constant
+                        static-field="net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration.PROFILE_ID"/>
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
+    
     <bean id="ProcessRequestedAuthnContext"
         class="net.shibboleth.idp.saml.saml2.profile.impl.ProcessRequestedAuthnContext" scope="prototype" />
         

@@ -14,6 +14,7 @@
 
     <action-state id="DoProfileWork">
         <evaluate expression="VerifyChannelBindings" />
+        <evaluate expression="PopulateECPContext" />
         <evaluate expression="InitializeAuthenticationContext" />
         <evaluate expression="InitializeRequestedPrincipalContext" />
         <evaluate expression="ProcessRequestedAuthnContext" />
