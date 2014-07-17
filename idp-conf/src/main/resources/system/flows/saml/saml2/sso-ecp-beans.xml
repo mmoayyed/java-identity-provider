@@ -31,6 +31,7 @@
         <property name="handlers">
             <util:list>
                 <bean class="org.opensaml.saml.saml2.binding.impl.AddECPResponseHeaderHandler" scope="prototype" />
+                <bean class="org.opensaml.saml.saml2.binding.impl.AddRelayStateHeaderHandler" scope="prototype" />
                 <bean class="org.opensaml.saml.saml2.binding.impl.AddRequestAuthenticatedHeaderHandler" scope="prototype" />
                 <bean class="org.opensaml.saml.saml2.binding.impl.AddGeneratedKeyHeaderHandler" scope="prototype" />
                 <bean class="org.opensaml.saml.common.binding.impl.AddChannelBindingsHeaderHandler" scope="prototype" />
