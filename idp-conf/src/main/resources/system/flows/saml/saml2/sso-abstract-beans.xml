@@ -71,6 +71,9 @@
     <bean id="AddChannelBindingsToAssertions"
         class="org.opensaml.saml.saml2.profile.impl.AddChannelBindingsToAssertions" scope="prototype" />
 
+    <bean id="AddGeneratedKeyToAssertions"
+        class="org.opensaml.saml.saml2.profile.impl.AddGeneratedKeyToAssertions" scope="prototype" />
+
     <bean id="UpdateSessionWithSPSession"
             class="net.shibboleth.idp.session.impl.UpdateSessionWithSPSession" scope="prototype"
             p:activationCondition="%{idp.session.enabled:true}"

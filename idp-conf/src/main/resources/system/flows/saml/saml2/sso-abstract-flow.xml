@@ -53,6 +53,7 @@
         <evaluate expression="AddAudienceRestrictionToAssertions" />
         <evaluate expression="AddProxyRestrictionToAssertions" />
         <evaluate expression="AddChannelBindingsToAssertions" />
+        <evaluate expression="AddGeneratedKeyToAssertions" />
 
         <!-- Needs access to unencrypted NameID and Assertion. -->
         <evaluate expression="UpdateSessionWithSPSession" />
