@@ -26,16 +26,13 @@
     
     <alias name="shibboleth.OutgoingECPBindings" alias="shibboleth.OutgoingBindings"/>
     
-    <!--
-    TODO: Channel binding extraction probably is a message handler, but might be ok to just put into
-    the per-profile-config default inbound chain for ECP.
-    -->
-    
     <bean id="shibboleth.BindingSpecificMessageHandler"
             class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
         <property name="handlers">
             <util:list>
                 <bean class="org.opensaml.saml.saml2.binding.impl.AddECPResponseHeaderHandler" scope="prototype" />
+                <bean class="org.opensaml.saml.saml2.binding.impl.AddRequestAuthenticatedHeaderHandler" scope="prototype" />
+                <bean class="org.opensaml.saml.saml2.binding.impl.AddGeneratedKeyHeaderHandler" scope="prototype" />
                 <bean class="org.opensaml.saml.common.binding.impl.AddChannelBindingsHeaderHandler" scope="prototype" />
             </util:list>
         </property>
