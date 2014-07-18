@@ -38,6 +38,11 @@
                 </constructor-arg>
             </bean>
         </property>
+        <property name="encryptionContextLookupStrategy">
+            <bean class="com.google.common.base.Functions" factory-method="compose"
+                c:g-ref="shibboleth.ChildLookup.EncryptionParameters"
+                c:f-ref="shibboleth.ChildLookup.RelyingParty" />
+        </property>
     </bean>
     
     <bean id="ProcessRequestedAuthnContext"
