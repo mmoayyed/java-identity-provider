@@ -13,12 +13,37 @@
        default-destroy-method="destroy">
        
     <!-- LDAP configuration. -->
-    
-    <bean id="shibboleth.authn.LDAP.ldapUrl" class="java.lang.String" c:_0="ldap://localhost:10389" />
-    <bean id="shibboleth.authn.LDAP.baseDn" class="java.lang.String" c:_0="ou=people,dc=example,dc=org" />
-    <bean id="shibboleth.authn.LDAP.userFilter" class="java.lang.String" c:_0="(uid={user})" />
+    <!-- Choose an import based on how you resolve DNs in your LDAP -->
+    <import resource="ldap-authn-anon-search-config.xml" />
+    <!-- <import resource="ldap-authn-bind-search-config.xml" /> -->
+    <!-- <import resource="ldap-authn-direct-config.xml" /> -->
+    <!-- <import resource="ldap-authn-ad-config.xml" /> -->
 
+    <!-- Common LDAP authn configuration -->
+    <bean id="shibboleth.authn.LDAP.ldapUrl" class="java.lang.String" c:_0="ldap://localhost:389" />
+    <util:constant id="shibboleth.authn.LDAP.useStartTLS" static-field="java.lang.Boolean.TRUE"/>
+    <util:constant id="shibboleth.authn.LDAP.useSSL" static-field="java.lang.Boolean.FALSE"/>
+    <bean id="shibboleth.authn.LDAP.baseDn" class="java.lang.String" c:_0="ou=people,dc=shibboleth,dc=net" />
     <util:constant id="shibboleth.authn.LDAP.subtreeSearch" static-field="java.lang.Boolean.FALSE"/>
+    <bean id="shibboleth.authn.LDAP.userFilter" class="java.lang.String" c:_0="(uid={user})" />
+    <bean id="shibboleth.authn.LDAP.connectTimeout" class="java.lang.Integer" c:_0="3000" />
+
+    <!-- Required for ldap-authn-bind-config -->
+    <bean id="shibboleth.authn.LDAP.bindDN" class="java.lang.String" c:_0="cn=manager" />
+    <bean id="shibboleth.authn.LDAP.bindCredential" class="java.lang.String" c:_0="password" />
+
+    <!-- Required for ldap-authn-direct-config and ldap-authn-ad-config; use %s@domain.com for AD -->
+    <bean id="shibboleth.authn.LDAP.dn-format" class="java.lang.String" c:_0="uid=%s,ou=people,dc=shibboleth,dc=net" />
+
+    <!-- Common pooling configuration used for DN resolution and binding -->
+    <bean id="shibboleth.authn.LDAP.pool.minSize" class="java.lang.Integer" c:_0="3" />
+    <bean id="shibboleth.authn.LDAP.pool.maxSize" class="java.lang.Integer" c:_0="10" />
+    <util:constant id="shibboleth.authn.LDAP.pool.validateOnCheckout" static-field="java.lang.Boolean.FALSE"/>
+    <util:constant id="shibboleth.authn.LDAP.pool.validatePeriodically" static-field="java.lang.Boolean.TRUE"/>
+    <bean id="shibboleth.authn.LDAP.pool.validatePeriod" class="java.lang.Long" c:_0="300" />
+    <bean id="shibboleth.authn.LDAP.pool.prunePeriod" class="java.lang.Long" c:_0="300" />
+    <bean id="shibboleth.authn.LDAP.pool.idleTime" class="java.lang.Long" c:_0="600" />
+    <bean id="shibboleth.authn.LDAP.pool.blockWaitTime" class="java.lang.Long" c:_0="3000" />
 
     <util:list id="shibboleth.authn.LDAP.returnAttributes">
         <value>cn</value>

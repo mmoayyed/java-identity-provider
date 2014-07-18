@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:util="http://www.springframework.org/schema/util" xmlns:p="http://www.springframework.org/schema/p" xmlns:c="http://www.springframework.org/schema/c"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+
+    default-init-method="initialize" default-destroy-method="destroy">
+
+    <import resource="ldap-authn-common-config.xml" />
+
+    <bean name="authenticator" class="org.ldaptive.auth.Authenticator">
+        <constructor-arg index="0" ref="searchDnResolver" />
+        <constructor-arg index="1" ref="authHandler" />
+    </bean>
+
+    <bean id="searchConnectionConfig" parent="connectionConfig" />
+    <bean id="bindConnectionConfig" parent="connectionConfig" />
+
+    <!-- Having SSL trust issues? Configure trust by adding
+    <bean id="sslConfig" class="org.ldaptive.ssl.SslConfig">
+        <property name="credentialConfig">
+            <bean class="org.ldaptive.ssl.X509CredentialConfig" p:trustCertificates="file:/path/to/CA.pem" />
+        </property>
+    </bean>
+    add p:sslConfig-ref="sslConfig" to each connectionConfig -->
+
+    <!-- Want to use ppolicy? Configure support by adding
+    <bean id="authenticationResponseHandler" class="org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler" />
+    add p:authenticationResponseHandlers-ref="authenticationResponseHandler" to the authenticator
+
+    <bean id="authenticationControl" class="org.ldaptive.control.PasswordPolicyControl" />
+    add p:authenticationControls-ref="authenticationControl" to the authHandler -->
+
+</beans>
