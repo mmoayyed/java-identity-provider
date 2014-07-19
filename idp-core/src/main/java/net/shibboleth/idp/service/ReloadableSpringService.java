@@ -258,8 +258,8 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
     @Override protected void doReload() {
         super.doReload();
 
-        log.debug("Creating new ApplicationContext for service '{}'", getId());
-        log.debug("Reloading from {}", getServiceConfigurations());
+        log.debug("{} Creating new ApplicationContext for service '{}'", getLogPrefix(), getId());
+        log.debug("{} Reloading from {}", getLogPrefix(), getServiceConfigurations());
         final GenericApplicationContext appContext;
         try {
             appContext =
@@ -285,7 +285,7 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
         //
         final T theComponent = service.getComponent();
 
-        log.debug("Testing that {} is a superclass of {}", theComponent.getClass(), theClaz);
+        log.debug("{} Testing that {} is a superclass of {}", getLogPrefix(), theComponent.getClass(), theClaz);
 
         if (!theClaz.isAssignableFrom(theComponent.getClass())) {
             //
@@ -315,7 +315,7 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
             oldComponent.unloadComponent();
         }
         lastLoadFailed = false;
-        log.debug("Reload complete");
+        log.info("{} Reload complete", getLogPrefix());
     }
 
     /** {@inheritDoc} */

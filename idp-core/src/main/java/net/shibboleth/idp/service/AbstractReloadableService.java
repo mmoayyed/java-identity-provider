@@ -267,7 +267,7 @@ public abstract class AbstractReloadableService<T> extends AbstractIdentifiableI
      * @throws ServiceException thrown if there is a problem reloading the service
      */
     protected void doReload() {
-
+        log.info("{} Reloading service configuration", getLogPrefix());
     }
 
     /**
