@@ -55,7 +55,7 @@ public class ReloadingRelyingPartyMetadataProvider extends AbstractIdentifiableI
      * @param resolverService the service which will manage the loading.
      */
     public ReloadingRelyingPartyMetadataProvider(@Nonnull ReloadableService<MetadataResolver> resolverService) {
-        service = Constraint.isNotNull(resolverService, "RelyingParty Service cannot be null");
+        service = Constraint.isNotNull(resolverService, "MetadataResolver Service cannot be null");
     }
 
     /** {@inheritDoc} */
@@ -66,13 +66,14 @@ public class ReloadingRelyingPartyMetadataProvider extends AbstractIdentifiableI
         try {
             component = service.getServiceableComponent();
             if (null == component) {
-                log.error("RelyingPartyResolver '{}': error looking up Relying Party: Invalid configuration.", getId());
+                log.error("RelyingPartyMetadataProvider '{}': Error accessing underlying metadata source: "
+                        + "Invalid configuration.", getId());
             } else {
                 final MetadataResolver resolver = component.getComponent();
                 return resolver.resolve(criteria);
             }
-        } catch (ResolverException e) {
-            log.error("RelyingPartyResolver '{}': error in resolution", getId(), e);
+        } catch (final ResolverException e) {
+            log.error("RelyingPartyMetadataProvider '{}': Error during resolution", getId(), e);
         } finally {
             if (null != component) {
                 component.unpinComponent();
@@ -89,13 +90,14 @@ public class ReloadingRelyingPartyMetadataProvider extends AbstractIdentifiableI
         try {
             component = service.getServiceableComponent();
             if (null == component) {
-                log.error("RelyingPartyResolver '{}': error looking up Relying Party: Invalid configuration.", getId());
+                log.error("RelyingPartyMetadataProvider '{}': Error accessing underlying metadata source: "
+                        + "Invalid configuration.", getId());
             } else {
                 final MetadataResolver resolver = component.getComponent();
                 return resolver.resolveSingle(criteria);
             }
-        } catch (ResolverException e) {
-            log.error("RelyingPartyResolver '{}': error in resolution", getId(), e);
+        } catch (final ResolverException e) {
+            log.error("RelyingPartyResolver '{}': Error during resolution", getId(), e);
         } finally {
             if (null != component) {
                 component.unpinComponent();
@@ -111,7 +113,8 @@ public class ReloadingRelyingPartyMetadataProvider extends AbstractIdentifiableI
         try {
             component = service.getServiceableComponent();
             if (null == component) {
-                log.error("RelyingPartyResolver '{}': error looking up Relying Party: Invalid configuration.", getId());
+                log.error("RelyingPartyMetadataProvider '{}': Error accessing underlying metadata source: "
+                        + "Invalid configuration.", getId());
             } else {
                 final MetadataResolver resolver = component.getComponent();
                 return resolver.isRequireValidMetadata();
@@ -136,7 +139,8 @@ public class ReloadingRelyingPartyMetadataProvider extends AbstractIdentifiableI
         try {
             component = service.getServiceableComponent();
             if (null == component) {
-                log.error("RelyingPartyResolver '{}': error looking up Relying Party: Invalid configuration.", getId());
+                log.error("RelyingPartyMetadataProvider '{}': Error accessing underlying metadata source: "
+                        + "Invalid configuration.", getId());
             } else {
                 final MetadataResolver resolver = component.getComponent();
                 return resolver.getMetadataFilter();
@@ -153,4 +157,5 @@ public class ReloadingRelyingPartyMetadataProvider extends AbstractIdentifiableI
     @Override public void setMetadataFilter(MetadataFilter newFilter) {
         throw new IllegalAccessError("Cannot set Metadata filter");
     }
+    
 }
