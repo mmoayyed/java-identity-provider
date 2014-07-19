@@ -93,5 +93,10 @@
         <value>%{idp.home}/conf/saml-nameid.xml</value>
         <value>%{idp.home}/system/conf/saml-nameid-system.xml</value>
     </util:list>
+    
+    <util:list id="shibboleth.AccessControlResources">
+        <value>%{idp.home}/conf/access-control.xml</value>
+        <value>%{idp.home}/system/conf/access-control-system.xml</value>
+    </util:list>
 
 </beans>

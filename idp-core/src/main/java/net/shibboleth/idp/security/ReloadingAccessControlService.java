@@ -19,58 +19,47 @@ package net.shibboleth.idp.security;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.service.ReloadableService;
-import net.shibboleth.idp.service.ServiceableComponent;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.idp.service.AbstractServiceableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.AccessControl;
 import net.shibboleth.utilities.java.support.security.AccessControlService;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
- * This class uses the service interface to implement {@link AccessControlService}.
+ * This class wraps an {@link AccessControlService} in a {@link net.shibboleth.idp.service.ServiceableComponent}.
  */
-public class ReloadingAccessControlService extends AbstractIdentifiableInitializableComponent implements
-        AccessControlService {
+public class ReloadingAccessControlService extends AbstractServiceableComponent<AccessControlService>
+        implements AccessControlService {
 
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ReloadingAccessControlService.class);
-
-    /** The service which manages the reloading. */
-    private final ReloadableService<AccessControlService> service;
+    /** The embedded service. */
+    private final AccessControlService service;
 
     /**
      * Constructor.
      * 
-     * @param acService the service which will manage the loading.
+     * @param svc the embedded service
      */
-    public ReloadingAccessControlService(@Nonnull ReloadableService<AccessControlService> acService) {
-        service = Constraint.isNotNull(acService, "AccessControlService cannot be null");
+    public ReloadingAccessControlService(@Nonnull AccessControlService svc) {
+        service = Constraint.isNotNull(svc, "AccessControlService cannot be null");
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        setId(service.getId());
+        super.doInitialize();
     }
 
     /** {@inheritDoc} */
     @Override
     public AccessControl getInstance(@Nonnull final String name) {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        ServiceableComponent<AccessControlService> component = null;
-        try {
-            component = service.getServiceableComponent();
-            if (null == component) {
-                log.error("AccessControlService '{}': Error accessing underlying component: Invalid configuration.",
-                        getId());
-            } else {
-                final AccessControlService svc = component.getComponent();
-                return svc.getInstance(name);
-            }
-        } finally {
-            if (null != component) {
-                component.unpinComponent();
-            }
-        }
-        return null;
+        return service.getInstance(name);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public AccessControlService getComponent() {
+        return this;
     }
     
 }

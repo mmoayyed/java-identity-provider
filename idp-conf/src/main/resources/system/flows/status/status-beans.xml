@@ -23,9 +23,10 @@
         p:profileId="http://shibboleth.net/ns/profiles/status" />
 
     <bean id="CheckAccess"
-        class="org.opensaml.profile.action.impl.CheckClientAddress" scope="prototype"
+        class="org.opensaml.profile.action.impl.CheckAccess" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:allowedRanges="#{ { %{idp.status.allowedAddresses:null} } }" />
+        p:accessControlService-ref="shibboleth.AccessControlService"
+        p:policyName="%{idp.status.accessPolicy}" />
     
     <bean id="MapEventToView"
         class="net.shibboleth.idp.profile.context.navigate.SpringEventToViewLookupFunction"

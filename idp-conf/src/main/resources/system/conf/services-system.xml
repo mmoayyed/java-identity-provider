@@ -86,6 +86,13 @@
         </property>
     </bean>
 
+    <bean id="shibboleth.ReloadableAccessControlService" class="net.shibboleth.idp.service.ReloadableSpringService"
+        c:claz="net.shibboleth.utilities.java.support.security.AccessControlService" 
+        p:serviceConfigurations-ref="shibboleth.AccessControlResources"
+        p:failFast="%{idp.service.access.failFast:true}"
+        p:reloadCheckDelay="%{idp.service.access.checkInterval:0}"
+        p:reloadTaskTimer="shibboleth.TaskTimer" />
+
     <!--
     These are proxies/facades that expose a service-unaware interface to client components.
     Services without such facades are being consumed directly in a service-aware way.
@@ -98,5 +105,9 @@
     <bean id="shibboleth.MetadataResolver"
         class="net.shibboleth.idp.saml.metadata.impl.ReloadingRelyingPartyMetadataProvider"
         c:resolverService-ref="shibboleth.MetadataResolverService" />
+        
+    <bean id="shibboleth.AccessControlService"
+        class="net.shibboleth.idp.security.AccessControlService"
+        c:acService-ref="shibboleth.ReloadableAccessControlService" />
 
  </beans>
