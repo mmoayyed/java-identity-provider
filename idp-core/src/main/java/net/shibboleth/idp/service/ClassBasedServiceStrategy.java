@@ -59,7 +59,7 @@ public class ClassBasedServiceStrategy<T> implements Function<ApplicationContext
         final Collection<? extends ServiceableComponent> components = appContext.getBeansOfType(serviceClaz).values();
 
         if (components.size() == 0) {
-            throw new ServiceException("Reload did not produce any bean of type" + serviceClaz.getName());
+            throw new ServiceException("Reload did not produce any bean of type " + serviceClaz.getName());
         }
         if (components.size() > 1) {
             throw new ServiceException("Reload produced " + components.size() + " ServiceableComponents");
