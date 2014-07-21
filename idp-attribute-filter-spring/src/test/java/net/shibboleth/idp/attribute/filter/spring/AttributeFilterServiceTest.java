@@ -27,8 +27,8 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.service.ServiceException;
 
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.support.GenericApplicationContext;

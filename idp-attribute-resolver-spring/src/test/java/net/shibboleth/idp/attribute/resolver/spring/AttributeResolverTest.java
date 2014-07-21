@@ -35,12 +35,12 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.impl.TestSources;
-import net.shibboleth.idp.service.ReloadableService;
-import net.shibboleth.idp.service.ServiceException;
-import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
+import net.shibboleth.utilities.java.support.service.ServiceException;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;

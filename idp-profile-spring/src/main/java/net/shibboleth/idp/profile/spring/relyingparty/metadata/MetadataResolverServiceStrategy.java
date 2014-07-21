@@ -24,11 +24,11 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
-import net.shibboleth.idp.service.ServiceException;
-import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
+import net.shibboleth.utilities.java.support.service.ServiceException;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.ChainingMetadataResolver;

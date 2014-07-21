@@ -29,10 +29,10 @@ import net.shibboleth.idp.saml.attribute.mapping.impl.RequestedAttributesMapper;
 import net.shibboleth.idp.saml.attribute.mapping.impl.ScopedStringAttributeValueMapper;
 import net.shibboleth.idp.saml.attribute.mapping.impl.StringAttributeValueMapper;
 import net.shibboleth.idp.saml.attribute.mapping.impl.XmlObjectAttributeValueMapper;
-import net.shibboleth.idp.service.ReloadableService;
-import net.shibboleth.idp.service.ServiceException;
-import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
+import net.shibboleth.utilities.java.support.service.ServiceException;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.saml.saml2.core.Attribute;

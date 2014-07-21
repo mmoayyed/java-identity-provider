@@ -30,9 +30,9 @@ import net.shibboleth.idp.attribute.resolver.dc.impl.MappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.impl.Validator;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.ExecutableStatement;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.RDBMSDataConnector;
-import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.service.ServiceException;
 
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;

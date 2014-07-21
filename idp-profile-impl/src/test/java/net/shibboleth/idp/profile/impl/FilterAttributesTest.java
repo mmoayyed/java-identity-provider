@@ -41,9 +41,9 @@ import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.idp.service.AbstractReloadableService;
-import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.service.AbstractReloadableService;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;

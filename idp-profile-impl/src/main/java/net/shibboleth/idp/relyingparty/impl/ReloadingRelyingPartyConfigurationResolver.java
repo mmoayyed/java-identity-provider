@@ -25,13 +25,13 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
-import net.shibboleth.idp.service.ReloadableService;
-import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;

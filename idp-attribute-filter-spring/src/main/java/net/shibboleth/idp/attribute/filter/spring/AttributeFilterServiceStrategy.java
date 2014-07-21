@@ -24,10 +24,10 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterImpl;
 import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
-import net.shibboleth.idp.service.ServiceException;
-import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.service.ServiceException;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -27,10 +27,10 @@ import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import net.shibboleth.idp.saml.attribute.principalconnector.impl.PrincipalConnector;
 import net.shibboleth.idp.saml.attribute.principalconnector.impl.PrinicpalConnectorCanonicalizer;
-import net.shibboleth.idp.service.ServiceException;
-import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.service.ServiceException;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

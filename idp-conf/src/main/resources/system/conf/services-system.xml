@@ -20,7 +20,7 @@
     services are generally defined in the services.xml file edited by deployers.
     -->
 
-    <bean id="shibboleth.AttributeFilterService" class="net.shibboleth.idp.service.ReloadableSpringService"
+    <bean id="shibboleth.AttributeFilterService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
         depends-on="shibboleth.VelocityEngine"
         p:serviceConfigurations-ref="shibboleth.AttributeFilterResources"
         p:failFast="%{idp.service.attribute.filter.failFast:false}"
@@ -34,7 +34,7 @@
         </constructor-arg>
     </bean>
 
-    <bean id="shibboleth.AttributeResolverService" class="net.shibboleth.idp.service.ReloadableSpringService" 
+    <bean id="shibboleth.AttributeResolverService" class="net.shibboleth.ext.spring.service.ReloadableSpringService" 
         depends-on="shibboleth.VelocityEngine"
         p:serviceConfigurations-ref="shibboleth.AttributeResolverResources"
         p:failFast="%{idp.service.attribute.resolver.failFast:false}"
@@ -48,14 +48,14 @@
         </constructor-arg>
     </bean>
 
-    <bean id="shibboleth.NameIdentifierGenerationService" class="net.shibboleth.idp.service.ReloadableSpringService" 
+    <bean id="shibboleth.NameIdentifierGenerationService" class="net.shibboleth.ext.spring.service.ReloadableSpringService" 
         c:claz="net.shibboleth.idp.saml.nameid.NameIdentifierGenerationService"
         p:serviceConfigurations-ref="shibboleth.NameIdentifierGenerationResources"
         p:failFast="%{idp.service.nameidGeneration.failFast:false}"
         p:reloadCheckDelay="%{idp.service.nameidGeneration.checkInterval:0}"
         p:reloadTaskTimer="shibboleth.TaskTimer" />
 
-    <bean id="shibboleth.RelyingPartyResolverService" class="net.shibboleth.idp.service.ReloadableSpringService"
+    <bean id="shibboleth.RelyingPartyResolverService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
         p:serviceConfigurations-ref="shibboleth.RelyingPartyResolverResources"
         p:failFast="%{idp.service.relyingparty.failFast:false}"
         p:reloadCheckDelay="%{idp.service.relyingparty.checkInterval:0}"
@@ -63,12 +63,12 @@
         <constructor-arg name="claz"
             value="net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver" />
         <constructor-arg name="strategy">
-            <bean class="net.shibboleth.idp.service.ClassBasedServiceStrategy"
+            <bean class="net.shibboleth.ext.spring.service.ClassBasedServiceStrategy"
                 c:serviceableClaz="net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver" />
         </constructor-arg>
     </bean>
 
-    <bean id="shibboleth.MetadataResolverService" class="net.shibboleth.idp.service.ReloadableSpringService"
+    <bean id="shibboleth.MetadataResolverService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
         depends-on="shibboleth.AttributeResolverService" 
         p:serviceConfigurations-ref="shibboleth.MetadataResolverResources"
         p:failFast="%{idp.service.metadata.failFast:false}"
@@ -86,7 +86,7 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.ReloadableAccessControlService" class="net.shibboleth.idp.service.ReloadableSpringService"
+    <bean id="shibboleth.ReloadableAccessControlService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
         c:claz="net.shibboleth.utilities.java.support.security.AccessControlService" 
         p:serviceConfigurations-ref="shibboleth.AccessControlResources"
         p:failFast="%{idp.service.access.failFast:true}"

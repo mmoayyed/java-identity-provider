@@ -26,7 +26,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.saml.attribute.mapping.AttributesMapContainer;
 import net.shibboleth.idp.saml.metadata.impl.AttributeMappingNodeProcessor;
-import net.shibboleth.idp.service.ReloadableService;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
 
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.saml.metadata.resolver.filter.FilterException;

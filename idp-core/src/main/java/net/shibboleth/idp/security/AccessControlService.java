@@ -19,12 +19,12 @@ package net.shibboleth.idp.security;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.service.ReloadableService;
-import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.AccessControl;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

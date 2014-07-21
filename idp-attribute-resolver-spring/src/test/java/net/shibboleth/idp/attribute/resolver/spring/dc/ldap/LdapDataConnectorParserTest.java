@@ -31,8 +31,8 @@ import net.shibboleth.idp.attribute.resolver.dc.impl.MappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.impl.Validator;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.LDAPDataConnector;
 import net.shibboleth.idp.saml.impl.TestSources;
-import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.service.ServiceException;
 
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;

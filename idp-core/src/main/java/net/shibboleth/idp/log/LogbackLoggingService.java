@@ -22,11 +22,11 @@ import java.io.InputStream;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.service.AbstractReloadableService;
-import net.shibboleth.idp.service.ServiceException;
-import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.service.AbstractReloadableService;
+import net.shibboleth.utilities.java.support.service.ServiceException;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;

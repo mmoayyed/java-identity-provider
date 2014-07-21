@@ -23,9 +23,9 @@ import java.util.Iterator;
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
-import net.shibboleth.idp.service.ReloadableSpringService;
-import net.shibboleth.idp.service.ServiceableComponent;
+import net.shibboleth.ext.spring.service.ReloadableSpringService;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.DOMMetadataResolver;

@@ -19,7 +19,7 @@
 			</props>
 		</property>
 	</bean>
-	<bean id="shibboleth.AttributeResolverService" class="net.shibboleth.idp.service.ReloadableSpringService"
+	<bean id="shibboleth.AttributeResolverService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
 		depends-on="shibboleth.VelocityEngine" p:failFast="true"
 		p:reloadCheckDelay="0">
 

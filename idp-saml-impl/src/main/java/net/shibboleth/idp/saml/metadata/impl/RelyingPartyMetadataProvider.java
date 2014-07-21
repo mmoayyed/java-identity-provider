@@ -20,7 +20,7 @@ package net.shibboleth.idp.saml.metadata.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.service.AbstractServiceableComponent;
+import net.shibboleth.ext.spring.service.AbstractServiceableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;

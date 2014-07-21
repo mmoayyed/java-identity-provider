@@ -26,11 +26,11 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.ext.spring.service.AbstractServiceableComponent;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.profile.logic.impl.AnonymousProfilePredicate;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
-import net.shibboleth.idp.service.AbstractServiceableComponent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -316,7 +316,7 @@ public class DefaultRelyingPartyConfigurationResolver extends
         super.setId(componentId);
     }
 
-    /** {@inheritDoc}. This is service is a {@link net.shibboleth.idp.service.ServiceableComponent}. */
+    /** {@inheritDoc}. This is service is a {@link net.shibboleth.utilities.java.support.service.ServiceableComponent}. */
     @Override @Nonnull public RelyingPartyConfigurationResolver getComponent() {
         return this;
     }

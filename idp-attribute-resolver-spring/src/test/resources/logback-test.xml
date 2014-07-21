@@ -3,7 +3,6 @@
 <configuration>
     <logger name="net.shibboleth.idp.attribute.resolver.spring" level="TRACE"/>
     <logger name="net.shibboleth.idp.attribute.resolver" level="DEBUG"/>
-    <logger name="net.shibboleth.idp.service" level="DEBUG"/>
     <logger name="net.shibboleth.ext.spring" level="DEBUG"/>
     
 

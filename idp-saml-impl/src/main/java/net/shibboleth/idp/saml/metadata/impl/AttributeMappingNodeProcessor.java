@@ -30,10 +30,10 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.saml.attribute.mapping.AttributesMapContainer;
 import net.shibboleth.idp.saml.attribute.mapping.impl.RequestedAttributesMapper;
 import net.shibboleth.idp.saml.attribute.mapping.impl.SAML2AttributesMapper;
-import net.shibboleth.idp.service.ReloadableService;
-import net.shibboleth.idp.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObject;

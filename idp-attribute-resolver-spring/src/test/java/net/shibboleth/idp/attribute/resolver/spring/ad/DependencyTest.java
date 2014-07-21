@@ -20,8 +20,8 @@ package net.shibboleth.idp.attribute.resolver.spring.ad;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.service.ServiceException;
 
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;

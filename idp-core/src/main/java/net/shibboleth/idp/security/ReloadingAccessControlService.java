@@ -19,14 +19,15 @@ package net.shibboleth.idp.security;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.service.AbstractServiceableComponent;
+import net.shibboleth.ext.spring.service.AbstractServiceableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.AccessControl;
 import net.shibboleth.utilities.java.support.security.AccessControlService;
 
 /**
- * This class wraps an {@link AccessControlService} in a {@link net.shibboleth.idp.service.ServiceableComponent}.
+ * This class wraps an {@link AccessControlService} in a
+ * {@link net.shibboleth.utilities.java.support.service.ServiceableComponent}.
  */
 public class ReloadingAccessControlService extends AbstractServiceableComponent<AccessControlService>
         implements AccessControlService {

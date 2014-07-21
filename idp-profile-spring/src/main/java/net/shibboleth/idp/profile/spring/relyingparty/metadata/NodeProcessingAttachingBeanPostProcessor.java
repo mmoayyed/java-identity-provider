@@ -26,8 +26,8 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.saml.metadata.impl.AttributeMappingNodeProcessor;
 import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
 import net.shibboleth.idp.saml.security.impl.KeyAuthorityNodeProcessor;
-import net.shibboleth.idp.service.ReloadableService;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
 
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
