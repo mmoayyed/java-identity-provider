@@ -65,5 +65,7 @@ public class PopulateAuthenticationContextTest {
 
         Assert.assertEquals(authCtx.getPotentialFlows().size(), 3);
         Assert.assertNotNull(authCtx.getPotentialFlows().get("test1"));
+        Assert.assertNotNull(authCtx.getPotentialFlows().get("test2"));
+        Assert.assertNotNull(authCtx.getPotentialFlows().get("test3"));
     }
 }

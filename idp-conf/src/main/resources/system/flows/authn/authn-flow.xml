@@ -28,6 +28,7 @@
    
     <action-state id="ResolveAttributes">
         <evaluate expression="ResolveAttributes" />
+        <evaluate expression="FilterFlowsByAttribute" />
         <evaluate expression="'proceed'" />
 
         <transition on="proceed" to="FilterFlows" />
