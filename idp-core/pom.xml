@@ -82,7 +82,7 @@
                                 </manifestEntries>
                                 <manifestSections>
                                     <manifestSection>
-                                        <name>net/shibboleth/idp</name>
+                                        <name>net/shibboleth/idp/</name>
                                         <manifestEntries>
                                             <Implementation-Title>${project.artifactId}</Implementation-Title>
                                             <Implementation-Version>${project.version}</Implementation-Version>
