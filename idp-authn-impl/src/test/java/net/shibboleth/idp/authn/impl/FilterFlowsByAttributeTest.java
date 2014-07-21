@@ -87,9 +87,9 @@ public class FilterFlowsByAttributeTest extends PopulateAuthenticationContextTes
         authCtx.getSubcontext(AttributeContext.class, true).setIdPAttributes(Collections.singletonList(attr));
         attr.setValues(Collections.singleton(new StringAttributeValue("bar")));
         
-        authCtx.getPotentialFlows().get("test1").setSupportedPrincipals(Collections.singletonList(new TestPrincipal("baz")));
-        authCtx.getPotentialFlows().get("test2").setSupportedPrincipals(Collections.singletonList(new TestPrincipal("bar")));
-        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(Collections.singletonList(new TestPrincipal("bay")));
+        authCtx.getPotentialFlows().get("test1").getSupportedPrincipals().add(new TestPrincipal("baz"));
+        authCtx.getPotentialFlows().get("test2").getSupportedPrincipals().add(new TestPrincipal("bar"));
+        authCtx.getPotentialFlows().get("test3").getSupportedPrincipals().add(new TestPrincipal("bay"));
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
