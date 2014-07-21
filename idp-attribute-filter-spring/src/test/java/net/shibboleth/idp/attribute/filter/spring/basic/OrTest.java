@@ -19,9 +19,6 @@ package net.shibboleth.idp.attribute.filter.spring.basic;
 
 import java.util.List;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.matcher.logic.impl.NotMatcher;
@@ -31,6 +28,9 @@ import net.shibboleth.idp.attribute.filter.policyrule.logic.impl.OrPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 /**
  * test for {@link OrMatcherParser}.
  */
@@ -38,21 +38,21 @@ public class OrTest extends BaseAttributeFilterParserTest {
 
     @Test public void matcher() throws ComponentInitializationException {
         OrMatcher what = (OrMatcher) getMatcher("or.xml");
-        
+
         final List<Matcher> children = what.getComposedMatchers();
-        
+
         Assert.assertEquals(children.size(), 2);
         Assert.assertEquals(children.get(0).getClass(), NotMatcher.class);
         Assert.assertEquals(children.get(1).getClass(), Matcher.MATCHES_ALL.getClass());
     }
 
     @Test public void policy() throws ComponentInitializationException {
-    OrPolicyRule what = (OrPolicyRule) getPolicyRule("or.xml");
-    
-    final List<PolicyRequirementRule> children = what.getComposedRules();
-    Assert.assertEquals(children.size(), 2);
-    Assert.assertEquals(children.get(0).getClass(), NotPolicyRule.class);
-    Assert.assertEquals(children.get(1).getClass(), PolicyRequirementRule.MATCHES_ALL.getClass());
-    
+        OrPolicyRule what = (OrPolicyRule) getPolicyRule("or.xml");
+
+        final List<PolicyRequirementRule> children = what.getComposedRules();
+        Assert.assertEquals(children.size(), 2);
+        Assert.assertEquals(children.get(0).getClass(), NotPolicyRule.class);
+        Assert.assertEquals(children.get(1).getClass(), PolicyRequirementRule.MATCHES_ALL.getClass());
+
     }
 }

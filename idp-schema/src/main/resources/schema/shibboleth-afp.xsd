@@ -157,6 +157,11 @@
                         <documentation>The ID of the attribute to which this rule applies.</documentation>
                     </annotation>
                 </attribute>
+                <attribute name="permitAny" type="string">
+                    <annotation>
+                        <documentation>If present, and true injects an implicit permit value rule of type ANY</documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>

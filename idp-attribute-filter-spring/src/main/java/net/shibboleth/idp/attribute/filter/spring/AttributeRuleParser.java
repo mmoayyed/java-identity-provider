@@ -25,7 +25,9 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.filter.AttributeRule;
+import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
@@ -64,17 +66,20 @@ public class AttributeRuleParser extends BaseFilterParser {
     public static final QName DENY_VALUE_REF = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
             "DenyValueRuleReference");
 
+    /** permitAny Attribute. */
+    public static final String PERMIT_ANY_ATTRIBUTE = "permitAny";
+
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeRuleParser.class);
 
     /** {@inheritDoc} */
-    @Nonnull protected Class<?> getBeanClass(@Nullable Element arg) {
+    @Override @Nonnull protected Class<?> getBeanClass(@Nullable Element arg) {
         return AttributeRule.class;
     }
 
     /** {@inheritDoc} */
     // Checkstyle: CyclomaticComplexity OFF
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
@@ -131,7 +136,14 @@ public class AttributeRuleParser extends BaseFilterParser {
             log.debug("Adding DenyValueRule reference to {}", reference);
             builder.addPropertyValue("matcher", new RuntimeBeanReference(reference));
             builder.addPropertyValue("isDenyRule", true);
+        } else if (config.hasAttributeNS(null, PERMIT_ANY_ATTRIBUTE)
+                && AttributeSupport.getAttributeValueAsBoolean(config.getAttributeNodeNS(null, PERMIT_ANY_ATTRIBUTE))) {
 
+            builder.addPropertyValue("isDenyRule", false);
+            builder.addPropertyValue("matcher", Matcher.MATCHES_ALL);
+        } else {
+            log.warn("Attribute rule must have one of PermitValueRule, "
+                    + "DenyValueRule or have attribute permitAny=\"true\"");
         }
     }
     // Checkstyle: CyclomaticComplexity ON
