@@ -22,6 +22,7 @@
                 <bean class="net.shibboleth.ext.spring.config.DurationToLongConverter" />
                 <bean class="net.shibboleth.ext.spring.config.StringToIPRangeConverter" />
                 <bean class="net.shibboleth.ext.spring.config.BooleanToPredicateConverter" />
+                <bean class="net.shibboleth.ext.spring.config.StringBooleanToPredicateConverter" />
                 <bean class="net.shibboleth.ext.spring.config.StringToResourceConverter" />
             </list>
         </property>
