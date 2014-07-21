@@ -24,7 +24,7 @@
     
         <entry key="AccessByIPAddress">
             <bean class="net.shibboleth.utilities.java.support.security.IPRangeAccessControl"
-                p:allowedRanges="#{ {'127.0.0.2/32', '::1/128'} }" />
+                p:allowedRanges="#{ {'127.0.0.1/32', '::1/128'} }" />
         </entry>
     
     </util:map>
