@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 /**
- * Context classes for IdP-specific information needed by the UI (mostly Velocity).
+ * Context classes for IdP-specific information needed by the UI.
  */
 
 package net.shibboleth.idp.ui.context;

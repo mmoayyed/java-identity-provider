@@ -49,7 +49,7 @@ public class ServiceDescriptionTag extends ServiceTagSupport {
     private static Logger log = LoggerFactory.getLogger(ServiceDescriptionTag.class);
 
     /**
-     * look at &lt;Uiinfo&gt; if there and if so look for appropriate description.
+     * look at &lt;UIInfo&gt; if there and if so look for appropriate description.
      * 
      * @param lang - which language to look up
      * @return null or an appropriate description
