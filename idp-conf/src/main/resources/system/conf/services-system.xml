@@ -107,7 +107,7 @@
         c:resolverService-ref="shibboleth.MetadataResolverService" />
         
     <bean id="shibboleth.AccessControlService"
-        class="net.shibboleth.idp.security.AccessControlService"
+        class="net.shibboleth.utilities.java.support.security.DelegatingAccessControlService"
         c:acService-ref="shibboleth.ReloadableAccessControlService" />
 
  </beans>
