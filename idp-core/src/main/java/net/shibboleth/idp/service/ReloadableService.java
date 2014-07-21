@@ -19,12 +19,13 @@ package net.shibboleth.idp.service;
 
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.component.InitializableComponent;
+
 import org.joda.time.DateTime;
-import org.springframework.context.Lifecycle;
 
 /** A service that supports reloading its configuration. 
  * @param <T> The sort of service that this implements */
-public interface ReloadableService<T> extends Lifecycle {
+public interface ReloadableService<T> extends InitializableComponent {
     
     /**
      * Gets the time when the service was last successfully reloaded.

@@ -5,7 +5,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <bean id="shibboleth.LogbackLogging" class="net.shibboleth.idp.log.LogbackLoggingService" init-method="start" destroy-method="stop">
+    <bean id="shibboleth.LogbackLogging" class="net.shibboleth.idp.log.LogbackLoggingService" init-method="initialize" destroy-method="destroy">
         <property name="id" value="shibboleth.LogbackLogging"/>
         <property name="loggingConfiguration" value="conf/logging.xml"/>
         <property name="reloadCheckDelay" value="0"/>

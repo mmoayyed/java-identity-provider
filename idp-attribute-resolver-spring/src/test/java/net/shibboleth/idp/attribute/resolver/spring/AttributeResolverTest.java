@@ -119,7 +119,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
 
         final ReloadableService<AttributeResolver> attributeResolverService = context.getBean(ReloadableService.class);
 
-        attributeResolverService.start();
+        attributeResolverService.initialize();
 
         ServiceableComponent<AttributeResolver> serviceableComponent = null;
         final AttributeResolutionContext resolutionContext =
@@ -260,7 +260,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
 
         final ReloadableService<AttributeResolver> attributeResolverService = context.getBean(ReloadableService.class);
 
-        attributeResolverService.start();
+        attributeResolverService.initialize();
 
         ServiceableComponent<AttributeResolver> serviceableComponent = null;
 

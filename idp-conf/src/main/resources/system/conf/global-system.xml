@@ -42,7 +42,7 @@
     
     <bean id="shibboleth.TaskTimer" class="java.util.Timer" destroy-method="cancel"/> <!--  only needed if you do reloading -->
     
-    <bean id="shibboleth.LogbackLogging" class="net.shibboleth.idp.log.LogbackLoggingService" init-method="start" destroy-method="stop"
+    <bean id="shibboleth.LogbackLogging" class="net.shibboleth.idp.log.LogbackLoggingService"
           p:loggingConfiguration="%{idp.home}/conf/logback.xml"
           p:reloadCheckDelay="%{idp.service.logging.checkInterval:PT5M}"
           p:reloadTaskTimer-ref="shibboleth.TaskTimer"

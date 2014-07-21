@@ -58,7 +58,7 @@ public class AttributeMapperTest extends OpenSAMLInitBaseTestCase {
 
         final ReloadableService<AttributeResolver> attributeResolverService = context.getBean(ReloadableService.class);
 
-        attributeResolverService.start();
+        attributeResolverService.initialize();
 
         ServiceableComponent<AttributeResolver> serviceableComponent = null;
         RequestedAttributesMapper attributesMapper = null;

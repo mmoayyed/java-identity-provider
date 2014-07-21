@@ -36,7 +36,6 @@ import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanInitializationException;
 
 /**
  * Base class for {@link ReloadableService}. This base class will start a background thread that will perform a periodic
@@ -195,15 +194,14 @@ public abstract class AbstractReloadableService<T> extends AbstractIdentifiableI
     }
 
     /** {@inheritDoc} */
-    @Override public final void start() {
-        if (isInitialized()) {
-            return;
+    @Override
+    protected void doDestroy() {
+        log.info("{} Starting shutdown", getLogPrefix());
+        super.doDestroy();
+        if (reloadTask != null) {
+            reloadTask.cancel();
         }
-        try {
-            initialize();
-        } catch (ComponentInitializationException e) {
-            throw new BeanInitializationException("Could not start service", e);
-        }
+        log.info("{} Completing shutdown", getLogPrefix());
     }
 
     /**
@@ -229,21 +227,6 @@ public abstract class AbstractReloadableService<T> extends AbstractIdentifiableI
         } finally {
             EventLogger.log(perfEvent);
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override public final void stop() {
-        log.info("{} Starting shutdown", getLogPrefix());
-        destroy();
-        log.info("{} Completing shutdown", getLogPrefix());
-        if (reloadTask != null) {
-            reloadTask.cancel();
-        }
-    }
-
-    /** {@inheritDoc}. */
-    @Override public boolean isRunning() {
-        return isInitialized() && !isDestroyed();
     }
 
     /**

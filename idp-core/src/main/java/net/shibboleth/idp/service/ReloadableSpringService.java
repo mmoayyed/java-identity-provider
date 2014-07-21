@@ -34,10 +34,12 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.FatalBeanException;
+import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.Lifecycle;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.Resource;
 
@@ -55,7 +57,7 @@ import com.google.common.collect.Lists;
  */
 @ThreadSafe
 public class ReloadableSpringService<T> extends AbstractReloadableService implements ApplicationContextAware,
-        BeanNameAware {
+        BeanNameAware, Lifecycle {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ReloadableSpringService.class);
@@ -191,6 +193,29 @@ public class ReloadableSpringService<T> extends AbstractReloadableService implem
 
         postProcessors = Lists.newArrayList(Collections2.filter(processors, Predicates.notNull()));
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public final void start() {
+        try {
+            initialize();
+        } catch (ComponentInitializationException e) {
+            throw new BeanInitializationException("Could not start service", e);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void stop() {
+        destroy();
+    }
+
+    /** {@inheritDoc}. */
+    @Override
+    public boolean isRunning() {
+        return isInitialized() && !isDestroyed();
+    }
+
 
     /** {@inheritDoc} */
     // Checkstyle: CyclomaticComplexity OFF
