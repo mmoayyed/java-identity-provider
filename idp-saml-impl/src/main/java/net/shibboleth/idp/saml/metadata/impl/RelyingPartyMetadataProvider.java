@@ -26,6 +26,7 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
@@ -35,7 +36,7 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
  * 
  */
 public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<MetadataResolver> implements
-        MetadataResolver {
+        MetadataResolver, RefreshableMetadataResolver {
 
     /** The embedded resolver. */
     private final MetadataResolver resolver;
@@ -48,10 +49,11 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
     public RelyingPartyMetadataProvider(MetadataResolver child) {
         resolver = child;
     }
-    
-    /** Return what we are build around. Used for testing.
+
+    /**
+     * Return what we are build around. Used for testing.
      * 
-     * @return the parameter we got as a constructor 
+     * @return the parameter we got as a constructor
      */
     public MetadataResolver getEmbeddedResolver() {
         return resolver;
@@ -84,10 +86,9 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
     @Override public MetadataFilter getMetadataFilter() {
         return resolver.getMetadataFilter();
     }
-    
+
     /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         setId(resolver.getId());
         super.doInitialize();
     }
@@ -100,5 +101,13 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
     /** {@inheritDoc} */
     @Override @Nonnull public MetadataResolver getComponent() {
         return this;
+    }
+
+    /** {@inheritDoc} */
+    @Override public void refresh() throws ResolverException {
+        if (resolver instanceof RefreshableMetadataResolver) {
+            ((RefreshableMetadataResolver) resolver).refresh();
+
+        }
     }
 }

@@ -31,7 +31,6 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.criterion.EntityIdCriterion;
-import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
@@ -112,7 +111,7 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
 
     }
 
-    protected <T extends MetadataResolver> T getBean(Class<T> claz, String... files) throws IOException {
+    protected <T> T getBean(Class<T> claz, String... files) throws IOException {
         final Resource[] resources = new Resource[files.length];
 
         for (int i = 0; i < files.length; i++) {
