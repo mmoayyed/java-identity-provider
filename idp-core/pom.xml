@@ -66,36 +66,31 @@
         
 
     </dependencies>
-    
-    <profiles>
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <configuration>
-                            <archive>
-                                <index>true</index>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <index>true</index>
+                        <manifestEntries>
+                            <Main-Class>net.shibboleth.idp.Version</Main-Class>
+                        </manifestEntries>
+                        <manifestSections>
+                            <manifestSection>
+                                <name>net/shibboleth/idp/</name>
                                 <manifestEntries>
-                                    <Main-Class>net.shibboleth.idp.Version</Main-Class>
+                                    <Implementation-Title>${project.artifactId}</Implementation-Title>
+                                    <Implementation-Version>${project.version}</Implementation-Version>
+                                    <Implementation-Vendor>shibboleth.net</Implementation-Vendor>
                                 </manifestEntries>
-                                <manifestSections>
-                                    <manifestSection>
-                                        <name>net/shibboleth/idp/</name>
-                                        <manifestEntries>
-                                            <Implementation-Title>${project.artifactId}</Implementation-Title>
-                                            <Implementation-Version>${project.version}</Implementation-Version>
-                                            <Implementation-Vendor>shibboleth.net</Implementation-Vendor>
-                                        </manifestEntries>
-                                    </manifestSection>
-                                </manifestSections>
-                            </archive>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-    
+                            </manifestSection>
+                        </manifestSections>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
