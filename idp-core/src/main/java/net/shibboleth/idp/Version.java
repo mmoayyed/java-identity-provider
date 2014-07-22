@@ -17,23 +17,17 @@
 
 package net.shibboleth.idp;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /** Class for getting and printing the version of the IdP. */
 public final class Version {
-    
+
     /** Name of {@link org.slf4j.MDC} attribute that holds the IdP's version string: <code>idp.version</code>. */
-    public static final String MDC_ATTRIBUTE = "idp.version";
+    @Nonnull public static final String MDC_ATTRIBUTE = "idp.version";
 
     /** IdP version. */
-    private static final String VERSION;
-
-    /** IdP major version number. */
-    private static final int MAJOR_VERSION;
-
-    /** IdP minor version number. */
-    private static final int MINOR_VERSION;
-
-    /** IdP micro version number. */
-    private static final int MICRO_VERSION;
+    @Nullable private static final String VERSION = Version.class.getPackage().getImplementationVersion();
 
     /** Constructor. */
     private Version() {
@@ -45,51 +39,15 @@ public final class Version {
      * @param args command line arguments
      */
     public static void main(String[] args) {
-        Package pkg = Version.class.getPackage();
-        System.out.println(pkg.getImplementationTitle() + " version " + VERSION);
+        System.out.println(VERSION);
     }
 
     /**
-     * Gets the version of the IdP.
+     * Get the version of the IdP.
      * 
      * @return version of the IdP
      */
-    public static String getVersion() {
+    @Nullable public static String getVersion() {
         return VERSION;
-    }
-
-    /**
-     * Gets the major version number of the IdP.
-     * 
-     * @return major version number of the IdP
-     */
-    public static int getMajorVersion() {
-        return MAJOR_VERSION;
-    }
-
-    /**
-     * Gets the minor version number of the IdP.
-     * 
-     * @return minor version number of the IdP
-     */
-    public static int getMinorVersion() {
-        return MINOR_VERSION;
-    }
-
-    /**
-     * Gets the micro version number of the IdP.
-     * 
-     * @return micro version number of the IdP
-     */
-    public static int getMicroVersion() {
-        return MICRO_VERSION;
-    }
-
-    static {
-        VERSION = Version.class.getPackage().getImplementationVersion();
-        String[] versionParts = VERSION.split("\\.");
-        MAJOR_VERSION = Integer.parseInt(versionParts[0]);
-        MINOR_VERSION = Integer.parseInt(versionParts[1]);
-        MICRO_VERSION = Integer.parseInt(versionParts[2]);
     }
 }
