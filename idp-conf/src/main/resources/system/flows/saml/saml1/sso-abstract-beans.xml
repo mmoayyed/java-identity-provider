@@ -32,6 +32,17 @@
     <bean id="ResolveAttributesPredicate"
         class="net.shibboleth.idp.saml.profile.config.logic.ResolveAttributesProfileConfigPredicate" />
 
+    <bean id="AddAttributeStatementToAssertion"
+            class="net.shibboleth.idp.saml.saml1.profile.impl.AddAttributeStatementToAssertion" scope="prototype">
+        <property name="activationCondition">
+            <bean class="net.shibboleth.idp.saml.profile.logic.IncludeAttributeStatementPredicate" />
+        </property>
+        <property name="identifierGeneratorLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
+                p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />
+        </property>
+    </bean>
+
     <bean id="AddNameIdentifierToSubjects"
             class="org.opensaml.saml.saml1.profile.impl.AddNameIdentifierToSubjects" scope="prototype">
         <property name="formatLookupStrategy">

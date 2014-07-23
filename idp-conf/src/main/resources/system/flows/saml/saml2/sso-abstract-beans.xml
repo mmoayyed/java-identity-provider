@@ -50,6 +50,17 @@
         
     <bean id="ResolveAttributesPredicate"
         class="net.shibboleth.idp.saml.profile.config.logic.ResolveAttributesProfileConfigPredicate" />
+
+    <bean id="AddAttributeStatementToAssertion"
+            class="net.shibboleth.idp.saml.saml2.profile.impl.AddAttributeStatementToAssertion" scope="prototype">
+        <property name="activationCondition">
+            <bean class="net.shibboleth.idp.saml.profile.logic.IncludeAttributeStatementPredicate" />
+        </property>
+        <property name="identifierGeneratorLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
+                p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />
+        </property>
+    </bean>
         
     <bean id="AddNameIDToSubjects"
             class="org.opensaml.saml.saml2.profile.impl.AddNameIDToSubjects" scope="prototype">

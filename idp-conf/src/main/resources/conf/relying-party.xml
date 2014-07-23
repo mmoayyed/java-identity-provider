@@ -51,7 +51,7 @@
         <bean parent="RelyingPartyByName" c:relyingPartyIds="https://sp.example.org">
             <property name="profileConfigurations">
                 <util:list>
-                    <bean parent="Shibboleth.SSO">
+                    <bean parent="Shibboleth.SSO" p:includeAttributeStatement="true">
                         <!--
                         <property name="defaultAuthenticationMethods">
                             <util:list>
