@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.executor.FlowExecutionResult;
@@ -130,8 +131,8 @@ public final class Main {
             configs.add(r);
         }
                 
-        return SpringSupport.newContext(Main.class.getName(), configs, Collections.<BeanPostProcessor>emptyList(),
-                null);
+        return SpringSupport.newContext(Main.class.getName(), configs, Collections.<BeanPostProcessor> emptyList(),
+                Collections.<ApplicationContextInitializer> emptyList(), null);
     }
     
     /**

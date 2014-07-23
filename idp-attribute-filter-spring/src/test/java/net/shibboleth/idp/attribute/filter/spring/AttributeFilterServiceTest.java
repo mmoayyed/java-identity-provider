@@ -31,6 +31,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.service.ServiceException;
 
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -63,7 +64,8 @@ public class AttributeFilterServiceTest {
         final Resource resource = new ClassPathResource(SERVICE_CONFIG_DIR + name);
         final GenericApplicationContext context =
                 SpringSupport.newContext(name, Collections.singletonList(resource),
-                        Collections.<BeanPostProcessor> emptyList(), null);
+                        Collections.<BeanPostProcessor> emptyList(),
+                        Collections.<ApplicationContextInitializer> emptyList(), null);
         final AttributeFilterServiceStrategy strategy = new AttributeFilterServiceStrategy();
         strategy.setId("ID");
         strategy.initialize();

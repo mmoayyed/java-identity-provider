@@ -31,11 +31,11 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.context.ConfigurableWebApplicationContext;
 
 /**
  * An {@link ApplicationContextInitializer} which attempts to add a properties file property source to the application
@@ -43,7 +43,7 @@ import org.springframework.web.context.ConfigurableWebApplicationContext;
  * will be set to the normalized search location if the properties file is found and the property is not already set.
  */
 public class IdPPropertiesApplicationContextInitializer implements
-        ApplicationContextInitializer<ConfigurableWebApplicationContext> {
+        ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     /** IdP home property. */
     @Nonnull public static final String IDP_HOME_PROPERTY = "idp.home";
@@ -64,7 +64,7 @@ public class IdPPropertiesApplicationContextInitializer implements
     @Nonnull private final Logger log = LoggerFactory.getLogger(IdPPropertiesApplicationContextInitializer.class);
 
     /** {@inheritDoc} */
-    public void initialize(@Nonnull final ConfigurableWebApplicationContext applicationContext) {
+    public void initialize(@Nonnull final ConfigurableApplicationContext applicationContext) {
         log.debug("Initializing application context '{}'", applicationContext);
 
         log.debug("Attempting to find '{}' at well known locations '{}'", getSearchTarget(), getSearchLocations());
