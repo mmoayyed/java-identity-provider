@@ -39,13 +39,17 @@ if (username == null) {
                 final AuthenticationErrorContext authenticationErrorContext = (AuthenticationErrorContext) request.getAttribute("authenticationErrorContext");
                 if (authenticationErrorContext != null) { %>
                 <section>
-                  <% if ( authenticationErrorContext != null && !authenticationErrorContext.getClassifiedErrors().isEmpty()) { %>
+                  <% if (authenticationErrorContext != null && !authenticationErrorContext.getClassifiedErrors().isEmpty()) { %>
                   <p class="form-element form-error">
                     ERROR: <%= HTMLEncoder.encodeForHTML(authenticationErrorContext.getClassifiedErrors().toString()) %>
                   </p>
-                  <% } else if ( authenticationErrorContext != null && !authenticationErrorContext.getExceptions().isEmpty()) { %>
+                  <% } else if (authenticationErrorContext != null && !authenticationErrorContext.getExceptions().isEmpty()) { %>
 		          <p class="form-element form-error">
-                    ERROR: <%= HTMLEncoder.encodeForHTML(authenticationErrorContext.getExceptions().get(0).getMessage()) %>
+		            <% if (authenticationErrorContext.getExceptions().get(0).getMessage() != null) { %>
+                      ERROR: <%= HTMLEncoder.encodeForHTML(authenticationErrorContext.getExceptions().get(0).getMessage()) %>
+                    <% } else { %>
+                      ERROR: <%= HTMLEncoder.encodeForHTML(authenticationErrorContext.getExceptions().get(0).getClass().getName()) %>
+                    <% } %>
                   </p>
                   <% } %>
 

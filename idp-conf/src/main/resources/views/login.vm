@@ -34,7 +34,11 @@
                 </p>
               #elseif ( $authenticationErrorContext && $authenticationErrorContext.getExceptions().size() > 0 )
                 <p class="form-element form-error">
-                ERROR: $encoder.encodeForHTML($authenticationErrorContext.getExceptions().get(0).getMessage())
+                #if ( $authenticationErrorContext.getExceptions().get(0).getMessage() )
+                    ERROR: $encoder.encodeForHTML($authenticationErrorContext.getExceptions().get(0).getMessage())
+                #else
+                    ERROR: $encoder.encodeForHTML($authenticationErrorContext.getExceptions().get(0).getClass().getName())
+                #end
                 </p>
               #end
 
