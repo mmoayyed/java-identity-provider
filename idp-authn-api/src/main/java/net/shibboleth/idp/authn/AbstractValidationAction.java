@@ -351,24 +351,26 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
      */
     protected void handleError(
             @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext, @Nonnull @NotEmpty final String message,
+            @Nonnull final AuthenticationContext authenticationContext, @Nullable final String message,
             @Nonnull @NotEmpty final String eventId) {
-        
-        final MessageChecker checker = new MessageChecker(message);
-        
+
         boolean eventSet = false;
-        
-        for (final Map.Entry<String, Collection<String>> entry : classifiedMessages.entrySet()) {
-            if (Iterables.any(entry.getValue(), checker)) {
-                authenticationContext.getSubcontext(AuthenticationErrorContext.class, true).getClassifiedErrors().add(
-                        entry.getKey());
-                if (!eventSet) {
-                    eventSet = true;
-                    ActionSupport.buildEvent(profileRequestContext, entry.getKey());
+
+        if (!Strings.isNullOrEmpty(message)) {
+            final MessageChecker checker = new MessageChecker(message);
+            
+            for (final Map.Entry<String, Collection<String>> entry : classifiedMessages.entrySet()) {
+                if (Iterables.any(entry.getValue(), checker)) {
+                    authenticationContext.getSubcontext(AuthenticationErrorContext.class,
+                            true).getClassifiedErrors().add(entry.getKey());
+                    if (!eventSet) {
+                        eventSet = true;
+                        ActionSupport.buildEvent(profileRequestContext, entry.getKey());
+                    }
                 }
             }
         }
-
+        
         if (!eventSet) {
             ActionSupport.buildEvent(profileRequestContext, eventId);
         }
@@ -391,24 +393,26 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
      */
     protected void handleWarning(
             @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext, @Nonnull @NotEmpty final String message,
+            @Nonnull final AuthenticationContext authenticationContext, @Nullable final String message,
             @Nonnull @NotEmpty final String eventId) {
         
-        final MessageChecker checker = new MessageChecker(message);
-
         boolean eventSet = false;
         
-        for (Map.Entry<String, Collection<String>> entry : classifiedMessages.entrySet()) {
-            if (Iterables.any(entry.getValue(), checker)) {
-                authenticationContext.getSubcontext(AuthenticationWarningContext.class,
-                        true).getClassifiedWarnings().add(entry.getKey());
-                if (!eventSet) {
-                    eventSet = true;
-                    ActionSupport.buildEvent(profileRequestContext, entry.getKey());
+        if (!Strings.isNullOrEmpty(message)) {
+            final MessageChecker checker = new MessageChecker(message);
+            
+            for (Map.Entry<String, Collection<String>> entry : classifiedMessages.entrySet()) {
+                if (Iterables.any(entry.getValue(), checker)) {
+                    authenticationContext.getSubcontext(AuthenticationWarningContext.class,
+                            true).getClassifiedWarnings().add(entry.getKey());
+                    if (!eventSet) {
+                        eventSet = true;
+                        ActionSupport.buildEvent(profileRequestContext, entry.getKey());
+                    }
                 }
             }
         }
-
+        
         if (!eventSet) {
             ActionSupport.buildEvent(profileRequestContext, eventId);
         }
@@ -426,7 +430,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
          * @param msg to operate on
          */
         public MessageChecker(@Nonnull @NotEmpty final String msg) {
-            Constraint.isNotNull(Strings.isNullOrEmpty(msg), "Message cannot be null or empty");
+            Constraint.isFalse(Strings.isNullOrEmpty(msg), "Message cannot be null or empty");
             s = msg;
         }
         
