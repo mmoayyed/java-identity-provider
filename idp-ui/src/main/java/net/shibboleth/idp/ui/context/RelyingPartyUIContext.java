@@ -25,13 +25,19 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.saml.ext.saml2mdui.Description;
 import org.opensaml.saml.ext.saml2mdui.DisplayName;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
+import org.opensaml.saml.saml2.metadata.ContactPerson;
+import org.opensaml.saml.saml2.metadata.ContactPersonTypeEnumeration;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.opensaml.saml.saml2.metadata.Organization;
+import org.opensaml.saml.saml2.metadata.OrganizationDisplayName;
+import org.opensaml.saml.saml2.metadata.OrganizationName;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.ServiceDescription;
 import org.opensaml.saml.saml2.metadata.ServiceName;
@@ -75,7 +81,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * 
      * @param what what to set.
      */
-    public void setRPEntityDescriptor(@Nonnull EntityDescriptor what) {
+    public void setRPEntityDescriptor(@Nonnull final EntityDescriptor what) {
         rpEntityDescriptor = Constraint.isNotNull(what, "Injected RP EntityDescriptor cannot be null");
     }
 
@@ -93,7 +99,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * 
      * @param what what to set.
      */
-    public void setRPSPSSODescriptor(@Nonnull SPSSODescriptor what) {
+    public void setRPSPSSODescriptor(@Nonnull final SPSSODescriptor what) {
         rpSPSSODescriptor = Constraint.isNotNull(what, "Injected RP EntityDescriptor cannot be null");
     }
 
@@ -120,7 +126,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * 
      * @param what the value to set.
      */
-    public void getRPUInfo(@Nullable UIInfo what) {
+    public void getRPUInfo(@Nullable final UIInfo what) {
         rpUIInfo = what;
     }
 
@@ -129,7 +135,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * 
      * @param what what to set.
      */
-    public void setRPAttributeConsumingService(@Nonnull AttributeConsumingService what) {
+    public void setRPAttributeConsumingService(@Nonnull final AttributeConsumingService what) {
         rpAttributeConsumingService =
                 Constraint.isNotNull(what, "Injected RP AttributeConsumingService cannot be null");
     }
@@ -139,7 +145,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * 
      * @param languages the languages to set.
      */
-    public void setBrowserLanguages(@Nonnull List<String> languages) {
+    public void setBrowserLanguages(@Nonnull final List<String> languages) {
         browserLanguages = Constraint.isNotNull(languages, "Language List mustr be non null");
     }
 
@@ -158,7 +164,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * @param lang - which language to look up
      * @return null or an appropriate name
      */
-    @Nullable protected String getNameFromUIInfo(String lang) {
+    @Nullable protected String getNameFromUIInfo(final String lang) {
 
         if (getRPUInfo() != null) {
             for (final DisplayName name : getRPUInfo().getDisplayNames()) {
@@ -241,7 +247,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * @param lang - which language to look up
      * @return null or an appropriate description
      */
-    @Nullable protected String getDescriptionFromUIInfo(String lang) {
+    @Nullable protected String getDescriptionFromUIInfo(final String lang) {
         if (getRPUInfo() == null || getRPUInfo().getDescriptions() == null) {
             log.trace("No UIInfo");
             return null;
@@ -270,7 +276,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * @param lang - which language to look up
      * @return null or an appropriate description
      */
-    @Nullable private String getDescriptionFromAttributeConsumingService(String lang) {
+    @Nullable protected String getDescriptionFromAttributeConsumingService(final String lang) {
         if (getRPAttributeConsumingService() == null) {
             log.trace("No ACS found");
             return null;
@@ -288,12 +294,77 @@ public class RelyingPartyUIContext extends BaseContext {
     }
 
     /**
+     * Get the {@link Organization} from the {@link SPSODescriptor}, failing that the {@link EntityDescriptor}.
+     * 
+     * @return the {@link Organization} for the relying party.
+     */
+    @Nullable protected Organization getOrganization() {
+        if (null != getRPSPSSODescriptor() && null != getRPSPSSODescriptor().getOrganization()) {
+            return getRPSPSSODescriptor().getOrganization();
+        }
+        if (null != getRPEntityDescriptor() && null != getRPEntityDescriptor().getOrganization()) {
+            return getRPSPSSODescriptor().getOrganization();
+        }
+        return null;
+    }
+
+    /**
+     * Parser for the contact type.
+     * 
+     * @param type in value
+     * @return the enumeration type. suitably defaulted.
+     */
+    protected ContactPersonTypeEnumeration getContactType(@Nullable final String type) {
+        final String value = StringSupport.trimOrNull(type);
+        if (null == value) {
+            log.warn("no parameter provided to contactType");
+            return ContactPersonTypeEnumeration.SUPPORT;
+        }
+        if (type.equals(ContactPersonTypeEnumeration.ADMINISTRATIVE.toString())) {
+            return ContactPersonTypeEnumeration.ADMINISTRATIVE;
+        } else if (type.equals(ContactPersonTypeEnumeration.BILLING.toString())) {
+            return ContactPersonTypeEnumeration.BILLING;
+        } else if (type.equals(ContactPersonTypeEnumeration.OTHER.toString())) {
+            return ContactPersonTypeEnumeration.OTHER;
+        } else if (type.equals(ContactPersonTypeEnumeration.SUPPORT.toString())) {
+            return ContactPersonTypeEnumeration.SUPPORT;
+        } else if (type.equals(ContactPersonTypeEnumeration.TECHNICAL.toString())) {
+            return ContactPersonTypeEnumeration.TECHNICAL;
+        } else {
+            log.warn("parameter provided to contactType:" + type + " is invalid");
+            return ContactPersonTypeEnumeration.SUPPORT;
+        }
+    }
+    
+    /** Lookup the specified type of Contact in the RP metadata.
+     * @param contactType what type to look up.
+     * @return the {@link ContactPerson} or null.
+     */
+    @Nullable protected ContactPerson getContactPerson(ContactPersonTypeEnumeration contactType) {
+        if (null == getRPEntityDescriptor()) {
+            return null;
+        }
+        final List<ContactPerson> contacts = getRPEntityDescriptor().getContactPersons();
+        if (null == contacts || contacts.isEmpty()) {
+            log.trace("No Contacts found at all");
+            return null;
+        }
+        for (final ContactPerson contact : contacts) {
+            if (contactType == contact.getType()) {
+                return contact;
+            }
+        }
+        log.trace("No matching Contacts found at all");
+        return null;
+    }
+
+    /**
      * Get the service name.
      * 
      * @param defaultValue what to provide if this is an anonymous lookup
      * @return the name
      */
-    public String getServiceName(String defaultValue) {
+    @Nullable public String getServiceName(@Nullable final String defaultValue) {
         String result;
 
         if (getRPEntityDescriptor() == null) {
@@ -316,4 +387,113 @@ public class RelyingPartyUIContext extends BaseContext {
         return getNameFromEntityId();
     }
 
+    /**
+     * look for the &lt;OrganizationDisplayName&gt;.
+     * 
+     * @param defaultValue what to provide if the lookup fails
+     * @return An appropriate string or the default
+     */
+    @Nullable public String getOrganizationDisplayName(@Nullable final String defaultValue) {
+        final Organization org = getOrganization();
+        if (null == org || null == org.getDisplayNames() || org.getDisplayNames().isEmpty()) {
+            log.debug("No Organization, OrganizationDisplayName or names, returning {}", defaultValue);
+            return defaultValue;
+        }
+        for (final String lang : getBrowserLanguages()) {
+
+            for (final OrganizationDisplayName name : org.getDisplayNames()) {
+                if (name.getXMLLang() == null) {
+                    continue;
+                } else {
+                    log.trace("Found OrganizationDisplayName in Organization, language={}", name.getXMLLang());
+                }
+
+                if (name.getXMLLang().equals(lang)) {
+                    log.debug("returning OrganizationDisplayName from Organization, {}", name.getValue());
+                    return name.getValue();
+                }
+            }
+        }
+        log.debug("No relevant OrganizationDisplayName in Organization, returning {}", defaultValue);
+        return defaultValue;
+    }
+
+    /**
+     * look for the &lt;OrganizationName&gt;.
+     * 
+     * @param defaultValue what to provide if the lookup fails
+     * @return An appropriate string or the default
+     */
+    @Nullable public String getOrganizationName(@Nullable final String defaultValue) {
+        final Organization org = getOrganization();
+        if (null == org || null == org.getOrganizationNames() || org.getOrganizationNames().isEmpty()) {
+            log.debug("No Organization, OrganizationName or names, returning {}", defaultValue);
+            return defaultValue;
+        }
+        for (final String lang : getBrowserLanguages()) {
+
+            for (final OrganizationName name : org.getOrganizationNames()) {
+                if (name.getXMLLang() == null) {
+                    continue;
+                } else {
+                    log.trace("Found OrganizationName in Organization, language={}", name.getXMLLang());
+                }
+
+                if (name.getXMLLang().equals(lang)) {
+                    log.debug("returning OrganizationName from Organization, {}", name.getValue());
+                    return name.getValue();
+                }
+            }
+        }
+        log.debug("No relevant OrganizationName in Organization, returning {}", defaultValue);
+        return defaultValue;
+    }
+    
+    /**
+     * look for the &lt;ContactPerson&gt; and within that the SurName.
+     * 
+     * @param contactType the type of contact to look for 
+     * @param defaultValue what to provide if the lookup fails
+     * @return An appropriate string or the default
+     */
+    @Nullable public String getSurName(@Nullable String contactType, @Nullable final String defaultValue) {
+   
+        final ContactPerson contact = getContactPerson(getContactType(contactType));
+        if (null == contact || null == contact.getSurName()) {
+            return defaultValue;
+        }
+        return contact.getSurName().getName();  
+    }
+    
+    /**
+     * look for the &lt;ContactPerson&gt; and within that the GivenName.
+     * 
+     * @param contactType the type of contact to look for 
+     * @param defaultValue what to provide if the lookup fails
+     * @return An appropriate string or the default
+     */
+    @Nullable public String getGivenName(@Nullable String contactType, @Nullable final String defaultValue) {
+   
+        final ContactPerson contact = getContactPerson(getContactType(contactType));
+        if (null == contact || null == contact.getGivenName()) {
+            return defaultValue;
+        }
+        return contact.getGivenName().getName();  
+    }
+
+    /**
+     * look for the &lt;ContactPerson&gt; and within that the GivenName.
+     * 
+     * @param contactType the type of contact to look for 
+     * @param defaultValue what to provide if the lookup fails
+     * @return An appropriate string or the default
+     */
+    @Nullable public String getEmail(@Nullable String contactType, @Nullable final String defaultValue) {
+   
+        final ContactPerson contact = getContactPerson(getContactType(contactType));
+        if (null == contact || null == contact.getEmailAddresses() || contact.getEmailAddresses().isEmpty()) {
+            return defaultValue;
+        }
+        return contact.getEmailAddresses().get(0).getAddress();
+    }
 }
