@@ -28,7 +28,7 @@ This is the first alpha release of the 3.0 Identity Provider software.
 Refer to https://wiki.shibboleth.net/confluence/display/IDP30/ConfigurationGuide
 for information on configuration and testing.
 
-This is alpha software; as such, we do not recommend depoying this code in
+This is alpha software; as such, we do not recommend deploying this code in
 production. It is a fairly advanced alpha and represents preliminary decisions
 on what the final software will look like, but feedback on configuration and
 defaults is very valuable at this stage.
