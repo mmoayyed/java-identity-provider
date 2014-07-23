@@ -30,13 +30,13 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
 /**
- * A predicate that returns {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration#isDetailedErrors()}
- * if available from a {@link RelyingPartyContext} obtained via a lookup function,
- * by default a child of the {@link ProfileRequestContext}.
+ * A predicate that evaluates a {@link ProfileRequestContext} and determines whether attribute resolution
+ * and filtering should take place.
  * 
- * <p>If unable to locate a specific setting, the predicate is false.</p>
+ * <p>For SAML 1 and SAML 2 SSO profiles, the "resolveAttributes" flag is the setting governing
+ * this decision. For other profiles, false is returned.</p> 
  */
-public class DetailedErrorsProfileConfigPredicate implements Predicate<ProfileRequestContext> {
+public class ResolveAttributesProfileConfigPredicate implements Predicate<ProfileRequestContext> {
     
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
@@ -44,7 +44,7 @@ public class DetailedErrorsProfileConfigPredicate implements Predicate<ProfileRe
     @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
     
     /** Constructor. */
-    public DetailedErrorsProfileConfigPredicate() {
+    public ResolveAttributesProfileConfigPredicate() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
     }
 
@@ -56,7 +56,7 @@ public class DetailedErrorsProfileConfigPredicate implements Predicate<ProfileRe
      *            {@link ProfileRequestContext}
      */
     public void setRelyingPartyContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
+            @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
@@ -66,8 +66,16 @@ public class DetailedErrorsProfileConfigPredicate implements Predicate<ProfileRe
     public boolean apply(@Nullable final ProfileRequestContext input) {
         if (input != null) {
             final RelyingPartyContext rpc = relyingPartyContextLookupStrategy.apply(input);
-            if (rpc != null && rpc.getConfiguration() != null) {
-                return rpc.getConfiguration().isDetailedErrors();
+            if (rpc != null) {
+                if (rpc.getProfileConfig()
+                        instanceof net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration) {
+                    return ((net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration)
+                            rpc.getProfileConfig()).resolveAttributes();
+                } else if (rpc.getProfileConfig()
+                        instanceof net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration) {
+                    return ((net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration)
+                            rpc.getProfileConfig()).resolveAttributes();
+                }
             }
         }
         

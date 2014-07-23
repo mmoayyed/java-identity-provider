@@ -56,6 +56,13 @@ public class BrowserSSOProfileConfiguration extends AbstractSAMLProfileConfigura
 
     /** SAML artifact configuration. */
     @Nullable private SAMLArtifactConfiguration artifactConfig;
+
+    /**
+     * Whether attributes should be resolved in the course of the profile.
+     * 
+     * <p>Default value: true</p>
+     */
+    private boolean resolveAttributes;
     
     /**
      * Whether responses to the authentication request should include an attribute statement.
@@ -86,6 +93,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAMLProfileConfigura
     protected BrowserSSOProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
         setSignResponses(Predicates.<ProfileRequestContext>alwaysTrue());
+        resolveAttributes = true;
         includeAttributeStatement = false;
         defaultAuthenticationMethods = Collections.emptyList();
         authenticationFlows = Collections.emptySet();
@@ -105,6 +113,24 @@ public class BrowserSSOProfileConfiguration extends AbstractSAMLProfileConfigura
     public void setArtifactConfiguration(@Nullable final SAMLArtifactConfiguration config) {
         artifactConfig = config;
     }
+
+    /**
+     * Get whether attributes should be resolved during the profile.
+     * 
+     * @return true iff attributes should be resolved
+     */
+    public boolean resolveAttributes() {
+        return resolveAttributes;
+    }
+    
+    /**
+     * Set whether attributes should be resolved during the profile.
+     * 
+     * @param flag flag to set
+     */
+    public void setResolveAttributes(final boolean flag) {
+        resolveAttributes = flag;
+    }
     
     /**
      * Get whether responses to the authentication request should include an attribute statement.
@@ -118,7 +144,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAMLProfileConfigura
     /**
      * Set whether responses to the authentication request should include an attribute statement.
      * 
-     * @param include whether responses to the authentication request should include an attribute statement
+     * @param include flag to set
      */
     public void setIncludeAttributeStatement(final boolean include) {
         includeAttributeStatement = include;

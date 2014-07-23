@@ -57,6 +57,13 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
     /** SAML artifact configuration. */
     @Nullable private SAMLArtifactConfiguration artifactConfig;
     
+    /**
+     * Whether attributes should be resolved in the course of the profile.
+     * 
+     * <p>Default value: true</p>
+     */
+    private boolean resolveAttributes;
+    
     /** Whether responses to the authentication request should include an attribute statement. Default value: true */
     private boolean includeAttributeStatement;
 
@@ -95,7 +102,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
         super(profileId);
         setSignResponses(Predicates.<ProfileRequestContext>alwaysTrue());
         setEncryptAssertions(Predicates.<ProfileRequestContext>alwaysTrue());
-
+        resolveAttributes = true;
         includeAttributeStatement = true;
         skipEndpointValidationWhenSigned = false;
         maximumSPSessionLifetime = 0;
@@ -117,6 +124,24 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      */
     public void setArtifactConfiguration(@Nullable final SAMLArtifactConfiguration config) {
         artifactConfig = config;
+    }
+    
+    /**
+     * Get whether attributes should be resolved during the profile.
+     * 
+     * @return true iff attributes should be resolved
+     */
+    public boolean resolveAttributes() {
+        return resolveAttributes;
+    }
+    
+    /**
+     * Set whether attributes should be resolved during the profile.
+     * 
+     * @param flag flag to set
+     */
+    public void setResolveAttributes(final boolean flag) {
+        resolveAttributes = flag;
     }
     
     /**

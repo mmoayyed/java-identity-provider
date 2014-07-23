@@ -25,8 +25,14 @@
     
     <subflow-state id="DoAuthenticationSubflow" subflow="authn">
         <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="AttributeResolution" />
+        <transition on="proceed" to="ResolveAttributes" />
     </subflow-state>
+    
+    <decision-state id="ResolveAttributes">
+        <if test="ResolveAttributesPredicate.apply(opensamlProfileRequestContext)"
+            then="AttributeResolution"
+            else="BuildResponse" />
+    </decision-state>
     
     <action-state id="AttributeResolution">
         <evaluate expression="ResolveAttributes" />
