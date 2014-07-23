@@ -133,7 +133,7 @@
                             </artifactItems>
                         </configuration>
                     </execution>
-                    <!-- Copy runtime dependencies to war/WEB-INF/lib directory. -->
+                    <!-- Copy runtime dependencies to bin/lib directory. -->
                     <execution>
                         <id>copy-runtime-dependencies</id>
                         <phase>prepare-package</phase>
@@ -151,7 +151,7 @@
                                     <artifactId>bcpkix-jdk15on</artifactId>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${assembly-directory}/war/WEB-INF/lib/</outputDirectory>
+                            <outputDirectory>${assembly-directory}/bin/lib/</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
