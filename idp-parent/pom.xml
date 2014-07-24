@@ -62,10 +62,10 @@
 
     <properties>
         <svn.relative.location>java-identity-provider</svn.relative.location>
-        <java-support.version>3.0-SNAPSHOT</java-support.version>
+        <java-support.version>4.0-SNAPSHOT</java-support.version>
         <opensaml.groupId>org.opensaml</opensaml.groupId>
         <opensaml.version>3.0-SNAPSHOT</opensaml.version>
-        <spring-extensions.version>1.2-SNAPSHOT</spring-extensions.version>
+        <spring-extensions.version>2.0-SNAPSHOT</spring-extensions.version>
     </properties>
 
     <repositories>
