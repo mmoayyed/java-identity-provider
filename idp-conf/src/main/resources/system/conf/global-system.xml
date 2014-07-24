@@ -127,10 +127,10 @@
         p:secure="false" />
     
     <bean id="shibboleth.DataSealer" class="net.shibboleth.utilities.java.support.security.DataSealer"
-        p:keystoreType="%{idp.sealer.storeType}"
+        p:keystoreType="%{idp.sealer.storeType:JCEKS}"
         p:keystoreResource="%{idp.sealer.storeResource}"
         p:keystorePassword="%{idp.sealer.storePassword}"
-        p:cipherKeyAlias="%{idp.sealer.alias}"
+        p:cipherKeyAlias="%{idp.sealer.aliasBase:idpSecretKey}"
         p:cipherKeyPassword="%{idp.sealer.keyPassword}" />
     
     <bean id="shibboleth.StorageService"
