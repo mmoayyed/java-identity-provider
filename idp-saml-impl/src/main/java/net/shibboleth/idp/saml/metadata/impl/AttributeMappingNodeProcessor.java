@@ -63,6 +63,9 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
     /** Service used to get the resolver used to fetch attributes. */
     @Nonnull private final ReloadableService<AttributeResolver> attributeResolverService;
 
+    /** Whether the last invocation of {@link #refreshMappers()} failed. */
+    @Nonnull private boolean refreshFailed;
+
     /** Cached RequestedAttributeMapper. */
     @Nullable private RequestedAttributesMapper requestedAttributesMapper;
 
@@ -137,12 +140,16 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
             final DateTime when = attributeResolverService.getLastSuccessfulReloadInstant();
             component = attributeResolverService.getServiceableComponent();
             if (null == component) {
-                log.error("{} generated Requested Attributes Mapper: Invalid Attribute resolver configuration.");
+                if (!refreshFailed) {
+                    log.error("Requested Attributes Mapper: Invalid Attribute resolver configuration.");
+                }
+                refreshFailed = true;
             } else {
                 final AttributeResolver attributeResolver = component.getComponent();
                 ram = new RequestedAttributesMapper(attributeResolver);
                 am = new SAML2AttributesMapper(attributeResolver);
 
+                refreshFailed = false;
                 lastReload = when;
             }
         } finally {
