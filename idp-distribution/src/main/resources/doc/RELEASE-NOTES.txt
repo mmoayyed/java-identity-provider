@@ -1,6 +1,8 @@
 Identity Provider Release Notes
 
-Release notes for all versions may be found at
+See https://wiki.shibboleth.net/confluence/display/IDP30/ReleaseNotes
+
+Changes for all versions may be found at
 https://issues.shibboleth.net/jira/secure/ReleaseNote.jspa?projectId=10010
 
 Changes in version 3.0.0-alpha2
