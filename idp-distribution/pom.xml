@@ -26,6 +26,13 @@
         <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->
+        <dependency>
+            <groupId>net.shibboleth.utilities.jetty9</groupId>
+            <artifactId>jetty9-dta-ssl</artifactId>
+            <version>${jetty9-dta-ssl.version}</version>
+            <optional>true</optional>
+            <scope>runtime</scope>
+        </dependency>
         <!-- Required if using classes with command line support. -->
         <dependency>
             <groupId>com.beust</groupId>
