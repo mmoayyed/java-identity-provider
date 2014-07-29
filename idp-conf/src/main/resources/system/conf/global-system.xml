@@ -126,16 +126,24 @@
         p:httpServletResponse-ref="shibboleth.HttpServletResponse"
         p:secure="false" />
     
-    <bean id="shibboleth.DataSealer" class="net.shibboleth.utilities.java.support.security.DataSealer"
-        p:keystoreType="%{idp.sealer.storeType:JCEKS}"
-        p:keystoreResource="%{idp.sealer.storeResource}"
-        p:keystorePassword="%{idp.sealer.storePassword}"
-        p:cipherKeyAlias="%{idp.sealer.aliasBase:idpSecretKey}"
-        p:cipherKeyPassword="%{idp.sealer.keyPassword}" />
+    <bean id="shibboleth.DataSealer" class="net.shibboleth.utilities.java.support.security.DataSealer">
+        <property name="keyStrategy">
+            <bean class="net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategy"
+                p:keystoreType="%{idp.sealer.storeType:JCEKS}"
+                p:keystoreResource="%{idp.sealer.storeResource}"
+                p:keyVersionResource="%{idp.sealer.versionResource}"
+                p:keystorePassword="%{idp.sealer.storePassword}"
+                p:keyAlias="%{idp.sealer.aliasBase:secret}"
+                p:keyPassword="%{idp.sealer.keyPassword}"
+                p:updateInterval="%{idp.sealer.updateInterval:PT15M}"               
+                p:updateTaskTimer-ref="shibboleth.TaskTimer" />
+        </property>
+    </bean>
     
     <bean id="shibboleth.StorageService"
-        class="%{idp.storage.StorageService:org.opensaml.storage.impl.MemoryStorageService}"
-        p:cleanupInterval="%{idp.storage.cleanupInterval:PT10M}" />
+        class="%{idp.storage.StorageService:org.opensaml.storage.impl.MemoryStorageService}"        
+        p:cleanupInterval="%{idp.storage.cleanupInterval:PT10M}"
+        p:cleanupTaskTimer-ref="shibboleth.TaskTimer" />
 
     <bean id="shibboleth.ClientStorageService"
         class="%{idp.storage.ClientStorageService:org.opensaml.storage.impl.ServletRequestScopedStorageService}"

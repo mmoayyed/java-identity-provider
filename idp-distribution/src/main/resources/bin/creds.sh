@@ -15,4 +15,6 @@ java -cp "bin/lib/*:war/WEB-INF/lib/*" $CLASS --hostname $HOSTNAME --keyfile cre
 
 java -cp "bin/lib/*:war/WEB-INF/lib/*" $CLASS --hostname $HOSTNAME --storefile creds/idp-tls.p12 --storepass changeit --uriAltName $URI_ALT_NAME
 
-keytool -genseckey -alias idpSecretKey -keypass password -storepass password -storetype JCEKS -keyalg AES -keysize 256 -keystore creds/sealer.jks
+CLASS=net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategyTool
+
+java -cp "bin/lib/*:war/WEB-INF/lib/*" $CLASS --storefile creds/secret.jks --versionfile creds/secret.kver --alias secret --storepass password
