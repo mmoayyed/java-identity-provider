@@ -65,6 +65,9 @@ public class SAML2TestResponseValidator {
 
     /** Expected SP entity ID. */
     @Nonnull public String spEntityID = "https://sp.example.org";
+    
+    /** Authentication context class reference. */
+    @Nonnull public String authnContextClassRef = AuthnContext.IP_AUTHN_CTX;
 
     /** SP credential. */
     @Nullable public Credential spCredential;
@@ -485,8 +488,8 @@ public class SAML2TestResponseValidator {
      * 
      * @param authnContextClassRef the authn context class ref
      */
-    public void assertAuthnContextClassRef(@Nullable final AuthnContextClassRef authnContextClassRef) {
-        Assert.assertEquals(authnContextClassRef.getAuthnContextClassRef(), AuthnContext.IP_AUTHN_CTX);
+    public void assertAuthnContextClassRef(@Nullable final AuthnContextClassRef authnContext) {
+        Assert.assertEquals(authnContext.getAuthnContextClassRef(), authnContextClassRef);
     }
 
     /**
