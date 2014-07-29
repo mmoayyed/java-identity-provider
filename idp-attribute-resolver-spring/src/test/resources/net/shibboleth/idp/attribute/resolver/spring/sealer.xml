@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-       xmlns:util="http://www.springframework.org/schema/util" 
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-<bean  id="shibboleth.TransientIDDataSealer" class="net.shibboleth.utilities.java.support.security.DataSealer"
-        init-method="initialize">
-    <property name="keystoreResource" value="/net/shibboleth/idp/attribute/resolver/spring/ad/SealerKeyStore.jks" />
-    <property name="keystorePassword" value="password" />
-    <property name="cipherKeyAlias" value="secret" />
-    <property name="cipherKeyPassword" value="kpassword" />
-</bean>
+    <bean id="shibboleth.TransientIDDataSealer" class="net.shibboleth.utilities.java.support.security.DataSealer">
+        <property name="keyStrategy">
+            <bean class="net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategy"
+                p:keystoreResource="/net/shibboleth/idp/attribute/resolver/spring/ad/SealerKeyStore.jks"
+                p:keyVersionResource="/net/shibboleth/idp/attribute/resolver/spring/ad/SealerKeyStore.kver"
+                p:keystorePassword="kpassword"
+                p:keyPassword="password"
+                p:updateInterval="0" />
+        </property>
+    </bean>
 </beans>
