@@ -17,12 +17,16 @@
 
 package net.shibboleth.idp.attribute.filter.matcher.impl;
 
+import java.util.Collections;
 import java.util.Set;
 
 import javax.annotation.concurrent.ThreadSafe;
 
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -30,6 +34,7 @@ import net.shibboleth.utilities.java.support.component.UnmodifiableComponentExce
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -49,7 +54,10 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     /** A script that returns a set contain values that were not attribute values. */
     private EvaluableScript addedValuesScript;
-    
+
+    /** A script that returns a set containing the prc name. */
+    private EvaluableScript prcScript;
+
     private boolean isV8() {
         final String ver = System.getProperty("java.version");
         return ver.startsWith("1.8");
@@ -61,50 +69,64 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         filterContext = new AttributeFilterContext();
 
         nullReturnScript = new EvaluableScript("JavaScript", "null;");
-        
-        
-        if (!isV8()){
+
+        if (!isV8()) {
             returnOneValueScript =
                     new EvaluableScript("JavaScript", new StringBuilder().append("importPackage(Packages.java.util);")
                             .append("filterContext.getPrefilteredIdPAttributes();").append("x = new HashSet();")
                             .append("x.add(attribute.getValues().iterator().next());").append("x;").toString());
-    
+
             invalidReturnObjectScript = new EvaluableScript("JavaScript", "new java.lang.String();");
-    
+
             addedValuesScript =
                     new EvaluableScript("JavaScript", new StringBuilder().append("importPackage(Packages.java.util);")
-                            .append("filterContext.getPrefilteredIdPAttributes();").append("x = new HashSet();")
-                            .append("x.add(attribute.getValues().iterator().next());")
-                            .append("x.add(new net.shibboleth.idp.attribute.StringAttributeValue(\"a\"));").append("x;")
-                            .toString());
+                            .append("x = new HashSet();").append("x.add(attribute.getValues().iterator().next());")
+                            .append("x.add(new net.shibboleth.idp.attribute.StringAttributeValue(\"a\"));")
+                            .append("x;").toString());
+            prcScript =
+                    new EvaluableScript(
+                            "JavaScript",
+                            new StringBuilder()
+                                    .append("x = new java.util.HashSet(1);\n")
+                                    .append("x.add(new net.shibboleth.idp.attribute.StringAttributeValue(profileContext.getClass().getName()));\n")
+                                    .append("x;").toString());
         } else {
-            
+
             returnOneValueScript =
-                    new EvaluableScript("JavaScript", new StringBuilder().append("load('nashorn:mozilla_compat.js');importPackage(Packages.java.util);")
+                    new EvaluableScript("JavaScript", new StringBuilder()
+                            .append("load('nashorn:mozilla_compat.js');importPackage(Packages.java.util);")
                             .append("filterContext.getPrefilteredIdPAttributes();").append("x = new HashSet();")
                             .append("x.add(attribute.getValues().iterator().next());").append("x;").toString());
-    
-            invalidReturnObjectScript = new EvaluableScript("JavaScript", "load('nashorn:mozilla_compat.js');new java.lang.String();");
-    
+
+            invalidReturnObjectScript =
+                    new EvaluableScript("JavaScript", "load('nashorn:mozilla_compat.js');new java.lang.String();");
+
             addedValuesScript =
-                    new EvaluableScript("JavaScript", new StringBuilder().append("load('nashorn:mozilla_compat.js');importPackage(Packages.java.util);")
+                    new EvaluableScript("JavaScript", new StringBuilder()
+                            .append("load('nashorn:mozilla_compat.js');importPackage(Packages.java.util);")
                             .append("importPackage(Packages.net.shibboleth.idp.attribute);")
-                            .append("filterContext.getPrefilteredIdPAttributes();").append("x = new HashSet();")
-                            .append("x.add(attribute.getValues().iterator().next());")
-                            .append("x.add(new StringAttributeValue(\"a\"));").append("x;")
-                            .toString());
+                            .append("x = new HashSet();").append("x.add(attribute.getValues().iterator().next());")
+                            .append("x.add(new StringAttributeValue(\"a\"));").append("x;").toString());
+            prcScript =
+                    new EvaluableScript(
+                            "JavaScript",
+                            new StringBuilder("HashSet = Java.type(\"java.util.HashSet\");\n")
+                                    .append("StringAttributeValue = Java.type(\"net.shibboleth.idp.attribute.StringAttributeValue\");\n")
+                                    .append("x = new HashSet(1);\n")
+                                    .append("x.add(new StringAttributeValue(profileContext.getClass().getName()));\n")
+                                    .append("x;").toString());
+
         }
     }
 
     @Test public void testGetMatcher() throws Exception {
-        
-        ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
+
+        final ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
         matcher.setId("Test");
         matcher.initialize();
 
         Assert.assertNotNull(matcher.getScript());
     }
-    
 
     @Test public void testNullArguments() throws Exception {
 
@@ -149,7 +171,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testValidScript() throws Exception {
-        ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
+        final ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
         matcher.setId("Test");
         matcher.initialize();
 
@@ -161,7 +183,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test public void testNullReturnScript() throws Exception {
 
-        ScriptedMatcher matcher = new ScriptedMatcher(nullReturnScript);
+        final ScriptedMatcher matcher = new ScriptedMatcher(nullReturnScript);
         matcher.setId("Test");
         matcher.initialize();
 
@@ -170,7 +192,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test public void testInvalidReturnObjectValue() throws Exception {
 
-        ScriptedMatcher matcher = new ScriptedMatcher(invalidReturnObjectScript);
+        final ScriptedMatcher matcher = new ScriptedMatcher(invalidReturnObjectScript);
         matcher.setId("Test");
         matcher.initialize();
 
@@ -179,11 +201,11 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test public void testAddedValuesScript() throws Exception {
 
-        ScriptedMatcher matcher = new ScriptedMatcher(addedValuesScript);
+        final ScriptedMatcher matcher = new ScriptedMatcher(addedValuesScript);
         matcher.setId("Test");
         matcher.initialize();
 
-        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 1);
         Assert.assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));
@@ -191,7 +213,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test public void testInitTeardown() throws ComponentInitializationException {
 
-        ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
+        final ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
 
         boolean thrown = false;
         try {
@@ -233,7 +255,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test public void testEqualsHashToString() {
 
-        ScriptedMatcher matcher = new ScriptedMatcher(addedValuesScript);
+        final ScriptedMatcher matcher = new ScriptedMatcher(addedValuesScript);
 
         matcher.toString();
 
@@ -252,5 +274,23 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         Assert.assertNotSame(matcher.hashCode(), other.hashCode());
 
     }
-    
+
+    @Test public void testPrc() throws ComponentInitializationException, CloneNotSupportedException {
+        ScriptedMatcher matcher = new ScriptedMatcher(prcScript);
+
+        matcher.setId("prc");
+        matcher.initialize();
+        new ProfileRequestContext<>().getSubcontext(RelyingPartyContext.class, true).addSubcontext(filterContext);
+        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        Assert.assertEquals(result.size(), 0);
+
+        final IdPAttribute newAttr = attribute.clone();
+
+        newAttr.setValues(Collections.singleton((IdPAttributeValue<?>) new StringAttributeValue(
+                ProfileRequestContext.class.getName())));
+        result = matcher.getMatchingValues(newAttr, filterContext);
+        Assert.assertEquals(result.size(), 1);
+
+    }
+
 }

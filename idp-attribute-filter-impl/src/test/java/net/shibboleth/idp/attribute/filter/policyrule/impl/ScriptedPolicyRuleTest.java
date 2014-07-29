@@ -22,6 +22,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.matcher.impl.AbstractMatcherPolicyRuleTest;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -29,6 +30,7 @@ import net.shibboleth.utilities.java.support.component.UnmodifiableComponentExce
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -46,6 +48,9 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
     /** A script that returns Boolean.false . */
     private EvaluableScript falseReturnScript;
 
+    /** Another script that returns Boolean.true . */
+    private EvaluableScript prcReturnScript;
+
     /** A script that returns an object other than a set. */
     private EvaluableScript invalidReturnObjectScript;
 
@@ -61,6 +66,8 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         trueReturnScript = new EvaluableScript("JavaScript", "new java.lang.Boolean(true);");
 
         falseReturnScript = new EvaluableScript("JavaScript", "new java.lang.Boolean(false);");
+        
+        prcReturnScript = new EvaluableScript("JavaScript", "new java.lang.Boolean(profileContext.getClass().getName().equals(\"org.opensaml.profile.context.ProfileRequestContext\"));");
     }
 
     @Test public void testNullArguments() throws Exception {
@@ -176,6 +183,15 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         rule.setId("test");
         rule.initialize();
         Assert.assertEquals(rule.matches(filterContext), Tristate.FALSE);
+
+        rule = new ScriptedPolicyRule(prcReturnScript);
+        rule.setId("test");
+        rule.initialize();
+
+        Assert.assertEquals(rule.matches(filterContext), Tristate.FAIL);
+        
+        new ProfileRequestContext<>().getSubcontext(RelyingPartyContext.class, true).addSubcontext(filterContext);
+        Assert.assertEquals(rule.matches(filterContext), Tristate.TRUE);
 
     }
 

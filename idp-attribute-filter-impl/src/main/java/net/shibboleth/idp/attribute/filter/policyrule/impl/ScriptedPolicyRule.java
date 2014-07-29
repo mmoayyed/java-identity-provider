@@ -25,6 +25,7 @@ import javax.script.SimpleScriptContext;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -32,9 +33,13 @@ import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
+import org.opensaml.messaging.context.navigate.ParentContextLookup;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Objects;
 
 /**
@@ -50,10 +55,13 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
     private final Logger log = LoggerFactory.getLogger(ScriptedPolicyRule.class);
 
     /** Script to be evaluated. */
-    private EvaluableScript script;
+    @Nonnull private EvaluableScript script;
 
     /** Log prefix. */
     private String logPrefix;
+
+    /** Strategy used to locate the {@link ProfileRequestContext} to use. */
+    @Nonnull private Function<AttributeFilterContext, ProfileRequestContext> prcLookupStrategy;
 
     /**
      * Constructor.
@@ -62,6 +70,10 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
      */
     public ScriptedPolicyRule(@Nonnull final EvaluableScript matchingScript) {
         setScript(matchingScript);
+        // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeContext.
+        prcLookupStrategy =
+                Functions.compose(new ParentContextLookup<RelyingPartyContext, ProfileRequestContext>(),
+                        new ParentContextLookup<AttributeFilterContext, RelyingPartyContext>());
     }
 
     /**
@@ -85,6 +97,20 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
     }
 
     /**
+     * Set the strategy used to locate the {@link ProfileRequestContext} associated with a given
+     * {@link AttributeFilterContext}.
+     * 
+     * @param strategy strategy used to locate the {@link ProfileRequestContext} associated with a given
+     *            {@link AttributeFilterContext}
+     */
+    public void setProfileRequestContextLookupStrategy(
+            @Nonnull final Function<AttributeFilterContext, ProfileRequestContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        prcLookupStrategy = Constraint.isNotNull(strategy, "ProfileRequestContext lookup strategy cannot be null");
+    }
+
+    /**
      * Calculate the PolicyRule.
      * <p>
      * When the script is evaluated, the following property will be available via the {@link ScriptContext}:
@@ -104,6 +130,8 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
 
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
         scriptContext.setAttribute("filterContext", filterContext, ScriptContext.ENGINE_SCOPE);
+        scriptContext
+                .setAttribute("profileContext", prcLookupStrategy.apply(filterContext), ScriptContext.ENGINE_SCOPE);
 
         try {
             final Object result = currentScript.eval(scriptContext);
@@ -129,12 +157,12 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
     }
 
     /** {@inheritDoc} */
-    protected void doDestroy() {
+    @Override protected void doDestroy() {
         super.doDestroy();
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         // clear cached name
         logPrefix = null;
@@ -147,7 +175,7 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
 
     // TODO do we still need this?
     /** {@inheritDoc} */
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         if (obj == null) {
             return false;
         }
@@ -166,12 +194,12 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
     }
 
     /** {@inheritDoc} */
-    public int hashCode() {
+    @Override public int hashCode() {
         return Objects.hashCode(script, getId());
     }
 
     /** {@inheritDoc} */
-    public String toString() {
+    @Override public String toString() {
         return Objects.toStringHelper(this).add("Script", getScript()).toString();
     }
 

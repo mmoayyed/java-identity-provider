@@ -32,6 +32,8 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
@@ -41,9 +43,13 @@ import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
+import org.opensaml.messaging.context.navigate.ParentContextLookup;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Objects;
 
 /**
@@ -55,10 +61,13 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
         UnmodifiableComponent {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ScriptedMatcher.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ScriptedMatcher.class);
 
     /** Script to be evaluated. */
-    private EvaluableScript script;
+    @NonnullAfterInit private EvaluableScript script;
+
+    /** Strategy used to locate the {@link ProfileRequestContext} to use. */
+    @Nonnull private Function<AttributeFilterContext, ProfileRequestContext> prcLookupStrategy;
 
     /** Log prefix. */
     private String logPrefix;
@@ -70,6 +79,10 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
      */
     public ScriptedMatcher(@Nonnull final EvaluableScript matchingScript) {
         setScript(matchingScript);
+        // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeContext.
+        prcLookupStrategy =
+                Functions.compose(new ParentContextLookup<RelyingPartyContext, ProfileRequestContext>(),
+                        new ParentContextLookup<AttributeFilterContext, RelyingPartyContext>());
     }
 
     /**
@@ -90,6 +103,20 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         script = Constraint.isNotNull(matcherScript, "Attribute value matching script can not be null");
+    }
+
+    /**
+     * Set the strategy used to locate the {@link ProfileRequestContext} associated with a given
+     * {@link AttributeFilterContext}.
+     * 
+     * @param strategy strategy used to locate the {@link ProfileRequestContext} associated with a given
+     *            {@link AttributeFilterContext}
+     */
+    public void setProfileRequestContextLookupStrategy(
+            @Nonnull final Function<AttributeFilterContext, ProfileRequestContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        prcLookupStrategy = Constraint.isNotNull(strategy, "ProfileRequestContext lookup strategy cannot be null");
     }
 
     /**
@@ -115,6 +142,8 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
         final EvaluableScript currentScript = script;
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
         scriptContext.setAttribute("filterContext", filterContext, ScriptContext.ENGINE_SCOPE);
+        scriptContext
+                .setAttribute("profileContext", prcLookupStrategy.apply(filterContext), ScriptContext.ENGINE_SCOPE);
         scriptContext.setAttribute("attribute", attribute, ScriptContext.ENGINE_SCOPE);
 
         try {
@@ -141,11 +170,10 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        // Clear name cache  now name is definitive
+        // Clear name cache now that the name is definitive
         logPrefix = null;
 
         if (null == script) {
-            // never met so long as we have the assert in the constructor
             throw new ComponentInitializationException("No script has been provided");
         }
     }
