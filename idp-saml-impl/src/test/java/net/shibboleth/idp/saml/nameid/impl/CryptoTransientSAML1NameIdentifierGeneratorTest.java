@@ -19,11 +19,12 @@ package net.shibboleth.idp.saml.nameid.impl;
 
 import java.io.IOException;
 
-import net.shibboleth.ext.spring.resource.ResourceHelper;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.resource.TestResourceConverter;
+import net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategy;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -48,15 +49,24 @@ public class CryptoTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLIni
     private TransientSAML1NameIdentifierGenerator generator;
     
     @BeforeMethod public void setUp() throws ComponentInitializationException, IOException {
-        final Resource keyStore  = new ClassPathResource("/net/shibboleth/idp/saml/impl/attribute/resolver/SealerKeyStore.jks");
+        final Resource keyStore =
+                new ClassPathResource("/net/shibboleth/idp/saml/impl/attribute/resolver/SealerKeyStore.jks");
+        Assert.assertTrue(keyStore.exists());
+        
+        final Resource version =
+                new ClassPathResource("/net/shibboleth/idp/saml/impl/attribute/resolver/SealerKeyStore.kver");
+        Assert.assertTrue(version.exists());
 
+        final BasicKeystoreKeyStrategy kstrategy = new BasicKeystoreKeyStrategy();
+        kstrategy.setKeyAlias("secret");
+        kstrategy.setKeyPassword("kpassword");
+        kstrategy.setKeystorePassword("password");
+        kstrategy.setKeystoreResource(TestResourceConverter.of(keyStore));
+        kstrategy.setKeyVersionResource(TestResourceConverter.of(version));
+        kstrategy.initialize();
+        
         sealer = new DataSealer();
-        sealer.setCipherKeyAlias("secret");
-        sealer.setCipherKeyPassword("kpassword");
-
-        sealer.setKeystorePassword("password");
-        sealer.setKeystoreResource(ResourceHelper.of(keyStore));
-
+        sealer.setKeyStrategy(kstrategy);
         sealer.initialize();
         
         transientGenerator = new CryptoTransientIdGenerationStrategy();

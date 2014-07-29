@@ -37,6 +37,7 @@ import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategy;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.DataSealerException;
 
@@ -80,14 +81,21 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
         final Resource keyStore =
                 new ClassPathResource("/net/shibboleth/idp/saml/impl/attribute/resolver/SealerKeyStore.jks");
         Assert.assertTrue(keyStore.exists());
+        
+        final Resource version =
+                new ClassPathResource("/net/shibboleth/idp/saml/impl/attribute/resolver/SealerKeyStore.kver");
+        Assert.assertTrue(version.exists());
 
+        final BasicKeystoreKeyStrategy kstrategy = new BasicKeystoreKeyStrategy();
+        kstrategy.setKeyAlias("secret");
+        kstrategy.setKeyPassword("kpassword");
+        kstrategy.setKeystorePassword("password");
+        kstrategy.setKeystoreResource(ResourceHelper.of(keyStore));
+        kstrategy.setKeyVersionResource(ResourceHelper.of(version));
+        kstrategy.initialize();
+        
         dataSealer = new DataSealer();
-        dataSealer.setCipherKeyAlias("secret");
-        dataSealer.setCipherKeyPassword("kpassword");
-
-        dataSealer.setKeystorePassword("password");
-        dataSealer.setKeystoreResource(ResourceHelper.of(keyStore));
-
+        dataSealer.setKeyStrategy(kstrategy);
         dataSealer.initialize();
 
         decoder = new CryptoTransientNameIDDecoder();
