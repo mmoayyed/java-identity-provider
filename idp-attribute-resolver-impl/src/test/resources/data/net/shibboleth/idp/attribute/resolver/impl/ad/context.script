@@ -5,3 +5,5 @@ claz = clazloader.loadClass("net.shibboleth.idp.attribute.resolver.context.Attri
 child = resolutionContext.getParent().getSubcontext(claz);
 
 Scripted.addValue(child.getParent().getClass().getSimpleName());
+Scripted.addValue(profileContext.getClass().getSimpleName());
+

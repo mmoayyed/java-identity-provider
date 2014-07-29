@@ -35,14 +35,20 @@ import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
+import org.opensaml.messaging.context.navigate.ParentContextLookup;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
 
 import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfileRequestContext;
 
@@ -74,14 +80,25 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
     @Nonnull private final Logger log = LoggerFactory.getLogger(ScriptedAttributeDefinition.class);
 
     /** Script to be evaluated. */
-    private EvaluableScript script;
+    @NonnullAfterInit private EvaluableScript script;
+
+    /** Strategy used to locate the {@link ProfileRequestContext} to use. */
+    @Nonnull private Function<AttributeResolutionContext, ProfileRequestContext> prcLookupStrategy;
+
+    /** Constructor. */
+    public ScriptedAttributeDefinition() {
+        // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeContext.
+        prcLookupStrategy =
+                Functions.compose(new ParentContextLookup<RelyingPartyContext, ProfileRequestContext>(),
+                        new ParentContextLookup<AttributeResolutionContext, RelyingPartyContext>());
+    }
 
     /**
      * Gets the script to be evaluated.
      * 
      * @return the script to be evaluated
      */
-    @Nullable @NonnullAfterInit public EvaluableScript getScript() {
+    @NonnullAfterInit public EvaluableScript getScript() {
         return script;
     }
 
@@ -95,6 +112,29 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         script = Constraint.isNotNull(definitionScript, "Attribute definition script cannot be null");
+    }
+
+    /**
+     * Set the strategy used to locate the {@link ProfileRequestContext} associated with a given
+     * {@link AttributeResolutionContext}.
+     * 
+     * @param strategy strategy used to locate the {@link ProfileRequestContext} associated with a given
+     *            {@link AttributeResolutionContext}
+     */
+    public void setProfileRequestContextLookupStrategy(
+            @Nonnull final Function<AttributeResolutionContext, ProfileRequestContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        prcLookupStrategy = Constraint.isNotNull(strategy, "ProfileRequestContext lookup strategy cannot be null");
+    }
+
+    /** {@inheritDoc} */
+    @Override protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        if (null == script) {
+            throw new ComponentInitializationException(getLogPrefix() + " no script was configured");
+        }
     }
 
     /** {@inheritDoc} */
@@ -131,15 +171,6 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
 
     }
 
-    /** {@inheritDoc} */
-    @Override protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-
-        if (null == script) {
-            throw new ComponentInitializationException(getLogPrefix() + " no script was configured");
-        }
-    }
-
     /**
      * Constructs the {@link ScriptContext} used when evaluating the script.
      * 
@@ -165,9 +196,11 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
                     ScriptContext.ENGINE_SCOPE);
         }
 
-        log.debug("{} adding current attribute resolution contexts to script context", getLogPrefix());
+        log.debug("{} adding contexts to script context", getLogPrefix());
         scriptContext.setAttribute("resolutionContext", resolutionContext, ScriptContext.ENGINE_SCOPE);
         scriptContext.setAttribute("workContext", workContext, ScriptContext.ENGINE_SCOPE);
+        scriptContext.setAttribute("profileContext", prcLookupStrategy.apply(resolutionContext),
+                ScriptContext.ENGINE_SCOPE);
 
         log.debug("{} adding emulated V2 request context to script context", getLogPrefix());
         scriptContext.setAttribute("requestContext", new V2SAMLProfileRequestContext(resolutionContext, getId()),
@@ -185,5 +218,5 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
 
         return scriptContext;
     }
-    
+
 }
