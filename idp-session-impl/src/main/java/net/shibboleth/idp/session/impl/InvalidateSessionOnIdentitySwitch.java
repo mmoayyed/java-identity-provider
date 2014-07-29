@@ -34,11 +34,14 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Function;
 
 /**
  * An authentication action that checks for a mismatch between an existing session's identity and
@@ -64,11 +67,23 @@ public class InvalidateSessionOnIdentitySwitch extends AbstractAuthenticationAct
     /** SessionManager. */
     @NonnullAfterInit private SessionManager sessionManager;
 
+    /** Lookup function for SessionContext. */
+    @Nonnull private Function<ProfileRequestContext,SessionContext> sessionContextLookupStrategy;
+
+    /** Lookup function for SubjectCanonicalizationContext. */
+    @Nonnull private Function<ProfileRequestContext,SubjectCanonicalizationContext> c14nContextLookupStrategy;
+    
     /** SessionContext to operate on. */
     @Nullable private SessionContext sessionCtx;
     
     /** A newly established principal name to check. */
     @Nullable private String newPrincipalName;
+    
+    /** Constructor. */
+    public InvalidateSessionOnIdentitySwitch() {
+        sessionContextLookupStrategy = new ChildContextLookup<>(SessionContext.class);
+        c14nContextLookupStrategy = new ChildContextLookup<>(SubjectCanonicalizationContext.class);
+    }
     
     /**
      * Set the {@link SessionManager} to use.
@@ -79,6 +94,32 @@ public class InvalidateSessionOnIdentitySwitch extends AbstractAuthenticationAct
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         sessionManager = Constraint.isNotNull(manager, "SessionManager cannot be null");
+    }
+    
+    /**
+     * Set the lookup strategy for the SessionContext to access.
+     * 
+     * @param strategy  lookup strategy
+     */
+    public void setSessionContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,SessionContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        sessionContextLookupStrategy = Constraint.isNotNull(strategy,
+                "SessionContext lookup strategy cannot be null");
+    }
+
+    /**
+     * Set the lookup strategy for the SubjectCanonicalizationContext to access.
+     * 
+     * @param strategy  lookup strategy
+     */
+    public void setSubjectCanonicalizationContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,SubjectCanonicalizationContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        c14nContextLookupStrategy = Constraint.isNotNull(strategy,
+                "SubjectCanonicalizationContext lookup strategy cannot be null");
     }
     
     /** {@inheritDoc} */
@@ -96,14 +137,13 @@ public class InvalidateSessionOnIdentitySwitch extends AbstractAuthenticationAct
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
-        sessionCtx = profileRequestContext.getSubcontext(SessionContext.class, false);
+        sessionCtx = sessionContextLookupStrategy.apply(profileRequestContext);
         if (sessionCtx == null || sessionCtx.getIdPSession() == null) {
             log.debug("{} No previous session found, nothing to do", getLogPrefix());
             return false;
         }
         
-        final SubjectCanonicalizationContext c14n =
-                profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, false);
+        final SubjectCanonicalizationContext c14n = c14nContextLookupStrategy.apply(profileRequestContext);
         if (c14n == null || c14n.getPrincipalName() == null) {
             log.debug("{} Reusing identity from session, nothing to do", getLogPrefix());
             return false;

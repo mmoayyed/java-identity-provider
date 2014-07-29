@@ -28,13 +28,16 @@ import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.context.SessionContext;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-
 
 /**
  * An authentication action that populates a {@link AuthenticationContext} with the active
@@ -50,15 +53,36 @@ public class ExtractActiveAuthenticationResults extends AbstractAuthenticationAc
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractActiveAuthenticationResults.class);
 
+    /** Lookup function for SessionContext. */
+    @Nonnull private Function<ProfileRequestContext,SessionContext> sessionContextLookupStrategy;
+    
     /** Session to copy results from. */
     @Nullable private IdPSession session;
+    
+    /** Constructor. */
+    public ExtractActiveAuthenticationResults() {
+        sessionContextLookupStrategy = new ChildContextLookup<>(SessionContext.class);
+    }
+    
+    /**
+     * Set the lookup strategy for the SessionContext to access.
+     * 
+     * @param strategy  lookup strategy
+     */
+    public void setSessionContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,SessionContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        sessionContextLookupStrategy = Constraint.isNotNull(strategy,
+                "SessionContext lookup strategy cannot be null");
+    }
     
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
-        final SessionContext ctx = profileRequestContext.getSubcontext(SessionContext.class, false);
+        final SessionContext ctx = sessionContextLookupStrategy.apply(profileRequestContext);
         if (ctx != null) {
             session = ctx.getIdPSession();
             if (session != null) {

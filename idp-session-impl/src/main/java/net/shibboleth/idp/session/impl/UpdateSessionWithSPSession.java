@@ -33,6 +33,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -69,13 +70,21 @@ public class UpdateSessionWithSPSession extends AbstractProfileAction {
     @Positive @Duration private long sessionLifetime;
     
     /** A function that returns the {@link SPSession} to add. */
-    @Nonnull private Function<ProfileRequestContext, SPSession> spSessionCreationStrategy;
+    @Nonnull private Function<ProfileRequestContext,SPSession> spSessionCreationStrategy;
 
     /** SessionManager. */
     @NonnullAfterInit private SessionManager sessionManager;
     
+    /** Lookup function for SessionContext. */
+    @Nonnull private Function<ProfileRequestContext,SessionContext> sessionContextLookupStrategy;
+    
     /** Existing or newly created SessionContext. */
     @Nullable private SessionContext sessionCtx;
+    
+    /** Constructor. */
+    public UpdateSessionWithSPSession() {
+        sessionContextLookupStrategy = new ChildContextLookup<>(SessionContext.class);
+    }
 
     /**
      * Set the default session lifetime to apply if using the default creation
@@ -96,7 +105,7 @@ public class UpdateSessionWithSPSession extends AbstractProfileAction {
      * 
      * @param strategy  creation function to use
      */
-    public void setSPSessionCreationStrategy(@Nonnull final Function<ProfileRequestContext, SPSession> strategy) {
+    public void setSPSessionCreationStrategy(@Nonnull final Function<ProfileRequestContext,SPSession> strategy) {
         spSessionCreationStrategy = Constraint.isNotNull(strategy,
                 "SPSession creation strategy function cannot be null");
     }
@@ -110,6 +119,19 @@ public class UpdateSessionWithSPSession extends AbstractProfileAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         sessionManager = Constraint.isNotNull(manager, "SessionManager cannot be null");
+    }
+    
+    /**
+     * Set the lookup strategy for the SessionContext to access.
+     * 
+     * @param strategy  lookup strategy
+     */
+    public void setSessionContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,SessionContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        sessionContextLookupStrategy = Constraint.isNotNull(strategy,
+                "SessionContext lookup strategy cannot be null");
     }
     
     /** {@inheritDoc} */
@@ -133,7 +155,7 @@ public class UpdateSessionWithSPSession extends AbstractProfileAction {
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         if (super.doPreExecute(profileRequestContext)) {
-            sessionCtx = profileRequestContext.getSubcontext(SessionContext.class);
+            sessionCtx = sessionContextLookupStrategy.apply(profileRequestContext);
             
             // We can only do work if a session exists.
             return sessionCtx != null && sessionCtx.getIdPSession() != null;

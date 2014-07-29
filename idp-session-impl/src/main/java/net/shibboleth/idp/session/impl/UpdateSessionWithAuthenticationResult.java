@@ -32,12 +32,14 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 
 /**
@@ -72,11 +74,23 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
     /** SessionManager. */
     @NonnullAfterInit private SessionManager sessionManager;
 
+    /** Lookup/creation function for SessionContext. */
+    @Nonnull private Function<ProfileRequestContext,SessionContext> sessionContextCreationStrategy;
+
+    /** Lookup function for SubjectContext. */
+    @Nonnull private Function<ProfileRequestContext,SubjectContext> subjectContextLookupStrategy;
+    
     /** Existing or newly created SessionContext. */
     @Nullable private SessionContext sessionCtx;
 
     /** Existing SubjectContext. */
     @Nullable private SubjectContext subjectCtx;
+    
+    /** Constructor. */
+    public UpdateSessionWithAuthenticationResult() {
+        sessionContextCreationStrategy = new ChildContextLookup<>(SessionContext.class, true);
+        subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
+    }
     
     /**
      * Set the {@link SessionManager} to use.
@@ -87,6 +101,31 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         sessionManager = Constraint.isNotNull(manager, "SessionManager cannot be null");
+    }
+    
+    /**
+     * Set the lookup/creation strategy for the SessionContext to update.
+     * 
+     * @param strategy  creation/lookup strategy
+     */
+    public void setSessionContextCreationStrategy(
+            @Nonnull final Function<ProfileRequestContext,SessionContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        sessionContextCreationStrategy = Constraint.isNotNull(strategy,
+                "SessionContext lookup/creation strategy cannot be null");
+    }
+    
+    /**
+     * Set the lookup strategy for the SubjectContext to access.
+     * 
+     * @param strategy  lookup strategy
+     */
+    public void setSubjectContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,SubjectContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        subjectContextLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
     }
     
     /** {@inheritDoc} */
@@ -104,16 +143,18 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
-        if (authenticationContext.getAuthenticationResult() != null) {
-            subjectCtx = profileRequestContext.getSubcontext(SubjectContext.class, false);
-            sessionCtx = profileRequestContext.getSubcontext(SessionContext.class, true);
-            
-            // We can only do work if a session exists or a non-empty SubjectContext exists.
-            if (sessionCtx.getIdPSession() != null || (subjectCtx != null && subjectCtx.getPrincipalName() != null)) {
-                return super.doPreExecute(profileRequestContext, authenticationContext);
-            } else {
+        if (super.doPreExecute(profileRequestContext, authenticationContext)
+                && authenticationContext.getAuthenticationResult() != null) {
+            subjectCtx = subjectContextLookupStrategy.apply(profileRequestContext);
+            sessionCtx = sessionContextCreationStrategy.apply(profileRequestContext);
+            if (sessionCtx == null) {
+                log.error("{} SessionContext creation failed", getLogPrefix());
+                ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
                 return false;
             }
+            
+            // We can only do work if a session exists or a non-empty SubjectContext exists.
+            return sessionCtx.getIdPSession() != null || (subjectCtx != null && subjectCtx.getPrincipalName() != null);
         }
         
         return false;
@@ -124,7 +165,7 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
-        IdPSession session = sessionCtx.getIdPSession();
+        final IdPSession session = sessionCtx.getIdPSession();
         if (session != null) {
             try {
                 updateIdPSession(authenticationContext, session);
