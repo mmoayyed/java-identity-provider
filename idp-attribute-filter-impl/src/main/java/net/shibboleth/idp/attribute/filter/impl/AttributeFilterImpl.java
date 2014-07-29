@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter;
+package net.shibboleth.idp.attribute.filter.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,6 +28,9 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.ext.spring.service.AbstractServiceableComponent;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.filter.AttributeFilter;
+import net.shibboleth.idp.attribute.filter.AttributeFilterException;
+import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;

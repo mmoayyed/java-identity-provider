@@ -22,8 +22,8 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
-import net.shibboleth.idp.attribute.filter.AttributeFilterImpl;
 import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
+import net.shibboleth.idp.attribute.filter.impl.AttributeFilterImpl;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.service.ServiceException;

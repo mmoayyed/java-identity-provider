@@ -38,7 +38,7 @@ import org.w3c.dom.Element;
  * 
  * There is no bean being summoned up here. Rather we just parse all the children. Then over in the service all the *
  * {@link net.shibboleth.idp.attribute.filter.AttributeFilterPolicy} beans are sucked out of spring by type and injected
- * into a new {@link net.shibboleth.idp.attribute.filter.AttributeFilterImpl} via a
+ * into a new {@link net.shibboleth.idp.attribute.filter.impl.AttributeFilterImpl} via a
  * {@link AttributeFilterServiceStrategy}.
  */
 public class AttributeFilterPolicyGroupParser implements BeanDefinitionParser {
