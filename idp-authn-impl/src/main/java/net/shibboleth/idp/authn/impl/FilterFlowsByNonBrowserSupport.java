@@ -49,7 +49,7 @@ public class FilterFlowsByNonBrowserSupport extends AbstractAuthenticationAction
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
-        if (authenticationContext.isBrowserProfile()) {
+        if (profileRequestContext.isBrowserProfile()) {
             log.debug("{} Request does not have non-browser requirement, nothing to do", getLogPrefix());
             return false;
         }

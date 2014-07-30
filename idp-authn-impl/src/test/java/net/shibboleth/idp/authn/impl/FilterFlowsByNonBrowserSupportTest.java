@@ -39,7 +39,7 @@ public class FilterFlowsByNonBrowserSupportTest extends PopulateAuthenticationCo
     
     @Test public void testBrowserProfile() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
-        authCtx.setBrowserProfile(true);
+        prc.setBrowserProfile(true);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);

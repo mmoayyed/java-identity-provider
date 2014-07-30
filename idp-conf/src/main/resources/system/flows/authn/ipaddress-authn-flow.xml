@@ -13,7 +13,7 @@
         <transition on="proceed" to="proceed" />
     </action-state>
 
-    <!-- As a "fall-through" method, remap selected events to select a different flow. -->    
+    <!-- As a "fall-through" method, remap selected events to select a different flow. -->
     <global-transitions>
         <transition on="NoCredentials" to="ReselectFlow" />
         <transition on="InvalidCredentials" to="ReselectFlow" />

@@ -5,13 +5,19 @@
 
     <!-- This is a login flow for container-based pseudo-authentication. -->
     
-    <action-state id="ExtractRemoteUser">
+    <action-state id="RemoteUser">
         <evaluate expression="ExtractRemoteUser" />
         <evaluate expression="ValidateRemoteUser" />
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="proceed" />
     </action-state>
+
+    <!-- As a "fall-through" method, remap selected events to select a different flow. -->
+    <global-transitions>
+        <transition on="NoCredentials" to="ReselectFlow" />
+        <transition on="InvalidCredentials" to="ReselectFlow" />
+    </global-transitions>
 
     <bean-import resource="remoteuser-internal-authn-beans.xml" />
 

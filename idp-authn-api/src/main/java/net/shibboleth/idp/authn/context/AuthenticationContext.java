@@ -57,24 +57,21 @@ public final class AuthenticationContext extends BaseContext {
 
     /** Whether authentication must not involve subject interaction. */
     private boolean isPassive;
-
-    /** Whether the surrounding profile is browser-based. */
-    private boolean isBrowserProfile;
     
     /** A non-normative hint some protocols support to indicate who the subject might be. */
     @Nullable private String hintedName;
     
     /** Flows that could potentially be used to authenticate the user. */
-    @Nonnull @NonnullElements private final Map<String, AuthenticationFlowDescriptor> potentialFlows;
+    @Nonnull @NonnullElements private final Map<String,AuthenticationFlowDescriptor> potentialFlows;
 
     /** Authentication results associated with an active session and available for (re)use. */
-    @Nonnull @NonnullElements private final Map<String, AuthenticationResult> activeResults;
+    @Nonnull @NonnullElements private final Map<String,AuthenticationResult> activeResults;
         
     /** The registry of predicate factories for custom principal evaluation. */
     @Nonnull private PrincipalEvalPredicateFactoryRegistry evalRegistry;
 
     /** Previously attempted flows (could be failures or intermediate results). */
-    @Nonnull @NonnullElements private final Map<String, AuthenticationFlowDescriptor> intermediateFlows;
+    @Nonnull @NonnullElements private final Map<String,AuthenticationFlowDescriptor> intermediateFlows;
     
     /** Authentication flow being attempted to authenticate the user. */
     @Nullable private AuthenticationFlowDescriptor attemptedFlow;
@@ -114,7 +111,7 @@ public final class AuthenticationContext extends BaseContext {
      * 
      * @return authentication results currently active for the subject
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, AuthenticationResult> getActiveResults() {
+    @Nonnull @NonnullElements @Unmodifiable public Map<String,AuthenticationResult> getActiveResults() {
         return ImmutableMap.copyOf(activeResults);
     }
 
@@ -142,7 +139,7 @@ public final class AuthenticationContext extends BaseContext {
      * 
      * @return the potential flows
      */
-    @Nonnull @NonnullElements @Live public Map<String, AuthenticationFlowDescriptor> getPotentialFlows() {
+    @Nonnull @NonnullElements @Live public Map<String,AuthenticationFlowDescriptor> getPotentialFlows() {
         return potentialFlows;
     }
 
@@ -152,7 +149,7 @@ public final class AuthenticationContext extends BaseContext {
      * 
      * @return the intermediately executed flows
      */
-    @Nonnull @NonnullElements @Live public Map<String, AuthenticationFlowDescriptor> getIntermediateFlows() {
+    @Nonnull @NonnullElements @Live public Map<String,AuthenticationFlowDescriptor> getIntermediateFlows() {
         return intermediateFlows;
     }
     
@@ -193,27 +190,6 @@ public final class AuthenticationContext extends BaseContext {
      */
     @Nonnull public AuthenticationContext setIsPassive(final boolean passive) {
         isPassive = passive;
-        return this;
-    }
-
-    /**
-     * Get whether the surrounding profile is browser-based.
-     * 
-     * @return whether surrounding profile is browser-based
-     */
-    public boolean isBrowserProfile() {
-        return isBrowserProfile;
-    }
-    
-    /**
-     * Set whether the surrounding profile is browser-based.
-     * 
-     * @param browser whether surrounding profile is browser-based
-     * 
-     * @return this authentication context
-     */
-    @Nonnull public AuthenticationContext setBrowserProfile(final boolean browser) {
-        isBrowserProfile = browser;
         return this;
     }
     
@@ -347,7 +323,6 @@ public final class AuthenticationContext extends BaseContext {
     @Override
     public String toString() {
         return Objects.toStringHelper(this).add("initiationInstant", new DateTime(initiationInstant))
-                .add("isBrowserProfile", isBrowserProfile)
                 .add("isPassive", isPassive).add("forceAuthn", forceAuthn).add("hintedName", hintedName)
                 .add("potentialFlows", potentialFlows.keySet())
                 .add("activeResults", activeResults.keySet())

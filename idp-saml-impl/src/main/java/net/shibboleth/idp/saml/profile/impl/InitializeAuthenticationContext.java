@@ -90,8 +90,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         final AuthenticationContext authnCtx = new AuthenticationContext();
-        authnCtx.setBrowserProfile(profileRequestContext.isBrowserProfile());
-        
+
         if (authnRequest != null) {
             authnCtx.setForceAuthn(authnRequest.isForceAuthn());
             authnCtx.setIsPassive(authnRequest.isPassive());

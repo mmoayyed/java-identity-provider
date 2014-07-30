@@ -18,11 +18,6 @@
         <evaluate expression="'proceed'" />
 
         <transition on="proceed" to="proceed" />
-        
-        <!-- Fall through to a different flow if login fails on a passive request. -->
-        <transition on="#{ opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).isPassive() }" to="ReselectFlow" />
-
-        <!-- Error or warning transitions are determined by deployer in /flows/authn/conditions/conditions-flow.xml -->
     </action-state>
 
     <bean-import resource="remoteuser-authn-beans.xml" />
