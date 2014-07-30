@@ -25,7 +25,7 @@
 
     <bean id="PopulateAuthenticationContextWithInitialFlow"
         class="net.shibboleth.idp.authn.impl.PopulateAuthenticationContext" scope="prototype"
-        p:availableFlows="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'authn/%{idp.authn.initialFlow:}']}"
+        p:availableFlows="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'authn/(%{idp.authn.flows.initial:})']}"
         p:principalEvalPredicateFactoryRegistry-ref="shibboleth.AuthnComparisonRegistry" />
 
     <bean id="PopulateSessionContext"
