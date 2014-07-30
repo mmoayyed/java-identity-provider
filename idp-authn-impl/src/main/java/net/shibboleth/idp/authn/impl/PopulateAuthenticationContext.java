@@ -49,10 +49,11 @@ import com.google.common.collect.Lists;
  * 
  * <p>The set of flows will be filtered by {@link AuthenticationProfileConfiguration#getAuthenticationFlows()}
  * if such a configuration is available from a {@link RelyingPartyContext} obtained via a lookup strategy,
- * by default the child of the {@link ProfileRequestContext}.</p>
+ * by default the child of the {@link ProfileRequestContext}. Each flow's attached predicate is also
+ * applied.</p>
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
+ * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class) != null</pre>
  * @post The AuthenticationContext is modified as above.
  */
 public class PopulateAuthenticationContext extends AbstractAuthenticationAction {
@@ -161,7 +162,12 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
                 && !authenticationProfileConfig.getAuthenticationFlows().isEmpty()) {
             for (final AuthenticationFlowDescriptor desc : availableFlows) {
                 if (authenticationProfileConfig.getAuthenticationFlows().contains(desc.getId())) {
-                    authenticationContext.getPotentialFlows().put(desc.getId(), desc);
+                    if (desc.apply(profileRequestContext)) {
+                        authenticationContext.getPotentialFlows().put(desc.getId(), desc);
+                    } else {
+                        log.debug("{} Filtered out authentication flow {} due to attached condition", getLogPrefix(),
+                                desc.getId());
+                    }
                 } else {
                     log.debug("{} Filtered out authentication flow {} due to profile configuration", getLogPrefix(),
                             desc.getId());
@@ -169,7 +175,12 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
             }
         } else {
             for (final AuthenticationFlowDescriptor desc : availableFlows) {
-                authenticationContext.getPotentialFlows().put(desc.getId(), desc);
+                if (desc.apply(profileRequestContext)) {
+                    authenticationContext.getPotentialFlows().put(desc.getId(), desc);
+                } else {
+                    log.debug("{} Filtered out authentication flow {} due to attached condition", getLogPrefix(),
+                            desc.getId());
+                }
             }
         }
 

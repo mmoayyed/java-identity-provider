@@ -26,6 +26,9 @@
 
     <!-- Default is to turn any event into its own end-state. -->
     <global-transitions>
+        <transition on="#{currentEvent.id.startsWith('authn/')}" to="ReselectFlow">
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).setSignaledFlowId(currentEvent.id)" />
+        </transition>
         <transition on="#{!'proceed'.equals(currentEvent.id)}" to="#{currentEvent.id}" />
     </global-transitions>
 

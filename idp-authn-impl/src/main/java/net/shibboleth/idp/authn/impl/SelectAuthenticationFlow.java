@@ -46,26 +46,28 @@ import org.slf4j.LoggerFactory;
  * the {@link RequestedPrincipalContext} (if any), and the active results, to decide how
  * to proceed.</p>
  * 
- * <p>If there is no {@link RequestedPrincipalContext}, then an active result will be
- * reused with the default "proceed" event returned, unless the request requires forced
- * authentication. If not possible, then a potential flow will be selected and its ID
- * returned as the result of the action.</p>
+ * <p>Normal processing behavior can be circumvented if {@link AuthenticationContext#getSignaledFlowId()}
+ * is set, which causes an active result from that flow to be reused, or that flow to be invoked, if at
+ * all possible, subject to the usual predicates and requested principal constraints noted below.</p>
+ * 
+ * <p>Otherwise, if there is no {@link RequestedPrincipalContext}, then an active result will be
+ * reused, unless the request requires forced authentication. If not possible, then a potential
+ * flow will be selected and its ID returned as the result of the action.</p>
  * 
  * <p>If there are requested principals, then the results or flows chosen must "match" the
  * request information according to the {@link net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry}
- * attached to the context. The "favorSSO" option determines whether to select a flow
- * specifically in the order specified by the {@link RequestedPrincipalContext}, or to favor
- * an active but matching result, over a new flow. Forced authentication trumps the
- * use of any active result.</p>
+ * attached to the context. The "favorSSO" option determines whether to select a flow specifically
+ * in the order specified by the {@link RequestedPrincipalContext}, or to favor an active but matching result
+ * over a new flow. Forced authentication trumps the use of any active result.</p>
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID} (reuse of a result, i.e., SSO)
  * @event {@link AuthnEventIds#NO_PASSIVE}
  * @event {@link AuthnEventIds#NO_POTENTIAL_FLOW}
  * @event {@link AuthnEventIds#REQUEST_UNSUPPORTED}
  * @event Selected flow ID to execute
- * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
+ * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class) != null</pre>
  * @pre The content of {@link AuthenticationContext#getPotentialFlows()} are assumed to be acceptable
- * with respect to passive and forced authentication requirements. 
+ * with respect to passive and forced authentication requirements, etc. 
  * @post If a result is reused, {@link AuthenticationContext#getAuthenticationResult()} will return
  * that result. Otherwise, {@link AuthenticationContext#getAttemptedFlow()} will return the flow
  * selected for execution and returned as an event.
@@ -104,12 +106,19 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
-        requestedPrincipalCtx = authenticationContext.getSubcontext(RequestedPrincipalContext.class, false);
+        requestedPrincipalCtx = authenticationContext.getSubcontext(RequestedPrincipalContext.class);
+        if (requestedPrincipalCtx != null) {
+            if (requestedPrincipalCtx.getOperator() == null
+                    || requestedPrincipalCtx.getRequestedPrincipals().isEmpty()) {
+                requestedPrincipalCtx = null;
+            }
+        }
         
         // Detect a previous attempted flow, and move it to the intermediate collection.
-        // This will prevent re-selecting the same (probably failed) flow again.
+        // This will prevent re-selecting the same (probably failed) flow again as part of
+        // general flow selection. A flow might signal to explicitly re-run another flow anyway.
         if (authenticationContext.getAttemptedFlow() != null) {
-            log.info("{} Moving incomplete flow {} to intermediate set, reselecting a different one", getLogPrefix(),
+            log.info("{} Moving incomplete flow {} to intermediate set", getLogPrefix(),
                     authenticationContext.getAttemptedFlow().getId());
             authenticationContext.getIntermediateFlows().put(
                     authenticationContext.getAttemptedFlow().getId(), authenticationContext.getAttemptedFlow());
@@ -122,15 +131,104 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
-
-        if (requestedPrincipalCtx == null || requestedPrincipalCtx.getOperator() == null
-                || requestedPrincipalCtx.getRequestedPrincipals().isEmpty()) {
+        
+        if (authenticationContext.getSignaledFlowId() != null) {
+            doSelectSignaledFlow(profileRequestContext, authenticationContext);
+        } else if (requestedPrincipalCtx == null) {
             doSelectNoRequestedPrincipals(profileRequestContext, authenticationContext);
         } else {
             doSelectRequestedPrincipals(profileRequestContext, authenticationContext);
         }
     }
+    
+// Checkstyle: MethodLength|CyclomaticComplexity OFF
+    /**
+     * Executes the selection process in the presence of an explicit flow signal.
+     * 
+     * @param profileRequestContext the current IdP profile request context
+     * @param authenticationContext the current authentication context
+     */
+    private void doSelectSignaledFlow(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext) {
+        
+        // See if flow exists.
+        final AuthenticationFlowDescriptor flow = authenticationContext.getPotentialFlows().get(
+                authenticationContext.getSignaledFlowId());
+        if (flow == null) {
+            log.error("{} Signaled flow {} is not available", getLogPrefix(),
+                    authenticationContext.getSignaledFlowId());
+            ActionSupport.buildEvent(profileRequestContext,
+                    authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE : AuthnEventIds.NO_POTENTIAL_FLOW);
+            authenticationContext.setSignaledFlowId(null);
+            return;
+        }
+        
+        // Clear state.
+        authenticationContext.setSignaledFlowId(null);
+        
+        log.debug("{} Attempting to honor signaled flow {}", getLogPrefix(), flow.getId());
 
+        // If not forced, check for an active result for that flow.
+        if (!authenticationContext.isForceAuthn()) {
+            final AuthenticationResult activeResult = authenticationContext.getActiveResults().get(flow.getId());
+            if (activeResult != null) {
+                if (requestedPrincipalCtx != null) {
+                    for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
+                        final PrincipalEvalPredicateFactory factory =
+                                authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
+                                        p.getClass(), requestedPrincipalCtx.getOperator());
+                        if (factory != null) {
+                            final PrincipalEvalPredicate predicate = factory.getPredicate(p);
+                            if (predicate.apply(activeResult)) {
+                                requestedPrincipalCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
+                                selectActiveResult(profileRequestContext, authenticationContext, activeResult);
+                                return;
+                            }
+                        } else {
+                            log.warn("{} Configuration does not support requested principal evaluation with "
+                                    + "operator '{}' and type '{}'", getLogPrefix(),
+                                    requestedPrincipalCtx.getOperator(), p.getClass());
+                        }
+                    }
+                } else {
+                    selectActiveResult(profileRequestContext, authenticationContext, activeResult);
+                    return;
+                }
+            }
+        }
+        
+        // Try and use the inactive flow.
+        
+        if (requestedPrincipalCtx != null) {
+            for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
+                final PrincipalEvalPredicateFactory factory =
+                        authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
+                                p.getClass(), requestedPrincipalCtx.getOperator());
+                if (factory != null) {
+                    final PrincipalEvalPredicate predicate = factory.getPredicate(p);
+                    if (predicate.apply(flow)) {
+                        requestedPrincipalCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
+                        selectInactiveFlow(profileRequestContext, authenticationContext, flow);
+                        return;
+                    }
+                } else {
+                    log.warn("{} Configuration does not support requested principal evaluation with "
+                            + "operator '{}' and type '{}'", getLogPrefix(), requestedPrincipalCtx.getOperator(),
+                            p.getClass());
+                }
+            }
+        } else {
+            selectInactiveFlow(profileRequestContext, authenticationContext, flow);
+            return;
+        }
+        
+        log.error("{} Signaled flow {} was unusable based on requester's requirements", getLogPrefix(),
+                flow.getId());
+        ActionSupport.buildEvent(profileRequestContext,
+                authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE : AuthnEventIds.NO_POTENTIAL_FLOW);
+    }
+// Checkstyle: MethodLength|CyclomaticComplexity ON
+    
     /**
      * Executes the selection process in the absence of specific requested principals.
      * 
@@ -160,7 +258,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         for (final AuthenticationResult activeResult : authenticationContext.getActiveResults().values()) {
             final AuthenticationFlowDescriptor flow = authenticationContext.getPotentialFlows().get(
                     activeResult.getAuthenticationFlowId());
-            if (flow != null && flow.apply(profileRequestContext)) {
+            if (flow != null) {
                 selectActiveResult(profileRequestContext, authenticationContext, activeResult);
                 return;
             }
@@ -190,12 +288,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             @Nonnull final AuthenticationContext authenticationContext) {
         for (final AuthenticationFlowDescriptor flow : authenticationContext.getPotentialFlows().values()) {
             if (!authenticationContext.getIntermediateFlows().containsKey(flow.getId())) {
-                if (!flow.apply(profileRequestContext)) {
-                    log.debug("{} Flow '{}' is inapplicable for this request", getLogPrefix(), flow.getId());
-                    authenticationContext.getIntermediateFlows().put(flow.getId(), flow);
-                } else {
-                    return flow;
-                }
+                return flow;
             }
         }
         
@@ -282,7 +375,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                 final PrincipalEvalPredicate predicate = factory.getPredicate(p);
                 for (final AuthenticationFlowDescriptor descriptor : potentialFlows.values()) {
                     if (!authenticationContext.getIntermediateFlows().containsKey(descriptor.getId())
-                            && predicate.apply(descriptor) && descriptor.apply(profileRequestContext)) {
+                            && predicate.apply(descriptor)) {
                         requestedPrincipalCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
                         selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);
                         return;
@@ -326,13 +419,9 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                     final PrincipalEvalPredicate predicate = factory.getPredicate(p);
                     for (final AuthenticationResult result : activeResults.values()) {
                         if (predicate.apply(result)) {
-                            final AuthenticationFlowDescriptor descriptor =
-                                    authenticationContext.getPotentialFlows().get(result.getAuthenticationFlowId());
-                            if (descriptor != null && descriptor.apply(profileRequestContext)) {
-                                requestedPrincipalCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
-                                selectActiveResult(profileRequestContext, authenticationContext, result);
-                                return;
-                            }
+                            requestedPrincipalCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
+                            selectActiveResult(profileRequestContext, authenticationContext, result);
+                            return;
                         }
                     }
                 } else {
@@ -362,7 +451,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                     final PrincipalEvalPredicate predicate = factory.getPredicate(p);
                     for (final AuthenticationFlowDescriptor descriptor : potentialFlows.values()) {
                         if (!authenticationContext.getIntermediateFlows().containsKey(descriptor.getId())
-                                && predicate.apply(descriptor) && descriptor.apply(profileRequestContext)) {
+                                && predicate.apply(descriptor)) {
                             
                             // Now check for an active result we can use from this flow. Not all results from a flow
                             // will necessarily match the request just because the flow might.
