@@ -15,8 +15,24 @@
     </action-state>
 
     <!-- This picks up from the parent flow with the transition or error step. -->
+        
+    <decision-state id="DoProfileWork">
+        <if test="InitialAuthenticationFlag" then="PreInitialSetup" else="PostInitialSetup" />
+    </decision-state>
+
+    <action-state id="PreInitialSetup">
+        <evaluate expression="InitializeAuthenticationContext" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="DoInitialAuthenticationSubflow" />
+    </action-state>
+
+    <subflow-state id="DoInitialAuthenticationSubflow" subflow="authn-initial">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="PostInitialSetup" />
+    </subflow-state>
     
-    <action-state id="DoProfileWork">
+    <action-state id="PostInitialSetup">
         <evaluate expression="InitializeAuthenticationContext" />
         <evaluate expression="InitializeRequestedPrincipalContext" />
         <evaluate expression="'proceed'" />

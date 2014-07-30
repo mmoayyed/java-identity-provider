@@ -4,39 +4,28 @@
       parent="authn.abstract">
 
     <!--
-    This is the Authentication subflow. It handles retrieval of an existing session,
-    set up and eventual selection of an subflow or active AuthenticationResult, and
-    finalization of the processing such as updating a session, before returning control
-    to the calling flow.
+    This is the Initial Authentication subflow. It checks for an existing session, and if none exists,
+    selects a flow preconfigured as "initial", which means it runs independently of whether it meets the
+    requirements of a requester and is designed to establish a session so that the full Authentication subflow
+    will be able to operate with additional context based on the subject's identity.
     -->
     
     <action-state id="AuthenticationSetup">
-        <evaluate expression="PopulateAuthenticationContext" />
         <evaluate expression="PopulateSessionContext" />
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="TestForSession" />
     </action-state>
    
-    <!-- Check for an existing session, and do additional steps in that case. -->
+    <!-- Check for an existing session, and just exit the flow successfully. -->
     <decision-state id="TestForSession">
         <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.SessionContext)) != null and opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.SessionContext)).getIdPSession() != null"
-            then="SessionExists"
+            then="proceed"
             else="FilterFlows" />
     </decision-state>
    
-    <action-state id="SessionExists">
-        <evaluate expression="ExtractActiveAuthenticationResults" />
-        <evaluate expression="ResolveAttributes" />
-        <evaluate expression="FilterFlowsByAttribute" />
-        <evaluate expression="'proceed'" />
-
-        <transition on="proceed" to="FilterFlows" />
-        <!-- Suppress resolution failure. -->
-        <transition on="UnableToResolveAttributes" to="FilterFlows" />
-    </action-state>
-   
     <action-state id="FilterFlows">
+        <evaluate expression="PopulateAuthenticationContextWithInitialFlow" />
         <evaluate expression="FilterFlowsByForcedAuthn" />
         <evaluate expression="FilterFlowsByPassivity" />
         <evaluate expression="FilterFlowsByNonBrowserSupport" />
@@ -46,18 +35,14 @@
     </action-state>
     
     <!--
-    The Select action is the "dispatching" step. Proceed here routes around
-    calling a new subflow, and goes directly to the Finalize step. Anything
-    starting with "authn/" is a flow descriptor that we send
-    control to to attempt a login.
+    The Select action is the "dispatching" step. Anything starting with "authn/"
+    is a flow descriptor that we send control to to attempt a login. Anything else
+    is an error, and "proceed" isn't an expected outcome here since no session
+    existed, making result reuse impossible.
     -->
     <action-state id="SelectAuthenticationFlow">
         <evaluate expression="SelectAuthenticationFlow" />
-        <evaluate expression="'proceed'" />
         
-        <!-- proceed indicates SSO (reuse of active result) -->
-        <transition on="proceed" to="FinalizeAuthentication" />
-
         <!-- Call a subflow with the same ID as the event. -->
         <transition on="#{currentEvent.id.startsWith('authn/')}" to="CallAuthenticationFlow" />
     </action-state>
@@ -76,22 +61,12 @@
     <!-- This runs a canonicalization step on the result of the authentication. -->
     <subflow-state id="CallSubjectCanonicalization" subflow="c14n/authn">
         <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="InvalidateSessionOnIdentitySwitch" />
+        <transition on="proceed" to="FinalizeAuthentication" />
     </subflow-state>
 
-    <!-- Handles an identity switch by dumping the old session. -->
-    <action-state id="InvalidateSessionOnIdentitySwitch">
-        <evaluate expression="InvalidateSessionOnIdentitySwitch" />
-        <evaluate expression="'proceed'" />
-        
-        <transition on="proceed" to="FinalizeAuthentication" />
-        <!-- Ignore any session layer errors at this stage. -->
-        <transition on="InputOutputError" to="FinalizeAuthentication" />
-    </action-state>
-    
     <!--
-    Wraps up the subflow or result reuse by producing a SubjectContext. If a mismatch
-    exists between an existing SubjectContext and the result here, an error occurs.
+    Wraps up the subflow by producing a SubjectContext. If a mismatch exists between an existing
+    SubjectContext and the result here, an error occurs.
     -->
     <action-state id="FinalizeAuthentication">
         <evaluate expression="FinalizeAuthentication" />

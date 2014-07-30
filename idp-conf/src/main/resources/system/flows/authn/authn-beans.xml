@@ -20,12 +20,17 @@
     
     <bean id="PopulateAuthenticationContext"
         class="net.shibboleth.idp.authn.impl.PopulateAuthenticationContext" scope="prototype"
-        p:availableFlows="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'authn/(%{idp.authn.flows})']}"
+        p:availableFlows="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'authn/(%{idp.authn.flows:})']}"
+        p:principalEvalPredicateFactoryRegistry-ref="shibboleth.AuthnComparisonRegistry" />
+
+    <bean id="PopulateAuthenticationContextWithInitialFlow"
+        class="net.shibboleth.idp.authn.impl.PopulateAuthenticationContext" scope="prototype"
+        p:availableFlows="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'authn/%{idp.authn.initialFlow:}']}"
         p:principalEvalPredicateFactoryRegistry-ref="shibboleth.AuthnComparisonRegistry" />
 
     <bean id="PopulateSessionContext"
         class="net.shibboleth.idp.session.impl.PopulateSessionContext" scope="prototype"
-        p:activationCondition-ref="#{ %{idp.session.enabled:true} ? 'shibboleth.Conditions.True' : 'shibboleth.Conditions.False' }"
+        p:activationCondition="%{idp.session.enabled:true}"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:sessionResolver-ref="shibboleth.SessionManager" />
     

@@ -49,6 +49,7 @@
 
         <!-- Master flow for authentication. -->
         <webflow:flow-location id="authn.abstract" path="../system/flows/authn/authn-abstract-flow.xml" />
+        <webflow:flow-location id="authn-initial" path="../system/flows/authn/initial-authn-flow.xml" />
         <webflow:flow-location id="authn" path="../system/flows/authn/authn-flow.xml" />
 
         <!-- Login methods. -->
