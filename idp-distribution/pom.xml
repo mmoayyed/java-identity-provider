@@ -163,21 +163,39 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Replace antrun plugin with something else ? -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.7</version>
                 <executions>
                     <execution>
+                        <id>make-files-in-bin-executable</id>
                         <phase>package</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
                         <configuration>
                             <target>
-                                <!-- Make files in bin executable. -->
                                 <chmod dir="${assembly-directory}/bin" perm="755" includes="**/*.sh" />
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-dist-files</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <copy todir="${assembly-directory}/dist">
+                                    <fileset dir="${assembly-directory}">
+                                        <include name="conf/**/*.*" />
+                                        <include name="flows/**/*.*" />
+                                        <include name="views/**/*.*" />
+                                    </fileset>
+                                    <globmapper from="*" to="*.dist" />
+                                </copy>
                             </target>
                         </configuration>
                     </execution>
