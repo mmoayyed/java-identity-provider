@@ -76,6 +76,9 @@ public final class AuthenticationContext extends BaseContext {
     /** Authentication flow being attempted to authenticate the user. */
     @Nullable private AuthenticationFlowDescriptor attemptedFlow;
     
+    /** Signals authentication flow to run next, to influence selection logic. */
+    @Nullable private String signaledFlowId;
+    
     /** A successfully processed authentication result (the output of the attempted flow, if any). */
     @Nullable private AuthenticationResult authenticationResult;
 
@@ -261,6 +264,27 @@ public final class AuthenticationContext extends BaseContext {
     }
     
     /**
+     * Get the flow ID signaled as the next selection.
+     * 
+     * @return  ID of flow to run next
+     */
+    @Nullable public String getSignaledFlowId() {
+        return signaledFlowId;
+    }
+    
+    /**
+     * Set the flow ID signaled as the next selection.
+     * 
+     * @param id ID of flow to run next
+     * 
+     * @return this authentication context
+     */
+    @Nonnull public AuthenticationContext setSignaledFlowId(@Nullable final String id) {
+        signaledFlowId = StringSupport.trimOrNull(id);
+        return this;
+    }    
+    
+    /**
      * Get the authentication result produced by the attempted flow, or reused for SSO.
      * 
      * @return authentication result, if any
@@ -322,13 +346,18 @@ public final class AuthenticationContext extends BaseContext {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("initiationInstant", new DateTime(initiationInstant))
-                .add("isPassive", isPassive).add("forceAuthn", forceAuthn).add("hintedName", hintedName)
+        return Objects.toStringHelper(this)
+                .add("initiationInstant", new DateTime(initiationInstant))
+                .add("isPassive", isPassive)
+                .add("forceAuthn", forceAuthn)
+                .add("hintedName", hintedName)
                 .add("potentialFlows", potentialFlows.keySet())
                 .add("activeResults", activeResults.keySet())
                 .add("attemptedFlow", attemptedFlow)
+                .add("signaledFlowId", signaledFlowId)
                 .add("resultCacheable", resultCacheable)
-                .add("completionInstant", new DateTime(completionInstant)).toString();
+                .add("completionInstant", new DateTime(completionInstant))
+                .toString();
     }
 
 }
