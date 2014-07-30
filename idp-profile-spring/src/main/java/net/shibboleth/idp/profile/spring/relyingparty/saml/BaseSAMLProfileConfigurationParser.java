@@ -33,7 +33,6 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 import org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -50,13 +49,10 @@ import com.google.common.base.Predicate;
 public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleBeanDefinitionParser {
     
     /** Class logger. */
-    @Nonnull private Logger log = LoggerFactory.getLogger(BaseSAMLProfileConfigurationParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(BaseSAMLProfileConfigurationParser.class);
 
     /** Flag controlling whether to parse artifact configuration. */
     private boolean artifactAware;
-
-    /** Where we store any &lt;spring:beans&gt; statements. */
-    private BeanFactory embeddedBeans;
 
     /**
      * Set whether to parse artifact configuration.
@@ -65,15 +61,6 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
      */
     protected void setArtifactAware(final boolean flag) {
         artifactAware = flag;
-    }
-
-    /**
-     * returns the factory for any embedded beans.
-     * 
-     * @return Returns the beans.
-     */
-    @Nullable protected BeanFactory getEmbeddedBeans() {
-        return embeddedBeans;
     }
 
     /**
@@ -168,20 +155,6 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
      */
     private void setSecurityConfiguration(Element element, BeanDefinitionBuilder builder, ParserContext parserContext) {
 
-        if (null != getEmbeddedBeans()) {
-            // Ask the embedded beans first
-            final SecurityConfiguration configuration;
-            configuration = SpringSupport.getBean(getEmbeddedBeans(), SecurityConfiguration.class);
-            if (null != configuration) {
-                builder.addPropertyValue("securityConfiguration", configuration);
-                if (element.hasAttributeNS(null, "signingCredentialRef")) {
-                    log.warn("local beans defined, explicit signingCredentialRef is ignored");
-                }
-                return;
-            }
-            log.debug("embedded beans but no SecurityConfiguration");
-        }
-
         final String credentialRef;
         if (element.hasAttributeNS(null, "signingCredentialRef")) {
             credentialRef = element.getAttributeNS(null, "signingCredentialRef");
@@ -223,13 +196,6 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
     // Checkstyle: CyclomaticComplexity OFF
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
-
-        final List<Element> springBeans =
-                ElementSupport.getChildElements(element, SpringSupport.SPRING_BEANS_ELEMENT_NAME);
-
-        if (null != springBeans && !springBeans.isEmpty()) {
-            embeddedBeans = SpringSupport.createBeanFactory(springBeans.get(0));
-        }
 
         setSecurityConfiguration(element, builder, parserContext);
 

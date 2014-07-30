@@ -8,8 +8,5 @@
                         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
 
 	xsi:type="saml:SAML2ArtifactResolutionProfile">
-	<spring:beans>
-		<spring:bean id="wibble" class="java.lang.String" c:_0="wobble" />
-	</spring:beans>
 </rp:ProfileConfiguration>
 

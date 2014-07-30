@@ -11,10 +11,6 @@
     assertionLifetime="PT8M" includeConditionsNotBefore="true" artifactType="7" 
     signAssertions="${prop.never}" signRequests="conditional" signResponses="never"
     inboundFlowId="logoutibfid" outboundFlowId="logoutobfid">
-    <spring:beans>
-        <spring:bean class="net.shibboleth.utilities.java.support.security.RandomIdentifierGenerationStrategy" id="idgen"/>
-        <spring:bean class="net.shibboleth.idp.profile.config.SecurityConfiguration" c:skew="987654321" c:generator-ref="idgen"/>
-    </spring:beans>
     <saml:ProxyAudience>${prop.String1}</saml:ProxyAudience>
 </rp:ProfileConfiguration>
 

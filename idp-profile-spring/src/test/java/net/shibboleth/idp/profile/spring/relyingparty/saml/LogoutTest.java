@@ -85,7 +85,6 @@ public class LogoutTest extends BaseSAMLProfileTest {
         Assert.assertEquals(artifact.getArtifactType(), new byte[] { 0x0, 0x7, });
         Assert.assertEquals(artifact.getArtifactResolutionServiceIndex().intValue(), 3214);
 
-        Assert.assertEquals(profile.getSecurityConfiguration().getClockSkew(), 987654321);
     }
 
 }

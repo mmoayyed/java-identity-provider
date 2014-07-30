@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:samlrp="urn:mace:shibboleth:2.0:relying-party:saml" xmlns:rp="urn:mace:shibboleth:2.0:relying-party" targetNamespace="urn:mace:shibboleth:2.0:relying-party:saml" elementFormDefault="qualified">
 
-    <import namespace="urn:mace:shibboleth:2.0:relying-party" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-relying-party.xsd"/> 
-    <import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans.xsd"/>
+    <import namespace="urn:mace:shibboleth:2.0:relying-party" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-relying-party.xsd"/>
     
     <complexType name="SAML2ArtifactResolutionProfile">
         <annotation>
@@ -246,15 +245,6 @@
                         <element name="Audience" type="string" minOccurs="0" maxOccurs="unbounded">
                             <annotation>
                                 <documentation>Additional audiences to which an assertion may be released.</documentation>
-                            </annotation>
-                        </element>
-                        <element ref="spring:beans" minOccurs="0" >
-                            <annotation>
-                                <documentation>
-                                    Additional Spring beans for Configuration.  If a bean of class
-                                    net.shibboleth.idp.profile.config.SecurityConfiguration is defined
-                                    it will be used as the override for the spring context.
-                                </documentation>
                             </annotation>
                         </element>
                     </choice>

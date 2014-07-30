@@ -74,5 +74,8 @@
 	<bean id="shibboleth.SchemaBuilder" class="org.opensaml.saml.common.xml.SAMLSchemaBuilder"
 		c:ver="SAML_11" />
 
+    <!--  for SSOS -->
+    <bean id="jimmy" factory-method="alwaysTrue" class="com.google.common.base.Predicates"/>
+
 </beans>
                             

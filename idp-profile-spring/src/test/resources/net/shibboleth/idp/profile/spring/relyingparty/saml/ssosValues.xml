@@ -8,9 +8,5 @@
 
 	xsi:type="saml:SAML2SSOSProfile" maximumTokenDelegationChainLength="99"
 	delegationPredicateRef="jimmy">
-	<spring:beans>
-		<spring:bean id="jimmy" factory-method="alwaysTrue"
-			class="com.google.common.base.Predicates"/>
-	</spring:beans>
 </rp:ProfileConfiguration>
 
