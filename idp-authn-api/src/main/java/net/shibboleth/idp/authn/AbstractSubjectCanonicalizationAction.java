@@ -167,11 +167,7 @@ public abstract class AbstractSubjectCanonicalizationAction<InboundMessageType, 
             return false;
         }
         
-        if (doPreExecute(profileRequestContext, scContext)) {
-            return super.doPreExecute(profileRequestContext);
-        } else {
-            return false;
-        }
+        return doPreExecute(profileRequestContext, scContext) && super.doPreExecute(profileRequestContext);
     }
 
     /**

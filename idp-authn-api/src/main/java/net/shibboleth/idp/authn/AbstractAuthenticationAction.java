@@ -59,7 +59,7 @@ public abstract class AbstractAuthenticationAction<InboundMessageType, OutboundM
 
     /** Constructor. */
     public AbstractAuthenticationAction() {
-        authnCtxLookupStrategy = new ChildContextLookup<>(AuthenticationContext.class, false);
+        authnCtxLookupStrategy = new ChildContextLookup<>(AuthenticationContext.class);
     }
 
     /**

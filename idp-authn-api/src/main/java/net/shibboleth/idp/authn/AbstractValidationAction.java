@@ -215,6 +215,10 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
             @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
+        if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
+            return false;
+        }
+        
         if (clearErrorContext) {
             authenticationContext.removeSubcontext(AuthenticationErrorContext.class);
         }
@@ -222,8 +226,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
         // If the request mandates particular principals, evaluate this validating component to see if it
         // can produce a matching principal. This skips validators chained together in flows that aren't
         // able to satisfy the request.
-        final RequestedPrincipalContext rpCtx =
-                authenticationContext.getSubcontext(RequestedPrincipalContext.class, false);
+        final RequestedPrincipalContext rpCtx = authenticationContext.getSubcontext(RequestedPrincipalContext.class);
         if (principalsAdded && rpCtx != null && rpCtx.getOperator() != null) {
             log.debug("{} Request contains principal requirements, evaluating for compatibility", getLogPrefix());
             for (Principal p : rpCtx.getRequestedPrincipals()) {
@@ -252,7 +255,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
             return false;
         }
         
-        return super.doPreExecute(profileRequestContext, authenticationContext);
+        return true;
     }
     
     /**
