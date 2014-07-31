@@ -42,6 +42,7 @@ import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchScope;
 import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.handler.CaseChangeEntryHandler.CaseChange;
 import org.ldaptive.handler.MergeAttributeEntryHandler;
@@ -460,15 +461,22 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
 
             final BeanDefinitionBuilder searchRequest =
                     BeanDefinitionBuilder.genericBeanDefinition(SearchRequest.class);
+            searchRequest.addPropertyValue("returnAttributes", "1.1");
+            searchRequest.addPropertyValue("searchScope", SearchScope.OBJECT);
+            searchRequest.addPropertyValue("sizeLimit", 1);
             if (validateDN != null) {
                 searchRequest.addPropertyValue("baseDn", validateDN);
+            } else {
+                searchRequest.addPropertyValue("baseDn", "");
             }
+            final BeanDefinitionBuilder searchFilter =
+                    BeanDefinitionBuilder.genericBeanDefinition(SearchFilter.class);
             if (validateFilter != null) {
-                final BeanDefinitionBuilder searchFilter =
-                        BeanDefinitionBuilder.genericBeanDefinition(SearchFilter.class);
                 searchFilter.addConstructorArgValue(validateFilter);
-                searchRequest.addPropertyValue("searchFilter", searchFilter.getBeanDefinition());
+            } else {
+                searchFilter.addConstructorArgValue("(objectClass=*)");
             }
+            searchRequest.addPropertyValue("searchFilter", searchFilter.getBeanDefinition());
             final BeanDefinitionBuilder validator = BeanDefinitionBuilder.genericBeanDefinition(SearchValidator.class);
             validator.addPropertyValue("searchRequest", searchRequest.getBeanDefinition());
             pool.addPropertyValue("validator", validator.getBeanDefinition());
