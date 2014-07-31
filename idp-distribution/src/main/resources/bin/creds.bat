@@ -17,4 +17,4 @@ java -cp "bin\lib\*;war\WEB-INF\lib\*" %CLASS% --hostname %HOSTNAME% --storefile
 
 set CLASS=net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategyTool
 
-java -cp "bin\lib\*;war\WEB-INF\lib\*" %CLASS% --storefile creds/secret.jks --versionfile creds/secret.kver --alias secret --storepass password
+java -cp "bin\lib\*;war\WEB-INF\lib\*" %CLASS% --storefile creds/sealer.jks --versionfile creds/sealer.kver --alias secret --storepass password
