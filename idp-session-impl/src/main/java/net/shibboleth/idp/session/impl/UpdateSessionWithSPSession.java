@@ -176,14 +176,14 @@ public class UpdateSessionWithSPSession extends AbstractProfileAction {
         
         final IdPSession idpSession = sessionCtx.getIdPSession();
         try {
-            log.info("{} Adding new SPSession for relying party {} to existing session {}", getLogPrefix(),
+            log.debug("{} Adding new SPSession for relying party {} to existing session {}", getLogPrefix(),
                     spSession.getId(), idpSession.getId());
             final SPSession old = idpSession.addSPSession(spSession);
             if (old != null) {
-                log.info("{} Older SPSession for relying party {} was replaced", getLogPrefix(), old.getId());
+                log.debug("{} Older SPSession for relying party {} was replaced", getLogPrefix(), old.getId());
             }
         } catch (final SessionException e) {
-            log.error(getLogPrefix() + " Error updating session " + idpSession.getId(), e);
+            log.error("{} Error updating session {}", getLogPrefix(), idpSession.getId(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
         }
     }

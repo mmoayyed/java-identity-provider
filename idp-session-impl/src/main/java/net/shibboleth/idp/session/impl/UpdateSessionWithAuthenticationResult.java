@@ -170,14 +170,15 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
             try {
                 updateIdPSession(authenticationContext, session);
             } catch (SessionException e) {
-                log.error(getLogPrefix() + " Error updating session " + session.getId(), e);
+                log.error("{} Error updating session {}", getLogPrefix(), session.getId(), e);
                 ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
             }
         } else {
             try {
                 createIdPSession(authenticationContext);
             } catch (SessionException e) {
-                log.error(getLogPrefix() + " Error creating session for " + subjectCtx.getPrincipalName(), e);
+                log.error("{} Error creating session for principal {}", getLogPrefix(),
+                        subjectCtx.getPrincipalName(), e);
                 ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
             }
         }
@@ -198,12 +199,12 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
         
         if (authenticationContext.getAttemptedFlow() != null) {
             if (authenticationContext.isResultCacheable()) {
-                log.info("{} Adding new AuthenticationResult for flow {} to existing session {}", getLogPrefix(),
+                log.debug("{} Adding new AuthenticationResult for flow {} to existing session {}", getLogPrefix(),
                         authenticationContext.getAuthenticationResult().getAuthenticationFlowId(), session.getId());
                 session.addAuthenticationResult(authenticationContext.getAuthenticationResult());
             }
         } else {
-            log.info("{} Updating activity time on reused AuthenticationResult for flow {} in existing session {}",
+            log.debug("{} Updating activity time on reused AuthenticationResult for flow {} in existing session {}",
                     getLogPrefix(), authenticationContext.getAuthenticationResult().getAuthenticationFlowId(),
                     session.getId());
             session.updateAuthenticationResultActivity(authenticationContext.getAuthenticationResult());
@@ -219,7 +220,7 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
     private void createIdPSession(@Nonnull final AuthenticationContext authenticationContext)
             throws SessionException {
 
-        log.info("{} Creating new session for principal {}", getLogPrefix(), subjectCtx.getPrincipalName());
+        log.debug("{} Creating new session for principal {}", getLogPrefix(), subjectCtx.getPrincipalName());
         
         sessionCtx.setIdPSession(sessionManager.createSession(subjectCtx.getPrincipalName()));
         if (authenticationContext.isResultCacheable()) {

@@ -518,7 +518,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             }
         }
 
-        log.info("Created new session {} for principal {}", sessionId, principalName);
+        log.debug("Created new session {} for principal {}", sessionId, principalName);
         cookieManager.addCookie(cookieName, sessionId);
         return newSession;
     }
@@ -534,7 +534,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
 
         try {
             storageService.deleteContext(sessionId);
-            log.info("Destroyed session {}", sessionId);
+            log.debug("Destroyed session {}", sessionId);
         } catch (IOException e) {
             log.error("Exception while destroying session " + sessionId, e);
             throw new SessionException("Exception while destroying session", e);
@@ -645,7 +645,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             try {
                 sessionList = storageService.read(serviceId, serviceKey);
             } catch (IOException e) {
-                log.error("Exception while querying based service ID " + serviceId + " and key " + serviceKey, e);
+                log.error("Exception while querying based service ID {} and key {}", serviceId, serviceKey, e);
                 if (!maskStorageFailure) {
                     throw new SessionException("Exception while querying based on SPSession", e);
                 }
@@ -658,22 +658,22 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
                     if (storageService.updateWithVersion(sessionList.getVersion(), serviceId, serviceKey, updated,
                             Math.max(sessionList.getExpiration(), 
                                      spSession.getExpirationInstant() + sessionSlop)) == null) {
-                        log.info("Secondary index record disappeared, retrying as insert");
+                        log.debug("Secondary index record disappeared, retrying as insert");
                         indexBySPSession(idpSession, spSession, attempts - 1);
                     }
                 } else if (!storageService.create(serviceId, serviceKey, idpSession.getId() + ',',
                         spSession.getExpirationInstant() + sessionSlop)) {
-                    log.info("Secondary index record appeared, retrying as update");
+                    log.debug("Secondary index record appeared, retrying as update");
                     indexBySPSession(idpSession, spSession, attempts - 1);
                 }
             } catch (IOException e) {
-                log.error("Exception maintaining secondary index for service ID " + serviceId + " and key "
-                        + serviceKey, e);
+                log.error("Exception maintaining secondary index for service ID {} and key {}",
+                        serviceId, serviceKey, e);
                 if (!maskStorageFailure) {
                     throw new SessionException("Exception maintaining seconday index", e);
                 }
             } catch (VersionMismatchException e) {
-                log.info("Secondary index record was updated between read/update, retrying");
+                log.debug("Secondary index record was updated between read/update, retrying");
                 indexBySPSession(idpSession, spSession, attempts - 1);
             }
         }
@@ -698,7 +698,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
                 log.debug("Primary lookup failed for session ID {}", sessionId);
             }
         } catch (IOException e) {
-            log.error("Exception while querying for session " + sessionId, e);
+            log.error("Exception while querying for session ID {}", sessionId, e);
             if (!maskStorageFailure) {
                 throw new ResolverException("Exception while querying for session", e);
             }
