@@ -216,7 +216,8 @@
                 <configuration>
                     <appendAssemblyId>false</appendAssemblyId>
                     <descriptors>
-                        <descriptor>src/main/assembly/idp-assembly.xml</descriptor>
+                        <descriptor>src/main/assembly/idp-assembly-tgz.xml</descriptor>
+                        <descriptor>src/main/assembly/idp-assembly-zip.xml</descriptor>
                     </descriptors>
                     <tarLongFileMode>gnu</tarLongFileMode>
                 </configuration>
