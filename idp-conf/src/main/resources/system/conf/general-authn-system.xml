@@ -49,6 +49,12 @@
     -->
     <bean id="shibboleth.DefaultAuthenticationResultSerializer"
             class="net.shibboleth.idp.authn.impl.DefaultAuthenticationResultSerializer">
+        <property name="principalSerializers">
+            <util:list>
+                <bean class="net.shibboleth.idp.authn.principal.impl.UsernamePrincipalSerializer" />
+                <bean class="net.shibboleth.idp.authn.principal.impl.LDAPPrincipalSerializer" />
+            </util:list>
+        </property>
         <property name="genericPrincipalSerializer.symbolics">
             <map>
                 <!-- Custom principal types. -->
