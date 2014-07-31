@@ -16,7 +16,7 @@
 
 	<!-- Example metadata provider. -->
 
-    <MetadataProvider id="URLMD" xsi:type="ResourceBackedMetadataProvider">
+    <MetadataProvider id="URLMD" xsi:type="ResourceBackedMetadataProvider" maxRefreshDelay="PT5M">
         <MetadataFilter xsi:type="ChainingFilter">
             <MetadataFilter xsi:type="SignatureValidation" requireSignedMetadata="false"> <!-- TODO -->
                 <PublicKey>
