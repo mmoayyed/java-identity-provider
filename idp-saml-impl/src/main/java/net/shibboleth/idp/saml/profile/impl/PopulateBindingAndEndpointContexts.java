@@ -392,7 +392,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         try {
             resolvedEndpoint = endpointResolver.resolveSingle(criteria);
         } catch (final ResolverException e) {
-            log.error(getLogPrefix() + " Error resolving outbound message endpoint", e);
+            log.error("{} Error resolving outbound message endpoint", getLogPrefix(), e);
         }
         
         if (resolvedEndpoint == null) {

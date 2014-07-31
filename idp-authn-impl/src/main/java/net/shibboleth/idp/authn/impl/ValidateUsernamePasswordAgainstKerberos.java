@@ -154,7 +154,7 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractValidationA
             
             buildAuthenticationResult(profileRequestContext, authenticationContext);
         } catch (final KrbException | IOException e) {
-            log.warn(getLogPrefix() + " Login by '" + upContext.getUsername() + "' produced exception", e);
+            log.warn("{} Login by {} produced exception", getLogPrefix(), upContext.getUsername(), e);
             handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
         }
     }

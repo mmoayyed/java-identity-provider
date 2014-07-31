@@ -79,7 +79,7 @@ public class PKIXResourceValidationInfoFactoryBean extends AbstractBasicPKIXVali
             try {
                 certificates.addAll(X509Support.decodeCertificates(f.getFile()));
             } catch (CertificateException | IOException e) {
-                log.error("{}: Could not decode Certificate at {}: {}", getConfigDescription(), f.getDescription(), e);
+                log.error("{}: Could not decode Certificate at {}", getConfigDescription(), f.getDescription(), e);
                 throw new FatalBeanException("Could not decode provided CertificateFile: " + f.getDescription(), e);
             }
         }

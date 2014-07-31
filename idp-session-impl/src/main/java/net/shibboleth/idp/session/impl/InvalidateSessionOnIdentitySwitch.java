@@ -170,7 +170,7 @@ public class InvalidateSessionOnIdentitySwitch extends AbstractAuthenticationAct
         try {
             sessionManager.destroySession(sessionCtx.getIdPSession().getId());
         } catch (SessionException e) {
-            log.error(getLogPrefix() + " Error destroying session " + sessionCtx.getIdPSession().getId(), e);
+            log.error("{} Error destroying session {}", getLogPrefix(), sessionCtx.getIdPSession().getId(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
         }
         

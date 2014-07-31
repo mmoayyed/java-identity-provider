@@ -179,7 +179,7 @@ public class GenericPrincipalSerializer extends AbstractPrincipalSerializer<Stri
                 } catch (final ClassNotFoundException | NoSuchMethodException | SecurityException
                             | InstantiationException | IllegalAccessException | IllegalArgumentException
                             | InvocationTargetException e) {
-                    log.warn("Exception instantiating custom Principal type " + type + " with name " + name, e);
+                    log.warn("Exception instantiating custom Principal type {} with name {}", type, name, e);
                 }
             } else {
                 log.warn("Unparseable Principal type or name in structure");

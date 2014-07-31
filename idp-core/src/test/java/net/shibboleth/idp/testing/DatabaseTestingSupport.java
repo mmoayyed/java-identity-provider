@@ -99,7 +99,7 @@ public class DatabaseTestingSupport {
 
             statement.executeUpdate(sql);
         } catch (SQLException e) {
-            log.warn("Could not contact data source {} or execute commands: {}", source, e);
+            log.warn("Could not contact data source {} or execute commands", source, e);
             return;
         }
     }

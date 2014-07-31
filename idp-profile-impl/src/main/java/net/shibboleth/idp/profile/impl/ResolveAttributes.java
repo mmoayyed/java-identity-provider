@@ -230,7 +230,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
 
             }
         } catch (final ResolutionException e) {
-            log.error(getLogPrefix() + " Error resolving attributes", e);
+            log.error("{} Error resolving attributes", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
         } finally {
             if (null != component) {

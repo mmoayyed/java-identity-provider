@@ -107,7 +107,7 @@ public abstract class BaseTransientDecoder extends AbstractIdentifiableInitializ
 
             return param.getPrincipal();
         } catch (final IOException e) {
-            log.error(getLogPrefix() + " I/O error looking up transient identifier", e);
+            log.error("{} I/O error looking up transient identifier", getLogPrefix(), e);
             return null;
         }
     }

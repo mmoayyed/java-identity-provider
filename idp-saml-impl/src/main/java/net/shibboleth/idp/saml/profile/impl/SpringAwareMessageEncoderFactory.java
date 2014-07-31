@@ -106,7 +106,7 @@ public class SpringAwareMessageEncoderFactory extends AbstractInitializableCompo
                     return springContext.getRequestContext().getActiveFlow().getApplicationContext().getBean(
                             binding.getEncoderBeanId(), MessageEncoder.class);
                 } catch (final BeansException e) {
-                    log.warn("Error instantiating message encoder from bean ID " + binding.getEncoderBeanId(), e);
+                    log.warn("Error instantiating message encoder from bean ID {}", binding.getEncoderBeanId(), e);
                 }
             }
         }

@@ -512,7 +512,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
                 throw new SessionException("A duplicate session ID was generated, unable to create session");
             }
         } catch (IOException e) {
-            log.error("Exception while storing new session for principal " + principalName, e);
+            log.error("Exception while storing new session for principal {}", principalName, e);
             if (!maskStorageFailure) {
                 throw new SessionException("Exception while storing new session", e);
             }
@@ -536,7 +536,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             storageService.deleteContext(sessionId);
             log.debug("Destroyed session {}", sessionId);
         } catch (IOException e) {
-            log.error("Exception while destroying session " + sessionId, e);
+            log.error("Exception while destroying session {}", sessionId, e);
             throw new SessionException("Exception while destroying session", e);
         }
     }
@@ -738,7 +738,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         try {
             sessionList = storageService.read(serviceId, serviceKey);
         } catch (IOException e) {
-            log.error("Exception while querying based service ID " + serviceId + " and key " + serviceKey, e);
+            log.error("Exception while querying based service ID {} and key {}", serviceId, serviceKey, e);
             if (!maskStorageFailure) {
                 throw new ResolverException("Exception while querying based on SPSession", e);
             }

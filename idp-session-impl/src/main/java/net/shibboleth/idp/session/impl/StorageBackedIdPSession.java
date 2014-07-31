@@ -306,7 +306,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                     log.error("Exhausted retry attempts updating record for session {}", getId());
                 }
             } catch (final IOException e) {
-                log.error("Exception updating record for session " + getId(), e);
+                log.error("Exception updating record for session {}", getId(), e);
                 if (!sessionManager.isMaskStorageFailure()) {
                     throw new SessionException(
                             "Exception updating session record after AuthenticationResult removal", e);
@@ -464,7 +464,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                     log.error("Exhausted retry attempts updating record for session {}", getId());
                 }
             } catch (final IOException e) {
-                log.error("Exception updating record for session " + getId(), e);
+                log.error("Exception updating record for session {}", getId(), e);
                 if (!sessionManager.isMaskStorageFailure()) {
                     throw new SessionException(
                             "Exception updating session record after SPSession removal", e);

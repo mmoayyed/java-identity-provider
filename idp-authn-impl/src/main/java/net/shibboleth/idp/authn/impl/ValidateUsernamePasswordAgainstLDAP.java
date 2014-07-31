@@ -210,7 +210,7 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
                 }
             }
         } catch (LdapException e) {
-            log.warn(getLogPrefix() + " Login by '" + upContext.getUsername() + "' produced exception", e);
+            log.warn("{} Login by {} produced exception", getLogPrefix(), upContext.getUsername(), e);
             handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
         }
     }

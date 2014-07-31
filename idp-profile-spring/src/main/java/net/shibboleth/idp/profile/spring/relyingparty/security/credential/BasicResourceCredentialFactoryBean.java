@@ -114,7 +114,7 @@ public class BasicResourceCredentialFactoryBean extends AbstractBasicCredentialF
         try {
             return KeyPairUtil.readPublicKey(getPublicKeyInfo().getFile());
         } catch (IOException e) {
-            log.error("{}: Could not decode public key: {}", getConfigDescription(), e);
+            log.error("{}: Could not decode public key", getConfigDescription(), e);
             throw new FatalBeanException("Could not decode public key", e);
         }
     }
@@ -127,7 +127,7 @@ public class BasicResourceCredentialFactoryBean extends AbstractBasicCredentialF
         try {
             return KeySupport.decodePrivateKey(getPrivateKeyInfo().getFile(), getSecretKeyPassword());
         } catch (KeyException | IOException e) {
-            log.error("{}: Could not decode private key: {}", e);
+            log.error("{}: Could not decode private key", getConfigDescription(), e);
             throw new BeanCreationException("Could not decode private key", getConfigDescription(), e);
         }
     }
@@ -140,7 +140,7 @@ public class BasicResourceCredentialFactoryBean extends AbstractBasicCredentialF
         try {
             return KeySupport.decodeSecretKey(Files.toByteArray(getSecretKeyInfo().getFile()), getSecretKeyPassword());
         } catch (KeyException | IOException e) {
-            log.error("{} Could not decode secret key: {}", getConfigDescription(), e);
+            log.error("{}: Could not decode secret key", getConfigDescription(), e);
             throw new BeanCreationException("Could not decode secret key", e);
         }
     }

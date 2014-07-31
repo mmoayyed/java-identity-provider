@@ -78,7 +78,7 @@ public final class OutputAttributes extends AbstractProfileAction {
                 }
             }
         } catch (IOException e) {
-            log.error(getLogPrefix() + " I/O error writing attributes to output context", e);
+            log.error("{} I/O error writing attributes to output context", getLogPrefix(), e);
             return ActionSupport.buildEvent(this, org.opensaml.profile.action.EventIds.IO_ERROR);
         }
         

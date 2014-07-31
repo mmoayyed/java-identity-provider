@@ -155,9 +155,9 @@ public class PopulateSessionContext extends AbstractProfileAction {
             sessionCtx.setIdPSession(session);
             
         } catch (final ResolverException e) {
-            log.error(getLogPrefix() + " Error resolving a session for the active client", e);
+            log.error("{} Error resolving a session for the active client", getLogPrefix(), e);
         } catch (final SessionException e) {
-            log.error(getLogPrefix() + " Error during timeout or address checking for session " + session.getId(), e);
+            log.error("{} Error during timeout or address checking for session {}",getLogPrefix(), session.getId(), e);
         }
     }
 

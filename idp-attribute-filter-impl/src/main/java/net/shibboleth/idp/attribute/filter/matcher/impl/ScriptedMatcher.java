@@ -162,7 +162,7 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
                 return null;
             }
         } catch (ScriptException e) {
-            log.error("{} Error while executing value matching script: {}", getLogPrefix(), e);
+            log.error("{} Error while executing value matching script", getLogPrefix(), e);
             return null;
         }
     }

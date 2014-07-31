@@ -142,7 +142,7 @@ public class IdPPropertiesApplicationContextInitializer implements
             }
             return properties;
         } catch (IOException e) {
-            log.warn("Unable to load properties from resource '" + resource + "'", e);
+            log.warn("Unable to load properties from resource '{}'", resource, e);
             return null;
         }
     }

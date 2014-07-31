@@ -97,7 +97,7 @@ public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableIni
         } catch (final DataExpiredException e) {
             throw new NameDecoderException(getLogPrefix() + " Principal identifier has expired");
         } catch (final DataSealerException e) {
-            log.debug(getLogPrefix() + " Caught exception unwrapping principal identifier", e);
+            log.debug("{} Caught exception unwrapping principal identifier", getLogPrefix(), e);
             return null;
         }
 

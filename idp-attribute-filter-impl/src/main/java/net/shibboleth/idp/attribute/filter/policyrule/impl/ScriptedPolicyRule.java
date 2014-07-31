@@ -151,7 +151,7 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
                 return Tristate.FAIL;
             }
         } catch (ScriptException e) {
-            log.error("{} Error while executing value matching script: {}", getLogPrefix(), e);
+            log.error("{} Error while executing value matching script", getLogPrefix(), e);
             return Tristate.FAIL;
         }
     }

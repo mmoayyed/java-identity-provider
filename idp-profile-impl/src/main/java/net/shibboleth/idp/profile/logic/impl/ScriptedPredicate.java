@@ -94,7 +94,7 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
                 return false;
             }
         } catch (ScriptException e) {
-            log.error("{} Error while executing value matching script: {}", logPrefix, e);
+            log.error("{} Error while executing value matching script", logPrefix, e);
             return false;
         }
     }

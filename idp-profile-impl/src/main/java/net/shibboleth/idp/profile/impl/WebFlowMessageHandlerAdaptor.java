@@ -180,7 +180,7 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
         try {
             handler.invoke(target);
         } catch (final MessageHandlerException e) {
-            log.warn(getLogPrefix() + " Exception handling message", e);
+            log.warn("{} Exception handling message", getLogPrefix(), e);
             if (errorEvent != null) {
                 ActionSupport.buildEvent(profileRequestContext, errorEvent);
             } else {
