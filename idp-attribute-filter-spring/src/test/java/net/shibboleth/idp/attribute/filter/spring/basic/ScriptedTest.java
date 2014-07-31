@@ -30,7 +30,7 @@ import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.beans.factory.BeanCreationException;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -63,9 +63,9 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
         Assert.assertEquals(rule.matches(filterContext), Tristate.FALSE);
     }
     
-    @Test(expectedExceptions={BeanDefinitionStoreException.class,}) public void policyNotFound() throws ComponentInitializationException {
+    @Test(expectedExceptions={BeanCreationException.class,}) public void policyNotFound() throws ComponentInitializationException {
         if (isV8()) {
-            throw new BeanDefinitionStoreException("test");
+            throw new BeanCreationException("test");
         }
         getPolicyRule("scriptedNotThere.xml");
     }

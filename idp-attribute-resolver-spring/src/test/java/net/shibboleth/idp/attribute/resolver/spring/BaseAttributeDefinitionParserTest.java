@@ -22,6 +22,7 @@ import java.util.Collection;
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.ext.spring.config.StringToResourceConverter;
+import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
@@ -142,7 +143,7 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
     protected <Type extends AttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz,
             boolean supressValid) {
 
-        GenericApplicationContext context = new GenericApplicationContext();
+        GenericApplicationContext context = new FilesystemGenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + claz);
 
         return getAttributeDefn(fileName, claz, context, supressValid);

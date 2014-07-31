@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
@@ -100,7 +101,7 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
 
     protected PolicyRequirementRule getPolicyRule(String fileName) throws ComponentInitializationException {
 
-        GenericApplicationContext context = new GenericApplicationContext();
+        GenericApplicationContext context = new FilesystemGenericApplicationContext();
         context.setDisplayName("ApplicationContext: Policy Rule");
 
         final AttributeFilterPolicy policy =
@@ -111,7 +112,7 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
 
     protected Matcher getMatcher(String fileName) throws ComponentInitializationException {
 
-        GenericApplicationContext context = new GenericApplicationContext();
+        GenericApplicationContext context = new FilesystemGenericApplicationContext();
         context.setDisplayName("ApplicationContext: Matcher");
 
         final AttributeRule rule = getBean(MATCHER_PATH + fileName, AttributeRule.class, context);

@@ -17,18 +17,15 @@
 
 package net.shibboleth.idp.attribute.filter.spring.basic;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.factory.EvaluableScriptFactoryBean;
 import net.shibboleth.idp.attribute.filter.matcher.impl.ScriptedMatcher;
 import net.shibboleth.idp.attribute.filter.policyrule.impl.ScriptedPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
@@ -56,48 +53,12 @@ public class ScriptedMatcherParser extends BaseFilterParser {
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeFilterBasicNamespaceHandler.class);
 
-    /** Prefix for log messages. */
-    private String logPrefix;
-
     /** {@inheritDoc} */
     @Override @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {
         if (isPolicyRule(element)) {
             return ScriptedPolicyRule.class;
         }
         return ScriptedMatcher.class;
-    }
-
-    /**
-     * Query the DOM and get the script from the appropriate subelements.
-     * 
-     * @param config The DOM we are interested in
-     * @return The script as a string or throws an {@link BeanCreationException}
-     */
-    @Nonnull private String getScript(@Nonnull final Element config) {
-        String script = null;
-        final List<Element> scriptElem = ElementSupport.getChildElements(config, SCRIPT_ELEMENT_NAME);
-        final List<Element> scriptFileElem = ElementSupport.getChildElements(config, SCRIPT_FILE_ELEMENT_NAME);
-        if (scriptElem != null && scriptElem.size() > 0) {
-            if (scriptFileElem != null && scriptFileElem.size() > 0) {
-                log.info("{} definition contains both <Script> and <ScriptFile> elements, using the <Script> element",
-                        logPrefix);
-            }
-            script = scriptElem.get(0).getTextContent();
-        } else {
-            if (scriptFileElem != null && scriptFileElem.size() > 0) {
-                String scriptFile = scriptFileElem.get(0).getTextContent();
-                try {
-                    script = StringSupport.inputStreamToString(new FileInputStream(scriptFile), null);
-                } catch (IOException e) {
-                    throw new BeanCreationException("{} Unable to read script file {}" + logPrefix, scriptFile, e);
-                }
-            }
-        }
-
-        if (script == null) {
-            throw new BeanCreationException("No script specified for this attribute definition");
-        }
-        return script;
     }
 
     /**
@@ -108,22 +69,38 @@ public class ScriptedMatcherParser extends BaseFilterParser {
         super.doParse(config, parserContext, builder);
 
         final String myId = builder.getBeanDefinition().getAttribute("qualifiedId").toString();
+        final String logPrefix = new StringBuilder("Scipted Filter '").append(myId).append("' :").toString();
+
+        BeanDefinitionBuilder scriptBuilder =
+                BeanDefinitionBuilder.genericBeanDefinition(EvaluableScriptFactoryBean.class);
+        scriptBuilder.addPropertyValue("sourceId",  logPrefix);
+        if (config.hasAttributeNS(null, "language")) {
+            final String scriptLanguage = config.getAttributeNS(null, "language");
+            log.debug("{} scripting language: {}.",  logPrefix , scriptLanguage);
+            scriptBuilder.addPropertyValue("engineName", scriptLanguage);
+        }
+        
+        final List<Element> scriptElem = ElementSupport.getChildElements(config, SCRIPT_ELEMENT_NAME);
+        final List<Element> scriptFileElem = ElementSupport.getChildElements(config, SCRIPT_FILE_ELEMENT_NAME);
+        if (scriptElem != null && scriptElem.size() > 0) {
+            if (scriptFileElem != null && scriptFileElem.size() > 0) {
+                log.info("Attribute definition {}: definition contains both <Script> "
+                        + "and <ScriptFile> elements, taking the <Script> element",  logPrefix);
+            }
+            final String script = scriptElem.get(0).getTextContent();
+            log.debug("{} script {}.",  logPrefix , script);
+            scriptBuilder.addPropertyValue("script", script);
+        } else if (scriptFileElem != null && scriptFileElem.size() > 0) {
+            final String scriptFile = scriptFileElem.get(0).getTextContent();
+            log.debug("{} script file {}.",  logPrefix , scriptFile);
+            scriptBuilder.addPropertyValue("resource", scriptFile);
+        } else {
+            log.error("{} No script specified for this attribute definition");
+            throw new BeanCreationException("No script specified for this attribute definition");
+        }
 
         builder.addPropertyValue("id", myId);
 
-        logPrefix = new StringBuilder("Scipted Filter '").append(myId).append("' :").toString();
-
-        String scriptLanguage = "javascript";
-        if (config.hasAttributeNS(null, "language")) {
-            scriptLanguage = config.getAttributeNS(null, "language");
-        }
-        log.debug("{}: scripting language: {}.", logPrefix, scriptLanguage);
-
-        final String script = getScript(config);
-        log.debug("{} script: {}.", logPrefix, script);
-        BeanDefinitionBuilder scriptDefn = BeanDefinitionBuilder.genericBeanDefinition(EvaluableScript.class);
-        scriptDefn.addConstructorArgValue(scriptLanguage);
-        scriptDefn.addConstructorArgValue(script);
-        builder.addConstructorArgValue(scriptDefn.getBeanDefinition());
+        builder.addConstructorArgValue(scriptBuilder.getBeanDefinition());
     }
 }

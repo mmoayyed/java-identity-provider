@@ -17,17 +17,14 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.factory.EvaluableScriptFactoryBean;
 import net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedAttributeDefinition;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
@@ -61,56 +58,38 @@ public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionPa
         return ScriptedAttributeDefinition.class;
     }
 
-    /**
-     * Query the DOM and get the script from the appropriate subelements.
-     * 
-     * @param config The DOM we are interested in
-     * @return The script as a string or throws an {@link BeanCreationException}
-     */
-    @Nonnull private String getScript(Element config) {
-        String script = null;
-        List<Element> scriptElem = ElementSupport.getChildElements(config, SCRIPT_ELEMENT_NAME);
-        List<Element> scriptFileElem = ElementSupport.getChildElements(config, SCRIPT_FILE_ELEMENT_NAME);
-        if (scriptElem != null && scriptElem.size() > 0) {
-            if (scriptFileElem != null && scriptFileElem.size() > 0) {
-                log.info("Attribute definition {}: definition contains both <Script> "
-                        + "and <ScriptFile> elements, taking the <Script> element", getDefinitionId());
-            }
-            script = scriptElem.get(0).getTextContent();
-        } else {
-            if (scriptFileElem != null && scriptFileElem.size() > 0) {
-                String scriptFile = scriptFileElem.get(0).getTextContent();
-                try {
-                    script = StringSupport.inputStreamToString(new FileInputStream(scriptFile), null);
-                } catch (IOException e) {
-                    throw new BeanCreationException("Attribute definition " + getDefinitionId()
-                            + ": Unable to read script file " + scriptFile, e);
-                }
-            }
-        }
-
-        if (script == null) {
-            throw new BeanCreationException("No script specified for this attribute definition");
-        }
-        return script;
-    }
-
     /** {@inheritDoc} */
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        String scriptLanguage = "javascript";
+        BeanDefinitionBuilder scriptBuilder =
+                BeanDefinitionBuilder.genericBeanDefinition(EvaluableScriptFactoryBean.class);
+        scriptBuilder.addPropertyValue("sourceId", getLogPrefix());
         if (config.hasAttributeNS(null, "language")) {
-            scriptLanguage = config.getAttributeNS(null, "language");
+            final String scriptLanguage = config.getAttributeNS(null, "language");
+            log.debug("{} scripting language: {}.", getLogPrefix(), scriptLanguage);
+            scriptBuilder.addPropertyValue("engineName", scriptLanguage);
         }
-        log.debug("{} scripting language: {}.", getLogPrefix(), scriptLanguage);
-
-        String script = getScript(config);
-        log.debug("{} script: {}.", getLogPrefix(), script);
-        BeanDefinitionBuilder scriptBuilder = BeanDefinitionBuilder.genericBeanDefinition(EvaluableScript.class);
-        scriptBuilder.addConstructorArgValue(scriptLanguage);
-        scriptBuilder.addConstructorArgValue(script);
+        
+        final List<Element> scriptElem = ElementSupport.getChildElements(config, SCRIPT_ELEMENT_NAME);
+        final List<Element> scriptFileElem = ElementSupport.getChildElements(config, SCRIPT_FILE_ELEMENT_NAME);
+        if (scriptElem != null && scriptElem.size() > 0) {
+            if (scriptFileElem != null && scriptFileElem.size() > 0) {
+                log.info("Attribute definition {}: definition contains both <Script> "
+                        + "and <ScriptFile> elements, taking the <Script> element", getDefinitionId());
+            }
+            final String script = scriptElem.get(0).getTextContent();
+            log.debug("{} script {}.", getLogPrefix(), script);
+            scriptBuilder.addPropertyValue("script", script);
+        } else if (scriptFileElem != null && scriptFileElem.size() > 0) {
+            final String scriptFile = scriptFileElem.get(0).getTextContent();
+            log.debug("{} script file {}.", getLogPrefix(), scriptFile);
+            scriptBuilder.addPropertyValue("resource", scriptFile);
+        } else {
+            log.error("{} No script specified for this attribute definition");
+            throw new BeanCreationException("No script specified for this attribute definition");
+        }
 
         builder.addPropertyValue("script", scriptBuilder.getBeanDefinition());
     }
