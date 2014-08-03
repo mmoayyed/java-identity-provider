@@ -165,7 +165,6 @@ public class LdapDataConnectorParserTest {
     /**
      * This test will fail when it is time to revert the fixes put in for
      * https://issues.shibboleth.net/jira/browse/IDP-338.
-     * @return 
      */
     @Test public void IdP338Canary() {
         GenericApplicationContext context = new FilesystemGenericApplicationContext();

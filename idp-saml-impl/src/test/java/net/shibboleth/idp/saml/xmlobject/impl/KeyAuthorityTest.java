@@ -47,7 +47,6 @@ public class KeyAuthorityTest extends XMLObjectProviderBaseTestCase {
         childElementsFile = "/net/shibboleth/idp/saml/impl/xmlobject/ShibMDKeyAuthorityChildElements.xml";
     }
 
-    /** {@inheritDoc} */
     @BeforeMethod
 	protected void setUp() throws Exception {
         expectedVerifyDepth = new Integer(5);

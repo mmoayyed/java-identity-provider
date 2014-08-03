@@ -47,11 +47,11 @@ import com.google.common.base.Functions;
 /**
  * A function to create a {@link SAML2SPSession} based on profile execution state.
  * 
- * <p>This strategy is a default approach that uses the inbound message's {@link BasicMessageMetadataContext}
- * to obtain an issuer value, used as the {@link SPSession}'s relying party ID. The authentication flow ID
- * comes from the {@link AuthenticationResult} in the {@link AuthenticationContext}. The session has a 
- * creation time based on the time of execution, and the expiration is based on a configurable lifetime,
- * bounded by the per-SP lifetime setting for the profile.</p>
+ * <p>This strategy is a default approach that uses a {@link RelyingPartyContext} via lookup strategy
+ * to obtain a requester value, used as the {@link SPSession}'s relying party ID. The authentication flow ID
+ * comes from the {@link net.shibboleth.idp.authn.AuthenticationResult} in the {@link AuthenticationContext}.
+ * The session has a creation time based on the time of execution, and the expiration is based on a configurable
+ * lifetime, bounded by the per-SP lifetime setting for the profile.</p>
  * 
  * <p>The SAML 2 specific data is extracted from the first assertion containing an authn statement
  * found in a {@link Response} message located via a lookup strategy, by default the outbound

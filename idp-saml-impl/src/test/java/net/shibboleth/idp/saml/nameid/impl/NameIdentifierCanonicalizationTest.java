@@ -40,7 +40,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-/** {@link SimpleSubjectCanonicalization} unit test. */
+/** {@link NameIdentifierCanonicalization} unit test. */
 public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase {
 
     private ProfileRequestContext prc;

@@ -46,7 +46,7 @@ public class ExternalAuthentication {
     /** Request attribute to which an error message may be bound. */
     @Nonnull @NotEmpty public static final String AUTHENTICATION_ERROR_KEY = "authnError";
 
-    /** Request attribute to which an {@link AuthenticationException} may be bound. */
+    /** Request attribute to which an exception may be bound. */
     @Nonnull @NotEmpty public static final String AUTHENTICATION_EXCEPTION_KEY = "authnException";
 
     /** Request attribute to which a signal not to cache the result may be bound. */
@@ -71,7 +71,7 @@ public class ExternalAuthentication {
      * @param request servlet request
      * 
      * @return a handle to subsequent use of
-     *      {@link #finishExternalAuthentication(HttpServletRequest, HttpServletResponse)}
+     *      {@link #finishExternalAuthentication(java.lang.String, HttpServletRequest, HttpServletResponse)}
      * 
      * @throws ExternalAuthenticationException if an error occurs
      */

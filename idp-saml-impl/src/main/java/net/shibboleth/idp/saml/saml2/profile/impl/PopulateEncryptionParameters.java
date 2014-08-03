@@ -66,7 +66,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Functions;
 
 /**
- * Action that resolves and populates {@link EncryptionParameters} on a {@link SecurityParametersContext}
+ * Action that resolves and populates {@link EncryptionParameters} on an {@link EncryptionContext}
  * created/accessed via a lookup function, by default on a {@link RelyingPartyContext} child of the
  * profile request context.
  * 
@@ -127,11 +127,7 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
     /** Flag tracking whether assertion encryption is required. */
     private boolean encryptAttributes;
 
-    /**
-     * Constructor.
-     * 
-     * Initializes {@link #messageMetadataContextLookupStrategy} to {@link ChildContextLookup}.
-     */
+    /** Constructor. */
     public PopulateEncryptionParameters() {
         
         requestLookupStrategy =

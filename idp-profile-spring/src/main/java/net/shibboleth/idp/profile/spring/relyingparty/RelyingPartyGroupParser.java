@@ -40,8 +40,8 @@ import org.w3c.dom.Element;
 /**
  * Parser for &lt;AnonymousRelyingParty&gt;<br/>
  * This parser summons up two beans: a {@link DefaultRelyingPartyConfigurationResolver} which deals with the
- * RelyingParty bit of the file, a series of {@link RelyingPartyMetadataProvider}s which deal with the metadata
- * configuration and a series of {@link TBD} which deal with the security configuration.
+ * RelyingParty bit of the file, and a series of {@link RelyingPartyMetadataProvider}s which deal with the metadata
+ * configuration.
  */
 public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser {
 

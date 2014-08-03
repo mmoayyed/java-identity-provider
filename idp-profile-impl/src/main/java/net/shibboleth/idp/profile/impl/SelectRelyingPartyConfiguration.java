@@ -48,7 +48,7 @@ import com.google.common.base.Function;
  * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
  * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CONFIG}
  * 
- * @post If a {@link ReplyingPartyContext} is located, it will be populated with a non-null result of applying
+ * @post If a {@link RelyingPartyContext} is located, it will be populated with a non-null result of applying
  * the supplied {@link RelyingPartyConfigurationResolver} to the {@link ProfileRequestContext}.
  */
 public final class SelectRelyingPartyConfiguration extends AbstractProfileAction {

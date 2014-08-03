@@ -34,9 +34,9 @@ import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
  * 
  * <p><em>Note Well</em>This class is about <em>attribute resolution</em>, that is to say the summoning
  * up of attributes in response to the exigies of the provided context. It does <em>not</em> implement
- * {@link net.shibboleth.utilities.java.support.resolver.Resolver} which is about summoning up bits of
+ * net.shibboleth.utilities.java.support.resolver.Resolver which is about summoning up bits of
  * generic data from the configuration (e.g., metadata) in response to specific
- * {@link net.shibboleth.utilities.java.support.resolver.Criterion}s.</p>
+ * net.shibboleth.utilities.java.support.resolver.Criterion.</p>
  * */
 @ThreadSafe
 public interface AttributeResolver extends DestructableComponent, IdentifiedComponent, UnmodifiableComponent {
@@ -57,8 +57,8 @@ public interface AttributeResolver extends DestructableComponent, IdentifiedComp
 
     /**
      * Resolves the attribute for the give request. Note, if attributes are requested,
-     * {@link AttributeResolutionContext#getRequestedIdPAttributes()}, the resolver will <strong>not</strong> fail if
-     * they can not be resolved. This information serves only as a hint to the resolver to, potentially, optimize the
+     * {@link AttributeResolutionContext#getRequestedIdPAttributeNames()}, the resolver will <strong>not</strong> fail
+     * if they can not be resolved. This information serves only as a hint to the resolver to, potentially, optimize the
      * resolution of attributes.
      * 
      * @param resolutionContext the attribute resolution context that identifies the request subject and accumulates the

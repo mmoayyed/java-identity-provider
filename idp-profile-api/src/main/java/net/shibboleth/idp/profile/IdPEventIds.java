@@ -42,12 +42,12 @@ public final class IdPEventIds {
     public static final String INVALID_PROFILE_CONFIG = "InvalidProfileConfiguration";
 
     /**
-     * ID of event returned if the {@link net.shibboleth.idp.attribute.AttributeContext} is missing or corrupt.
+     * ID of event returned if the @link net.shibboleth.idp.attribute.context.AttributeContext is missing or corrupt.
      */
     public static final String INVALID_ATTRIBUTE_CTX = "InvalidAttributeContext";
 
     /**
-     * ID of event returned if the {@link net.shibboleth.idp.authn.context.SubjectContext} is missing or corrupt.
+     * ID of event returned if the @link net.shibboleth.idp.authn.context.SubjectContext is missing or corrupt.
      */
     public static final String INVALID_SUBJECT_CTX = "InvalidSubjectContext";
 

@@ -324,7 +324,7 @@ public class SAML1TestResponseValidator {
     /**
      * Assert that the authentication method is the expected authentication method.
      * 
-     * @param authenticationMethod the authentication method
+     * @param method the authentication method
      */
     public void assertAuthenticationMethod(@Nullable final String method) {
         Assert.assertNotNull(method);
@@ -412,7 +412,7 @@ public class SAML1TestResponseValidator {
      * <li>the name qualifier is the expected name qualifier</li>
      * <ul>
      * 
-     * @param nameIdentifier the name identifier
+     * @param identifier the name identifier
      */
     public void assertNameIdentifier(@Nullable final NameIdentifier identifier) {
         Assert.assertNotNull(identifier);
@@ -453,7 +453,7 @@ public class SAML1TestResponseValidator {
     /**
      * Assert the confirmation method.
      * 
-     * @param confirmationMethod the confirmation method
+     * @param method the confirmation method
      */
     public void assertConfirmationMethod(@Nullable final ConfirmationMethod method) {
         Assert.assertNotNull(method);

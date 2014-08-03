@@ -32,7 +32,7 @@ import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/** Bean definition parser for a {@link BaseResolverPlugin}. */
+/** Bean definition parser for a {@link net.shibboleth.idp.attribute.resolver.ResolverPlugin}. */
 public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinitionParser {
 
     /** An Id for the definition, used for debugging messages and creating names of children. */

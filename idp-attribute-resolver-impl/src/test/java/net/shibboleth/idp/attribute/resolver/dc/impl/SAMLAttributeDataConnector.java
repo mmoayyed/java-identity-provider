@@ -111,8 +111,10 @@ public class SAMLAttributeDataConnector extends AbstractDataConnector {
     }
 
     /**
-     * @param object
-     * @return
+     * Encode a string into an attribute value.
+     * 
+     * @param inputString string to encode
+     * @return encoded attribute value
      */
     private IdPAttributeValue encodeString(XSString inputString) {
         String value = inputString.getValue();

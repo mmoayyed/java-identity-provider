@@ -30,7 +30,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Parser for {@link AttributeIssuerInEntityGroupPolicyRule}.
+ * Parser for AttributeIssuerInEntityGroupPolicyRule.
  */
 public class AttributeIssuerInEntityGroupRuleParser extends BasePolicyRuleParser {
 

@@ -39,7 +39,7 @@ public class MockAttributeDefinition extends AbstractAttributeDefinition {
     /** Static value returned by this definition. */
     private IdPAttribute staticValue;
 
-    /** Exception thrown by {@link #doAttributeResolution(AttributeResolutionContext))}. */
+    /** Exception thrown by resolution. */
     private ResolutionException resolutionException;
 
     /**
@@ -58,7 +58,7 @@ public class MockAttributeDefinition extends AbstractAttributeDefinition {
      * Constructor.
      * 
      * @param id id of the data connector
-     * @param exception exception thrown by {@link #doDataConnectorResolve(AttributeResolutionContext)}
+     * @param exception exception thrown by resolution
      */
     public MockAttributeDefinition(final String id, final ResolutionException exception) {
         setId(id);

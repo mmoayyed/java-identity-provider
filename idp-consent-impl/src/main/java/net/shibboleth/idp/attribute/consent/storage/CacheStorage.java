@@ -52,7 +52,8 @@ public class CacheStorage implements Storage {
      * Key: userId Value: Map Key: relyingPartyId Value: Map Key: attributeId Value: {@see AttributeRelease}.
      * 
      */
-    private ConcurrentMap<String, ConcurrentMap<String, ConcurrentMap<String, AttributeRelease>>> attributeReleasePartition;
+    private ConcurrentMap<String, ConcurrentMap<String, ConcurrentMap<String, AttributeRelease>>>
+    attributeReleasePartition;
 
     /** Initializes the cache storage. */
     public void initialize() {

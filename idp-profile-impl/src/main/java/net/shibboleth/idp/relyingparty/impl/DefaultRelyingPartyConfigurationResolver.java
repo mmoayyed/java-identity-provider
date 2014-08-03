@@ -304,19 +304,17 @@ public class DefaultRelyingPartyConfigurationResolver extends
 
     /** {@inheritDoc} */
     @Override
-    @Nullable public SecurityConfiguration getDefaultSecurityConfiguration(@Nonnull @NotEmpty String profileId) {
+    @Nullable public SecurityConfiguration getDefaultSecurityConfiguration(@Nonnull @NotEmpty final String profileId) {
         final SecurityConfiguration config = securityConfigurationMap.get(profileId);
         return config != null ? config : defaultSecurityConfiguration;
     }
 
-    /**
-     * {@inheritDoc}. This is an {@link IdentifiableComponent).
-     */
-    @Override public void setId(@Nonnull String componentId) {
+    /** {@inheritDoc} */
+    @Override public void setId(@Nonnull final String componentId) {
         super.setId(componentId);
     }
 
-    /** {@inheritDoc}. This is service is a {@link net.shibboleth.utilities.java.support.service.ServiceableComponent}. */
+    /** {@inheritDoc} */
     @Override @Nonnull public RelyingPartyConfigurationResolver getComponent() {
         return this;
     }

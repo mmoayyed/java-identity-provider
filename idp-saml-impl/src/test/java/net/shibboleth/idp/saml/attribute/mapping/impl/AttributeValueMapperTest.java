@@ -36,7 +36,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Tests for {@link AttributeValueMapper}.
+ * Tests for AttributeValueMapper.
  */
 public class AttributeValueMapperTest extends MappingTests {
 

@@ -92,8 +92,7 @@ public class SAML1XMLObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
     }
 
     /**
-     * Check that the input XML object is what was expected - something created by {@link ObjectFor} with a value taken
-     * from possibles.
+     * Check that the input XML object is what was expected.
      * 
      * @param input the objects in question.
      * @param possibles the strings that they might be encoding.
@@ -112,7 +111,7 @@ public class SAML1XMLObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
                 return;
             }
         }
-        Assert.assertTrue(false, "No potential matched matched");
+        Assert.assertTrue(false, "No potential match");
     }
 
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void empty() throws Exception {

@@ -59,11 +59,11 @@ public class ConsentServlet extends HttpServlet {
     /** Class logger. */
     private final Logger logger = LoggerFactory.getLogger(ConsentServlet.class);
 
-    /** The {@see Storage} instance which is used. */
+    /** The {@link Storage} instance which is used. */
     @Resource(name = "consent.storage")
     private Storage storage;
 
-    /** The {@see LocalizationHelper} which is used. */
+    /** The {@link LocalizationHelper} which is used. */
     @Resource(name = "consent.config.localizationHelper")
     private LocalizationHelper localizationHelper;
 

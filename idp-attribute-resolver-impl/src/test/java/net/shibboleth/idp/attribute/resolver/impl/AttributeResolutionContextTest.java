@@ -49,7 +49,7 @@ public class AttributeResolutionContextTest {
         Assert.assertTrue(context.getRequestedIdPAttributeNames().isEmpty());
     }
     
-    /** Test {@link AttributeResolutionContext#setRequestedIdPAttributeNames(java.util.Set)}. */
+    /** Test {@link AttributeResolutionContext#setRequestedIdPAttributeNames(java.util.Collection)}. */
     @Test public void setRequesedAttributes() {
         AttributeResolutionContext context = new AttributeResolutionContext();
 
@@ -77,7 +77,7 @@ public class AttributeResolutionContextTest {
         Assert.assertEquals(context.getRequestedIdPAttributeNames().size(), 1);
     }
 
-    /** Test {@link AttributeResolutionContext#setRequestedIdPAttributeNames(java.util.Set)}. */
+    /** Test {@link AttributeResolutionContext#setRequestedIdPAttributeNames(java.util.Collection)}. */
     @Test public void setResolvedAttributes() {
         AttributeResolutionContext context = new AttributeResolutionContext();
 

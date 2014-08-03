@@ -184,7 +184,7 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
     }
 
     /**
-     * Look inside the {@link AttributeConsumingService} for any {@link RequestedAttributes} and map them.
+     * Look inside the {@link AttributeConsumingService} for any {@link RequestedAttribute}s and map them.
      * 
      * @param acs the {@link AttributeConsumingService} to look at
      */

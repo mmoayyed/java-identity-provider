@@ -93,10 +93,6 @@ import com.google.common.collect.Lists;
  * <p>If the outbound binding is an artifact-based binding, then the action also creates
  * a {@link SAMLArtifactContext} populated by settings from the {@link SAMLArtifactConfiguration}.</p> 
  * 
- * <p>The base action understands SAML 2 {@link AuthnRequest} messages. Subclasses may
- * override the {@link #supplementResolverCriteria(ProfileRequestContext, CriteriaSet)} method
- * to implement support for other message types or advanced criteria.</p>
- * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_MSG_CTX}
  * @event {@link SAMLEventIds#ENDPOINT_RESOLUTION_FAILED}

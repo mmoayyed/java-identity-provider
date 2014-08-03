@@ -438,7 +438,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     }
 
     /**
-     * Get the attached {@link spSessionSerializerRegistry}.
+     * Get the attached {@link SPSessionSerializerRegistry}.
      * 
      * @return a registry of SPSession class to serializer mappings
      */

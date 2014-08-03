@@ -599,7 +599,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
     
     /**
      * Loads a {@link SPSession} record from storage and deserializes it using the object
-     * registered in the attached {@link SPSessionSerializerRegistry}.
+     * registered in the attached {@link net.shibboleth.idp.session.SPSessionSerializerRegistry}.
      * 
      * @param serviceId ID of service for session to load
      * 

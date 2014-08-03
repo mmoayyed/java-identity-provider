@@ -30,7 +30,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Parser for {@link AttributeIssuerNameIDFormatExactPolicyRule}.
+ * Parser for AttributeIssuerNameIDFormatExactPolicyRule.
  */
 public class AttributeIssuerNameIdFormatRuleParser extends BasePolicyRuleParser {
 

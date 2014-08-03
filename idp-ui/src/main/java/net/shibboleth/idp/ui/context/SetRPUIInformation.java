@@ -60,7 +60,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
             new ChildContextLookup<ProfileRequestContext, AuthenticationContext>(AuthenticationContext.class, true));
 
     /**
-     * The {@link EntityDescriptor}. If we cannot find this we short cut the {@link #doExecute(ProfileRequestContext)
+     * The {@link EntityDescriptor}. If we cannot find this we short cut the {@link #doExecute(ProfileRequestContext)}
      * stage
      */
     private EntityDescriptor entityDescriptor;

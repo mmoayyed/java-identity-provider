@@ -37,7 +37,7 @@ import org.springframework.core.io.Resource;
 import com.google.common.base.Predicate;
 
 /**
- * A {@link Predicate<ProfileRequestContext>} which calls out to a supplied script.
+ * A {@link Predicate} which calls out to a supplied script.
  */
 public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
 
@@ -100,7 +100,7 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
     }
 
     /**
-     * Factory to create {@link ScriptedPredicate} from a {@Resource}.
+     * Factory to create {@link ScriptedPredicate} from a {@link Resource}.
      * 
      * @param resource the resource to look at
      * @param engineName the language
@@ -115,7 +115,7 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
     }
 
     /**
-     * Factory to create {@link ScriptedPredicate} from a {@Resource}.
+     * Factory to create {@link ScriptedPredicate} from a {@link Resource}.
      * 
      * @param resource the resource to look at
      * @return the predicate

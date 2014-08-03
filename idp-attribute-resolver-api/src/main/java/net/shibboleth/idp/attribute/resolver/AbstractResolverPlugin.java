@@ -70,7 +70,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
     /** Criterion that must be met for this plugin to be active for the given request. */
     @Nullable private Predicate<ProfileRequestContext> activationCondition;
 
-    /** IDs of the {@link ResolutionPlugIn}s this plug-in depends on. */
+    /** IDs of the {@link ResolverPlugin}s this plug-in depends on. */
     @Nonnull @NonnullElements private Set<ResolverPluginDependency> dependencies = Collections.emptySet();
 
     /**

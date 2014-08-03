@@ -115,7 +115,7 @@ public class AttributeFilterPolicy extends AbstractIdentifiedInitializableCompon
 
     /**
      * Checks if the given filter context meets the requirements for this attribute filter policy as given by the
-     * {@link AttributeFilterPolicyRequirementRule}.
+     * {@link PolicyRequirementRule}.
      * 
      * @param filterContext current filter context
      * 

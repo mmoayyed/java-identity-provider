@@ -24,7 +24,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Test For {@link AttributeScopeRegexpMatcher}
+ * Test For {@link AttributeScopeRegexpMatcher}.
  */
 public class AttributeScopeRegexpMatcherTest {
     

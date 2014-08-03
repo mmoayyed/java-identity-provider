@@ -273,7 +273,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         }
 
         /**
-         * Uses {@link X509CredentialSupport} to read StartTLS trust and authentication credentials.
+         * Read StartTLS trust and authentication credentials.
          * 
          * @param parserContext bean definition parsing context
          * @return credential config

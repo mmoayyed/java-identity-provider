@@ -32,7 +32,8 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Spring bean definition parser for {@link TransientIdAttributeDefinitionFactoryBean}s.
+ * Spring bean definition parser for {@link TransientIdAttributeDefinition} using a
+ * {@link StoredTransientIdGenerationStrategy}.
  */
 public class TransientIdAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 

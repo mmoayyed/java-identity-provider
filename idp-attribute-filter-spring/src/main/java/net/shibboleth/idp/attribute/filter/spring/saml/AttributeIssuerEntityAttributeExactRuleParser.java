@@ -26,7 +26,7 @@ import org.springframework.beans.factory.BeanCreationException;
 
 
 /**
- * Parser for {@link AttributeIssuerEntityAttributeExactPolicyRule}.
+ * Parser for AttributeIssuerEntityAttributeExactPolicyRule.
  */
 public class AttributeIssuerEntityAttributeExactRuleParser extends AbstractEntityAttributeRuleParser {
 

@@ -55,7 +55,6 @@ public class ScopedValueTest extends XMLObjectProviderBaseTestCase {
         singleElementOptionalAttributesFile = "/net/shibboleth/idp/saml/impl/xmlobject/ShibScopedValueOptionalAttributes.xml";
     }
 
-    /** {@inheritDoc} */
     @BeforeMethod
 	protected void setUp() throws Exception {
         expectedValue = "member";

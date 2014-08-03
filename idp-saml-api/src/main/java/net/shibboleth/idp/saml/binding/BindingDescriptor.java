@@ -21,14 +21,17 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-/** Subclass that adds awareness of a Spring bean ID for a binding's {@link MessageEncoder}. */
+/**
+ * Subclass that adds awareness of a Spring bean ID for a binding's
+ * {@link org.opensaml.messaging.encoder.MessageEncoder}.
+ */
 public class BindingDescriptor extends org.opensaml.saml.common.binding.BindingDescriptor {
 
     /** Spring bean ID of message encoder. */
     @Nullable private String encoderBeanId;
     
     /**
-     * Get the Spring bean ID of the binding's {@link MessageEncoder}.
+     * Get the Spring bean ID of the binding's {@link org.opensaml.messaging.encoder.MessageEncoder}.
      * 
      * @return bean ID of message encoder
      */
@@ -37,7 +40,7 @@ public class BindingDescriptor extends org.opensaml.saml.common.binding.BindingD
     }
 
     /**
-     * Set the Spring bean ID of the binding's {@link MessageEncoder}.
+     * Set the Spring bean ID of the binding's {@link org.opensaml.messaging.encoder.MessageEncoder}.
      * 
      * @param id bean ID of message encoder
      * @return 

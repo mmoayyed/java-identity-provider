@@ -45,7 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The context which carries the {@link RelyingPartyUIInformation}.
+ * The context which carries the user interface information.
  */
 public class RelyingPartyUIContext extends BaseContext {
 
@@ -294,7 +294,7 @@ public class RelyingPartyUIContext extends BaseContext {
     }
 
     /**
-     * Get the {@link Organization} from the {@link SPSODescriptor}, failing that the {@link EntityDescriptor}.
+     * Get the {@link Organization} from the {@link SPSSODescriptor}, failing that the {@link EntityDescriptor}.
      * 
      * @return the {@link Organization} for the relying party.
      */

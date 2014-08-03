@@ -58,7 +58,7 @@ import com.google.common.base.Predicate;
  * name may be used by a requester, possibly resulting in a {@link AuthnEventIds#INVALID_SUBJECT}
  * event.</p>
  * 
- * <p>Otherwise, a custom {@link Principal} of the appropriate type is wrapped around the
+ * <p>Otherwise, a custom {@link java.security.Principal} of the appropriate type is wrapped around the
  * identifier object and a Java {@link Subject} is prepared for canonicalization.</p>
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}

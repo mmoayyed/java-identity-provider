@@ -35,7 +35,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 /**
- * Extends an {@link SPSession} with SAML 2.0 information required for
+ * Extends a {@link BasicSPSession} with SAML 2.0 information required for
  * reverse lookup in the case of a logout. 
  */
 public class SAML2SPSession extends BasicSPSession {

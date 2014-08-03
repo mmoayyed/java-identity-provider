@@ -32,7 +32,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
-/** Spring bean definition parser that creates {@link RegistrationAuthorityMatcher} beans. */
+/** Spring bean definition parser that creates {@link RegistrationAuthorityPolicyRule} beans. */
 public class RegistrationAuthorityRuleParser extends BasePolicyRuleParser {
 
     /** Schema type. */

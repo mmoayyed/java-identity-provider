@@ -163,9 +163,9 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
     /**
      * Resolves the attribute for the give request. Note, if attributes are requested,
-     * {@link AttributeResolutionContext#getRequestedIdPAttributes()}, the resolver will <strong>not</strong> fail if
-     * they can not be resolved. This information serves only as a hint to the resolver to, potentially, optimize the
-     * resolution of attributes.
+     * {@link AttributeResolutionContext#getRequestedIdPAttributeNames()}, the resolver will <strong>not</strong> fail
+     * if they can not be resolved. This information serves only as a hint to the resolver to, potentially, optimize
+     * the resolution of attributes.
      * 
      * @param resolutionContext the attribute resolution context that identifies the request subject and accumulates the
      *            resolved attributes
@@ -208,8 +208,8 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
     /**
      * Gets the list of attributes, identified by IDs, that should be resolved. If the
-     * {@link AttributeResolutionContext#getRequestedIdPAttributes()} is not empty then those attributes are the ones to
-     * be resolved, otherwise all registered attribute definitions are to be resolved.
+     * {@link AttributeResolutionContext#getRequestedIdPAttributeNames()} is not empty then those attributes
+     * are the ones to be resolved, otherwise all registered attribute definitions are to be resolved.
      * 
      * @param resolutionContext current resolution context
      * 

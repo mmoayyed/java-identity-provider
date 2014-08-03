@@ -226,8 +226,9 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
      * {@inheritDoc}
      * 
      * This method delegates the actual resolution of the attribute's values to the
-     * {@link #doAttributeDefinitionResolve(AttributeResolutionContext)} method. Afterwards, if null was not returned,
-     * this method will attach the registered display names, descriptions, and encoders to the resultant attribute.
+     * {@link #doAttributeDefinitionResolve(AttributeResolutionContext, AttributeResolverWorkContext)} method.
+     * Afterwards, if null was not returned, this method will attach the registered display names, descriptions,
+     * and encoders to the resultant attribute.
      */
     @Override
     @Nullable protected IdPAttribute doResolve(@Nonnull final AttributeResolutionContext resolutionContext,

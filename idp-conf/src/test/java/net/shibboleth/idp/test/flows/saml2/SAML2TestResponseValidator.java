@@ -374,7 +374,7 @@ public class SAML2TestResponseValidator {
     /**
      * Assert that the subject confirmation method is {@link SubjectConfirmation#METHOD_BEARER}.
      * 
-     * @param subjectConfirmation the subject confirmation
+     * @param method the subject confirmation
      */
     public void assertSubjectConfirmationMethod(@Nullable final SubjectConfirmation method) {
         Assert.assertEquals(method.getMethod(), subjectConfirmationMethod);
@@ -409,7 +409,7 @@ public class SAML2TestResponseValidator {
      * <li>the NameID SP name qualifier is the expected SP name qualifier</li>
      * <ul>
      * 
-     * @param nameID the NameID
+     * @param id the NameID
      */
     public void assertNameID(@Nullable final NameID id) {
         Assert.assertNotNull(id);
@@ -486,7 +486,7 @@ public class SAML2TestResponseValidator {
     /**
      * Assert that the authn context class ref is {@link AuthnContext#IP_AUTHN_CTX}.
      * 
-     * @param authnContextClassRef the authn context class ref
+     * @param authnContext the authn context
      */
     public void assertAuthnContextClassRef(@Nullable final AuthnContextClassRef authnContext) {
         Assert.assertEquals(authnContext.getAuthnContextClassRef(), authnContextClassRef);

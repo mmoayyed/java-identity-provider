@@ -23,7 +23,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Test For {@link AttributeScopeStringPredicate}
+ * Test For {@link AttributeScopeStringMatcher}.
  */
 public class AttributeScopeStringMatcherTest {
     

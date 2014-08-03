@@ -34,8 +34,7 @@ public interface LegacyPrincipalDecoder {
 
     /**
      * Resolve the principal with respect to the provided context. This is expected to strip out the
-     * {@link org.opensaml.saml.saml2.core.NameID} or {@link org.opensaml.saml.saml1.core.NameIdentifier} and match it
-     * against the connector definitions configured.
+     * NameID or NameIdentifier and match it against the connector definitions configured.
      * 
      * @param context what to look at.
      * @return the IdP principal, or null if no definitions were applicable

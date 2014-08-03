@@ -38,7 +38,7 @@ import com.google.common.base.Function;
 /**
  * A function to create a {@link BasicSPSession} based on profile execution state.
  * 
- * <p>This strategy is a default approach that uses the inbound message's {@link BasicMessageMetadataContext}
+ * <p>This strategy is a default approach that uses a lookup strategy for a {@link RelyingPartyContext}
  * to obtain an issuer value, used as the {@link SPSession}'s relying party ID. The authentication flow ID
  * comes from the {@link AuthenticationResult} in the {@link AuthenticationContext}. The session has a 
  * creation time based on the time of execution, and the expiration is based on a configurable lifetime.</p> 

@@ -33,9 +33,9 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * {@link PolicyRequirementRule} that implements the disjunction of Policy Rules.  That
- * is to say {@link Tristate.TRUE} if any rule returns {@link Tristate.TRUE},
- * {@link Tristate.FAIL} as soon as a rule returns {@link Tristate.FAIL}, and
- * {@link Tristate.FALSE} otherwise.<br/>
+ * is to say {@link Tristate#TRUE} if any rule returns {@link Tristate#TRUE},
+ * {@link Tristate#FAIL} as soon as a rule returns {@link Tristate#FAIL}, and
+ * {@link Tristate#FALSE} otherwise.<br/>
  * The standard "fail/succeed fast" optimization is implemented.
  */
 @ThreadSafe
@@ -54,8 +54,10 @@ public class OrPolicyRule extends AbstractComposedPolicyRule {
     /**
     * A given rule is considered to have matched as soon as TRUE is returned by any composed
     * rule. It is considered to have failed as soon as FAIL is returned by any composed
-    * rule 
-    * {@inheritDoc} */
+    * rule.
+    * 
+    * {@inheritDoc}
+    */
     public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);

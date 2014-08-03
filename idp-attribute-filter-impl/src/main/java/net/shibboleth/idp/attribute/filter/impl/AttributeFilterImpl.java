@@ -132,8 +132,8 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
 
     /**
      * Gets the permitted values for the given attribute from the
-     * {@link AttributeFilterContext#getPermittedIdPAttributeValues()} and removes all denied values given in the
-     * {@link AttributeFilterContext#getDeniedAttributeValues()}.
+     * {@link AttributeFilterWorkContext#getPermittedIdPAttributeValues()} and removes all denied values given in the
+     * {@link AttributeFilterWorkContext#getDeniedAttributeValues()}.
      * 
      * @param attributeId ID of the attribute whose values are to be retrieved
      * @param filterContext current attribute filter context

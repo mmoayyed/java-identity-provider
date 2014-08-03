@@ -58,7 +58,7 @@ public class LocalizationHelper {
     /** Whether the preferred is enforced or not. */
     private boolean localeEnforcement;
 
-    /** The {@see MetadataProvider} used for resolving localized information. */
+    /** The {@link MetadataResolver} used for resolving localized information. */
     private MetadataResolver metadataResolver;
 
     /**

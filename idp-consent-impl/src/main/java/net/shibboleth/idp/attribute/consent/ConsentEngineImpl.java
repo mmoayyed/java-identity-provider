@@ -41,7 +41,7 @@ public class ConsentEngineImpl implements ConsentEngine {
     /** Class logger. */
     private final Logger logger = LoggerFactory.getLogger(ConsentEngineImpl.class);
 
-    /** The {@see Storage} instance which is used. */
+    /** The {@link Storage} instance which is used. */
     @Resource(name = "consent.storage")
     private Storage storage;
 

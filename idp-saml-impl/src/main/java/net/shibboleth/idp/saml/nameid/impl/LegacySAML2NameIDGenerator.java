@@ -24,7 +24,7 @@ import org.opensaml.saml.saml2.profile.SAML2NameIDGenerator;
 
 /**
  * Legacy generator of {@link NameID} objects that relies on resolved attributes having
- * {@link NameIdentifierAttributeEncoder}s attached.
+ * {@link SAML2NameIDAttributeEncoder}s attached.
  * 
  * <p>See the base class for additional detail.</p>
  */

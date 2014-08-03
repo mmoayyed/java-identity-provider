@@ -46,14 +46,13 @@ public final class SAML2ActionTestingSupport extends org.opensaml.saml.saml2.pro
      * Builds a {@link RelyingPartyContext} that is a child of the given parent context. The build subcontext contains:
      * <ul>
      * <li>a {@link RelyingPartyConfiguration} whose ID is the given relying party ID or
-     * {@link SamlActionTestingSupport#INBOUND_MSG_ISSUER} if none is given</li>
+     * {@link ActionTestingSupport#INBOUND_MSG_ISSUER} if none is given</li>
      * <li>the set of {@link ProfileConfiguration} created by {@link #buildProfileConfigurations()}</li>
      * <li>the {@link BrowserSSOProfileConfiguration} set as the active profile configuration</li>
      * </ul>
      * 
      * @param parent the parent of the created subcontext
      * @param relyingPartyId the ID of the relying party
-     * @param activeProfileConfig the active profile configuration
      * 
      * @return the constructed subcontext
      * @throws ComponentInitializationException 

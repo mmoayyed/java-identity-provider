@@ -31,8 +31,8 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
  * Post-processes bean configuration metadata to ensure that stateful beans are scoped properly.
  * 
  * This post-processor will override the scope of any bean whose class or superclass is annotated with {@link Prototype}
- * and whose scope is not {@link BeanDefinition.SCOPE_PROTOTYPE} by setting the bean's scope to
- * {@link BeanDefinition.SCOPE_PROTOTYPE}.
+ * and whose scope is not {@link BeanDefinition#SCOPE_PROTOTYPE} by setting the bean's scope to
+ * {@link BeanDefinition#SCOPE_PROTOTYPE}.
  */
 // TODO Implement Ordered ?
 public class ProfileActionBeanFactoryPostProcessor implements BeanFactoryPostProcessor {

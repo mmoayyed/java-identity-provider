@@ -48,12 +48,13 @@ import com.google.common.collect.Lists;
  * form of a protocol-specific operator string and an ordered list of custom
  * {@link Principal} objects.</p>
  * 
- * <p>During the authentication process, interactions with {@link PrincipalSupportingComponent}-
- * supporting objects will depend on them satisfying context requirements, via the use of
- * registered {@link PrincipalEvalPredicateFactory} objects.</p>
+ * <p>During the authentication process, interactions with
+ * {@link net.shibboleth.idp.authn.principal.PrincipalSupportingComponent}-supporting objects
+ * will depend on them satisfying context requirements, via the use of registered
+ * {@link PrincipalEvalPredicateFactory} objects.</p>
  * 
  * <p>Upon successful authentication the most appropriate "matching" {@link Principal} will be
- * saved back to this context for use in generating a protocol response.
+ * saved back to this context for use in generating a protocol response.</p>
  */
 public class RequestedPrincipalContext extends BaseContext {
 

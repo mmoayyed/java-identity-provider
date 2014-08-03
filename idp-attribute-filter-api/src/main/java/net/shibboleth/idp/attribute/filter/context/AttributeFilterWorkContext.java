@@ -79,7 +79,7 @@ public final class AttributeFilterWorkContext extends BaseContext {
 
     /**
      * Adds a collection of attribute values that are permitted to be released. Attempting to add values for an
-     * attribute that is not a member of {@link #getPrefilteredIdPAttributes()} will result in an
+     * attribute that is not a member of {@link AttributeFilterContext#getPrefilteredIdPAttributes()} will result in an
      * {@link IllegalArgumentException}. Attempting to add an attribute value that is not a member of
      * {@link IdPAttribute#getValues()} will result in an {@link IllegalArgumentException}.
      * 
@@ -130,7 +130,7 @@ public final class AttributeFilterWorkContext extends BaseContext {
 
     /**
      * Adds a collection of attribute values that are not permitted to be released. Attempting to add values for an
-     * attribute that is not a member of {@link #getPrefilteredIdPAttributes()} will result in an
+     * attribute that is not a member of {@link AttributeFilterContext#getPrefilteredIdPAttributes()} will result in an
      * {@link IllegalArgumentException}. Attempting to add an attribute value that is not a member of
      * {@link IdPAttribute#getValues()} will result in an {@link IllegalArgumentException}.
      * 

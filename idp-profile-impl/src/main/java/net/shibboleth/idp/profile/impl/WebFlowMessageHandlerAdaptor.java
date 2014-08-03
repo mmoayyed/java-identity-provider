@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Function;
 
 /**
- * An {@link Action} implementation which adapts an OpenSAML {@link MessageHandler} for execution 
+ * An {@link AbstractProfileAction} subclass that adapts an OpenSAML {@link MessageHandler} for execution 
  * in a Spring WebFlow environment.
  * 
  * <p>The handler to run may be injected directly, or supplied via a lookup function.</p>
@@ -48,7 +48,7 @@ import com.google.common.base.Function;
  * <ul>
  * <li>{@link Direction#INBOUND} indicates to execute the handler on the 
  * {@link ProfileRequestContext#getInboundMessageContext()}</li>
- * <li>{@link Direction#OUBTOUND} indicates to execute the handler on the 
+ * <li>{@link Direction#OUTBOUND} indicates to execute the handler on the 
  * {@link ProfileRequestContext#getOutboundMessageContext()}</li>
  * </ul>
  * </p>
@@ -72,8 +72,7 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
         
         /** Indicates to invoke the handle on the outbound message context, obtained via
          * {@link ProfileRequestContext#getOutboundMessageContext()}. */
-        OUTBOUND
-        
+        OUTBOUND,
         };
     
     /** Logger. */

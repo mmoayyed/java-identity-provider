@@ -89,7 +89,8 @@ public class User {
      * @param relyingPartyId The id of the relying party for which the attribute releases should be set
      * @param attributeReleases Collection of @see AttributeRelease to set
      */
-    public void setAttributeReleases(final String relyingPartyId, final Collection<AttributeRelease> attributeReleases) {
+    public void setAttributeReleases(final String relyingPartyId,
+            final Collection<AttributeRelease> attributeReleases) {
         releases.put(relyingPartyId, attributeReleases);
     }
 

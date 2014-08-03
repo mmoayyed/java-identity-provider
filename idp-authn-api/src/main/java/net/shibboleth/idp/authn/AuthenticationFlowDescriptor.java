@@ -232,7 +232,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * Get a collection of supported non-user-specific principals that the flow may produce when it operates.
      * 
      * <p>
-     * The {@link Collection#remove()} method is not supported.
+     * The {@link Collection#remove(java.lang.Object)} method is not supported.
      * </p>
      * 
      * @return a live collection of supported principals

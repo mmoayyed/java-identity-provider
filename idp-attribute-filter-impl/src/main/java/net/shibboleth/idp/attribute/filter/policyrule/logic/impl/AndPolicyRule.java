@@ -33,9 +33,9 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * {@link PolicyRequirementRule} that implements the conjunction of Policy Rules.  That
- * is to say {@link Tristate.TRUE} if every rule returns {@link Tristate.TRUE},
- * {@link Tristate.FAIL} as soon as a rule returns {@link Tristate.FAIL}, and
- * {@link Tristate.FALSE} otherwise.<br/>
+ * is to say {@link Tristate#TRUE} if every rule returns {@link Tristate#TRUE},
+ * {@link Tristate#FAIL} as soon as a rule returns {@link Tristate#FAIL}, and
+ * {@link Tristate#FALSE} otherwise.<br/>
  * The standard "fail/false fast" optimization is implemented.
  */
 @ThreadSafe
@@ -53,7 +53,9 @@ public class AndPolicyRule extends AbstractComposedPolicyRule {
     /**
     * A given rule is considered to have matched if, and only if, TRUE is returned by every composed
     * rule.
-    * {@inheritDoc} */
+    * 
+    * {@inheritDoc}
+    */
     public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);

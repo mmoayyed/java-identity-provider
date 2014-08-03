@@ -61,8 +61,6 @@ public class MetadataPKIXValidationInformationResolverTest extends XMLObjectBase
     
     private CriteriaSet criteriaSet;
     
-    /** {@inheritDoc} */
-    
     @BeforeMethod
     protected void setUp() throws Exception {
         criteriaSet = new CriteriaSet();

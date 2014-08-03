@@ -35,7 +35,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 /** JDBC implementation. */
 public class JDBCStorage implements Storage {
 
-    /** {@see User} row mapper. */
+    /** User row mapper. */
     private static final class UserMapper implements RowMapper<User> {
         @Override
         public final User mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -43,7 +43,7 @@ public class JDBCStorage implements Storage {
         }
     }
 
-    /** {@see AttributeRelease} row mapper. */
+    /** AttributeRelease row mapper. */
     private static final class AttributeReleaseMapper implements RowMapper<AttributeRelease> {
         @Override
         public AttributeRelease mapRow(ResultSet rs, int rowNum) throws SQLException {

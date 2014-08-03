@@ -78,9 +78,9 @@ public final class ConsentHelper {
     }
 
     /**
-     * Hashes the values of a given @see Attribute.
+     * Hashes the values of a given {@link IdPAttribute}.
      * 
-     * @param attribute The @see Attribute.
+     * @param attribute The {@link IdPAttribute}.
      * @return Returns the hash of all attribute values.
      */
     public static String hashAttributeValues(final IdPAttribute attribute) {

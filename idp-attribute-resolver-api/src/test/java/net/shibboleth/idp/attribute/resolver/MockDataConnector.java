@@ -42,7 +42,7 @@ public class MockDataConnector extends AbstractDataConnector {
     /** Static collection of values returned by this connector. */
     private Map<String, IdPAttribute> values;
 
-    /** Exception thrown by {@link #doDataConnectorResolve(AttributeResolutionContext)}. */
+    /** Exception thrown by resolution. */
     private ResolutionException resolutionException;
 
     /**
@@ -62,7 +62,7 @@ public class MockDataConnector extends AbstractDataConnector {
      * Constructor.
      * 
      * @param id id of the data connector
-     * @param exception exception thrown by {@link #doDataConnectorResolve(AttributeResolutionContext)}
+     * @param exception exception thrown by resolution
      */
     public MockDataConnector(final String id, final ResolutionException exception) {
         setId(id);
@@ -73,7 +73,7 @@ public class MockDataConnector extends AbstractDataConnector {
      * Constructor.
      *
      * @param id
-     * @param map
+     * @param connectorValues
      * @param newHashSet
      * @throws ComponentInitializationException 
      */

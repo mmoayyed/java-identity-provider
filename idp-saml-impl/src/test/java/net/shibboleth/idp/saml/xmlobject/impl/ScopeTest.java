@@ -40,7 +40,6 @@ public class ScopeTest extends XMLObjectProviderBaseTestCase {
         singleElementOptionalAttributesFile = "/net/shibboleth/idp/saml/impl/xmlobject/ShibMDScopeOptionalAttributes.xml";
     }
 
-    /** {@inheritDoc} */
     @BeforeMethod
 	protected void setUp() throws Exception {
         expectedContent = "ThisIsSomeScopeValue";

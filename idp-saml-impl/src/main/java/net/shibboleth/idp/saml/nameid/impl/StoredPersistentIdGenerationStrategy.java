@@ -55,9 +55,9 @@ public class StoredPersistentIdGenerationStrategy extends AbstractIdentifiableIn
     @Nullable private ComputedPersistentIdGenerationStrategy computedIdStrategy;
     
     /**
-     * Get the {@link DataSource} used to communicate with the database.
+     * Get the {@link PersistentIdStore} used to communicate with the database.
      * 
-     * @return the {@link DataSource}.
+     * @return the {@link PersistentIdStore}.
      */
     @NonnullAfterInit public PersistentIdStore getIDStore() {
         return pidStore;

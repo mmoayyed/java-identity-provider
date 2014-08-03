@@ -46,25 +46,23 @@ import com.google.common.base.Predicates;
  * An authentication action that establishes a record of the {@link net.shibboleth.idp.authn.AuthenticationResult}
  * in an {@link IdPSession} for the client, either by updating an existing session or creating a new one.
  * 
- * <p>A new {@link AuthenticationResult} may be added to the session, or the last activity time
- * of an existing one updated. A new one will only be added if the authentication context indicates
- * that the result is "cacheable".</p>
+ * <p>A new {@link net.shibboleth.idp.authn.AuthenticationResult} may be added to the session, or the last activity
+ * time of an existing one updated. A new one will only be added if the authentication context indicates that the
+ * result is "cacheable".</p>
  * 
- * <p>An existing session is identified via a {@link SessionContext} attached to the
- * {@link ProfileRequestContext}. If a new session is created, it will be placed into a
- * {@link SessionContext}, creating it if necessary, with the principal name coming
- * from a {@link SubjectContext}.</p>
+ * <p>An existing session is identified via a {@link SessionContext} attached to the {@link ProfileRequestContext}.
+ * If a new session is created, it will be placed into a {@link SessionContext}, creating it if necessary, with the
+ * principal name coming from a {@link SubjectContext}.</p>
  * 
- * <p>An error interacting with the session layer will result in an {@link EventIds#IO_ERROR}
- * event.</p>
+ * <p>An error interacting with the session layer will result in an {@link EventIds#IO_ERROR} event.</p>
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link EventIds#IO_ERROR}
- * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
+ * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class) != null</pre>
  * @post If AuthenticationContext.getAuthenticationResult() != null and
  * SubjectContext.getPrincipalName() != null then the steps above are performed,
- * and ProfileRequestContext.getSubcontext(SessionContext.class, false).getIdPSession() != null
+ * and ProfileRequestContext.getSubcontext(SessionContext.class).getIdPSession() != null
  */
 public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticationAction {
 

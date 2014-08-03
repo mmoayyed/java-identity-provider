@@ -69,7 +69,7 @@ public class AbstractResolverPluginTest {
         Assert.assertEquals(plugin.getProfileContextStrategy().getClass(), TestFunc.class);
     }
 
-    /** Test setters to {@link ResolverPlugin#setPropagateResolutionExceptions(boolean)}. */
+    /** Test setters to {@link AbstractResolverPlugin#setPropagateResolutionExceptions(boolean)}. */
     @Test public void propogateSetters() {
         MockBaseResolverPlugin plugin = new MockBaseResolverPlugin("foo", "bar");
 
@@ -146,14 +146,14 @@ public class AbstractResolverPluginTest {
      */
     private static final class MockBaseResolverPlugin extends AbstractResolverPlugin<String> {
 
-        /** Static value return by {@link #doResolve(AttributeResolutionContext)}. */
+        /** Static value return by resolution. */
         private String resolverValue;
 
         /**
          * Constructor.
          * 
          * @param id id of this plugin
-         * @param value value returned by {@link #doResolve(AttributeResolutionContext)}
+         * @param value value returned by resolution
          */
         public MockBaseResolverPlugin(String id, String value) {
             setId(id);

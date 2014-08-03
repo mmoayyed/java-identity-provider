@@ -23,5 +23,5 @@ import java.security.Principal;
 public interface CloneablePrincipal extends Principal, Cloneable {
 
     /** {@inheritDoc} */
-    CloneablePrincipal clone() throws CloneNotSupportedException;
+    Object clone() throws CloneNotSupportedException;
 }

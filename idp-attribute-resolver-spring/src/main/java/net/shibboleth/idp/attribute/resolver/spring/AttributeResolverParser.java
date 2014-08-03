@@ -54,8 +54,6 @@ public class AttributeResolverParser implements BeanDefinitionParser {
 
     /**
      * {@inheritDoc}
-     * 
-     * @return
      */
     @Override public BeanDefinition parse(Element config, ParserContext context) {
 

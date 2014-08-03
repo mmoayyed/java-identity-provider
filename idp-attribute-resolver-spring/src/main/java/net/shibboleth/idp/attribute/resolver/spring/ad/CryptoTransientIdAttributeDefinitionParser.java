@@ -30,7 +30,8 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Spring bean definition parser for {@link CryptoTransientIdAttributeDefinition}s.
+ * Spring bean definition parser for {@link TransientIdAttributeDefinition} using a
+ * {@link CryptoTransientIdGenerationStrategy}.
  */
 public class CryptoTransientIdAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 

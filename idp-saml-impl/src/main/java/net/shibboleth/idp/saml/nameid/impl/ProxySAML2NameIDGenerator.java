@@ -32,7 +32,7 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.profile.SAML2NameIDGenerator;
 
 /**
- * A compound implementation of the {@link NameIdentifierGenerator} interface that wraps a sequence of
+ * A compound implementation of the {@link SAML2NameIDGenerator} interface that wraps a sequence of
  * candidate generators along with a default to try if no format-specific options are available.
  */
 public class ProxySAML2NameIDGenerator implements SAML2NameIDGenerator {

@@ -108,7 +108,7 @@ public class PredicatePolicyRule extends AbstractPolicyRule {
      * @param filterContext the context
      * @return whether it matches. All failure and navigation issues return {@link Tristate#FAIL}.
      * 
-     *         {@inheritDoc}
+     * {@inheritDoc}
      */
     @Override public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
 

@@ -267,7 +267,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
 
     /**
      * Assert that the flow execution outcome is not null and its id equals 'end'. For testing purposes, the outcome's
-     * attribute map must map {@value #OUTPUT_ATTR_NAME} to the {@link ProfileRequestContext}.
+     * attribute map must map {@value #END_STATE_OUTPUT_ATTR_NAME} to the {@link ProfileRequestContext}.
      * 
      * @param outcome the flow execution outcome
      */

@@ -40,7 +40,7 @@ public class AttributeRelease {
     private final DateTime consentDate;
 
     /**
-     * Constructs a @see AttributeRelease.
+     * Constructs a AttributeRelease.
      * 
      * @param attributeId The id of the attribute.
      * @param valuesHash The hashed values.
@@ -53,7 +53,7 @@ public class AttributeRelease {
     }
 
     /**
-     * Constructs a @see AttributeRelease.
+     * Constructs a AttributeRelease.
      * 
      * @param attribute The @see Attribute.
      * @param consentDate The timestamp for this @see AttributeRelease.

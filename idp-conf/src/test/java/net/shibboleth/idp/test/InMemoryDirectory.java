@@ -42,7 +42,7 @@ public class InMemoryDirectory {
     /**
      * Default constructor.
      * 
-     * @param LDIF the LDIF resource to be imported
+     * @param ldif the LDIF resource to be imported
      * 
      * @throws LDAPException if the in-memory directory server cannot be created
      * @throws IOException if the LDIF resource cannot be imported

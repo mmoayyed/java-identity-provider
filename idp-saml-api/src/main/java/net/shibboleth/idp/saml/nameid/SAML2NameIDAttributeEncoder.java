@@ -21,8 +21,8 @@ import org.opensaml.saml.saml2.core.NameID;
 
 
 /**
- * Marker interface for {@link AttributeEncoder} that produces SAML 2.0 {@link NameID}s
- * instead of attributes.
+ * Marker interface for {@link net.shibboleth.idp.attribute.AttributeEncoder}
+ * that produces SAML 2.0 {@link NameID}s instead of attributes.
  */
 public interface SAML2NameIDAttributeEncoder extends NameIdentifierAttributeEncoder<NameID> {
 

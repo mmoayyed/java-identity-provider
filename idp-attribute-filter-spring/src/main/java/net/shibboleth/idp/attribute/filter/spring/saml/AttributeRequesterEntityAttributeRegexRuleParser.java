@@ -30,7 +30,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Parser for {@link AttributeIssuerEntityAttributeRegexPolicyRule}.
+ * Parser for {@link AttributeRequesterEntityAttributeRegexPolicyRule}.
  */
 public class AttributeRequesterEntityAttributeRegexRuleParser extends AbstractEntityAttributeRuleParser {
 

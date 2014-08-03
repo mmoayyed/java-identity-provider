@@ -76,7 +76,8 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
     /**
      * {@inheritDoc}
      * 
-     * This method delegates to {@link #doDataConnectorResolve(AttributeResolutionContext)}. It serves as a future
+     * This method delegates to
+     * {@link #doDataConnectorResolve(AttributeResolutionContext, AttributeResolverWorkContext)}. It serves as a future
      * extension point for introducing new common behavior.
      */
     @Override @Nullable public final Map<String, IdPAttribute> doResolve(
