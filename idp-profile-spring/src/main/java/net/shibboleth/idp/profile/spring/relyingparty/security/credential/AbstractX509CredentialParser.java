@@ -93,7 +93,6 @@ public abstract class AbstractX509CredentialParser extends AbstractCredentialPar
      * @param childElements the elements containing the certificates, Must have at least one element.
      * @param builder the builder
      */
-    @SuppressWarnings("deprecation")
     private void parseCertificates(@Nullable final List<Element> childElements,
             @Nonnull final BeanDefinitionBuilder builder) {
         if (null == childElements || childElements.isEmpty()) {
