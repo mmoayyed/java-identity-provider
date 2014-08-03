@@ -67,8 +67,7 @@ public abstract class AbstractSAML2AttributeEncoder<EncodedType extends IdPAttri
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull public final String getProtocol() {
+    @Override @Nonnull public final String getProtocol() {
         return SAMLConstants.SAML20P_NS;
     }
 
@@ -88,7 +87,7 @@ public abstract class AbstractSAML2AttributeEncoder<EncodedType extends IdPAttri
      */
     public void setFriendlyName(@Nullable final String attributeFriendlyName) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         friendlyName = StringSupport.trimOrNull(attributeFriendlyName);
     }
 
@@ -100,7 +99,7 @@ public abstract class AbstractSAML2AttributeEncoder<EncodedType extends IdPAttri
     @Nullable public String getNameFormat() {
         return format;
     }
-    
+
     /**
      * Get the name format, or the SAML constants for "unspecified", if not set.
      * 
@@ -109,7 +108,7 @@ public abstract class AbstractSAML2AttributeEncoder<EncodedType extends IdPAttri
     @Nonnull @NotEmpty public String getEffectiveNameFormat() {
         return format != null ? format : Attribute.UNSPECIFIED;
     }
-    
+
     /**
      * Set the format of the attribute name.
      * 
@@ -117,13 +116,12 @@ public abstract class AbstractSAML2AttributeEncoder<EncodedType extends IdPAttri
      */
     public void setNameFormat(@Nullable final String nameFormat) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         format = StringSupport.trimOrNull(nameFormat);
     }
-    
+
     /** {@inheritDoc} */
-    @Override
-    @Nonnull protected Attribute buildAttribute(@Nonnull final IdPAttribute idpAttribute,
+    @Override @Nonnull protected Attribute buildAttribute(@Nonnull final IdPAttribute idpAttribute,
             @Nonnull @NonnullElements final List<XMLObject> attributeValues) throws AttributeEncodingException {
 
         final Attribute samlAttribute = attributeBuilder.buildObject();
@@ -135,14 +133,26 @@ public abstract class AbstractSAML2AttributeEncoder<EncodedType extends IdPAttri
         return samlAttribute;
     }
 
+    /**
+     * Generate an Id suitable for the mapper.
+     * 
+     * @return a suitable Id for the mapper
+     */
+    @Nonnull protected String getMapperId() {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        if (null != getFriendlyName()) {
+            return "MapperFor" + getFriendlyName();
+        }
+        return "MapperForAttribute" + getFriendlyName();
+    }
+
     /** {@inheritDoc} */
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
 
         if (!super.equals(obj)) {
             return false;
         }
-        
+
         if (!(obj instanceof AbstractSAML2AttributeEncoder)) {
             return false;
         }
@@ -153,8 +163,7 @@ public abstract class AbstractSAML2AttributeEncoder<EncodedType extends IdPAttri
     }
 
     /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         return Objects.hashCode(super.hashCode(), getEffectiveNameFormat());
     }
 }

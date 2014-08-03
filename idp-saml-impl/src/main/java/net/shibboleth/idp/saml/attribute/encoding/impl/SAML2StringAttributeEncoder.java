@@ -58,7 +58,7 @@ public class SAML2StringAttributeEncoder extends AbstractSAML2AttributeEncoder<S
     @Override @Nonnull public void populateAttributeMapper(
             final AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute> mapper) {
         mapper.setAttributeFormat(getNameFormat());
-        mapper.setId(getFriendlyName());
+        mapper.setId(getMapperId());
         mapper.setSAMLName(getName());
         mapper.setValueMapper(new StringAttributeValueMapper());
     }

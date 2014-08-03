@@ -178,7 +178,7 @@ public class SAML2ScopedStringAttributeEncoder extends AbstractSAML2AttributeEnc
     @Override @Nonnull public void populateAttributeMapper(
             final AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute> mapper) {
         mapper.setAttributeFormat(getNameFormat());
-        mapper.setId(getFriendlyName());
+        mapper.setId(getMapperId());
         mapper.setSAMLName(getName());
         final ScopedStringAttributeValueMapper foo = new ScopedStringAttributeValueMapper();
         foo.setDelimiter(getScopeDelimiter());

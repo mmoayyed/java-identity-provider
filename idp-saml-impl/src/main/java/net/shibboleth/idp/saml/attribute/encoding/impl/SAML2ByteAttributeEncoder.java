@@ -59,7 +59,7 @@ public class SAML2ByteAttributeEncoder extends AbstractSAML2AttributeEncoder<Byt
     @Override @Nonnull public void populateAttributeMapper(final
             AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute> mapper) {
         mapper.setAttributeFormat(getNameFormat());
-        mapper.setId(getFriendlyName());
+        mapper.setId(getMapperId());
         mapper.setSAMLName(getName());
         mapper.setValueMapper(new ByteAttributeValueMapper());
     }

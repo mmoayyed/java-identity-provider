@@ -60,7 +60,7 @@ public class SAML2XMLObjectAttributeEncoder extends AbstractSAML2AttributeEncode
             final AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute> mapper) {
 
         mapper.setAttributeFormat(getNameFormat());
-        mapper.setId(getFriendlyName());
+        mapper.setId(getMapperId());
         mapper.setSAMLName(getName());
         mapper.setValueMapper(new XmlObjectAttributeValueMapper());
 
