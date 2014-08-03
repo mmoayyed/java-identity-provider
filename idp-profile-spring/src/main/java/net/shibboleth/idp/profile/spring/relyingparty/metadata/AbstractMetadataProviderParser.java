@@ -53,8 +53,8 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
     private final Logger log = LoggerFactory.getLogger(AbstractMetadataProviderParser.class);
 
     /**
-     * Handle attributes which are inapropriate for specific implementations. The chaining metadata provider cannot have
-     * "requireValidMetadata" or "failFastInitialization" set, even though they are present in the schema. <br/>
+     * Handle attributes which are inappropriate for specific implementations. The chaining metadata provider cannot
+     * have "requireValidMetadata" or "failFastInitialization" set, even though they are present in the schema. <br/>
      * This method detects whether these elements are present and if the element is not a chaining provider returns
      * true, otherwise it returns false and emits a warning.
      * 
@@ -75,13 +75,15 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
         return true;
     }
 
-    /** Is this the element at the top of the file?
+    /**
+     * Is this the element at the top of the file?
+     * 
      * @param element the element.
      * @return whether it is the outmost element.
      */
     private boolean isOuterElement(@Nonnull Element element) {
         return element.getParentNode().getNodeType() == Node.DOCUMENT_NODE;
-        
+
     }
 
     /**
@@ -172,11 +174,10 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
         if (null != filters && !filters.isEmpty()) {
             builder.addPropertyValue("metadataFilter", SpringSupport.parseCustomElements(filters, parserContext));
         }
-        
-        final List<Element>trustEngines =
+
+        final List<Element> trustEngines =
                 ElementSupport.getChildElements(element, SecurityNamespaceHandler.TRUST_ENGINE_ELEMENT_NAME);
         SpringSupport.parseCustomElements(trustEngines, parserContext);
-        
 
     }
 }
