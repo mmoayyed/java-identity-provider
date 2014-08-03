@@ -75,7 +75,7 @@ public class AttributeMapperTest extends OpenSAMLInitBaseTestCase {
 
         for (AttributeMapper<RequestedAttribute, IdPRequestedAttribute> mapper : mappers) {
             AbstractSAMLAttributeMapper sMappers = (AbstractSAMLAttributeMapper) mapper;
-            if (mapper.getId().equals("feduPersonScopedAffiliation")) {
+            if (mapper.getId().equals("MapperForfeduPersonScopedAffiliation")) {
                 Assert.assertEquals(sMappers.getSAMLName(), "urn:oid:1.3.6.1.4.1.5923.1.1.1.9");
                 Assert.assertEquals(sMappers.getAttributeFormat(), Attribute.URI_REFERENCE);
                 Assert.assertEquals(sMappers.getAttributeIds().size(), 1);
@@ -83,26 +83,26 @@ public class AttributeMapperTest extends OpenSAMLInitBaseTestCase {
                 ScopedStringAttributeValueMapper valueMapper =
                         (ScopedStringAttributeValueMapper) sMappers.getValueMapper();
                 Assert.assertEquals(valueMapper.getDelimiter(), "#");
-            } else if (mapper.getId().equals("feduPersonAssurance")) {
+            } else if (mapper.getId().equals("MapperForfeduPersonAssurance")) {
                 Assert.assertEquals(sMappers.getSAMLName(), "urn:oid:1.3.6.1.4.1.5923.1.1.1.11");
                 Assert.assertEquals(sMappers.getAttributeFormat(), Attribute.URI_REFERENCE);
                 Assert.assertEquals(sMappers.getAttributeIds().size(), 2);
                 Assert.assertEquals(sMappers.getAttributeIds().get(0), "eduPersonAssurance");
                 Assert.assertEquals(sMappers.getAttributeIds().get(1), "otherPersonAssurance");
                 Assert.assertTrue(sMappers.getValueMapper() instanceof StringAttributeValueMapper);
-            } else if (mapper.getId().equals("fOeduPersonAssurance")) {
+            } else if (mapper.getId().equals("MapperForfOeduPersonAssurance")) {
                 Assert.assertEquals(sMappers.getSAMLName(), "urn:oid:1.3.6.1.4.1.5923.1.1.1.11");
                 Assert.assertEquals(sMappers.getAttributeFormat(), "http://example.org/Format");
                 Assert.assertEquals(sMappers.getAttributeIds().size(), 1);
                 Assert.assertEquals(sMappers.getAttributeIds().get(0), "otherFormatPersonAssurance");
                 Assert.assertTrue(sMappers.getValueMapper() instanceof StringAttributeValueMapper);
-            } else if (mapper.getId().equals("fotherSAMLName")) {
+            } else if (mapper.getId().equals("MapperForfotherSAMLName")) {
                 Assert.assertEquals(sMappers.getSAMLName(), "http://example.org/name/for/Attribute");
                 Assert.assertEquals(sMappers.getAttributeFormat(), "http://example.org/Format");
                 Assert.assertEquals(sMappers.getAttributeIds().size(), 1);
                 Assert.assertEquals(sMappers.getAttributeIds().get(0), "eduPersonAssurance");
                 Assert.assertTrue(sMappers.getValueMapper() instanceof StringAttributeValueMapper);
-            } else if (mapper.getId().equals("feduPersonTargetedID")) {
+            } else if (mapper.getId().equals("MapperForfeduPersonTargetedID")) {
                 Assert.assertEquals(sMappers.getSAMLName(), "urn:oid:1.3.6.1.4.1.5923.1.1.1.10");
                 Assert.assertEquals(sMappers.getAttributeFormat(), Attribute.URI_REFERENCE);
                 Assert.assertEquals(sMappers.getAttributeIds().size(), 1);
