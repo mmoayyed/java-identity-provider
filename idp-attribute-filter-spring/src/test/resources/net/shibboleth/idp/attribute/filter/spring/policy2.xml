@@ -7,7 +7,7 @@
                             urn:mace:shibboleth:2.0:afp:mf:basic http://shibboleth.net/schema/idp/shibboleth-afp-mf-basic.xsd">
 
     <!-- Release affiliation to anyone in the InCommon group -->
-    <afp:AttributeFilterPolicy id="InCommonRelease">
+    <afp:AttributeFilterPolicy >
         <afp:PolicyRequirementRule xsi:type="basic:ANY"/>
         
         <afp:AttributeRule attributeID="affiliation">

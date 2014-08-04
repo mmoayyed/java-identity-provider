@@ -68,17 +68,22 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
     private Logger log = LoggerFactory.getLogger(AttributeFilterPolicyParser.class);
 
     /** {@inheritDoc} */
+    @Override
     protected Class<?> getBeanClass(Element arg0) {
         return AttributeFilterPolicy.class;
     }
 
     /** {@inheritDoc} */
  // Checkstyle: CyclomaticComplexity OFF
+    @Override
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        final String policyId = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
+        String policyId = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
+        if (null == policyId) {
+            policyId =  builder.getBeanDefinition().getAttribute("qualifiedId").toString();
+        }
         log.info("Parsing configuration for attribute filter policy {}", policyId);
         builder.addConstructorArgValue(policyId);
 
