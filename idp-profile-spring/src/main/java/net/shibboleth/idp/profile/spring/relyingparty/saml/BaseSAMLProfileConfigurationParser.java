@@ -47,7 +47,7 @@ import com.google.common.base.Predicate;
  * and for elements which inherit from <code>saml:SAMLProfileConfigutationType</code>.
  */
 public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleBeanDefinitionParser {
-    
+
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(BaseSAMLProfileConfigurationParser.class);
 
@@ -178,13 +178,13 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
                 return;
             }
             credentialRef = relyingParty.getAttributeNS(null, "defaultSigningCredentialRef");
-            log.debug("Using default signing credential reference {}", credentialRef);
+            log.debug("Using default signing credential reference '{}'", credentialRef);
         }
 
         final BeanDefinitionBuilder signingConfiguration =
                 BeanDefinitionBuilder.genericBeanDefinition(BasicSignatureSigningConfiguration.class);
         signingConfiguration.addPropertyReference("signingCredentials", credentialRef);
-        
+
         final BeanDefinitionBuilder configuration =
                 BeanDefinitionBuilder.genericBeanDefinition(SecurityConfiguration.class);
         configuration.addPropertyValue("signatureSigningConfiguration", signingConfiguration.getBeanDefinition());
@@ -197,6 +197,8 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
+        log.debug("Parsing Legacy SAML profile.  Destination type: '{}'", builder.getBeanDefinition()
+                .getBeanClass().getName());
         setSecurityConfiguration(element, builder, parserContext);
 
         if (element.hasAttributeNS(null, "assertionLifetime")) {
@@ -241,8 +243,7 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
                     predicateForSigning(element.getAttributeNS(null, "signAssertions")));
         }
         if (element.hasAttributeNS(null, "signRequests")) {
-            builder.addPropertyValue("signRequests",
-                    predicateForSigning(element.getAttributeNS(null, "signRequests")));
+            builder.addPropertyValue("signRequests", predicateForSigning(element.getAttributeNS(null, "signRequests")));
         }
         if (element.hasAttributeNS(null, "signResponses")) {
             builder.addPropertyValue("signResponses",

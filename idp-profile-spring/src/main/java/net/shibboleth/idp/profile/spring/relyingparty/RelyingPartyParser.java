@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty;
 
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
@@ -24,6 +26,7 @@ import net.shibboleth.idp.saml.profile.logic.EntitiesDescriptorPredicate;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
@@ -53,7 +56,9 @@ public class RelyingPartyParser extends AbstractRelyingPartyParser {
 
         final BeanDefinitionBuilder rpPredicate =
                 BeanDefinitionBuilder.genericBeanDefinition(RelyingPartyIdPredicate.class);
-        rpPredicate.addConstructorArgValue(id);
+        List<String> ids = new ManagedList<>(1);
+        ids.add(id);
+        rpPredicate.addConstructorArgValue(ids);
 
         final BeanDefinitionBuilder egPredicate =
                 BeanDefinitionBuilder.genericBeanDefinition(EntitiesDescriptorPredicate.class);
