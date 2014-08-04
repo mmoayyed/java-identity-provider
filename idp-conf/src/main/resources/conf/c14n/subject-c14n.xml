@@ -80,7 +80,7 @@
 
     <!--
     Under what conditions should direct NameID mapping be allowed? By default, never.
-    Any predicate can be used here; the example is suitable for enumerating a number of SPs to allow.
+    Any condition can be used here; the example is suitable for enumerating a number of SPs to allow.
     -->
     <bean id="shibboleth.NameTransformPredicate" parent="shibboleth.Conditions.RelyingPartyId">
         <constructor-arg>
