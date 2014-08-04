@@ -66,7 +66,8 @@
 
     <!--
     These are the actual MessageEncoder beans that implement the outgoing binding requirements.
-    There is generally never any reason to change these.
+    There is generally never any reason to change these. The init-method is being nulled below to
+    prevent explicit initialization by Spring, as this is deferred to the code to do.
     -->
 
     <bean id="shibboleth.Encoders.SAML1PostEncoder"

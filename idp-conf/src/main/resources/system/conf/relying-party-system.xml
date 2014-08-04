@@ -18,6 +18,7 @@
     <!-- This BeanPostProcessor auto-sets identifiable beans with the bean name (if not already set). -->
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
+    <!-- This is one of the few properties we rely on that has no default. -->
     <bean id="entityID" class="java.lang.String" c:_0="%{idp.entityID}" />
 
     <!-- Pulls together the various components that feed the resolver. -->
