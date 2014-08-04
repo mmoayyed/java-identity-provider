@@ -12,7 +12,8 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean id="shibboleth.SessionIDGenerator" class="net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy"
+    <bean id="shibboleth.SessionIDGenerator"
+        class="net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy"
         c:identifierSize="%{idp.session.idSize:32}" />
 
     <bean id="shibboleth.SPSessionSerializerRegistry" class="net.shibboleth.idp.session.SPSessionSerializerRegistry"
@@ -20,10 +21,12 @@
         <constructor-arg>
             <map>
                 <entry key="#{ T(net.shibboleth.idp.session.BasicSPSession) }">
-                    <bean class="net.shibboleth.idp.session.impl.BasicSPSessionSerializer" c:offset="PT30M" />
+                    <bean class="net.shibboleth.idp.session.impl.BasicSPSessionSerializer"
+                        c:offset="%{idp.session.slop:0}" />
                 </entry>
                 <entry key="#{ T(net.shibboleth.idp.saml.session.SAML2SPSession) }">
-                    <bean class="net.shibboleth.idp.saml.session.impl.SAML2SPSessionSerializer" c:offset="PT30M"
+                    <bean class="net.shibboleth.idp.saml.session.impl.SAML2SPSessionSerializer"
+                        c:offset="%{idp.session.slop:0}"
                         p:parserPool-ref="shibboleth.ParserPool" />
                 </entry>
             </map>
