@@ -201,7 +201,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
 
             if (requestedAttribute instanceof IdPRequestedAttribute
                     && !((IdPRequestedAttribute) requestedAttribute).getIsRequired() && onlyIfRequired) {
-                log.debug("{} Attribute {} found in metadata, but was not required" + ", values not matched",
+                log.debug("{} Attribute {} found in metadata, but was not required, values not matched",
                         getLogPrefix(), attribute.getId());
                 continue;
             }

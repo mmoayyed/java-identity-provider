@@ -200,8 +200,8 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
             if (propagateResolutionExceptions) {
                 throw e;
             } else {
-                log.debug("Resolver {} produced the following" + " error but was configured not to propogate it.",
-                        new Object[] {getId(), e,});
+                log.debug("Resolver plugin '{}' produced the following error but was configured not to propagate it.",
+                        getId(), e);
                 return null;
             }
         }

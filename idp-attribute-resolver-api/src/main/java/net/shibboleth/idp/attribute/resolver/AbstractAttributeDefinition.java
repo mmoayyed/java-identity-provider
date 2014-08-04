@@ -248,8 +248,8 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
                     resolvedAttribute.getValues());
         }
 
-        log.trace("{} associating the following display descriptions" + " with the resolved attribute: {}",
-                getLogPrefix(), getDisplayDescriptions());
+        log.trace("{} associating the following display descriptions with the resolved attribute: {}", getLogPrefix(),
+                getDisplayDescriptions());
         resolvedAttribute.setDisplayDescriptions(getDisplayDescriptions());
 
         log.trace("{} associating the following display names with the resolved attribute: {}", getLogPrefix(),

@@ -292,7 +292,7 @@ public class FilterAttributes extends AbstractProfileAction {
                 attributeContext.setIdPAttributes(filterContext.getFilteredIdPAttributes().values());
             }
         } catch (final AttributeFilterException e) {
-            log.error("{} Error encountered while filtering attributes", getLogPrefix() , e);
+            log.error("{} Error encountered while filtering attributes", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
         } finally {
             if (null != component) {

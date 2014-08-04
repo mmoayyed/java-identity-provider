@@ -92,7 +92,7 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
             @Nonnull final AuthenticationContext authenticationContext) {
 
         if (extContext.getAuthnException() != null) {
-            log.warn(getLogPrefix() + " External authentication produced exception", extContext.getAuthnException());
+            log.warn("{} External authentication produced exception", getLogPrefix(), extContext.getAuthnException());
             handleError(profileRequestContext, authenticationContext, extContext.getAuthnException(),
                     AuthnEventIds.AUTHN_EXCEPTION);
             return;

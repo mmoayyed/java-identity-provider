@@ -341,8 +341,8 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
                     return (Attribute) encoder.encode(attribute);
                 } catch (final AttributeEncodingException e) {
                     if (ignoringUnencodableAttributes) {
-                        log.debug(getLogPrefix() + " Unable to encode attribute " + attribute.getId()
-                                + "as SAML 1 attribute", e);
+                        log.debug("{} Unable to encode attribute {} as SAML 1 attribute", getLogPrefix(),
+                                attribute.getId(), e);
                     } else {
                         throw e;
                     }

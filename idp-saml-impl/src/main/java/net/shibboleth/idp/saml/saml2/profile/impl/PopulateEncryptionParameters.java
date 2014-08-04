@@ -348,7 +348,7 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
                 }
             }
         } catch (final ResolverException e) {
-            log.error("{} Error resolving EncryptionParameters", getLogPrefix() , e);
+            log.error("{} Error resolving EncryptionParameters", getLogPrefix(), e);
             if (encryptionOptional) {
                 log.info("{} Encryption is optional, ignoring inability to encrypt", getLogPrefix());
             } else {
