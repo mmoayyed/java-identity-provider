@@ -85,7 +85,7 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
                 throw new BeanCreationException("trustEngineRef and embedded public keys are mutually exlusive");
             }
             builder.addConstructorArgReference(StringSupport.trimOrNull(element.getAttributeNS(null, 
-                "trustEngineRef")));
+                    "trustEngineRef")));
         } else if (hasCertFile) {
             if (null != publicKeys && !publicKeys.isEmpty()) {
                 log.error("{}: certificateFile and embedded public keys are mutually exlusive", parserContext
@@ -174,7 +174,9 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
     private BeanDefinition buildCertificateCredential(String attribute) {
         final BeanDefinitionBuilder credentialBuilder =
                 BeanDefinitionBuilder.genericBeanDefinition(X509ResourceCredentialFactoryBean.class);
-        credentialBuilder.addPropertyValue("certificates", attribute);
+        final List<String> certs = new ManagedList<>(1);
+        certs.add(attribute);
+        credentialBuilder.addPropertyValue("certificates", certs);
         return credentialBuilder.getBeanDefinition();
     }
 
