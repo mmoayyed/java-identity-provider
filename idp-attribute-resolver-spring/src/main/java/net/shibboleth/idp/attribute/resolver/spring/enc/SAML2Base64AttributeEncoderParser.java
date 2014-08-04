@@ -47,15 +47,14 @@ public class SAML2Base64AttributeEncoderParser extends BaseAttributeEncoderParse
     public SAML2Base64AttributeEncoderParser() {
         setNameRequired(true);
     }
-    
+
     /** {@inheritDoc} */
-    protected Class<SAML2ByteAttributeEncoder> getBeanClass(@Nullable Element element) {
+    @Override protected Class<SAML2ByteAttributeEncoder> getBeanClass(@Nullable Element element) {
         return SAML2ByteAttributeEncoder.class;
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
@@ -65,6 +64,6 @@ public class SAML2Base64AttributeEncoderParser extends BaseAttributeEncoderParse
         }
         builder.addPropertyValue("nameFormat", nameFormat);
 
-        builder.addPropertyValue("friendlyName", config.getAttribute(FRIENDLY_NAME_ATTRIBUTE_NAME));
+        builder.addPropertyValue("friendlyName", config.getAttributeNS(null, FRIENDLY_NAME_ATTRIBUTE_NAME));
     }
 }

@@ -39,16 +39,17 @@ public class PrescopedAttributeDefinitionParser extends BaseAttributeDefinitionP
     private final Logger log = LoggerFactory.getLogger(PrescopedAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
-    protected Class<PrescopedAttributeDefinition> getBeanClass(@Nullable Element element) {
+    @Override protected Class<PrescopedAttributeDefinition> getBeanClass(@Nullable Element element) {
         return PrescopedAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
+        // TODO(rdw) move default to bean.
         String scopeDelimiter = "@";
-        
+
         if (config.hasAttributeNS(null, "scopeDelimiter")) {
             scopeDelimiter = config.getAttributeNS(null, "scopeDelimiter");
         }

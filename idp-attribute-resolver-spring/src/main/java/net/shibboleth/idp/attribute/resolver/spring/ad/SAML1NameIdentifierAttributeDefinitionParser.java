@@ -31,35 +31,33 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /** Spring bean definition parser for SAML 1 NameIdentifier attribute definitions. */
-public class SAML1NameIdentifierAttributeDefinitionParser extends
-        BaseAttributeDefinitionParser {
+public class SAML1NameIdentifierAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
             "SAML1NameIdentifier");
 
     /** Logger. */
-    private final Logger log = LoggerFactory
-            .getLogger(SAML1NameIdentifierAttributeDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(SAML1NameIdentifierAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
-    protected Class<SAML1NameIdentifierAttributeDefinition> getBeanClass(@Nullable Element element) {
+    @Override protected Class<SAML1NameIdentifierAttributeDefinition> getBeanClass(@Nullable Element element) {
         return SAML1NameIdentifierAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
+        // TODO(rdw) move default to bean.
         String nameIdFormat = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";
         if (config.hasAttributeNS(null, "nameIdFormat")) {
             nameIdFormat = StringSupport.trimOrNull(config.getAttributeNS(null, "nameIdFormat"));
         }
         final String nameIdQualifier = StringSupport.trimOrNull(config.getAttributeNS(null, "nameIdQualifier"));
 
-        log.debug("{} nameIdFormat '{}', nameIdQualifier '{}'.", new Object[] {getLogPrefix(), nameIdFormat,
-                nameIdQualifier,});
+        log.debug("{} nameIdFormat '{}', nameIdQualifier '{}'.", getLogPrefix(), nameIdFormat, nameIdQualifier);
         builder.addPropertyValue("nameIdFormat", nameIdFormat);
         builder.addPropertyValue("nameIdQualifier", nameIdQualifier);
     }

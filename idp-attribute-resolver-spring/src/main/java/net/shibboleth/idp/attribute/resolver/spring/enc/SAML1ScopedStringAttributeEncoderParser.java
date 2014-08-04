@@ -32,8 +32,7 @@ import org.w3c.dom.Element;
 /**
  * Spring Bean Definition Parser for {@link SAML1ScopedStringAttributeEncoder}.
  */
-public class SAML1ScopedStringAttributeEncoderParser extends
-        BaseScopedAttributeEncoderParser {
+public class SAML1ScopedStringAttributeEncoderParser extends BaseScopedAttributeEncoderParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML1ScopedString");
@@ -45,21 +44,21 @@ public class SAML1ScopedStringAttributeEncoderParser extends
     public SAML1ScopedStringAttributeEncoderParser() {
         setNameRequired(true);
     }
-    
+
     /** {@inheritDoc} */
-    protected Class<SAML1ScopedStringAttributeEncoder> getBeanClass(@Nullable Element element) {
+    @Override protected Class<SAML1ScopedStringAttributeEncoder> getBeanClass(@Nullable Element element) {
         return SAML1ScopedStringAttributeEncoder.class;
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
         if (config.hasAttributeNS(null, SCOPE_TYPE_ATTRIBUTE_NAME)) {
             builder.addPropertyValue("scopeType", config.getAttributeNS(null, SCOPE_TYPE_ATTRIBUTE_NAME));
         } else {
+            // TODO(rdw) Move default into the bean
             builder.addPropertyValue("scopeType", "attribute");
         }
 
@@ -69,5 +68,5 @@ public class SAML1ScopedStringAttributeEncoderParser extends
         }
         builder.addPropertyValue("namespace", namespace);
     }
-    
+
 }

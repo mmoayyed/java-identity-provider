@@ -50,6 +50,7 @@ public class SAML2ScopedStringAttributeEncoderParser extends
     }
     
     /** {@inheritDoc} */
+    @Override
     protected Class<SAML2ScopedStringAttributeEncoder> getBeanClass(@Nullable Element element) {
         return SAML2ScopedStringAttributeEncoder.class;
     }
@@ -72,7 +73,7 @@ public class SAML2ScopedStringAttributeEncoderParser extends
         }
         builder.addPropertyValue("nameFormat", nameFormat);
 
-        builder.addPropertyValue("friendlyName", config.getAttribute(FRIENDLY_NAME_ATTRIBUTE_NAME));
+        builder.addPropertyValue("friendlyName", config.getAttributeNS(null, FRIENDLY_NAME_ATTRIBUTE_NAME));
     }
     
 }

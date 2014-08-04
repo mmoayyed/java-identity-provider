@@ -55,6 +55,7 @@ public class SAML1StringNameIdentifierEncoderParser extends AbstractSingleBeanDe
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
+        // TODO(rdw) Move default into the bean
         String format = NameIdentifier.UNSPECIFIED;
         if (config.hasAttributeNS(null, FORMAT_ATTRIBUTE_NAME)) {
             format = StringSupport.trimOrNull(config.getAttributeNS(null, FORMAT_ATTRIBUTE_NAME));

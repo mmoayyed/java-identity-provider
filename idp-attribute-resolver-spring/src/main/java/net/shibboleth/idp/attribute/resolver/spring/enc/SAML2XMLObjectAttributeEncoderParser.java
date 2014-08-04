@@ -45,14 +45,14 @@ public class SAML2XMLObjectAttributeEncoderParser extends BaseAttributeEncoderPa
     public SAML2XMLObjectAttributeEncoderParser() {
         setNameRequired(true);
     }
-    
+
     /** {@inheritDoc} */
-    protected Class<SAML2XMLObjectAttributeEncoder> getBeanClass(@Nullable Element element) {
+    @Override protected Class<SAML2XMLObjectAttributeEncoder> getBeanClass(@Nullable Element element) {
         return SAML2XMLObjectAttributeEncoder.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
@@ -61,8 +61,8 @@ public class SAML2XMLObjectAttributeEncoderParser extends BaseAttributeEncoderPa
             nameFormat = StringSupport.trimOrNull(config.getAttributeNS(null, NAME_FORMAT_ATTRIBUTE_NAME));
         }
         builder.addPropertyValue("nameFormat", nameFormat);
-        
-        builder.addPropertyValue("friendlyName", config.getAttribute(FRIENDLY_NAME_ATTRIBUTE_NAME));
+
+        builder.addPropertyValue("friendlyName", config.getAttributeNS(null, FRIENDLY_NAME_ATTRIBUTE_NAME));
     }
 
 }

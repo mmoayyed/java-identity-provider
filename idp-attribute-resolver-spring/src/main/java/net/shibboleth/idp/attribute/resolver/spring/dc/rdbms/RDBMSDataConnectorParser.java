@@ -161,6 +161,7 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
 
             String velocityEngineRef = StringSupport.trimOrNull(configElement.getAttribute("templateEngine"));
             if (null == velocityEngineRef) {
+                // TODO(rdw) Move default into the bean
                 velocityEngineRef = "shibboleth.VelocityEngine";
             }
             templateBuilder.addPropertyReference("velocityEngine", velocityEngineRef);

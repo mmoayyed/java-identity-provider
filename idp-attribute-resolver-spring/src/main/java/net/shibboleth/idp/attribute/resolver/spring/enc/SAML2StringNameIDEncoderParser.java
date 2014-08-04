@@ -34,7 +34,7 @@ import org.w3c.dom.Element;
  * Spring bean definition parser for {@link SAML2StringNameIDEncoder}.
  */
 public class SAML2StringNameIDEncoderParser extends AbstractSingleBeanDefinitionParser {
-    
+
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML2StringNameID");
 
@@ -43,16 +43,14 @@ public class SAML2StringNameIDEncoderParser extends AbstractSingleBeanDefinition
 
     /** Local name of name qualifier attribute. */
     public static final String NAMEQUALIFIER_ATTRIBUTE_NAME = "nameQualifier";
-    
+
     /** {@inheritDoc} */
-    @Override
-    protected Class<SAML2StringNameIDEncoder> getBeanClass(@Nullable Element element) {
+    @Override protected Class<SAML2StringNameIDEncoder> getBeanClass(@Nullable Element element) {
         return SAML2StringNameIDEncoder.class;
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
@@ -62,13 +60,12 @@ public class SAML2StringNameIDEncoderParser extends AbstractSingleBeanDefinition
         }
         builder.setInitMethodName(null);
         builder.addPropertyValue("nameFormat", namespace);
-        
+
         builder.addPropertyValue("nameQualifier", config.getAttributeNS(null, NAMEQUALIFIER_ATTRIBUTE_NAME));
     }
 
     /** {@inheritDoc} */
-    @Override
-    public boolean shouldGenerateId() {
+    @Override public boolean shouldGenerateId() {
         return true;
     }
 

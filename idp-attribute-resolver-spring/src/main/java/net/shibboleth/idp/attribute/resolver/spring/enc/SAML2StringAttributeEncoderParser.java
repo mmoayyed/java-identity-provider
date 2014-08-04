@@ -49,13 +49,13 @@ public class SAML2StringAttributeEncoderParser extends BaseAttributeEncoderParse
     }
 
     /** {@inheritDoc} */
+    @Override
     protected Class<SAML2StringAttributeEncoder> getBeanClass(@Nullable Element element) {
         return SAML2StringAttributeEncoder.class;
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
@@ -64,7 +64,7 @@ public class SAML2StringAttributeEncoderParser extends BaseAttributeEncoderParse
             nameFormat = StringSupport.trimOrNull(config.getAttributeNS(null, NAME_FORMAT_ATTRIBUTE_NAME));
         }
         builder.addPropertyValue("nameFormat", nameFormat);
-        
+
         builder.addPropertyValue("friendlyName", config.getAttribute(FRIENDLY_NAME_ATTRIBUTE_NAME));
     }
 }

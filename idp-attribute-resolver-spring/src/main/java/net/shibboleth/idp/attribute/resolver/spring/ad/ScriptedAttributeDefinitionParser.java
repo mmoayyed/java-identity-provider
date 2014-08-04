@@ -63,7 +63,7 @@ public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionPa
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        BeanDefinitionBuilder scriptBuilder =
+        final BeanDefinitionBuilder scriptBuilder =
                 BeanDefinitionBuilder.genericBeanDefinition(EvaluableScriptFactoryBean.class);
         scriptBuilder.addPropertyValue("sourceId", getLogPrefix());
         if (config.hasAttributeNS(null, "language")) {

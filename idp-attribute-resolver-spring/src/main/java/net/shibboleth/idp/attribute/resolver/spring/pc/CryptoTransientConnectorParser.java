@@ -41,6 +41,7 @@ public class CryptoTransientConnectorParser extends AbstractPrincipalConnectorPa
     @Override protected void addSAMLDecoders(@Nonnull Element config, @Nonnull ParserContext parserContext,
             @Nonnull BeanDefinitionBuilder builder) {
 
+        // TODO Move this defaulting up into the bean?
         String dataSealer = "shibboleth.TransientIDDataSealer";
         if (config.hasAttributeNS(null, "dataSealerRef")) {
             dataSealer = StringSupport.trimOrNull(config.getAttributeNS(null, "dataSealerRef"));

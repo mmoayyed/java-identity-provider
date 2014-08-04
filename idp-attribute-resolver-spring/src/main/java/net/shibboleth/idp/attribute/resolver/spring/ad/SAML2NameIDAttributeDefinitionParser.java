@@ -37,19 +37,19 @@ public class SAML2NameIDAttributeDefinitionParser extends BaseAttributeDefinitio
     public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "SAML2NameID");
 
     /** Logger. */
-    private final Logger log = LoggerFactory
-            .getLogger(SAML1NameIdentifierAttributeDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(SAML1NameIdentifierAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
-    protected Class<SAML2NameIDAttributeDefinition> getBeanClass(@Nullable Element element) {
+    @Override protected Class<SAML2NameIDAttributeDefinition> getBeanClass(@Nullable Element element) {
         return SAML2NameIDAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
+        // TODO(rdw) Move default to bean?
         String nameIdFormat = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";
         if (config.hasAttributeNS(null, "nameIdFormat")) {
             nameIdFormat = StringSupport.trimOrNull(config.getAttributeNS(null, "nameIdFormat"));
@@ -62,7 +62,7 @@ public class SAML2NameIDAttributeDefinitionParser extends BaseAttributeDefinitio
         final String nameIdSPQualifier = StringSupport.trimOrNull(config.getAttributeNS(null, "nameIdSPQualifier"));
         builder.addPropertyValue("nameIdSPQualifier", nameIdSPQualifier);
 
-        log.debug("{} nameIdFormat '{}', nameIdQualifier '{}', nameIdSPQualifier '{}'.",
-                new Object[] {getLogPrefix(), nameIdFormat, nameIdQualifier, nameIdSPQualifier,});
+        log.debug("{} nameIdFormat '{}', nameIdQualifier '{}', nameIdSPQualifier '{}'.", getLogPrefix(), nameIdFormat,
+                nameIdQualifier, nameIdSPQualifier);
     }
 }

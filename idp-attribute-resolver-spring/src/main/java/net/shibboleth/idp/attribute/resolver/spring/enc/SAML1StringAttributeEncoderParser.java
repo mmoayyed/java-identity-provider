@@ -45,18 +45,18 @@ public class SAML1StringAttributeEncoderParser extends BaseAttributeEncoderParse
     public SAML1StringAttributeEncoderParser() {
         setNameRequired(true);
     }
-    
+
     /** {@inheritDoc} */
-    protected Class<SAML1StringAttributeEncoder> getBeanClass(@Nullable Element element) {
+    @Override protected Class<SAML1StringAttributeEncoder> getBeanClass(@Nullable Element element) {
         return SAML1StringAttributeEncoder.class;
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
+        // TODO(rdw) Move default into the bean
         String namespace = SAMLConstants.SAML1_ATTR_NAMESPACE_URI;
         if (config.hasAttributeNS(null, NAMESPACE_ATTRIBUTE_NAME)) {
             namespace = StringSupport.trimOrNull(config.getAttributeNS(null, NAMESPACE_ATTRIBUTE_NAME));

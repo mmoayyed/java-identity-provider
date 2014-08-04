@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
@@ -67,7 +66,7 @@ public class MappedAttributeDefinitionParser extends BaseAttributeDefinitionPars
         String passThru = null;
 
         if (null != defaultValueElements && defaultValueElements.size() > 0) {
-            Element defaultValueElement = defaultValueElements.get(0);
+            final Element defaultValueElement = defaultValueElements.get(0);
             defaultValue = StringSupport.trimOrNull(defaultValueElement.getTextContent());
 
             if (defaultValueElement.hasAttributeNS(null, "passThru")) {
@@ -86,7 +85,7 @@ public class MappedAttributeDefinitionParser extends BaseAttributeDefinitionPars
                     + "' At least one ValueMap must be specified");
         }
 
-        ManagedList<BeanDefinition> valueMaps = SpringSupport.parseCustomElements(valueMapElements, parserContext);
+        final List<BeanDefinition> valueMaps = SpringSupport.parseCustomElements(valueMapElements, parserContext);
 
         log.debug("{} passThru = {}, defaultValue = {}, {} value maps.", new Object[] {getLogPrefix(), passThru,
                 defaultValue, valueMaps.size(),});
