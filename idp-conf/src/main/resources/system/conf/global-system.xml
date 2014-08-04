@@ -72,7 +72,7 @@
                 <prop key="file.resource.loader.class">
                     org.apache.velocity.runtime.resource.loader.FileResourceLoader
                 </prop>
-                <prop key="file.resource.loader.path">%{idp.home}/views</prop>
+                <prop key="file.resource.loader.path">%{idp.views:%{idp.home}/views}</prop>
                 <prop key="file.resource.loader.cache">false</prop>
             </props>
         </property>
