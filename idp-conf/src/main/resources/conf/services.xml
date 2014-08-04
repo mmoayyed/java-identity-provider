@@ -54,7 +54,7 @@
     -->
     
     <!--
-    Otherwise by default we look at files whose names are derived from %{idp.home}. Services not configured
+    Otherwise by default we look at resources whose names are derived from %{idp.home}. Services not configured
     using native Spring syntax also need to load the property-placeholder file in order to pull settings from
     property sources.
     -->
@@ -99,4 +99,13 @@
         <value>%{idp.home}/system/conf/access-control-system.xml</value>
     </util:list>
 
+    <!--
+    This collection of resources differs slightly in that it should not include the file extension.
+    Message sources are internationalized, and Spring will search for a compatible language extension
+    and fall back to one with a .properties extension.
+    -->
+    <util:list id="shibboleth.MessageSourceResources">
+        <value>%{idp.home}/conf/messages</value>
+    </util:list>
+    
 </beans>

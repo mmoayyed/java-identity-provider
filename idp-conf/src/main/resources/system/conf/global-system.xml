@@ -32,7 +32,8 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
-            p:cacheSeconds="300" p:basename="%{idp.home}/conf/messages" />
+            p:cacheSeconds="%{idp.errors.cacheSeconds:300}"
+            p:basenames-ref="shibboleth.MessageSourceResources" />
 
     <import resource="general-authn-system.xml" />
     <import resource="session-manager.xml" />
