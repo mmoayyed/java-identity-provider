@@ -137,7 +137,7 @@ public class AttributeRuleParser extends BaseFilterParser {
             builder.addPropertyValue("isDenyRule", true);
         } else if (config.hasAttributeNS(null, PERMIT_ANY_ATTRIBUTE)
                 && AttributeSupport.getAttributeValueAsBoolean(config.getAttributeNodeNS(null, PERMIT_ANY_ATTRIBUTE))) {
-
+            // Note the documented restriction that permitAny cannot be property replaced.
             builder.addPropertyValue("isDenyRule", false);
             builder.addPropertyValue("matcher", Matcher.MATCHES_ALL);
         } else {
