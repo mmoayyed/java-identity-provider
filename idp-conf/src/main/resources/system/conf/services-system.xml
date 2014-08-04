@@ -25,7 +25,7 @@
         p:serviceConfigurations-ref="shibboleth.AttributeFilterResources"
         p:failFast="%{idp.service.attribute.filter.failFast:false}"
         p:reloadCheckDelay="%{idp.service.attribute.filter.checkInterval:0}"
-        p:reloadTaskTimer="shibboleth.TaskTimer">
+        p:reloadTaskTimer-ref="shibboleth.TaskTimer">
         <constructor-arg name="claz"
             value="net.shibboleth.idp.attribute.filter.AttributeFilter" />
         <constructor-arg name="strategy">
@@ -39,7 +39,7 @@
         p:serviceConfigurations-ref="shibboleth.AttributeResolverResources"
         p:failFast="%{idp.service.attribute.resolver.failFast:false}"
         p:reloadCheckDelay="%{idp.service.attribute.resolver.checkInterval:0}"
-        p:reloadTaskTimer="shibboleth.TaskTimer">
+        p:reloadTaskTimer-ref="shibboleth.TaskTimer">
         <constructor-arg name="claz"
             value="net.shibboleth.idp.attribute.resolver.AttributeResolver" />
         <constructor-arg name="strategy">
@@ -53,13 +53,13 @@
         p:serviceConfigurations-ref="shibboleth.NameIdentifierGenerationResources"
         p:failFast="%{idp.service.nameidGeneration.failFast:false}"
         p:reloadCheckDelay="%{idp.service.nameidGeneration.checkInterval:0}"
-        p:reloadTaskTimer="shibboleth.TaskTimer" />
+        p:reloadTaskTimer-ref="shibboleth.TaskTimer" />
 
     <bean id="shibboleth.RelyingPartyResolverService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
         p:serviceConfigurations-ref="shibboleth.RelyingPartyResolverResources"
         p:failFast="%{idp.service.relyingparty.failFast:false}"
         p:reloadCheckDelay="%{idp.service.relyingparty.checkInterval:0}"
-        p:reloadTaskTimer="shibboleth.TaskTimer">
+        p:reloadTaskTimer-ref="shibboleth.TaskTimer">
         <constructor-arg name="claz"
             value="net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver" />
         <constructor-arg name="strategy">
@@ -73,7 +73,7 @@
         p:serviceConfigurations-ref="shibboleth.MetadataResolverResources"
         p:failFast="%{idp.service.metadata.failFast:false}"
         p:reloadCheckDelay="%{idp.service.metadata.checkInterval:0}"
-        p:reloadTaskTimer="shibboleth.TaskTimer">
+        p:reloadTaskTimer-ref="shibboleth.TaskTimer">
         <constructor-arg name="claz"
             value="org.opensaml.saml.metadata.resolver.MetadataResolver" />
         <constructor-arg name="strategy">
@@ -91,7 +91,7 @@
         p:serviceConfigurations-ref="shibboleth.AccessControlResources"
         p:failFast="%{idp.service.access.failFast:true}"
         p:reloadCheckDelay="%{idp.service.access.checkInterval:0}"
-        p:reloadTaskTimer="shibboleth.TaskTimer" />
+        p:reloadTaskTimer-ref="shibboleth.TaskTimer" />
 
     <!--
     These are proxies/facades that expose a service-unaware interface to client components.
