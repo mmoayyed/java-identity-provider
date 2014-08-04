@@ -111,7 +111,7 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
 
     /**
      * Used to process string elements that contain an xml:lang attribute expressing localization.
-     * Eeturns a {@link ManagedMap} to allow property replacement to work.
+     * returns a {@link ManagedMap} to allow property replacement to work.
      * 
      * @param elements list of elements, must not be null, may be empty
      * 
