@@ -89,7 +89,6 @@ public class AttributeRuleParser extends BaseFilterParser {
 
         final String attributeId = StringSupport.trimOrNull(config.getAttributeNS(null, "attributeID"));
         builder.addPropertyValue("attributeId", attributeId);
-        log.info("attributeID '{}' for '{}'", attributeId, config);
 
         final List<Element> permitValueRule = ElementSupport.getChildElements(config, PERMIT_VALUE_RULE);
         final List<Element> permitValueReference = ElementSupport.getChildElements(config, PERMIT_VALUE_REF);
