@@ -27,6 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.AttributeResolverNamespaceHandler;
@@ -88,7 +89,7 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
      * @return bean factory
      */
     @Nonnull protected BeanFactory createBeanFactory(@Nonnull final String... springResources) {
-        final GenericApplicationContext ctx = new GenericApplicationContext();
+        final GenericApplicationContext ctx = new FilesystemGenericApplicationContext();
         final XmlBeanDefinitionReader definitionReader = new XmlBeanDefinitionReader(ctx);
         definitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
         definitionReader.setNamespaceAware(true);
