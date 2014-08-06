@@ -54,14 +54,12 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
     private final Logger log = LoggerFactory.getLogger(RDBMSDataConnectorParser.class);
 
     /** {@inheritDoc} */
-    @Override
-    protected Class<RDBMSDataConnector> getBeanClass(@Nullable final Element element) {
+    @Override protected Class<RDBMSDataConnector> getBeanClass(@Nullable final Element element) {
         return RDBMSDataConnector.class;
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
         log.debug("doParse {}", config);
@@ -122,7 +120,11 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
         builder.setDestroyMethodName("destroy");
     }
 
-    /** Utility class for parsing v2 schema configuration. */
+    /**
+     * Utility class for parsing v2 schema configuration.
+     * 
+     * TODO(rdw) Move defaults into the bean
+     */
     protected static class V2Parser {
 
         /** Base XML element. */
@@ -140,7 +142,7 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
 
         /**
          * Create the data source bean definition. See {@link ManagedConnectionParser}.
-         *
+         * 
          * @return data source bean definition
          */
         @Nonnull public BeanDefinition createDataSource() {
@@ -161,7 +163,6 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
 
             String velocityEngineRef = StringSupport.trimOrNull(configElement.getAttribute("templateEngine"));
             if (null == velocityEngineRef) {
-                // TODO(rdw) Move default into the bean
                 velocityEngineRef = "shibboleth.VelocityEngine";
             }
             templateBuilder.addPropertyReference("velocityEngine", velocityEngineRef);
@@ -192,7 +193,7 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
 
         /**
          * Create the results cache. See {@link CacheConfigParser}.
-         *
+         * 
          * @return results cache
          */
         @Nullable public BeanDefinition createCache() {

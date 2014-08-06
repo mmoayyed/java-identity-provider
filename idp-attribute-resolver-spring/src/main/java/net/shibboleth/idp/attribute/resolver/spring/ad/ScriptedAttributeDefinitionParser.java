@@ -34,7 +34,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-// TODO incomplete port from v2
 /**
  * Spring bean definition parser for scripted attribute configuration elements.
  */

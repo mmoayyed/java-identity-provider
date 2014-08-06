@@ -74,6 +74,7 @@ public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition 
         nameIDBuilder = (SAMLObjectBuilder<NameID>)
                 XMLObjectProviderRegistrySupport.getBuilderFactory().<NameID>getBuilderOrThrow(
                         NameID.DEFAULT_ELEMENT_NAME);
+        nameIdFormat = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";
     }
 
     /**

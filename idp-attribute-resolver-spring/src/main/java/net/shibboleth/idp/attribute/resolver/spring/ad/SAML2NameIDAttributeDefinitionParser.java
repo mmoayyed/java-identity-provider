@@ -49,12 +49,11 @@ public class SAML2NameIDAttributeDefinitionParser extends BaseAttributeDefinitio
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        // TODO(rdw) Move default to bean?
-        String nameIdFormat = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";
         if (config.hasAttributeNS(null, "nameIdFormat")) {
-            nameIdFormat = StringSupport.trimOrNull(config.getAttributeNS(null, "nameIdFormat"));
+            final String nameIdFormat = StringSupport.trimOrNull(config.getAttributeNS(null, "nameIdFormat"));
+            builder.addPropertyValue("nameIdFormat", nameIdFormat);
+            log.debug("{} nameIdFormat '{}'", getLogPrefix(), nameIdFormat);
         }
-        builder.addPropertyValue("nameIdFormat", nameIdFormat);
 
         final String nameIdQualifier = StringSupport.trimOrNull(config.getAttributeNS(null, "nameIdQualifier"));
         builder.addPropertyValue("nameIdQualifier", nameIdQualifier);
@@ -62,7 +61,7 @@ public class SAML2NameIDAttributeDefinitionParser extends BaseAttributeDefinitio
         final String nameIdSPQualifier = StringSupport.trimOrNull(config.getAttributeNS(null, "nameIdSPQualifier"));
         builder.addPropertyValue("nameIdSPQualifier", nameIdSPQualifier);
 
-        log.debug("{} nameIdFormat '{}', nameIdQualifier '{}', nameIdSPQualifier '{}'.", getLogPrefix(), nameIdFormat,
-                nameIdQualifier, nameIdSPQualifier);
+        log.debug("{} nameIdQualifier '{}', nameIdSPQualifier '{}'.", getLogPrefix(), nameIdQualifier,
+                nameIdSPQualifier);
     }
 }

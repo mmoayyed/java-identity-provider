@@ -24,7 +24,6 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringAttributeEncoder;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.saml.saml2.core.Attribute;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -49,8 +48,7 @@ public class SAML2StringAttributeEncoderParser extends BaseAttributeEncoderParse
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected Class<SAML2StringAttributeEncoder> getBeanClass(@Nullable Element element) {
+    @Override protected Class<SAML2StringAttributeEncoder> getBeanClass(@Nullable Element element) {
         return SAML2StringAttributeEncoder.class;
     }
 
@@ -59,11 +57,10 @@ public class SAML2StringAttributeEncoderParser extends BaseAttributeEncoderParse
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        String nameFormat = Attribute.URI_REFERENCE;
         if (config.hasAttributeNS(null, NAME_FORMAT_ATTRIBUTE_NAME)) {
-            nameFormat = StringSupport.trimOrNull(config.getAttributeNS(null, NAME_FORMAT_ATTRIBUTE_NAME));
+            final String nameFormat = StringSupport.trimOrNull(config.getAttributeNS(null, NAME_FORMAT_ATTRIBUTE_NAME));
+            builder.addPropertyValue("nameFormat", nameFormat);
         }
-        builder.addPropertyValue("nameFormat", nameFormat);
 
         builder.addPropertyValue("friendlyName", config.getAttribute(FRIENDLY_NAME_ATTRIBUTE_NAME));
     }

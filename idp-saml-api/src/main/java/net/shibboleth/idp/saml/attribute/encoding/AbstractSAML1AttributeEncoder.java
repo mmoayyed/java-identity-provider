@@ -63,6 +63,7 @@ public abstract class AbstractSAML1AttributeEncoder<EncodedType extends IdPAttri
         if (attributeBuilder == null) {
             throw new ConstraintViolationException("SAML 1 Attribute builder is unavailable");
         }
+        namespace = net.shibboleth.idp.saml.xml.SAMLConstants.SAML1_ATTR_NAMESPACE_URI;
     }
 
     /** {@inheritDoc} */

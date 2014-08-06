@@ -22,7 +22,6 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML1XMLObjectAttributeEncoder;
-import net.shibboleth.idp.saml.xml.SAMLConstants;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -53,12 +52,10 @@ public class SAML1XMLObjectAttributeEncoderParser extends BaseAttributeEncoderPa
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        // TODO(rdw) move default into the bean.
-        String namespace = SAMLConstants.SAML1_ATTR_NAMESPACE_URI;
         if (config.hasAttributeNS(null, NAMESPACE_ATTRIBUTE_NAME)) {
-            namespace = StringSupport.trimOrNull(config.getAttributeNS(null, NAMESPACE_ATTRIBUTE_NAME));
+            final String namespace = StringSupport.trimOrNull(config.getAttributeNS(null, NAMESPACE_ATTRIBUTE_NAME));
+            builder.addPropertyValue("namespace", namespace);
         }
-        builder.addPropertyValue("namespace", namespace);
     }
 
 }

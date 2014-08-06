@@ -22,8 +22,8 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML1NameIdentifierEncoder;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -65,6 +65,7 @@ public class SAML1StringNameIdentifierEncoder extends AbstractSAML1NameIdentifie
         if (identifierBuilder == null) {
             throw new ConstraintViolationException("Builder unavailable for NameIdentifier objects");
         }
+        format = NameIdentifier.UNSPECIFIED;
     }
 
     /**
@@ -114,6 +115,7 @@ public class SAML1StringNameIdentifierEncoder extends AbstractSAML1NameIdentifie
     }
     
     /** {@inheritDoc} */
+    @Override
     @Nonnull public NameIdentifier encode(@Nonnull final IdPAttribute attribute) throws AttributeEncodingException {
         final String attributeId = attribute.getId();
 

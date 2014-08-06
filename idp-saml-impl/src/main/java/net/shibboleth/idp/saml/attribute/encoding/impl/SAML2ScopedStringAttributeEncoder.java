@@ -58,6 +58,16 @@ public class SAML2ScopedStringAttributeEncoder extends AbstractSAML2AttributeEnc
 
     /** Attribute name used for "attribute" scopeType. */
     @Nullable private String scopeAttributeName;
+    
+    /**
+     * Constructor.
+     *
+     */
+    public SAML2ScopedStringAttributeEncoder() {
+        scopeDelimiter = "@";
+        scopeAttributeName = "Scope";
+        scopeType = "inline";
+    }
 
     /**
      * Get the name of the non-inline scope-carrying attribute.

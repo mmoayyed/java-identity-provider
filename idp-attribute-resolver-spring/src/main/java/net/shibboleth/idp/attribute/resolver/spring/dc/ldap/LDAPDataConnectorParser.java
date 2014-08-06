@@ -203,9 +203,13 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
     }
+
     // CheckStyle: MethodLength ON
 
-    /** Utility class for parsing v2 schema configuration. */
+    /**
+     * Utility class for parsing v2 schema configuration. 
+     * TODO(rdw) Move defaults into the bean
+     */
     protected static class V2Parser {
 
         /** LDAPDirectory XML element. */
@@ -304,8 +308,8 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                             + " only the first has been consulted", parserContext.getReaderContext().getResource()
                             .getDescription());
                 }
-                result.addPropertyValue("authCredential",
-                        SpringSupport.parseCustomElements(authElements, parserContext).get(0));
+                result.addPropertyValue("authCredential", SpringSupport
+                        .parseCustomElements(authElements, parserContext).get(0));
             }
 
             return result.getBeanDefinition();
@@ -452,7 +456,6 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                 strategy.addConstructorArgValue(idle.getBeanDefinition());
                 pool.addPropertyValue("pruneStrategy", strategy.getBeanDefinition());
             }
-
             pool.addPropertyValue("poolConfig", createPoolConfig());
 
             final String validateDN = AttributeSupport.getAttributeValue(poolConfigElement, new QName("validateDN"));
@@ -469,8 +472,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             } else {
                 searchRequest.addPropertyValue("baseDn", "");
             }
-            final BeanDefinitionBuilder searchFilter =
-                    BeanDefinitionBuilder.genericBeanDefinition(SearchFilter.class);
+            final BeanDefinitionBuilder searchFilter = BeanDefinitionBuilder.genericBeanDefinition(SearchFilter.class);
             if (validateFilter != null) {
                 searchFilter.addConstructorArgValue(validateFilter);
             } else {

@@ -47,13 +47,11 @@ public class PrescopedAttributeDefinitionParser extends BaseAttributeDefinitionP
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
-        // TODO(rdw) move default to bean.
-        String scopeDelimiter = "@";
 
         if (config.hasAttributeNS(null, "scopeDelimiter")) {
-            scopeDelimiter = config.getAttributeNS(null, "scopeDelimiter");
+            final String scopeDelimiter = config.getAttributeNS(null, "scopeDelimiter");
+            log.debug("{} scope delimiter of {} specified.", getLogPrefix(), scopeDelimiter);
+            builder.addPropertyValue("scopeDelimiter", scopeDelimiter);
         }
-        log.debug("{} scope delimiter of {} specified.", getLogPrefix(), scopeDelimiter);
-        builder.addPropertyValue("scopeDelimiter", scopeDelimiter);
     }
 }

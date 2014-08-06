@@ -20,8 +20,8 @@ package net.shibboleth.idp.saml.attribute.encoding.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML1AttributeEncoder;
@@ -53,6 +53,16 @@ public class SAML1ScopedStringAttributeEncoder extends AbstractSAML1AttributeEnc
     /** Attribute name used for "attribute" scopeType. */
     @Nullable private String scopeAttributeName;
 
+    /**
+     * Constructor.
+     *
+     */
+    public SAML1ScopedStringAttributeEncoder() {
+        scopeDelimiter = "@";
+        scopeAttributeName =  "Scope";
+        scopeType = "attribute";
+    }
+    
     /**
      * Get the name of the non-inline scope-carrying attribute.
      * 

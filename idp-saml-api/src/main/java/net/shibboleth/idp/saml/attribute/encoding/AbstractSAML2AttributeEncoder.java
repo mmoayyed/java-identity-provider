@@ -64,6 +64,7 @@ public abstract class AbstractSAML2AttributeEncoder<EncodedType extends IdPAttri
         if (attributeBuilder == null) {
             throw new ConstraintViolationException("SAML 2 Attribute builder is unavailable");
         }
+        setNameFormat(Attribute.URI_REFERENCE);
     }
 
     /** {@inheritDoc} */

@@ -42,18 +42,12 @@ public abstract class BaseScopedAttributeEncoderParser extends BaseAttributeEnco
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        // TODO(rdw) Move default into the bean
         if (config.hasAttributeNS(null, SCOPE_DELIMITER_ATTRIBUTE_NAME)) {
             builder.addPropertyValue("scopeDelimiter", config.getAttributeNS(null, SCOPE_DELIMITER_ATTRIBUTE_NAME));
-        } else {
-            builder.addPropertyValue("scopeDelimiter", "@");
         }
 
-        // TODO(rdw) Move default into the bean
         if (config.hasAttributeNS(null, SCOPE_ATTRIBUTE_ATTRIBUTE_NAME)) {
             builder.addPropertyValue("scopeAttributeName", config.getAttributeNS(null, SCOPE_ATTRIBUTE_ATTRIBUTE_NAME));
-        } else {
-            builder.addPropertyValue("scopeAttributeName", "Scope");
         }
     }
 
