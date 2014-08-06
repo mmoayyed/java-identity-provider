@@ -331,7 +331,7 @@ public class RelyingPartyUIContext extends BaseContext {
         } else if (type.equals(ContactPersonTypeEnumeration.TECHNICAL.toString())) {
             return ContactPersonTypeEnumeration.TECHNICAL;
         } else {
-            log.warn("parameter provided to contactType:" + type + " is invalid");
+            log.warn("parameter provided to contactType: " + type + " is invalid");
             return ContactPersonTypeEnumeration.SUPPORT;
         }
     }
