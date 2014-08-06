@@ -17,6 +17,10 @@
 
 package net.shibboleth.idp.profile;
 
+import javax.annotation.Nonnull;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+
 // TODO: move attribute related events into that module?
 
 /**
@@ -28,41 +32,41 @@ public final class IdPEventIds {
     /**
      * ID of event returned if the {@link net.shibboleth.idp.profile.context.RelyingPartyContext} is missing or corrupt.
      */
-    public static final String INVALID_RELYING_PARTY_CTX = "InvalidRelyingPartyContext";
+    @Nonnull @NotEmpty public static final String INVALID_RELYING_PARTY_CTX = "InvalidRelyingPartyContext";
 
     /**
      * ID of event returned if the {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration} is missing or
      * corrupt.
      */
-    public static final String INVALID_RELYING_PARTY_CONFIG = "InvalidRelyingPartyConfiguration";
+    @Nonnull @NotEmpty public static final String INVALID_RELYING_PARTY_CONFIG = "InvalidRelyingPartyConfiguration";
 
     /**
      * ID of event returned if the {@link net.shibboleth.idp.profile.config.ProfileConfiguration} is missing or corrupt.
      */
-    public static final String INVALID_PROFILE_CONFIG = "InvalidProfileConfiguration";
+    @Nonnull @NotEmpty public static final String INVALID_PROFILE_CONFIG = "InvalidProfileConfiguration";
 
     /**
      * ID of event returned if the @link net.shibboleth.idp.attribute.context.AttributeContext is missing or corrupt.
      */
-    public static final String INVALID_ATTRIBUTE_CTX = "InvalidAttributeContext";
+    @Nonnull @NotEmpty public static final String INVALID_ATTRIBUTE_CTX = "InvalidAttributeContext";
 
     /**
      * ID of event returned if the @link net.shibboleth.idp.authn.context.SubjectContext is missing or corrupt.
      */
-    public static final String INVALID_SUBJECT_CTX = "InvalidSubjectContext";
+    @Nonnull @NotEmpty public static final String INVALID_SUBJECT_CTX = "InvalidSubjectContext";
 
     /**
      * ID of event returned if attribute resolution failed.
      */
-    public static final String UNABLE_RESOLVE_ATTRIBS = "UnableToResolveAttributes";
+    @Nonnull @NotEmpty public static final String UNABLE_RESOLVE_ATTRIBS = "UnableToResolveAttributes";
 
     /**
      * ID of event returned if attribute filtering failed.
      */
-    public static final String UNABLE_FILTER_ATTRIBS = "UnableToFilterAttributes";
+    @Nonnull @NotEmpty public static final String UNABLE_FILTER_ATTRIBS = "UnableToFilterAttributes";
 
     /** ID of the event returned if some attributes cannot be encoded. */
-    public static final String UNABLE_ENCODE_ATTRIBUTE = "UnableToEncodeAttribute";
+    @Nonnull @NotEmpty public static final String UNABLE_ENCODE_ATTRIBUTE = "UnableToEncodeAttribute";
     
     /** Constructor. */
     private IdPEventIds() {
