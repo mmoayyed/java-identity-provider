@@ -39,6 +39,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +75,7 @@ public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition 
         nameIDBuilder = (SAMLObjectBuilder<NameID>)
                 XMLObjectProviderRegistrySupport.getBuilderFactory().<NameID>getBuilderOrThrow(
                         NameID.DEFAULT_ELEMENT_NAME);
-        nameIdFormat = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";
+        nameIdFormat = NameIDType.UNSPECIFIED;
     }
 
     /**

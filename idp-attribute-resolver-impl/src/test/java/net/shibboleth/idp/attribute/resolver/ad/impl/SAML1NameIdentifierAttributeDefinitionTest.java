@@ -97,7 +97,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         Collection<String> nameValues = new HashSet<String>(2);
         for (IdPAttributeValue val : values) {
             NameIdentifier id = (NameIdentifier) val.getValue();
-            Assert.assertNull(id.getFormat());
+            Assert.assertEquals(id.getFormat(),  "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
             Assert.assertEquals(id.getNameQualifier(), IDP_ENTITY_ID);
             nameValues.add(id.getNameIdentifier());
         }

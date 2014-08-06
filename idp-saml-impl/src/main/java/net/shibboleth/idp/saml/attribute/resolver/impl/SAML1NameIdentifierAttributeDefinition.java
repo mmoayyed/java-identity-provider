@@ -70,7 +70,7 @@ public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDef
         nameIdentifierBuilder = (SAMLObjectBuilder<NameIdentifier>)
                 XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIdentifier>getBuilderOrThrow(
                         NameIdentifier.DEFAULT_ELEMENT_NAME);
-        nameIdFormat = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";
+        nameIdFormat = NameIdentifier.UNSPECIFIED;
     }
 
     /**
