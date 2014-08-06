@@ -26,10 +26,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -68,7 +68,7 @@ public class AbstractSAMLAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         AbstractSAML1AttributeEncoder encoder = new mockEncoder(theBuilder, theQName);
         
         Assert.assertNull(encoder.getName());
-        Assert.assertNull(encoder.getNamespace());
+        Assert.assertEquals(encoder.getNamespace(), "urn:mace:shibboleth:1.0:attributeNamespace:uri");
         
         try {
             encoder.setName("");
@@ -131,6 +131,7 @@ public class AbstractSAMLAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
                 Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         null,
                         new IdPAttributeValue<Object>() {
+                            @Override
                             public Object getValue() {
                                 return intArray;
                             }

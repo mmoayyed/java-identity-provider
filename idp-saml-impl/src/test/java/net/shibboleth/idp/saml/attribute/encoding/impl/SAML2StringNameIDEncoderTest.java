@@ -21,8 +21,8 @@ import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 
@@ -39,7 +39,7 @@ public class SAML2StringNameIDEncoderTest extends OpenSAMLInitBaseTestCase {
     @Test public void settersGetters() {
         final SAML2StringNameIDEncoder encoder = new SAML2StringNameIDEncoder();
 
-        Assert.assertNull(encoder.getNameFormat());
+        Assert.assertEquals(encoder.getNameFormat(), "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
         Assert.assertNull(encoder.getNameQualifier());
 
         encoder.setNameFormat("nameFormat");
@@ -85,7 +85,7 @@ public class SAML2StringNameIDEncoderTest extends OpenSAMLInitBaseTestCase {
 
         NameID nameId = enc1.encode(attribute);
         Assert.assertEquals(nameId.getValue(), "value");
-        Assert.assertNull(nameId.getFormat());
+        Assert.assertEquals(nameId.getFormat(), "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
         Assert.assertNull(nameId.getNameQualifier());
 
         enc1.setNameFormat("nameFormat");
@@ -112,6 +112,7 @@ public class SAML2StringNameIDEncoderTest extends OpenSAMLInitBaseTestCase {
         final SAML2StringNameIDEncoder enc1 = new SAML2StringNameIDEncoder();
 
         final IdPAttributeValue<?> empty = new IdPAttributeValue<String>() {
+            @Override
             @Nonnull public String getValue() {
                 return null;
             }
@@ -126,6 +127,7 @@ public class SAML2StringNameIDEncoderTest extends OpenSAMLInitBaseTestCase {
         IdPAttribute attribute = new IdPAttribute("id");
         final SAML2StringNameIDEncoder enc1 = new SAML2StringNameIDEncoder();
         final IdPAttributeValue<?> wrong = new IdPAttributeValue<Integer>() {
+            @Override
             @Nonnull public Integer getValue() {
                 return new Integer(3);
             }

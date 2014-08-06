@@ -21,9 +21,9 @@ import java.util.Collection;
 import java.util.List;
 
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.saml.xmlobject.ScopedValue;
@@ -95,6 +95,7 @@ public class SAML1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
         final Collection<IdPAttributeValue<?>> values =
                 Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new StringAttributeValue("dd"),
                         new IdPAttributeValue<Object>() {
+                            @Override
                             public Object getValue() {
                                 return intArray;
                             }
@@ -212,12 +213,6 @@ public class SAML1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
         }
 
         encoder.setScopeType("inline");
-        try {
-            encoder.initialize();
-            Assert.fail("Missing sep should throw");
-        } catch (ComponentInitializationException e) {
-            // OK
-        }
         encoder.setScopeDelimiter(DELIMITER);
         encoder.initialize();
 
