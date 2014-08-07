@@ -24,6 +24,7 @@ import net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicI
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicResourceCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509InlineCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509ResourceCredentialParser;
+import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.CertPathPKIXValidationOptionsParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.PKIXInlineValidationInfoParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.PKIXResourceValidationInfoParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.PKIXValidationOptionsParser;
@@ -61,8 +62,7 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(BasicResourceCredentialParser.TYPE_NAME_RESOURCE,
                 new BasicResourceCredentialParser());
 
-        registerBeanDefinitionParser(StaticExplicitKeySignatureParser.TYPE_NAME, 
-                new StaticExplicitKeySignatureParser());
+        registerBeanDefinitionParser(StaticExplicitKeySignatureParser.TYPE_NAME,new StaticExplicitKeySignatureParser());
         registerBeanDefinitionParser(StaticPKIXSignatureParser.TYPE_NAME, new StaticPKIXSignatureParser());
         registerBeanDefinitionParser(SignatureChainingParser.TYPE_NAME, new SignatureChainingParser());
 
@@ -82,9 +82,12 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(PKIXResourceValidationInfoParser.TYPE_NAME_RESOURCE,
                 new PKIXResourceValidationInfoParser());
         registerBeanDefinitionParser(PKIXInlineValidationInfoParser.SCHEMA_TYPE, new PKIXInlineValidationInfoParser());
-        
+
+        // Validation Opts
         registerBeanDefinitionParser(PKIXValidationOptionsParser.ELEMENT_NAME, new PKIXValidationOptionsParser());
-        
+        registerBeanDefinitionParser(CertPathPKIXValidationOptionsParser.ELEMENT_NAME,
+                new CertPathPKIXValidationOptionsParser());
+
         // Credential unsupported
         registerBeanDefinitionParser(UnsupportedTrustEngineParser.CHAINING_TYPE, new UnsupportedTrustEngineParser());
         registerBeanDefinitionParser(UnsupportedTrustEngineParser.PKIX_CREDENTIAL, new UnsupportedTrustEngineParser());

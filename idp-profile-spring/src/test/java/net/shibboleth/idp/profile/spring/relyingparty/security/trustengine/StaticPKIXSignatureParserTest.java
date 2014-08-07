@@ -29,6 +29,7 @@ import org.opensaml.security.x509.PKIXValidationInformation;
 import org.opensaml.security.x509.PKIXValidationOptions;
 import org.opensaml.security.x509.impl.BasicPKIXValidationInformation;
 import org.opensaml.security.x509.impl.CertPathPKIXTrustEvaluator;
+import org.opensaml.security.x509.impl.CertPathPKIXValidationOptions;
 import org.opensaml.security.x509.impl.StaticPKIXValidationInformationResolver;
 import org.opensaml.xmlsec.signature.support.impl.PKIXSignatureTrustEngine;
 import org.testng.Assert;
@@ -88,5 +89,36 @@ public class StaticPKIXSignatureParserTest extends AbstractSecurityParserTest {
         Assert.assertFalse(options.isProcessEmptyCRLs());
         Assert.assertFalse(options.isProcessExpiredCRLs());
         Assert.assertEquals(options.getDefaultVerificationDepth().intValue(), 2);
+    }
+    
+    @Test public void certPath() throws IOException, ResolverException {
+        final PKIXSignatureTrustEngine engine =
+                (PKIXSignatureTrustEngine) getBean(TrustEngine.class, true, "trustengine/staticPKIXValuesCertPathOpts.xml");
+
+        final StaticPKIXValidationInformationResolver resolver =
+                (StaticPKIXValidationInformationResolver) engine.getPKIXResolver();
+        final Set<String> tns = resolver.resolveTrustedNames(null);
+        Assert.assertEquals(tns.size(), 1);
+        Assert.assertTrue(tns.contains("Name1"));
+
+        final List<PKIXValidationInformation> infos = Lists.newArrayList(Sets.newHashSet(resolver.resolve(null)));
+        Assert.assertEquals(infos.size(), 1);
+        final int value = ((BasicPKIXValidationInformation) infos.get(0)).getVerificationDepth().intValue();
+
+        Assert.assertEquals(value, 99);
+
+        final CertPathPKIXTrustEvaluator trustEvaluator = (CertPathPKIXTrustEvaluator) engine.getPKIXTrustEvaluator();
+        final CertPathPKIXValidationOptions options = (CertPathPKIXValidationOptions) trustEvaluator.getPKIXValidationOptions();
+        Assert.assertFalse(options.isProcessCredentialCRLs());
+        Assert.assertFalse(options.isProcessEmptyCRLs());
+        Assert.assertFalse(options.isProcessExpiredCRLs());
+        Assert.assertEquals(options.getDefaultVerificationDepth().intValue(), 3);
+
+        Assert.assertFalse(options.isRevocationEnabled());
+        Assert.assertTrue(options.isAnyPolicyInhibited());
+        Assert.assertTrue(options.isPolicyMappingInhibited());
+        Assert.assertTrue(options.isForceRevocationEnabled());
+        Assert.assertEquals(options.getInitialPolicies().size(), 1);
+        Assert.assertTrue(options.getInitialPolicies().contains("1234"));
     }
 }
