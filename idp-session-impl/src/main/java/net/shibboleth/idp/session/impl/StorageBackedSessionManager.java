@@ -176,6 +176,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         consistentAddress = true;
         cookieName = DEFAULT_COOKIE_NAME;
 
+        // TODO(RDW) Implict setId
         setId(UUID.randomUUID().toString());
     }
 

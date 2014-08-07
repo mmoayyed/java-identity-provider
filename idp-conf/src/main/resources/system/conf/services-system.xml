@@ -30,7 +30,7 @@
             value="net.shibboleth.idp.attribute.filter.AttributeFilter" />
         <constructor-arg name="strategy">
             <bean class="net.shibboleth.idp.attribute.filter.spring.AttributeFilterServiceStrategy"
-                p:id="ShibbolethAttributeFilter"/>
+                id="ShibbolethAttributeFilter"/>
         </constructor-arg>
     </bean>
 
@@ -44,7 +44,7 @@
             value="net.shibboleth.idp.attribute.resolver.AttributeResolver" />
         <constructor-arg name="strategy">
             <bean class="net.shibboleth.idp.attribute.resolver.spring.AttributeResolverServiceStrategy"
-                p:id="ShibbolethAttributeResolver"/>
+                id="ShibbolethAttributeResolver"/>
         </constructor-arg>
     </bean>
 
