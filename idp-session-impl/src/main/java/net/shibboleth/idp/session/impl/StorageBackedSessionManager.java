@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -175,9 +174,6 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         flowDescriptorMap = new HashMap();
         consistentAddress = true;
         cookieName = DEFAULT_COOKIE_NAME;
-
-        // TODO(RDW) Implict setId
-        setId(UUID.randomUUID().toString());
     }
 
     /**
