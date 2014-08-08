@@ -14,9 +14,6 @@
 
     <context:property-placeholder />
 
-    <!-- This BeanPostProcessor auto-sets identifiable beans with the bean name (if not already set). -->
-    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
-    
     <!--
     Anonymous configuration, defaults to no support for any profiles. Add <ref> elements to the list
     to enable specific default profile settings (as below), or create new beans inline to override defaults. 

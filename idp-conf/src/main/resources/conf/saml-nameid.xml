@@ -14,9 +14,6 @@
 
     <context:property-placeholder />
 
-    <!-- This BeanPostProcessor auto-sets identifiable beans with the bean name (if not already set). -->
-    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
-
     <!-- ========================= SAML NameID Generation ========================= -->
 
     <!--

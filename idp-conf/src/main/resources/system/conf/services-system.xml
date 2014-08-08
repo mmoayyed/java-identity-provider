@@ -12,9 +12,6 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <!-- This BeanPostProcessor auto-sets identifiable beans with the bean name (if not already set). -->
-    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
-
     <!--
     These are beans that define reloadable services. The actual Spring resources that configure the
     services are generally defined in the services.xml file edited by deployers.
