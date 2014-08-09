@@ -27,7 +27,6 @@ import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.storage.StorageRecord;
-import org.opensaml.storage.StorageService;
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -37,7 +36,7 @@ import org.testng.annotations.Test;
 /** Unit test for {@link TransientSAML1NameIdentifierGenerator} using storage-based generator. */
 public class StoredTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLInitBaseTestCase {
 
-    private StorageService store;
+    private MemoryStorageService store;
     
     private StoredTransientIdGenerationStrategy transientGenerator;
     
@@ -45,6 +44,7 @@ public class StoredTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLIni
     
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         store = new MemoryStorageService();
+        store.setId("test");
         store.initialize();
         
         transientGenerator = new StoredTransientIdGenerationStrategy();

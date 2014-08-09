@@ -31,9 +31,9 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.storage.StorageRecord;
-import org.opensaml.storage.StorageService;
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** test for {@link net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinition}. */
@@ -46,12 +46,17 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
 
     private static final int TEST_ID_SIZE = 32;
 
+    private MemoryStorageService store;
+
+    @BeforeMethod void setUp() throws ComponentInitializationException {
+        store = new MemoryStorageService();
+        store.setId("test");
+        store.initialize();
+    }
+    
     @Test public void single() throws ComponentInitializationException, ResolutionException, IOException {
         final StoredTransientIdGenerationStrategy strategy = new StoredTransientIdGenerationStrategy();
         strategy.setId("strategy");
-        
-        final StorageService store = new MemoryStorageService();
-        store.initialize();
         strategy.setIdStore(store);        
         strategy.initialize();
         
@@ -91,8 +96,6 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         
         final StoredTransientIdGenerationStrategy strategy = new StoredTransientIdGenerationStrategy();
         strategy.setId("strategy");
-        final StorageService store = new MemoryStorageService();
-        store.initialize();
         strategy.setIdStore(store);
         strategy.initialize();
         
@@ -120,13 +123,8 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
     @Test public void testGetters() throws ComponentInitializationException {
         final StoredTransientIdGenerationStrategy strategy = new StoredTransientIdGenerationStrategy();
         strategy.setId("strategy");
-
-        final StorageService store = new MemoryStorageService();
-        store.initialize();
-
         strategy.setIdLifetime(TEST_LIFETIME);
         strategy.setIdSize(TEST_ID_SIZE);
-
         strategy.setIdStore(store);
         strategy.initialize();
         final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition(strategy);
@@ -145,13 +143,8 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
             InterruptedException {
         final StoredTransientIdGenerationStrategy strategy = new StoredTransientIdGenerationStrategy();
         strategy.setId("strategy");
-
-        final StorageService store = new MemoryStorageService();
-        store.initialize();
-
         strategy.setIdLifetime(TEST_LIFETIME);
         strategy.setIdSize(TEST_ID_SIZE);
-
         strategy.setIdStore(store);
         strategy.initialize();
         final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition(strategy);

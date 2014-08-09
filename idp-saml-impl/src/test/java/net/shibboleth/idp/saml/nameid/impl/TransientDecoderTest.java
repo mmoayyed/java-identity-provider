@@ -30,14 +30,15 @@ import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.saml.nameid.TransientIdParameters;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.NameID;
-import org.opensaml.storage.StorageService;
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link BaseTransientDecoder} unit test. */
@@ -45,11 +46,16 @@ public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
 
     private static final String RECIPIENT="TheRecipient";
     private static final String PRINCIPAL="ThePrincipalName";
+    
+    private MemoryStorageService store;
 
-    @Test public void testSucess() throws Exception {
-
-        final StorageService store = new MemoryStorageService();
+    @BeforeMethod void setUp() throws ComponentInitializationException {
+        store = new MemoryStorageService();
+        store.setId("test");
         store.initialize();
+    }
+    
+    @Test public void testSucess() throws Exception {
 
         final String principalTokenId;
         principalTokenId = new TransientIdParameters(RECIPIENT, PRINCIPAL).encode();
@@ -70,9 +76,6 @@ public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void testExpired() throws Exception {
-
-        final StorageService store = new MemoryStorageService();
-        store.initialize();
 
         final String principalTokenId;
         principalTokenId = new TransientIdParameters(RECIPIENT, PRINCIPAL).encode();
@@ -95,9 +98,6 @@ public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void testNotFound() throws Exception {
 
-        final StorageService store = new MemoryStorageService();
-        store.initialize();
-
         final BaseTransientDecoder decoder = new BaseTransientDecoder(){};
         decoder.setId("decoder");
         decoder.setIdStore(store);
@@ -108,9 +108,6 @@ public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
 
 
     @Test(expectedExceptions={NameDecoderException.class,}) public void testBadRecipient() throws Exception {
-
-        final StorageService store = new MemoryStorageService();
-        store.initialize();
 
         final String principalTokenId;
         principalTokenId = new TransientIdParameters(RECIPIENT, PRINCIPAL).encode();
@@ -135,9 +132,6 @@ public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
         
         final StoredTransientIdGenerationStrategy strategy = new StoredTransientIdGenerationStrategy();
         strategy.setId("strategy");
-        
-        final StorageService store = new MemoryStorageService();
-        store.initialize();
         strategy.setIdStore(store);        
         strategy.initialize();
         
