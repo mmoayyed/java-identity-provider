@@ -17,6 +17,6 @@
             </list>
         </property>
     </bean>
-	<bean id="shibboleth.StorageService" class="org.opensaml.storage.impl.MemoryStorageService"
+	<bean id="shibboleth.StorageService" p:id="test" class="org.opensaml.storage.impl.MemoryStorageService"
 		p:cleanupInterval="PT10M" />
 </beans>
