@@ -60,7 +60,6 @@ public class StoredIDDataConnector extends ComputedIDDataConnector {
     public StoredIDDataConnector() {
         idStore = new JDBCPersistentIdStore();
         storedIdStrategy = new StoredPersistentIdGenerationStrategy();
-        storedIdStrategy.setId("StoredPersistentIdGenerationStrategy");
         storedIdStrategy.setIDStore(idStore);
     }
     

@@ -87,7 +87,6 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
     @Test(expectedExceptions = ComponentInitializationException.class)
     public void testInvalidConfig() throws ComponentInitializationException {
         final ComputedPersistentIdGenerationStrategy strategy = new ComputedPersistentIdGenerationStrategy();
-        strategy.setId("test");
         strategy.setSalt(salt);
         strategy.initialize();
         
@@ -142,7 +141,6 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
     @Test
     public void testComputedId() throws Exception {
         final ComputedPersistentIdGenerationStrategy strategy = new ComputedPersistentIdGenerationStrategy();
-        strategy.setId("test");
         strategy.setSalt(salt);
         strategy.initialize();
 
@@ -172,7 +170,6 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         store.initialize();
         
         final StoredPersistentIdGenerationStrategy strategy = new StoredPersistentIdGenerationStrategy();
-        strategy.setId("test");
         strategy.setIDStore(store);
         strategy.initialize();
 
@@ -227,7 +224,6 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
     @Test
     public void testComputedAndStoredId() throws Exception {
         final ComputedPersistentIdGenerationStrategy strategy = new ComputedPersistentIdGenerationStrategy();
-        strategy.setId("test");
         strategy.setSalt(salt);
         strategy.initialize();
 
@@ -236,7 +232,6 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         store.initialize();
         
         final StoredPersistentIdGenerationStrategy strategy2 = new StoredPersistentIdGenerationStrategy();
-        strategy2.setId("test");
         strategy2.setIDStore(store);
         strategy2.setComputedIdStrategy(strategy);
         strategy2.initialize();

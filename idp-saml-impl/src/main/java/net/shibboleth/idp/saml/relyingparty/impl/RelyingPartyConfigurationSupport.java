@@ -26,6 +26,7 @@ import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.saml.profile.logic.EntitiesDescriptorPredicate;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Support functions for building {@link RelyingPartyConfiguration} objects with SAML functionality.
@@ -48,11 +49,19 @@ public final class RelyingPartyConfigurationSupport {
      */
     @Nonnull public static RelyingPartyConfiguration byName(
             @Nonnull @NonnullElements final Collection<String> relyingPartyIds) {
+
+        Constraint.isNotNull(relyingPartyIds, "Relying Partys list must be non null");
+
         final RelyingPartyConfiguration config = new RelyingPartyConfiguration();
         config.setActivationCondition(new RelyingPartyIdPredicate(relyingPartyIds));
-        if (relyingPartyIds.size() == 1) {
-            config.setId(relyingPartyIds.iterator().next());
+
+        final StringBuffer name = new StringBuffer("EntityNames[");
+        for (final String rpId: relyingPartyIds) {
+            name.append(rpId).append(',');
+            
         }
+        name.append(']');
+        config.setId(name.toString());
         return config;
     }
 
@@ -64,6 +73,7 @@ public final class RelyingPartyConfigurationSupport {
      * @return  a default-constructed configuration with the appropriate condition set
      */
     @Nonnull public static RelyingPartyConfiguration byGroup(@Nonnull @NotEmpty final String name) {
+        Constraint.isNotNull(name, "Group name must be non null");
         final RelyingPartyConfiguration config = new RelyingPartyConfiguration();
         config.setId(name);
         config.setActivationCondition(new EntitiesDescriptorPredicate(name));

@@ -51,7 +51,6 @@ public class ComputedIDDataConnector extends AbstractPersistentIdDataConnector {
     /** Constructor. */
     public ComputedIDDataConnector() {
         idStrategy = new ComputedPersistentIdGenerationStrategy();
-        idStrategy.setId("ComputedPersistentIdGenerationStrategy");
     }
     
     /**

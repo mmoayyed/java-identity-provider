@@ -28,7 +28,7 @@ import net.shibboleth.idp.saml.nameid.PersistentIdEntry;
 import net.shibboleth.idp.saml.nameid.PersistentIdStore;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * Manages persistent IDs via a {@link PersistentIdStore}, generating them either randomly or via a
  * {@link ComputedPersistentIdGenerationStrategy} (for compatibility with existing data).
  */
-public class StoredPersistentIdGenerationStrategy extends AbstractIdentifiableInitializableComponent
+public class StoredPersistentIdGenerationStrategy extends AbstractInitializableComponent
         implements PersistentIdGenerationStrategy {
 
     /** Class logger. */

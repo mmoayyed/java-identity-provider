@@ -66,7 +66,7 @@ public class MetadataResolverServiceStrategy extends AbstractIdentifiableInitial
         final ChainingMetadataResolver chain = new ChainingMetadataResolver();
         try {
             chain.setResolvers(resolverList);
-            chain.setId("ChainingResolverFor"+resolvers.size()+"Resources");
+            chain.setId("ChainingResolverFor:"+resolvers.size()+":Resources");
             chain.initialize();
             final RelyingPartyMetadataProvider result = new RelyingPartyMetadataProvider(chain);
             result.initialize();

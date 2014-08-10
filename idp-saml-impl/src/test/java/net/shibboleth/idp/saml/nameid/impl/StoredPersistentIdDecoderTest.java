@@ -72,7 +72,6 @@ public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
         store.initialize();
         
         final StoredPersistentIdGenerationStrategy strategy = new StoredPersistentIdGenerationStrategy();
-        strategy.setId("test");
         strategy.setIDStore(store);
         strategy.initialize();
         

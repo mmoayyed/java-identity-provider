@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * The basis of a {@link PersistentIdGenerationStrategy} that generates a unique ID by computing the hash of
  * a given attribute value, the entity ID of the inbound message issuer, and a provided salt.
  */
-public class ComputedPersistentIdGenerationStrategy extends AbstractIdentifiableInitializableComponent
+public class ComputedPersistentIdGenerationStrategy extends AbstractInitializableComponent
         implements PersistentIdGenerationStrategy {
 
     /** Class logger. */

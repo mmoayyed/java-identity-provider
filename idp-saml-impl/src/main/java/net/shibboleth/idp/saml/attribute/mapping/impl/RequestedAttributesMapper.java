@@ -49,12 +49,13 @@ public class RequestedAttributesMapper extends AbstractSAMLAttributesMapper<Requ
      * @param resolver The resolver to invert.
      */
     public RequestedAttributesMapper(AttributeResolver resolver) {
-        super(resolver, new Supplier<AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute>>() {
+        super(resolver, "RequestedMapper<" + resolver.getId() + ">",
+                new Supplier<AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute>>() {
 
-            @Override public RequestedAttributeMapper get() {
-                return new RequestedAttributeMapper();
-            }
-        });
+                    @Override public RequestedAttributeMapper get() {
+                        return new RequestedAttributeMapper();
+                    }
+                });
     }
 
 }

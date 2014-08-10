@@ -48,7 +48,8 @@ public class SAML2AttributesMapper extends AbstractSAMLAttributesMapper<Attribut
      * @param resolver The resolver to invert.
      */
     public SAML2AttributesMapper(AttributeResolver resolver) {
-        super(resolver, new Supplier<AbstractSAMLAttributeMapper<Attribute, IdPAttribute>>() {
+        super(resolver, "Mapper<" + resolver.getId() + ">",
+                new Supplier<AbstractSAMLAttributeMapper<Attribute, IdPAttribute>>() {
 
             @Override public SAML2AttributeMapper get() {
                 return new SAML2AttributeMapper();

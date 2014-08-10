@@ -85,13 +85,14 @@ public abstract class AbstractSAMLAttributesMapper<InType extends Attribute, Out
      * being the value of the {@link Multimap})
      * 
      * @param resolver The resolver
+     * @param id The it
      * @param mapperFactory A factory to generate new mappers of the correct type.
      */
-    public AbstractSAMLAttributesMapper(AttributeResolver resolver,
+    public AbstractSAMLAttributesMapper(final AttributeResolver resolver, final String id,
             Supplier<AbstractSAMLAttributeMapper<InType, OutType>> mapperFactory) {
 
         super();
-        setId(resolver.getId());
+        setId(id); 
 
         final Multimap<AbstractSAMLAttributeMapper<InType, OutType>, String> theMappers;
 

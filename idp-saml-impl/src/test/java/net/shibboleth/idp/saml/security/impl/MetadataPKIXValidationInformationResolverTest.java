@@ -325,6 +325,7 @@ public class MetadataPKIXValidationInformationResolverTest extends XMLObjectBase
         nodeFilter.initialize();
         
         mdProvider.setMetadataFilter(nodeFilter);
+        mdProvider.setId("Test");
         mdProvider.initialize();
         
         RoleDescriptorResolver roleResolver = new BasicRoleDescriptorResolver(mdProvider);
